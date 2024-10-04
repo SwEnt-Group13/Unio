@@ -1,4 +1,5 @@
 # Unio
+The link to the Figma prototype can be found [here](https://www.figma.com/design/rlvqRyIsbdSyEbXu8Xp7yG/Unio).
 
 ## The problem being solved
 University associations, specifically the ones at EPFL, lack ways of interacting with their community. This can be seen through their single e-mail per semester allowance, or their use of the Instagram platform to communicate about projects or events, when only a small proportion of their audience sees it. Our project aims to resolve this issue by providing a single platform where campus associations can inform about, manage, and prepare their events. This would take shape as a social media-style application, where associations would be presented to users who could then choose to learn more about them, follow them (letting them know of future events etc.), or even join them. Once one has followed a few associations, their feed would then consist of their future events. As such, the core audience we aim for are students both on the user side and the association side. The application can be viewed as an extension of the EPFL Campus application, but it could also potentially be later adapted for non-university events.
