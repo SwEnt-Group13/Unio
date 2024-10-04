@@ -24,20 +24,10 @@ class SecondActivity : ComponentActivity() {
         Surface(
             modifier = Modifier.fillMaxSize().semantics { testTag = C.Tag.second_screen_container },
             color = MaterialTheme.colorScheme.background) {
-              GreetingRobo("Robolectric")
-            }
+            Text("Hello Robolectric!", modifier = Modifier.semantics { testTag = C.Tag.greeting_robo })
+
+        }
       }
     }
   }
-}
-
-@Composable
-fun GreetingRobo(name: String, modifier: Modifier = Modifier) {
-  Text(text = "Hello $name!", modifier = modifier.semantics { testTag = C.Tag.greeting_robo })
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview2() {
-  SampleAppTheme { GreetingRobo("Robolectric") }
 }
