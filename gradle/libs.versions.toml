@@ -58,6 +58,8 @@ mockkAndroid = "1.13.7"
 navigationCompose = "2.8.1"
 robolectric = "4.11.1"
 
+# Sonar
+sonar = "4.4.1.3373"
 
 # AndroidX and Core Libraries
 activityCompose = "1.9.2"
@@ -134,3 +136,4 @@ androidApplication = { id = "com.android.application", version.ref = "agp" }
 jetbrainsKotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 ktfmt = { id = "com.ncorti.ktfmt.gradle", version.ref = "ktfmt" }
 gms = { id = "com.google.gms.google-services", version.ref = "gms" }
+sonar = { id = "org.sonarqube", version.ref = "sonar" }

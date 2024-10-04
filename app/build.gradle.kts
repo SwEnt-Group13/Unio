@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.jetbrainsKotlinAndroid)
     alias(libs.plugins.ktfmt)
     alias(libs.plugins.gms)
+    alias(libs.plugins.sonar)
 }
 
 android {
