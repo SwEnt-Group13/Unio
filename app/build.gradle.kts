@@ -9,6 +9,7 @@ plugins {
     alias(libs.plugins.ktfmt)
     alias(libs.plugins.gms)
     alias(libs.plugins.sonar)
+    id("jacoco")
 }
 
 android {
@@ -174,6 +175,38 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
     implementation(libs.material)
+
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(platform(libs.compose.bom))
+
+    globalTestImplementation(libs.androidx.junit)
+    globalTestImplementation(libs.androidx.espresso.core)
+
+    // ------------- Jetpack Compose ------------------
+    val composeBom = platform(libs.compose.bom)
+    implementation(composeBom)
+    globalTestImplementation(composeBom)
+
+    implementation(libs.compose.ui)
+    implementation(libs.compose.ui.graphics)
+    // Material Design 3
+    implementation(libs.compose.material3)
+    // Integration with activities
+    implementation(libs.compose.activity)
+    // Integration with ViewModels
+    implementation(libs.compose.viewmodel)
+    // Android Studio Preview support
+    implementation(libs.compose.preview)
+    debugImplementation(libs.compose.tooling)
+    // UI Tests
+    globalTestImplementation(libs.compose.test.junit)
+    debugImplementation(libs.compose.test.manifest)
+
+    // --------- Kaspresso test framework ----------
+    globalTestImplementation(libs.kaspresso)
+    globalTestImplementation(libs.kaspresso.compose)
+
+    // ----------       Robolectric     ------------
 
     // Navigation
     implementation(libs.androidx.navigation.compose)
