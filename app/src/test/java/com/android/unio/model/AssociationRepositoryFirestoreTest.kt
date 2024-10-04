@@ -107,6 +107,5 @@ class AssociationRepositoryFirestoreTest {
               associations[1])
         },
         onFailure = { exception -> assert(false) })
-
   }
 }
