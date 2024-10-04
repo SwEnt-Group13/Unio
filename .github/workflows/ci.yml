@@ -26,6 +26,9 @@ jobs:
           submodules: recursive
           fetch-depth: 0 # Shallow clones should be disabled for a better relevancy of Sonar analysis (if we use Sonar Later)
 
+      # This step removes the current gradle cache to avoid any caching issues
+      - name: Remove current gradle cache
+        run: rm -rf ~/.gradle
 
       # Kernel-based Virtual Machine (KVM) is an open source virtualization technology built into Linux. Enabling it allows the Android emulator to run faster.
       - name: Enable KVM group perms
@@ -40,7 +43,8 @@ jobs:
           distribution: "temurin"
           java-version: "17"
 
-      # Caching is a very useful part of a CI, as a workflow is executed in a clean environment every time,
+
+      # Caching is a very useful part of a CI, as a workflow is executed in a clean environement every time,
       # this means that one would need to re-download and re-process gradle files for every run. Which is very time consuming.
       #
       # To avoid that, we cache the the gradle folder to reuse it later.
@@ -69,6 +73,16 @@ jobs:
           disable-animations: false
           script: echo "Generated AVD snapshot for caching."
 
+
+      # Load google-services.json and local.properties from the secrets
+      - name: Decode secrets
+        env:
+          GOOGLE_SERVICES: ${{ secrets.GOOGLE_SERVICES }}
+          LOCAL_PROPERTIES: ${{ secrets.LOCAL_PROPERTIES }}
+        run: |
+          echo "$GOOGLE_SERVICES" | base64 --decode > ./app/google-services.json
+          echo "$LOCAL_PROPERTIES" | base64 --decode > ./local.properties
+
       - name: Grant execute permission for gradlew
         run: |
           chmod +x ./gradlew
@@ -91,7 +105,7 @@ jobs:
           ./gradlew check --parallel --build-cache
 
       # Run connected tests on the emulator
-      - name: run tests
+      - name: Run connected tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 34
