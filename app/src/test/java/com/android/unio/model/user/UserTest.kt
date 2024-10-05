@@ -1,5 +1,6 @@
-package com.android.unio.model
+package com.android.unio.model.user
 
+import com.android.unio.model.association.Association
 import junit.framework.TestCase.assertEquals
 import org.junit.Test
 

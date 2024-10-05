@@ -1,4 +1,4 @@
-package com.android.unio.model
+package com.android.unio.model.association
 
 import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.gms.tasks.Task

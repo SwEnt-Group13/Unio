@@ -1,4 +1,4 @@
-package com.android.unio.model
+package com.android.unio.model.association
 
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
