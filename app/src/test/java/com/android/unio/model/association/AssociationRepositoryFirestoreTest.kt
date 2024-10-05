@@ -1,7 +1,5 @@
-package com.android.unio.model
+package com.android.unio.model.association
 
-import com.android.unio.model.association.Association
-import com.android.unio.model.association.AssociationRepositoryFirestore
 import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.CollectionReference
