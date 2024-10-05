@@ -1,4 +1,4 @@
-package com.android.unio.model
+package com.android.unio.model.association
 
 data class Association(
     val uid: String,

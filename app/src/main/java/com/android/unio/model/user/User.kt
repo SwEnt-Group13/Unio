@@ -1,4 +1,6 @@
-package com.android.unio.model
+package com.android.unio.model.user
+
+import com.android.unio.model.association.Association
 
 data class User(
     val id: String,
