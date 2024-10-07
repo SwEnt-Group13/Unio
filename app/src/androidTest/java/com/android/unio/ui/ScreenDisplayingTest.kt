@@ -12,6 +12,8 @@ import com.android.unio.ui.home.HomeScreen
 import com.android.unio.ui.map.MapScreen
 import com.android.unio.ui.saved.SavedScreen
 import com.android.unio.ui.settings.SettingsScreen
+import com.android.unio.ui.user.SomeoneElseUserProfileScreen
+import com.android.unio.ui.user.UserProfileScreen
 import org.junit.Rule
 import org.junit.Test
 
@@ -72,4 +74,15 @@ class ScreenDisplayingTest() {
     composeTestRule.setContent { SettingsScreen() }
     composeTestRule.onNodeWithTag("SettingsScreen").assertIsDisplayed()
   }
+    @Test
+    fun testUserProfileDisplayed() {
+        composeTestRule.setContent { UserProfileScreen() }
+        composeTestRule.onNodeWithTag("UserProfileScreen").assertIsDisplayed()
+    }
+
+    @Test
+    fun testSOmeoneElseUserProfileDisplayed() {
+        composeTestRule.setContent { SomeoneElseUserProfileScreen() }
+        composeTestRule.onNodeWithTag("SomeoneElseUserProfileScreen").assertIsDisplayed()
+    }
 }
