@@ -23,10 +23,8 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.unit.times
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.android.unio.model.events.Event
 import com.android.unio.model.events.EventListViewModel
@@ -145,7 +143,6 @@ fun EventListOverview(
                                 .padding(top = 4.dp)
                         ) {
                             val selectedTabWidth = if (selectedTab == "All") allTabWidth else followingTabWidth
-                            val selectedTabXCoordinate = if (selectedTab == "All") allTabXCoordinate else followingTabXCoordinate
                             Box(
                                 modifier = Modifier
                                     //.offset(x = animatablePosition.value * (followingTabWidth - allTabWidth) + allTabWidth)

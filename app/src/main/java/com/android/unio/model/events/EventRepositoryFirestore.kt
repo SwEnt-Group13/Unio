@@ -1,7 +1,6 @@
 package com.android.unio.model.events
 
 import com.google.firebase.firestore.FirebaseFirestore
-import kotlinx.coroutines.tasks.await
 
 class EventRepositoryFirestore : EventRepository {
     private val firestore = FirebaseFirestore.getInstance()
