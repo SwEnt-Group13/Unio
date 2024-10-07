@@ -10,5 +10,5 @@ import androidx.compose.ui.platform.testTag
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun MapScreen() {
-  Scaffold (modifier = Modifier.testTag("MapScreen")){ Text("Map Screen") }
+  Scaffold(modifier = Modifier.testTag("MapScreen")) { Text("Map Screen") }
 }

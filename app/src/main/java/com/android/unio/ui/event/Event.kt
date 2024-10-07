@@ -10,5 +10,5 @@ import androidx.compose.ui.platform.testTag
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun EventScreen() {
-  Scaffold (modifier = Modifier.testTag("EventScreen")){ Text("Event screen") }
+  Scaffold(modifier = Modifier.testTag("EventScreen")) { Text("Event screen") }
 }

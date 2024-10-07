@@ -10,5 +10,7 @@ import androidx.compose.ui.platform.testTag
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun SomeoneElseUserProfileScreen() {
-  Scaffold (modifier = Modifier.testTag("SomeoneElseUserProfileScreen")){ Text("Someone else user profile screen") }
+  Scaffold(modifier = Modifier.testTag("SomeoneElseUserProfileScreen")) {
+    Text("Someone else user profile screen")
+  }
 }
