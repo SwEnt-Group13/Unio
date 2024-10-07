@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -27,51 +28,56 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.android.unio.model.association.Association
+import com.android.unio.model.association.AssociationType
+import com.android.unio.model.association.MockAssociation
+import com.android.unio.model.association.mockAssociations
 
 @Composable
 fun ExploreScreen() {
   Scaffold(
+      /**
+       * This is where the bottom navigation bar will be added. For now, it is just a placeholder
+       */
       modifier = Modifier.testTag("exploreScreen"),
-      /** Here, we should have the bottom navigation bar. */
-      content = { padding ->
-        Column(modifier = Modifier.fillMaxSize().padding(padding)) {
-          OutlinedTextField(
-              value = "",
-              onValueChange = {},
-              modifier = Modifier.fillMaxWidth().padding(8.dp).testTag("searchBar"),
-              placeholder = { Text("Search") },
-              trailingIcon = { Icon(Icons.Default.Search, contentDescription = "Search icon") })
+      content = { padding -> ExploreScreenContent(padding) })
+}
 
-          LazyColumn(
-              modifier = Modifier.fillMaxSize(),
-              verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                AssociationType.entries.forEach { category ->
-                  val filteredAssociations =
-                      mockAssociations
-                          .filter { it.type == category }
-                          .sortedBy { it.association.acronym }
+@Composable
+fun ExploreScreenContent(padding: PaddingValues) {
+  // This is a placeholder for the actual content of the Explore screen
+  Column(modifier = Modifier.fillMaxSize().padding(padding)) {
+    OutlinedTextField(
+        value = "",
+        onValueChange = {},
+        modifier = Modifier.fillMaxWidth().padding(8.dp).testTag("searchBar"),
+        placeholder = { Text("Search") },
+        trailingIcon = { Icon(Icons.Default.Search, contentDescription = "Search icon") })
 
-                  if (filteredAssociations.isNotEmpty()) {
-                    item {
-                      Text(
-                          text = category.name.lowercase().replaceFirstChar { it.uppercase() },
-                          fontWeight = FontWeight.Bold,
-                          modifier = Modifier.padding(horizontal = 16.dp).testTag("categoryTitle"))
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+          AssociationType.entries.forEach { category ->
+            val filteredAssociations = getFilteredAssociationsByCategory(category)
 
-                      // Horizontal scrollable list of associations
-                      LazyRow(
-                          modifier = Modifier.fillMaxWidth(),
-                          horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                            items(filteredAssociations.size) { index ->
-                              AssociationItem(filteredAssociations[index].association)
-                            }
-                          }
+            if (filteredAssociations.isNotEmpty()) {
+              item {
+                Text(
+                    text = getCategoryNameWithFirstLetterUppercase(category),
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(horizontal = 16.dp).testTag("categoryTitle"))
+
+                // Horizontal scrollable list of associations
+                LazyRow(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                      items(filteredAssociations.size) { index ->
+                        AssociationItem(filteredAssociations[index].association)
+                      }
                     }
-                  }
-                }
               }
+            }
+          }
         }
-      })
+  }
 }
 
 @Composable
@@ -99,80 +105,12 @@ fun AssociationItem(association: Association) {
       }
 }
 
-/**
- * Everything below is mock data. This file (and other classes) should later be adapted to get data
- * from the association repository.
- */
-enum class AssociationType {
-  MUSIC,
-  FESTIVALS,
-  INNOVATION,
-  FACULTIES,
-  SOCIAL,
-  TECH,
-  OTHER
+/** Returns a list of associations filtered by the given category. */
+fun getFilteredAssociationsByCategory(category: AssociationType): List<MockAssociation> {
+  return mockAssociations.filter { it.type == category }.sortedBy { it.association.acronym }
 }
 
-data class MockAssociation(val association: Association, val type: AssociationType)
-
-val mockAssociations =
-    listOf(
-        MockAssociation(
-            Association(
-                uid = "1",
-                acronym = "Musical",
-                fullName = "Musical Association",
-                description =
-                    "AGEPoly Commission – stimulation of the practice of music on the campus",
-                members = emptyList()),
-            AssociationType.MUSIC),
-        MockAssociation(
-            Association(
-                uid = "2",
-                acronym = "Nuit De la Magistrale",
-                fullName = "Nuit De la Magistrale Association",
-                description =
-                    "AGEPoly Commission – party following the formal Magistrale Graduation Ceremony",
-                members = emptyList()),
-            AssociationType.FESTIVALS),
-        MockAssociation(
-            Association(
-                uid = "3",
-                acronym = "Balélec",
-                fullName = "Festival Balélec",
-                description = "Open-air unique en Suisse, organisée par des bénévoles étudiants.",
-                members = emptyList()),
-            AssociationType.FESTIVALS),
-        MockAssociation(
-            Association(
-                uid = "4",
-                acronym = "Artiphys",
-                fullName = "Festival Artiphys",
-                description = "Festival à l'EPFL",
-                members = emptyList()),
-            AssociationType.FESTIVALS),
-        MockAssociation(
-            Association(
-                uid = "5",
-                acronym = "Sysmic",
-                fullName = "Festival Sysmic",
-                description = "Festival à l'EPFL",
-                members = emptyList()),
-            AssociationType.FESTIVALS),
-        MockAssociation(
-            Association(
-                uid = "6",
-                acronym = "IFL",
-                fullName = "Innovation Forum Lausanne",
-                description = "Innovation Forum Lausanne",
-                members = emptyList()),
-            AssociationType.INNOVATION),
-        MockAssociation(
-            Association(
-                uid = "7",
-                acronym = "Clic",
-                fullName = "Clic Association",
-                description = "Association of EPFL Students of IC Faculty",
-                members = emptyList()),
-            AssociationType.FACULTIES),
-    )
+/** Returns the name of the category with the first letter in uppercase. */
+fun getCategoryNameWithFirstLetterUppercase(category: AssociationType): String {
+  return category.name.lowercase().replaceFirstChar { it.uppercase() }
+}
