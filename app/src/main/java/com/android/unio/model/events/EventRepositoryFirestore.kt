@@ -6,8 +6,8 @@ import kotlinx.coroutines.tasks.await
 class EventRepositoryFirestore : EventRepository {
     private val firestore = FirebaseFirestore.getInstance()
 
-    override suspend fun getEvents(): List<Event> {
-        val eventsSnapshot = firestore.collection("events").get().await()
-        return eventsSnapshot.documents.mapNotNull { it.toObject(Event::class.java) }
+    // Change the return type to accept a callback
+    override fun getEvents(): List<Event> {
+       return emptyList()
     }
 }

@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTag
 import com.android.unio.resources.C
+import com.android.unio.ui.events.EventListOverview
 import com.android.unio.ui.theme.SampleAppTheme
 
 class MainActivity : ComponentActivity() {
@@ -22,7 +23,10 @@ class MainActivity : ComponentActivity() {
         Surface(
             modifier = Modifier.fillMaxSize().semantics { testTag = C.Tag.main_screen_container },
             color = MaterialTheme.colorScheme.background) {
-              Text("Hello Android!", modifier = Modifier.semantics { testTag = C.Tag.greeting })
+              EventListOverview(
+                  onAddEvent = { /* Handle Add Event Click */ },
+                  onEventClick = { event -> /* Handle Event Item Click */ }
+              )
             }
       }
     }

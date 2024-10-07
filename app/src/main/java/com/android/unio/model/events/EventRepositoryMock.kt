@@ -27,6 +27,34 @@ class EventRepositoryMock : EventRepository {
                 description = "Learn about building UIs with Jetpack Compose.",
                 date = "ok",
                 location = "Chicago, IL",
+            ),
+            Event(
+                id = UUID.randomUUID().toString(),
+                title = "Jetpack Compose Seminar",
+                description = "Learn about building UIs with Jetpack Compose.",
+                date = "ok",
+                location = "Chicago, IL",
+            ),
+            Event(
+                id = UUID.randomUUID().toString(),
+                title = "Jetpack Compose Seminar",
+                description = "Learn about building UIs with Jetpack Compose.",
+                date = "ok",
+                location = "Chicago, IL",
+            ),
+            Event(
+                id = UUID.randomUUID().toString(),
+                title = "Jetpack Compose Seminar",
+                description = "Learn about building UIs with Jetpack Compose.",
+                date = "ok",
+                location = "Chicago, IL",
+            ),
+            Event(
+                id = UUID.randomUUID().toString(),
+                title = "Jetpack Compose Seminar",
+                description = "Learn about building UIs with Jetpack Compose.",
+                date = "ok",
+                location = "Chicago, IL",
             )
         )
     }
