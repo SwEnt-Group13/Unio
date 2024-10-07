@@ -56,7 +56,8 @@ fun ExploreScreenContent(padding: PaddingValues) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.spacedBy(16.dp)) {
           AssociationType.entries.forEach { category ->
-            val filteredAssociations = getFilteredAssociationsByCategory(category)
+            val filteredAssociations =
+                getFilteredAssociationsByCategoryAndAlphabeticalOrder(category)
 
             if (filteredAssociations.isNotEmpty()) {
               item {
@@ -106,7 +107,9 @@ fun AssociationItem(association: Association) {
 }
 
 /** Returns a list of associations filtered by the given category. */
-fun getFilteredAssociationsByCategory(category: AssociationType): List<MockAssociation> {
+fun getFilteredAssociationsByCategoryAndAlphabeticalOrder(
+    category: AssociationType
+): List<MockAssociation> {
   return mockAssociations.filter { it.type == category }.sortedBy { it.association.acronym }
 }
 
