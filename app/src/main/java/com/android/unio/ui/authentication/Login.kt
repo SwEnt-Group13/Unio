@@ -8,5 +8,5 @@ import androidx.compose.runtime.Composable
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun LoginScreen() {
-    Scaffold (content = { Text("Login screen") })
+  Scaffold(content = { Text("Login screen") })
 }

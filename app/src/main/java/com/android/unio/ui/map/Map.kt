@@ -8,7 +8,5 @@ import androidx.compose.runtime.Composable
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun MapScreen() {
-    Scaffold {
-        Text("Map Screen")
-    }
+  Scaffold { Text("Map Screen") }
 }

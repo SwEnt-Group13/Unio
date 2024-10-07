@@ -8,5 +8,5 @@ import androidx.compose.runtime.Composable
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun SettingsScreen() {
-    Scaffold { Text("Settings screen") }
+  Scaffold { Text("Settings screen") }
 }

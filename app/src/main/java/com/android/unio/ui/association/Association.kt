@@ -8,5 +8,5 @@ import androidx.compose.runtime.Composable
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun AssociationScreen() {
-    Scaffold { Text("Association screen") }
+  Scaffold { Text("Association screen") }
 }

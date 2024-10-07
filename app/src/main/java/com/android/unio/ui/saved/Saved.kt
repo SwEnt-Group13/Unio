@@ -8,5 +8,5 @@ import androidx.compose.runtime.Composable
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun SavedScreen() {
-    Scaffold { Text("Saved screen") }
+  Scaffold { Text("Saved screen") }
 }

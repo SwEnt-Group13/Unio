@@ -8,5 +8,5 @@ import androidx.compose.runtime.Composable
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun EventScreen() {
-    Scaffold { Text("Event screen") }
+  Scaffold { Text("Event screen") }
 }
