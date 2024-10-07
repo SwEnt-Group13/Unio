@@ -74,15 +74,16 @@ class ScreenDisplayingTest() {
     composeTestRule.setContent { SettingsScreen() }
     composeTestRule.onNodeWithTag("SettingsScreen").assertIsDisplayed()
   }
-    @Test
-    fun testUserProfileDisplayed() {
-        composeTestRule.setContent { UserProfileScreen() }
-        composeTestRule.onNodeWithTag("UserProfileScreen").assertIsDisplayed()
-    }
 
-    @Test
-    fun testSOmeoneElseUserProfileDisplayed() {
-        composeTestRule.setContent { SomeoneElseUserProfileScreen() }
-        composeTestRule.onNodeWithTag("SomeoneElseUserProfileScreen").assertIsDisplayed()
-    }
+  @Test
+  fun testUserProfileDisplayed() {
+    composeTestRule.setContent { UserProfileScreen() }
+    composeTestRule.onNodeWithTag("UserProfileScreen").assertIsDisplayed()
+  }
+
+  @Test
+  fun testSOmeoneElseUserProfileDisplayed() {
+    composeTestRule.setContent { SomeoneElseUserProfileScreen() }
+    composeTestRule.onNodeWithTag("SomeoneElseUserProfileScreen").assertIsDisplayed()
+  }
 }
