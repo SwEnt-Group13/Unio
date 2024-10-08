@@ -4,7 +4,6 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
-import androidx.navigation.compose.rememberNavController
 import com.android.unio.ui.association.AssociationScreen
 import com.android.unio.ui.authentication.LoginScreen
 import com.android.unio.ui.event.EventCreationScreen
@@ -29,9 +28,9 @@ class ScreenDisplayingTest() {
   @get:Rule val composeTestRule = createComposeRule()
 
   @Before
-    fun setUp() {
-        navigationAction = mock { NavigationAction::class.java }
-    }
+  fun setUp() {
+    navigationAction = mock { NavigationAction::class.java }
+  }
 
   @Test
   fun testHomeDisplayed() {

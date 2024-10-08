@@ -14,13 +14,11 @@ import com.android.unio.ui.navigation.Route
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun HomeScreen(navigationAction: NavigationAction) {
-    Scaffold(content = { Text("Home screen") },
-        modifier = Modifier.testTag("HomeScreen"),
-        bottomBar = {
-            BottomNavigationMenu(
-                { navigationAction.navigateTo(Route.HOME) },
-                LIST_TOP_LEVEL_DESTINATION,
-                Route.HOME
-            )
-        })
+  Scaffold(
+      content = { Text("Home screen") },
+      modifier = Modifier.testTag("HomeScreen"),
+      bottomBar = {
+        BottomNavigationMenu(
+            { navigationAction.navigateTo(Route.HOME) }, LIST_TOP_LEVEL_DESTINATION, Route.HOME)
+      })
 }

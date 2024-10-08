@@ -12,21 +12,18 @@ import org.mockito.kotlin.mock
 
 class BottomNavigationTest {
 
-    private lateinit var navigationAction: NavigationAction
+  private lateinit var navigationAction: NavigationAction
 
-    @get:Rule
-    val composeTestRule = createComposeRule()
+  @get:Rule val composeTestRule = createComposeRule()
 
-    @Before
-    fun setUp() {
-        navigationAction = mock { NavigationAction::class.java }
-    }
+  @Before
+  fun setUp() {
+    navigationAction = mock { NavigationAction::class.java }
+  }
 
-    @Test
-    fun testBottomNavigationMenuDisplayed() {
-        composeTestRule.setContent {
-            HomeScreen(navigationAction)
-        }
-        composeTestRule.onNodeWithTag("bottomNavigationMenu").assertIsDisplayed()
-    }
+  @Test
+  fun testBottomNavigationMenuDisplayed() {
+    composeTestRule.setContent { HomeScreen(navigationAction) }
+    composeTestRule.onNodeWithTag("bottomNavigationMenu").assertIsDisplayed()
+  }
 }

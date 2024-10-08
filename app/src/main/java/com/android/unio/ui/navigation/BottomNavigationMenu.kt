@@ -15,17 +15,16 @@ fun BottomNavigationMenu(
     tabList: List<TopLevelDestination>,
     selectedItem: String
 ) {
-    BottomNavigation(
-        windowInsets = BottomNavigationDefaults.windowInsets,
-        modifier = Modifier.testTag("bottomNavigationMenu")
-    ) {
+  BottomNavigation(
+      windowInsets = BottomNavigationDefaults.windowInsets,
+      modifier = Modifier.testTag("bottomNavigationMenu")) {
         tabList.map { tld ->
-            BottomNavigationItem(
-                modifier = Modifier.testTag(tld.textId),
-                label = { Text(tld.route) },
-                icon = { Icon(tld.icon, tld.textId) },
-                selected = selectedItem == tld.route,
-                onClick = { onSelection(tld) })
+          BottomNavigationItem(
+              modifier = Modifier.testTag(tld.textId),
+              label = { Text(tld.route) },
+              icon = { Icon(tld.icon, tld.textId) },
+              selected = selectedItem == tld.route,
+              onClick = { onSelection(tld) })
         }
-    }
+      }
 }
