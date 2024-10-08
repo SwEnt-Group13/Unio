@@ -146,7 +146,6 @@ play-services-auth = { module = "com.google.android.gms:play-services-auth", ver
 play-services-maps = { module = "com.google.android.gms:play-services-maps", version.ref = "playServicesMaps" }
 robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric" }
 test-core-ktx = { group = "androidx.test", name = "core-ktx", version.ref = "androidxCoreKtx" }
-firebase-common-ktx = { group = "com.google.firebase", name = "firebase-common-ktx", version.ref = "firebaseCommonKtx" }
 
 
 [plugins]
