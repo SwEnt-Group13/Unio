@@ -85,8 +85,8 @@ class EventListOverviewTest {
     // Assert that the number of event list items matches the number of events in the mock
     // repository.
     /*composeTestRule
-        .onAllNodesWithTag("event_EventListItem", useUnmergedTree = true)
-        .assertCountEquals(mockEventRepository.getEvents().size)*/
+    .onAllNodesWithTag("event_EventListItem", useUnmergedTree = true)
+    .assertCountEquals(mockEventRepository.getEvents().size)*/
 
     // Verify each event's title and catchy description.
     mockEventRepository.getEvents().forEach { event ->
