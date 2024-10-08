@@ -9,13 +9,13 @@ const associations = Array.from(ul.children).map((e) => {
 
   if (text.includes("(")) {
     return {
-      name: text.match(/.+?(?=\W\()/)[0],
+      acronym: text.match(/.+?(?=\W\()/)[0],
       fullName: text.match(/(?<=\().+?(?=\))/)[0],
       url,
     };
   } else {
     return {
-      name: text,
+      acronym: text,
       fullName: text,
       url,
     };
