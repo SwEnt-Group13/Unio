@@ -2,23 +2,21 @@ package com.android.unio.model.event
 
 import android.util.Log
 import com.google.firebase.Timestamp
-
-
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 
 class EventRepositoryFirestore(private val db: FirebaseFirestore) : EventRepository {
-
 
     override fun getEventsOfAssociation(
         association: String,
         onSuccess: (List<Event>) -> Unit,
         onFailure: (Exception) -> Unit
     ) {
-        db.collection(EVENT_PATH).whereArrayContains("organisers", association)
+        db.collection(EVENT_PATH)
+            .whereArrayContains("organisers", association)
             .get()
             .addOnSuccessListener { result ->
-                val events = result.documents.mapNotNull { event -> hydrate(event) }
+                val events = result.mapNotNull { event -> hydrate(event) }
                 onSuccess(events)
             }
             .addOnFailureListener { exception -> onFailure(exception) }
@@ -30,25 +28,22 @@ class EventRepositoryFirestore(private val db: FirebaseFirestore) : EventReposit
         onSuccess: (List<Event>) -> Unit,
         onFailure: (Exception) -> Unit
     ) {
-        db.collection(EVENT_PATH).whereGreaterThanOrEqualTo("date", startDate)
+        db.collection(EVENT_PATH)
+            .whereGreaterThanOrEqualTo("date", startDate)
             .whereLessThan("date", endDate)
             .get()
             .addOnSuccessListener { result ->
-                val events = result.documents.mapNotNull { event -> hydrate(event) }
+                val events = result.mapNotNull { event -> hydrate(event) }
                 onSuccess(events)
             }
             .addOnFailureListener { exception -> onFailure(exception) }
     }
 
-    override fun getEvents(
-        onSuccess: (List<Event>) -> Unit,
-        onFailure: (Exception) -> Unit
-    ) {
+    override fun getEvents(onSuccess: (List<Event>) -> Unit, onFailure: (Exception) -> Unit) {
         db.collection(EVENT_PATH)
             .get()
             .addOnSuccessListener { result ->
-
-                val events = result.documents.mapNotNull { event -> hydrate(event) }
+                val events = result.mapNotNull { doc -> hydrate(doc) }
                 onSuccess(events)
             }
             .addOnFailureListener { exception -> onFailure(exception) }
@@ -58,16 +53,16 @@ class EventRepositoryFirestore(private val db: FirebaseFirestore) : EventReposit
         return db.collection(EVENT_PATH).document().id
     }
 
-    override fun addEvent(
-        event: Event,
-        onSuccess: () -> Unit,
-        onFailure: (Exception) -> Unit
-    ) {
-        db.collection(EVENT_PATH).document(event.uid).set(event).addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                onSuccess()
-            } else {
-                onFailure(task.exception ?: Exception("Failed to add an event"))
+    override fun addEvent(event: Event, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+        if (event.uid.isBlank()) {
+            onFailure(IllegalArgumentException("No event id was provided"))
+        } else {
+            db.collection(EVENT_PATH).document(event.uid).set(event).addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    onSuccess()
+                } else {
+                    onFailure(task.exception ?: Exception("Failed to add an event"))
+                }
             }
         }
     }
@@ -87,6 +82,7 @@ class EventRepositoryFirestore(private val db: FirebaseFirestore) : EventReposit
     }
 
     private fun hydrate(doc: DocumentSnapshot): Event? {
+
         val event = doc.toObject(Event::class.java)
         if (event == null) {
             Log.e("EventRepositoryFirestore", "Error while converting db document to Event object")

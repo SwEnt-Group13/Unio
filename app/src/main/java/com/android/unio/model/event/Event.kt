@@ -8,9 +8,12 @@ data class Event(
     val uid: String = "",
     val title: String = "",
     val organisers: List<String> = mutableListOf<String>(),
-    val image: String = "", // TODO: determine what format is the best
+    val taggedAssociations: List<String> = mutableListOf<String>(),
+    val image: String = "",
     val description: String = "",
+    val catchyDescription: String = "",
     val price: Double = 0.0,
     val date: Timestamp = Timestamp(Date()),
-    val location: Location = Location()
+    val location: Location = Location(),
+    val types: List<String> = mutableListOf<String>()
 )
