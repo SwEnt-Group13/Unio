@@ -11,14 +11,6 @@ import org.junit.Test
 class ExploreScreen {
   @get:Rule val composeTestRule = createComposeRule()
 
-  // Already tested in ScreenDisplayingTest.kt. To Delete
-  //  @Test
-  //  fun displayAllComponents() {
-  //    composeTestRule.setContent { ExploreScreen() }
-  //    composeTestRule.onNodeWithTag("exploreScreen").assertIsDisplayed()
-  //    composeTestRule.onNodeWithTag("searchBar").assertIsDisplayed()
-  //  }
-
   @Test
   fun testGetFilteredAssociationsByCategory() {
     val musicAssociations =
