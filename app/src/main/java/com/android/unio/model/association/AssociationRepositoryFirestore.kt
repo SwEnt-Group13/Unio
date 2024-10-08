@@ -36,6 +36,7 @@ class AssociationRepositoryFirestore(private val db: FirebaseFirestore) : Associ
   fun hydrate(doc: DocumentSnapshot): Association {
     return Association(
         uid = doc.id,
+        url = doc.getString("url") ?: "",
         acronym = doc.getString("acronym") ?: "",
         fullName = doc.getString("fullName") ?: "",
         description = doc.getString("description") ?: "",
