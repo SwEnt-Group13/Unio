@@ -7,7 +7,8 @@ package com.android.unio.model.events
  * @property title The title of the event.
  * @property catchy_description A short, attention-grabbing description of the event.
  * @property description A detailed description of the event.
- * @property date The date of the event in string format. Consider using a proper Date type for better handling of date values.
+ * @property date The date of the event in string format. Consider using a proper Date type for
+ *   better handling of date values.
  * @property location The location where the event will take place.
  * @property main_type The main category or type of the event (e.g., conference, concert, etc.).
  * @property picture A URL or path to the event's main picture or image.
