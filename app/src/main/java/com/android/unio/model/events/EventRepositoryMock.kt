@@ -2,8 +2,20 @@ package com.android.unio.model.events
 
 import java.util.UUID
 
-// As the EventRepository is not made yet, and to test easily with specific data
-class EventRepositoryMock : EventRepository {
+/**
+ * A mock implementation of the EventRepository interface.
+ * This class is used for testing purposes to provide a predefined list of events.
+ *
+ * Since the actual EventRepository is not implemented yet, this mock repository
+ * allows for easy testing with specific data.
+ */
+open class EventRepositoryMock : EventRepository {
+
+    /**
+     * Retrieves a list of mock events.
+     *
+     * @return A list of [Event] objects with predefined data for testing.
+     */
     override fun getEvents(): List<Event> {
         return listOf(
             Event(
