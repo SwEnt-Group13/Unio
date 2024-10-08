@@ -4,6 +4,7 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
+import androidx.navigation.NavHostController
 import com.android.unio.ui.association.AssociationScreen
 import com.android.unio.ui.authentication.LoginScreen
 import com.android.unio.ui.event.EventCreationScreen
@@ -11,28 +12,41 @@ import com.android.unio.ui.event.EventScreen
 import com.android.unio.ui.explore.ExploreScreen
 import com.android.unio.ui.home.HomeScreen
 import com.android.unio.ui.map.MapScreen
+import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.saved.SavedScreen
 import com.android.unio.ui.settings.SettingsScreen
 import com.android.unio.ui.user.SomeoneElseUserProfileScreen
 import com.android.unio.ui.user.UserProfileScreen
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.mockito.kotlin.mock
 
 class ScreenDisplayingTest() {
 
+  private lateinit var navHostController: NavHostController
+  private lateinit var navigationAction: NavigationAction
+
   @get:Rule val composeTestRule = createComposeRule()
+
+  @Before
+  fun setUp() {
+    navHostController = mock { NavHostController::class.java }
+    navigationAction = NavigationAction(navHostController)
+  }
 
   @Test
   fun testHomeDisplayed() {
-    composeTestRule.setContent { HomeScreen() }
+    composeTestRule.setContent { HomeScreen(navigationAction) }
     composeTestRule.onNodeWithTag("HomeScreen").assertIsDisplayed()
     composeTestRule.onNodeWithText("Home screen").assertIsDisplayed()
   }
 
   @Test
   fun testExploreDisplayed() {
-    composeTestRule.setContent { ExploreScreen() }
+    composeTestRule.setContent { ExploreScreen(navigationAction) }
     composeTestRule.onNodeWithTag("exploreScreen").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("searchBar").assertIsDisplayed()
   }
 
   @Test

@@ -31,14 +31,21 @@ import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationType
 import com.android.unio.model.association.MockAssociation
 import com.android.unio.model.association.mockAssociations
+import com.android.unio.ui.navigation.BottomNavigationMenu
+import com.android.unio.ui.navigation.LIST_TOP_LEVEL_DESTINATION
+import com.android.unio.ui.navigation.NavigationAction
+import com.android.unio.ui.navigation.TopLevelDestinations
 
 @Composable
-fun ExploreScreen() {
+fun ExploreScreen(navigationAction: NavigationAction) {
 
   Scaffold(
-      /**
-       * This is where the bottom navigation bar will be added. For now, it is just a placeholder
-       */
+      bottomBar = {
+        BottomNavigationMenu(
+            { navigationAction.navigateTo(TopLevelDestinations.EXPLORE) },
+            LIST_TOP_LEVEL_DESTINATION,
+            TopLevelDestinations.EXPLORE.route)
+      },
       modifier = Modifier.testTag("exploreScreen"),
       content = { padding -> ExploreScreenContent(padding) })
 }
