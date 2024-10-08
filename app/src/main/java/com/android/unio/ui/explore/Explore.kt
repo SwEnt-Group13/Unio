@@ -42,7 +42,7 @@ fun ExploreScreen(navigationAction: NavigationAction) {
   Scaffold(
       bottomBar = {
         BottomNavigationMenu(
-            { navigationAction.navigateTo(TopLevelDestinations.EXPLORE) },
+            { navigationAction.navigateTo(it.route) },
             LIST_TOP_LEVEL_DESTINATION,
             TopLevelDestinations.EXPLORE.route)
       },

@@ -46,12 +46,12 @@ object TopLevelDestinations {
       TopLevelDestination(route = Route.EXPLORE, icon = Icons.Outlined.Search, textId = "Explore")
   val MY_PROFILE =
       TopLevelDestination(
-          route = Route.MY_PROFILE, icon = Icons.Outlined.Person, textId = "MyProfile")
+          route = Route.MY_PROFILE, icon = Icons.Outlined.Person, textId = "My Profile")
   val MAP = TopLevelDestination(route = Route.MAP, icon = Icons.Outlined.Place, textId = "Map")
 }
 
 object Route {
-  const val HOME = "Overview"
+  const val HOME = "Home"
   const val MAP = "Map"
   const val AUTH = "Auth"
   const val EXPLORE = "Explore"
