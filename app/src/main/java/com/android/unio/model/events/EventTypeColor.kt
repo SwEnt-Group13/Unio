@@ -13,7 +13,7 @@ val eventTypeColors = listOf(
     EventTypeColor("jam", Color(0xFFFFEB3B)),   //yellow
     EventTypeColor("networking", Color(0xFF009688)), //cyan
     EventTypeColor("sport", Color(0xFF8BC34A)),    //light green
-    EventTypeColor("Social", Color(0xFFE91E63)),     //pink
+    EventTypeColor("trip", Color(0xFFE91E63)),     //pink
     EventTypeColor("Other", Color.Gray)               //default color
 )
 
