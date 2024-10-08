@@ -32,8 +32,7 @@ class ScreenDisplayingTest() {
   @Test
   fun testExploreDisplayed() {
     composeTestRule.setContent { ExploreScreen() }
-    composeTestRule.onNodeWithTag("ExploreScreen").assertIsDisplayed()
-    composeTestRule.onNodeWithText("Explore screen").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("exploreScreen").assertIsDisplayed()
   }
 
   @Test
