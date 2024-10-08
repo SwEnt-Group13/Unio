@@ -85,7 +85,7 @@ fun EventListOverview(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = onAddEvent,
-                modifier = Modifier.testTag("createEventFab")
+                modifier = Modifier.testTag("event_MapButton")
             ) {
                 Icon(imageVector = Icons.Filled.Add, contentDescription = "Add Event")
             }
@@ -103,6 +103,7 @@ fun EventListOverview(
                         .fillMaxWidth()
                         .background(Color.Black)
                         .padding(vertical = 16.dp, horizontal = horizontalHeaderPadding)
+                        .testTag("event_Header")
                 ) {
                     Column {
                         Text(
@@ -139,7 +140,7 @@ fun EventListOverview(
                                         allTabWidth = (coordinates.size.width / density).dp
                                         allTabXCoordinate = coordinates.positionInRoot().x
                                     }
-                                    .testTag("tabAll")
+                                    .testTag("event_tabAll")
                             )
 
                             // Clickable text for "Following"
@@ -161,7 +162,7 @@ fun EventListOverview(
                                         followingTabWidth = (coordinates.size.width / density).dp
                                         followingTabXCoordinate = coordinates.positionInRoot().x
                                     }
-                                    .testTag("tabFollowing")
+                                    .testTag("event_tabFollowing")
                             )
                         }
 
@@ -179,6 +180,7 @@ fun EventListOverview(
                                     .width(selectedTabWidth) // Use the width of the selected tab
                                     .height(2.dp)
                                     .background(Color.Blue)
+                                    .testTag("event_UnderlyingBar")
                             )
                         }
                     }
@@ -204,7 +206,7 @@ fun EventListOverview(
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            modifier = Modifier.testTag("emptyEventPrompt"),
+                            modifier = Modifier.testTag("event_emptyEventPrompt"),
                             text = "No events available.",
                             color = Color.White
                         )
@@ -227,9 +229,9 @@ fun EventItem(event: Event, onClick: () -> Unit) {
             .fillMaxWidth()
             .padding(vertical = 8.dp)
             .clickable(onClick = onClick)
-            .testTag("eventListItem")
+            .testTag("event_EventListItem")
             .clip(RoundedCornerShape(10.dp))
-            .background(Color.Transparent) // Set background to transparent to see the image
+            .background(Color.Transparent)
     ) {
         // Background Image
         Image(
@@ -237,19 +239,10 @@ fun EventItem(event: Event, onClick: () -> Unit) {
             contentDescription = null,
             modifier = Modifier
                 .matchParentSize() // Ensure the image takes up the full size of the Box
-                .clip(RoundedCornerShape(10.dp)), // Apply the same shape as the box
+                .clip(RoundedCornerShape(10.dp)) // Apply the same shape as the box
+                .testTag("event_EventImage"),
             contentScale = ContentScale.Crop // Crop the image to fit
         )
-
-        /* Overlay gradient (optional, if you want to keep it)
-        Box(
-            modifier = Modifier
-                .matchParentSize()
-                .background(brush = Brush.verticalGradient(
-                    colors = listOf(backgroundColor, darkenColor(backgroundColor, 0.4f))
-                ))
-                .alpha(0.6f) // Optional: Add alpha to make the text more readable
-        )*/
 
         Column(modifier = Modifier.padding(16.dp)) {
             Spacer(modifier = Modifier.height(8.dp))
@@ -265,7 +258,8 @@ fun EventItem(event: Event, onClick: () -> Unit) {
                 ){
                     Text(
                         modifier = Modifier
-                            .padding(vertical = 1.dp, horizontal = 4.dp),
+                            .padding(vertical = 1.dp, horizontal = 4.dp)
+                            .testTag("event_EventTitle"),
                         text = event.title,
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
@@ -281,7 +275,9 @@ fun EventItem(event: Event, onClick: () -> Unit) {
                 ) {
                     Text(
                         text = event.main_type,
-                        modifier = Modifier.padding(horizontal = 4.dp, vertical = 4.dp),
+                        modifier = Modifier
+                            .padding(horizontal = 4.dp, vertical = 4.dp)
+                            .testTag("event_EventMainType"),
                         color = Color.White,
                         style = TextStyle(fontSize = 8.sp)
                     )
@@ -299,7 +295,9 @@ fun EventItem(event: Event, onClick: () -> Unit) {
                     text = event.catchy_description,
                     style = TextStyle(fontSize = 10.sp),
                     color = Color.White,
-                    modifier = Modifier.padding(top = 4.dp)
+                    modifier = Modifier
+                        .padding(vertical = 2.dp)
+                        .testTag("event_CatchyDescription")
                 )
             }
 
@@ -353,7 +351,9 @@ fun getContrastingColor(backgroundColor: Color): Color {
     return candidateColors.maxByOrNull { contrastRatio(it) } ?: Color.White // Fallback to white if no candidates
 }
 
-fun getContrastingColorBlackAndWhite(backgroundColor: Color): Color {
+// these twos functions might be useful later
+
+/*fun getContrastingColorBlackAndWhite(backgroundColor: Color): Color {
     // Extract RGB components from the Color
     val r = backgroundColor.red
     val g = backgroundColor.green
@@ -379,7 +379,7 @@ fun darkenColor(color: Color, factor: Float): Color {
     val darkenedB = (b * (1 - factor)).coerceIn(0f, 255f).toInt()
 
     return Color(darkenedR, darkenedG, darkenedB)
-}
+}*/
 
 
 fun addAlphaToColor(color: Color, alpha: Int): Color {
