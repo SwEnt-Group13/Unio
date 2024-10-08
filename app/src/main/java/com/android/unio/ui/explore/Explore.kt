@@ -34,6 +34,7 @@ import com.android.unio.model.association.mockAssociations
 
 @Composable
 fun ExploreScreen() {
+
   Scaffold(
       /**
        * This is where the bottom navigation bar will be added. For now, it is just a placeholder
