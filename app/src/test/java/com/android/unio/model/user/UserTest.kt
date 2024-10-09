@@ -26,7 +26,7 @@ class UserTest {
             "john@example.com",
             FirestoreReferenceList.empty(
                 db, "associations", AssociationRepositoryFirestore::hydrate))
-    assertEquals("1", user.id)
+    assertEquals("1", user.uid)
     assertEquals("John", user.name)
     assertEquals("john@example.com", user.email)
   }
