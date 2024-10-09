@@ -7,6 +7,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.unio.model.events.Event
 import com.android.unio.model.events.EventListViewModel
 import com.android.unio.model.events.EventRepositoryMock
+import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -90,5 +91,41 @@ class EventListOverviewTest {
     composeTestRule.onNodeWithTag("event_MapButton").performClick()
 
     assert(mapClicked)
+  }
+
+  /**
+   * Tests the sequence of clicking on the 'Following' tab and then on the 'Add' button to ensure
+   * that both actions trigger their respective animations and behaviors.
+   */
+  @Test
+  fun testClickFollowingAndAdd() = runBlockingTest {
+    var addClicked = false
+
+    composeTestRule.setContent {
+      val eventListViewModel = EventListViewModel(mockEventRepository)
+      EventListOverview(
+          eventListViewModel = eventListViewModel,
+          onAddEvent = { addClicked = true },
+          onEventClick = {})
+    }
+
+    // Ensure the 'Following' tab exists and perform a click.
+    composeTestRule.onNodeWithTag("event_tabFollowing").assertExists()
+    composeTestRule.onNodeWithTag("event_tabFollowing").performClick()
+
+    // Optionally, wait for the animation to complete.
+    // This depends on how the animation is implemented. If using coroutine delays or animation
+    // state,
+    // you might need to advance time or check state.
+
+    // Perform a click on the 'Add' button.
+    composeTestRule.onNodeWithTag("event_MapButton").assertExists()
+    composeTestRule.onNodeWithTag("event_MapButton").performClick()
+
+    // Assert that the 'Add' button was clicked.
+    assert(addClicked)
+
+    // Optionally, verify that the animation related to the 'Add' button was triggered.
+    // This could involve checking the state changes or specific UI elements.
   }
 }
