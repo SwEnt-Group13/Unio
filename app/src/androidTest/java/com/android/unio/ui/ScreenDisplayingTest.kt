@@ -86,7 +86,7 @@ class ScreenDisplayingTest() {
 
   @Test
   fun testSavedDisplayed() {
-    composeTestRule.setContent { SavedScreen() }
+    composeTestRule.setContent { SavedScreen(navigationAction) }
     composeTestRule.onNodeWithTag("SavedScreen").assertIsDisplayed()
     composeTestRule.onNodeWithText("Saved screen").assertIsDisplayed()
   }
@@ -100,7 +100,7 @@ class ScreenDisplayingTest() {
 
   @Test
   fun testUserProfileDisplayed() {
-    composeTestRule.setContent { UserProfileScreen() }
+    composeTestRule.setContent { UserProfileScreen(navigationAction) }
     composeTestRule.onNodeWithTag("UserProfileScreen").assertIsDisplayed()
     composeTestRule.onNodeWithText("User profile screen").assertIsDisplayed()
   }

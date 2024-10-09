@@ -34,8 +34,7 @@ val LIST_TOP_LEVEL_DESTINATION =
         TopLevelDestinations.HOME,
         TopLevelDestinations.SAVED,
         TopLevelDestinations.EXPLORE,
-        TopLevelDestinations.MY_PROFILE,
-        TopLevelDestinations.MAP)
+        TopLevelDestinations.MY_PROFILE)
 
 data class TopLevelDestination(val route: String, val icon: ImageVector, val textId: String) {}
 
@@ -46,12 +45,12 @@ object TopLevelDestinations {
       TopLevelDestination(route = Route.EXPLORE, icon = Icons.Outlined.Search, textId = "Explore")
   val MY_PROFILE =
       TopLevelDestination(
-          route = Route.MY_PROFILE, icon = Icons.Outlined.Person, textId = "MyProfile")
+          route = Route.MY_PROFILE, icon = Icons.Outlined.Person, textId = "My Profile")
   val MAP = TopLevelDestination(route = Route.MAP, icon = Icons.Outlined.Place, textId = "Map")
 }
 
 object Route {
-  const val HOME = "Overview"
+  const val HOME = "Home"
   const val MAP = "Map"
   const val AUTH = "Auth"
   const val EXPLORE = "Explore"
@@ -64,6 +63,6 @@ object Screen {
   const val HOME = "Home Screen"
   const val MAP = "Map Screen"
   const val EXPLORE = "Explore Screen"
-  const val Saved = "Saved Screen"
+  const val SAVED = "Saved Screen"
   const val MY_PROFILE = "MyProfile Screen"
 }
