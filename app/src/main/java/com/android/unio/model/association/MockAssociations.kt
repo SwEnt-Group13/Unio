@@ -1,5 +1,9 @@
 package com.android.unio.model.association
 
+import com.android.unio.model.firestore.FirestorePaths.USER_PATH
+import com.android.unio.model.firestore.FirestoreReferenceList
+import com.android.unio.model.user.UserRepositoryFirestore
+
 enum class AssociationType {
   MUSIC,
   FESTIVALS,
@@ -12,6 +16,11 @@ enum class AssociationType {
 
 data class MockAssociation(val association: Association, val type: AssociationType)
 
+val emptyMembers = {
+  FirestoreReferenceList.empty(
+      collectionPath = USER_PATH, hydrate = UserRepositoryFirestore::hydrate)
+}
+
 val mockAssociations =
     listOf(
         MockAssociation(
@@ -21,7 +30,7 @@ val mockAssociations =
                 fullName = "Musical Association",
                 description =
                     "AGEPoly Commission – stimulation of the practice of music on the campus",
-                members = emptyList()),
+                members = emptyMembers()),
             AssociationType.MUSIC),
         MockAssociation(
             Association(
@@ -30,7 +39,7 @@ val mockAssociations =
                 fullName = "Nuit De la Magistrale Association",
                 description =
                     "AGEPoly Commission – party following the formal Magistrale Graduation Ceremony",
-                members = emptyList()),
+                members = emptyMembers()),
             AssociationType.FESTIVALS),
         MockAssociation(
             Association(
@@ -38,7 +47,7 @@ val mockAssociations =
                 acronym = "Balélec",
                 fullName = "Festival Balélec",
                 description = "Open-air unique en Suisse, organisée par des bénévoles étudiants.",
-                members = emptyList()),
+                members = emptyMembers()),
             AssociationType.FESTIVALS),
         MockAssociation(
             Association(
@@ -46,7 +55,7 @@ val mockAssociations =
                 acronym = "Artiphys",
                 fullName = "Festival Artiphys",
                 description = "Festival à l'EPFL",
-                members = emptyList()),
+                members = emptyMembers()),
             AssociationType.FESTIVALS),
         MockAssociation(
             Association(
@@ -54,7 +63,7 @@ val mockAssociations =
                 acronym = "Sysmic",
                 fullName = "Festival Sysmic",
                 description = "Festival à l'EPFL",
-                members = emptyList()),
+                members = emptyMembers()),
             AssociationType.FESTIVALS),
         MockAssociation(
             Association(
@@ -62,7 +71,7 @@ val mockAssociations =
                 acronym = "IFL",
                 fullName = "Innovation Forum Lausanne",
                 description = "Innovation Forum Lausanne",
-                members = emptyList()),
+                members = emptyMembers()),
             AssociationType.INNOVATION),
         MockAssociation(
             Association(
@@ -70,6 +79,6 @@ val mockAssociations =
                 acronym = "Clic",
                 fullName = "Clic Association",
                 description = "Association of EPFL Students of IC Faculty",
-                members = emptyList()),
+                members = emptyMembers()),
             AssociationType.FACULTIES),
     )
