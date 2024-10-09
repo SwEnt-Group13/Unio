@@ -11,6 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -20,7 +21,7 @@ import com.android.unio.ui.navigation.Screen
 
 @Composable
 fun WelcomeScreen(navigationAction: NavigationAction) {
-  Scaffold(modifier = Modifier.fillMaxSize()) {
+  Scaffold(modifier = Modifier.fillMaxSize().testTag("WelcomeScreen")) {
     Column(
         modifier = Modifier.padding(it).padding(vertical = 200.dp, horizontal = 100.dp),
         verticalArrangement = Arrangement.Center,
@@ -36,7 +37,7 @@ fun WelcomeScreen(navigationAction: NavigationAction) {
               modifier = Modifier.padding(16.dp))
           Button(
               onClick = { navigationAction.navigateTo(Screen.AUTH) },
-              modifier = Modifier.padding(16.dp)) {
+              modifier = Modifier.testTag("LoginButton").padding(16.dp)) {
                 Text("Login")
               }
           Button(onClick = { navigationAction.navigateTo(Screen.HOME) }) {
