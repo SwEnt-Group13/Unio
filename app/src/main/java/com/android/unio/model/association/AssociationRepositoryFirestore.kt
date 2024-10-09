@@ -37,7 +37,7 @@ class AssociationRepositoryFirestore(private val db: FirebaseFirestore) : Associ
         .addOnFailureListener { exception -> onFailure(exception) }
   }
 
-  override fun getAssociationsWithId(
+  override fun getAssociationWithId(
       id: String,
       onSuccess: (Association) -> Unit,
       onFailure: (Exception) -> Unit
