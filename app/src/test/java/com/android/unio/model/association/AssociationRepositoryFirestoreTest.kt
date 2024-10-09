@@ -8,6 +8,8 @@ import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.gms.tasks.Task
 import com.google.firebase.FirebaseApp
 import com.google.firebase.firestore.CollectionReference
+import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QueryDocumentSnapshot
 import com.google.firebase.firestore.QuerySnapshot
@@ -29,7 +31,9 @@ class AssociationRepositoryFirestoreTest {
   @Mock private lateinit var querySnapshot: QuerySnapshot
   @Mock private lateinit var queryDocumentSnapshot1: QueryDocumentSnapshot
   @Mock private lateinit var queryDocumentSnapshot2: QueryDocumentSnapshot
-  @Mock private lateinit var task: Task<QuerySnapshot>
+  @Mock private lateinit var documentReference: DocumentReference
+  @Mock private lateinit var querySnapshotTask: Task<QuerySnapshot>
+  @Mock private lateinit var documentSnapshotTask: Task<DocumentSnapshot>
 
   private lateinit var repository: AssociationRepositoryFirestore
 
@@ -69,17 +73,25 @@ class AssociationRepositoryFirestoreTest {
 
     // When getting the collection, return the task
     `when`(db.collection(eq("associations"))).thenReturn(collectionReference)
-    `when`(collectionReference.get()).thenReturn(task)
+    `when`(collectionReference.get()).thenReturn(querySnapshotTask)
+    `when`(collectionReference.document(eq(association1.uid))).thenReturn(documentReference)
+    `when`(documentReference.get()).thenReturn(documentSnapshotTask)
 
     // When the query snapshot is iterated, return the two query document snapshots
     `when`(querySnapshot.iterator())
         .thenReturn(mutableListOf(queryDocumentSnapshot1, queryDocumentSnapshot2).iterator())
 
     // When the task is successful, return the query snapshot
-    `when`(task.addOnSuccessListener(any())).thenAnswer { invocation ->
+    `when`(querySnapshotTask.addOnSuccessListener(any())).thenAnswer { invocation ->
       val callback = invocation.arguments[0] as OnSuccessListener<QuerySnapshot>
       callback.onSuccess(querySnapshot)
-      task
+      querySnapshotTask
+    }
+
+    `when`(documentSnapshotTask.addOnSuccessListener(any())).thenAnswer { invocation ->
+      val callback = invocation.arguments[0] as OnSuccessListener<DocumentSnapshot>
+      callback.onSuccess(queryDocumentSnapshot1)
+      documentSnapshotTask
     }
 
     // When the query document snapshots are queried for specific fields, return the fields
@@ -140,6 +152,19 @@ class AssociationRepositoryFirestoreTest {
           assertEquals("", associations[1].acronym)
           assertEquals("", associations[1].fullName)
           assertEquals("", associations[1].description)
+        },
+        onFailure = { exception -> assert(false) })
+  }
+
+  @Test
+  fun testGetAssociationWithId() {
+    repository.getAssociationWithId(
+        association1.uid,
+        onSuccess = { association ->
+          assertEquals(association1.uid, association.uid)
+          assertEquals(association1.acronym, association.acronym)
+          assertEquals(association1.fullName, association.fullName)
+          assertEquals(association1.description, association.description)
         },
         onFailure = { exception -> assert(false) })
   }
