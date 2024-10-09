@@ -60,6 +60,7 @@ object Route {
 
 object Screen {
   const val AUTH = "Auth Screen"
+  const val WELCOME = "Welcome Screen"
   const val HOME = "Home Screen"
   const val MAP = "Map Screen"
   const val EXPLORE = "Explore Screen"
