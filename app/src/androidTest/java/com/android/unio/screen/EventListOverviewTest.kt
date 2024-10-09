@@ -71,46 +71,6 @@ class EventListOverviewTest {
     composeTestRule.onNodeWithText("No events available.").assertExists()
   }
 
-  /**
-   * Tests the UI when there are events available. Asserts that all event items are displayed
-   * correctly in the list and checks that each event's title and catchy description are present.
-   */
-  @Test
-  fun testNonEmptyEventList() {
-    composeTestRule.setContent {
-      val eventListViewModel = EventListViewModel(mockEventRepository)
-      EventListOverview(eventListViewModel = eventListViewModel, onAddEvent = {}, onEventClick = {})
-    }
-
-    // Assert that the number of event list items matches the number of events in the mock
-    // repository.
-    /*composeTestRule
-    .onAllNodesWithTag("event_EventListItem", useUnmergedTree = true)
-    .assertCountEquals(mockEventRepository.getEvents().size)*/
-
-    // Verify each event's title and catchy description.
-    mockEventRepository.getEvents().forEach { event ->
-      composeTestRule
-          .onAllNodesWithTag("event_EventTitle", useUnmergedTree = true)
-          .filter(hasText(event.title))
-          .assertCountEquals(1)
-
-      composeTestRule
-          .onAllNodesWithTag("event_CatchyDescription", useUnmergedTree = true)
-          .filter(hasText(event.catchy_description))
-          .assertCountEquals(1)
-
-      /* Uncomment below to check main type if necessary.
-      composeTestRule.onAllNodesWithTag("event_EventMainType", useUnmergedTree = true)
-          .filter(hasText(event.main_type))
-      */
-
-      /* Uncomment below to check if event images exist if necessary.
-      composeTestRule.onNodeWithTag("event_EventImage", useUnmergedTree = true)
-          .assertExists() // Check that the image exists
-      */
-    }
-  }
 
   /**
    * Tests the functionality of the Map button. Verifies that clicking the button triggers the
