@@ -22,7 +22,7 @@ class AuthenticationTest {
 
   @Before
   fun setUp() {
-      navigationAction = mock{ NavigationAction::class.java }
+    navigationAction = mock { NavigationAction::class.java }
   }
 
   @Test
