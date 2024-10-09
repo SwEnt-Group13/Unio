@@ -18,30 +18,27 @@ import org.junit.Test
 
 class AuthenticationTest {
 
-    private lateinit var navHostController: NavHostController
-    private lateinit var navigationAction: NavigationAction
+  private lateinit var navHostController: NavHostController
+  private lateinit var navigationAction: NavigationAction
 
-    @get:Rule
-    val composeTestRule = createComposeRule()
+  @get:Rule val composeTestRule = createComposeRule()
 
-    @Before
-    fun setUp() {
-        composeTestRule.setContent {
-            navHostController = rememberNavController()
-            navigationAction = NavigationAction(navHostController)
-            NavHost(navController = navHostController, startDestination = Screen.WELCOME) {
-                    composable(Screen.WELCOME) { WelcomeScreen(navigationAction) }
-                    composable(Screen.AUTH) { LoginScreen(navigationAction) }
-            }
-        }
-
+  @Before
+  fun setUp() {
+    composeTestRule.setContent {
+      navHostController = rememberNavController()
+      navigationAction = NavigationAction(navHostController)
+      NavHost(navController = navHostController, startDestination = Screen.WELCOME) {
+        composable(Screen.WELCOME) { WelcomeScreen(navigationAction) }
+        composable(Screen.AUTH) { LoginScreen(navigationAction) }
+      }
     }
+  }
 
-    @Test
-    fun testNavigationWelcomeToLogin() {
-        composeTestRule.onNodeWithTag("LoginButton").assertIsDisplayed()
-        composeTestRule.onNodeWithTag("LoginButton").performClick()
-        composeTestRule.onNodeWithTag("LoginScreen").assertIsDisplayed()
-    }
-
+  @Test
+  fun testNavigationWelcomeToLogin() {
+    composeTestRule.onNodeWithTag("LoginButton").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("LoginButton").performClick()
+    composeTestRule.onNodeWithTag("LoginScreen").assertIsDisplayed()
+  }
 }
