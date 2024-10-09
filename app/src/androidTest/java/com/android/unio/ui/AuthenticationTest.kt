@@ -12,6 +12,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.timeout
 import org.mockito.kotlin.verify
 
 class AuthenticationTest {
@@ -28,7 +29,7 @@ class AuthenticationTest {
   @Test
   fun testNavigationWelcomeToLogin() {
     composeTestRule.setContent { WelcomeScreen(navigationAction) }
-    composeTestRule.waitForIdle()
+    timeout(100)
     composeTestRule.onNodeWithTag("LoginButton").assertIsDisplayed()
     composeTestRule.onNodeWithTag("LoginButton").performClick()
     verify(navigationAction).navigateTo(eq(Screen.AUTH))
