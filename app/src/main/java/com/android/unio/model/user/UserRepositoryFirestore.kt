@@ -58,9 +58,9 @@ class UserRepositoryFirestore(private val db: FirebaseFirestore) : UserRepositor
               AssociationRepositoryFirestore::hydrate)
 
       return User(
-          id = doc.id,
-          name = doc.getString("name")!!,
-          email = doc.getString("email")!!,
+          uid = doc.id,
+          name = doc.getString("name") ?: "",
+          email = doc.getString("email") ?: "",
           followingAssociations = followingAssociations)
     }
   }
