@@ -10,13 +10,13 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 
-class NavigationAction(private val navController: NavHostController) {
+open class NavigationAction(private val navController: NavHostController) {
 
-  fun navigateTo(route: String) {
+  open fun navigateTo(route: String) {
     navController.navigate(route)
   }
 
-  fun navigateTo(tld: TopLevelDestination) {
+  open fun navigateTo(tld: TopLevelDestination) {
     navController.navigate(tld.route) { popUpTo(navController.graph.findStartDestination().id) }
   }
 
