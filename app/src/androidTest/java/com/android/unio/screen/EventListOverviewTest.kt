@@ -71,7 +71,6 @@ class EventListOverviewTest {
     composeTestRule.onNodeWithText("No events available.").assertExists()
   }
 
-
   /**
    * Tests the functionality of the Map button. Verifies that clicking the button triggers the
    * expected action.
