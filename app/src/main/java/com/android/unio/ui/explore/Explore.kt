@@ -34,7 +34,7 @@ import com.android.unio.model.association.mockAssociations
 import com.android.unio.ui.navigation.BottomNavigationMenu
 import com.android.unio.ui.navigation.LIST_TOP_LEVEL_DESTINATION
 import com.android.unio.ui.navigation.NavigationAction
-import com.android.unio.ui.navigation.TopLevelDestinations
+import com.android.unio.ui.navigation.Route
 
 @Composable
 fun ExploreScreen(navigationAction: NavigationAction) {
@@ -42,9 +42,7 @@ fun ExploreScreen(navigationAction: NavigationAction) {
   Scaffold(
       bottomBar = {
         BottomNavigationMenu(
-            { navigationAction.navigateTo(it.route) },
-            LIST_TOP_LEVEL_DESTINATION,
-            TopLevelDestinations.EXPLORE.route)
+            { navigationAction.navigateTo(it.route) }, LIST_TOP_LEVEL_DESTINATION, Route.EXPLORE)
       },
       modifier = Modifier.testTag("exploreScreen"),
       content = { padding -> ExploreScreenContent(padding) })
