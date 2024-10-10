@@ -19,6 +19,6 @@ fun HomeScreen(navigationAction: NavigationAction) {
       modifier = Modifier.testTag("HomeScreen"),
       bottomBar = {
         BottomNavigationMenu(
-            { navigationAction.navigateTo(Route.HOME) }, LIST_TOP_LEVEL_DESTINATION, Route.HOME)
+            { navigationAction.navigateTo(it.route) }, LIST_TOP_LEVEL_DESTINATION, Route.HOME)
       })
 }

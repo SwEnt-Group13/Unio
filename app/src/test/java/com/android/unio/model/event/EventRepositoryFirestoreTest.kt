@@ -1,5 +1,6 @@
 package com.android.unio.model.event
 
+import com.android.unio.model.firestore.MockReferenceList
 import com.android.unio.model.map.Location
 import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.gms.tasks.Task
@@ -43,12 +44,14 @@ class EventRepositoryFirestoreTest {
   @Mock private lateinit var voidTask: Task<Void>
 
   private lateinit var repository: EventRepositoryFirestore
-  private val defaultEvent = Event()
+  private val defaultEvent =
+      Event(organisers = MockReferenceList(), taggedAssociations = MockReferenceList())
   private val event1 =
       Event(
           uid = "1",
           title = "Balelec",
-          organisers = mutableListOf("Balelec, EPFL"),
+          organisers = MockReferenceList(),
+          taggedAssociations = MockReferenceList(),
           image = "",
           description = "Plus grand festival du monde (non contractuel)",
           price = 40.5,
@@ -58,7 +61,8 @@ class EventRepositoryFirestoreTest {
       Event(
           uid = "3",
           title = "Tremplin Sysmic",
-          organisers = mutableListOf("Sysmic, EPFL"),
+          organisers = MockReferenceList(),
+          taggedAssociations = MockReferenceList(),
           image = "",
           description = "Plus grand festival du monde (non contractuel)",
           price = 40.5,
