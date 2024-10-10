@@ -1,4 +1,4 @@
-package com.android.unio.model.events
+package com.android.unio.model.event
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -37,11 +37,17 @@ class EventListViewModel(private val repository: EventRepository) : ViewModel() 
    * Loads the list of events from the repository asynchronously using coroutines and updates the
    * internal [MutableStateFlow].
    */
-  fun loadEvents() {
+  private fun loadEvents() {
     // Launch a coroutine in the ViewModel scope to load events asynchronously
     viewModelScope.launch {
-      val eventList = repository.getEvents() // this will be asynchronous if the repository is async
-      _events.value = eventList
+      repository.getEvents(
+          onSuccess = { eventList ->
+            _events.value = eventList // Update the state flow with the loaded events
+          },
+          onFailure = { exception ->
+            // Handle error (e.g., log it, show a message to the user)
+            _events.value = emptyList() // Clear events on failure or handle accordingly
+          })
     }
   }
 

@@ -4,9 +4,10 @@ import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.unit.ExperimentalUnitApi
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.android.unio.model.events.Event
-import com.android.unio.model.events.EventListViewModel
-import com.android.unio.model.events.EventRepositoryMock
+import com.android.unio.model.event.Event
+import com.android.unio.model.event.EventListViewModel
+import com.android.unio.model.event.EventRepositoryMock
+import com.android.unio.ui.event.EventListOverview
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Rule
 import org.junit.Test
@@ -61,7 +62,13 @@ class EventListOverviewTest {
     composeTestRule.setContent {
       val emptyEventRepository =
           object : EventRepositoryMock() {
-            override fun getEvents(): List<Event> = emptyList()
+            override fun getEvents(
+                onSuccess: (List<Event>) -> Unit,
+                onFailure: (Exception) -> Unit
+            ) {
+              // Return an empty list for testing
+              onSuccess(emptyList())
+            }
           }
       val eventListViewModel = EventListViewModel(emptyEventRepository)
       EventListOverview(eventListViewModel = eventListViewModel, onAddEvent = {}, onEventClick = {})
@@ -112,11 +119,6 @@ class EventListOverviewTest {
     // Ensure the 'Following' tab exists and perform a click.
     composeTestRule.onNodeWithTag("event_tabFollowing").assertExists()
     composeTestRule.onNodeWithTag("event_tabFollowing").performClick()
-
-    // Optionally, wait for the animation to complete.
-    // This depends on how the animation is implemented. If using coroutine delays or animation
-    // state,
-    // you might need to advance time or check state.
 
     // Perform a click on the 'Add' button.
     composeTestRule.onNodeWithTag("event_MapButton").assertExists()
