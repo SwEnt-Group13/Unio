@@ -171,81 +171,63 @@ class AssociationRepositoryFirestoreTest {
         onFailure = { exception -> assert(false) })
   }
 
-    @Test
-    fun testAddAssociationSuccess() {
-        `when`(documentReference.set(association1)).thenReturn(Tasks.forResult(null))
+  @Test
+  fun testAddAssociationSuccess() {
+    `when`(documentReference.set(association1)).thenReturn(Tasks.forResult(null))
 
-        repository.addAssociation(
-            association1,
-            onSuccess = { assert(true) },
-            onFailure = { assert(false) }
-        )
+    repository.addAssociation(
+        association1, onSuccess = { assert(true) }, onFailure = { assert(false) })
 
-        verify(documentReference).set(association1)
-    }
+    verify(documentReference).set(association1)
+  }
 
-    @Test
-    fun testAddAssociationFailure() {
-        `when`(documentReference.set(association1)).thenReturn(Tasks.forException(Exception()))
+  @Test
+  fun testAddAssociationFailure() {
+    `when`(documentReference.set(association1)).thenReturn(Tasks.forException(Exception()))
 
-        repository.addAssociation(
-            association1,
-            onSuccess = { assert(false) },
-            onFailure = { assert(true) }
-        )
+    repository.addAssociation(
+        association1, onSuccess = { assert(false) }, onFailure = { assert(true) })
 
-        verify(documentReference).set(association1)
-    }
+    verify(documentReference).set(association1)
+  }
 
-    @Test
-    fun testUpdateAssociationSuccess() {
-        `when`(documentReference.set(association1)).thenReturn(Tasks.forResult(null))
+  @Test
+  fun testUpdateAssociationSuccess() {
+    `when`(documentReference.set(association1)).thenReturn(Tasks.forResult(null))
 
-        repository.updateAssociation(
-            association1,
-            onSuccess = { assert(true) },
-            onFailure = { assert(false) }
-        )
+    repository.updateAssociation(
+        association1, onSuccess = { assert(true) }, onFailure = { assert(false) })
 
-        verify(documentReference).set(association1)
-    }
+    verify(documentReference).set(association1)
+  }
 
-    @Test
-    fun testUpdateAssociationFailure() {
-        `when`(documentReference.set(association1)).thenReturn(Tasks.forException(Exception()))
+  @Test
+  fun testUpdateAssociationFailure() {
+    `when`(documentReference.set(association1)).thenReturn(Tasks.forException(Exception()))
 
-        repository.updateAssociation(
-            association1,
-            onSuccess = { assert(false) },
-            onFailure = { assert(true) }
-        )
+    repository.updateAssociation(
+        association1, onSuccess = { assert(false) }, onFailure = { assert(true) })
 
-        verify(documentReference).set(association1)
-    }
+    verify(documentReference).set(association1)
+  }
 
-    @Test
-    fun testDeleteAssociationByIdSuccess() {
-        `when`(documentReference.delete()).thenReturn(Tasks.forResult(null))
+  @Test
+  fun testDeleteAssociationByIdSuccess() {
+    `when`(documentReference.delete()).thenReturn(Tasks.forResult(null))
 
-        repository.deleteAssociationById(
-            association1.uid,
-            onSuccess = { assert(true) },
-            onFailure = { assert(false) }
-        )
+    repository.deleteAssociationById(
+        association1.uid, onSuccess = { assert(true) }, onFailure = { assert(false) })
 
-        verify(documentReference).delete()
-    }
+    verify(documentReference).delete()
+  }
 
-    @Test
-    fun testDeleteAssociationByIdFailure() {
-        `when`(documentReference.delete()).thenReturn(Tasks.forException(Exception()))
+  @Test
+  fun testDeleteAssociationByIdFailure() {
+    `when`(documentReference.delete()).thenReturn(Tasks.forException(Exception()))
 
-        repository.deleteAssociationById(
-            association1.uid,
-            onSuccess = { assert(false) },
-            onFailure = { assert(true) }
-        )
+    repository.deleteAssociationById(
+        association1.uid, onSuccess = { assert(false) }, onFailure = { assert(true) })
 
-        verify(documentReference).delete()
-    }
+    verify(documentReference).delete()
+  }
 }

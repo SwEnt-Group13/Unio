@@ -9,7 +9,6 @@ import com.google.android.gms.tasks.Task
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.DocumentSnapshot
-import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 
 class AssociationRepositoryFirestore(private val db: FirebaseFirestore) : AssociationRepository {
@@ -55,58 +54,54 @@ class AssociationRepositoryFirestore(private val db: FirebaseFirestore) : Associ
         .addOnFailureListener { exception -> onFailure(exception) }
   }
 
-    override fun addAssociation(
-        association: Association,
-        onSuccess: () -> Unit,
-        onFailure: (Exception) -> Unit
-    ) {
-        performFirestoreOperation(
-            db.collection(ASSOCIATION_PATH).document(association.uid).set(association),
-            onSuccess,
-            onFailure)
-    }
+  override fun addAssociation(
+      association: Association,
+      onSuccess: () -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+    performFirestoreOperation(
+        db.collection(ASSOCIATION_PATH).document(association.uid).set(association),
+        onSuccess,
+        onFailure)
+  }
 
-    override fun updateAssociation(
-        association: Association,
-        onSuccess: () -> Unit,
-        onFailure: (Exception) -> Unit
-    ) {
-        performFirestoreOperation(
-            db.collection(ASSOCIATION_PATH).document(association.uid).set(association),
-            onSuccess,
-            onFailure)
-    }
+  override fun updateAssociation(
+      association: Association,
+      onSuccess: () -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+    performFirestoreOperation(
+        db.collection(ASSOCIATION_PATH).document(association.uid).set(association),
+        onSuccess,
+        onFailure)
+  }
 
-    override fun deleteAssociationById(
-        associationId: String,
-        onSuccess: () -> Unit,
-        onFailure: (Exception) -> Unit
-    ) {
-        performFirestoreOperation(
-            db.collection(ASSOCIATION_PATH).document(associationId).delete(),
-            onSuccess,
-            onFailure)
-    }
+  override fun deleteAssociationById(
+      associationId: String,
+      onSuccess: () -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+    performFirestoreOperation(
+        db.collection(ASSOCIATION_PATH).document(associationId).delete(), onSuccess, onFailure)
+  }
 
-    /**
-     * Performs a Firestore operation and calls the appropriate callback based on the result.
-     */
-    private fun performFirestoreOperation(
-        task: Task<Void>,
-        onSuccess: () -> Unit,
-        onFailure: (Exception) -> Unit
-    ) {
-        task.addOnCompleteListener {
-            if (it.isSuccessful) {
-                onSuccess()
-            } else {
-                it.exception?.let { e ->
-                    Log.e("AssociationRepositoryFirestore", "Error performing Firestore operation", e)
-                    onFailure(e)
-                }
-            }
+  /** Performs a Firestore operation and calls the appropriate callback based on the result. */
+  private fun performFirestoreOperation(
+      task: Task<Void>,
+      onSuccess: () -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+    task.addOnCompleteListener {
+      if (it.isSuccessful) {
+        onSuccess()
+      } else {
+        it.exception?.let { e ->
+          Log.e("AssociationRepositoryFirestore", "Error performing Firestore operation", e)
+          onFailure(e)
         }
+      }
     }
+  }
 
   companion object {
     fun hydrate(doc: DocumentSnapshot): Association {
