@@ -9,8 +9,8 @@ data class EventTypeColor(val type: String, val color: Color)
 val eventTypeColors =
     listOf(
         EventTypeColor("festival", Color(0xFF6200EE)), // purple
-        EventTypeColor("apéro", Color(0xFF03DAC5)), // teal
-        EventTypeColor("soirée", Color(0xFFFF5722)), // deep orange
+        EventTypeColor("aperitif", Color(0xFF03DAC5)), // teal
+        EventTypeColor("night party", Color(0xFFFF5722)), // deep orange
         EventTypeColor("jam", Color(0xFFFFEB3B)), // yellow
         EventTypeColor("networking", Color(0xFF009688)), // cyan
         EventTypeColor("sport", Color(0xFF8BC34A)), // light green
