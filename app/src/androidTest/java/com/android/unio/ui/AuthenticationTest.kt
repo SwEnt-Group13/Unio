@@ -24,12 +24,11 @@ class AuthenticationTest {
   @Before
   fun setUp() {
     navigationAction = mock { NavigationAction::class.java }
+    composeTestRule.setContent { WelcomeScreen(navigationAction) }
   }
 
   @Test
   fun testNavigationWelcomeToLogin() {
-    composeTestRule.setContent { WelcomeScreen(navigationAction) }
-    timeout(100)
     composeTestRule.onNodeWithTag("LoginButton").assertIsDisplayed()
     composeTestRule.onNodeWithTag("LoginButton").performClick()
     verify(navigationAction).navigateTo(eq(Screen.AUTH))
