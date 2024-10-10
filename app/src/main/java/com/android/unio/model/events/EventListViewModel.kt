@@ -52,18 +52,18 @@ class EventListViewModel(private val repository: EventRepository) : ViewModel() 
   companion object {
     /** A factory for creating [EventListViewModel] instances with the [EventRepositoryMock]. */
     val Factory: ViewModelProvider.Factory =
-      object : ViewModelProvider.Factory {
-        /**
-         * Creates an instance of the [EventListViewModel].
-         *
-         * @param modelClass The class of the ViewModel to create.
-         * @return The created ViewModel instance.
-         * @throws IllegalArgumentException if the [modelClass] does not match.
-         */
-        @Suppress("UNCHECKED_CAST")
-        override fun <T : ViewModel> create(modelClass: Class<T>): T {
-          return EventListViewModel(EventRepositoryMock()) as T
+        object : ViewModelProvider.Factory {
+          /**
+           * Creates an instance of the [EventListViewModel].
+           *
+           * @param modelClass The class of the ViewModel to create.
+           * @return The created ViewModel instance.
+           * @throws IllegalArgumentException if the [modelClass] does not match.
+           */
+          @Suppress("UNCHECKED_CAST")
+          override fun <T : ViewModel> create(modelClass: Class<T>): T {
+            return EventListViewModel(EventRepositoryMock()) as T
+          }
         }
-      }
   }
 }

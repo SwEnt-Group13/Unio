@@ -11,82 +11,81 @@ import java.util.UUID
  */
 open class EventRepositoryMock : EventRepository {
 
-    /**
-     * Retrieves a list of mock events.
-     *
-     * @return A list of [Event] objects with predefined data for testing.
-     */
-    override fun getEvents(): List<Event> {
-        return listOf(
-            Event(
-                id = UUID.randomUUID().toString(),
-                title = "WESKIC",
-                catchy_description = "Come to the best event of the Coaching IC!",
-                description =
+  /**
+   * Retrieves a list of mock events.
+   *
+   * @return A list of [Event] objects with predefined data for testing.
+   */
+  override fun getEvents(): List<Event> {
+    return listOf(
+        Event(
+            id = UUID.randomUUID().toString(),
+            title = "WESKIC",
+            catchy_description = "Come to the best event of the Coaching IC!",
+            description =
                 "The Summer Festival features live music, food stalls, and various activities for all ages.",
-                date = "2024-07-20",
-                location = "Central Park, New York",
-                mainType = EventType.TRIP,
-                picture = "weskic"),
-            Event(
-                id = UUID.randomUUID().toString(),
-                title = "Oktoberweek",
-                catchy_description = "There never enough beersssssss!",
-                description =
+            date = "2024-07-20",
+            location = "Central Park, New York",
+            mainType = EventType.TRIP,
+            picture = "weskic"),
+        Event(
+            id = UUID.randomUUID().toString(),
+            title = "Oktoberweek",
+            catchy_description = "There never enough beersssssss!",
+            description =
                 "An evening of networking with industry leaders and innovators. Don't miss out!",
-                date = "2024-05-15",
-                location = "Downtown Conference Center, Los Angeles",
-                mainType = EventType.OTHER,
-                picture = "oktoberweek"),
-            Event(
-                id = UUID.randomUUID().toString(),
-                title = "SwissTech Talk",
-                catchy_description = "Don't miss the chant de section!",
-                description = "Learn Kotlin from scratch with real-world examples and expert guidance.",
-                date = "2024-03-10",
-                location = "Tech Hub, San Francisco",
-                mainType = EventType.OTHER,
-                picture = "swisstechtalk"),
-            Event(
-                id = UUID.randomUUID().toString(),
-                title = "Lapin Vert",
-                catchy_description = "Venez, il y a des gens sympa!",
-                description =
+            date = "2024-05-15",
+            location = "Downtown Conference Center, Los Angeles",
+            mainType = EventType.OTHER,
+            picture = "oktoberweek"),
+        Event(
+            id = UUID.randomUUID().toString(),
+            title = "SwissTech Talk",
+            catchy_description = "Don't miss the chant de section!",
+            description = "Learn Kotlin from scratch with real-world examples and expert guidance.",
+            date = "2024-03-10",
+            location = "Tech Hub, San Francisco",
+            mainType = EventType.OTHER,
+            picture = "swisstechtalk"),
+        Event(
+            id = UUID.randomUUID().toString(),
+            title = "Lapin Vert",
+            catchy_description = "Venez, il y a des gens sympa!",
+            description =
                 "Join us for an unforgettable evening featuring local artists and musicians.",
-                date = "2024-09-25",
-                location = "Art Gallery, Miami",
-                mainType = EventType.OTHER,
-                picture = "lapin_vert"),
-            Event(
-                id = UUID.randomUUID().toString(),
-                title = "Choose your coach!",
-                catchy_description = "Pick the best one!",
-                description =
+            date = "2024-09-25",
+            location = "Art Gallery, Miami",
+            mainType = EventType.OTHER,
+            picture = "lapin_vert"),
+        Event(
+            id = UUID.randomUUID().toString(),
+            title = "Choose your coach!",
+            catchy_description = "Pick the best one!",
+            description =
                 "Participate in various sports activities and enjoy food and entertainment.",
-                date = "2024-06-05",
-                location = "City Stadium, Chicago",
-                mainType = EventType.SPORT,
-                picture = "chooseyourcoach"),
-            Event(
-                id = UUID.randomUUID().toString(),
-                title = "Concert",
-                catchy_description = "Best concert everrrrr!",
-                description =
+            date = "2024-06-05",
+            location = "City Stadium, Chicago",
+            mainType = EventType.SPORT,
+            picture = "chooseyourcoach"),
+        Event(
+            id = UUID.randomUUID().toString(),
+            title = "Concert",
+            catchy_description = "Best concert everrrrr!",
+            description =
                 "A workshop dedicated to teaching strategies for successful social media marketing.",
-                date = "2024-08-30",
-                location = "Innovation Center, Austin",
-                mainType = EventType.OTHER,
-                picture = "antoinoxlephar"),
-            Event(
-                id = UUID.randomUUID().toString(),
-                title = "Jam Session: Local Artists",
-                catchy_description = "Support local talent in this open jam session!",
-                description =
+            date = "2024-08-30",
+            location = "Innovation Center, Austin",
+            mainType = EventType.OTHER,
+            picture = "antoinoxlephar"),
+        Event(
+            id = UUID.randomUUID().toString(),
+            title = "Jam Session: Local Artists",
+            catchy_description = "Support local talent in this open jam session!",
+            description =
                 "An evening of music with local artists. Bring your instruments or just enjoy the show!",
-                date = "2024-04-12",
-                location = "Community Center, Seattle",
-                mainType = EventType.JAM,
-                picture = "photo_2024_10_08_14_57_48")
-        )
-    }
+            date = "2024-04-12",
+            location = "Community Center, Seattle",
+            mainType = EventType.JAM,
+            picture = "photo_2024_10_08_14_57_48"))
+  }
 }
