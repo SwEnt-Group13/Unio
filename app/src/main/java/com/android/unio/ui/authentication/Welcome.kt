@@ -26,11 +26,11 @@ fun WelcomeScreen(navigationAction: NavigationAction) {
         modifier = Modifier.padding(it).padding(vertical = 200.dp, horizontal = 100.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally) {
-          Image(
-              // Placeholder for the Unio logo
-              painter = painterResource(id = R.drawable.ic_launcher_foreground),
-              contentDescription = "Unio logo",
-              modifier = Modifier.padding(16.dp))
+//          Image(
+//              // Placeholder for the Unio logo
+//              painter = painterResource(id = R.drawable.ic_launcher_foreground),
+//              contentDescription = "Unio logo",
+//              modifier = Modifier.padding(16.dp))
           Text(
               "The world’s largest campus life platform !",
               textAlign = TextAlign.Center,
