@@ -5,7 +5,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.navigation.NavHostController
-import com.android.unio.ui.association.AssociationScreen
+import com.android.unio.ui.association.AssociationProfile
 import com.android.unio.ui.authentication.LoginScreen
 import com.android.unio.ui.authentication.WelcomeScreen
 import com.android.unio.ui.event.EventCreationScreen
@@ -85,7 +85,7 @@ class ScreenDisplayingTest() {
 
   @Test
   fun testAssociationDisplayed() {
-    composeTestRule.setContent { AssociationScreen() }
+    composeTestRule.setContent { AssociationProfile(navigationAction) }
     composeTestRule.onNodeWithTag("AssociationScreen").assertIsDisplayed()
     composeTestRule.onNodeWithText("Association screen").assertIsDisplayed()
   }

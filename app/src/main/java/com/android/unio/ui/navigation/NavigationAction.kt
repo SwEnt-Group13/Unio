@@ -12,18 +12,47 @@ import androidx.navigation.NavHostController
 
 open class NavigationAction(private val navController: NavHostController) {
 
-  open fun navigateTo(route: String) {
-    navController.navigate(route)
+  /**
+   * Navigate to the specified screen.
+   *
+   * @param screen The screen to navigate to
+   */
+  fun navigateTo(screen: String) {
+    navController.navigate(screen)
   }
 
-  open fun navigateTo(tld: TopLevelDestination) {
-    navController.navigate(tld.route) { popUpTo(navController.graph.findStartDestination().id) }
+  /**
+   * Navigate to the specified [TopLevelDestination]
+   *
+   * @param tld Main destination to navigate to, clearing the back stack when navigating to a new
+   *   one.
+   */
+  fun navigateTo(tld: TopLevelDestination) {
+    navController.navigate(tld.route) {
+      popUpTo(navController.graph.findStartDestination().id) {
+        saveState = true
+        inclusive = true
+      }
+
+      // To avoid having multiples copies of the same destination if we reselct the same item
+      launchSingleTop = true
+
+      if (tld.route != Route.AUTH) {
+        restoreState = true
+      }
+    }
   }
 
+  /** Navigate back to the previous screen. */
   fun goBack() {
     navController.popBackStack()
   }
 
+  /**
+   * Get the current route.
+   *
+   * @return The current route
+   */
   fun getCurrentRoute(): String {
     return navController.currentDestination?.route ?: ""
   }
@@ -66,4 +95,5 @@ object Screen {
   const val EXPLORE = "Explore Screen"
   const val SAVED = "Saved Screen"
   const val MY_PROFILE = "MyProfile Screen"
+  const val ASSOCIATION = "Association Screen"
 }
