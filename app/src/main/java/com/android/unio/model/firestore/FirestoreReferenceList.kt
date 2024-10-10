@@ -1,9 +1,9 @@
 package com.android.unio.model.firestore
 
+import android.util.Log
+import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentSnapshot
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
+import com.google.firebase.firestore.FieldPath
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
@@ -17,23 +17,21 @@ import kotlinx.coroutines.flow.StateFlow
  * ```
  *
  * @param T The type of the objects in the list.
- * @property db The [FirebaseFirestore] instance to use.
- * @property collectionPath The path to the Firestore collection that contains the objects.
+ * @property collection The reference to the Firestore collection.
  * @property hydrate A function that converts a [DocumentSnapshot] to a [T].
  */
 class FirestoreReferenceList<T>(
-    private val db: FirebaseFirestore,
-    private val collectionPath: String,
+    private val collection: CollectionReference,
     private val hydrate: (DocumentSnapshot) -> T
-) : ReferenceList {
+) : ReferenceList<T> {
   // The internal list of UIDs.
-  private var _uids = mutableListOf<String>()
+  private val _uids = mutableListOf<String>()
 
   // The internal list of objects.
   private val _list = MutableStateFlow<List<T>>(emptyList())
 
   // The public list of objects.
-  val list: StateFlow<List<T>> = _list
+  override val list: StateFlow<List<T>> = _list
 
   /**
    * Adds a UID to the list.
@@ -55,37 +53,37 @@ class FirestoreReferenceList<T>(
 
   /** Requests all documents from Firestore and updates the list. */
   override fun requestAll() {
-    println("Requesting all")
     _list.value = emptyList()
-    _uids.forEach { uid ->
-      db.collection(collectionPath).document(uid).get().addOnSuccessListener { result ->
-        val item = hydrate(result)
-        _list.value += item
-        println("Added $item")
-      }
-    }
+    collection
+        .whereIn(FieldPath.documentId(), _uids)
+        .get()
+        .addOnSuccessListener { result ->
+          val items = result.documents.map { hydrate(it) }
+          _list.value = items
+        }
+        .addOnFailureListener { exception ->
+          Log.e("FirestoreReferenceList", "Failed to get documents", exception)
+        }
   }
 
   companion object {
     /** Creates a [FirestoreReferenceList] from a list of UIDs. */
     fun <T> fromList(
         list: List<String>,
-        db: FirebaseFirestore = Firebase.firestore,
-        collectionPath: String,
+        collection: CollectionReference,
         hydrate: (DocumentSnapshot) -> T
     ): FirestoreReferenceList<T> {
-      val result = FirestoreReferenceList(db, collectionPath, hydrate)
+      val result = FirestoreReferenceList(collection, hydrate)
       result.addAll(list)
       return result
     }
 
     /** Creates an empty [FirestoreReferenceList]. */
     fun <T> empty(
-        db: FirebaseFirestore = Firebase.firestore,
-        collectionPath: String,
+        collection: CollectionReference,
         hydrate: (DocumentSnapshot) -> T
     ): FirestoreReferenceList<T> {
-      return FirestoreReferenceList(db, collectionPath, hydrate)
+      return FirestoreReferenceList(collection, hydrate)
     }
   }
 }
