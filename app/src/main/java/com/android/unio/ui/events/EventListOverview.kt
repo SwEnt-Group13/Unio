@@ -36,7 +36,6 @@ import com.android.unio.R
 import com.android.unio.model.events.Event
 import com.android.unio.model.events.EventListViewModel
 import com.android.unio.model.events.EventRepositoryMock
-import com.android.unio.model.events.getColorForEventType
 import kotlinx.coroutines.launch
 
 @Preview(showBackground = true)
@@ -250,9 +249,9 @@ fun EventItem(event: Event, onClick: () -> Unit) {
             Box(
                 modifier =
                     Modifier.clip(RoundedCornerShape(4.dp))
-                        .background(addAlphaToColor(getColorForEventType(event.main_type), 200))) {
+                        .background(addAlphaToColor(event.main_type.color, 200))) {
                   Text(
-                      text = event.main_type,
+                      text = event.main_type.text,
                       modifier =
                           Modifier.padding(horizontal = 4.dp, vertical = 4.dp)
                               .testTag("event_EventMainType"),
