@@ -20,6 +20,6 @@ data class Event(
     val description: String,
     val date: String, // Consider using Date type with proper formatting
     val location: String,
-    val main_type: EventType,
+    val mainType: EventType,
     val picture: String
 )

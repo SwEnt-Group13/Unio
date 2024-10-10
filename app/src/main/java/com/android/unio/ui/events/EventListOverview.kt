@@ -249,9 +249,9 @@ fun EventItem(event: Event, onClick: () -> Unit) {
             Box(
                 modifier =
                     Modifier.clip(RoundedCornerShape(4.dp))
-                        .background(addAlphaToColor(event.main_type.color, 200))) {
+                        .background(addAlphaToColor(event.mainType.color, 200))) {
                   Text(
-                      text = event.main_type.text,
+                      text = event.mainType.text,
                       modifier =
                           Modifier.padding(horizontal = 4.dp, vertical = 4.dp)
                               .testTag("event_EventMainType"),
