@@ -17,5 +17,5 @@ data class Event(
     val price: Double = 0.0,
     val date: Timestamp = Timestamp(Date()),
     val location: Location = Location(),
-    val types: List<String> = mutableListOf()
+    val types: List<EventType> = mutableListOf<EventType>()
 )
