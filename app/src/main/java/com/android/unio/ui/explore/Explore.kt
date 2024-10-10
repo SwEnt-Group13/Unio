@@ -93,7 +93,7 @@ fun ExploreScreenContent(padding: PaddingValues, navigationAction: NavigationAct
 fun AssociationItem(association: Association, navigationAction: NavigationAction) {
   Column(
       modifier =
-          Modifier.padding(16.dp).width(80.dp).clickable {
+          Modifier.padding(16.dp).width(80.dp).height(120.dp).clickable {
             navigationAction.navigateTo(Screen.ASSOCIATION)
           }
       // Interaction (to see detailed screen about an association) can be defined here,
