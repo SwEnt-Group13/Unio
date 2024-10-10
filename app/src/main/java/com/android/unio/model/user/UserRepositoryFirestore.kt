@@ -53,8 +53,7 @@ class UserRepositoryFirestore(private val db: FirebaseFirestore) : UserRepositor
       val followingAssociations =
           FirestoreReferenceList.fromList(
               followingAssociationsUids,
-              db,
-              ASSOCIATION_PATH,
+              db.collection(ASSOCIATION_PATH),
               AssociationRepositoryFirestore::hydrate)
 
       return User(

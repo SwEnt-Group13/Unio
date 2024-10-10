@@ -4,10 +4,12 @@ import com.android.unio.model.firestore.FirestorePaths.ASSOCIATION_PATH
 import com.android.unio.model.firestore.FirestorePaths.USER_PATH
 import com.android.unio.model.firestore.FirestoreReferenceList
 import com.android.unio.model.user.UserRepositoryFirestore
+import com.google.android.play.core.assetpacks.db
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.firestore
 
 class AssociationRepositoryFirestore(private val db: FirebaseFirestore) : AssociationRepository {
 
@@ -58,7 +60,7 @@ class AssociationRepositoryFirestore(private val db: FirebaseFirestore) : Associ
       val members =
           FirestoreReferenceList.fromList(
               list = memberUids,
-              collectionPath = USER_PATH,
+              collection = Firebase.firestore.collection(USER_PATH),
               hydrate = UserRepositoryFirestore::hydrate)
 
       return Association(
