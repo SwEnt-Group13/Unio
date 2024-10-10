@@ -75,10 +75,9 @@ class ImageRepositoryFirebaseStorageTest {
      */
     @Test
     fun getImageUrlTest() {
-        var url: Uri
         repository.getImageUrl(
             "images/test.jpg",
-            { stringUrl -> url = stringUrl.toUri() },
+            { stringUrl -> stringUrl.toUri() },
             { e -> throw e })
 
     }
