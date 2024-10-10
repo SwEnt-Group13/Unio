@@ -1,6 +1,7 @@
 package com.android.unio.model.event
 
 import android.util.Log
+import com.android.unio.model.firestore.FirestorePaths.EVENT_PATH
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
@@ -77,16 +78,13 @@ class EventRepositoryFirestore(private val db: FirebaseFirestore) : EventReposit
     }
   }
 
-  private fun hydrate(doc: DocumentSnapshot): Event? {
-
-    val event = doc.toObject(Event::class.java)
-    if (event == null) {
-      Log.e("EventRepositoryFirestore", "Error while converting db document to Event object")
-    }
-    return event
-  }
-
   companion object {
-    private const val EVENT_PATH = "events"
+    fun hydrate(doc: DocumentSnapshot): Event? {
+      val event = doc.toObject(Event::class.java)
+      if (event == null) {
+        Log.e("EventRepositoryFirestore", "Error while converting db document to Event object")
+      }
+      return event
+    }
   }
 }
