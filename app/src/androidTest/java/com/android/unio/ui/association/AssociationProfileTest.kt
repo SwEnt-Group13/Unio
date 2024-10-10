@@ -14,38 +14,36 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 
 class AssociationProfileTest {
-    private lateinit var navHostController: NavHostController
-    private lateinit var navigationAction: NavigationAction
+  private lateinit var navHostController: NavHostController
+  private lateinit var navigationAction: NavigationAction
 
-    @get:Rule
-    val composeTestRule = createComposeRule()
+  @get:Rule val composeTestRule = createComposeRule()
 
-    @Before
-    fun setUp() {
-        navHostController = mock { NavHostController::class.java }
-        navigationAction = NavigationAction(navHostController)
-    }
+  @Before
+  fun setUp() {
+    navHostController = mock { NavHostController::class.java }
+    navigationAction = NavigationAction(navHostController)
+  }
 
-    @Test
-    fun testAssociationProfileDisplayed() {
-        composeTestRule.setContent { AssociationProfile(navigationAction) }
+  @Test
+  fun testAssociationProfileDisplayed() {
+    composeTestRule.setContent { AssociationProfile(navigationAction) }
 
-        composeTestRule.onNodeWithTag("AssociationProfileTitle").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Association Profile").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("AssociationProfileTitle").assertIsDisplayed()
+    composeTestRule.onNodeWithText("Association Profile").assertIsDisplayed()
 
-        composeTestRule.onNodeWithTag("goBackButton").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("goBackButton").assertIsDisplayed()
 
-        composeTestRule.onNodeWithTag("AssociationScreen").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Association screen").assertIsDisplayed()
-    }
+    composeTestRule.onNodeWithTag("AssociationScreen").assertIsDisplayed()
+    composeTestRule.onNodeWithText("Association screen").assertIsDisplayed()
+  }
 
-    @Test
-    fun testGoBackButton() {
-        composeTestRule.setContent { AssociationProfile(navigationAction) }
+  @Test
+  fun testGoBackButton() {
+    composeTestRule.setContent { AssociationProfile(navigationAction) }
 
-        composeTestRule.onNodeWithTag("goBackButton").performClick()
+    composeTestRule.onNodeWithTag("goBackButton").performClick()
 
-        verify(navHostController).popBackStack()
-    }
-
+    verify(navHostController).popBackStack()
+  }
 }
