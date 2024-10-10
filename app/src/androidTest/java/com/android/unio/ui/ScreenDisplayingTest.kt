@@ -25,15 +25,13 @@ import org.mockito.kotlin.mock
 
 class ScreenDisplayingTest() {
 
-  private lateinit var navHostController: NavHostController
   private lateinit var navigationAction: NavigationAction
 
   @get:Rule val composeTestRule = createComposeRule()
 
   @Before
   fun setUp() {
-    navHostController = mock { NavHostController::class.java }
-    navigationAction = NavigationAction(navHostController)
+    navigationAction = mock { NavHostController::class.java }
   }
 
   @Test

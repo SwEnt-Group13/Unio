@@ -17,7 +17,7 @@ open class NavigationAction(private val navController: NavHostController) {
    *
    * @param screen The screen to navigate to
    */
-  fun navigateTo(screen: String) {
+  open fun navigateTo(screen: String) {
     navController.navigate(screen)
   }
 
@@ -27,7 +27,7 @@ open class NavigationAction(private val navController: NavHostController) {
    * @param tld Main destination to navigate to, clearing the back stack when navigating to a new
    *   one.
    */
-  fun navigateTo(tld: TopLevelDestination) {
+  open fun navigateTo(tld: TopLevelDestination) {
     navController.navigate(tld.route) {
       popUpTo(navController.graph.findStartDestination().id) {
         saveState = true
