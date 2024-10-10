@@ -11,6 +11,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
+import com.android.unio.ui.association.AssociationProfile
+import com.android.unio.ui.authentication.LoginScreen
+import com.android.unio.ui.authentication.WelcomeScreen
 import com.android.unio.ui.explore.ExploreScreen
 import com.android.unio.ui.home.HomeScreen
 import com.android.unio.ui.navigation.NavigationAction
@@ -33,12 +36,17 @@ fun UnioApp() {
 
   // start destination should be Route.AUTH, but for now, we let it be Route.HOME for testing
   // purposes
-  NavHost(navController = navController, startDestination = Route.HOME) {
+  NavHost(navController = navController, startDestination = Route.AUTH) {
+    navigation(startDestination = Screen.WELCOME, route = Route.AUTH) {
+      composable(Screen.WELCOME) { WelcomeScreen(navigationActions) }
+      composable(Screen.AUTH) { LoginScreen(navigationActions) }
+    }
     navigation(startDestination = Screen.HOME, route = Route.HOME) {
       composable(Screen.HOME) { HomeScreen(navigationActions) }
     }
     navigation(startDestination = Screen.EXPLORE, route = Route.EXPLORE) {
       composable(Screen.EXPLORE) { ExploreScreen(navigationActions) }
+      composable(Screen.ASSOCIATION) { AssociationProfile(navigationActions) }
     }
     navigation(startDestination = Screen.SAVED, route = Route.SAVED) {
       composable(Screen.SAVED) { SavedScreen(navigationActions) }

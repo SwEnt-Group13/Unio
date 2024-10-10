@@ -1,11 +1,13 @@
 package com.android.unio.model.association
 
 import androidx.test.core.app.ApplicationProvider
+import com.android.unio.model.firestore.FirestorePaths.ASSOCIATION_PATH
 import com.android.unio.model.firestore.FirestorePaths.USER_PATH
 import com.android.unio.model.firestore.FirestoreReferenceList
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.gms.tasks.Task
+import com.google.android.gms.tasks.Tasks
 import com.google.firebase.FirebaseApp
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
@@ -22,12 +24,14 @@ import org.mockito.Mockito.`when`
 import org.mockito.MockitoAnnotations
 import org.mockito.kotlin.any
 import org.mockito.kotlin.eq
+import org.mockito.kotlin.verify
 import org.robolectric.RobolectricTestRunner
 
 @RunWith(RobolectricTestRunner::class)
 class AssociationRepositoryFirestoreTest {
   @Mock private lateinit var db: FirebaseFirestore
-  @Mock private lateinit var collectionReference: CollectionReference
+  @Mock private lateinit var associationCollectionReference: CollectionReference
+  @Mock private lateinit var userCollectionReference: CollectionReference
   @Mock private lateinit var querySnapshot: QuerySnapshot
   @Mock private lateinit var queryDocumentSnapshot1: QueryDocumentSnapshot
   @Mock private lateinit var queryDocumentSnapshot2: QueryDocumentSnapshot
@@ -49,6 +53,9 @@ class AssociationRepositoryFirestoreTest {
       FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext())
     }
 
+    `when`(db.collection(eq(ASSOCIATION_PATH))).thenReturn(associationCollectionReference)
+    `when`(db.collection(eq(USER_PATH))).thenReturn(userCollectionReference)
+
     association1 =
         Association(
             uid = "1",
@@ -58,7 +65,7 @@ class AssociationRepositoryFirestoreTest {
                 "ACM is the world's largest educational and scientific computing society.",
             members =
                 FirestoreReferenceList.fromList(
-                    listOf("1", "2"), db, USER_PATH, UserRepositoryFirestore::hydrate))
+                    listOf("1", "2"), db.collection(USER_PATH), UserRepositoryFirestore::hydrate))
 
     association2 =
         Association(
@@ -69,12 +76,12 @@ class AssociationRepositoryFirestoreTest {
                 "IEEE is the world's largest technical professional organization dedicated to advancing technology for the benefit of humanity.",
             members =
                 FirestoreReferenceList.fromList(
-                    listOf("3", "4"), db, USER_PATH, UserRepositoryFirestore::hydrate))
+                    listOf("3", "4"), db.collection(USER_PATH), UserRepositoryFirestore::hydrate))
 
     // When getting the collection, return the task
-    `when`(db.collection(eq("associations"))).thenReturn(collectionReference)
-    `when`(collectionReference.get()).thenReturn(querySnapshotTask)
-    `when`(collectionReference.document(eq(association1.uid))).thenReturn(documentReference)
+    `when`(associationCollectionReference.get()).thenReturn(querySnapshotTask)
+    `when`(associationCollectionReference.document(eq(association1.uid)))
+        .thenReturn(documentReference)
     `when`(documentReference.get()).thenReturn(documentSnapshotTask)
 
     // When the query snapshot is iterated, return the two query document snapshots
@@ -139,7 +146,9 @@ class AssociationRepositoryFirestoreTest {
           val emptyAssociation =
               Association(
                   uid = association2.uid,
-                  members = FirestoreReferenceList.empty(db, "", UserRepositoryFirestore::hydrate))
+                  members =
+                      FirestoreReferenceList.empty(
+                          db.collection(USER_PATH), UserRepositoryFirestore::hydrate))
 
           assertEquals(2, associations.size)
 
@@ -167,5 +176,65 @@ class AssociationRepositoryFirestoreTest {
           assertEquals(association1.description, association.description)
         },
         onFailure = { exception -> assert(false) })
+  }
+
+  @Test
+  fun testAddAssociationSuccess() {
+    `when`(documentReference.set(association1)).thenReturn(Tasks.forResult(null))
+
+    repository.addAssociation(
+        association1, onSuccess = { assert(true) }, onFailure = { assert(false) })
+
+    verify(documentReference).set(association1)
+  }
+
+  @Test
+  fun testAddAssociationFailure() {
+    `when`(documentReference.set(association1)).thenReturn(Tasks.forException(Exception()))
+
+    repository.addAssociation(
+        association1, onSuccess = { assert(false) }, onFailure = { assert(true) })
+
+    verify(documentReference).set(association1)
+  }
+
+  @Test
+  fun testUpdateAssociationSuccess() {
+    `when`(documentReference.set(association1)).thenReturn(Tasks.forResult(null))
+
+    repository.updateAssociation(
+        association1, onSuccess = { assert(true) }, onFailure = { assert(false) })
+
+    verify(documentReference).set(association1)
+  }
+
+  @Test
+  fun testUpdateAssociationFailure() {
+    `when`(documentReference.set(association1)).thenReturn(Tasks.forException(Exception()))
+
+    repository.updateAssociation(
+        association1, onSuccess = { assert(false) }, onFailure = { assert(true) })
+
+    verify(documentReference).set(association1)
+  }
+
+  @Test
+  fun testDeleteAssociationByIdSuccess() {
+    `when`(documentReference.delete()).thenReturn(Tasks.forResult(null))
+
+    repository.deleteAssociationById(
+        association1.uid, onSuccess = { assert(true) }, onFailure = { assert(false) })
+
+    verify(documentReference).delete()
+  }
+
+  @Test
+  fun testDeleteAssociationByIdFailure() {
+    `when`(documentReference.delete()).thenReturn(Tasks.forException(Exception()))
+
+    repository.deleteAssociationById(
+        association1.uid, onSuccess = { assert(false) }, onFailure = { assert(true) })
+
+    verify(documentReference).delete()
   }
 }

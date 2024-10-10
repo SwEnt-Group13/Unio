@@ -1,6 +1,7 @@
 package com.android.unio.ui.explore
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -35,6 +36,7 @@ import com.android.unio.ui.navigation.BottomNavigationMenu
 import com.android.unio.ui.navigation.LIST_TOP_LEVEL_DESTINATION
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Route
+import com.android.unio.ui.navigation.Screen
 
 @Composable
 fun ExploreScreen(navigationAction: NavigationAction) {
@@ -45,11 +47,11 @@ fun ExploreScreen(navigationAction: NavigationAction) {
             { navigationAction.navigateTo(it.route) }, LIST_TOP_LEVEL_DESTINATION, Route.EXPLORE)
       },
       modifier = Modifier.testTag("exploreScreen"),
-      content = { padding -> ExploreScreenContent(padding) })
+      content = { padding -> ExploreScreenContent(padding, navigationAction) })
 }
 
 @Composable
-fun ExploreScreenContent(padding: PaddingValues) {
+fun ExploreScreenContent(padding: PaddingValues, navigationAction: NavigationAction) {
   // This is a placeholder for the actual content of the Explore screen
   Column(modifier = Modifier.fillMaxSize().padding(padding)) {
     OutlinedTextField(
@@ -77,7 +79,7 @@ fun ExploreScreenContent(padding: PaddingValues) {
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                       items(filteredAssociations.size) { index ->
-                        AssociationItem(filteredAssociations[index].association)
+                        AssociationItem(filteredAssociations[index].association, navigationAction)
                       }
                     }
               }
@@ -88,9 +90,12 @@ fun ExploreScreenContent(padding: PaddingValues) {
 }
 
 @Composable
-fun AssociationItem(association: Association) {
+fun AssociationItem(association: Association, navigationAction: NavigationAction) {
   Column(
-      modifier = Modifier.padding(16.dp).width(80.dp)
+      modifier =
+          Modifier.padding(16.dp).width(80.dp).height(120.dp).clickable {
+            navigationAction.navigateTo(Screen.ASSOCIATION)
+          }
       // Interaction (to see detailed screen about an association) can be defined here,
       // with the .clickable modifier
       ) {
@@ -116,7 +121,7 @@ fun AssociationItem(association: Association) {
 fun getFilteredAssociationsByCategoryAndAlphabeticalOrder(
     category: AssociationType
 ): List<MockAssociation> {
-  return mockAssociations.filter { it.type == category }.sortedBy { it.association.acronym }
+  return mockAssociations().filter { it.type == category }.sortedBy { it.association.acronym }
 }
 
 /** Returns the name of the category with the first letter in uppercase. */
