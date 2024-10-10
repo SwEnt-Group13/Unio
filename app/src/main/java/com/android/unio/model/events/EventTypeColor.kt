@@ -2,23 +2,23 @@ package com.android.unio.model.events
 
 import androidx.compose.ui.graphics.Color
 
-// class for event types and their corresponding colors
-data class EventTypeColor(val type: String, val color: Color)
+enum class EventType(val color: Color) {
+    FESTIVAL(Color(0xFF6200EE)),    // purple
+    APERITIF(Color(0xFF03DAC5)),    // teal
+    NIGHT_PARTY(Color(0xFFFF5722)), // deep orange
+    JAM(Color(0xFFFFEB3B)),         // yellow
+    NETWORKING(Color(0xFF009688)),  // cyan
+    SPORT(Color(0xFF8BC34A)),       // light green
+    TRIP(Color(0xFFE91E63)),        // pink
+    OTHER(Color.Gray);              // default color
 
-// list of event types with their associated colors
-val eventTypeColors =
-    listOf(
-        EventTypeColor("festival", Color(0xFF6200EE)), // purple
-        EventTypeColor("aperitif", Color(0xFF03DAC5)), // teal
-        EventTypeColor("night party", Color(0xFFFF5722)), // deep orange
-        EventTypeColor("jam", Color(0xFFFFEB3B)), // yellow
-        EventTypeColor("networking", Color(0xFF009688)), // cyan
-        EventTypeColor("sport", Color(0xFF8BC34A)), // light green
-        EventTypeColor("trip", Color(0xFFE91E63)), // pink
-        EventTypeColor("Other", Color.Gray) // default color
-        )
+    companion object {
 
-// get color for a given event type
-fun getColorForEventType(eventType: String): Color {
-  return eventTypeColors.find { it.type == eventType }?.color ?: Color.Gray
+        fun getColorForEventType(eventType: String): Color {
+            return values().find { it.name.equals(eventType, ignoreCase = true) }?.color ?: Color.Gray
+        }
+    }
 }
+
+
+// val color = EventType.getColorForEventType("festival")
