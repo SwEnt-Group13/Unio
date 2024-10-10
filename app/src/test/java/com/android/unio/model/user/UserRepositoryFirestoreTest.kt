@@ -2,6 +2,8 @@ package com.android.unio.model.user
 
 import androidx.test.core.app.ApplicationProvider
 import com.android.unio.model.association.AssociationRepositoryFirestore
+import com.android.unio.model.firestore.FirestorePaths.ASSOCIATION_PATH
+import com.android.unio.model.firestore.FirestorePaths.USER_PATH
 import com.android.unio.model.firestore.FirestoreReferenceList
 import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.gms.tasks.Task
@@ -26,7 +28,8 @@ import org.robolectric.RobolectricTestRunner
 @RunWith(RobolectricTestRunner::class)
 class UserRepositoryFirestoreTest {
   @Mock private lateinit var db: FirebaseFirestore
-  @Mock private lateinit var collectionReference: CollectionReference
+  @Mock private lateinit var userCollectionReference: CollectionReference
+  @Mock private lateinit var associationCollectionReference: CollectionReference
   @Mock private lateinit var querySnapshot: QuerySnapshot
   @Mock private lateinit var queryDocumentSnapshot1: QueryDocumentSnapshot
   @Mock private lateinit var queryDocumentSnapshot2: QueryDocumentSnapshot
@@ -48,13 +51,18 @@ class UserRepositoryFirestoreTest {
       FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext())
     }
 
+    // When getting the collection, return the task
+    `when`(db.collection(eq(USER_PATH))).thenReturn(userCollectionReference)
+    `when`(db.collection(eq(ASSOCIATION_PATH))).thenReturn(associationCollectionReference)
+
     user1 =
         User(
             uid = "1",
             email = "example1@abcd.com",
             name = "Example 1",
             followingAssociations =
-                FirestoreReferenceList.empty(db, "", AssociationRepositoryFirestore::hydrate))
+                FirestoreReferenceList.empty(
+                    db.collection(ASSOCIATION_PATH), AssociationRepositoryFirestore::hydrate))
 
     user2 =
         User(
@@ -62,12 +70,11 @@ class UserRepositoryFirestoreTest {
             email = "example2@abcd.com",
             name = "Example 2",
             followingAssociations =
-                FirestoreReferenceList.empty(db, "", AssociationRepositoryFirestore::hydrate))
+                FirestoreReferenceList.empty(
+                    db.collection(ASSOCIATION_PATH), AssociationRepositoryFirestore::hydrate))
 
-    // When getting the collection, return the task
-    `when`(db.collection(eq("users"))).thenReturn(collectionReference)
-    `when`(collectionReference.get()).thenReturn(querySnapshotTask)
-    `when`(collectionReference.document(eq(user1.uid))).thenReturn(documentReference)
+    `when`(userCollectionReference.get()).thenReturn(querySnapshotTask)
+    `when`(userCollectionReference.document(eq(user1.uid))).thenReturn(documentReference)
     `when`(documentReference.get()).thenReturn(documentSnapshotTask)
 
     // When the query snapshot is iterated, return the two query document snapshots
@@ -134,7 +141,8 @@ class UserRepositoryFirestoreTest {
                   email = "",
                   name = "",
                   followingAssociations =
-                      FirestoreReferenceList.empty(db, "", AssociationRepositoryFirestore::hydrate))
+                      FirestoreReferenceList.empty(
+                          db.collection(ASSOCIATION_PATH), AssociationRepositoryFirestore::hydrate))
           assertEquals(2, users.size)
 
           assertEquals(user1.uid, users[0].uid)

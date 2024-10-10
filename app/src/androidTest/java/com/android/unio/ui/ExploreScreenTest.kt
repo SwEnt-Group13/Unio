@@ -8,7 +8,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
 
-class ExploreScreen {
+class ExploreScreenTest {
   @get:Rule val composeTestRule = createComposeRule()
 
   @Test

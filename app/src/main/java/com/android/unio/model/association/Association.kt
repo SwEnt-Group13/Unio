@@ -1,6 +1,6 @@
 package com.android.unio.model.association
 
-import com.android.unio.model.firestore.FirestoreReferenceList
+import com.android.unio.model.firestore.ReferenceList
 import com.android.unio.model.user.User
 
 data class Association(
@@ -9,5 +9,5 @@ data class Association(
     val acronym: String = "",
     val fullName: String = "",
     val description: String = "",
-    val members: FirestoreReferenceList<User>
+    val members: ReferenceList<User>
 )

@@ -121,7 +121,7 @@ fun AssociationItem(association: Association, navigationAction: NavigationAction
 fun getFilteredAssociationsByCategoryAndAlphabeticalOrder(
     category: AssociationType
 ): List<MockAssociation> {
-  return mockAssociations.filter { it.type == category }.sortedBy { it.association.acronym }
+  return mockAssociations().filter { it.type == category }.sortedBy { it.association.acronym }
 }
 
 /** Returns the name of the category with the first letter in uppercase. */
