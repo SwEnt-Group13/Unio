@@ -3,6 +3,7 @@ package com.android.unio.model.association
 import com.android.unio.model.firestore.FirestorePaths.USER_PATH
 import com.android.unio.model.firestore.FirestoreReferenceList
 import com.android.unio.model.user.UserRepositoryFirestore
+import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.Dispatchers
@@ -24,6 +25,7 @@ import org.mockito.kotlin.any
 class ExploreViewModelTest {
   @Mock private lateinit var repository: AssociationRepositoryFirestore
   @Mock private lateinit var db: FirebaseFirestore
+  @Mock private lateinit var collectionReference: CollectionReference
 
   private lateinit var viewModel: ExploreViewModel
 
@@ -36,6 +38,8 @@ class ExploreViewModelTest {
     MockitoAnnotations.openMocks(this)
     Dispatchers.setMain(testDispatcher)
 
+    `when`(db.collection(any())).thenReturn(collectionReference)
+
     testAssociations =
         listOf(
             Association(
@@ -46,7 +50,9 @@ class ExploreViewModelTest {
                     "ACM is the world's largest educational and scientific computing society.",
                 members =
                     FirestoreReferenceList.fromList(
-                        listOf("1", "2"), db, USER_PATH, UserRepositoryFirestore::hydrate)),
+                        listOf("1", "2"),
+                        db.collection(USER_PATH),
+                        UserRepositoryFirestore::hydrate)),
             Association(
                 uid = "2",
                 acronym = "IEEE",
@@ -54,7 +60,9 @@ class ExploreViewModelTest {
                 description = "IEEE is the world's largest technical professional organization.",
                 members =
                     FirestoreReferenceList.fromList(
-                        listOf("3", "4"), db, USER_PATH, UserRepositoryFirestore::hydrate)))
+                        listOf("3", "4"),
+                        db.collection(USER_PATH),
+                        UserRepositoryFirestore::hydrate)))
 
     viewModel = ExploreViewModel(repository)
   }
