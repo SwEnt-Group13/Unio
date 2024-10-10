@@ -10,14 +10,14 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 
-class NavigationAction(private val navController: NavHostController) {
+open class NavigationAction(private val navController: NavHostController) {
 
   /**
    * Navigate to the specified screen.
    *
    * @param screen The screen to navigate to
    */
-  fun navigateTo(screen: String) {
+  open fun navigateTo(screen: String) {
     navController.navigate(screen)
   }
 
@@ -27,7 +27,7 @@ class NavigationAction(private val navController: NavHostController) {
    * @param tld Main destination to navigate to, clearing the back stack when navigating to a new
    *   one.
    */
-  fun navigateTo(tld: TopLevelDestination) {
+  open fun navigateTo(tld: TopLevelDestination) {
     navController.navigate(tld.route) {
       popUpTo(navController.graph.findStartDestination().id) {
         saveState = true
@@ -89,6 +89,7 @@ object Route {
 
 object Screen {
   const val AUTH = "Auth Screen"
+  const val WELCOME = "Welcome Screen"
   const val HOME = "Home Screen"
   const val MAP = "Map Screen"
   const val EXPLORE = "Explore Screen"

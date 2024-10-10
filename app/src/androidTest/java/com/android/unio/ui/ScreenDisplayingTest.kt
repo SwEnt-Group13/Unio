@@ -7,6 +7,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.navigation.NavHostController
 import com.android.unio.ui.association.AssociationProfile
 import com.android.unio.ui.authentication.LoginScreen
+import com.android.unio.ui.authentication.WelcomeScreen
 import com.android.unio.ui.event.EventCreationScreen
 import com.android.unio.ui.event.EventScreen
 import com.android.unio.ui.explore.ExploreScreen
@@ -24,15 +25,19 @@ import org.mockito.kotlin.mock
 
 class ScreenDisplayingTest() {
 
-  private lateinit var navHostController: NavHostController
   private lateinit var navigationAction: NavigationAction
 
   @get:Rule val composeTestRule = createComposeRule()
 
   @Before
   fun setUp() {
-    navHostController = mock { NavHostController::class.java }
-    navigationAction = NavigationAction(navHostController)
+    navigationAction = mock { NavHostController::class.java }
+  }
+
+  @Test
+  fun testWelcomeDisplayed() {
+    composeTestRule.setContent { WelcomeScreen(navigationAction) }
+    composeTestRule.onNodeWithTag("WelcomeScreen").assertIsDisplayed()
   }
 
   @Test
@@ -72,9 +77,8 @@ class ScreenDisplayingTest() {
 
   @Test
   fun testLoginDisplayed() {
-    composeTestRule.setContent { LoginScreen() }
+    composeTestRule.setContent { LoginScreen(navigationAction) }
     composeTestRule.onNodeWithTag("LoginScreen").assertIsDisplayed()
-    composeTestRule.onNodeWithText("Login screen").assertIsDisplayed()
   }
 
   @Test

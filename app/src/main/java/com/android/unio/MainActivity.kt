@@ -12,6 +12,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
 import com.android.unio.ui.association.AssociationProfile
+import com.android.unio.ui.authentication.LoginScreen
+import com.android.unio.ui.authentication.WelcomeScreen
 import com.android.unio.ui.explore.ExploreScreen
 import com.android.unio.ui.home.HomeScreen
 import com.android.unio.ui.navigation.NavigationAction
@@ -34,10 +36,11 @@ fun UnioApp() {
 
   // start destination should be Route.AUTH, but for now, we let it be Route.HOME for testing
   // purposes
-
-  // Remember that the route corresponds to the parent screen. The children screen should not
-  // have a route, and their composable should be initialized under their parent's NavGraph.
-  NavHost(navController = navController, startDestination = Route.HOME) {
+  NavHost(navController = navController, startDestination = Route.AUTH) {
+    navigation(startDestination = Screen.WELCOME, route = Route.AUTH) {
+      composable(Screen.WELCOME) { WelcomeScreen(navigationActions) }
+      composable(Screen.AUTH) { LoginScreen(navigationActions) }
+    }
     navigation(startDestination = Screen.HOME, route = Route.HOME) {
       composable(Screen.HOME) { HomeScreen(navigationActions) }
     }
