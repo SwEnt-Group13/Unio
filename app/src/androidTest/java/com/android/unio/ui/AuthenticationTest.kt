@@ -12,7 +12,6 @@ import org.junit.Rule
 import org.junit.Test
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
-import org.mockito.kotlin.timeout
 import org.mockito.kotlin.verify
 
 class AuthenticationTest {
