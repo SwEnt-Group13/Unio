@@ -6,6 +6,7 @@ import com.android.unio.model.firestore.FirestoreReferenceList
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.gms.tasks.Task
+import com.google.android.gms.tasks.Tasks
 import com.google.firebase.FirebaseApp
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
@@ -22,6 +23,7 @@ import org.mockito.Mockito.`when`
 import org.mockito.MockitoAnnotations
 import org.mockito.kotlin.any
 import org.mockito.kotlin.eq
+import org.mockito.kotlin.verify
 import org.robolectric.RobolectricTestRunner
 
 @RunWith(RobolectricTestRunner::class)
@@ -168,4 +170,82 @@ class AssociationRepositoryFirestoreTest {
         },
         onFailure = { exception -> assert(false) })
   }
+
+    @Test
+    fun testAddAssociationSuccess() {
+        `when`(documentReference.set(association1)).thenReturn(Tasks.forResult(null))
+
+        repository.addAssociation(
+            association1,
+            onSuccess = { assert(true) },
+            onFailure = { assert(false) }
+        )
+
+        verify(documentReference).set(association1)
+    }
+
+    @Test
+    fun testAddAssociationFailure() {
+        `when`(documentReference.set(association1)).thenReturn(Tasks.forException(Exception()))
+
+        repository.addAssociation(
+            association1,
+            onSuccess = { assert(false) },
+            onFailure = { assert(true) }
+        )
+
+        verify(documentReference).set(association1)
+    }
+
+    @Test
+    fun testUpdateAssociationSuccess() {
+        `when`(documentReference.set(association1)).thenReturn(Tasks.forResult(null))
+
+        repository.updateAssociation(
+            association1,
+            onSuccess = { assert(true) },
+            onFailure = { assert(false) }
+        )
+
+        verify(documentReference).set(association1)
+    }
+
+    @Test
+    fun testUpdateAssociationFailure() {
+        `when`(documentReference.set(association1)).thenReturn(Tasks.forException(Exception()))
+
+        repository.updateAssociation(
+            association1,
+            onSuccess = { assert(false) },
+            onFailure = { assert(true) }
+        )
+
+        verify(documentReference).set(association1)
+    }
+
+    @Test
+    fun testDeleteAssociationByIdSuccess() {
+        `when`(documentReference.delete()).thenReturn(Tasks.forResult(null))
+
+        repository.deleteAssociationById(
+            association1.uid,
+            onSuccess = { assert(true) },
+            onFailure = { assert(false) }
+        )
+
+        verify(documentReference).delete()
+    }
+
+    @Test
+    fun testDeleteAssociationByIdFailure() {
+        `when`(documentReference.delete()).thenReturn(Tasks.forException(Exception()))
+
+        repository.deleteAssociationById(
+            association1.uid,
+            onSuccess = { assert(false) },
+            onFailure = { assert(true) }
+        )
+
+        verify(documentReference).delete()
+    }
 }
