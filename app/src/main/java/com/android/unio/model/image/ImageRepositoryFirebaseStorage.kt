@@ -4,8 +4,9 @@ import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.UploadTask.TaskSnapshot
 import java.io.InputStream
 
-class ImageRepositoryFirebaseStorage(private val storage: FirebaseStorage = FirebaseStorage.getInstance()) :
-    ImageRepository {
+class ImageRepositoryFirebaseStorage(
+    private val storage: FirebaseStorage = FirebaseStorage.getInstance()
+) : ImageRepository {
 
     private val storageRef = storage.reference
 
@@ -16,7 +17,8 @@ class ImageRepositoryFirebaseStorage(private val storage: FirebaseStorage = Fire
     ) {
         val pathReference = storageRef.child(firebasePath)
 
-        pathReference.downloadUrl.addOnSuccessListener { url -> onSuccess(url.toString()) }
+        pathReference.downloadUrl
+            .addOnSuccessListener { url -> onSuccess(url.toString()) }
             .addOnFailureListener { e -> onFailure(e) }
     }
 
@@ -28,10 +30,8 @@ class ImageRepositoryFirebaseStorage(private val storage: FirebaseStorage = Fire
     ) {
         val uploadTask = storageRef.child(firebasePath).putStream(imageStream)
 
-        uploadTask.addOnSuccessListener { taskSnapshot -> onSuccess(taskSnapshot) }
+        uploadTask
+            .addOnSuccessListener { taskSnapshot -> onSuccess(taskSnapshot) }
             .addOnFailureListener { exception -> onFailure(exception) }
-
-
     }
-
 }

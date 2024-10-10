@@ -39,9 +39,7 @@ class ImageRepositoryFirebaseStorageTest {
     @Mock
     private lateinit var uploadTask: UploadTask
 
-
     private lateinit var repository: ImageRepositoryFirebaseStorage
-
 
     @Before
     fun setUp() {
@@ -57,7 +55,6 @@ class ImageRepositoryFirebaseStorageTest {
             uploadTask
         }
 
-
         `when`(task.addOnSuccessListener(any())).thenAnswer { invocation ->
             val callback = invocation.arguments[0] as OnSuccessListener<Uri>
             callback.onSuccess(uri)
@@ -65,8 +62,6 @@ class ImageRepositoryFirebaseStorageTest {
         }
 
         repository = ImageRepositoryFirebaseStorage(storage)
-
-
     }
 
     /**
@@ -79,12 +74,9 @@ class ImageRepositoryFirebaseStorageTest {
             "images/test.jpg",
             { stringUrl -> stringUrl.toUri() },
             { e -> throw e })
-
     }
 
-    /**
-     * Asserts that uploadImage calls the right functions.
-     */
+    /** Asserts that uploadImage calls the right functions. */
     @Test
     fun uploadImageTest() {
         repository.uploadImage(fileInputStream, "images/test.jpg", {}, {})
