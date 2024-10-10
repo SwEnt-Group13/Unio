@@ -2,8 +2,10 @@ package com.android.unio.model.events
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 
 /**
  * ViewModel class that manages the event list data and provides it to the UI. It uses an
@@ -31,9 +33,16 @@ class EventListViewModel(private val repository: EventRepository) : ViewModel() 
     loadEvents()
   }
 
-  /** Loads the list of events from the repository and updates the internal [MutableStateFlow]. */
+  /**
+   * Loads the list of events from the repository asynchronously using coroutines and updates the
+   * internal [MutableStateFlow].
+   */
   fun loadEvents() {
-    _events.value = repository.getEvents()
+    // Launch a coroutine in the ViewModel scope to load events asynchronously
+    viewModelScope.launch {
+      val eventList = repository.getEvents() // this will be asynchronous if the repository is async
+      _events.value = eventList
+    }
   }
 
   /**
@@ -43,18 +52,18 @@ class EventListViewModel(private val repository: EventRepository) : ViewModel() 
   companion object {
     /** A factory for creating [EventListViewModel] instances with the [EventRepositoryMock]. */
     val Factory: ViewModelProvider.Factory =
-        object : ViewModelProvider.Factory {
-          /**
-           * Creates an instance of the [EventListViewModel].
-           *
-           * @param modelClass The class of the ViewModel to create.
-           * @return The created ViewModel instance.
-           * @throws IllegalArgumentException if the [modelClass] does not match.
-           */
-          @Suppress("UNCHECKED_CAST")
-          override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return EventListViewModel(EventRepositoryMock()) as T
-          }
+      object : ViewModelProvider.Factory {
+        /**
+         * Creates an instance of the [EventListViewModel].
+         *
+         * @param modelClass The class of the ViewModel to create.
+         * @return The created ViewModel instance.
+         * @throws IllegalArgumentException if the [modelClass] does not match.
+         */
+        @Suppress("UNCHECKED_CAST")
+        override fun <T : ViewModel> create(modelClass: Class<T>): T {
+          return EventListViewModel(EventRepositoryMock()) as T
         }
+      }
   }
 }
