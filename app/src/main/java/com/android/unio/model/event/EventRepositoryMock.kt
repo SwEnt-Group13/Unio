@@ -1,5 +1,7 @@
 package com.android.unio.model.event
 
+import com.android.unio.model.association.Association
+import com.android.unio.model.firestore.MockReferenceList
 import com.android.unio.model.map.Location
 import com.google.firebase.Timestamp
 import java.util.Date
@@ -26,8 +28,8 @@ open class EventRepositoryMock : EventRepository {
               Event(
                   uid = UUID.randomUUID().toString(),
                   title = "WESKIC",
-                  organisers = listOf("Organizer 1"),
-                  taggedAssociations = listOf("Coaching IC"),
+                  organisers = MockReferenceList<Association>(),
+                  taggedAssociations = MockReferenceList<Association>(),
                   image = "weskic",
                   description =
                       "The Summer Festival features live music, food stalls, and various activities for all ages.",
@@ -39,8 +41,8 @@ open class EventRepositoryMock : EventRepository {
               Event(
                   uid = UUID.randomUUID().toString(),
                   title = "Oktoberweek",
-                  organisers = listOf("Organizer 2"),
-                  taggedAssociations = listOf("Beer Lovers Association"),
+                  organisers = MockReferenceList<Association>(),
+                  taggedAssociations = MockReferenceList<Association>(),
                   image = "oktoberweek",
                   description =
                       "An evening of networking with industry leaders and innovators. Don't miss out!",
@@ -52,8 +54,8 @@ open class EventRepositoryMock : EventRepository {
               Event(
                   uid = UUID.randomUUID().toString(),
                   title = "SwissTech Talk",
-                  organisers = listOf("Organizer 3"),
-                  taggedAssociations = listOf("Tech Enthusiasts"),
+                  organisers = MockReferenceList<Association>(),
+                  taggedAssociations = MockReferenceList<Association>(),
                   image = "swisstechtalk",
                   description =
                       "Learn Kotlin from scratch with real-world examples and expert guidance.",
@@ -65,8 +67,8 @@ open class EventRepositoryMock : EventRepository {
               Event(
                   uid = UUID.randomUUID().toString(),
                   title = "Lapin Vert",
-                  organisers = listOf("Organizer 4"),
-                  taggedAssociations = listOf("Art Community"),
+                  organisers = MockReferenceList<Association>(),
+                  taggedAssociations = MockReferenceList<Association>(),
                   image = "lapin_vert",
                   description =
                       "Join us for an unforgettable evening featuring local artists and musicians.",
@@ -78,8 +80,8 @@ open class EventRepositoryMock : EventRepository {
               Event(
                   uid = UUID.randomUUID().toString(),
                   title = "Choose your coach!",
-                  organisers = listOf("Organizer 5"),
-                  taggedAssociations = listOf("Sports Enthusiasts"),
+                  organisers = MockReferenceList<Association>(),
+                  taggedAssociations = MockReferenceList<Association>(),
                   image = "chooseyourcoach",
                   description =
                       "Participate in various sports activities and enjoy food and entertainment.",
@@ -91,8 +93,8 @@ open class EventRepositoryMock : EventRepository {
               Event(
                   uid = UUID.randomUUID().toString(),
                   title = "Concert",
-                  organisers = listOf("Organizer 6"),
-                  taggedAssociations = listOf("Music Lovers"),
+                  organisers = MockReferenceList<Association>(),
+                  taggedAssociations = MockReferenceList<Association>(),
                   image = "antoinoxlephar",
                   description =
                       "A workshop dedicated to teaching strategies for successful social media marketing.",
@@ -104,8 +106,8 @@ open class EventRepositoryMock : EventRepository {
               Event(
                   uid = UUID.randomUUID().toString(),
                   title = "Jam Session: Local Artists",
-                  organisers = listOf("Organizer 7"),
-                  taggedAssociations = listOf("Local Talent"),
+                  organisers = MockReferenceList<Association>(),
+                  taggedAssociations = MockReferenceList<Association>(),
                   image = "photo_2024_10_08_14_57_48",
                   description =
                       "An evening of music with local artists. Bring your instruments or just enjoy the show!",
@@ -128,7 +130,9 @@ open class EventRepositoryMock : EventRepository {
   ) {
     // Filter mock events by tagged associations
     getEvents(
-        { events -> onSuccess(events.filter { it.taggedAssociations.contains(association) }) },
+        { events ->
+          onSuccess(events.filter { it.taggedAssociations.list.value.isEmpty() })
+        }, // Now filtering for empty tagged associations
         onFailure)
   }
 
