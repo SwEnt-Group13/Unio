@@ -26,19 +26,18 @@ class AssociationRepositoryFirestore(private val db: FirebaseFirestore) : Associ
       onSuccess: (List<Association>) -> Unit,
       onFailure: (Exception) -> Unit
   ) {
-      performFirestoreOperation(
-          db.collection(ASSOCIATION_PATH).get(),
-          onSuccess = { result ->
-              val associations = mutableListOf<Association>()
-              for (document in result) {
-                  val association = hydrate(document)
+    performFirestoreOperation(
+        db.collection(ASSOCIATION_PATH).get(),
+        onSuccess = { result ->
+          val associations = mutableListOf<Association>()
+          for (document in result) {
+            val association = hydrate(document)
 
-                  associations.add(association)
-              }
-              onSuccess(associations)
-          },
-          onFailure = { exception -> onFailure(exception) }
-      )
+            associations.add(association)
+          }
+          onSuccess(associations)
+        },
+        onFailure = { exception -> onFailure(exception) })
   }
 
   override fun getAssociationWithId(
@@ -46,11 +45,10 @@ class AssociationRepositoryFirestore(private val db: FirebaseFirestore) : Associ
       onSuccess: (Association) -> Unit,
       onFailure: (Exception) -> Unit
   ) {
-      performFirestoreOperation(
-          db.collection(ASSOCIATION_PATH).document(id).get(),
-          onSuccess = { document -> onSuccess(hydrate(document)) },
-          onFailure = { exception -> onFailure(exception) }
-      )
+    performFirestoreOperation(
+        db.collection(ASSOCIATION_PATH).document(id).get(),
+        onSuccess = { document -> onSuccess(hydrate(document)) },
+        onFailure = { exception -> onFailure(exception) })
   }
 
   override fun addAssociation(
@@ -85,9 +83,6 @@ class AssociationRepositoryFirestore(private val db: FirebaseFirestore) : Associ
         onSuccess = { onSuccess() },
         onFailure)
   }
-
-
-
 
   /** Performs a Firestore operation and calls the appropriate callback based on the result. */
   private fun <T> performFirestoreOperation(
