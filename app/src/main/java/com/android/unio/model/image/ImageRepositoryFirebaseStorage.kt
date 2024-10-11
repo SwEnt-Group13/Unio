@@ -9,8 +9,8 @@ class ImageRepositoryFirebaseStorage(
 
   private val storageRef = storage.reference
 
-    /** Helper function that gets the downloadUrl of an image. Is used after calling uploadImage. */
-    private fun getImageUrl(
+  /** Helper function that gets the downloadUrl of an image. Is used after calling uploadImage. */
+  private fun getImageUrl(
       firebasePath: String,
       onSuccess: (String) -> Unit,
       onFailure: (Exception) -> Unit
@@ -22,19 +22,19 @@ class ImageRepositoryFirebaseStorage(
         .addOnFailureListener { e -> onFailure(e) }
   }
 
-    /** Uploads an image stream to Firebase Storage. Gives a downloadUrl to onSuccess. */
+  /** Uploads an image stream to Firebase Storage. Gives a downloadUrl to onSuccess. */
   override fun uploadImage(
       imageStream: InputStream,
       firebasePath: String,
       onSuccess: (String) -> Unit,
       onFailure: (Exception) -> Unit
   ) {
-        val path = storageRef.child(firebasePath)
-        val uploadTask = path.putStream(imageStream)
+    val path = storageRef.child(firebasePath)
+    val uploadTask = path.putStream(imageStream)
 
     uploadTask
         .addOnSuccessListener {
-            getImageUrl(firebasePath, onSuccess = onSuccess, onFailure = onFailure)
+          getImageUrl(firebasePath, onSuccess = onSuccess, onFailure = onFailure)
         }
         .addOnFailureListener { exception -> onFailure(exception) }
   }
