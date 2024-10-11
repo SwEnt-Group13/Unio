@@ -58,17 +58,12 @@ class ImageRepositoryFirebaseStorageTest {
   }
 
   /**
-   * Asserts that getImageUrl calls the right functions and returns a string that can be converted
+   * Asserts that uploadImage calls the right functions and returns a string that can be converted
    * to Uri format.
    */
   @Test
-  fun getImageUrlTest() {
-    repository.getImageUrl("images/test.jpg", { stringUrl -> stringUrl.toUri() }, { e -> throw e })
-  }
-
-  /** Asserts that uploadImage calls the right functions. */
-  @Test
   fun uploadImageTest() {
-    repository.uploadImage(fileInputStream, "images/test.jpg", {}, {})
+    repository.uploadImage(
+        fileInputStream, "images/test.jpg", { stringUrl -> stringUrl.toUri() }, { e -> throw e })
   }
 }
