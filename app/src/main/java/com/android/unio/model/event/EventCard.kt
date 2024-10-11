@@ -10,7 +10,9 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -29,78 +31,145 @@ import androidx.compose.ui.unit.sp
 import com.android.unio.R
 
 @Composable
-fun EventItem(event: Event, onClick: () -> Unit) {
+fun EventCard(event: Event, onClick: () -> Unit) {
     val backgroundColor = Color(0xFF2596BE)
     val backgroundImage = painterResource(id = R.drawable.photo_2024_10_08_14_57_48)
 
-    Box(
-        modifier =
-        Modifier.fillMaxWidth()
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
             .padding(vertical = 8.dp)
             .clickable(onClick = onClick)
             .testTag("event_EventListItem")
             .clip(RoundedCornerShape(10.dp))
-            .background(Color.Transparent)) {
-        // Background Image
+            .background(Color(0xFFF0ECF4))
+    ) {
+
         Image(
             painter = DynamicImage(event.image),
             contentDescription = null,
-            modifier =
-            Modifier.matchParentSize() // Ensure the image takes up the full size of the Box
-                .clip(RoundedCornerShape(10.dp)) // Apply the same shape as the box
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(100.dp)
+                .clip(RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp))
                 .testTag("event_EventImage"),
-            contentScale = ContentScale.Crop // Crop the image to fit
+            contentScale = ContentScale.Crop // crop the image to fit
         )
 
-        Column(modifier = Modifier.padding(16.dp)) {
-            Spacer(modifier = Modifier.height(8.dp))
 
-            // Event Title
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Box(
-                    modifier =
-                    Modifier.clip(RoundedCornerShape(4.dp))
-                        .background(addAlphaToColor(Color.Black, 120))) {
+        Column(modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp)) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.weight(1f)
+                ) {
+
                     Text(
-                        modifier =
-                        Modifier.padding(vertical = 1.dp, horizontal = 4.dp)
-                            .testTag("event_EventTitle"),
+                        modifier = Modifier
+                            .padding(vertical = 1.dp, horizontal = 4.dp)
+                            .testTag("event_EventTitle")
+                            .wrapContentWidth(), // Make sure the text only takes as much space as needed
                         text = event.title,
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
-                        color = Color.White)
+                        color = Color.Black
+                    )
+
+                    Spacer(modifier = Modifier.width(6.dp))
+
+
+                    Box(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(4.dp))
+                            .background(addAlphaToColor(event.types.get(0).color, 200))
+                            .wrapContentWidth()
+                    ) {
+                        Text(
+                            text = event.types.get(0).text,
+                            modifier = Modifier
+                                .padding(horizontal = 4.dp, vertical = 4.dp)
+                                .testTag("event_EventMainType"),
+                            color = Color.Black,
+                            style = TextStyle(fontSize = 8.sp)
+                        )
+                    }
                 }
 
                 Spacer(modifier = Modifier.width(6.dp))
-                Box(
-                    modifier =
-                    Modifier.clip(RoundedCornerShape(4.dp))
-                        .background(addAlphaToColor(event.types.get(0).color, 200))) {
+
+
+                Image(
+                    painter = painterResource(id = R.drawable.clic),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(24.dp)
+                        .align(Alignment.CenterVertically)
+                        .testTag("event_ClicImage")
+                )
+            }
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.weight(1f)
+                ) {
+
                     Text(
-                        text = event.types.get(0).text,
-                        modifier =
-                        Modifier.padding(horizontal = 4.dp, vertical = 4.dp)
-                            .testTag("event_EventMainType"),
-                        color = Color.White,
-                        style = TextStyle(fontSize = 8.sp)
+                        modifier = Modifier
+                            .padding(vertical = 1.dp, horizontal = 4.dp)
+                            .testTag("event_EventLocation")
+                            .wrapContentWidth(), // Make sure the text only takes as much space as needed
+                        text = event.location.name,
+                        style = MaterialTheme.typography.titleMedium,
+                        color = Color.Black
                     )
                 }
-            }
 
-            Spacer(modifier = Modifier.height(6.dp))
 
-            Box(
-                modifier =
-                Modifier.clip(RoundedCornerShape(4.dp))
-                    .background(addAlphaToColor(Color.Black, 120))) {
+                Spacer(modifier = Modifier.width(1.dp))
+
                 Text(
-                    text = event.catchyDescription,
-                    style = TextStyle(fontSize = 10.sp),
-                    color = Color.White,
-                    modifier = Modifier.padding(vertical = 2.dp).testTag("event_CatchyDescription"))
+                    modifier = Modifier
+                        .padding(vertical = 1.dp, horizontal = 4.dp)
+                        .testTag("event_EventDate")
+                        .wrapContentWidth(),
+                    text = formatTimestampToMMDD(event.date),
+                    style = MaterialTheme.typography.titleMedium,
+                    color = Color.Black
+                )
+
+                Spacer(modifier = Modifier.width(1.dp))
+
+                Text(
+                    modifier = Modifier
+                        .testTag("event_EventTime")
+                        .wrapContentWidth(),
+                    text = formatTimestampToHHMM(event.date),
+                    style = MaterialTheme.typography.titleMedium,
+                    color = Color.Black
+                )
+
+
             }
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                modifier = Modifier
+                    .testTag("event_EventCatchyDescription")
+                    .wrapContentWidth(),
+                text = event.catchyDescription,
+                style = TextStyle(fontSize = 12.sp),
+                color = Color.Black
+            )
+
+
         }
     }
 }

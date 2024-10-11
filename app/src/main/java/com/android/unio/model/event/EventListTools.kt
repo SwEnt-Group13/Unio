@@ -6,6 +6,10 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import com.android.unio.R
+import com.google.firebase.Timestamp
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 fun addAlphaToColor(color: Color, alpha: Int): Color {
     val red = (color.red * 255).toInt()
@@ -101,3 +105,25 @@ fun getContrastingColor(backgroundColor: Color): Color {
         ?: Color.White
 }
 
+fun formatTimestampToMMDD(timestamp: Timestamp): String {
+
+    if (timestamp == null) {
+        return "Invalid Timestamp"
+    }
+
+    val date = timestamp.toDate()
+    val dateFormat = SimpleDateFormat("MM/dd", Locale.getDefault())
+    return dateFormat.format(date)
+}
+
+fun formatTimestampToHHMM(timestamp: Timestamp?): String {
+    if (timestamp == null) {
+        return "Invalid Timestamp"
+    }
+
+    val date = timestamp.toDate()
+
+
+    val timeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
+    return timeFormat.format(date)
+}

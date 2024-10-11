@@ -34,7 +34,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.android.unio.R
 import com.android.unio.model.event.DynamicImage
 import com.android.unio.model.event.Event
-import com.android.unio.model.event.EventItem
+import com.android.unio.model.event.EventCard
 import com.android.unio.model.event.EventListViewModel
 import com.android.unio.model.event.EventRepository
 import com.android.unio.model.event.EventRepositoryMock
@@ -103,16 +103,16 @@ fun EventListOverview(
                       style =
                           TextStyle(
                               fontSize =
-                                  24.sp // Set the font size to 24 sp (scale-independent pixels)
+                                  24.sp
                               ))
                   Spacer(modifier = Modifier.height(8.dp))
 
-                  // Row with clickable tabs
+
                   Row(
                       modifier = Modifier.fillMaxWidth(),
-                      horizontalArrangement = Arrangement.SpaceBetween // Aligns the tabs evenly
+                      horizontalArrangement = Arrangement.SpaceBetween
                       ) {
-                        // Clickable text for "All"
+
                         Text(
                             text = "All",
                             color = if (selectedTab == "All") Color.White else Color.Gray,
@@ -189,7 +189,7 @@ fun EventListOverview(
                 contentPadding = PaddingValues(vertical = 8.dp),
                 modifier = Modifier.fillMaxSize().padding(horizontal = 32.dp)) {
                   items(events) { event ->
-                    EventItem(event = event, onClick = { onEventClick(event) })
+                    EventCard(event = event, onClick = { onEventClick(event) })
                   }
                 }
           } else {
