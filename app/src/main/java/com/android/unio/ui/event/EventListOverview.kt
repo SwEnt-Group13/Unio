@@ -32,11 +32,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.android.unio.R
+import com.android.unio.model.event.DynamicImage
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventListViewModel
 import com.android.unio.model.event.EventRepository
 import com.android.unio.model.event.EventRepositoryMock
+import com.android.unio.model.event.EventListTools
+import com.android.unio.model.event.addAlphaToColor
 import kotlinx.coroutines.launch
+
 
 @Preview(showBackground = true)
 @Composable
@@ -278,105 +282,9 @@ fun EventItem(event: Event, onClick: () -> Unit) {
       }
 }
 
-// Extension function to convert pixel size to dp
-
-fun getContrastingColor(backgroundColor: Color): Color {
-  // Define a list of candidate colors
-  val candidateColors =
-      listOf(
-          Color.Black,
-          Color.White,
-          Color.Red,
-          Color.Green,
-          Color.Blue,
-          Color.Yellow,
-          Color.Cyan,
-          Color.Magenta,
-          Color.Gray)
-
-  // Extract RGB components from the Color
-  val rBg = backgroundColor.red
-  val gBg = backgroundColor.green
-  val bBg = backgroundColor.blue
-
-  // Calculate the luminance of the background color
-  val luminanceBg = 0.2126 * rBg + 0.7152 * gBg + 0.0722 * bBg
-
-  // Function to calculate the contrast ratio
-  fun contrastRatio(color: Color): Double {
-    val r = color.red
-    val g = color.green
-    val b = color.blue
-
-    // Calculate the luminance of the candidate color
-    val luminanceColor = 0.2126 * r + 0.7152 * g + 0.0722 * b
-
-    // Calculate the contrast ratio (luminanceColor + 0.05) / (luminanceBg + 0.05)
-    return if (luminanceBg < luminanceColor) {
-      (luminanceColor + 0.05) / (luminanceBg + 0.05)
-    } else {
-      (luminanceBg + 0.05) / (luminanceColor + 0.05)
-    }
-  }
-
-  // Find the color with the highest contrast ratio
-  return candidateColors.maxByOrNull { contrastRatio(it) }
-      ?: Color.White // Fallback to white if no candidates
-}
-
-// these twos functions might be useful later
-
-/*fun getContrastingColorBlackAndWhite(backgroundColor: Color): Color {
-    // Extract RGB components from the Color
-    val r = backgroundColor.red
-    val g = backgroundColor.green
-    val b = backgroundColor.blue
-
-    // Calculate luminance using the formula
-    val luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b
-
-    // Return black if the luminance is high, otherwise return white
-    return if (luminance > 0.5) Color.Black else Color.White
-}
 
 
 
-fun darkenColor(color: Color, factor: Float): Color {
-    val r = (color.red * 255).toInt()
-    val g = (color.green * 255).toInt()
-    val b = (color.blue * 255).toInt()
 
-    // Darken the color by a factor (0.0 to 1.0)
-    val darkenedR = (r * (1 - factor)).coerceIn(0f, 255f).toInt()
-    val darkenedG = (g * (1 - factor)).coerceIn(0f, 255f).toInt()
-    val darkenedB = (b * (1 - factor)).coerceIn(0f, 255f).toInt()
 
-    return Color(darkenedR, darkenedG, darkenedB)
-}*/
 
-fun addAlphaToColor(color: Color, alpha: Int): Color {
-  // Extract RGB components
-  val red = (color.red * 255).toInt()
-  val green = (color.green * 255).toInt()
-  val blue = (color.blue * 255).toInt()
-
-  // Return a new Color with the specified alpha
-  return Color(red, green, blue, alpha)
-}
-
-@Composable
-fun DynamicImage(eventImageName: String): Painter {
-  val context = LocalContext.current
-
-  // Get the resource ID using the string name
-  val resourceId = context.resources.getIdentifier(eventImageName, "drawable", context.packageName)
-
-  // Load the image using painterResource
-  val painter =
-      if (resourceId != 0) {
-        return painterResource(id = resourceId)
-      } else {
-        // Fallback to a default image or handle the case when the image doesn't exist
-        return painterResource(id = R.drawable.weskic) // Replace with your default image
-      }
-}
