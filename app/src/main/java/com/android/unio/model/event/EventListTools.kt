@@ -101,6 +101,3 @@ fun getContrastingColor(backgroundColor: Color): Color {
         ?: Color.White
 }
 
-class EventListTools {
-
-}
