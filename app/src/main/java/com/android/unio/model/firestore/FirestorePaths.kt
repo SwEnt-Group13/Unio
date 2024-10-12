@@ -1,7 +1,15 @@
 package com.android.unio.model.firestore
 
+import com.android.unio.R
+import com.android.unio.resources.ResourceManager
+
 object FirestorePaths {
-  const val ASSOCIATION_PATH = "associations"
-  const val USER_PATH = "users"
-  const val EVENT_PATH = "events"
+  val ASSOCIATION_PATH: String
+    get() = ResourceManager.getString(R.string.firestore_path_association)
+
+  val USER_PATH: String
+    get() = ResourceManager.getString(R.string.firestore_path_user)
+
+  val EVENT_PATH: String
+    get() = ResourceManager.getString(R.string.firestore_path_event)
 }
