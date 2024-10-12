@@ -12,7 +12,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
 import com.android.unio.ui.association.AssociationProfile
-import com.android.unio.ui.authentication.LoginScreen
+import com.android.unio.ui.authentication.AccountDetails
+import com.android.unio.ui.authentication.EmailVerificationScreen
 import com.android.unio.ui.authentication.WelcomeScreen
 import com.android.unio.ui.explore.ExploreScreen
 import com.android.unio.ui.home.HomeScreen
@@ -20,7 +21,10 @@ import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Route
 import com.android.unio.ui.navigation.Screen
 import com.android.unio.ui.saved.SavedScreen
+import com.android.unio.ui.theme.AppTheme
 import com.android.unio.ui.user.UserProfileScreen
+import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
 
 class MainActivity : ComponentActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,12 +38,25 @@ fun UnioApp() {
   val navController = rememberNavController()
   val navigationActions = NavigationAction(navController)
 
-  // start destination should be Route.AUTH, but for now, we let it be Route.HOME for testing
-  // purposes
+  // Redirect user based on authentication state
+  Firebase.auth.addAuthStateListener { auth ->
+    val user = auth.currentUser
+    if (user != null) {
+      if (user.isEmailVerified) {
+        navController.navigate(Route.HOME)
+      } else {
+        navController.navigate(Screen.EMAIL_VERIFICATION)
+      }
+    } else {
+      navController.navigate(Route.AUTH)
+    }
+  }
+
   NavHost(navController = navController, startDestination = Route.AUTH) {
     navigation(startDestination = Screen.WELCOME, route = Route.AUTH) {
       composable(Screen.WELCOME) { WelcomeScreen(navigationActions) }
-      composable(Screen.AUTH) { LoginScreen(navigationActions) }
+      composable(Screen.EMAIL_VERIFICATION) { EmailVerificationScreen(navigationActions) }
+      composable(Screen.ACCOUNT_DETAILS) { AccountDetails(navigationActions) }
     }
     navigation(startDestination = Screen.HOME, route = Route.HOME) {
       composable(Screen.HOME) { HomeScreen(navigationActions) }
