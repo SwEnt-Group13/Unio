@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- String values for French language -->
+<!-- example in code : val greeting = getString(R.string.greeting) -->
+<resources>
+    <!-- App name and activity titles -->
+    <string name="app_name">Unio</string>
+    <string name="title_activity_main">MainActivity</string>
+
+    <!-- EventListOverview Strings -->
+    <string name="event_upcomingEvents">Évènements à venir</string>
+    <string name="event_tab_all">Tous</string>
+    <string name="event_tab_following">Suivis</string>
+    <string name="event_add_event">Ajouter un évènement</string>
+    <string name="event_no_events_available">Aucun évènement disponible.</string>
+
+    <!-- Event Card Strings -->
+    <string name="event_event_title">Titre de lévènement</string>
+    <string name="event_catchy_description">Description accrocheuse</string>
+
+    <!-- Accessibility and Content Descriptions -->
+    <string name="event_map_button_description">Ouvrir la carte pour ajouter un évènement</string>
+    <string name="event_image_description">Image de l\'évènement</string>
+
+    <!-- Event Types Strings from EventType.kt -->
+    <string name="event_type_festival">Festival</string>
+    <string name="event_type_aperitif">Aperitif</string>
+    <string name="event_type_night_party">Soirée</string>
+    <string name="event_type_jam">Jam</string>
+    <string name="event_type_networking">Réseautage</string>
+    <string name="event_type_sport">Sport</string>
+    <string name="event_type_trip">Voyage</string>
+    <string name="event_type_other">Autre</string>
+
+    <!-- EventRepositoryFirestore Strings -->
+    <string name="event_error_converting_document">Erreur lors de la conversion du document de la base de données en objet Évènement</string>
+    <string name="event_error_no_id_provided">Aucun ID dévènement fourni</string>
+    <string name="event_error_failed_to_add">Échec de l\'ajout de lévènement</string>
+    <string name="event_error_failed_to_delete">Échec de la suppression de l\'évènement</string>
+
+    <!-- Login Screen Strings -->
+    <string name="login_email_label">Entrez votre adresse universitaire</string>
+    <string name="login_password_label">Et votre mot de passe</string>
+    <string name="login_continue_button">Continuer</string>
+
+    <!-- Welcome Screen Strings -->
+    <string name="welcome_message">La plus grande plateforme de vie universitaire au monde !</string>
+    <string name="welcome_login_button">Se connecter</string>
+    <string name="welcome_skip_home_button">Passer à l\'accueil</string>
+
+    <!-- Explore Screen Strings -->
+    <string name="explore_search_placeholder">Recherche</string>
+
+</resources>
+

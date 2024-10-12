@@ -1,5 +1,76 @@
+<!-- String values for default (english) language -->
+<!-- example in code : val greeting = getString(R.string.greeting) -->
+<!-- You must implement a version of the string in every language or mark it as untranslatable ! -->
 <resources>
+    <!-- App name and activity titles -->
     <string name="app_name">Unio</string>
     <string name="title_activity_main">MainActivity</string>
-    <string name="title_activity_second">SecondActivity</string>
+
+    <!-- EventListOverview Strings -->
+    <string name="event_upcomingEvents">Upcoming Events</string>
+    <string name="event_tab_all">All</string>
+    <string name="event_tab_following">Following</string>
+    <string name="event_add_event">Add Event</string>
+    <string name="event_no_events_available">No events available.</string>
+
+    <!-- Event Card Strings -->
+    <string name="event_event_title">Event Title</string>
+    <string name="event_catchy_description">Catchy Description</string>
+
+    <!-- Accessibility and Content Descriptions -->
+    <string name="event_map_button_description">Open Map to Add Event</string>
+    <string name="event_image_description">Event Image</string>
+
+    <!-- Event Types Strings from EventType.kt -->
+    <string name="event_type_festival">Festival</string>
+    <string name="event_type_aperitif">Aperitif</string>
+    <string name="event_type_night_party">Night Party</string>
+    <string name="event_type_jam">Jam</string>
+    <string name="event_type_networking">Networking</string>
+    <string name="event_type_sport">Sport</string>
+    <string name="event_type_trip">Trip</string>
+    <string name="event_type_other">Other</string>
+
+    <!-- EventRepositoryFirestore Strings -->
+    <string name="event_error_converting_document" translatable="false">Error while converting db document to Event object</string>
+    <string name="event_error_no_id_provided" translatable="false">No event ID was provided</string>
+    <string name="event_error_failed_to_add" translatable="false">Failed to add event</string>
+    <string name="event_error_failed_to_delete" translatable="false">Failed to delete event</string>
+
+    <!-- Firestore Paths Strings from FirestorePaths.kt -->
+    <string name="firestore_path_association" translatable="false">associations</string>
+    <string name="firestore_path_user" translatable="false">users</string>
+    <string name="firestore_path_event" translatable="false">events</string>
+
+    <!-- Login Screen Strings -->
+    <string name="login_email_label">Enter your university address</string>
+    <string name="login_password_label">And your password</string>
+    <string name="login_continue_button">Continue</string>
+
+    <!-- Welcome Screen Strings -->
+    <string name="welcome_message">The world’s largest campus life platform!</string>
+    <string name="welcome_login_button">Login</string>
+    <string name="welcome_skip_home_button">Skip to Home</string>
+
+    <!-- Explore Screen Strings -->
+    <string name="explore_search_placeholder">Search</string>
+
+    <!-- Navigation Strings -->
+    <string name="route_home" translatable="false">Home</string>
+    <string name="route_map" translatable="false">Map</string>
+    <string name="route_auth" translatable="false">Auth</string>
+    <string name="route_explore" translatable="false">Explore</string>
+    <string name="route_saved" translatable="false">Saved</string>
+    <string name="route_my_profile" translatable="false">My Profile</string>
+
+    <!-- Screen Strings -->
+    <string name="screen_auth" translatable="false">Auth Screen</string>
+    <string name="screen_welcome" translatable="false">Welcome Screen</string>
+    <string name="screen_home" translatable="false">Home Screen</string>
+    <string name="screen_map" translatable="false">Map Screen</string>
+    <string name="screen_explore" translatable="false">Explore Screen</string>
+    <string name="screen_saved" translatable="false">Saved Screen</string>
+    <string name="screen_my_profile" translatable="false">My Profile Screen</string>
+    <string name="screen_association" translatable="false">Association Screen</string>
 </resources>
+
