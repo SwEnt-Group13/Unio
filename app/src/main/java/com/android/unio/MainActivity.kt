@@ -29,7 +29,7 @@ import com.google.firebase.auth.auth
 class MainActivity : ComponentActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    setContent { Surface(modifier = Modifier.fillMaxSize()) { UnioApp() } }
+    setContent { Surface(modifier = Modifier.fillMaxSize()) { AppTheme { UnioApp() } } }
   }
 }
 
