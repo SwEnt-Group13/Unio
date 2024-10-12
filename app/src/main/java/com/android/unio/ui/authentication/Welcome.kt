@@ -20,33 +20,30 @@ import com.android.unio.ui.navigation.Screen
 
 @Composable
 fun WelcomeScreen(navigationAction: NavigationAction) {
-    Scaffold(modifier = Modifier.fillMaxSize().testTag("WelcomeScreen")) {
-        Column(
-            modifier = Modifier.padding(it).padding(vertical = 200.dp, horizontal = 100.dp),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            // Uncomment and update when logo resource is available
-            // Image(
-            //     painter = painterResource(id = R.drawable.ic_launcher_foreground),
-            //     contentDescription = "Unio logo",
-            //     modifier = Modifier.padding(16.dp)
-            // )
+  Scaffold(modifier = Modifier.fillMaxSize().testTag("WelcomeScreen")) {
+    Column(
+        modifier = Modifier.padding(it).padding(vertical = 200.dp, horizontal = 100.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally) {
+          // Uncomment and update when logo resource is available
+          // Image(
+          //     painter = painterResource(id = R.drawable.ic_launcher_foreground),
+          //     contentDescription = "Unio logo",
+          //     modifier = Modifier.padding(16.dp)
+          // )
 
-            Text(
-                text = stringResource(id = R.string.welcome_message), // Updated
-                textAlign = TextAlign.Center,
-                modifier = Modifier.padding(16.dp)
-            )
-            Button(
-                onClick = { navigationAction.navigateTo(Screen.AUTH) },
-                modifier = Modifier.testTag("LoginButton").padding(16.dp)
-            ) {
+          Text(
+              text = stringResource(id = R.string.welcome_message), // Updated
+              textAlign = TextAlign.Center,
+              modifier = Modifier.padding(16.dp))
+          Button(
+              onClick = { navigationAction.navigateTo(Screen.AUTH) },
+              modifier = Modifier.testTag("LoginButton").padding(16.dp)) {
                 Text(stringResource(id = R.string.welcome_login_button)) // Updated
-            }
-            Button(onClick = { navigationAction.navigateTo(Screen.HOME) }) {
-                Text("<Debug> " + stringResource(id = R.string.welcome_skip_home_button)) // Updated
-            }
+          }
+          Button(onClick = { navigationAction.navigateTo(Screen.HOME) }) {
+            Text("<Debug> " + stringResource(id = R.string.welcome_skip_home_button)) // Updated
+          }
         }
-    }
+  }
 }
