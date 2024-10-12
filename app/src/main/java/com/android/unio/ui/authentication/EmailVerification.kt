@@ -80,18 +80,13 @@ fun EmailVerificationScreen(navigationAction: NavigationAction) {
                     modifier = Modifier.fillMaxWidth(0.8f),
                     style = AppTypography.bodyMedium)
                 OutlinedButton(
-                  onClick = { resendEmail() },
+                    onClick = { resendEmail() },
                 ) {
                   Text("Resend email")
                 }
 
-                Button(
-                  onClick = { checkEmailVerification() }
-                ) {
-                  Icon(
-                    Icons.Outlined.Refresh,
-                    contentDescription = "Refresh"
-                  )
+                Button(onClick = { checkEmailVerification() }) {
+                  Icon(Icons.Outlined.Refresh, contentDescription = "Refresh")
                   Spacer(Modifier.width(8.dp))
                   Text("Refresh")
                 }

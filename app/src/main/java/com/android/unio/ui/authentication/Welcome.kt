@@ -130,17 +130,20 @@ fun WelcomeScreen(navigationAction: NavigationAction) {
                   value = password,
                   onValueChange = { password = it },
                   label = { Text("Enter your password") },
-                trailingIcon = {
-                  IconButton(
-                    onClick = { showPassword = !showPassword },
-                  ) {
-                    Icon(
-                      if (showPassword) Icons.Filled.VisibilityOff else Icons.Filled.Visibility,
-                      contentDescription = if (showPassword) "Hide password" else "Show password",
-                    )
-                  }
-                },
-                  visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
+                  trailingIcon = {
+                    IconButton(
+                        onClick = { showPassword = !showPassword },
+                    ) {
+                      Icon(
+                          if (showPassword) Icons.Filled.VisibilityOff else Icons.Filled.Visibility,
+                          contentDescription =
+                              if (showPassword) "Hide password" else "Show password",
+                      )
+                    }
+                  },
+                  visualTransformation =
+                      if (showPassword) VisualTransformation.None
+                      else PasswordVisualTransformation(),
               )
 
               Spacer(modifier = Modifier.size(70.dp))
