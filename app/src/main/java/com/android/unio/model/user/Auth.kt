@@ -24,7 +24,6 @@ fun signInOrCreateAccount(
         .signInWithEmailAndPassword(email, password)
         .addOnSuccessListener { onResult(SignInResult(SignInState.SUCCESS_SIGN_IN, it.user)) }
         .addOnFailureListener {
-          println(it)
           if (it is FirebaseAuthInvalidCredentialsException) {
             auth
                 .createUserWithEmailAndPassword(email, password)
