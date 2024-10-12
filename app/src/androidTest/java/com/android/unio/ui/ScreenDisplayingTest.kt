@@ -6,7 +6,8 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.navigation.NavHostController
 import com.android.unio.ui.association.AssociationProfile
-import com.android.unio.ui.authentication.LoginScreen
+import com.android.unio.ui.authentication.AccountDetails
+import com.android.unio.ui.authentication.EmailVerificationScreen
 import com.android.unio.ui.authentication.WelcomeScreen
 import com.android.unio.ui.event.EventCreationScreen
 import com.android.unio.ui.event.EventScreen
@@ -23,7 +24,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.mockito.kotlin.mock
 
-class ScreenDisplayingTest() {
+class ScreenDisplayingTest {
 
   private lateinit var navigationAction: NavigationAction
 
@@ -38,6 +39,18 @@ class ScreenDisplayingTest() {
   fun testWelcomeDisplayed() {
     composeTestRule.setContent { WelcomeScreen(navigationAction) }
     composeTestRule.onNodeWithTag("WelcomeScreen").assertIsDisplayed()
+  }
+
+  @Test
+  fun testEmailVerificationDisplayed() {
+    composeTestRule.setContent { EmailVerificationScreen(navigationAction) }
+    composeTestRule.onNodeWithTag("EmailVerificationScreen").assertIsDisplayed()
+  }
+
+  @Test
+  fun testAccountDetailsDisplayed() {
+    composeTestRule.setContent { AccountDetails(navigationAction) }
+    composeTestRule.onNodeWithTag("AccountDetails").assertIsDisplayed()
   }
 
   @Test
@@ -73,12 +86,6 @@ class ScreenDisplayingTest() {
     composeTestRule.setContent { EventCreationScreen() }
     composeTestRule.onNodeWithTag("EventCreationScreen").assertIsDisplayed()
     composeTestRule.onNodeWithText("Event creation screen").assertIsDisplayed()
-  }
-
-  @Test
-  fun testLoginDisplayed() {
-    composeTestRule.setContent { LoginScreen(navigationAction) }
-    composeTestRule.onNodeWithTag("LoginScreen").assertIsDisplayed()
   }
 
   @Test
