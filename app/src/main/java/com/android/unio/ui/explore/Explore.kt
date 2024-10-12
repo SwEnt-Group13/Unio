@@ -78,9 +78,7 @@ fun ExploreScreenContent(padding: PaddingValues, navigationAction: NavigationAct
               onExpandedChange = { /* Handle expanded state change here */},
               placeholder = { Text("Search") },
               trailingIcon = {
-                IconButton(onClick = {}) {
                   Icon(Icons.Default.Search, contentDescription = "Search icon")
-                }
               },
           )
         },
