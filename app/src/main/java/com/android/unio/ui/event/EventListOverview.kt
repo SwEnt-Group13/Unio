@@ -251,7 +251,7 @@ fun EventItem(event: Event, onClick: () -> Unit) {
                     Modifier.clip(RoundedCornerShape(4.dp))
                         .background(addAlphaToColor(event.types.get(0).color, 200))) {
                   Text(
-                      text = event.types.get(0).text,
+                      text = event.types.get(0).textResId.toString(),
                       modifier =
                           Modifier.padding(horizontal = 4.dp, vertical = 4.dp)
                               .testTag("event_EventMainType"),
