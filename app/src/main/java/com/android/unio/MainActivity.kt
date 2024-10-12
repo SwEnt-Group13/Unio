@@ -11,6 +11,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
+import com.android.unio.resources.ResourceManager
 import com.android.unio.ui.association.AssociationProfile
 import com.android.unio.ui.authentication.LoginScreen
 import com.android.unio.ui.authentication.WelcomeScreen
@@ -26,6 +27,7 @@ class MainActivity : ComponentActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContent { Surface(modifier = Modifier.fillMaxSize()) { UnioApp() } }
+    ResourceManager.init(this)
   }
 }
 
