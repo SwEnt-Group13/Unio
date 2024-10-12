@@ -1,7 +1,6 @@
 package com.android.unio.model.image
 
 import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.storage.UploadTask.TaskSnapshot
 import java.io.InputStream
 
 class ImageRepositoryFirebaseStorage(
@@ -10,7 +9,8 @@ class ImageRepositoryFirebaseStorage(
 
   private val storageRef = storage.reference
 
-  override fun getImageUrl(
+  /** Helper function that gets the downloadUrl of an image. Is used after calling uploadImage. */
+  private fun getImageUrl(
       firebasePath: String,
       onSuccess: (String) -> Unit,
       onFailure: (Exception) -> Unit
@@ -22,16 +22,20 @@ class ImageRepositoryFirebaseStorage(
         .addOnFailureListener { e -> onFailure(e) }
   }
 
+  /** Uploads an image stream to Firebase Storage. Gives a downloadUrl to onSuccess. */
   override fun uploadImage(
       imageStream: InputStream,
       firebasePath: String,
-      onSuccess: (TaskSnapshot) -> Unit,
+      onSuccess: (String) -> Unit,
       onFailure: (Exception) -> Unit
   ) {
-    val uploadTask = storageRef.child(firebasePath).putStream(imageStream)
+    val path = storageRef.child(firebasePath)
+    val uploadTask = path.putStream(imageStream)
 
     uploadTask
-        .addOnSuccessListener { taskSnapshot -> onSuccess(taskSnapshot) }
+        .addOnSuccessListener {
+          getImageUrl(firebasePath, onSuccess = onSuccess, onFailure = onFailure)
+        }
         .addOnFailureListener { exception -> onFailure(exception) }
   }
 }
