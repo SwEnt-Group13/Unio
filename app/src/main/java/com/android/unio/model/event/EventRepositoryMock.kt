@@ -40,7 +40,7 @@ open class EventRepositoryMock : EventRepository {
                   types = listOf(EventType.TRIP)),
               Event(
                   uid = UUID.randomUUID().toString(),
-                  title = "Oktoberweek",
+                  title = "Oktoberweekdnsjandjas",
                   organisers = MockReferenceList<Association>(),
                   taggedAssociations = MockReferenceList<Association>(),
                   image = "oktoberweek",
