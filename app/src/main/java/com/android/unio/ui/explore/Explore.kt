@@ -17,7 +17,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.SearchBarDefaults
@@ -40,6 +39,7 @@ import com.android.unio.ui.navigation.LIST_TOP_LEVEL_DESTINATION
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Route
 import com.android.unio.ui.navigation.Screen
+import com.android.unio.ui.theme.AppTypography
 
 @Composable
 fun ExploreScreen(navigationAction: NavigationAction) {
@@ -61,8 +61,11 @@ fun ExploreScreenContent(padding: PaddingValues, navigationAction: NavigationAct
     Text(
         text = "Explore our Associations",
         /** Will go in the string.xml */
-        style = MaterialTheme.typography.headlineLarge,
-        modifier = Modifier.padding(horizontal = 29.dp, vertical = 16.dp).testTag("exploreTitle"))
+        style = AppTypography.headlineLarge,
+        modifier =
+            Modifier.padding(vertical = 16.dp)
+                .align(Alignment.CenterHorizontally)
+                .testTag("exploreTitle"))
 
     SearchBar(
         inputField = {
@@ -73,13 +76,13 @@ fun ExploreScreenContent(padding: PaddingValues, navigationAction: NavigationAct
               onSearch = { /* Handle search here */},
               expanded = false,
               onExpandedChange = { /* Handle expanded state change here */},
-              placeholder = { Text("Search") },
+              placeholder = { Text(text = "Search", style = AppTypography.bodyLarge) },
               trailingIcon = { Icon(Icons.Default.Search, contentDescription = "Search icon") },
           )
         },
         expanded = false,
         onExpandedChange = { /* Also handle expanded state change here */},
-        modifier = Modifier.padding(horizontal = 26.dp).testTag("searchBar"),
+        modifier = Modifier.padding(horizontal = 26.dp, vertical = 8.dp).testTag("searchBar"),
         content = {},
     )
 
@@ -95,7 +98,7 @@ fun ExploreScreenContent(padding: PaddingValues, navigationAction: NavigationAct
           item {
             Text(
                 text = getCategoryNameWithFirstLetterUppercase(category),
-                style = MaterialTheme.typography.headlineSmall,
+                style = AppTypography.headlineSmall,
                 modifier = Modifier.padding(horizontal = 16.dp))
 
             // Horizontal scrollable list of associations
@@ -131,7 +134,7 @@ fun AssociationItem(association: Association, navigationAction: NavigationAction
 
     Text(
         text = association.acronym,
-        style = MaterialTheme.typography.bodyMedium,
+        style = AppTypography.bodyMedium,
         modifier = Modifier.fillMaxWidth().align(Alignment.CenterHorizontally))
   }
 }
