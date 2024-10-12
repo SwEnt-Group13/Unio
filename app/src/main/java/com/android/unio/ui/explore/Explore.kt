@@ -26,8 +26,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.android.unio.R
 import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationType
 import com.android.unio.model.association.MockAssociation
@@ -58,7 +60,7 @@ fun ExploreScreenContent(padding: PaddingValues, navigationAction: NavigationAct
         value = "",
         onValueChange = {},
         modifier = Modifier.fillMaxWidth().padding(8.dp).testTag("searchBar"),
-        placeholder = { Text("Search") },
+        placeholder = { Text(stringResource(id = R.string.explore_search_placeholder)) },
         trailingIcon = { Icon(Icons.Default.Search, contentDescription = "Search icon") })
 
     LazyColumn(
