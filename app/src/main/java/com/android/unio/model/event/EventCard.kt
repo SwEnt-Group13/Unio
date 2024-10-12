@@ -29,11 +29,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.unio.R
+import com.android.unio.utils.EventUtils.DynamicImage
+import com.android.unio.utils.EventUtils.addAlphaToColor
+import com.android.unio.utils.EventUtils.formatTimestamp
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 @Composable
 fun EventCard(event: Event, onClick: () -> Unit) {
-  val backgroundColor = Color(0xFF2596BE)
-  val backgroundImage = painterResource(id = R.drawable.photo_2024_10_08_14_57_48)
 
   Column(
       modifier =
@@ -116,7 +119,7 @@ fun EventCard(event: Event, onClick: () -> Unit) {
                     Modifier.padding(vertical = 1.dp, horizontal = 4.dp)
                         .testTag("event_EventDate")
                         .wrapContentWidth(),
-                text = formatTimestampToMMDD(event.date),
+                text = formatTimestamp(event.date, SimpleDateFormat("MM/dd", Locale.getDefault())),
                 style = MaterialTheme.typography.titleMedium,
                 color = Color.Black)
 
@@ -124,7 +127,7 @@ fun EventCard(event: Event, onClick: () -> Unit) {
 
             Text(
                 modifier = Modifier.testTag("event_EventTime").wrapContentWidth(),
-                text = formatTimestampToHHMM(event.date),
+                text = formatTimestamp(event.date, SimpleDateFormat("HH:mm", Locale.getDefault())),
                 style = MaterialTheme.typography.titleMedium,
                 color = Color.Black)
           }
