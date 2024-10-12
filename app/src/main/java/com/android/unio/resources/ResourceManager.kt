@@ -2,6 +2,7 @@ package com.android.unio.resources
 
 import android.annotation.SuppressLint
 import android.content.Context
+import com.google.protobuf.NullValue
 
 @SuppressLint("StaticFieldLeak")
 object ResourceManager {
@@ -13,8 +14,10 @@ object ResourceManager {
 
   fun getString(resId: Int): String { // good for files that do not have any Application Context
     if (!::context.isInitialized) {
-      throw UninitializedPropertyAccessException(
-          "ResourceManager is not initialized. Call init(context) before using it.")
+      /**throw UninitializedPropertyAccessException(
+          "ResourceManager is not initialized. Call init(context) before using it.")*/
+      print("ResourceManager is not initialized. Call init(context) before using it.)")
+      return "null"
     }
     return context.getString(resId)
   }

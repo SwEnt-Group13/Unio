@@ -27,7 +27,7 @@ class MainActivity : ComponentActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContent { Surface(modifier = Modifier.fillMaxSize()) { UnioApp() } }
-    ResourceManager.init(this)
+    //ResourceManager.init(this)
   }
 }
 
