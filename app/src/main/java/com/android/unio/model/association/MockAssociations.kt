@@ -3,7 +3,7 @@ package com.android.unio.model.association
 import com.android.unio.model.firestore.MockReferenceList
 import com.android.unio.model.user.User
 
-enum class AssociationType {
+enum class MockAssociationType {
   MUSIC,
   FESTIVALS,
   INNOVATION,
@@ -13,7 +13,7 @@ enum class AssociationType {
   OTHER
 }
 
-data class MockAssociation(val association: Association, val type: AssociationType)
+data class MockAssociation(val association: Association, val type: MockAssociationType)
 
 val emptyMembers = { MockReferenceList<User>() }
 
@@ -27,7 +27,7 @@ fun mockAssociations(): List<MockAssociation> {
               description =
                   "AGEPoly Commission – stimulation of the practice of music on the campus",
               members = emptyMembers()),
-          AssociationType.MUSIC),
+          MockAssociationType.MUSIC),
       MockAssociation(
           Association(
               uid = "2",
@@ -36,7 +36,7 @@ fun mockAssociations(): List<MockAssociation> {
               description =
                   "AGEPoly Commission – party following the formal Magistrale Graduation Ceremony",
               members = emptyMembers()),
-          AssociationType.FESTIVALS),
+          MockAssociationType.FESTIVALS),
       MockAssociation(
           Association(
               uid = "3",
@@ -44,7 +44,7 @@ fun mockAssociations(): List<MockAssociation> {
               fullName = "Festival Balélec",
               description = "Open-air unique en Suisse, organisée par des bénévoles étudiants.",
               members = emptyMembers()),
-          AssociationType.FESTIVALS),
+          MockAssociationType.FESTIVALS),
       MockAssociation(
           Association(
               uid = "4",
@@ -52,7 +52,7 @@ fun mockAssociations(): List<MockAssociation> {
               fullName = "Festival Artiphys",
               description = "Festival à l'EPFL",
               members = emptyMembers()),
-          AssociationType.FESTIVALS),
+          MockAssociationType.FESTIVALS),
       MockAssociation(
           Association(
               uid = "5",
@@ -60,7 +60,7 @@ fun mockAssociations(): List<MockAssociation> {
               fullName = "Festival Sysmic",
               description = "Festival à l'EPFL",
               members = emptyMembers()),
-          AssociationType.FESTIVALS),
+          MockAssociationType.FESTIVALS),
       MockAssociation(
           Association(
               uid = "6",
@@ -68,7 +68,7 @@ fun mockAssociations(): List<MockAssociation> {
               fullName = "Innovation Forum Lausanne",
               description = "Innovation Forum Lausanne",
               members = emptyMembers()),
-          AssociationType.INNOVATION),
+          MockAssociationType.INNOVATION),
       MockAssociation(
           Association(
               uid = "7",
@@ -76,6 +76,6 @@ fun mockAssociations(): List<MockAssociation> {
               fullName = "Clic Association",
               description = "Association of EPFL Students of IC Faculty",
               members = emptyMembers()),
-          AssociationType.FACULTIES),
+          MockAssociationType.FACULTIES),
   )
 }
