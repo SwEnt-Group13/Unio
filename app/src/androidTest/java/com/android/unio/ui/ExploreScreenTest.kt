@@ -6,7 +6,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performTextInput
 import androidx.navigation.NavHostController
-import com.android.unio.model.association.AssociationType
+import com.android.unio.model.association.MockAssociationType
 import com.android.unio.ui.explore.ExploreScreen
 import com.android.unio.ui.explore.getCategoryNameWithFirstLetterUppercase
 import com.android.unio.ui.explore.getFilteredAssociationsByCategoryAndAlphabeticalOrder
@@ -46,22 +46,22 @@ class ExploreScreenTest {
   @Test
   fun testGetFilteredAssociationsByCategory() {
     val musicAssociations =
-        getFilteredAssociationsByCategoryAndAlphabeticalOrder(AssociationType.MUSIC)
+        getFilteredAssociationsByCategoryAndAlphabeticalOrder(MockAssociationType.MUSIC)
     assertEquals(1, musicAssociations.size)
     assertEquals("Musical", musicAssociations[0].association.acronym)
 
     val festivalAssociations =
-        getFilteredAssociationsByCategoryAndAlphabeticalOrder(AssociationType.FESTIVALS)
+        getFilteredAssociationsByCategoryAndAlphabeticalOrder(MockAssociationType.FESTIVALS)
     assertEquals(4, festivalAssociations.size)
     assertEquals("Artiphys", festivalAssociations[0].association.acronym)
   }
 
   @Test
   fun testGetCategoryNameWithFirstLetterUppercase() {
-    val musicCategory = getCategoryNameWithFirstLetterUppercase(AssociationType.MUSIC)
+    val musicCategory = getCategoryNameWithFirstLetterUppercase(MockAssociationType.MUSIC)
     assertEquals("Music", musicCategory)
 
-    val festivalCategory = getCategoryNameWithFirstLetterUppercase(AssociationType.FESTIVALS)
+    val festivalCategory = getCategoryNameWithFirstLetterUppercase(MockAssociationType.FESTIVALS)
     assertEquals("Festivals", festivalCategory)
   }
 }

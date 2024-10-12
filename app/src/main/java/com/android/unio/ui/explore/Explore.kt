@@ -17,17 +17,14 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
@@ -35,8 +32,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.android.unio.R
 import com.android.unio.model.association.Association
-import com.android.unio.model.association.AssociationType
 import com.android.unio.model.association.MockAssociation
+import com.android.unio.model.association.MockAssociationType
 import com.android.unio.model.association.mockAssociations
 import com.android.unio.ui.navigation.BottomNavigationMenu
 import com.android.unio.ui.navigation.LIST_TOP_LEVEL_DESTINATION
@@ -77,9 +74,7 @@ fun ExploreScreenContent(padding: PaddingValues, navigationAction: NavigationAct
               expanded = false,
               onExpandedChange = { /* Handle expanded state change here */},
               placeholder = { Text("Search") },
-              trailingIcon = {
-                  Icon(Icons.Default.Search, contentDescription = "Search icon")
-              },
+              trailingIcon = { Icon(Icons.Default.Search, contentDescription = "Search icon") },
           )
         },
         expanded = false,
@@ -93,7 +88,7 @@ fun ExploreScreenContent(padding: PaddingValues, navigationAction: NavigationAct
         contentPadding = PaddingValues(vertical = 16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-      AssociationType.entries.forEach { category ->
+      MockAssociationType.entries.forEach { category ->
         val filteredAssociations = getFilteredAssociationsByCategoryAndAlphabeticalOrder(category)
 
         if (filteredAssociations.isNotEmpty()) {
@@ -143,12 +138,12 @@ fun AssociationItem(association: Association, navigationAction: NavigationAction
 
 /** Returns a list of associations filtered by the given category. */
 fun getFilteredAssociationsByCategoryAndAlphabeticalOrder(
-    category: AssociationType
+    category: MockAssociationType
 ): List<MockAssociation> {
   return mockAssociations().filter { it.type == category }.sortedBy { it.association.acronym }
 }
 
 /** Returns the name of the category with the first letter in uppercase. */
-fun getCategoryNameWithFirstLetterUppercase(category: AssociationType): String {
+fun getCategoryNameWithFirstLetterUppercase(category: MockAssociationType): String {
   return category.name.lowercase().replaceFirstChar { it.uppercase() }
 }
