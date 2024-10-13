@@ -13,6 +13,16 @@ enum class SignInState {
 
 data class SignInResult(val state: SignInState, val user: FirebaseUser?)
 
+/**
+ * Sign in or create an account with the given email and password.
+ * The function will first try to sign in with the given email and password.
+ * If the sign in fails, the function will try to create an account.
+ *
+ * @param email The email to sign in or create an account with.
+ * @param password The password to sign in or create an account with.
+ * @param auth The FirebaseAuth instance to use for signing in or creating an account.
+ * @param onResult The callback to call when the sign in or account creation is complete.
+ */
 fun signInOrCreateAccount(
     email: String,
     password: String,
@@ -35,6 +45,14 @@ fun signInOrCreateAccount(
   }
 }
 
+/**
+ * Create an account with the given email and password.
+ *
+ * @param email The email to create an account with.
+ * @param password The password to create an account with.
+ * @param auth The FirebaseAuth instance to use for creating an account.
+ * @param onResult The callback to call when the account creation is complete.
+ */
 fun createAccount(email: String, password: String, auth: FirebaseAuth, onResult: (SignInResult) -> Unit) {
   if (isValidEmail(email)) {
     auth
@@ -50,6 +68,13 @@ fun createAccount(email: String, password: String, auth: FirebaseAuth, onResult:
     onResult(SignInResult(SignInState.INVALID_EMAIL_FORMAT, null))
   }
 }
+
+/**
+ * Check if the given text is a valid email.
+ *
+ * @param text The text to check.
+ * @return True if the text is a valid email, false otherwise.
+ */
 fun isValidEmail(text: String): Boolean {
-  return text.trim().isNotEmpty() && text.trim().matches(Regex("^.+@.+\\..+$"))
+  return text.trim().let { it.isNotEmpty() && it.matches(Regex("^.+@.+\\..+$")) }
 }
