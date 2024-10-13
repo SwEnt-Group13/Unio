@@ -1,5 +1,6 @@
 package com.android.unio.ui.authentication
 
+import android.content.Context
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
@@ -52,49 +53,6 @@ fun WelcomeScreen(navigationAction: NavigationAction) {
   var showPassword by remember { mutableStateOf(false) }
 
   val context = LocalContext.current
-
-  val signIn = {
-    signInOrCreateAccount(email, password, Firebase.auth) {
-      // No need to navigate to other screens, that is already handled by the MainActivity
-      when (it.state) {
-        SignInState.INVALID_CREDENTIALS -> {
-          Toast.makeText(context, "Invalid credentials", Toast.LENGTH_SHORT).show()
-        }
-        SignInState.INVALID_EMAIL_FORMAT -> {
-          Toast.makeText(context, "Please enter a valid EPFL email address", Toast.LENGTH_SHORT)
-              .show()
-        }
-        SignInState.SUCCESS_SIGN_IN -> {
-          Toast.makeText(context, "Signed in successfully", Toast.LENGTH_SHORT).show()
-
-          if (it.user?.isEmailVerified == false) {
-            it.user.sendEmailVerification().addOnCompleteListener {
-              if (it.isSuccessful) {
-                Toast.makeText(context, "Verification email sent", Toast.LENGTH_SHORT).show()
-              } else {
-                Toast.makeText(context, "Failed to send verification email", Toast.LENGTH_SHORT)
-                    .show()
-                Log.e("WelcomeScreen", "Failed to send verification email", it.exception)
-              }
-            }
-          }
-        }
-        SignInState.SUCCESS_CREATE_ACCOUNT -> {
-          Toast.makeText(context, "Account created successfully", Toast.LENGTH_SHORT).show()
-
-          it.user?.sendEmailVerification()?.addOnCompleteListener {
-            if (it.isSuccessful) {
-              Toast.makeText(context, "Verification email sent", Toast.LENGTH_SHORT).show()
-            } else {
-              Toast.makeText(context, "Failed to send verification email", Toast.LENGTH_SHORT)
-                  .show()
-              Log.e("WelcomeScreen", "Failed to send verification email", it.exception)
-            }
-          }
-        }
-      }
-    }
-  }
 
   val enabled = isValidEmail(email) && password.isNotEmpty()
 
@@ -150,10 +108,53 @@ fun WelcomeScreen(navigationAction: NavigationAction) {
 
               Button(
                   modifier = Modifier.testTag("WelcomeButton"),
-                  onClick = { signIn() },
+                  onClick = { handleAuthentication(email, password, context) },
                   enabled = enabled) {
                     Text("Continue")
                   }
             }
       })
+}
+
+fun handleAuthentication(email: String, password: String, context: Context) {
+  signInOrCreateAccount(email, password, Firebase.auth) { signInResult ->
+    // NOTE: No need to navigate to other screens, that is already handled by the listener in MainActivity
+    when (signInResult.state) {
+      SignInState.INVALID_CREDENTIALS -> {
+        Toast.makeText(context, "Invalid credentials", Toast.LENGTH_SHORT).show()
+      }
+      SignInState.INVALID_EMAIL_FORMAT -> {
+        Toast.makeText(context, "Please enter a valid EPFL email address", Toast.LENGTH_SHORT)
+          .show()
+      }
+      SignInState.SUCCESS_SIGN_IN -> {
+        Toast.makeText(context, "Signed in successfully", Toast.LENGTH_SHORT).show()
+
+        if (signInResult.user?.isEmailVerified == false) {
+          signInResult.user.sendEmailVerification().addOnCompleteListener {
+            if (it.isSuccessful) {
+              Toast.makeText(context, "Verification email sent", Toast.LENGTH_SHORT).show()
+            } else {
+              Toast.makeText(context, "Failed to send verification email", Toast.LENGTH_SHORT)
+                .show()
+              Log.e("WelcomeScreen", "Failed to send verification email", it.exception)
+            }
+          }
+        }
+      }
+      SignInState.SUCCESS_CREATE_ACCOUNT -> {
+        Toast.makeText(context, "Account created successfully", Toast.LENGTH_SHORT).show()
+
+        signInResult.user?.sendEmailVerification()?.addOnCompleteListener {
+          if (it.isSuccessful) {
+            Toast.makeText(context, "Verification email sent", Toast.LENGTH_SHORT).show()
+          } else {
+            Toast.makeText(context, "Failed to send verification email", Toast.LENGTH_SHORT)
+              .show()
+            Log.e("WelcomeScreen", "Failed to send verification email", it.exception)
+          }
+        }
+      }
+    }
+  }
 }
