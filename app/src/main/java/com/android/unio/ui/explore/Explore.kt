@@ -120,7 +120,12 @@ fun ExploreScreenContent(padding: PaddingValues, navigationAction: NavigationAct
 
 @Composable
 fun AssociationItem(association: Association, navigationAction: NavigationAction) {
-  Column(modifier = Modifier.clickable { navigationAction.navigateTo(Screen.ASSOCIATION_PROFILE) }) {
+  Column(modifier = Modifier.clickable {
+      navigationAction.navigateTo(
+          Screen.ASSOCIATION_PROFILE + "/{uid}"
+              .replace(oldValue = "{uid}", newValue = association.uid)
+      )
+  }) {
     /**
      * AdEC image is used as the placeholder. Will need to add the actual image later, when the
      * actual view model is used.

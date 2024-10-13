@@ -12,12 +12,18 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.android.unio.model.association.ExploreViewModel
 import com.android.unio.ui.navigation.NavigationAction
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun AssociationProfile(navigationAction: NavigationAction) {
+fun AssociationProfile(
+    navigationAction: NavigationAction,
+    associationId: String,
+    exploreViewModel: ExploreViewModel = viewModel(factory = ExploreViewModel.Factory)
+) {
   Scaffold(
       topBar = {
         TopAppBar(
@@ -34,7 +40,10 @@ fun AssociationProfile(navigationAction: NavigationAction) {
                   }
             })
       },
-      modifier = Modifier.testTag("AssociationScreen")) {
-        Text("Association screen")
-      }
+      modifier = Modifier.testTag("AssociationScreen")
+  ) {
+      Text("Association screen")
+
+
+  }
 }
