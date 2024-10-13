@@ -22,12 +22,12 @@ import org.mockito.Mockito.`when`
 import org.mockito.MockitoAnnotations
 import org.mockito.kotlin.any
 
-class ExploreViewModelTest {
+class AssociationViewModelTest {
   @Mock private lateinit var repository: AssociationRepositoryFirestore
   @Mock private lateinit var db: FirebaseFirestore
   @Mock private lateinit var collectionReference: CollectionReference
 
-  private lateinit var viewModel: ExploreViewModel
+  private lateinit var viewModel: AssociationViewModel
 
   @OptIn(ExperimentalCoroutinesApi::class) private val testDispatcher = UnconfinedTestDispatcher()
 
@@ -64,7 +64,7 @@ class ExploreViewModelTest {
                         db.collection(USER_PATH),
                         UserRepositoryFirestore::hydrate)))
 
-    viewModel = ExploreViewModel(repository)
+    viewModel = AssociationViewModel(repository)
   }
 
   @OptIn(ExperimentalCoroutinesApi::class)
@@ -80,7 +80,7 @@ class ExploreViewModelTest {
       onSuccess(testAssociations)
     }
 
-    viewModel.fetchAssociations()
+    viewModel.getAssociations()
     assertEquals(testAssociations, viewModel.associations.value)
 
     runBlocking {
@@ -102,7 +102,7 @@ class ExploreViewModelTest {
       onFailure(Exception("Test exception"))
     }
 
-    viewModel.fetchAssociations()
+    viewModel.getAssociations()
     assert(viewModel.associations.value.isEmpty())
 
     // Verify that the repository method was called
@@ -122,7 +122,7 @@ class ExploreViewModelTest {
       onSuccess(testAssociations)
     }
 
-    val newViewModel = ExploreViewModel(repository)
+    val newViewModel = AssociationViewModel(repository)
 
     runBlocking {
       val result = newViewModel.associations.first()

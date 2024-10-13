@@ -13,7 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.android.unio.model.association.ExploreViewModel
+import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.ui.navigation.NavigationAction
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -22,7 +22,7 @@ import com.android.unio.ui.navigation.NavigationAction
 fun AssociationProfile(
     navigationAction: NavigationAction,
     associationId: String,
-    exploreViewModel: ExploreViewModel = viewModel(factory = ExploreViewModel.Factory)
+    associationViewModel: AssociationViewModel = viewModel(factory = AssociationViewModel.Factory)
 ) {
   Scaffold(
       topBar = {
