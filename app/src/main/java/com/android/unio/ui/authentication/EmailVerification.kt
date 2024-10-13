@@ -89,13 +89,13 @@ fun EmailVerificationScreen(navigationAction: NavigationAction) {
                 OutlinedButton(
                     onClick = { resendEmail() },
                 ) {
-                  Text("Resend email")
+                  Text("Resend email", style = AppTypography.labelLarge)
                 }
 
                 Button(onClick = { checkEmailVerification() }) {
                   Icon(Icons.Outlined.Refresh, contentDescription = "Refresh")
                   Spacer(Modifier.width(8.dp))
-                  Text("Refresh")
+                  Text("Refresh", style = AppTypography.labelLarge)
                 }
               }
             }
