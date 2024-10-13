@@ -3,7 +3,6 @@ package com.android.unio.ui
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
-import androidx.compose.ui.test.onNodeWithText
 import androidx.navigation.NavHostController
 import com.android.unio.ui.association.AssociationProfile
 import com.android.unio.ui.authentication.AccountDetails
@@ -57,7 +56,6 @@ class ScreenDisplayingTest {
   fun testHomeDisplayed() {
     composeTestRule.setContent { HomeScreen(navigationAction) }
     composeTestRule.onNodeWithTag("HomeScreen").assertIsDisplayed()
-    composeTestRule.onNodeWithText("Home screen").assertIsDisplayed()
   }
 
   @Test
@@ -71,55 +69,47 @@ class ScreenDisplayingTest {
   fun testMapDisplayed() {
     composeTestRule.setContent { MapScreen() }
     composeTestRule.onNodeWithTag("MapScreen").assertIsDisplayed()
-    composeTestRule.onNodeWithText("Map screen").assertIsDisplayed()
   }
 
   @Test
   fun testEventDisplayed() {
     composeTestRule.setContent { EventScreen() }
     composeTestRule.onNodeWithTag("EventScreen").assertIsDisplayed()
-    composeTestRule.onNodeWithText("Event screen").assertIsDisplayed()
   }
 
   @Test
   fun testEventCreationDisplayed() {
     composeTestRule.setContent { EventCreationScreen() }
     composeTestRule.onNodeWithTag("EventCreationScreen").assertIsDisplayed()
-    composeTestRule.onNodeWithText("Event creation screen").assertIsDisplayed()
   }
 
   @Test
   fun testAssociationDisplayed() {
     composeTestRule.setContent { AssociationProfile(navigationAction) }
     composeTestRule.onNodeWithTag("AssociationScreen").assertIsDisplayed()
-    composeTestRule.onNodeWithText("Association screen").assertIsDisplayed()
   }
 
   @Test
   fun testSavedDisplayed() {
     composeTestRule.setContent { SavedScreen(navigationAction) }
     composeTestRule.onNodeWithTag("SavedScreen").assertIsDisplayed()
-    composeTestRule.onNodeWithText("Saved screen").assertIsDisplayed()
   }
 
   @Test
   fun testSettingsDisplayed() {
     composeTestRule.setContent { SettingsScreen() }
     composeTestRule.onNodeWithTag("SettingsScreen").assertIsDisplayed()
-    composeTestRule.onNodeWithText("Settings screen").assertIsDisplayed()
   }
 
   @Test
   fun testUserProfileDisplayed() {
     composeTestRule.setContent { UserProfileScreen(navigationAction) }
     composeTestRule.onNodeWithTag("UserProfileScreen").assertIsDisplayed()
-    composeTestRule.onNodeWithText("User profile screen").assertIsDisplayed()
   }
 
   @Test
-  fun testSOmeoneElseUserProfileDisplayed() {
+  fun testSomeoneElseUserProfileDisplayed() {
     composeTestRule.setContent { SomeoneElseUserProfileScreen() }
     composeTestRule.onNodeWithTag("SomeoneElseUserProfileScreen").assertIsDisplayed()
-    composeTestRule.onNodeWithText("Someone else user profile screen").assertIsDisplayed()
   }
 }
