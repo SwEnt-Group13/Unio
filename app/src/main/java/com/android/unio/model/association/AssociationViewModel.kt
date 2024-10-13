@@ -14,6 +14,9 @@ class AssociationViewModel(val repository: AssociationRepositoryFirestore) : Vie
   private val _associations = MutableStateFlow<List<Association>>(emptyList())
   val associations: StateFlow<List<Association>> = _associations
 
+    private val _selectedAssociation = MutableStateFlow<Association?>(null)
+    val idFetchedAssociation: StateFlow<Association?> = _selectedAssociation
+
   init {
     repository.init { getAssociations() }
   }
@@ -38,4 +41,13 @@ class AssociationViewModel(val repository: AssociationRepositoryFirestore) : Vie
           })
     }
   }
+
+    fun selectAssociation(id: String){
+        associations.value.find { it.uid == id }?.let {
+            _selectedAssociation.value = it
+        } ?: run {
+            _selectedAssociation.value = null
+            Log.e("AssociationViewModel", "Association not found")
+        }
+    }
 }
