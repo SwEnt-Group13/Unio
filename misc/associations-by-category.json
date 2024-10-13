@@ -1,0 +1,681 @@
+[
+  {
+    "categoryName": "Representation of EPFL bodies",
+    "associationList": [
+      {
+        "acronym": "AGEPoly",
+        "name": "Student’s general association of the EPFL",
+        "url": "http://agepoly.epfl.ch/"
+      },
+      {
+        "acronym": "PolyDoc",
+        "name": "EPFL PhD association",
+        "url": "https://polydoc.epfl.ch/"
+      }
+    ]
+  },
+  {
+    "categoryName": "Representation",
+    "associationList": [
+      {
+        "acronym": "EPFelles",
+        "name": "EPFL student female community",
+        "url": "https://epfelles.ch/"
+      },
+      {
+        "acronym": "Mil@CampusLausanne",
+        "name": "Société militaire du campus universitaire de Lausanne",
+        "url": "https://www.milcampus.ch/"
+      },
+      {
+        "acronym": "PlanQueer",
+        "name": "Association of LGBTIQ+ students of hautes écoles in Lausanne",
+        "url": "https://www.epfl.ch/campus/associations/list/planqueer/"
+      },
+      {
+        "acronym": "PolyQuity",
+        "name": "Promotion of gender equality",
+        "url": "https://polyquity.agepoly.ch/"
+      }
+    ]
+  },
+  {
+    "categoryName": "Interdisciplinary projects",
+    "associationList": [
+      {
+        "acronym": "Æther Swiss Kite",
+        "name": "Développement d’une aile de kite",
+        "url": "http://xn--dveloppement%20dune%20aile%20de%20kite-bmd98403a/"
+      },
+      {
+        "acronym": "Asclepios",
+        "name": "Association pour la conception de missions analogues"
+      },
+      {
+        "acronym": "BioSense EPFL",
+        "name": "Projets dans le domaine des bio-capteurs",
+        "url": "https://biosense-epfl.ch/"
+      },
+      {
+        "acronym": "EPFL Spacecraft Team",
+        "name": "Build, launch and operate satellites",
+        "url": "http://chessmission.ch/"
+      },
+      {
+        "acronym": "EPFL Xplore",
+        "name": "Association participating to an international challenge every year (European Rover Challenge in Poland or University Rover Challenge in USA)",
+        "url": "https://epfl-xplore.ch/"
+      },
+      {
+        "acronym": "Genorobotics",
+        "name": "Field DNA analysis & biodiversity monitoring",
+        "url": "https://www.genorobotics.org/"
+      },
+      {
+        "acronym": "EPFL Racing Team",
+        "name": "Racing Formula Student",
+        "url": "http://lausanneracingteam.ch/"
+      },
+      {
+        "acronym": "EPFL Rocket Team",
+        "name": "Construction and rocket launch",
+        "url": "https://ert.epfl.ch/"
+      },
+      {
+        "acronym": "EPFL Watchmakers",
+        "name": "Conceive a clock featuring innovative mechanisms"
+      },
+      {
+        "acronym": "Sailowtech",
+        "name": "Association to promote Open Science",
+        "url": "https://sailowtech.ch/en/home-page/"
+      },
+      {
+        "acronym": "Swiss Solar Boat",
+        "name": "Association participating in the Monaco Solar & Energy Boat Challenge 2020",
+        "url": "http://www.swisssolarboat.ch/"
+      }
+    ]
+  },
+  {
+    "categoryName": "EPFL Students",
+    "associationList": [
+      {
+        "acronym": "ADEC",
+        "name": "Association of EPFL students in chemistry",
+        "url": "http://adec.epfl.ch/"
+      },
+      {
+        "acronym": "ADELE",
+        "name": "Association of EPFL students in electrical engineering",
+        "url": "http://adele.epfl.ch/"
+      },
+      {
+        "acronym": "ADSV",
+        "name": "Association of EPFL PhD in life science",
+        "url": "http://adsv.epfl.ch/page-114691-fr.html"
+      },
+      {
+        "acronym": "AEGC",
+        "name": "Association of EPFL students in civil engineering",
+        "url": "http://aegc.epfl.ch/"
+      },
+      {
+        "acronym": "AESV",
+        "name": "Association of EPFL students in life science",
+        "url": "http://aesv.epfl.ch/"
+      },
+      {
+        "acronym": "AGEPoly",
+        "name": "Coaching",
+        "url": "http://coaching.epfl.ch/"
+      },
+      {
+        "acronym": "AGEPoly",
+        "name": "ESN EPFL",
+        "url": "http://epfl.esn.ch/"
+      },
+      {
+        "acronym": "AGEPoly",
+        "name": "PolySI",
+        "url": "https://polysi.ch/"
+      },
+      {
+        "acronym": "AGEPoly",
+        "name": "S4S",
+        "url": "http://coaching.epfl.ch/"
+      },
+      {
+        "acronym": "AMAC",
+        "name": "Association of EPFL students in mechanical engineering",
+        "url": "http://amac.epfl.ch/"
+      },
+      {
+        "acronym": "ASAR",
+        "name": "Association of EPFL students in architecture",
+        "url": "http://asar.epfl.ch/"
+      },
+      {
+        "acronym": "BSA",
+        "name": "Blockchain Student Association",
+        "url": "https://bsa.epfl.ch/"
+      },
+      {
+        "acronym": "Clic",
+        "name": "Association of EPFL students in computing and communications",
+        "url": "http://clic.epfl.ch/"
+      },
+      {
+        "acronym": "CQFD",
+        "name": "Association of EPFL students in mathematics",
+        "url": "http://cqfd.epfl.ch/"
+      },
+      {
+        "acronym": "DAG",
+        "name": "Awareness and Promotion of Data Sciences",
+        "url": "https://www.dag-epfl.ch/"
+      },
+      {
+        "acronym": "Dhelta",
+        "name": "Digital humanities activities",
+        "url": "https://www.epfl.ch/schools/cdh/education-2/dh-master/registered-students/dhelta/"
+      },
+      {
+        "acronym": "Dynamic",
+        "name": "Association of EPFL students in microengineering",
+        "url": "http://dynamic.epfl.ch/"
+      },
+      {
+        "acronym": "Enigma",
+        "name": "Association of EPFL students in materials",
+        "url": "http://enigma.epfl.ch/"
+      },
+      {
+        "acronym": "EPFL Photonics Chapter",
+        "name": "Association of EPFL students in photonic",
+        "url": "https://photonics.epfl.ch/epc"
+      },
+      {
+        "acronym": "EPIC",
+        "name": "EPFL PhDs of I&C",
+        "url": "https://www.epfl.ch/campus/associations/list/epic/"
+      },
+      {
+        "acronym": "FES",
+        "name": "Financial Engineers’ Society",
+        "url": "https://www.financial-engineers.org/"
+      },
+      {
+        "acronym": "Irrotationnels",
+        "name": "Association of EPFL students in physics",
+        "url": "http://irrotationnels.epfl.ch/"
+      },
+      {
+        "acronym": "MESAA",
+        "name": "Energy management and sustainability students and alumni association",
+        "url": "http://messaa.epfl.ch/"
+      },
+      {
+        "acronym": "Polyphys",
+        "name": "EPFL PhD association in physics",
+        "url": "https://polyphys.epfl.ch/site/polyphis/page-149464.html"
+      },
+      {
+        "acronym": "QET",
+        "name": "Quantum Engineering Team"
+      },
+      {
+        "acronym": "SME",
+        "name": "Society of managerial engineering students of EPFL",
+        "url": "http://sme.epfl.ch/"
+      },
+      {
+        "acronym": "TREE",
+        "name": "Round table of EPFL students in environment",
+        "url": "http://tree.epfl.ch/"
+      }
+    ]
+  },
+  {
+    "categoryName": "Students by country",
+    "associationList": [
+      {
+        "acronym": "ABSL",
+        "name": "Association of Bulgarian Students in Lausanne"
+      },
+      {
+        "acronym": "ACIL",
+        "name": "Italian Cultural Association in Lausanne"
+      },
+      {
+        "acronym": "AEAUL",
+        "name": "Association of Albanian Students from Universities in Lausanne"
+      },
+      {
+        "acronym": "AEGEL",
+        "name": "EPFL Greeks students in Lausanne",
+        "url": "http://aegel.epfl.ch/"
+      },
+      {
+        "acronym": "AERUS",
+        "name": "Association for russian-speaking students",
+        "url": "https://www.epfl.ch/campus/associations/list/aerus/"
+      },
+      {
+        "acronym": "AKULA",
+        "name": "Ukrainian Cultural Association",
+        "url": "https://www.epfl.ch/campus/associations/list/akula/"
+      },
+      {
+        "acronym": "ALSL",
+        "name": "Association of the Libanese students in Lausanne",
+        "url": "https://www.facebook.com/LebaneseStudentsLausanne/about/"
+      },
+      {
+        "acronym": "ALUJ",
+        "name": "Association lausannoise des universitaires jurassien.ne.s",
+        "url": "https://www.epfl.ch/campus/associations/list/aluj/"
+      },
+      {
+        "acronym": "APML",
+        "name": "Association of the Morrocans polytechnicians students in Lausanne",
+        "url": "http://apml.epfl.ch/"
+      },
+      {
+        "acronym": "ARO",
+        "name": "Romanian students association at EPFL",
+        "url": "http://aro.epfl.ch/"
+      },
+      {
+        "acronym": "ASA",
+        "name": "Swiss german students association at EPFL",
+        "url": "https://www.epfl.ch/campus/associations/list/asa/"
+      },
+      {
+        "acronym": "Belg’Association",
+        "url": "https://www.instagram.com/belgassociation/?igshid=YmMyMTA2M2Y"
+      },
+      {
+        "acronym": "CSSA",
+        "name": "Chinese Students & Scholars Association, Lausanne",
+        "url": "http://cssa.epfl.ch/index.php/en/"
+      },
+      {
+        "acronym": "Dzaïr",
+        "name": "Association of algerian students in Switzerland"
+      },
+      {
+        "acronym": "EGYPoly",
+        "name": "Egyptians Students Association",
+        "url": "https://www.epfl.ch/campus/associations/list/egypoly/en/egypoly-the-egyptians-association-of-epfl/"
+      },
+      {
+        "acronym": "HOLA",
+        "name": "Hispanic Organization of Latin Americans",
+        "url": "https://www.epfl.ch/campus/associations/list/hola/"
+      },
+      {
+        "acronym": "IRSA",
+        "name": "Iranian students association at EPFL",
+        "url": "http://irsa.epfl.ch/"
+      },
+      {
+        "acronym": "KORAL",
+        "name": "Korean Cultural Association"
+      },
+      {
+        "acronym": "Polca",
+        "name": "Polish Cultural Association"
+      },
+      {
+        "acronym": "PSC (Palestine Student Committee)"
+      },
+      {
+        "acronym": "SHALOM",
+        "name": "Israeli Students Association",
+        "url": "https://shalomepfl.ch/"
+      },
+      {
+        "acronym": "Stoica",
+        "name": "Association of Tessin students",
+        "url": "http://www.stoica.ch/"
+      },
+      {
+        "acronym": "TUNES",
+        "name": "Association of the academic Tunisian in Switzerland",
+        "url": "https://www.tunes-epfl.com/"
+      },
+      {
+        "acronym": "Turcopoly",
+        "name": "Association des étudiants turcophones de Lausanne",
+        "url": "https://www.epfl.ch/campus/associations/list/turcopoly/fr/acceuil/"
+      },
+      {
+        "acronym": "UASP",
+        "name": "Association of the Spanish students at EPFL",
+        "url": "http://uasp.epfl.ch/"
+      },
+      {
+        "acronym": "YUVA-Indians",
+        "name": "Association of the Indian students in Lausanne",
+        "url": "http://yuva.epfl.ch/"
+      }
+    ]
+  },
+  {
+    "categoryName": "Sustainability",
+    "associationList": [
+      {
+        "acronym": "Ingénieurs du monde",
+        "name": "IDM",
+        "url": "https://ciel.epfl.ch/"
+      },
+      {
+        "acronym": "The Sustainable Innovation Competition"
+      },
+      {
+        "acronym": "UniPoly",
+        "name": "Association for ecology",
+        "url": "http://unipoly.epfl.ch/"
+      },
+      {
+        "acronym": "Zero Emission Group",
+        "name": "ZEG",
+        "url": "https://www.facebook.com/zeroemissionsgroup/"
+      }
+    ]
+  },
+  {
+    "categoryName": "Science and technology",
+    "associationList": [
+      {
+        "acronym": "AI Team",
+        "name": "AI association focused on robotics project & events",
+        "url": "https://epflaiteam.ch/"
+      },
+      {
+        "acronym": "Callista",
+        "name": "EPFL-UNIL association in astronomy",
+        "url": "http://callista.epfl.ch/"
+      },
+      {
+        "acronym": "GNU Generation",
+        "name": "Promotion for free applications",
+        "url": "http://gnugeneration.epfl.ch/"
+      },
+      {
+        "acronym": "NSMX",
+        "name": "NeuroStudents’ NetworX",
+        "url": "https://www.epfl.ch/campus/associations/list/nsnx/fr/lassociation/"
+      },
+      {
+        "acronym": "Polympiads",
+        "name": "Association for promotion, competitive maths and competitive programming",
+        "url": "https://www.polympiads.ch/"
+      },
+      {
+        "acronym": "RoboPoly",
+        "name": "Robots contest",
+        "url": "http://robopoly.epfl.ch/"
+      },
+      {
+        "acronym": "Space@yourService",
+        "name": "Promotion and popularization of space sciences",
+        "url": "https://www.epfl.ch/campus/associations/list/spaceat/fr/spaceyourservice-2/"
+      },
+      {
+        "acronym": "SPAN (Science Policy Action Network)",
+        "url": "https://www.epfl.ch/campus/associations/list/span/homepage/"
+      },
+      {
+        "acronym": "SIAM",
+        "name": "Society for Industrial and Applied Mathematics, student chapter",
+        "url": "https://epflsiam.wordpress.com/"
+      },
+      {
+        "acronym": "SSA",
+        "name": "Space Situational Awareness Team",
+        "url": "https://www.epfl.ch/campus/associations/list/ssa/"
+      }
+    ]
+  },
+  {
+    "categoryName": "Culture and society",
+    "associationList": [
+      {
+        "acronym": "180°C",
+        "name": "Association to promote cooking amongst students",
+        "url": "https://www.180c.ch/association/"
+      },
+      {
+        "acronym": "EAL",
+        "name": "Effective Altruism Lausanne",
+        "url": "https://effectivealtruism.ch/lausanne"
+      },
+      {
+        "acronym": "EscapEPFL",
+        "name": "Creation and proposition of Escape Games",
+        "url": "https://www.epfl.ch/campus/associations/list/escapepfl/"
+      },
+      {
+        "acronym": "AGEPoly",
+        "name": "Dame Blanche",
+        "url": "https://www.facebook.com/chess.epfl"
+      },
+      {
+        "acronym": "AGEPoly",
+        "name": "JDRPoly",
+        "url": "https://jdrpoly.ch/"
+      },
+      {
+        "acronym": "AGEPoly",
+        "name": "LudoPoly",
+        "url": "https://www.epfl.ch/campus/associations/list/ludopoly/"
+      },
+      {
+        "acronym": "EPFL & UNIL Wine Society",
+        "name": "Oenology association",
+        "url": "http://www.wine-society.ch/"
+      },
+      {
+        "acronym": "EPhilo",
+        "name": "Association of EPFL students for Philosophy"
+      },
+      {
+        "acronym": "Fréquence Banane",
+        "name": "Radio",
+        "url": "http://www.frequencebanane.ch/"
+      },
+      {
+        "acronym": "PET",
+        "name": "Theatrical expression pole",
+        "url": "http://pet.epfl.ch/"
+      },
+      {
+        "acronym": "PIXELS",
+        "name": "Gaming association culture",
+        "url": "http://www.pixels-association.ch/"
+      },
+      {
+        "acronym": "PLUME",
+        "name": "Literary Association",
+        "url": "https://www.epfl.ch/campus/associations/list/plume"
+      },
+      {
+        "acronym": "PolyJapan",
+        "name": "Promotion of Japanese culture",
+        "url": "http://polyjapan.epfl.ch/"
+      },
+      {
+        "acronym": "PolyLan",
+        "name": "Promotion of video game culture",
+        "url": "http://polylan.ch/"
+      },
+      {
+        "acronym": "TEDxEcublens",
+        "name": "Independently organized TED event",
+        "url": "https://www.tedxecublens.com/"
+      },
+      {
+        "acronym": "TriviaPoly",
+        "name": "Organization of quiz competitions",
+        "url": "https://www.epfl.ch/campus/associations/list/triviapoly/"
+      }
+    ]
+  },
+  {
+    "categoryName": "Arts",
+    "associationList": [
+      {
+        "acronym": "AGEPoly",
+        "name": "ArtePoly",
+        "url": "https://artepoly.agepoly.ch/"
+      },
+      {
+        "acronym": "AGEPoly",
+        "name": "Club Photo",
+        "url": "http://photo.epfl.ch/"
+      },
+      {
+        "acronym": "Musical",
+        "name": "Music club",
+        "url": "http://musical.epfl.ch/"
+      },
+      {
+        "acronym": "OChe",
+        "name": "Orchestre de chambre des étudiant-e-s de Lausanne",
+        "url": "http://oche.epfl.ch/"
+      }
+    ]
+  },
+  {
+    "categoryName": "Entertainment",
+    "associationList": [
+      {
+        "acronym": "Artiphys",
+        "name": "Festival",
+        "url": "https://artiphys.epfl.ch/v2/#home"
+      },
+      {
+        "acronym": "Balelec",
+        "name": "Festival",
+        "url": "http://www.balelec.ch/"
+      },
+      {
+        "acronym": "NDLM",
+        "name": "Nuit de la magistale",
+        "url": "https://nuit-de-la-magistrale.ch/"
+      },
+      {
+        "acronym": "Satellite",
+        "name": "Bar, concerts and theater",
+        "url": "https://satellite.bar/"
+      },
+      {
+        "acronym": "Sysmic",
+        "name": "Evening of the EPFL students in microtechnics",
+        "url": "http://sysmic.epfl.ch/"
+      }
+    ]
+  },
+  {
+    "categoryName": "Sports",
+    "associationList": [
+      {
+        "acronym": "Aeropoly",
+        "name": "Association for all types of flying activities",
+        "url": "http://aeropoly.epfl.ch/"
+      },
+      {
+        "acronym": "Challenge",
+        "name": "Ski challenge EPFL-ETHZ",
+        "url": "https://challenge.swiss/fr/"
+      },
+      {
+        "acronym": "Club Montagne",
+        "name": "Outdoor activities",
+        "url": "http://clubmontagne.epfl.ch/"
+      },
+      {
+        "acronym": "Dance Square",
+        "name": "Dance club",
+        "url": "https://dancesquare.epfl.ch/wordpress/"
+      },
+      {
+        "acronym": "EUGA",
+        "name": "EPFL-UNIL golf association",
+        "url": "http://euga.ch/"
+      }
+    ]
+  },
+  {
+    "categoryName": "Vocational guidance",
+    "associationList": [
+      {
+        "acronym": "BSNL",
+        "name": "BioScience Network Lausanne",
+        "url": "http://bsnl.ch/"
+      },
+      {
+        "acronym": "Forum EPFL",
+        "name": "Meeting companies-future graduates",
+        "url": "http://forum.epfl.ch/"
+      },
+      {
+        "acronym": "Entrepreneur Club",
+        "name": "Association to promote entrepreneurship",
+        "url": "https://ec-epfl-unil.ch/"
+      },
+      {
+        "acronym": "IAESTE",
+        "name": "Exchange and internship abroad",
+        "url": "https://www.iaeste.ch/local-committees/join-us/lc-lausanne/"
+      },
+      {
+        "acronym": "IEEE EPFL Student branch",
+        "name": "Advancement of technology",
+        "url": "http://ieee.epfl.ch/"
+      },
+      {
+        "acronym": "IFL",
+        "name": "Innovation Forum Lausanne",
+        "url": "https://lausanne.inno-forum.org/"
+      },
+      {
+        "acronym": "JE EPFL",
+        "name": "Junior Entreprise",
+        "url": "http://je.epfl.ch/"
+      },
+      {
+        "acronym": "LauzHack",
+        "name": "Hackaton organisation",
+        "url": "http://lauzhack.com/"
+      },
+      {
+        "acronym": "MUN EPFL",
+        "name": "Model United Nations, eloquence and debates of international politics",
+        "url": "https://www.epfl.ch/campus/associations/list/mun/"
+      },
+      {
+        "acronym": "ShARE-EPFL",
+        "name": "Sharing knowledge for development",
+        "url": "https://junior-connect.com/lobby/organization/share-epfl"
+      },
+      {
+        "acronym": "Start",
+        "name": "Association to promote entrepreneurship",
+        "url": "http://www.startlausanne.ch/"
+      },
+      {
+        "acronym": "The Consulting Society",
+        "name": "Promotion of consulting activities",
+        "url": "http://www.theconsultingsociety.com/"
+      },
+      {
+        "acronym": "TFA",
+        "name": "The Finance Association",
+        "url": "http://www.thefinanceassociation.com/"
+      }
+    ]
+  }
+]
