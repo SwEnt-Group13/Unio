@@ -44,7 +44,7 @@ fun LoginScreen(navigationAction: NavigationAction) {
               Button(
                   onClick = {
                     /* TODO Handle login with Tequila/Microsoft if possible */
-                    navigationAction.navigateTo(Screen.HOME)
+                    navigationAction.navigateTo(Screen.ACCOUNT_CREATION)
                   }) {
                     Text("Continue")
                   }

@@ -96,4 +96,5 @@ object Screen {
   const val SAVED = "Saved Screen"
   const val MY_PROFILE = "MyProfile Screen"
   const val ASSOCIATION = "Association Screen"
+  const val ACCOUNT_CREATION = "Account Creation Screen"
 }

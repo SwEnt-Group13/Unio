@@ -11,6 +11,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
+import com.android.unio.ui.accountCreation.AccountCreationScreen
 import com.android.unio.ui.association.AssociationProfile
 import com.android.unio.ui.authentication.LoginScreen
 import com.android.unio.ui.authentication.WelcomeScreen
@@ -40,6 +41,7 @@ fun UnioApp() {
     navigation(startDestination = Screen.WELCOME, route = Route.AUTH) {
       composable(Screen.WELCOME) { WelcomeScreen(navigationActions) }
       composable(Screen.AUTH) { LoginScreen(navigationActions) }
+      composable(Screen.ACCOUNT_CREATION){ AccountCreationScreen(navigationActions) }
     }
     navigation(startDestination = Screen.HOME, route = Route.HOME) {
       composable(Screen.HOME) { HomeScreen(navigationActions) }
