@@ -1,6 +1,7 @@
 package com.android.unio.ui.association
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -28,10 +29,13 @@ fun AssociationProfile(
 ) {
   val association =
       associationViewModel.findAssociationById(associationId)
-          ?: return Text(
-              text = "Association not found. Shouldn't happen.",
-              modifier = Modifier.testTag("associationNotFound"),
-              color = Color.Red)
+          ?: run {
+              Log.e("AssociationProfile", "Association not found")
+              return Text(
+                  text = "Association not found. Shouldn't happen.",
+                  modifier = Modifier.testTag("associationNotFound"),
+                  color = Color.Red)
+          }
 
   Scaffold(
       topBar = {
