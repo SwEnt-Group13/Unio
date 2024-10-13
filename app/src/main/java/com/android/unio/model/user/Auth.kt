@@ -15,9 +15,9 @@ enum class SignInState {
 data class SignInResult(val state: SignInState, val user: FirebaseUser?)
 
 /**
- * Sign in or create an account with the given email and password.
- * The function will first try to sign in with the given email and password.
- * If the sign in fails, the function will try to create an account.
+ * Sign in or create an account with the given email and password. The function will first try to
+ * sign in with the given email and password. If the sign in fails, the function will try to create
+ * an account.
  *
  * @param email The email to sign in or create an account with.
  * @param password The password to sign in or create an account with.
@@ -55,17 +55,22 @@ fun signInOrCreateAccount(
  * @param auth The FirebaseAuth instance to use for creating an account.
  * @param onResult The callback to call when the account creation is complete.
  */
-fun createAccount(email: String, password: String, auth: FirebaseAuth, onResult: (SignInResult) -> Unit) {
+fun createAccount(
+    email: String,
+    password: String,
+    auth: FirebaseAuth,
+    onResult: (SignInResult) -> Unit
+) {
   if (isValidEmail(email)) {
     auth
-    .createUserWithEmailAndPassword(email, password)
-    .addOnSuccessListener {
-      onResult(SignInResult(SignInState.SUCCESS_CREATE_ACCOUNT, it.user))
-    }
-    .addOnFailureListener {
-      Log.e("Auth", "Failed to create account", it)
-      onResult(SignInResult(SignInState.INVALID_CREDENTIALS, null))
-    }
+        .createUserWithEmailAndPassword(email, password)
+        .addOnSuccessListener {
+          onResult(SignInResult(SignInState.SUCCESS_CREATE_ACCOUNT, it.user))
+        }
+        .addOnFailureListener {
+          Log.e("Auth", "Failed to create account", it)
+          onResult(SignInResult(SignInState.INVALID_CREDENTIALS, null))
+        }
   } else {
     onResult(SignInResult(SignInState.INVALID_EMAIL_FORMAT, null))
   }

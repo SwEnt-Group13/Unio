@@ -118,14 +118,15 @@ fun WelcomeScreen(navigationAction: NavigationAction) {
 
 fun handleAuthentication(email: String, password: String, context: Context) {
   signInOrCreateAccount(email, password, Firebase.auth) { signInResult ->
-    // NOTE: No need to navigate to other screens, that is already handled by the listener in MainActivity
+    // NOTE: No need to navigate to other screens, that is already handled by the listener in
+    // MainActivity
     when (signInResult.state) {
       SignInState.INVALID_CREDENTIALS -> {
         Toast.makeText(context, "Invalid credentials", Toast.LENGTH_SHORT).show()
       }
       SignInState.INVALID_EMAIL_FORMAT -> {
         Toast.makeText(context, "Please enter a valid EPFL email address", Toast.LENGTH_SHORT)
-          .show()
+            .show()
       }
       SignInState.SUCCESS_SIGN_IN -> {
         Toast.makeText(context, "Signed in successfully", Toast.LENGTH_SHORT).show()
@@ -136,7 +137,7 @@ fun handleAuthentication(email: String, password: String, context: Context) {
               Toast.makeText(context, "Verification email sent", Toast.LENGTH_SHORT).show()
             } else {
               Toast.makeText(context, "Failed to send verification email", Toast.LENGTH_SHORT)
-                .show()
+                  .show()
               Log.e("WelcomeScreen", "Failed to send verification email", it.exception)
             }
           }
@@ -149,8 +150,7 @@ fun handleAuthentication(email: String, password: String, context: Context) {
           if (it.isSuccessful) {
             Toast.makeText(context, "Verification email sent", Toast.LENGTH_SHORT).show()
           } else {
-            Toast.makeText(context, "Failed to send verification email", Toast.LENGTH_SHORT)
-              .show()
+            Toast.makeText(context, "Failed to send verification email", Toast.LENGTH_SHORT).show()
             Log.e("WelcomeScreen", "Failed to send verification email", it.exception)
           }
         }
