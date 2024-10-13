@@ -95,5 +95,5 @@ object Screen {
   const val EXPLORE = "Explore Screen"
   const val SAVED = "Saved Screen"
   const val MY_PROFILE = "MyProfile Screen"
-  const val ASSOCIATION = "Association Screen"
+  const val ASSOCIATION_PROFILE = "Association Profile Screen"
 }

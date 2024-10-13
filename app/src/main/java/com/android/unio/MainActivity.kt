@@ -46,7 +46,7 @@ fun UnioApp() {
     }
     navigation(startDestination = Screen.EXPLORE, route = Route.EXPLORE) {
       composable(Screen.EXPLORE) { ExploreScreen(navigationActions) }
-      composable(Screen.ASSOCIATION) { AssociationProfile(navigationActions) }
+      composable(Screen.ASSOCIATION_PROFILE) { AssociationProfile(navigationActions) }
     }
     navigation(startDestination = Screen.SAVED, route = Route.SAVED) {
       composable(Screen.SAVED) { SavedScreen(navigationActions) }
