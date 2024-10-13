@@ -55,7 +55,7 @@ class FirestoreReferenceList<T>(
   override fun requestAll() {
     _list.value = emptyList()
     collection
-        .whereIn(FieldPath.documentId(), _uids)
+        .whereIn(FieldPath.documentId(), _uids.filter { it.isNotEmpty() })
         .get()
         .addOnSuccessListener { result ->
           val items = result.documents.map { hydrate(it) }
