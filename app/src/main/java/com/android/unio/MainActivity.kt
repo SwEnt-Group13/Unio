@@ -53,12 +53,11 @@ fun UnioApp() {
       composable(Screen.EXPLORE) { ExploreScreen(navigationActions) }
       composable(Screen.ASSOCIATION_PROFILE + "/{uid}") { navBackStackEntry ->
         val uid = navBackStackEntry.arguments?.getString("uid")
-        uid?.let {
-          AssociationProfile(navigationAction = navigationActions, associationId = it)
-        } ?: run {
-          Log.e("AssociationProfile", "Association id is null")
-          Toast.makeText(context, "Association id is null", Toast.LENGTH_SHORT).show()
-        }
+        uid?.let { AssociationProfile(navigationAction = navigationActions, associationId = it) }
+            ?: run {
+              Log.e("AssociationProfile", "Association id is null")
+              Toast.makeText(context, "Association id is null", Toast.LENGTH_SHORT).show()
+            }
       }
     }
     navigation(startDestination = Screen.SAVED, route = Route.SAVED) {

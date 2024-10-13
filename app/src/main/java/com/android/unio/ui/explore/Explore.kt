@@ -120,28 +120,29 @@ fun ExploreScreenContent(padding: PaddingValues, navigationAction: NavigationAct
 
 @Composable
 fun AssociationItem(association: Association, navigationAction: NavigationAction) {
-  Column(modifier = Modifier.clickable {
-      navigationAction.navigateTo(
-          Screen.ASSOCIATION_PROFILE + "/{uid}"
-              .replace(oldValue = "{uid}", newValue = association.uid)
-      )
-  }) {
-    /**
-     * AdEC image is used as the placeholder. Will need to add the actual image later, when the
-     * actual view model is used.
-     */
-    Image(
-        painter = painterResource(id = R.drawable.adec),
-        contentDescription = "image description",
-        modifier = Modifier.size(124.dp))
+  Column(
+      modifier =
+          Modifier.clickable {
+            navigationAction.navigateTo(
+                Screen.ASSOCIATION_PROFILE +
+                    "/{uid}".replace(oldValue = "{uid}", newValue = association.uid))
+          }) {
+        /**
+         * AdEC image is used as the placeholder. Will need to add the actual image later, when the
+         * actual view model is used.
+         */
+        Image(
+            painter = painterResource(id = R.drawable.adec),
+            contentDescription = "image description",
+            modifier = Modifier.size(124.dp))
 
-    Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
-    Text(
-        text = association.acronym,
-        style = AppTypography.bodyMedium,
-        modifier = Modifier.fillMaxWidth().align(Alignment.CenterHorizontally))
-  }
+        Text(
+            text = association.acronym,
+            style = AppTypography.bodyMedium,
+            modifier = Modifier.fillMaxWidth().align(Alignment.CenterHorizontally))
+      }
 }
 
 /** Returns a list of associations filtered by the given category. */

@@ -11,10 +11,12 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.ui.navigation.NavigationAction
+import com.android.unio.ui.theme.AppTypography
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -24,6 +26,13 @@ fun AssociationProfile(
     associationId: String,
     associationViewModel: AssociationViewModel = viewModel(factory = AssociationViewModel.Factory)
 ) {
+  val association =
+      associationViewModel.findAssociationById(associationId)
+          ?: return Text(
+              text = "Association not found. Shouldn't happen.",
+              modifier = Modifier.testTag("associationNotFound"),
+              color = Color.Red)
+
   Scaffold(
       topBar = {
         TopAppBar(
@@ -40,10 +49,9 @@ fun AssociationProfile(
                   }
             })
       },
-      modifier = Modifier.testTag("AssociationScreen")
-  ) {
-      Text("Association screen")
+      modifier = Modifier.testTag("AssociationScreen")) {
+        Text("Association Profile screen")
 
-
-  }
+        Text("Association acronym: ${association.acronym}", style = AppTypography.bodyMedium)
+      }
 }
