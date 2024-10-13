@@ -27,7 +27,7 @@ class AssociationProfileTest {
 
   @Test
   fun testAssociationProfileDisplayed() {
-    composeTestRule.setContent { AssociationProfile(navigationAction) }
+    composeTestRule.setContent { AssociationProfile(navigationAction, "") }
 
     composeTestRule.onNodeWithTag("AssociationProfileTitle").assertIsDisplayed()
     composeTestRule.onNodeWithText("Association Profile").assertIsDisplayed()
@@ -40,7 +40,7 @@ class AssociationProfileTest {
 
   @Test
   fun testGoBackButton() {
-    composeTestRule.setContent { AssociationProfile(navigationAction) }
+    composeTestRule.setContent { AssociationProfile(navigationAction, "") }
 
     composeTestRule.onNodeWithTag("goBackButton").performClick()
 
