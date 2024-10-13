@@ -95,5 +95,11 @@ object Screen {
   const val EXPLORE = "Explore Screen"
   const val SAVED = "Saved Screen"
   const val MY_PROFILE = "MyProfile Screen"
-  const val ASSOCIATION_PROFILE = "Association Profile Screen"
+  const val ASSOCIATION_PROFILE = "Association Profile Screen/{uid}"
+
+  fun withParams(screen: String, vararg params: String): String {
+    return params.fold(screen) { acc, param -> acc.replaceFirst(Regex("\\{[^}]*}"), param) }
+  }
 }
+
+
