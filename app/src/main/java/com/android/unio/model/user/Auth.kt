@@ -25,14 +25,7 @@ fun signInOrCreateAccount(
         .addOnSuccessListener { onResult(SignInResult(SignInState.SUCCESS_SIGN_IN, it.user)) }
         .addOnFailureListener {
           if (it is FirebaseAuthInvalidCredentialsException) {
-            auth
-                .createUserWithEmailAndPassword(email, password)
-                .addOnSuccessListener {
-                  onResult(SignInResult(SignInState.SUCCESS_CREATE_ACCOUNT, it.user))
-                }
-                .addOnFailureListener {
-                  onResult(SignInResult(SignInState.INVALID_CREDENTIALS, null))
-                }
+            createAccount(email, password, auth, onResult)
           } else {
             onResult(SignInResult(SignInState.INVALID_CREDENTIALS, null))
           }
@@ -42,6 +35,21 @@ fun signInOrCreateAccount(
   }
 }
 
+fun createAccount(email: String, password: String, auth: FirebaseAuth, onResult: (SignInResult) -> Unit) {
+  if (isValidEmail(email)) {
+    auth
+    .createUserWithEmailAndPassword(email, password)
+    .addOnSuccessListener {
+      onResult(SignInResult(SignInState.SUCCESS_CREATE_ACCOUNT, it.user))
+    }
+    .addOnFailureListener {
+      Log.e("Auth", "Failed to create account", it)
+      onResult(SignInResult(SignInState.INVALID_CREDENTIALS, null))
+    }
+  } else {
+    onResult(SignInResult(SignInState.INVALID_EMAIL_FORMAT, null))
+  }
+}
 fun isValidEmail(text: String): Boolean {
   return text.trim().isNotEmpty() && text.trim().matches(Regex("^.+@.+\\..+$"))
 }
