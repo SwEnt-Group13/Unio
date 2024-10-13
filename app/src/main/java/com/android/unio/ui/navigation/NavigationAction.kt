@@ -101,5 +101,3 @@ object Screen {
     return params.fold(screen) { acc, param -> acc.replaceFirst(Regex("\\{[^}]*}"), param) }
   }
 }
-
-

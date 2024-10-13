@@ -30,11 +30,11 @@ fun AssociationProfile(
   val association =
       associationViewModel.findAssociationById(associationId)
           ?: run {
-              Log.e("AssociationProfile", "Association not found")
-              return Text(
-                  text = "Association not found. Shouldn't happen.",
-                  modifier = Modifier.testTag("associationNotFound"),
-                  color = Color.Red)
+            Log.e("AssociationProfile", "Association not found")
+            return Text(
+                text = "Association not found. Shouldn't happen.",
+                modifier = Modifier.testTag("associationNotFound"),
+                color = Color.Red)
           }
 
   Scaffold(
