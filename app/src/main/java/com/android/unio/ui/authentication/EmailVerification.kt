@@ -1,5 +1,6 @@
 package com.android.unio.ui.authentication
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -42,8 +43,13 @@ fun EmailVerificationScreen(navigationAction: NavigationAction) {
 
   val checkEmailVerification = {
     Firebase.auth.currentUser?.reload()?.addOnCompleteListener {
-      if (Firebase.auth.currentUser?.isEmailVerified == true) {
-        success = true
+      if (it.isSuccessful) {
+        if (Firebase.auth.currentUser?.isEmailVerified == true) {
+          success = true
+        }
+      } else {
+        Log.e("EmailVerificationScreen", "Failed to refresh", it.exception)
+        Toast.makeText(context, "Failed to refresh", Toast.LENGTH_SHORT).show()
       }
     }
   }
@@ -53,6 +59,7 @@ fun EmailVerificationScreen(navigationAction: NavigationAction) {
       if (it.isSuccessful) {
         Toast.makeText(context, "Email sent", Toast.LENGTH_SHORT).show()
       } else {
+        Log.e("EmailVerificationScreen", "Failed to send email", it.exception)
         Toast.makeText(context, "Failed to send email", Toast.LENGTH_SHORT).show()
       }
     }
