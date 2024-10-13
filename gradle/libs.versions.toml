@@ -13,6 +13,7 @@ ktfmt = "0.17.0"
 
 # UI Compose
 lifecycleLivedataKtx = "2.8.6"
+materialIconsExtended = "1.7.3"
 mockitoAndroid = "5.13.0"
 ui = "1.7.2"
 uiTestJunit4 = "1.7.2"
@@ -32,7 +33,7 @@ firebaseFirestore = "25.1.0"
 firebaseUiAuth = "8.0.0"
 
 # Google Service and Maps
-playServicesAuth = "21.2.0"
+playServicesAuth = "20.7.0" # Do not upgrade. See https://stackoverflow.com/a/78107308/11618935
 playServicesMaps = "19.0.0"
 mapsCompose = "4.3.3"
 mapsComposeUtils = "4.3.0"
@@ -80,6 +81,7 @@ uiTextGoogleFonts = "1.7.3"
 
 
 [libraries]
+androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "materialIconsExtended" }
 compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
 compose-material3 = { group = "androidx.compose.material3", name = "material3" }
 compose-ui = { group = "androidx.compose.ui", name = "ui" }

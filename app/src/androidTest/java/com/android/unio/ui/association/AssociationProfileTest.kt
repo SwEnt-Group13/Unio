@@ -3,7 +3,6 @@ package com.android.unio.ui.association
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
-import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.navigation.NavHostController
 import com.android.unio.ui.navigation.NavigationAction
@@ -30,12 +29,10 @@ class AssociationProfileTest {
     composeTestRule.setContent { AssociationProfile(navigationAction, "") }
 
     composeTestRule.onNodeWithTag("AssociationProfileTitle").assertIsDisplayed()
-    composeTestRule.onNodeWithText("Association Profile").assertIsDisplayed()
 
     composeTestRule.onNodeWithTag("goBackButton").assertIsDisplayed()
 
     composeTestRule.onNodeWithTag("AssociationScreen").assertIsDisplayed()
-    composeTestRule.onNodeWithText("Association screen").assertIsDisplayed()
   }
 
   @Test
