@@ -31,18 +31,33 @@ fun AssociationProfile(
       associationViewModel.findAssociationById(associationId)
           ?: run {
             Log.e("AssociationProfile", "Association not found")
-            return Text(
-                text = "Association not found. Shouldn't happen.",
-                modifier = Modifier.testTag("associationNotFound"),
-                color = Color.Red)
+            return AssociationProfileScaffold(
+                title = "Association Profile", navigationAction = navigationAction) {
+                  Text(
+                      text = "Association not found. Shouldn't happen.",
+                      modifier = Modifier.testTag("associationNotFound"),
+                      color = Color.Red)
+                }
           }
 
+  AssociationProfileScaffold(title = "Association Profile", navigationAction = navigationAction) {
+    Text("Association Profile screen")
+    Text("Association acronym: ${association.acronym}", style = AppTypography.bodyMedium)
+  }
+}
+
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun AssociationProfileScaffold(
+    title: String,
+    navigationAction: NavigationAction,
+    content: @Composable () -> Unit
+) {
   Scaffold(
       topBar = {
         TopAppBar(
-            title = {
-              Text("Association Profile", modifier = Modifier.testTag("AssociationProfileTitle"))
-            },
+            title = { Text(title, modifier = Modifier.testTag("AssociationProfileTitle")) },
             navigationIcon = {
               IconButton(
                   onClick = { navigationAction.goBack() },
@@ -53,9 +68,7 @@ fun AssociationProfile(
                   }
             })
       },
-      modifier = Modifier.testTag("AssociationScreen")) {
-        Text("Association Profile screen")
-
-        Text("Association acronym: ${association.acronym}", style = AppTypography.bodyMedium)
+      modifier = Modifier.testTag("AssociationProfileScreen")) {
+        content()
       }
 }
