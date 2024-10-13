@@ -1,5 +1,6 @@
 package com.android.unio.model.user
 
+import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseUser
@@ -37,6 +38,7 @@ fun signInOrCreateAccount(
           if (it is FirebaseAuthInvalidCredentialsException) {
             createAccount(email, password, auth, onResult)
           } else {
+            Log.e("Auth", "Failed to sign in", it)
             onResult(SignInResult(SignInState.INVALID_CREDENTIALS, null))
           }
         }
