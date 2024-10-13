@@ -32,7 +32,7 @@ class AssociationProfileTest {
 
     composeTestRule.onNodeWithTag("goBackButton").assertIsDisplayed()
 
-    composeTestRule.onNodeWithTag("AssociationScreen").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("AssociationProfileScreen").assertIsDisplayed()
   }
 
   @Test
