@@ -82,9 +82,7 @@ class HydrationAndSerializationTest {
         )
   }
 
-  /**
-   * Round-trip tests for serialization and hydration of user, association, and event instances.
-   */
+  /** Round-trip tests for serialization and hydration of user, association, and event instances. */
   @Test
   fun testUserHydrationAndSerialization() {
     val serialized = UserRepositoryFirestore.serialize(user)
@@ -136,7 +134,8 @@ class HydrationAndSerializationTest {
     assertEquals(event.date, serialized["date"])
     assertEquals(event.location.name, (serialized["location"] as Map<String, Any>)["name"])
     assertEquals(event.location.latitude, (serialized["location"] as Map<String, Any>)["latitude"])
-    assertEquals(event.location.longitude, (serialized["location"] as Map<String, Any>)["longitude"])
+    assertEquals(
+        event.location.longitude, (serialized["location"] as Map<String, Any>)["longitude"])
     assertEquals(event.organisers.list.value, serialized["organisers"])
     assertEquals(event.taggedAssociations.list.value, serialized["taggedAssociations"])
 
@@ -154,9 +153,7 @@ class HydrationAndSerializationTest {
     assertEquals(event.taggedAssociations.list.value, hydrated.taggedAssociations.list.value)
   }
 
-  /**
-   * Test hydration when the map misses fields.
-   */
+  /** Test hydration when the map misses fields. */
   @Test
   fun testUserHydrationWithMissingFields() {
     val serialized = emptyMap<String, Any>()
