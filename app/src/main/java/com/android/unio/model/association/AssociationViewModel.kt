@@ -10,12 +10,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class ExploreViewModel(val repository: AssociationRepositoryFirestore) : ViewModel() {
+class AssociationViewModel(val repository: AssociationRepository) : ViewModel() {
   private val _associations = MutableStateFlow<List<Association>>(emptyList())
   val associations: StateFlow<List<Association>> = _associations
 
   init {
-    repository.init { fetchAssociations() }
+    repository.init { getAssociations() }
   }
 
   companion object {
@@ -23,12 +23,12 @@ class ExploreViewModel(val repository: AssociationRepositoryFirestore) : ViewMod
         object : ViewModelProvider.Factory {
           @Suppress("UNCHECKED_CAST")
           override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return ExploreViewModel(AssociationRepositoryFirestore(Firebase.firestore)) as T
+            return AssociationViewModel(AssociationRepositoryFirestore(Firebase.firestore)) as T
           }
         }
   }
 
-  fun fetchAssociations() {
+  fun getAssociations() {
     viewModelScope.launch {
       repository.getAssociations(
           onSuccess = { fetchedAssociations -> _associations.value = fetchedAssociations },
@@ -37,5 +37,19 @@ class ExploreViewModel(val repository: AssociationRepositoryFirestore) : ViewMod
             Log.e("ExploreViewModel", "Failed to fetch associations", exception)
           })
     }
+  }
+
+  /**
+   * Finds an association, in the association list, by its ID.
+   *
+   * @param id The ID of the association to find.
+   * @return The association with the given ID, or null if no such association exists.
+   */
+  fun findAssociationById(id: String): Association? {
+    _associations.value
+        .find { it.uid == id }
+        ?.let {
+          return it
+        } ?: return null
   }
 }

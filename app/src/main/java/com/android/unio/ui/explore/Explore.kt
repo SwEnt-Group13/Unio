@@ -53,6 +53,12 @@ fun ExploreScreen(navigationAction: NavigationAction) {
       content = { padding -> ExploreScreenContent(padding, navigationAction) })
 }
 
+/**
+ * The content of the Explore screen. It displays a list of associations grouped by category.
+ *
+ * @param padding The padding values to apply to the content.
+ * @param navigationAction The navigation action to use when an association is clicked.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ExploreScreenContent(padding: PaddingValues, navigationAction: NavigationAction) {
@@ -118,25 +124,38 @@ fun ExploreScreenContent(padding: PaddingValues, navigationAction: NavigationAct
   }
 }
 
+/**
+ * A single item in the horizontal list of associations. When clicked, it navigates to the
+ * association profile.
+ *
+ * @param association The association to display.
+ * @param navigationAction The navigation action to use when the item is clicked.
+ */
 @Composable
 fun AssociationItem(association: Association, navigationAction: NavigationAction) {
-  Column(modifier = Modifier.clickable { navigationAction.navigateTo(Screen.ASSOCIATION) }) {
-    /**
-     * AdEC image is used as the placeholder. Will need to add the actual image later, when the
-     * actual view model is used.
-     */
-    Image(
-        painter = painterResource(id = R.drawable.adec),
-        contentDescription = "image description",
-        modifier = Modifier.size(124.dp))
+  Column(
+      modifier =
+          Modifier.clickable {
+                navigationAction.navigateTo(
+                    Screen.withParams(Screen.ASSOCIATION_PROFILE, association.uid))
+              }
+              .testTag("associationItem")) {
+        /**
+         * AdEC image is used as the placeholder. Will need to add the actual image later, when the
+         * actual view model is used.
+         */
+        Image(
+            painter = painterResource(id = R.drawable.adec),
+            contentDescription = "image description",
+            modifier = Modifier.size(124.dp))
 
-    Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
-    Text(
-        text = association.acronym,
-        style = AppTypography.bodyMedium,
-        modifier = Modifier.fillMaxWidth().align(Alignment.CenterHorizontally))
-  }
+        Text(
+            text = association.acronym,
+            style = AppTypography.bodyMedium,
+            modifier = Modifier.fillMaxWidth().align(Alignment.CenterHorizontally))
+      }
 }
 
 /** Returns a list of associations filtered by the given category. */

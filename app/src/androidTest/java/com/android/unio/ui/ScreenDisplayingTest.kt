@@ -84,9 +84,9 @@ class ScreenDisplayingTest {
   }
 
   @Test
-  fun testAssociationDisplayed() {
-    composeTestRule.setContent { AssociationProfile(navigationAction) }
-    composeTestRule.onNodeWithTag("AssociationScreen").assertIsDisplayed()
+  fun testAssociationProfileDisplayed() {
+    composeTestRule.setContent { AssociationProfile(navigationAction, "") }
+    composeTestRule.onNodeWithTag("AssociationProfileScreen").assertIsDisplayed()
   }
 
   @Test
