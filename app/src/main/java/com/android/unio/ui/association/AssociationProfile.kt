@@ -19,7 +19,6 @@ import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.theme.AppTypography
 
-@OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun AssociationProfile(
@@ -48,6 +47,13 @@ fun AssociationProfile(
   }
 }
 
+/**
+ * The scaffold for the Association Profile screen.
+ *
+ * @param title The title of the screen.
+ * @param navigationAction The navigation action to use when the back button is clicked.
+ * @param content The content of the screen.
+ */
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

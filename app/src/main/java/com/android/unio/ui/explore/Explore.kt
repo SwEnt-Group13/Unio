@@ -53,6 +53,12 @@ fun ExploreScreen(navigationAction: NavigationAction) {
       content = { padding -> ExploreScreenContent(padding, navigationAction) })
 }
 
+/**
+ * The content of the Explore screen. It displays a list of associations grouped by category.
+ *
+ * @param padding The padding values to apply to the content.
+ * @param navigationAction The navigation action to use when an association is clicked.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ExploreScreenContent(padding: PaddingValues, navigationAction: NavigationAction) {
@@ -118,6 +124,13 @@ fun ExploreScreenContent(padding: PaddingValues, navigationAction: NavigationAct
   }
 }
 
+/**
+ * A single item in the horizontal list of associations. When clicked, it navigates to the
+ * association profile.
+ *
+ * @param association The association to display.
+ * @param navigationAction The navigation action to use when the item is clicked.
+ */
 @Composable
 fun AssociationItem(association: Association, navigationAction: NavigationAction) {
   Column(

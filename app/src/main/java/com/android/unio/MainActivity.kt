@@ -69,7 +69,10 @@ fun UnioApp() {
     navigation(startDestination = Screen.EXPLORE, route = Route.EXPLORE) {
       composable(Screen.EXPLORE) { ExploreScreen(navigationActions) }
       composable(Screen.ASSOCIATION_PROFILE) { navBackStackEntry ->
+        // Get the association UID from the arguments
         val uid = navBackStackEntry.arguments?.getString("uid")
+
+        // Create the AssociationProfile screen with the association UID
         uid?.let { AssociationProfile(navigationAction = navigationActions, associationId = it) }
             ?: run {
               Log.e("AssociationProfile", "Association UID is null")

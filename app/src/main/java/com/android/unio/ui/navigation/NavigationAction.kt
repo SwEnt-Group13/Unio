@@ -99,6 +99,12 @@ object Screen {
   const val MY_PROFILE = "MyProfile Screen"
   const val ASSOCIATION_PROFILE = "Association Profile Screen/{uid}"
 
+  /**
+   * Replace the placeholders in the screen with the provided parameters.
+   *
+   * @param screen The screen with placeholders
+   * @param params The parameters to replace the placeholders with
+   */
   fun withParams(screen: String, vararg params: String): String {
     return params.fold(screen) { acc, param -> acc.replaceFirst(Regex("\\{[^}]*\\}"), param) }
   }
