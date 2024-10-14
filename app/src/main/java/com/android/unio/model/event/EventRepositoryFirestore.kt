@@ -1,9 +1,9 @@
 package com.android.unio.model.event
 
-import android.util.Log
 import com.android.unio.model.firestore.FirestorePaths.EVENT_PATH
+import com.android.unio.model.firestore.transform.hydrate
+import com.android.unio.model.firestore.transform.serialize
 import com.google.firebase.Timestamp
-import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 
 class EventRepositoryFirestore(private val db: FirebaseFirestore) : EventRepository {
@@ -17,7 +17,7 @@ class EventRepositoryFirestore(private val db: FirebaseFirestore) : EventReposit
         .whereArrayContains("organisers", association)
         .get()
         .addOnSuccessListener { result ->
-          val events = result.mapNotNull { event -> hydrate(event) }
+          val events = result.mapNotNull { hydrate(it.data) }
           onSuccess(events)
         }
         .addOnFailureListener { exception -> onFailure(exception) }
@@ -34,7 +34,7 @@ class EventRepositoryFirestore(private val db: FirebaseFirestore) : EventReposit
         .whereLessThan("date", endDate)
         .get()
         .addOnSuccessListener { result ->
-          val events = result.mapNotNull { event -> hydrate(event) }
+          val events = result.mapNotNull { hydrate(it.data) }
           onSuccess(events)
         }
         .addOnFailureListener { exception -> onFailure(exception) }
@@ -44,7 +44,7 @@ class EventRepositoryFirestore(private val db: FirebaseFirestore) : EventReposit
     db.collection(EVENT_PATH)
         .get()
         .addOnSuccessListener { result ->
-          val events = result.mapNotNull { doc -> hydrate(doc) }
+          val events = result.mapNotNull { hydrate(it.data) }
           onSuccess(events)
         }
         .addOnFailureListener { exception -> onFailure(exception) }
@@ -58,7 +58,8 @@ class EventRepositoryFirestore(private val db: FirebaseFirestore) : EventReposit
     if (event.uid.isBlank()) {
       onFailure(IllegalArgumentException("No event id was provided"))
     } else {
-      db.collection(EVENT_PATH).document(event.uid).set(event).addOnCompleteListener { task ->
+      db.collection(EVENT_PATH).document(event.uid).set(serialize(event)).addOnCompleteListener {
+          task ->
         if (task.isSuccessful) {
           onSuccess()
         } else {
@@ -78,13 +79,6 @@ class EventRepositoryFirestore(private val db: FirebaseFirestore) : EventReposit
     }
   }
 
-  companion object {
-    fun hydrate(doc: DocumentSnapshot): Event? {
-      val event = doc.toObject(Event::class.java)
-      if (event == null) {
-        Log.e("EventRepositoryFirestore", "Error while converting db document to Event object")
-      }
-      return event
-    }
-  }
+  // Note: the following line is needed to add external methods to the companion object
+  companion object
 }

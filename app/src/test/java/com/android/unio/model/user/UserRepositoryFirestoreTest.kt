@@ -5,6 +5,7 @@ import com.android.unio.model.association.AssociationRepositoryFirestore
 import com.android.unio.model.firestore.FirestorePaths.ASSOCIATION_PATH
 import com.android.unio.model.firestore.FirestorePaths.USER_PATH
 import com.android.unio.model.firestore.FirestoreReferenceList
+import com.android.unio.model.firestore.transform.hydrate
 import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.gms.tasks.Task
 import com.google.firebase.FirebaseApp
@@ -32,7 +33,9 @@ class UserRepositoryFirestoreTest {
   @Mock private lateinit var associationCollectionReference: CollectionReference
   @Mock private lateinit var querySnapshot: QuerySnapshot
   @Mock private lateinit var queryDocumentSnapshot1: QueryDocumentSnapshot
+  @Mock private lateinit var map1: Map<String, Any>
   @Mock private lateinit var queryDocumentSnapshot2: QueryDocumentSnapshot
+  @Mock private lateinit var map2: Map<String, Any>
   @Mock private lateinit var documentReference: DocumentReference
   @Mock private lateinit var querySnapshotTask: Task<QuerySnapshot>
   @Mock private lateinit var documentSnapshotTask: Task<DocumentSnapshot>
@@ -95,23 +98,28 @@ class UserRepositoryFirestoreTest {
     }
 
     // When the query document snapshots are queried for specific fields, return the fields
-    `when`(queryDocumentSnapshot1.id).thenReturn(user1.uid)
-    `when`(queryDocumentSnapshot1.getString("name")).thenReturn(user1.name)
-    `when`(queryDocumentSnapshot1.getString("email")).thenReturn(user1.email)
-    `when`(queryDocumentSnapshot1.get("followingAssociations"))
-        .thenReturn(user1.followingAssociations)
+
+    `when`(queryDocumentSnapshot1.data).thenReturn(map1)
+    `when`(queryDocumentSnapshot2.data).thenReturn(map2)
+
+    `when`(map1.get("uid")).thenReturn(user1.uid)
+    `when`(map1.get("name")).thenReturn(user1.name)
+    `when`(map1.get("email")).thenReturn(user1.email)
+    `when`(map1.get("followingAssociations"))
+        .thenReturn(user1.followingAssociations.list.value.map { it.uid })
+
+    // Only set the uid field for user2
+    `when`(map2.get("uid")).thenReturn(user2.uid)
 
     repository = UserRepositoryFirestore(db)
   }
 
   @Test
   fun testGetUsers() {
-
-    `when`(queryDocumentSnapshot2.id).thenReturn(user2.uid)
-    `when`(queryDocumentSnapshot2.getString("name")).thenReturn(user2.name)
-    `when`(queryDocumentSnapshot2.getString("email")).thenReturn(user2.email)
-    `when`(queryDocumentSnapshot2.get("followingAssociations"))
-        .thenReturn(user2.followingAssociations)
+    `when`(map2.get("name")).thenReturn(user2.name)
+    `when`(map2.get("email")).thenReturn(user2.email)
+    `when`(map2.get("followingAssociations"))
+        .thenReturn(user2.followingAssociations.list.value.map { it.uid })
 
     repository.getUsers(
         onSuccess = { users ->
@@ -130,8 +138,7 @@ class UserRepositoryFirestoreTest {
 
   @Test
   fun testGetAssociationsWithMissingFields() {
-    // Only set the ID for the second association, leaving the other fields as null
-    `when`(queryDocumentSnapshot2.id).thenReturn(user2.uid)
+    // No specific fields are set for user2
 
     repository.getUsers(
         onSuccess = { users ->

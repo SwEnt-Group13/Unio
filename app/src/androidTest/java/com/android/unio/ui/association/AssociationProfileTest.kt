@@ -12,6 +12,7 @@ import com.android.unio.model.association.AssociationRepository
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.firestore.FirestorePaths.USER_PATH
 import com.android.unio.model.firestore.FirestoreReferenceList
+import com.android.unio.model.firestore.transform.hydrate
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.ui.navigation.NavigationAction
 import com.google.firebase.firestore.CollectionReference
@@ -55,7 +56,7 @@ class AssociationProfileTest {
                     "ACM is the world's largest educational and scientific computing society.",
                 members =
                     FirestoreReferenceList.empty(
-                        db.collection(USER_PATH), UserRepositoryFirestore::hydrate)))
+                        db.collection(USER_PATH), UserRepositoryFirestore.Companion::hydrate)))
 
     navHostController = mock { NavHostController::class.java }
     navigationAction = NavigationAction(navHostController)

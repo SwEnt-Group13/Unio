@@ -3,6 +3,7 @@ package com.android.unio.model.user
 import com.android.unio.model.association.AssociationRepositoryFirestore
 import com.android.unio.model.firestore.FirestorePaths.ASSOCIATION_PATH
 import com.android.unio.model.firestore.FirestoreReferenceList
+import com.android.unio.model.firestore.transform.hydrate
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import junit.framework.TestCase.assertEquals

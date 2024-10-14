@@ -1,9 +1,11 @@
 package com.android.unio.model.event
 
+import androidx.test.core.app.ApplicationProvider
 import com.android.unio.model.firestore.MockReferenceList
 import com.android.unio.model.map.Location
 import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.gms.tasks.Task
+import com.google.firebase.FirebaseApp
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
@@ -16,12 +18,15 @@ import junit.framework.TestCase.assertEquals
 import org.junit.Assert.assertThrows
 import org.junit.Before
 import org.junit.Test
+import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.Mockito.`when`
 import org.mockito.MockitoAnnotations
 import org.mockito.kotlin.any
 import org.mockito.kotlin.eq
+import org.robolectric.RobolectricTestRunner
 
+@RunWith(RobolectricTestRunner::class)
 class EventRepositoryFirestoreTest {
   @Mock private lateinit var db: FirebaseFirestore
 
@@ -34,10 +39,13 @@ class EventRepositoryFirestoreTest {
   @Mock private lateinit var querySnapshot: QuerySnapshot
 
   @Mock private lateinit var queryDocumentSnapshot1: QueryDocumentSnapshot
+  @Mock private lateinit var map1: Map<String, Any>
 
   @Mock private lateinit var queryDocumentSnapshot2: QueryDocumentSnapshot
+  @Mock private lateinit var map2: Map<String, Any>
 
   @Mock private lateinit var queryDocumentSnapshot3: QueryDocumentSnapshot
+  @Mock private lateinit var map3: Map<String, Any>
 
   @Mock private lateinit var getTask: Task<QuerySnapshot>
 
@@ -73,6 +81,11 @@ class EventRepositoryFirestoreTest {
   fun setUp() {
     MockitoAnnotations.openMocks(this)
 
+    // Initialize Firebase if necessary
+    if (FirebaseApp.getApps(ApplicationProvider.getApplicationContext()).isEmpty()) {
+      FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext())
+    }
+
     // When getting the collection, return the task
     `when`(db.collection(eq("events"))).thenReturn(collectionReference)
     `when`(collectionReference.get()).thenReturn(getTask)
@@ -90,9 +103,15 @@ class EventRepositoryFirestoreTest {
             mutableListOf(queryDocumentSnapshot1, queryDocumentSnapshot2, queryDocumentSnapshot3)
                 .iterator())
 
-    `when`(queryDocumentSnapshot1.toObject(Event::class.java)).thenReturn(event1)
-    `when`(queryDocumentSnapshot2.toObject(Event::class.java)).thenReturn(defaultEvent)
-    `when`(queryDocumentSnapshot3.toObject(Event::class.java)).thenReturn(event3)
+    // When the query document snapshots are converted to events, return the events
+    `when`(queryDocumentSnapshot1.data).thenReturn(map1)
+    `when`(queryDocumentSnapshot2.data).thenReturn(map2)
+    `when`(queryDocumentSnapshot3.data).thenReturn(map3)
+
+    // Only test the uid field, the other fields are tested by HydrationAndSerializationTest
+    `when`(map1["uid"]).thenReturn(event1.uid)
+    `when`(map2["uid"]).thenReturn(defaultEvent.uid)
+    `when`(map3["uid"]).thenReturn(event3.uid)
 
     repository = EventRepositoryFirestore(db)
   }
@@ -104,9 +123,10 @@ class EventRepositoryFirestoreTest {
     repository.getEvents(
         onSuccess = { events ->
           assertEquals(3, events.size)
-          assert(events.contains(event1))
-          assert(events.contains(defaultEvent))
-          assert(events.contains(event3))
+
+          assertEquals(event1.uid, events[0].uid)
+          assertEquals(defaultEvent.uid, events[1].uid)
+          assertEquals(event3.uid, events[2].uid)
         },
         onFailure = { e -> throw e })
   }
@@ -124,7 +144,7 @@ class EventRepositoryFirestoreTest {
         "Balelec",
         onSuccess = { events ->
           assertEquals(1, events.size)
-          assertEquals(event1, events[0])
+          assertEquals(event1.uid, events[0].uid)
         },
         onFailure = { e -> throw e })
 
@@ -136,8 +156,8 @@ class EventRepositoryFirestoreTest {
         "EPFL",
         onSuccess = { events ->
           assertEquals(2, events.size)
-          assert(events.contains(event1))
-          assert(events.contains(event3))
+          assert(events.any { it.uid == event1.uid })
+          assert(events.any { it.uid == event3.uid })
         },
         onFailure = { e -> throw e })
   }
@@ -157,7 +177,7 @@ class EventRepositoryFirestoreTest {
         endDate,
         { events ->
           assertEquals(events.size, 1)
-          assert(events.contains(event1))
+          assertEquals(events[0].uid, event1.uid)
         },
         { e -> throw e })
   }
@@ -166,7 +186,7 @@ class EventRepositoryFirestoreTest {
   @Test
   fun testAddEvent() {
     `when`(collectionReference.document(event1.uid)).thenReturn(documentReference)
-    `when`(documentReference.set(event1)).thenReturn(voidTask)
+    `when`(documentReference.set(any())).thenReturn(voidTask)
     repository.addEvent(event1, {}, { e -> throw e })
   }
 

@@ -37,7 +37,7 @@ class FirestoreReferenceListTest {
     `when`(mockQuery.get()).thenReturn(mockTask)
 
     firestoreReferenceList =
-        FirestoreReferenceList(mockCollection) { snapshot -> snapshot.getString("data") ?: "" }
+        FirestoreReferenceList(mockCollection) { data -> data?.get("data") as? String ?: "" }
   }
 
   @Test
@@ -79,7 +79,7 @@ class FirestoreReferenceListTest {
     }
 
     whenever(mockQuerySnapshot.documents).thenReturn(listOf(mockSnapshot, mockSnapshot))
-    whenever(mockSnapshot.getString("data")).thenReturn("Item1", "Item2")
+    whenever(mockSnapshot.data).thenReturn(mapOf("data" to "Item1"), mapOf("data" to "Item2"))
 
     // Add UIDs and call requestAll
     firestoreReferenceList.addAll(listOf("uid1", "uid2"))
@@ -113,7 +113,7 @@ class FirestoreReferenceListTest {
     val list = listOf("uid1", "uid2")
     val fromList =
         FirestoreReferenceList.fromList(list, mockCollection) { snapshot ->
-          snapshot.getString("data") ?: ""
+          snapshot?.get("data") as? String ?: ""
         }
 
     assertEquals(0, fromList.list.value.size)
@@ -123,7 +123,7 @@ class FirestoreReferenceListTest {
   fun `test empty creates FirestoreReferenceList without UIDs`() = runTest {
     val emptyList =
         FirestoreReferenceList.empty(mockCollection) { snapshot ->
-          snapshot.getString("data") ?: ""
+          snapshot?.get("data") as? String ?: ""
         }
 
     // Initial list should be empty
