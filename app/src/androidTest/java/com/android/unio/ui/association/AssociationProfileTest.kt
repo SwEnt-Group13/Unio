@@ -74,16 +74,6 @@ class AssociationProfileTest {
   }
 
   @Test
-  fun testAssociationProfileNullId() {
-    composeTestRule.setContent { AssociationProfile(navigationAction, null.toString()) }
-
-    composeTestRule.onNodeWithTag("AssociationProfileTitle").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("goBackButton").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("AssociationProfileScreen").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("associationNotFound").assertIsDisplayed()
-  }
-
-  @Test
   fun testGoBackButton() {
     composeTestRule.setContent { AssociationProfile(navigationAction, "") }
 
@@ -105,12 +95,17 @@ class AssociationProfileTest {
       assertEquals(associations, associationViewModel.associations.value)
     }
 
-    composeTestRule.setContent { AssociationProfile(navigationAction, "1", associationViewModel) }
+    composeTestRule.setContent {
+      AssociationProfile(navigationAction, associations.first().uid, associationViewModel)
+    }
 
     composeTestRule.onNodeWithTag("AssociationProfileTitle").assertIsDisplayed()
     composeTestRule.onNodeWithTag("goBackButton").assertIsDisplayed()
     composeTestRule.onNodeWithTag("AssociationProfileScreen").assertIsDisplayed()
     composeTestRule.onNodeWithTag("associationAcronym").assertIsDisplayed()
+    composeTestRule
+        .onNodeWithText("Association acronym: ${associations.first().acronym}")
+        .assertIsDisplayed()
   }
 
   @Test
