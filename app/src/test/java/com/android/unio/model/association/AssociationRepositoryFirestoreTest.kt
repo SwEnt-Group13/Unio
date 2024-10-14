@@ -129,8 +129,6 @@ class AssociationRepositoryFirestoreTest {
     `when`(queryDocumentSnapshot1.data).thenReturn(map1)
     `when`(queryDocumentSnapshot2.data).thenReturn(map2)
 
-    //    `when`(serialize(map))
-
     repository = AssociationRepositoryFirestore(db)
   }
 
