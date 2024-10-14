@@ -177,4 +177,3 @@ fun EventListOverview(
         }
       })
 }
-
