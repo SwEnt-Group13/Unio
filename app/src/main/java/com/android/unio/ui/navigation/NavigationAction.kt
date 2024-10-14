@@ -100,6 +100,6 @@ object Screen {
   const val ASSOCIATION_PROFILE = "Association Profile Screen/{uid}"
 
   fun withParams(screen: String, vararg params: String): String {
-    return params.fold(screen) { acc, param -> acc.replaceFirst(Regex("\\{[^}]*}"), param) }
+    return params.fold(screen) { acc, param -> acc.replaceFirst(Regex("\\{[^}]*\\}"), param) }
   }
 }
