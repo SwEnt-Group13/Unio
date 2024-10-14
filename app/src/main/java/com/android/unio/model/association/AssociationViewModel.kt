@@ -39,12 +39,12 @@ class AssociationViewModel(val repository: AssociationRepository) : ViewModel() 
     }
   }
 
-    /**
-     * Finds an association, in the association list, by its ID.
-     *
-     * @param id The ID of the association to find.
-     * @return The association with the given ID, or null if no such association exists.
-     */
+  /**
+   * Finds an association, in the association list, by its ID.
+   *
+   * @param id The ID of the association to find.
+   * @return The association with the given ID, or null if no such association exists.
+   */
   fun findAssociationById(id: String): Association? {
     _associations.value
         .find { it.uid == id }
