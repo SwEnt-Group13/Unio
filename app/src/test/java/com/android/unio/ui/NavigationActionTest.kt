@@ -53,12 +53,12 @@ class NavigationActionTest {
     assertThat(navigationAction.getCurrentRoute(), `is`(Route.HOME))
   }
 
-    @Test
-    fun testNavigateToAssociationProfileFromExplore() {
-      navigationAction.navigateTo(TopLevelDestinations.EXPLORE)
-      verify(navHostController).navigate(eq(Route.EXPLORE), any<NavOptionsBuilder.() -> Unit>())
+  @Test
+  fun testNavigateToAssociationProfileFromExplore() {
+    navigationAction.navigateTo(TopLevelDestinations.EXPLORE)
+    verify(navHostController).navigate(eq(Route.EXPLORE), any<NavOptionsBuilder.() -> Unit>())
 
-      navigationAction.navigateTo(Screen.ASSOCIATION_PROFILE)
-      verify(navHostController).navigate(Screen.ASSOCIATION_PROFILE)
-    }
+    navigationAction.navigateTo(Screen.ASSOCIATION_PROFILE)
+    verify(navHostController).navigate(Screen.ASSOCIATION_PROFILE)
+  }
 }

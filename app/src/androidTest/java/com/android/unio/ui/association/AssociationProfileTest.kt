@@ -44,15 +44,17 @@ class AssociationProfileTest {
 
     `when`(db.collection(any())).thenReturn(collectionReference)
 
-    associations = listOf(Association(
-      uid = "1",
-      acronym = "ACM",
-      fullName = "Association for Computing Machinery",
-      description = "ACM is the world's largest educational and scientific computing society.",
-      members = FirestoreReferenceList.empty(
-        db.collection(USER_PATH),
-        UserRepositoryFirestore::hydrate)
-    ))
+    associations =
+        listOf(
+            Association(
+                uid = "1",
+                acronym = "ACM",
+                fullName = "Association for Computing Machinery",
+                description =
+                    "ACM is the world's largest educational and scientific computing society.",
+                members =
+                    FirestoreReferenceList.empty(
+                        db.collection(USER_PATH), UserRepositoryFirestore::hydrate)))
 
     navHostController = mock { NavHostController::class.java }
     navigationAction = NavigationAction(navHostController)
@@ -95,14 +97,11 @@ class AssociationProfileTest {
       assertEquals(associations, associationViewModel.associations.value)
     }
 
-    composeTestRule.setContent {
-      AssociationProfile(navigationAction, "1", associationViewModel)
-    }
+    composeTestRule.setContent { AssociationProfile(navigationAction, "1", associationViewModel) }
 
     composeTestRule.onNodeWithTag("AssociationProfileTitle").assertIsDisplayed()
     composeTestRule.onNodeWithTag("goBackButton").assertIsDisplayed()
     composeTestRule.onNodeWithTag("AssociationProfileScreen").assertIsDisplayed()
     composeTestRule.onNodeWithTag("associationAcronym").assertIsDisplayed()
   }
-
 }
