@@ -2,6 +2,7 @@ package com.android.unio.model.association
 
 import com.android.unio.model.firestore.FirestorePaths.USER_PATH
 import com.android.unio.model.firestore.FirestoreReferenceList
+import com.android.unio.model.firestore.transform.hydrate
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
@@ -52,7 +53,7 @@ class AssociationViewModelTest {
                     FirestoreReferenceList.fromList(
                         listOf("1", "2"),
                         db.collection(USER_PATH),
-                        UserRepositoryFirestore::hydrate)),
+                        UserRepositoryFirestore.Companion::hydrate)),
             Association(
                 uid = "2",
                 acronym = "IEEE",
@@ -62,7 +63,7 @@ class AssociationViewModelTest {
                     FirestoreReferenceList.fromList(
                         listOf("3", "4"),
                         db.collection(USER_PATH),
-                        UserRepositoryFirestore::hydrate)))
+                        UserRepositoryFirestore.Companion::hydrate)))
 
     viewModel = AssociationViewModel(repository)
   }
