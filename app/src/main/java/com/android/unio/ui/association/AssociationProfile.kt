@@ -17,7 +17,7 @@ import com.android.unio.ui.navigation.NavigationAction
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun AssociationProfile(navigationAction: NavigationAction) {
+fun AssociationProfileScreen(navigationAction: NavigationAction) {
   Scaffold(
       topBar = {
         TopAppBar(
