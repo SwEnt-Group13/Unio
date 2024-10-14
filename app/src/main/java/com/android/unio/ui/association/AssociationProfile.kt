@@ -3,15 +3,21 @@ package com.android.unio.ui.association
 import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
@@ -30,6 +36,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
@@ -85,7 +92,9 @@ fun AssociationProfileScreen(navigationAction: NavigationAction) {
 
 @Composable
 fun AssociationProfileContent(padding: PaddingValues, context: Context) {
-    Column(modifier = Modifier.padding(padding)) {
+    Column(modifier = Modifier
+        .padding(padding)
+        .verticalScroll(rememberScrollState())) {
         AssociationHeader(context)
         Spacer(modifier = Modifier.size(22.dp))
         Text(
@@ -103,21 +112,90 @@ fun AssociationProfileContent(padding: PaddingValues, context: Context) {
         //TODO: Implement upcoming events with event cards from home screen
         AssociationProfileEvents(context)
         Spacer(modifier = Modifier.size(11.dp))
-        Text(getString(R.string.association_contact_members), style = AppTypography.headlineMedium)
+        Text(
+            getString(R.string.association_contact_members),
+            style = AppTypography.headlineMedium,
+            modifier = Modifier.padding(horizontal = 20.dp)
+        )
         Spacer(modifier = Modifier.size(4.dp))
         UserCard()
+        Spacer(modifier = Modifier.size(61.dp))
+        Text(
+            text = "Join <Association> ?",
+            style = AppTypography.headlineMedium,
+            modifier = Modifier.padding(horizontal = 20.dp)
+        )
+        Spacer(modifier = Modifier.size(13.dp))
+        Text(
+            text = "Here’s where you could help us. Click on a role to learn more",
+            style = AppTypography.bodySmall,
+            modifier = Modifier.padding(horizontal = 23.dp)
+        )
+        Spacer(modifier = Modifier.size(18.dp))
+        AssociationRecruitment(context)
     }
 }
 
 @Composable
-fun UserCard(){
-    Row (modifier = Modifier.padding(vertical = 2.dp, horizontal = 3.dp)){
-        Icon(
-            //TODO: Replace with user's profile picture
-            Icons.Filled.Person,
-            contentDescription = "user's profile picture",
-            Modifier.size(InputChipDefaults.AvatarSize)
-        )
+fun AssociationRecruitment(context: Context) {
+    Row(modifier = Modifier.padding(horizontal = 24.dp)) {
+        OutlinedButton(
+            onClick = {
+                Toast.makeText(context, "<DEBUG> Not implemented yet", Toast.LENGTH_SHORT).show()
+            },
+            enabled = true
+        ) {
+            Icon(
+                Icons.Filled.Add,
+                contentDescription = "Add icon"
+            )
+            Spacer(Modifier.width(2.dp))
+            Text("Graphic Designer")
+        }
+        Spacer(modifier = Modifier.width(10.dp))
+        OutlinedButton(
+            onClick = {
+                Toast.makeText(context, "<DEBUG> Not implemented yet", Toast.LENGTH_SHORT).show()
+            },
+            enabled = true
+        ) {
+            Icon(
+                Icons.Filled.Add,
+                contentDescription = "Add icon"
+            )
+            Spacer(Modifier.width(2.dp))
+            Text("Treasurer")
+        }
+    }
+}
+
+@Composable
+fun UserCard() {
+    Box(
+        modifier = Modifier
+            .padding(horizontal = 23.dp)
+            .width(366.dp)
+            .height(40.dp)
+            .background(color = Color.Gray, shape = RoundedCornerShape(size = 12.dp))
+            .padding(vertical = 2.dp, horizontal = 3.dp)
+    ) {
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(115.dp, Alignment.Start),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Icon(
+                //TODO: Replace with user's profile picture
+                Icons.Filled.Person,
+                contentDescription = "user's profile picture",
+                Modifier.size(36.dp)
+            )
+            Spacer(modifier = Modifier.size(115.dp))
+            Text(
+                text = "Casey Rue",
+                style = AppTypography.headlineSmall
+            )
+
+        }
     }
 }
 
