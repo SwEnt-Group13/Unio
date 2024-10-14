@@ -1,4 +1,4 @@
-package com.android.unio.ui
+package com.android.unio.ui.explore
 
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextEquals
@@ -9,9 +9,6 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import com.android.unio.model.association.MockAssociationType
-import com.android.unio.ui.explore.ExploreScreen
-import com.android.unio.ui.explore.getCategoryNameWithFirstLetterUppercase
-import com.android.unio.ui.explore.getFilteredAssociationsByCategoryAndAlphabeticalOrder
 import com.android.unio.ui.navigation.NavigationAction
 import org.junit.Assert.assertEquals
 import org.junit.Before
