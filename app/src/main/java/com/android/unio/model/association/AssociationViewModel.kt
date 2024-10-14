@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class AssociationViewModel(val repository: AssociationRepositoryFirestore) : ViewModel() {
+class AssociationViewModel(val repository: AssociationRepository) : ViewModel() {
   private val _associations = MutableStateFlow<List<Association>>(emptyList())
   val associations: StateFlow<List<Association>> = _associations
 
