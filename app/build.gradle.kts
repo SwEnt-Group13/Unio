@@ -257,6 +257,8 @@ dependencies {
 
     testImplementation(libs.kotlinx.coroutines.test)
 
+    implementation(libs.androidx.material.icons.extended)
+
 }
 
 
