@@ -123,9 +123,10 @@ fun AssociationItem(association: Association, navigationAction: NavigationAction
   Column(
       modifier =
           Modifier.clickable {
-            navigationAction.navigateTo(
-                Screen.withParams(Screen.ASSOCIATION_PROFILE, association.uid))
-          }) {
+                navigationAction.navigateTo(
+                    Screen.withParams(Screen.ASSOCIATION_PROFILE, association.uid))
+              }
+              .testTag("associationItem")) {
         /**
          * AdEC image is used as the placeholder. Will need to add the actual image later, when the
          * actual view model is used.
