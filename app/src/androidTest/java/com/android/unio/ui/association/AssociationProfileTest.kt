@@ -1,8 +1,10 @@
 package com.android.unio.ui.association
 
+import androidx.compose.material3.Text
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.navigation.NavHostController
 import com.android.unio.model.association.Association
@@ -66,11 +68,18 @@ class AssociationProfileTest {
     composeTestRule.setContent { AssociationProfile(navigationAction, "") }
 
     composeTestRule.onNodeWithTag("AssociationProfileTitle").assertIsDisplayed()
-
     composeTestRule.onNodeWithTag("goBackButton").assertIsDisplayed()
-
     composeTestRule.onNodeWithTag("AssociationProfileScreen").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("associationNotFound").assertIsDisplayed()
+  }
 
+  @Test
+  fun testAssociationProfileNullId() {
+    composeTestRule.setContent { AssociationProfile(navigationAction, null.toString()) }
+
+    composeTestRule.onNodeWithTag("AssociationProfileTitle").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("goBackButton").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("AssociationProfileScreen").assertIsDisplayed()
     composeTestRule.onNodeWithTag("associationNotFound").assertIsDisplayed()
   }
 
@@ -102,5 +111,22 @@ class AssociationProfileTest {
     composeTestRule.onNodeWithTag("goBackButton").assertIsDisplayed()
     composeTestRule.onNodeWithTag("AssociationProfileScreen").assertIsDisplayed()
     composeTestRule.onNodeWithTag("associationAcronym").assertIsDisplayed()
+  }
+
+  @Test
+  fun testAssociationProfileScaffold() {
+    composeTestRule.setContent {
+      AssociationProfileScaffold(
+          title = "Test Title",
+          navigationAction = navigationAction,
+      ) {
+        Text("Test Content")
+      }
+    }
+
+    composeTestRule.onNodeWithTag("AssociationProfileTitle").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("goBackButton").assertIsDisplayed()
+
+    composeTestRule.onNodeWithText("Test Content").assertIsDisplayed()
   }
 }
