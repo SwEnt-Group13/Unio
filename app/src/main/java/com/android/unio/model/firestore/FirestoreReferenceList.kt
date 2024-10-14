@@ -22,7 +22,7 @@ import kotlinx.coroutines.flow.StateFlow
  */
 class FirestoreReferenceList<T>(
     private val collection: CollectionReference,
-    private val hydrate: (DocumentSnapshot) -> T
+    private val hydrate: (Map<String, Any>?) -> T
 ) : ReferenceList<T> {
   // The internal list of UIDs.
   private val _uids = mutableListOf<String>()
@@ -58,7 +58,7 @@ class FirestoreReferenceList<T>(
         .whereIn(FieldPath.documentId(), _uids.filter { it.isNotEmpty() })
         .get()
         .addOnSuccessListener { result ->
-          val items = result.documents.map { hydrate(it) }
+          val items = result.documents.map { hydrate(it.data) }
           _list.value = items
         }
         .addOnFailureListener { exception ->
@@ -71,7 +71,7 @@ class FirestoreReferenceList<T>(
     fun <T> fromList(
         list: List<String>,
         collection: CollectionReference,
-        hydrate: (DocumentSnapshot) -> T
+        hydrate: (Map<String, Any>?) -> T
     ): FirestoreReferenceList<T> {
       val result = FirestoreReferenceList(collection, hydrate)
       result.addAll(list)
@@ -81,7 +81,7 @@ class FirestoreReferenceList<T>(
     /** Creates an empty [FirestoreReferenceList]. */
     fun <T> empty(
         collection: CollectionReference,
-        hydrate: (DocumentSnapshot) -> T
+        hydrate: (Map<String, Any>?) -> T
     ): FirestoreReferenceList<T> {
       return FirestoreReferenceList(collection, hydrate)
     }
