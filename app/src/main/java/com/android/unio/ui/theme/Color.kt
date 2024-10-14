@@ -217,3 +217,12 @@ val surfaceContainerLowDarkHighContrast = Color(0xFF1B1B21)
 val surfaceContainerDarkHighContrast = Color(0xFF1F1F25)
 val surfaceContainerHighDarkHighContrast = Color(0xFF2A292F)
 val surfaceContainerHighestDarkHighContrast = Color(0xFF35343A)
+
+val eventTypeFestival = Color(0xFF6200EE) // Purple
+val eventTypeAperitif = Color(0xFF03DAC5) // Teal
+val eventTypeNightParty = Color(0xFFFF5722) // Deep Orange
+val eventTypeJam = Color(0xFFFFEB3B) // Yellow
+val eventTypeNetworking = Color(0xFF009688) // Cyan
+val eventTypeSport = Color(0xFF8BC34A) // Light Green
+val eventTypeTrip = Color(0xFFE91E63) // Pink
+val eventTypeOther = Color.Gray // Default Color
