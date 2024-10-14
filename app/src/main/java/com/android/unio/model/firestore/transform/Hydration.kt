@@ -62,7 +62,7 @@ fun EventRepositoryFirestore.Companion.hydrate(data: Map<String, Any>?): Event {
 
   val types = (data?.get("types") as? List<String> ?: emptyList())
 
-  val location = data?.get("location") as? Map<String, Any>
+  val location = data?.get("location") as? Map<String, Any> ?: emptyMap()
 
   return Event(
       uid = data?.get("uid") as? String ?: "",
@@ -73,11 +73,11 @@ fun EventRepositoryFirestore.Companion.hydrate(data: Map<String, Any>?): Event {
       description = data?.get("description") as? String ?: "",
       catchyDescription = data?.get("catchyDescription") as? String ?: "",
       price = data?.get("price") as? Double ?: 0.0,
-      date = data?.get("date") as? Timestamp ?: Timestamp.now(),
+      date = data?.get("date") as? Timestamp ?: Timestamp(0, 0),
       location =
           Location(
-              latitude = location?.get("latitude") as? Double ?: 0.0,
-              longitude = location?.get("longitude") as? Double ?: 0.0,
-              name = location?.get("name") as? String ?: ""),
+              latitude = location.get("latitude") as? Double ?: 0.0,
+              longitude = location.get("longitude") as? Double ?: 0.0,
+              name = location.get("name") as? String ?: ""),
       types = types.map { EventType.valueOf(it) })
 }
