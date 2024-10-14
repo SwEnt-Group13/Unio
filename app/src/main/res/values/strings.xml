@@ -71,6 +71,16 @@
     <string name="screen_explore" translatable="false">Explore Screen</string>
     <string name="screen_saved" translatable="false">Saved Screen</string>
     <string name="screen_my_profile" translatable="false">My Profile Screen</string>
-    <string name="screen_association" translatable="false">Association Screen</string>
+
+    <!-- Association Strings -->
+    <string name="association_upcoming_events" translatable="true">Upcoming Events</string>
+
+
+    <!-- Debug Strings -->
+    <string name="debug_lorem_ipsum" translatable="false">Lorem ipsum dolor sit amet, consectetur
+        adipiscing elit. Nam nec fermentum orci. Praesent tortor purus, porta at ligula id, vehicula sodales
+        sem. Morbi id leo nisi. Cras pretium orci vitae sapien aliquet aliquam. Phasellus vestibulum
+        diam nec consequat hendrerit.
+    </string>
 </resources>
 

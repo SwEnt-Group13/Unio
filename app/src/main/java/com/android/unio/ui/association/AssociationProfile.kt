@@ -29,6 +29,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.android.unio.R
 import com.android.unio.resources.ResourceManager.getString
+import com.android.unio.resources.ResourceManager.init
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.theme.AppTypography
 
@@ -42,7 +43,6 @@ fun AssociationProfileScreen(navigationAction: NavigationAction) {
                 title = {
                     Text(
                         "Association Profile",
-//                        style = AppTypography.headlineLarge,
                         modifier = Modifier.testTag("AssociationProfileTitle")
                     )
                 },
@@ -78,6 +78,7 @@ fun AssociationProfileScreen(navigationAction: NavigationAction) {
 @Composable
 fun AssociationProfileContent(padding: PaddingValues) {
     val context = LocalContext.current
+    init(context)
     Column(modifier = Modifier.padding(padding)) {
         Row {
             Box(modifier = Modifier.padding(horizontal = 24.dp)) {
@@ -119,6 +120,9 @@ fun AssociationProfileContent(padding: PaddingValues) {
         }
         Text(getString(R.string.debug_lorem_ipsum),
             style = AppTypography.bodyMedium,
-            modifier = Modifier.padding(horizontal = 24.dp))
+            modifier = Modifier.padding(horizontal = 24.dp, vertical = 15.dp))
+        Text(getString(R.string.association_upcoming_events),
+            style = AppTypography.headlineMedium,
+            modifier = Modifier.padding(horizontal = 20.dp))
     }
 }

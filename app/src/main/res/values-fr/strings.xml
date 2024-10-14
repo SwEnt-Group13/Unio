@@ -50,5 +50,9 @@
     <!-- Explore Screen Strings -->
     <string name="explore_search_placeholder">Recherche</string>
 
+    <!-- Association Strings -->
+    <string name="association_upcoming_events" translatable="true">Evenement à venir</string>
+
+
 </resources>
 
