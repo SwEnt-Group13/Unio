@@ -89,12 +89,13 @@ class ExploreScreenTest {
     assertEquals(associations[1].name, result[1].name)
   }
 
-    @Test
-    fun testGetFilteredAssociationsByCategory() {
-        val associationsByCategory = associations.groupBy { it.category }
-        val sortedByCategoryAssociations = getSortedEntriesAssociationsByCategory(associationsByCategory)
+  @Test
+  fun testGetFilteredAssociationsByCategory() {
+    val associationsByCategory = associations.groupBy { it.category }
+    val sortedByCategoryAssociations =
+        getSortedEntriesAssociationsByCategory(associationsByCategory)
 
-        assertEquals(AssociationCategory.ARTS, sortedByCategoryAssociations[0].key)
-        assertEquals(AssociationCategory.SCIENCE_TECH, sortedByCategoryAssociations[1].key)
-    }
+    assertEquals(AssociationCategory.ARTS, sortedByCategoryAssociations[0].key)
+    assertEquals(AssociationCategory.SCIENCE_TECH, sortedByCategoryAssociations[1].key)
+  }
 }

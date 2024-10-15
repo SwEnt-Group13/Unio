@@ -109,7 +109,8 @@ fun ExploreScreenContent(
         contentPadding = PaddingValues(vertical = 16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-      getSortedEntriesAssociationsByCategory(associationsByCategory).forEach { (category, associations) ->
+      getSortedEntriesAssociationsByCategory(associationsByCategory).forEach {
+          (category, associations) ->
         val alphabeticalAssociations = getFilteredAssociationsByAlphabeticalOrder(associations)
 
         if (alphabeticalAssociations.isNotEmpty()) {
@@ -175,11 +176,9 @@ fun getFilteredAssociationsByAlphabeticalOrder(associations: List<Association>):
   return associations.sortedBy { it.name }
 }
 
-/**
- * Returns the entries of the association map sorted by the key's display name.
- */
+/** Returns the entries of the association map sorted by the key's display name. */
 fun getSortedEntriesAssociationsByCategory(
     associationsByCategory: Map<AssociationCategory, List<Association>>
 ): List<Map.Entry<AssociationCategory, List<Association>>> {
-    return associationsByCategory.entries.sortedBy { it.key.displayName }
+  return associationsByCategory.entries.sortedBy { it.key.displayName }
 }
