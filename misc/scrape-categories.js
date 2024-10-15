@@ -4,9 +4,9 @@
 (() => {
   const categoriesHeaders = Array.from(document.querySelectorAll("#post-2124 > div > h3"));
   
-  const categories = categoriesHeaders.map((e) => {
-    const categoryName = e.textContent;
-    const associationList = Array.from(e.nextElementSibling.children).map((e) => {
+  const categories = categoriesHeaders.flatMap((e) => {
+    const category = e.textContent;
+    return Array.from(e.nextElementSibling.children).map((e) => {
       const parts = e.textContent.split("–");
       const acronym = parts[0]?.trim();
       const name = parts[1]?.trim();
@@ -15,14 +15,10 @@
       return {
         acronym,
         name,
-        url
+        url,
+        category
       };
     });
-  
-    return {
-      categoryName,
-      associationList
-    };
   });
   
   console.log(JSON.stringify(categories));
