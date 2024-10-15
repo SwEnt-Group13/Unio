@@ -20,5 +20,6 @@ data class Association(
     val acronym: String = "",
     val fullName: String = "",
     val description: String = "",
-    val members: ReferenceList<User>
+    val members: ReferenceList<User>,
+    var image: String = ""
 )

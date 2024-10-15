@@ -1,6 +1,5 @@
 package com.android.unio.ui.explore
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -26,11 +25,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.android.unio.R
+import androidx.core.net.toUri
+import coil.compose.AsyncImage
 import com.android.unio.model.association.Association
+import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.association.MockAssociation
 import com.android.unio.model.association.MockAssociationType
 import com.android.unio.model.association.mockAssociations
@@ -42,7 +43,7 @@ import com.android.unio.ui.navigation.Screen
 import com.android.unio.ui.theme.AppTypography
 
 @Composable
-fun ExploreScreen(navigationAction: NavigationAction) {
+fun ExploreScreen(navigationAction: NavigationAction, associationViewModel: AssociationViewModel) {
 
   Scaffold(
       bottomBar = {
@@ -50,7 +51,13 @@ fun ExploreScreen(navigationAction: NavigationAction) {
             { navigationAction.navigateTo(it.route) }, LIST_TOP_LEVEL_DESTINATION, Route.EXPLORE)
       },
       modifier = Modifier.testTag("exploreScreen"),
-      content = { padding -> ExploreScreenContent(padding, navigationAction) })
+      content = { padding ->
+          ExploreScreenContent(
+              padding,
+              navigationAction,
+              associationViewModel
+          )
+      })
 }
 
 /**
@@ -61,7 +68,11 @@ fun ExploreScreen(navigationAction: NavigationAction) {
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ExploreScreenContent(padding: PaddingValues, navigationAction: NavigationAction) {
+fun ExploreScreenContent(
+    padding: PaddingValues,
+    navigationAction: NavigationAction,
+    associationViewModel: AssociationViewModel
+) {
   val searchQuery = remember { mutableStateOf("") }
   Column(modifier = Modifier.padding(padding)) {
     Text(
@@ -69,9 +80,11 @@ fun ExploreScreenContent(padding: PaddingValues, navigationAction: NavigationAct
         /** Will go in the string.xml */
         style = AppTypography.headlineLarge,
         modifier =
-            Modifier.padding(vertical = 16.dp)
-                .align(Alignment.CenterHorizontally)
-                .testTag("exploreTitle"))
+        Modifier
+            .padding(vertical = 16.dp)
+            .align(Alignment.CenterHorizontally)
+            .testTag("exploreTitle")
+    )
 
     SearchBar(
         inputField = {
@@ -88,12 +101,16 @@ fun ExploreScreenContent(padding: PaddingValues, navigationAction: NavigationAct
         },
         expanded = false,
         onExpandedChange = { /* Also handle expanded state change here */},
-        modifier = Modifier.padding(horizontal = 26.dp, vertical = 8.dp).testTag("searchBar"),
+        modifier = Modifier
+            .padding(horizontal = 26.dp, vertical = 8.dp)
+            .testTag("searchBar"),
         content = {},
     )
 
     LazyColumn(
-        modifier = Modifier.fillMaxSize().testTag("categoriesList"),
+        modifier = Modifier
+            .fillMaxSize()
+            .testTag("categoriesList"),
         contentPadding = PaddingValues(vertical = 16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
@@ -109,7 +126,9 @@ fun ExploreScreenContent(padding: PaddingValues, navigationAction: NavigationAct
 
             // Horizontal scrollable list of associations
             LazyRow(
-                modifier = Modifier.fillMaxSize().padding(vertical = 16.dp),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(vertical = 16.dp),
                 contentPadding = PaddingValues(horizontal = 16.dp),
                 horizontalArrangement = Arrangement.spacedBy(32.dp, Alignment.Start),
                 verticalAlignment = Alignment.CenterVertically) {
@@ -135,26 +154,36 @@ fun ExploreScreenContent(padding: PaddingValues, navigationAction: NavigationAct
 fun AssociationItem(association: Association, navigationAction: NavigationAction) {
   Column(
       modifier =
-          Modifier.clickable {
-                navigationAction.navigateTo(
-                    Screen.withParams(Screen.ASSOCIATION_PROFILE, association.uid))
-              }
-              .testTag("associationItem")) {
+      Modifier
+          .clickable {
+              navigationAction.navigateTo(
+                  Screen.withParams(Screen.ASSOCIATION_PROFILE, association.uid)
+              )
+          }
+          .testTag("associationItem")) {
         /**
          * AdEC image is used as the placeholder. Will need to add the actual image later, when the
          * actual view model is used.
          */
-        Image(
-            painter = painterResource(id = R.drawable.adec),
-            contentDescription = "image description",
-            modifier = Modifier.size(124.dp))
+      AsyncImage(
+          model = association.image.toUri(),
+          contentDescription = "Translated description of what the image contains",
+          modifier =
+          Modifier
+              .size(124.dp)
+              .testTag("associationImage"),
+          contentScale = ContentScale.Crop // crop the image to fit
+      )
 
         Spacer(modifier = Modifier.height(8.dp))
 
         Text(
             text = association.acronym,
             style = AppTypography.bodyMedium,
-            modifier = Modifier.fillMaxWidth().align(Alignment.CenterHorizontally))
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.CenterHorizontally)
+        )
       }
 }
 

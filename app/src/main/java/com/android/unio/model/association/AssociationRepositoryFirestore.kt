@@ -37,7 +37,26 @@ class AssociationRepositoryFirestore(private val db: FirebaseFirestore) : Associ
         onFailure = { exception -> onFailure(exception) })
   }
 
-  override fun getAssociationWithId(
+    override fun getAssociationsByCategory(
+        category: MockAssociationType,
+        onSuccess: (List<Association>) -> Unit,
+        onFailure: (Exception) -> Unit
+    ) {
+        performFirestoreOperation(db.collection(ASSOCIATION_PATH).whereEqualTo("category", category)
+            .get(),
+            onSuccess = { result ->
+                val associations = mutableListOf<Association>()
+                for (document in result) {
+                    val association = hydrate(document.data)
+
+                    associations.add(association)
+                }
+                onSuccess(associations)
+            }, { exception -> onFailure(exception) })
+    }
+
+
+    override fun getAssociationWithId(
       id: String,
       onSuccess: (Association) -> Unit,
       onFailure: (Exception) -> Unit

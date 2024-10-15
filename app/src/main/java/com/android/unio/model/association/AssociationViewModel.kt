@@ -4,15 +4,18 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import java.io.InputStream
 
 class AssociationViewModel(val repository: AssociationRepository) : ViewModel() {
-  private val _associations = MutableStateFlow<List<Association>>(emptyList())
-  val associations: StateFlow<List<Association>> = _associations
+    private val _associations = MutableStateFlow<List<Association>>(emptyList())
+    val associations: StateFlow<List<Association>> = _associations
+    private val imageRepository = ImageRepositoryFirebaseStorage()
 
   init {
     repository.init { getAssociations() }
@@ -28,7 +31,8 @@ class AssociationViewModel(val repository: AssociationRepository) : ViewModel() 
         }
   }
 
-  fun getAssociations() {
+
+    fun getAssociations() {
     viewModelScope.launch {
       repository.getAssociations(
           onSuccess = { fetchedAssociations -> _associations.value = fetchedAssociations },
@@ -38,6 +42,26 @@ class AssociationViewModel(val repository: AssociationRepository) : ViewModel() 
           })
     }
   }
+
+
+    fun addAssociation(
+        inputStream: InputStream,
+        association: Association,
+        onSuccess: () -> Unit,
+        onFailure: (Exception) -> Unit
+    ) {
+        viewModelScope.launch {
+            imageRepository.uploadImage(inputStream,
+                "images/associations/${association.uid}", { uri ->
+                    association.image = uri
+                    repository.addAssociation(association, onSuccess, onFailure)
+                },
+                { e ->
+                    Log.e("ImageRepository", "Failed to store image : $e")
+                })
+        }
+    }
+
 
   /**
    * Finds an association, in the association list, by its ID.

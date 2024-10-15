@@ -23,11 +23,11 @@ import java.util.Date
  * @property types list of event types
  */
 data class Event(
-    val uid: String = "",
+    var uid: String = "",
     val title: String = "",
     val organisers: ReferenceList<Association>,
     val taggedAssociations: ReferenceList<Association>,
-    val image: String = "",
+    var image: String = "",
     val description: String = "",
     val catchyDescription: String = "",
     val price: Double = 0.0,

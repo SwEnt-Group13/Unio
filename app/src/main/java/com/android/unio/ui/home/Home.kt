@@ -217,7 +217,9 @@ fun HomeScreen(
                           .padding(horizontal = 32.dp)
                   ) {
                       items(events) { event ->
-                          EventCard(event = event, onClick = { onEventClick(event) })
+                          EventCard(event = event, onClick = {
+                              onEventClick(event)
+                          })
                       }
                   }
               } else {
