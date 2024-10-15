@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -29,6 +30,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.unio.R
+import com.android.unio.ui.theme.primaryContainerDark
+import com.android.unio.ui.theme.primaryContainerDarkMediumContrast
+import com.android.unio.ui.theme.primaryContainerLight
+import com.android.unio.ui.theme.secondaryDark
 import com.android.unio.utils.EventUtils.DynamicImage
 import com.android.unio.utils.EventUtils.addAlphaToColor
 import com.android.unio.utils.EventUtils.formatTimestamp
@@ -45,7 +50,7 @@ fun EventCard(event: Event, onClick: () -> Unit) {
               .clickable(onClick = onClick)
               .testTag("event_EventListItem")
               .clip(RoundedCornerShape(10.dp))
-              .background(Color(0xFFF0ECF4))) {
+              .background(secondaryDark)) {
         Image(
             painter = DynamicImage(event.image),
             contentDescription = null,
@@ -67,7 +72,7 @@ fun EventCard(event: Event, onClick: () -> Unit) {
                           .wrapContentWidth(), // Make sure the text only takes as much space as
                   // needed
                   text = event.title,
-                  style = MaterialTheme.typography.titleMedium,
+                  style = MaterialTheme.typography.labelLarge,
                   fontWeight = FontWeight.Bold,
                   color = Color.Black)
 
@@ -96,6 +101,7 @@ fun EventCard(event: Event, onClick: () -> Unit) {
                 modifier =
                     Modifier.size(24.dp)
                         .align(Alignment.CenterVertically)
+                        .clip(RoundedCornerShape(5.dp))
                         .testTag("event_ClicImage"))
           }
 
@@ -108,7 +114,7 @@ fun EventCard(event: Event, onClick: () -> Unit) {
                           .wrapContentWidth(), // Make sure the text only takes as much space as
                   // needed
                   text = event.location.name,
-                  style = MaterialTheme.typography.titleMedium,
+                  style = MaterialTheme.typography.bodySmall,
                   color = Color.Black)
             }
 
@@ -116,26 +122,44 @@ fun EventCard(event: Event, onClick: () -> Unit) {
 
             Text(
                 modifier =
-                    Modifier.padding(vertical = 1.dp, horizontal = 4.dp)
-                        .testTag("event_EventDate")
-                        .wrapContentWidth(),
-                text = formatTimestamp(event.date, SimpleDateFormat("MM/dd", Locale.getDefault())),
-                style = MaterialTheme.typography.titleMedium,
+                    Modifier.padding(vertical = 1.dp, horizontal = 0.dp)
+                        .testTag("event_EventDate"),
+                        //.wrapContentWidth(),
+                text = formatTimestamp(event.date, SimpleDateFormat("dd/MM", Locale.getDefault())),
+                style = MaterialTheme.typography.bodySmall,
                 color = Color.Black)
 
-            Spacer(modifier = Modifier.width(1.dp))
+            Spacer(modifier = Modifier.width(2.dp))
+
+            Spacer(modifier = Modifier
+                .height(10.dp)
+                .width(1.dp)
+                .background(primaryContainerLight))
+
+              Spacer(modifier = Modifier.width(2.dp))
 
             Text(
                 modifier = Modifier.testTag("event_EventTime").wrapContentWidth(),
                 text = formatTimestamp(event.date, SimpleDateFormat("HH:mm", Locale.getDefault())),
-                style = MaterialTheme.typography.titleMedium,
+                style = MaterialTheme.typography.bodySmall,
                 color = Color.Black)
           }
+            Row {
+                Spacer(modifier = Modifier.width(4.dp))
+                Spacer(modifier = Modifier
+                    .fillMaxWidth()
+                    .height(1.dp)
+                    .background(primaryContainerLight)
+                )
+            }
+
 
           Text(
-              modifier = Modifier.testTag("event_EventCatchyDescription").wrapContentWidth(),
+              modifier = Modifier
+                  .padding(vertical = 1.dp, horizontal = 4.dp)
+                  .testTag("event_EventCatchyDescription").wrapContentWidth(),
               text = event.catchyDescription,
-              style = TextStyle(fontSize = 12.sp),
+              style = MaterialTheme.typography.bodySmall,
               color = Color.Black)
         }
       }
