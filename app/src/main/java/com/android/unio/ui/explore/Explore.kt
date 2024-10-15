@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.android.unio.R
 import com.android.unio.model.association.Association
+import com.android.unio.model.association.AssociationCategory
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.ui.navigation.BottomNavigationMenu
 import com.android.unio.ui.navigation.LIST_TOP_LEVEL_DESTINATION
@@ -108,7 +109,7 @@ fun ExploreScreenContent(
         contentPadding = PaddingValues(vertical = 16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-      associationsByCategory.entries.forEach { (category, associations) ->
+      getSortedEntriesAssociationsByCategory(associationsByCategory).forEach { (category, associations) ->
         val alphabeticalAssociations = getFilteredAssociationsByAlphabeticalOrder(associations)
 
         if (alphabeticalAssociations.isNotEmpty()) {
@@ -169,7 +170,16 @@ fun AssociationItem(association: Association, navigationAction: NavigationAction
       }
 }
 
-/** Returns a list of associations filtered by the given category. */
+/** Returns a list of associations sorted by alphabetical order. */
 fun getFilteredAssociationsByAlphabeticalOrder(associations: List<Association>): List<Association> {
   return associations.sortedBy { it.name }
+}
+
+/**
+ * Returns the entries of the association map sorted by the key's display name.
+ */
+fun getSortedEntriesAssociationsByCategory(
+    associationsByCategory: Map<AssociationCategory, List<Association>>
+): List<Map.Entry<AssociationCategory, List<Association>>> {
+    return associationsByCategory.entries.sortedBy { it.key.displayName }
 }
