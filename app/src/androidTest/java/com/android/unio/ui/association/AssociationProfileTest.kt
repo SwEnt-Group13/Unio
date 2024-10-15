@@ -69,7 +69,7 @@ class AssociationProfileTest {
 
     composeTestRule.onNodeWithTag("AssociationScreen").assertIsDisplayed()
     composeTestRule.onNodeWithTag("goBackButton").assertIsDisplayed()
-//    composeTestRule.onNodeWithTag("AssociationImageHeader").assertIsDisplayed()
+    //    composeTestRule.onNodeWithTag("AssociationImageHeader").assertIsDisplayed()
     composeTestRule.onNodeWithTag("AssociationProfileTitle").assertIsDisplayed()
     composeTestRule.onNodeWithTag("AssociationHeaderFollowers").assertIsDisplayed()
     composeTestRule.onNodeWithTag("AssociationHeaderMembers").assertIsDisplayed()
