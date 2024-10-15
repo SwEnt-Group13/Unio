@@ -118,11 +118,16 @@ fun ExploreScreenContent(
             Text(
                 text = category.displayName,
                 style = AppTypography.headlineSmall,
-                modifier = Modifier.padding(horizontal = 16.dp))
+                modifier =
+                    Modifier.padding(horizontal = 16.dp)
+                        .testTag("category_${category.displayName}"))
 
             // Horizontal scrollable list of associations
             LazyRow(
-                modifier = Modifier.fillMaxSize().padding(vertical = 16.dp),
+                modifier =
+                    Modifier.fillMaxSize()
+                        .padding(vertical = 16.dp)
+                        .testTag("associationRow_${category.displayName}"),
                 contentPadding = PaddingValues(horizontal = 16.dp),
                 horizontalArrangement = Arrangement.spacedBy(32.dp, Alignment.Start),
                 verticalAlignment = Alignment.CenterVertically) {
@@ -167,7 +172,10 @@ fun AssociationItem(association: Association, navigationAction: NavigationAction
         Text(
             text = association.name,
             style = AppTypography.bodyMedium,
-            modifier = Modifier.fillMaxWidth().align(Alignment.CenterHorizontally))
+            modifier =
+                Modifier.fillMaxWidth()
+                    .align(Alignment.CenterHorizontally)
+                    .testTag("associationName_${association.name}"))
       }
 }
 

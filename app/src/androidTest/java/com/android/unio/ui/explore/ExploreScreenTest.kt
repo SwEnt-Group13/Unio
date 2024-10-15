@@ -7,6 +7,8 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performTextInput
 import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationCategory
+import com.android.unio.model.association.AssociationRepository
+import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.firestore.FirestorePaths.USER_PATH
 import com.android.unio.model.firestore.FirestoreReferenceList
 import com.android.unio.model.firestore.transform.hydrate
@@ -26,11 +28,14 @@ import org.mockito.kotlin.any
 
 class ExploreScreenTest {
   private lateinit var navigationAction: NavigationAction
-  private lateinit var associations: List<Association>
   @Mock private lateinit var db: FirebaseFirestore
   @Mock private lateinit var collectionReference: CollectionReference
+  @Mock private lateinit var associationRepository: AssociationRepository
+  private lateinit var associationViewModel: AssociationViewModel
 
   @get:Rule val composeTestRule = createComposeRule()
+
+  private lateinit var associations: List<Association>
 
   @Before
   fun setUp() {
@@ -64,11 +69,13 @@ class ExploreScreenTest {
                 members =
                     FirestoreReferenceList.empty(
                         db.collection(USER_PATH), UserRepositoryFirestore.Companion::hydrate)))
+
+    associationViewModel = AssociationViewModel(associationRepository)
   }
 
   @Test
   fun allComponentsAreDisplayed() {
-    composeTestRule.setContent { ExploreScreen(navigationAction) }
+    composeTestRule.setContent { ExploreScreen(navigationAction, associationViewModel) }
     composeTestRule.onNodeWithTag("exploreScreen").assertIsDisplayed()
     composeTestRule.onNodeWithTag("searchBar").assertIsDisplayed()
     composeTestRule.onNodeWithTag("exploreTitle").assertIsDisplayed()
@@ -77,7 +84,7 @@ class ExploreScreenTest {
 
   @Test
   fun canTypeInSearchBar() {
-    composeTestRule.setContent { ExploreScreen(navigationAction) }
+    composeTestRule.setContent { ExploreScreen(navigationAction, associationViewModel) }
     composeTestRule.onNodeWithTag("searchBarInput").performTextInput("Music")
     composeTestRule.onNodeWithTag("searchBarInput").assertTextEquals("Music")
   }
@@ -97,5 +104,25 @@ class ExploreScreenTest {
 
     assertEquals(AssociationCategory.ARTS, sortedByCategoryAssociations[0].key)
     assertEquals(AssociationCategory.SCIENCE_TECH, sortedByCategoryAssociations[1].key)
+  }
+
+  @Test
+  fun associationsAreDisplayed() {
+    `when`(associationRepository.getAssociations(any(), any())).thenAnswer { invocation ->
+      val onSuccess = invocation.arguments[0] as (List<Association>) -> Unit
+      onSuccess(associations)
+    }
+
+    associationViewModel.getAssociations()
+    composeTestRule.setContent { ExploreScreen(navigationAction, associationViewModel) }
+
+    val sortedByCategoryAssociations =
+        getSortedEntriesAssociationsByCategory(associations.groupBy { it.category })
+
+    sortedByCategoryAssociations.forEach { (category, associations) ->
+      composeTestRule.onNodeWithTag("category_${category.displayName}").assertIsDisplayed()
+      composeTestRule.onNodeWithTag("associationRow_${category.displayName}")
+      associations.forEach { composeTestRule.onNodeWithTag("associationName_${it.name}") }
+    }
   }
 }
