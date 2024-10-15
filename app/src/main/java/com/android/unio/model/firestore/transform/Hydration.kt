@@ -28,7 +28,7 @@ fun AssociationRepositoryFirestore.Companion.hydrate(data: Map<String, Any>?): A
   return Association(
       uid = data?.get("uid") as? String ?: "",
       url = data?.get("url") as? String ?: "",
-      name = data?.get("acronym") as? String ?: "",
+      name = data?.get("name") as? String ?: "",
       fullName = data?.get("fullName") as? String ?: "",
       category =
           if (category is String) AssociationCategory.valueOf(category)
