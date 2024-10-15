@@ -2,8 +2,11 @@ package com.android.unio.ui.association
 
 import android.content.Context
 import android.widget.Toast
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,10 +17,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
@@ -28,9 +31,9 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.InputChipDefaults
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -42,6 +45,10 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.android.unio.R
+import com.android.unio.model.event.Event
+import com.android.unio.model.event.EventCard
+import com.android.unio.model.firestore.MockReferenceList
+import com.android.unio.model.firestore.ReferenceList
 import com.android.unio.resources.ResourceManager.getString
 import com.android.unio.resources.ResourceManager.init
 import com.android.unio.ui.navigation.NavigationAction
@@ -92,52 +99,39 @@ fun AssociationProfileScreen(navigationAction: NavigationAction) {
 
 @Composable
 fun AssociationProfileContent(padding: PaddingValues, context: Context) {
-    Column(modifier = Modifier
-        .padding(padding)
-        .verticalScroll(rememberScrollState())) {
+    Column(
+        modifier = Modifier
+            .padding(padding)
+            .verticalScroll(rememberScrollState())
+    ) {
         AssociationHeader(context)
         Spacer(modifier = Modifier.size(22.dp))
-        Text(
-            getString(R.string.debug_lorem_ipsum),
-            style = AppTypography.bodyMedium,
-            modifier = Modifier.padding(horizontal = 24.dp)
-        )
+        AssociationDescription()
         Spacer(modifier = Modifier.size(15.dp))
-        Text(
-            getString(R.string.association_upcoming_events),
-            modifier = Modifier.padding(horizontal = 20.dp),
-            style = AppTypography.headlineMedium
-        )
+        AssociationEventTitle()
         Spacer(modifier = Modifier.size(11.dp))
-        //TODO: Implement upcoming events with event cards from home screen
         AssociationProfileEvents(context)
         Spacer(modifier = Modifier.size(11.dp))
-        Text(
-            getString(R.string.association_contact_members),
-            style = AppTypography.headlineMedium,
-            modifier = Modifier.padding(horizontal = 20.dp)
-        )
-        Spacer(modifier = Modifier.size(4.dp))
-        UserCard()
+        UserCard(context)
         Spacer(modifier = Modifier.size(61.dp))
-        Text(
-            text = "Join <Association> ?",
-            style = AppTypography.headlineMedium,
-            modifier = Modifier.padding(horizontal = 20.dp)
-        )
-        Spacer(modifier = Modifier.size(13.dp))
-        Text(
-            text = "Here’s where you could help us. Click on a role to learn more",
-            style = AppTypography.bodySmall,
-            modifier = Modifier.padding(horizontal = 23.dp)
-        )
-        Spacer(modifier = Modifier.size(18.dp))
         AssociationRecruitment(context)
     }
 }
 
 @Composable
 fun AssociationRecruitment(context: Context) {
+    Text(
+        text = "Join <Association> ?",
+        style = AppTypography.headlineMedium,
+        modifier = Modifier.padding(horizontal = 20.dp)
+    )
+    Spacer(modifier = Modifier.size(13.dp))
+    Text(
+        text = "Here’s where you could help us. Click on a role to learn more",
+        style = AppTypography.bodySmall,
+        modifier = Modifier.padding(horizontal = 23.dp)
+    )
+    Spacer(modifier = Modifier.size(18.dp))
     Row(modifier = Modifier.padding(horizontal = 24.dp)) {
         OutlinedButton(
             onClick = {
@@ -170,14 +164,25 @@ fun AssociationRecruitment(context: Context) {
 }
 
 @Composable
-fun UserCard() {
+fun UserCard(context: Context) {
+    Text(
+        getString(R.string.association_contact_members),
+        style = AppTypography.headlineMedium,
+        modifier = Modifier.padding(horizontal = 20.dp)
+    )
+    Spacer(modifier = Modifier.size(4.dp))
     Box(
         modifier = Modifier
             .padding(horizontal = 23.dp)
             .width(366.dp)
             .height(40.dp)
-            .background(color = Color.Gray, shape = RoundedCornerShape(size = 12.dp))
+            .background(Color.LightGray, RoundedCornerShape(12.dp))
             .padding(vertical = 2.dp, horizontal = 3.dp)
+            .clickable {
+                Toast
+                    .makeText(context, "<DEBUG> Not implemented yet", Toast.LENGTH_SHORT)
+                    .show()
+            },
     ) {
         Row(
             horizontalArrangement = Arrangement.spacedBy(115.dp, Alignment.Start),
@@ -189,7 +194,6 @@ fun UserCard() {
                 contentDescription = "user's profile picture",
                 Modifier.size(36.dp)
             )
-            Spacer(modifier = Modifier.size(115.dp))
             Text(
                 text = "Casey Rue",
                 style = AppTypography.headlineSmall
@@ -205,11 +209,12 @@ fun AssociationProfileEvents(context: Context) {
         modifier = Modifier.padding(horizontal = 28.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Image(
-            painter = painterResource(id = R.drawable.adec),
-            contentDescription = "placeholder",
-            modifier = Modifier.size(222.dp)
-        )
+        EventCard(
+            event = Event(
+                organisers = MockReferenceList(),
+                taggedAssociations = MockReferenceList()
+            )
+        ) { }
         Spacer(modifier = Modifier.size(11.dp))
         OutlinedButton(
             onClick = {
@@ -226,6 +231,24 @@ fun AssociationProfileEvents(context: Context) {
             Text(getString(R.string.association_see_more))
         }
     }
+}
+
+@Composable
+fun AssociationEventTitle() {
+    Text(
+        getString(R.string.association_upcoming_events),
+        modifier = Modifier.padding(horizontal = 20.dp),
+        style = AppTypography.headlineMedium
+    )
+}
+
+@Composable
+fun AssociationDescription() {
+    Text(
+        getString(R.string.debug_lorem_ipsum),
+        style = AppTypography.bodyMedium,
+        modifier = Modifier.padding(horizontal = 24.dp)
+    )
 }
 
 @Composable
