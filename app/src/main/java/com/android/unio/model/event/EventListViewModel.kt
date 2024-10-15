@@ -1,5 +1,6 @@
 package com.android.unio.model.event
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -46,6 +47,7 @@ class EventListViewModel(private val repository: EventRepository) : ViewModel() 
           },
           onFailure = { exception ->
             // Handle error (e.g., log it, show a message to the user)
+            Log.e("EventViewModel", "An error occured while loading events :$exception")
             _events.value = emptyList() // Clear events on failure or handle accordingly
           })
     }
