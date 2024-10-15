@@ -41,7 +41,7 @@ fun AssociationProfile(
 
   AssociationProfileScaffold(title = "Association Profile", navigationAction = navigationAction) {
     Text(
-        "Association acronym: ${association.acronym}",
+        "Association acronym: ${association.name}",
         style = AppTypography.bodyMedium,
         modifier = Modifier.testTag("associationAcronym"))
   }
