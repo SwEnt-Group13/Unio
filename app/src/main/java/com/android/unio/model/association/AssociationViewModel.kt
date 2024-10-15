@@ -38,7 +38,7 @@ class AssociationViewModel(val repository: AssociationRepository) : ViewModel() 
       repository.getAssociations(
           onSuccess = { fetchedAssociations ->
             _associations.value = fetchedAssociations
-            getAssociationsByCategory()
+            _associationsByCategory.value = fetchedAssociations.groupBy { it.category }
           },
           onFailure = { exception ->
             _associations.value = emptyList()
@@ -59,10 +59,5 @@ class AssociationViewModel(val repository: AssociationRepository) : ViewModel() 
         ?.let {
           return it
         } ?: return null
-  }
-
-  /** Groups the associations by their category. */
-  fun getAssociationsByCategory() {
-    _associationsByCategory.value = _associations.value.groupBy { it.category }
   }
 }
