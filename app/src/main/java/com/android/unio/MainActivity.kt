@@ -73,7 +73,9 @@ fun UnioApp() {
         val uid = navBackStackEntry.arguments?.getString("uid")
 
         // Create the AssociationProfile screen with the association UID
-        uid?.let { AssociationProfileScreen(navigationAction = navigationActions, associationId = it) }
+        uid?.let {
+          AssociationProfileScreen(navigationAction = navigationActions, associationId = it)
+        }
             ?: run {
               Log.e("AssociationProfile", "Association UID is null")
               Toast.makeText(context, "Association UID is null", Toast.LENGTH_SHORT).show()
