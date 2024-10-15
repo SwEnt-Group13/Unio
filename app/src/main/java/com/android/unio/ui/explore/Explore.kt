@@ -52,11 +52,7 @@ fun ExploreScreen(navigationAction: NavigationAction, associationViewModel: Asso
       },
       modifier = Modifier.testTag("exploreScreen"),
       content = { padding ->
-          ExploreScreenContent(
-              padding,
-              navigationAction,
-              associationViewModel
-          )
+          ExploreScreenContent(padding, navigationAction, associationViewModel)
       })
 }
 
@@ -168,8 +164,7 @@ fun AssociationItem(association: Association, navigationAction: NavigationAction
       AsyncImage(
           model = association.image.toUri(),
           contentDescription = "Translated description of what the image contains",
-          modifier =
-          Modifier
+          modifier = Modifier
               .size(124.dp)
               .testTag("associationImage"),
           contentScale = ContentScale.Crop // crop the image to fit

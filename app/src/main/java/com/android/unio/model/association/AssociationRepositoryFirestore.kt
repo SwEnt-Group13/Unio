@@ -42,8 +42,8 @@ class AssociationRepositoryFirestore(private val db: FirebaseFirestore) : Associ
         onSuccess: (List<Association>) -> Unit,
         onFailure: (Exception) -> Unit
     ) {
-        performFirestoreOperation(db.collection(ASSOCIATION_PATH).whereEqualTo("category", category)
-            .get(),
+        performFirestoreOperation(
+            db.collection(ASSOCIATION_PATH).whereEqualTo("category", category).get(),
             onSuccess = { result ->
                 val associations = mutableListOf<Association>()
                 for (document in result) {
@@ -52,9 +52,9 @@ class AssociationRepositoryFirestore(private val db: FirebaseFirestore) : Associ
                     associations.add(association)
                 }
                 onSuccess(associations)
-            }, { exception -> onFailure(exception) })
+            },
+            { exception -> onFailure(exception) })
     }
-
 
     override fun getAssociationWithId(
       id: String,

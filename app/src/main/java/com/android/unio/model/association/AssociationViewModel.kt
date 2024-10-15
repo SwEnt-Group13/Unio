@@ -31,7 +31,6 @@ class AssociationViewModel(val repository: AssociationRepository) : ViewModel() 
         }
   }
 
-
     fun getAssociations() {
     viewModelScope.launch {
       repository.getAssociations(
@@ -43,7 +42,6 @@ class AssociationViewModel(val repository: AssociationRepository) : ViewModel() 
     }
   }
 
-
     fun addAssociation(
         inputStream: InputStream,
         association: Association,
@@ -51,17 +49,16 @@ class AssociationViewModel(val repository: AssociationRepository) : ViewModel() 
         onFailure: (Exception) -> Unit
     ) {
         viewModelScope.launch {
-            imageRepository.uploadImage(inputStream,
-                "images/associations/${association.uid}", { uri ->
+            imageRepository.uploadImage(
+                inputStream,
+                "images/associations/${association.uid}",
+                { uri ->
                     association.image = uri
                     repository.addAssociation(association, onSuccess, onFailure)
                 },
-                { e ->
-                    Log.e("ImageRepository", "Failed to store image : $e")
-                })
+                { e -> Log.e("ImageRepository", "Failed to store image : $e") })
         }
     }
-
 
   /**
    * Finds an association, in the association list, by its ID.

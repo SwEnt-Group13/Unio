@@ -57,20 +57,20 @@ class EventListViewModel(private val repository: EventRepository) : ViewModel() 
   }
 
   fun addEvent(
-    inputStream: InputStream,
-    event: Event,
-    onSuccess: () -> Unit,
-    onFailure: (Exception) -> Unit
+      inputStream: InputStream,
+      event: Event,
+      onSuccess: () -> Unit,
+      onFailure: (Exception) -> Unit
   ) {
-    imageRepository.uploadImage(inputStream,
-      "images/events/${event.uid}", { uri ->
-        event.image = uri
-        event.uid = repository.getNewUid()
-        repository.addEvent(event, onSuccess, onFailure)
-      },
-      { e ->
-        Log.e("ImageRepository", "Failed to store image : $e")
-      })
+      imageRepository.uploadImage(
+          inputStream,
+          "images/events/${event.uid}",
+          { uri ->
+              event.image = uri
+              event.uid = repository.getNewUid()
+              repository.addEvent(event, onSuccess, onFailure)
+          },
+          { e -> Log.e("ImageRepository", "Failed to store image : $e") })
   }
 
   /**

@@ -49,7 +49,6 @@ fun EventCard(event: Event, onClick: () -> Unit) {
           .clip(RoundedCornerShape(10.dp))
           .background(Color(0xFFF0ECF4))
   ) {
-
       AsyncImage(
           model = event.image.toUri(),
           contentDescription = "Translated description of what the image contains",
@@ -61,7 +60,6 @@ fun EventCard(event: Event, onClick: () -> Unit) {
               .testTag("event_EventImage"),
           contentScale = ContentScale.Crop // crop the image to fit
       )
-
 
         Column(modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp)) {
           Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
@@ -79,9 +77,10 @@ fun EventCard(event: Event, onClick: () -> Unit) {
                   color = Color.Black)
 
               Spacer(modifier = Modifier.width(6.dp))
-                val type: EventType = if (event.types.isEmpty()) {
+                val type: EventType =
+                    if (event.types.isEmpty()) {
                     EventType.OTHER
-                } else event.types[0]
+                    } else event.types[0]
                 Box(
                     modifier =
                     Modifier
@@ -99,7 +98,6 @@ fun EventCard(event: Event, onClick: () -> Unit) {
                         style = TextStyle(fontSize = 8.sp)
                     )
                   }
-
             }
             Spacer(modifier = Modifier.width(6.dp))
 

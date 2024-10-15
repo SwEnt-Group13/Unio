@@ -101,7 +101,8 @@ fun HomeScreen(
           ) {
               Icon(imageVector = Icons.Filled.Add, contentDescription = "Add Event")
           }
-      }, bottomBar = {
+      },
+      bottomBar = {
           BottomNavigationMenu(
               { navigationAction.navigateTo(it.route) }, LIST_TOP_LEVEL_DESTINATION, Route.HOME
           )
@@ -217,9 +218,7 @@ fun HomeScreen(
                           .padding(horizontal = 32.dp)
                   ) {
                       items(events) { event ->
-                          EventCard(event = event, onClick = {
-                              onEventClick(event)
-                          })
+                          EventCard(event = event, onClick = { onEventClick(event) })
                       }
                   }
               } else {
