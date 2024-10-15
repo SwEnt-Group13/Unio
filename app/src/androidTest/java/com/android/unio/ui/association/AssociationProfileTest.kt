@@ -64,7 +64,7 @@ class AssociationProfileTest {
   }
 
   @Test
-  fun testAssociationProfileDisplayedBadId() {
+  fun testAssociationProfileDisplayComponent() {
     composeTestRule.setContent { AssociationProfileScreen(navigationAction, "") }
 
     composeTestRule.onNodeWithTag("AssociationScreen").assertIsDisplayed()
@@ -75,14 +75,12 @@ class AssociationProfileTest {
     composeTestRule.onNodeWithTag("goBackButton").assertIsDisplayed()
     composeTestRule.onNodeWithTag("AssociationContactMembersTitle").assertIsDisplayed()
     composeTestRule.onNodeWithTag("AssociationContactMembersCard").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("AssociationRecruitmentRoles").performScrollTo()
     composeTestRule.onNodeWithTag("AssociationEventCard").assertIsDisplayed()
     composeTestRule.onNodeWithTag("AssociationSeeMoreButton").assertIsDisplayed()
     composeTestRule.onNodeWithTag("AssociationHeaderFollowers").assertIsDisplayed()
     composeTestRule.onNodeWithTag("AssociationHeaderMembers").assertIsDisplayed()
     composeTestRule.onNodeWithTag("AssociationFollowButton").assertIsDisplayed()
-
-    composeTestRule.onNodeWithTag("AssociationRecruitmentRoles").performScrollTo()
-
     composeTestRule.onNodeWithTag("AssociationRecruitmentTitle").assertIsDisplayed()
     composeTestRule.onNodeWithTag("AssociationRecruitmentDescription").assertIsDisplayed()
     composeTestRule.onNodeWithTag("AssociationRecruitmentRoles").assertIsDisplayed()
