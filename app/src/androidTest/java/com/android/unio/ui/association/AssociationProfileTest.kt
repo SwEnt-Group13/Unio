@@ -1,6 +1,8 @@
 package com.android.unio.ui.association
 
+import androidx.compose.ui.test.SemanticsNodeInteraction
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.isNotDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
@@ -69,23 +71,27 @@ class AssociationProfileTest {
 
     composeTestRule.onNodeWithTag("AssociationScreen").assertIsDisplayed()
     composeTestRule.onNodeWithTag("goBackButton").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("AssociationImageHeader").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("AssociationProfileTitle").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("AssociationHeaderFollowers").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("AssociationHeaderMembers").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("AssociationFollowButton").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("AssociationDescription").assertIsDisplayed()
 
-    composeTestRule.onNodeWithTag("AssociationEventTitle").performScrollTo()
+    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationImageHeader"))
+    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationProfileTitle"))
+    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationHeaderFollowers"))
+    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationHeaderMembers"))
+    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationFollowButton"))
+    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationDescription"))
+    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationEventTitle"))
+    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationEventCard"))
+    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationSeeMoreButton"))
+    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationContactMembersTitle"))
+    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationContactMembersCard"))
+    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationRecruitmentDescription"))
+    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationRecruitmentRoles"))
+  }
 
-    composeTestRule.onNodeWithTag("AssociationEventTitle").assertIsDisplayed()
-    //    composeTestRule.onNodeWithTag("AssociationEventCard").assertIsDisplayed()
-    //    composeTestRule.onNodeWithTag("AssociationSeeMoreButton").assertIsDisplayed()
-    //    composeTestRule.onNodeWithTag("AssociationContactMembersTitle").assertIsDisplayed()
-    //    composeTestRule.onNodeWithTag("AssociationContactMembersCard").assertIsDisplayed()
-    //    composeTestRule.onNodeWithTag("AssociationRecruitmentTitle").assertIsDisplayed()
-    //    composeTestRule.onNodeWithTag("AssociationRecruitmentDescription").assertIsDisplayed()
-    //    composeTestRule.onNodeWithTag("AssociationRecruitmentRoles").assertIsDisplayed()
+  private fun assertDisplayComponentInScroll(compose: SemanticsNodeInteraction){
+      if(compose.isNotDisplayed()){
+        compose.performScrollTo()
+      }
+        compose.assertIsDisplayed()
   }
 
   @Test
