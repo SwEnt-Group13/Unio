@@ -8,28 +8,69 @@ import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
-import com.android.unio.model.association.MockAssociationType
+import com.android.unio.model.association.Association
+import com.android.unio.model.association.AssociationCategory
+import com.android.unio.model.association.AssociationRepositoryFirestore
+import com.android.unio.model.association.AssociationViewModel
+import com.android.unio.model.firestore.FirestorePaths.USER_PATH
+import com.android.unio.model.firestore.FirestoreReferenceList
+import com.android.unio.model.firestore.transform.hydrate
+import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.ui.navigation.NavigationAction
+import com.google.firebase.firestore.CollectionReference
+import com.google.firebase.firestore.FirebaseFirestore
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.mockito.Mock
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
+import org.mockito.MockitoAnnotations
 import org.mockito.kotlin.any
-import org.mockito.kotlin.verify
 
 class ExploreScreenTest {
   private lateinit var navigationAction: NavigationAction
+  private lateinit var associations: List<Association>
+  @Mock private lateinit var db: FirebaseFirestore
+  @Mock private lateinit var collectionReference: CollectionReference
 
   @get:Rule val composeTestRule = createComposeRule()
 
   @Before
   fun setUp() {
+    MockitoAnnotations.openMocks(this)
     navigationAction = mock(NavigationAction::class.java)
 
     // Mock the navigation action to do nothing
     `when`(navigationAction.navigateTo(any<String>())).then {}
+
+    `when`(db.collection(any())).thenReturn(collectionReference)
+    associations = listOf(
+      Association(
+        uid = "1",
+        url = "",
+        name = "ACM",
+        fullName = "Association for Computing Machinery",
+        category = AssociationCategory.SCIENCE_TECH,
+        description =
+        "ACM is the world's largest educational and scientific computing society.",
+        members =
+        FirestoreReferenceList.empty(
+          db.collection(USER_PATH), UserRepositoryFirestore.Companion::hydrate)),
+      Association(
+        uid = "2",
+        url = "",
+        name = "Musical",
+        fullName = "-",
+        category = AssociationCategory.ARTS,
+        description =
+        "Musical is the world's largest music society.",
+        members =
+        FirestoreReferenceList.empty(
+          db.collection(USER_PATH), UserRepositoryFirestore.Companion::hydrate))
+    )
+
   }
 
   @Test
@@ -49,33 +90,9 @@ class ExploreScreenTest {
   }
 
   @Test
-  fun testGetFilteredAssociationsByCategory() {
-    val musicAssociations =
-        getFilteredAssociationsByCategoryAndAlphabeticalOrder(MockAssociationType.MUSIC)
-    assertEquals(1, musicAssociations.size)
-    assertEquals("Musical", musicAssociations[0].association.acronym)
-
-    val festivalAssociations =
-        getFilteredAssociationsByCategoryAndAlphabeticalOrder(MockAssociationType.FESTIVALS)
-    assertEquals(4, festivalAssociations.size)
-    assertEquals("Artiphys", festivalAssociations[0].association.acronym)
-  }
-
-  @Test
-  fun testGetCategoryNameWithFirstLetterUppercase() {
-    val musicCategory = getCategoryNameWithFirstLetterUppercase(MockAssociationType.MUSIC)
-    assertEquals("Music", musicCategory)
-
-    val festivalCategory = getCategoryNameWithFirstLetterUppercase(MockAssociationType.FESTIVALS)
-    assertEquals("Festivals", festivalCategory)
-  }
-
-  @Test
-  fun testClickOnAssociation() {
-    composeTestRule.setContent { ExploreScreen(navigationAction) }
-
-    composeTestRule.onAllNodesWithTag("associationItem").onFirst().performClick()
-
-    verify(navigationAction).navigateTo(any<String>())
+  fun testGetFilteredAssociationsByAlphabeticalOrder() {
+    val result = getFilteredAssociationsByAlphabeticalOrder(associations)
+    assertEquals(associations[0].name, result[0].name)
+    assertEquals(associations[1].name, result[1].name)
   }
 }

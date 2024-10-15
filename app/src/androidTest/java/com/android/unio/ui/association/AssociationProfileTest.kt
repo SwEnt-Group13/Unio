@@ -8,6 +8,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.navigation.NavHostController
 import com.android.unio.model.association.Association
+import com.android.unio.model.association.AssociationCategory
 import com.android.unio.model.association.AssociationRepository
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.firestore.FirestorePaths.USER_PATH
@@ -50,8 +51,10 @@ class AssociationProfileTest {
         listOf(
             Association(
                 uid = "1",
-                acronym = "ACM",
+              url = "",
+                name = "ACM",
                 fullName = "Association for Computing Machinery",
+              category = AssociationCategory.SCIENCE_TECH,
                 description =
                     "ACM is the world's largest educational and scientific computing society.",
                 members =
@@ -105,7 +108,7 @@ class AssociationProfileTest {
     composeTestRule.onNodeWithTag("AssociationProfileScreen").assertIsDisplayed()
     composeTestRule.onNodeWithTag("associationAcronym").assertIsDisplayed()
     composeTestRule
-        .onNodeWithText("Association acronym: ${associations.first().acronym}")
+        .onNodeWithText("Association acronym: ${associations.first().name}")
         .assertIsDisplayed()
   }
 
