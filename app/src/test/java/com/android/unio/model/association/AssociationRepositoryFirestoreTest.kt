@@ -168,10 +168,10 @@ class AssociationRepositoryFirestoreTest {
               Association(
                   uid = association2.uid,
                   url = "",
-                    name = "",
-                    fullName = "",
-                    category = AssociationCategory.ARTS,
-                    description = "",
+                  name = "",
+                  fullName = "",
+                  category = AssociationCategory.ARTS,
+                  description = "",
                   members =
                       FirestoreReferenceList.empty(
                           db.collection(USER_PATH), UserRepositoryFirestore::hydrate))

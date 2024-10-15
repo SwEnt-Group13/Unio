@@ -51,10 +51,10 @@ class AssociationProfileTest {
         listOf(
             Association(
                 uid = "1",
-              url = "",
+                url = "",
                 name = "ACM",
                 fullName = "Association for Computing Machinery",
-              category = AssociationCategory.SCIENCE_TECH,
+                category = AssociationCategory.SCIENCE_TECH,
                 description =
                     "ACM is the world's largest educational and scientific computing society.",
                 members =

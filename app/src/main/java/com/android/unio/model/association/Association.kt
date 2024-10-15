@@ -24,18 +24,18 @@ data class Association(
     val members: ReferenceList<User>
 )
 
-enum class AssociationCategory(val displayName: String){
-    EPFL_BODIES("EPFL bodies"),
-    REPRESENTATION("Representation"),
-    PROJECTS("Interdisciplinary projects"),
-    EPFL_STUDENTS("EPFL Students"),
-    COUNTRIES("Students by country"),
-    SUSTAINABILITY("Sustainability"),
-    SCIENCE_TECH("Science and technology"),
-    CULTURE_SOCIETY("Culture and society"),
-    ARTS("Arts"),
-    ENTERTAINMENT("Entertainment"),
-    SPORTS("Sports"),
-    GUIDANCE("Vocational guidance"),
-    UNKNOWN("Unknown")
+enum class AssociationCategory(val displayName: String) {
+  EPFL_BODIES("EPFL bodies"),
+  REPRESENTATION("Representation"),
+  PROJECTS("Interdisciplinary projects"),
+  EPFL_STUDENTS("EPFL Students"),
+  COUNTRIES("Students by country"),
+  SUSTAINABILITY("Sustainability"),
+  SCIENCE_TECH("Science and technology"),
+  CULTURE_SOCIETY("Culture and society"),
+  ARTS("Arts"),
+  ENTERTAINMENT("Entertainment"),
+  SPORTS("Sports"),
+  GUIDANCE("Vocational guidance"),
+  UNKNOWN("Unknown")
 }

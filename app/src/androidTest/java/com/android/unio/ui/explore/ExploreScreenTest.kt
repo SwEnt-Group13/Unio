@@ -3,15 +3,10 @@ package com.android.unio.ui.explore
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.onAllNodesWithTag
-import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.onNodeWithTag
-import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationCategory
-import com.android.unio.model.association.AssociationRepositoryFirestore
-import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.firestore.FirestorePaths.USER_PATH
 import com.android.unio.model.firestore.FirestoreReferenceList
 import com.android.unio.model.firestore.transform.hydrate
@@ -46,31 +41,29 @@ class ExploreScreenTest {
     `when`(navigationAction.navigateTo(any<String>())).then {}
 
     `when`(db.collection(any())).thenReturn(collectionReference)
-    associations = listOf(
-      Association(
-        uid = "1",
-        url = "",
-        name = "ACM",
-        fullName = "Association for Computing Machinery",
-        category = AssociationCategory.SCIENCE_TECH,
-        description =
-        "ACM is the world's largest educational and scientific computing society.",
-        members =
-        FirestoreReferenceList.empty(
-          db.collection(USER_PATH), UserRepositoryFirestore.Companion::hydrate)),
-      Association(
-        uid = "2",
-        url = "",
-        name = "Musical",
-        fullName = "-",
-        category = AssociationCategory.ARTS,
-        description =
-        "Musical is the world's largest music society.",
-        members =
-        FirestoreReferenceList.empty(
-          db.collection(USER_PATH), UserRepositoryFirestore.Companion::hydrate))
-    )
-
+    associations =
+        listOf(
+            Association(
+                uid = "1",
+                url = "",
+                name = "ACM",
+                fullName = "Association for Computing Machinery",
+                category = AssociationCategory.SCIENCE_TECH,
+                description =
+                    "ACM is the world's largest educational and scientific computing society.",
+                members =
+                    FirestoreReferenceList.empty(
+                        db.collection(USER_PATH), UserRepositoryFirestore.Companion::hydrate)),
+            Association(
+                uid = "2",
+                url = "",
+                name = "Musical",
+                fullName = "-",
+                category = AssociationCategory.ARTS,
+                description = "Musical is the world's largest music society.",
+                members =
+                    FirestoreReferenceList.empty(
+                        db.collection(USER_PATH), UserRepositoryFirestore.Companion::hydrate)))
   }
 
   @Test

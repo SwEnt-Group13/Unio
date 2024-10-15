@@ -54,7 +54,9 @@ fun ExploreScreen(
             { navigationAction.navigateTo(it.route) }, LIST_TOP_LEVEL_DESTINATION, Route.EXPLORE)
       },
       modifier = Modifier.testTag("exploreScreen"),
-      content = { padding -> ExploreScreenContent(padding, navigationAction, associationViewModel) })
+      content = { padding ->
+        ExploreScreenContent(padding, navigationAction, associationViewModel)
+      })
 }
 
 /**
@@ -70,7 +72,7 @@ fun ExploreScreenContent(
     navigationAction: NavigationAction,
     associationViewModel: AssociationViewModel,
 ) {
-    val associationsByCategory by associationViewModel.associationsByCategory.collectAsState()
+  val associationsByCategory by associationViewModel.associationsByCategory.collectAsState()
   val searchQuery = remember { mutableStateOf("") }
   Column(modifier = Modifier.padding(padding)) {
     Text(
@@ -106,29 +108,29 @@ fun ExploreScreenContent(
         contentPadding = PaddingValues(vertical = 16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        associationsByCategory.entries.forEach { (category, associations) ->
-            val alphabeticalAssociations = getFilteredAssociationsByAlphabeticalOrder(associations)
+      associationsByCategory.entries.forEach { (category, associations) ->
+        val alphabeticalAssociations = getFilteredAssociationsByAlphabeticalOrder(associations)
 
-            if (alphabeticalAssociations.isNotEmpty()){
-                item {
-                    Text(
-                        text = category.displayName,
-                        style = AppTypography.headlineSmall,
-                        modifier = Modifier.padding(horizontal = 16.dp))
+        if (alphabeticalAssociations.isNotEmpty()) {
+          item {
+            Text(
+                text = category.displayName,
+                style = AppTypography.headlineSmall,
+                modifier = Modifier.padding(horizontal = 16.dp))
 
-                    // Horizontal scrollable list of associations
-                    LazyRow(
-                        modifier = Modifier.fillMaxSize().padding(vertical = 16.dp),
-                        contentPadding = PaddingValues(horizontal = 16.dp),
-                        horizontalArrangement = Arrangement.spacedBy(32.dp, Alignment.Start),
-                        verticalAlignment = Alignment.CenterVertically) {
-                        items(alphabeticalAssociations.size) { index ->
-                            AssociationItem(alphabeticalAssociations[index], navigationAction)
-                        }
-                    }
+            // Horizontal scrollable list of associations
+            LazyRow(
+                modifier = Modifier.fillMaxSize().padding(vertical = 16.dp),
+                contentPadding = PaddingValues(horizontal = 16.dp),
+                horizontalArrangement = Arrangement.spacedBy(32.dp, Alignment.Start),
+                verticalAlignment = Alignment.CenterVertically) {
+                  items(alphabeticalAssociations.size) { index ->
+                    AssociationItem(alphabeticalAssociations[index], navigationAction)
+                  }
                 }
-            }
+          }
         }
+      }
     }
   }
 }
@@ -168,8 +170,6 @@ fun AssociationItem(association: Association, navigationAction: NavigationAction
 }
 
 /** Returns a list of associations filtered by the given category. */
-fun getFilteredAssociationsByAlphabeticalOrder(
-    associations: List<Association>
-): List<Association> {
+fun getFilteredAssociationsByAlphabeticalOrder(associations: List<Association>): List<Association> {
   return associations.sortedBy { it.name }
 }

@@ -14,8 +14,10 @@ class AssociationViewModel(val repository: AssociationRepository) : ViewModel() 
   private val _associations = MutableStateFlow<List<Association>>(emptyList())
   val associations: StateFlow<List<Association>> = _associations
 
-    private val _associationsByCategory = MutableStateFlow<Map<AssociationCategory, List<Association>>>(emptyMap())
-    val associationsByCategory: StateFlow<Map<AssociationCategory, List<Association>>> = _associationsByCategory
+  private val _associationsByCategory =
+      MutableStateFlow<Map<AssociationCategory, List<Association>>>(emptyMap())
+  val associationsByCategory: StateFlow<Map<AssociationCategory, List<Association>>> =
+      _associationsByCategory
 
   init {
     repository.init { getAssociations() }
@@ -35,8 +37,9 @@ class AssociationViewModel(val repository: AssociationRepository) : ViewModel() 
     viewModelScope.launch {
       repository.getAssociations(
           onSuccess = { fetchedAssociations ->
-              _associations.value = fetchedAssociations
-                      getAssociationsByCategory()},
+            _associations.value = fetchedAssociations
+            getAssociationsByCategory()
+          },
           onFailure = { exception ->
             _associations.value = emptyList()
             Log.e("ExploreViewModel", "Failed to fetch associations", exception)
@@ -58,10 +61,8 @@ class AssociationViewModel(val repository: AssociationRepository) : ViewModel() 
         } ?: return null
   }
 
-    /**
-     * Groups the associations by their category.
-     */
-    fun getAssociationsByCategory() {
-        _associationsByCategory.value = _associations.value.groupBy { it.category }
-    }
+  /** Groups the associations by their category. */
+  fun getAssociationsByCategory() {
+    _associationsByCategory.value = _associations.value.groupBy { it.category }
+  }
 }

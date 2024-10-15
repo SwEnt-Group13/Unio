@@ -17,7 +17,7 @@ import com.google.firebase.Timestamp
 import com.google.firebase.firestore.firestore
 
 fun AssociationRepositoryFirestore.Companion.hydrate(data: Map<String, Any>?): Association {
-    val category = data?.get("category")
+  val category = data?.get("category")
   val memberUids = data?.get("members") as? List<String> ?: emptyList()
   val members =
       FirestoreReferenceList.fromList(
@@ -30,7 +30,9 @@ fun AssociationRepositoryFirestore.Companion.hydrate(data: Map<String, Any>?): A
       url = data?.get("url") as? String ?: "",
       name = data?.get("acronym") as? String ?: "",
       fullName = data?.get("fullName") as? String ?: "",
-        category = if (category is String) AssociationCategory.valueOf(category) else AssociationCategory.UNKNOWN,
+      category =
+          if (category is String) AssociationCategory.valueOf(category)
+          else AssociationCategory.UNKNOWN,
       description = data?.get("description") as? String ?: "",
       members = members)
 }
