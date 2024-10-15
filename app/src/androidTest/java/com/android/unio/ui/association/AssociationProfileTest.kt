@@ -83,15 +83,16 @@ class AssociationProfileTest {
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationSeeMoreButton"))
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationContactMembersTitle"))
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationContactMembersCard"))
-    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationRecruitmentDescription"))
+    assertDisplayComponentInScroll(
+        composeTestRule.onNodeWithTag("AssociationRecruitmentDescription"))
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationRecruitmentRoles"))
   }
 
-  private fun assertDisplayComponentInScroll(compose: SemanticsNodeInteraction){
-      if(compose.isNotDisplayed()){
-        compose.performScrollTo()
-      }
-        compose.assertIsDisplayed()
+  private fun assertDisplayComponentInScroll(compose: SemanticsNodeInteraction) {
+    if (compose.isNotDisplayed()) {
+      compose.performScrollTo()
+    }
+    compose.assertIsDisplayed()
   }
 
   @Test
