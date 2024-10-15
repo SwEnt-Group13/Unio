@@ -18,6 +18,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
@@ -51,15 +53,52 @@ import com.android.unio.ui.theme.AppTypography
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AssociationProfileScreen(navigationAction: NavigationAction) {
+fun AssociationProfileScreen(
+    navigationAction: NavigationAction,
+    associationId: String,
+    associationViewModel: AssociationViewModel = viewModel(factory = AssociationViewModel.Factory)) {
   val context = LocalContext.current
   init(context)
+  val association =
+      associationViewModel.findAssociationById(associationId)
+          ?: run {
+            Log.e("AssociationProfile", "Association not found")
+            return AssociationProfileScaffold(
+                title = "Association Profile", navigationAction = navigationAction) {
+                  Text(
+                      text = "Association not found. Shouldn't happen.",
+                      modifier = Modifier.testTag("associationNotFound"),
+                      color = Color.Red)
+                }
+          }
+
+  AssociationProfileScaffold(title = "Association Profile", navigationAction = navigationAction) {
+    Text(
+        "Association acronym: ${association.acronym}",
+        style = AppTypography.bodyMedium,
+        modifier = Modifier.testTag("associationAcronym"))
+  }
+}
+
+/**
+ * The scaffold for the Association Profile screen.
+ *
+ * @param title The title of the screen.
+ * @param navigationAction The navigation action to use when the back button is clicked.
+ * @param content The content of the screen.
+ */
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun AssociationProfileScaffold(
+    title: String,
+    navigationAction: NavigationAction,
+    content: @Composable () -> Unit
+) {
   Scaffold(
       topBar = {
         TopAppBar(
-            title = {
-              Text("Association Profile", modifier = Modifier.testTag("AssociationProfileTitle"))
-            },
+            title = { Text(title, modifier = Modifier.testTag("AssociationProfileTitle")) },
             navigationIcon = {
               IconButton(
                   onClick = { navigationAction.goBack() },

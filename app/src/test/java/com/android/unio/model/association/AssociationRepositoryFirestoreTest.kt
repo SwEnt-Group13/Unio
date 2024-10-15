@@ -4,6 +4,7 @@ import androidx.test.core.app.ApplicationProvider
 import com.android.unio.model.firestore.FirestorePaths.ASSOCIATION_PATH
 import com.android.unio.model.firestore.FirestorePaths.USER_PATH
 import com.android.unio.model.firestore.FirestoreReferenceList
+import com.android.unio.model.firestore.transform.hydrate
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.gms.tasks.Task
@@ -42,7 +43,10 @@ class AssociationRepositoryFirestoreTest {
   private lateinit var repository: AssociationRepositoryFirestore
 
   private lateinit var association1: Association
+  private lateinit var map1: Map<String, Any>
+
   private lateinit var association2: Association
+  private lateinit var map2: Map<String, Any>
 
   @Before
   fun setUp() {
@@ -59,6 +63,7 @@ class AssociationRepositoryFirestoreTest {
     association1 =
         Association(
             uid = "1",
+            url = "https://www.acm.org/",
             acronym = "ACM",
             fullName = "Association for Computing Machinery",
             description =
@@ -70,6 +75,7 @@ class AssociationRepositoryFirestoreTest {
     association2 =
         Association(
             uid = "2",
+            url = "https://www.ieee.org/",
             acronym = "IEEE",
             fullName = "Institute of Electrical and Electronics Engineers",
             description =
@@ -102,23 +108,32 @@ class AssociationRepositoryFirestoreTest {
     }
 
     // When the query document snapshots are queried for specific fields, return the fields
-    `when`(queryDocumentSnapshot1.id).thenReturn(association1.uid)
-    `when`(queryDocumentSnapshot1.getString("acronym")).thenReturn(association1.acronym)
-    `when`(queryDocumentSnapshot1.getString("fullName")).thenReturn(association1.fullName)
-    `when`(queryDocumentSnapshot1.getString("description")).thenReturn(association1.description)
-    `when`(queryDocumentSnapshot1.get("members")).thenReturn(association1.members)
+    map1 =
+        mapOf(
+            "uid" to association1.uid,
+            "url" to association1.url,
+            "acronym" to association1.acronym,
+            "fullName" to association1.fullName,
+            "description" to association1.description,
+            "members" to association1.members.list.value.map { it.uid })
+
+    map2 =
+        mapOf(
+            "uid" to association2.uid,
+            "url" to association2.url,
+            "acronym" to association2.acronym,
+            "fullName" to association2.fullName,
+            "description" to association2.description,
+            "members" to association2.members.list.value.map { it.uid })
+
+    `when`(queryDocumentSnapshot1.data).thenReturn(map1)
+    `when`(queryDocumentSnapshot2.data).thenReturn(map2)
 
     repository = AssociationRepositoryFirestore(db)
   }
 
   @Test
   fun testGetAssociations() {
-
-    `when`(queryDocumentSnapshot2.id).thenReturn(association2.uid)
-    `when`(queryDocumentSnapshot2.getString("acronym")).thenReturn(association2.acronym)
-    `when`(queryDocumentSnapshot2.getString("fullName")).thenReturn(association2.fullName)
-    `when`(queryDocumentSnapshot2.getString("description")).thenReturn(association2.description)
-    `when`(queryDocumentSnapshot2.get("members")).thenReturn(association2.members)
 
     repository.getAssociations(
         onSuccess = { associations ->
@@ -127,11 +142,13 @@ class AssociationRepositoryFirestoreTest {
           assertEquals(association1.acronym, associations[0].acronym)
           assertEquals(association1.fullName, associations[0].fullName)
           assertEquals(association1.description, associations[0].description)
+          assertEquals(association1.members.list.value, associations[0].members.list.value)
 
           assertEquals(association2.uid, associations[1].uid)
           assertEquals(association2.acronym, associations[1].acronym)
           assertEquals(association2.fullName, associations[1].fullName)
           assertEquals(association2.description, associations[1].description)
+          assertEquals(association2.members.list.value, associations[1].members.list.value)
         },
         onFailure = { exception -> assert(false) })
   }
@@ -156,11 +173,13 @@ class AssociationRepositoryFirestoreTest {
           assertEquals(association1.acronym, associations[0].acronym)
           assertEquals(association1.fullName, associations[0].fullName)
           assertEquals(association1.description, associations[0].description)
+          assertEquals(association1.members.list.value, associations[0].members.list.value)
 
           assertEquals(emptyAssociation.uid, associations[1].uid)
           assertEquals("", associations[1].acronym)
           assertEquals("", associations[1].fullName)
           assertEquals("", associations[1].description)
+          assertEquals(emptyList<String>(), associations[1].members.list.value)
         },
         onFailure = { exception -> assert(false) })
   }
@@ -174,48 +193,49 @@ class AssociationRepositoryFirestoreTest {
           assertEquals(association1.acronym, association.acronym)
           assertEquals(association1.fullName, association.fullName)
           assertEquals(association1.description, association.description)
+          assertEquals(association1.members.list.value, association.members.list.value)
         },
         onFailure = { exception -> assert(false) })
   }
 
   @Test
   fun testAddAssociationSuccess() {
-    `when`(documentReference.set(association1)).thenReturn(Tasks.forResult(null))
+    `when`(documentReference.set(map1)).thenReturn(Tasks.forResult(null))
 
     repository.addAssociation(
         association1, onSuccess = { assert(true) }, onFailure = { assert(false) })
 
-    verify(documentReference).set(association1)
+    verify(documentReference).set(map1)
   }
 
   @Test
   fun testAddAssociationFailure() {
-    `when`(documentReference.set(association1)).thenReturn(Tasks.forException(Exception()))
+    `when`(documentReference.set(any())).thenReturn(Tasks.forException(Exception()))
 
     repository.addAssociation(
         association1, onSuccess = { assert(false) }, onFailure = { assert(true) })
 
-    verify(documentReference).set(association1)
+    verify(documentReference).set(map1)
   }
 
   @Test
   fun testUpdateAssociationSuccess() {
-    `when`(documentReference.set(association1)).thenReturn(Tasks.forResult(null))
+    `when`(documentReference.set(any())).thenReturn(Tasks.forResult(null))
 
     repository.updateAssociation(
         association1, onSuccess = { assert(true) }, onFailure = { assert(false) })
 
-    verify(documentReference).set(association1)
+    verify(documentReference).set(map1)
   }
 
   @Test
   fun testUpdateAssociationFailure() {
-    `when`(documentReference.set(association1)).thenReturn(Tasks.forException(Exception()))
+    `when`(documentReference.set(any())).thenReturn(Tasks.forException(Exception()))
 
     repository.updateAssociation(
         association1, onSuccess = { assert(false) }, onFailure = { assert(true) })
 
-    verify(documentReference).set(association1)
+    verify(documentReference).set(map1)
   }
 
   @Test
