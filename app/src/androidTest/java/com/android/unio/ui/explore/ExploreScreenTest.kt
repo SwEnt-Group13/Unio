@@ -63,9 +63,29 @@ class ExploreScreenTest {
                 uid = "2",
                 url = "",
                 name = "Musical",
-                fullName = "-",
+                fullName = "Music club",
                 category = AssociationCategory.ARTS,
                 description = "Musical is the world's largest music society.",
+                members =
+                    FirestoreReferenceList.empty(
+                        db.collection(USER_PATH), UserRepositoryFirestore.Companion::hydrate)),
+            Association(
+                uid = "3",
+                url = "",
+                name = "OChe",
+                fullName = "Orchestre de chambre des étudiant-e-s de Lausanne",
+                category = AssociationCategory.ARTS,
+                description = "Orchestre de chambre.",
+                members =
+                    FirestoreReferenceList.empty(
+                        db.collection(USER_PATH), UserRepositoryFirestore.Companion::hydrate)),
+            Association(
+                uid = "4",
+                url = "",
+                name = "AGEPoly",
+                fullName = "Student’s general association of the EPFL",
+                category = AssociationCategory.EPFL_BODIES,
+                description = "Student’s general association.",
                 members =
                     FirestoreReferenceList.empty(
                         db.collection(USER_PATH), UserRepositoryFirestore.Companion::hydrate)))
@@ -93,7 +113,9 @@ class ExploreScreenTest {
   fun testGetFilteredAssociationsByAlphabeticalOrder() {
     val result = getFilteredAssociationsByAlphabeticalOrder(associations)
     assertEquals(associations[0].name, result[0].name)
-    assertEquals(associations[1].name, result[1].name)
+    assertEquals(associations[3].name, result[1].name)
+    assertEquals(associations[1].name, result[2].name)
+    assertEquals(associations[2].name, result[3].name)
   }
 
   @Test
@@ -103,7 +125,8 @@ class ExploreScreenTest {
         getSortedEntriesAssociationsByCategory(associationsByCategory)
 
     assertEquals(AssociationCategory.ARTS, sortedByCategoryAssociations[0].key)
-    assertEquals(AssociationCategory.SCIENCE_TECH, sortedByCategoryAssociations[1].key)
+    assertEquals(AssociationCategory.EPFL_BODIES, sortedByCategoryAssociations[1].key)
+    assertEquals(AssociationCategory.SCIENCE_TECH, sortedByCategoryAssociations[2].key)
   }
 
   @Test
