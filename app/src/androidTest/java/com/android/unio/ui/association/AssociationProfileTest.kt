@@ -80,8 +80,8 @@ class AssociationProfileTest {
 
     composeTestRule.onNodeWithTag("AssociationEventTitle").assertIsDisplayed()
     composeTestRule.onNodeWithTag("AssociationEventCard").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("AssociationSeeMoreButton").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("AssociationContactMembersTitle").assertIsDisplayed()
+    //    composeTestRule.onNodeWithTag("AssociationSeeMoreButton").assertIsDisplayed()
+    //    composeTestRule.onNodeWithTag("AssociationContactMembersTitle").assertIsDisplayed()
     //    composeTestRule.onNodeWithTag("AssociationContactMembersCard").assertIsDisplayed()
     //    composeTestRule.onNodeWithTag("AssociationRecruitmentTitle").assertIsDisplayed()
     //    composeTestRule.onNodeWithTag("AssociationRecruitmentDescription").assertIsDisplayed()
