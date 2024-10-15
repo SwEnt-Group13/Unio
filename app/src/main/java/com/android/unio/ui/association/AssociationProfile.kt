@@ -43,7 +43,7 @@ fun AssociationProfile(
     Text(
         "Association acronym: ${association.name}",
         style = AppTypography.bodyMedium,
-        modifier = Modifier.testTag("associationAcronym"))
+        modifier = Modifier.testTag("associationName"))
   }
 }
 

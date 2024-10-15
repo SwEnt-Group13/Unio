@@ -114,7 +114,7 @@ class AssociationRepositoryFirestoreTest {
         mapOf(
             "uid" to association1.uid,
             "url" to association1.url,
-            "acronym" to association1.name,
+            "name" to association1.name,
             "fullName" to association1.fullName,
             "category" to association1.category.name,
             "description" to association1.description,
@@ -124,7 +124,7 @@ class AssociationRepositoryFirestoreTest {
         mapOf(
             "uid" to association2.uid,
             "url" to association2.url,
-            "acronym" to association2.name,
+            "name" to association2.name,
             "fullName" to association2.fullName,
             "category" to association2.category.name,
             "description" to association2.description,

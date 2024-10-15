@@ -108,7 +108,7 @@ class HydrationAndSerializationTest {
 
     assertEquals(association.uid, serialized["uid"])
     assertEquals(association.url, serialized["url"])
-    assertEquals(association.name, serialized["acronym"])
+    assertEquals(association.name, serialized["name"])
     assertEquals(association.fullName, serialized["fullName"])
     assertEquals(association.description, serialized["description"])
     assertEquals(association.members.list.value, serialized["members"])

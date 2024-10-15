@@ -106,9 +106,9 @@ class AssociationProfileTest {
     composeTestRule.onNodeWithTag("AssociationProfileTitle").assertIsDisplayed()
     composeTestRule.onNodeWithTag("goBackButton").assertIsDisplayed()
     composeTestRule.onNodeWithTag("AssociationProfileScreen").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("associationAcronym").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("associationName").assertIsDisplayed()
     composeTestRule
-        .onNodeWithText("Association acronym: ${associations.first().name}")
+        .onNodeWithText("Association name: ${associations.first().name}")
         .assertIsDisplayed()
   }
 
