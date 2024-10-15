@@ -24,11 +24,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.compose.rememberNavController
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventCard
 import com.android.unio.model.event.EventListViewModel
 import com.android.unio.model.event.EventRepository
 import com.android.unio.model.event.EventRepositoryMock
+import com.android.unio.ui.navigation.NavigationAction
 import kotlinx.coroutines.launch
 
 @Preview(showBackground = true)
@@ -38,15 +40,18 @@ fun EventListOverviewPreview() {
   val mockEventRepository = EventRepositoryMock()
 
   val eventListViewModel = EventListViewModel(mockEventRepository as EventRepository)
+  val navController = rememberNavController()
+  val navigationActions = NavigationAction(navController)
 
-  EventListOverview(eventListViewModel = eventListViewModel, onAddEvent = {}, onEventClick = {})
+  EventListOverview(eventListViewModel = eventListViewModel, onAddEvent = {}, onEventClick = {}, navigationActions)
 }
 
 @Composable
 fun EventListOverview(
     eventListViewModel: EventListViewModel = viewModel(factory = EventListViewModel.Factory),
     onAddEvent: () -> Unit,
-    onEventClick: (Event) -> Unit
+    onEventClick: (Event) -> Unit,
+    navigationAction: NavigationAction
 ) {
   val events by eventListViewModel.events.collectAsState()
   var selectedTab by remember { mutableStateOf("All") }

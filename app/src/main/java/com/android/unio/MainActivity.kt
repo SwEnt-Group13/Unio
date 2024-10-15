@@ -14,10 +14,15 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
+import com.android.unio.model.event.EventListViewModel
+import com.android.unio.model.event.EventRepository
+import com.android.unio.model.event.EventRepositoryFirestore
+import com.android.unio.model.event.EventRepositoryMock
 import com.android.unio.ui.association.AssociationProfile
 import com.android.unio.ui.authentication.AccountDetails
 import com.android.unio.ui.authentication.EmailVerificationScreen
 import com.android.unio.ui.authentication.WelcomeScreen
+import com.android.unio.ui.event.EventListOverview
 import com.android.unio.ui.explore.ExploreScreen
 import com.android.unio.ui.home.HomeScreen
 import com.android.unio.ui.navigation.NavigationAction
@@ -28,6 +33,7 @@ import com.android.unio.ui.theme.AppTheme
 import com.android.unio.ui.user.UserProfileScreen
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
+import com.google.firebase.firestore.FirebaseFirestore
 
 class MainActivity : ComponentActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -64,7 +70,10 @@ fun UnioApp() {
       composable(Screen.ACCOUNT_DETAILS) { AccountDetails(navigationActions) }
     }
     navigation(startDestination = Screen.HOME, route = Route.HOME) {
-      composable(Screen.HOME) { HomeScreen(navigationActions) }
+      val mockEventRepository = EventRepositoryMock()
+
+      val eventListViewModel = EventListViewModel(mockEventRepository as EventRepository)
+      composable(Screen.HOME) { EventListOverview(eventListViewModel, onAddEvent = {}, onEventClick = {}, navigationActions) }
     }
     navigation(startDestination = Screen.EXPLORE, route = Route.EXPLORE) {
       composable(Screen.EXPLORE) { ExploreScreen(navigationActions) }
