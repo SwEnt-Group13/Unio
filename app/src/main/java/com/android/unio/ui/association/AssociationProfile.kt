@@ -1,6 +1,8 @@
 package com.android.unio.ui.association
 
+import android.annotation.SuppressLint
 import android.content.Context
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -18,8 +20,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
@@ -42,7 +42,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.android.unio.R
+import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventCard
 import com.android.unio.model.firestore.MockReferenceList
@@ -56,28 +58,30 @@ import com.android.unio.ui.theme.AppTypography
 fun AssociationProfileScreen(
     navigationAction: NavigationAction,
     associationId: String,
-    associationViewModel: AssociationViewModel = viewModel(factory = AssociationViewModel.Factory)) {
-  val context = LocalContext.current
-  init(context)
-  val association =
-      associationViewModel.findAssociationById(associationId)
-          ?: run {
-            Log.e("AssociationProfile", "Association not found")
-            return AssociationProfileScaffold(
-                title = "Association Profile", navigationAction = navigationAction) {
-                  Text(
-                      text = "Association not found. Shouldn't happen.",
-                      modifier = Modifier.testTag("associationNotFound"),
-                      color = Color.Red)
+    associationViewModel: AssociationViewModel = viewModel(factory = AssociationViewModel.Factory)
+) {
+    val association =
+        associationViewModel.findAssociationById(associationId)
+            ?: run {
+                Log.e("AssociationProfile", "Association not found")
+                return AssociationProfileScaffold(
+                    title = "Association Profile", navigationAction = navigationAction
+                ) {
+                    Text(
+                        text = "Association not found. Shouldn't happen.",
+                        modifier = Modifier.testTag("associationNotFound"),
+                        color = Color.Red
+                    )
                 }
-          }
+            }
 
-  AssociationProfileScaffold(title = "Association Profile", navigationAction = navigationAction) {
-    Text(
-        "Association acronym: ${association.acronym}",
-        style = AppTypography.bodyMedium,
-        modifier = Modifier.testTag("associationAcronym"))
-  }
+    AssociationProfileScaffold(title = "Association Profile", navigationAction = navigationAction) {
+        Text(
+            "Association acronym: ${association.acronym}",
+            style = AppTypography.bodyMedium,
+            modifier = Modifier.testTag("associationAcronym")
+        )
+    }
 }
 
 /**
@@ -95,40 +99,53 @@ fun AssociationProfileScaffold(
     navigationAction: NavigationAction,
     content: @Composable () -> Unit
 ) {
-  Scaffold(
-      topBar = {
-        TopAppBar(
-            title = { Text(title, modifier = Modifier.testTag("AssociationProfileTitle")) },
-            navigationIcon = {
-              IconButton(
-                  onClick = { navigationAction.goBack() },
-                  modifier = Modifier.testTag("goBackButton")) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
-                        contentDescription = getString(R.string.association_go_back))
-                  }
-            },
-            actions = {
-              IconButton(
-                  onClick = {
-                    // TODO: Implement association sharing
-                    Toast.makeText(context, "<DEBUG> Not implemented yet", Toast.LENGTH_SHORT)
-                        .show()
-                  }) {
-                    Icon(Icons.Outlined.Share, contentDescription = "Icon for sharing association")
-                  }
-            })
-      },
-      content = { padding -> AssociationProfileContent(padding, context) })
+    val context = LocalContext.current
+    init(context)
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text(title, modifier = Modifier.testTag("AssociationProfileTitle")) },
+                navigationIcon = {
+                    IconButton(
+                        onClick = { navigationAction.goBack() },
+                        modifier = Modifier.testTag("goBackButton")
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
+                            contentDescription = getString(R.string.association_go_back)
+                        )
+                    }
+                },
+                actions = {
+                    IconButton(
+                        onClick = {
+                            // TODO: Implement association sharing
+                            Toast.makeText(
+                                context,
+                                "<DEBUG> Not implemented yet",
+                                Toast.LENGTH_SHORT
+                            )
+                                .show()
+                        }) {
+                        Icon(
+                            Icons.Outlined.Share,
+                            contentDescription = "Icon for sharing association"
+                        )
+                    }
+                })
+        },
+        content = { padding -> AssociationProfileContent(padding, context) })
 }
 
 @Composable
 fun AssociationProfileContent(padding: PaddingValues, context: Context) {
-  Column(
-      modifier =
-          Modifier.padding(padding)
-              .testTag("AssociationScreen")
-              .verticalScroll(rememberScrollState())) {
+    Column(
+        modifier =
+        Modifier
+            .padding(padding)
+            .testTag("AssociationScreen")
+            .verticalScroll(rememberScrollState())
+    ) {
         AssociationHeader(context)
         Spacer(modifier = Modifier.size(22.dp))
         AssociationDescription()
@@ -140,146 +157,186 @@ fun AssociationProfileContent(padding: PaddingValues, context: Context) {
         UserCard(context)
         Spacer(modifier = Modifier.size(61.dp))
         AssociationRecruitment(context)
-      }
+    }
 }
 
 @Composable
 fun AssociationRecruitment(context: Context) {
-  Text(
-      text = "Join <Association> ?",
-      style = AppTypography.headlineMedium,
-      modifier = Modifier.padding(horizontal = 20.dp).testTag("AssociationRecruitmentTitle"))
-  Spacer(modifier = Modifier.size(13.dp))
-  Text(
-      text = "Here’s where you could help us. Click on a role to learn more",
-      style = AppTypography.bodySmall,
-      modifier = Modifier.padding(horizontal = 23.dp).testTag("AssociationRecruitmentDescription"))
-  Spacer(modifier = Modifier.size(18.dp))
-  Row(modifier = Modifier.padding(horizontal = 24.dp).testTag("AssociationRecruitmentRoles")) {
-    OutlinedButton(
-        onClick = {
-          Toast.makeText(context, "<DEBUG> Not implemented yet", Toast.LENGTH_SHORT).show()
-        },
-        enabled = true) {
-          Icon(Icons.Filled.Add, contentDescription = "Add icon")
-          Spacer(Modifier.width(2.dp))
-          Text("Graphic Designer")
+    Text(
+        text = "Join <Association> ?",
+        style = AppTypography.headlineMedium,
+        modifier = Modifier
+            .padding(horizontal = 20.dp)
+            .testTag("AssociationRecruitmentTitle")
+    )
+    Spacer(modifier = Modifier.size(13.dp))
+    Text(
+        text = "Here’s where you could help us. Click on a role to learn more",
+        style = AppTypography.bodySmall,
+        modifier = Modifier
+            .padding(horizontal = 23.dp)
+            .testTag("AssociationRecruitmentDescription")
+    )
+    Spacer(modifier = Modifier.size(18.dp))
+    Row(modifier = Modifier
+        .padding(horizontal = 24.dp)
+        .testTag("AssociationRecruitmentRoles")) {
+        OutlinedButton(
+            onClick = {
+                Toast.makeText(context, "<DEBUG> Not implemented yet", Toast.LENGTH_SHORT).show()
+            },
+            enabled = true
+        ) {
+            Icon(Icons.Filled.Add, contentDescription = "Add icon")
+            Spacer(Modifier.width(2.dp))
+            Text("Graphic Designer")
         }
-    Spacer(modifier = Modifier.width(10.dp))
-    OutlinedButton(
-        onClick = {
-          Toast.makeText(context, "<DEBUG> Not implemented yet", Toast.LENGTH_SHORT).show()
-        },
-        enabled = true) {
-          Icon(Icons.Filled.Add, contentDescription = "Add icon")
-          Spacer(Modifier.width(2.dp))
-          Text("Treasurer")
+        Spacer(modifier = Modifier.width(10.dp))
+        OutlinedButton(
+            onClick = {
+                Toast.makeText(context, "<DEBUG> Not implemented yet", Toast.LENGTH_SHORT).show()
+            },
+            enabled = true
+        ) {
+            Icon(Icons.Filled.Add, contentDescription = "Add icon")
+            Spacer(Modifier.width(2.dp))
+            Text("Treasurer")
         }
-  }
+    }
 }
 
 @Composable
 fun UserCard(context: Context) {
-  Text(
-      getString(R.string.association_contact_members),
-      style = AppTypography.headlineMedium,
-      modifier = Modifier.padding(horizontal = 20.dp).testTag("AssociationContactMembersTitle"))
-  Spacer(modifier = Modifier.size(4.dp))
-  Box(
-      modifier =
-          Modifier.testTag("AssociationContactMembersCard")
-              .padding(horizontal = 23.dp)
-              .width(366.dp)
-              .height(40.dp)
-              .background(Color.LightGray, RoundedCornerShape(12.dp))
-              .padding(vertical = 2.dp, horizontal = 3.dp)
-              .clickable {
-                Toast.makeText(context, "<DEBUG> Not implemented yet", Toast.LENGTH_SHORT).show()
-              },
-  ) {
-    Row(
-        horizontalArrangement = Arrangement.spacedBy(115.dp, Alignment.Start),
-        verticalAlignment = Alignment.CenterVertically,
+    Text(
+        getString(R.string.association_contact_members),
+        style = AppTypography.headlineMedium,
+        modifier = Modifier
+            .padding(horizontal = 20.dp)
+            .testTag("AssociationContactMembersTitle")
+    )
+    Spacer(modifier = Modifier.size(4.dp))
+    Box(
+        modifier =
+        Modifier
+            .testTag("AssociationContactMembersCard")
+            .padding(horizontal = 23.dp)
+            .width(366.dp)
+            .height(40.dp)
+            .background(Color.LightGray, RoundedCornerShape(12.dp))
+            .padding(vertical = 2.dp, horizontal = 3.dp)
+            .clickable {
+                Toast
+                    .makeText(context, "<DEBUG> Not implemented yet", Toast.LENGTH_SHORT)
+                    .show()
+            },
     ) {
-      Icon(
-          // TODO: Replace with user's profile picture
-          Icons.Filled.Person,
-          contentDescription = "user's profile picture",
-          Modifier.size(36.dp))
-      Text(text = "Casey Rue", style = AppTypography.headlineSmall)
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(115.dp, Alignment.Start),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Icon(
+                // TODO: Replace with user's profile picture
+                Icons.Filled.Person,
+                contentDescription = "user's profile picture",
+                Modifier.size(36.dp)
+            )
+            Text(text = "Casey Rue", style = AppTypography.headlineSmall)
+        }
     }
-  }
 }
 
 @Composable
 fun AssociationProfileEvents(context: Context) {
-  Column(
-      modifier = Modifier.padding(horizontal = 28.dp),
-      horizontalAlignment = Alignment.CenterHorizontally) {
+    Column(
+        modifier = Modifier.padding(horizontal = 28.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         Box(modifier = Modifier.testTag("AssociationEventCard")) {
-          EventCard(
-              event =
-                  Event(
-                      organisers = MockReferenceList(),
-                      taggedAssociations = MockReferenceList())) {}
+            EventCard(
+                event =
+                Event(
+                    organisers = MockReferenceList(),
+                    taggedAssociations = MockReferenceList()
+                )
+            ) {}
         }
         Spacer(modifier = Modifier.size(11.dp))
         OutlinedButton(
             onClick = {
-              Toast.makeText(context, "<DEBUG> Not implemented yet", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "<DEBUG> Not implemented yet", Toast.LENGTH_SHORT).show()
             },
-            modifier = Modifier.padding(horizontal = 28.dp).testTag("AssociationSeeMoreButton")) {
-              Icon(Icons.AutoMirrored.Filled.ArrowForward, contentDescription = "See more")
-              Spacer(Modifier.width(2.dp))
-              Text(getString(R.string.association_see_more))
-            }
-      }
+            modifier = Modifier
+                .padding(horizontal = 28.dp)
+                .testTag("AssociationSeeMoreButton")
+        ) {
+            Icon(Icons.AutoMirrored.Filled.ArrowForward, contentDescription = "See more")
+            Spacer(Modifier.width(2.dp))
+            Text(getString(R.string.association_see_more))
+        }
+    }
 }
 
 @Composable
 fun AssociationEventTitle() {
-  Text(
-      getString(R.string.association_upcoming_events),
-      modifier = Modifier.padding(horizontal = 20.dp).testTag("AssociationEventTitle"),
-      style = AppTypography.headlineMedium)
+    Text(
+        getString(R.string.association_upcoming_events),
+        modifier = Modifier
+            .padding(horizontal = 20.dp)
+            .testTag("AssociationEventTitle"),
+        style = AppTypography.headlineMedium
+    )
 }
 
 @Composable
 fun AssociationDescription() {
-  Text(
-      getString(R.string.debug_lorem_ipsum),
-      style = AppTypography.bodyMedium,
-      modifier = Modifier.padding(horizontal = 24.dp).testTag("AssociationDescription"))
+    Text(
+        getString(R.string.debug_lorem_ipsum),
+        style = AppTypography.bodyMedium,
+        modifier = Modifier
+            .padding(horizontal = 24.dp)
+            .testTag("AssociationDescription")
+    )
 }
 
 @Composable
 fun AssociationHeader(context: Context) {
-  Row {
-    Box(modifier = Modifier.padding(horizontal = 24.dp).testTag("AssociationImageHeader")) {
-      Image(
-          painter = painterResource(id = R.drawable.adec),
-          contentDescription = "placeholder",
-          modifier = Modifier.size(124.dp))
+    Row {
+        Box(modifier = Modifier
+            .padding(horizontal = 24.dp)
+            .testTag("AssociationImageHeader")) {
+            Image(
+                painter = painterResource(id = R.drawable.adec),
+                contentDescription = "placeholder",
+                modifier = Modifier.size(124.dp)
+            )
+        }
+        Column {
+            Text(
+                "xxx followers",
+                style = AppTypography.headlineSmall,
+                modifier = Modifier
+                    .padding(bottom = 5.dp)
+                    .testTag("AssociationHeaderFollowers")
+            )
+            Text(
+                "yyy members",
+                style = AppTypography.headlineSmall,
+                modifier = Modifier
+                    .padding(bottom = 14.dp)
+                    .testTag("AssociationHeaderMembers")
+            )
+            Button(
+                onClick = {
+                    Toast.makeText(context, "<DEBUG> Not implemented yet", Toast.LENGTH_SHORT)
+                        .show()
+                },
+                enabled = false,
+                modifier = Modifier.testTag("AssociationFollowButton")
+            ) {
+                Icon(Icons.Filled.Add, contentDescription = "Follow icon")
+                Spacer(Modifier.width(2.dp))
+                Text("Follow")
+            }
+        }
     }
-    Column {
-      Text(
-          "xxx followers",
-          style = AppTypography.headlineSmall,
-          modifier = Modifier.padding(bottom = 5.dp).testTag("AssociationHeaderFollowers"))
-      Text(
-          "yyy members",
-          style = AppTypography.headlineSmall,
-          modifier = Modifier.padding(bottom = 14.dp).testTag("AssociationHeaderMembers"))
-      Button(
-          onClick = {
-            Toast.makeText(context, "<DEBUG> Not implemented yet", Toast.LENGTH_SHORT).show()
-          },
-          enabled = false,
-          modifier = Modifier.testTag("AssociationFollowButton")) {
-            Icon(Icons.Filled.Add, contentDescription = "Follow icon")
-            Spacer(Modifier.width(2.dp))
-            Text("Follow")
-          }
-    }
-  }
 }
