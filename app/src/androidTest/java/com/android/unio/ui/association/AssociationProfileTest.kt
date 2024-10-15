@@ -76,7 +76,7 @@ class AssociationProfileTest {
     composeTestRule.onNodeWithTag("AssociationFollowButton").assertIsDisplayed()
     composeTestRule.onNodeWithTag("AssociationDescription").assertIsDisplayed()
 
-    composeTestRule.onNodeWithTag("AssociationRecruitmentRoles").performScrollTo()
+    composeTestRule.onNodeWithTag("AssociationEventTitle").performScrollTo()
 
     composeTestRule.onNodeWithTag("AssociationEventTitle").assertIsDisplayed()
     //    composeTestRule.onNodeWithTag("AssociationEventCard").assertIsDisplayed()
