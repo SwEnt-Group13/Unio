@@ -142,6 +142,9 @@ class ExploreScreenTest {
     val sortedByCategoryAssociations =
         getSortedEntriesAssociationsByCategory(associations.groupBy { it.category })
 
+      composeTestRule.waitForIdle()
+
+
     sortedByCategoryAssociations.forEach { (category, associations) ->
       composeTestRule.onNodeWithTag("category_${category.displayName}").assertIsDisplayed()
       composeTestRule.onNodeWithTag("associationRow_${category.displayName}")
