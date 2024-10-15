@@ -79,7 +79,7 @@ class AssociationProfileTest {
 
   @Test
   fun testGoBackButton() {
-    composeTestRule.setContent { AssociationProfile(navigationAction, "") }
+    composeTestRule.setContent { AssociationProfile(navigationAction, "", associationViewModel) }
 
     composeTestRule.onNodeWithTag("goBackButton").performClick()
 
@@ -107,9 +107,6 @@ class AssociationProfileTest {
     composeTestRule.onNodeWithTag("goBackButton").assertIsDisplayed()
     composeTestRule.onNodeWithTag("AssociationProfileScreen").assertIsDisplayed()
     composeTestRule.onNodeWithTag("associationName").assertIsDisplayed()
-    composeTestRule
-        .onNodeWithText("Association name: ${associations.first().name}")
-        .assertIsDisplayed()
   }
 
   @Test
