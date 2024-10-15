@@ -36,5 +36,6 @@ enum class AssociationCategory(val displayName: String){
     ARTS("Arts"),
     ENTERTAINMENT("Entertainment"),
     SPORTS("Sports"),
-    GUIDANCE("Vocational guidance")
+    GUIDANCE("Vocational guidance"),
+    UNKNOWN("Unknown")
 }
