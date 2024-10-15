@@ -68,19 +68,22 @@ class AssociationProfileTest {
     composeTestRule.setContent { AssociationProfileScreen(navigationAction, "") }
 
     composeTestRule.onNodeWithTag("AssociationScreen").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("AssociationEventTitle").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("AssociationDescription").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("goBackButton").assertIsDisplayed()
     composeTestRule.onNodeWithTag("AssociationImageHeader").assertIsDisplayed()
     composeTestRule.onNodeWithTag("AssociationProfileTitle").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("goBackButton").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("AssociationContactMembersTitle").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("AssociationContactMembersCard").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("AssociationRecruitmentRoles").performScrollTo()
-    composeTestRule.onNodeWithTag("AssociationEventCard").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("AssociationSeeMoreButton").assertIsDisplayed()
     composeTestRule.onNodeWithTag("AssociationHeaderFollowers").assertIsDisplayed()
     composeTestRule.onNodeWithTag("AssociationHeaderMembers").assertIsDisplayed()
     composeTestRule.onNodeWithTag("AssociationFollowButton").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("AssociationDescription").assertIsDisplayed()
+
+    composeTestRule.onNodeWithTag("AssociationRecruitmentRoles").performScrollTo()
+
+
+    composeTestRule.onNodeWithTag("AssociationEventTitle").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("AssociationEventCard").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("AssociationSeeMoreButton").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("AssociationContactMembersTitle").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("AssociationContactMembersCard").assertIsDisplayed()
     composeTestRule.onNodeWithTag("AssociationRecruitmentTitle").assertIsDisplayed()
     composeTestRule.onNodeWithTag("AssociationRecruitmentDescription").assertIsDisplayed()
     composeTestRule.onNodeWithTag("AssociationRecruitmentRoles").assertIsDisplayed()
