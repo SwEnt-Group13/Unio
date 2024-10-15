@@ -1,4 +1,4 @@
-package com.android.unio.model.event
+package com.android.unio.ui.event
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -15,6 +14,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.FavoriteBorder
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -30,8 +32,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.unio.R
-import com.android.unio.ui.theme.primaryContainerDark
-import com.android.unio.ui.theme.primaryContainerDarkMediumContrast
+import com.android.unio.model.event.Event
 import com.android.unio.ui.theme.primaryContainerLight
 import com.android.unio.ui.theme.secondaryDark
 import com.android.unio.utils.EventUtils.DynamicImage
@@ -51,16 +52,40 @@ fun EventCard(event: Event, onClick: () -> Unit) {
               .testTag("event_EventListItem")
               .clip(RoundedCornerShape(10.dp))
               .background(secondaryDark)) {
-        Image(
-            painter = DynamicImage(event.image),
-            contentDescription = null,
-            modifier =
-                Modifier.fillMaxWidth()
-                    .height(100.dp)
-                    .clip(RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp))
-                    .testTag("event_EventImage"),
-            contentScale = ContentScale.Crop // crop the image to fit
-            )
+      Box(
+          modifier = Modifier
+              .fillMaxWidth()
+              .height(100.dp)
+      ) {
+          // Main image
+          Image(
+              painter = DynamicImage(event.image),
+              contentDescription = null,
+              modifier = Modifier
+                  .fillMaxWidth()
+                  .height(100.dp)
+                  .clip(RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp))
+                  .testTag("event_EventImage"),
+              contentScale = ContentScale.Crop // crop the image to fit
+          )
+
+          Box(
+              modifier = Modifier
+                  .size(28.dp)
+                  .clip(RoundedCornerShape(14.dp))
+                  .background(Color(0xFF6200EE))
+                  .align(Alignment.TopEnd)
+                  .padding(4.dp)
+
+
+          ) {
+              // Icon inside the circle
+              Icon(
+                  Icons.Rounded.FavoriteBorder,
+                  contentDescription = ""
+              )
+          }
+      }
 
         Column(modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp)) {
           Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
