@@ -12,10 +12,8 @@ import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationCategory
 import com.android.unio.model.association.AssociationRepository
 import com.android.unio.model.association.AssociationViewModel
-import com.android.unio.model.firestore.FirestorePaths.USER_PATH
-import com.android.unio.model.firestore.FirestoreReferenceList
-import com.android.unio.model.firestore.transform.hydrate
-import com.android.unio.model.user.UserRepositoryFirestore
+import com.android.unio.model.firestore.emptyFirestoreReferenceList
+import com.android.unio.model.user.User
 import com.android.unio.ui.navigation.NavigationAction
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
@@ -58,9 +56,7 @@ class AssociationProfileTest {
                 category = AssociationCategory.SCIENCE_TECH,
                 description =
                     "ACM is the world's largest educational and scientific computing society.",
-                members =
-                    FirestoreReferenceList.empty(
-                        db.collection(USER_PATH), UserRepositoryFirestore.Companion::hydrate)))
+                members = User.emptyFirestoreReferenceList()))
 
     navHostController = mock { NavHostController::class.java }
     navigationAction = NavigationAction(navHostController)
