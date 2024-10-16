@@ -19,11 +19,12 @@ import com.google.firebase.auth.auth
 fun HomeScreen(navigationAction: NavigationAction) {
   Scaffold(
       content = {
-          Button(
-              onClick = { Firebase.auth.signOut() },
-          ) {
-              Text("Sign out (this is a place holder)")
-          }},
+        Button(
+            onClick = { Firebase.auth.signOut() },
+        ) {
+          Text("Sign out (this is a place holder)")
+        }
+      },
       modifier = Modifier.testTag("HomeScreen"),
       bottomBar = {
         BottomNavigationMenu(
