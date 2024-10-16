@@ -10,8 +10,11 @@ import com.android.unio.model.firestore.FirestorePaths.ASSOCIATION_PATH
 import com.android.unio.model.firestore.FirestorePaths.USER_PATH
 import com.android.unio.model.firestore.FirestoreReferenceList
 import com.android.unio.model.map.Location
+import com.android.unio.model.user.Interest
+import com.android.unio.model.user.Social
 import com.android.unio.model.user.User
 import com.android.unio.model.user.UserRepositoryFirestore
+import com.android.unio.model.user.UserSocial
 import com.google.firebase.Firebase
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.firestore
@@ -48,9 +51,19 @@ fun UserRepositoryFirestore.Companion.hydrate(data: Map<String, Any>?): User {
 
   return User(
       uid = data?.get("uid") as? String ?: "",
-      name = data?.get("name") as? String ?: "",
       email = data?.get("email") as? String ?: "",
-      followingAssociations = followingAssociations)
+      firstName = data?.get("firstName") as? String ?: "",
+      lastName = data?.get("lastName") as? String ?: "",
+      biography = data?.get("biography") as? String ?: "",
+      followingAssociations = followingAssociations,
+      interests =
+          (data?.get("interests") as? List<String> ?: emptyList()).map { Interest.valueOf(it) },
+      socials =
+          (data?.get("socials") as? List<Map<String, String>> ?: emptyList()).map {
+            UserSocial(Social.valueOf(it["social"] ?: ""), it["content"] ?: "")
+          },
+      profilePicture = data?.get("profilePicture") as? String ?: "",
+  )
 }
 
 fun EventRepositoryFirestore.Companion.hydrate(data: Map<String, Any>?): Event {
