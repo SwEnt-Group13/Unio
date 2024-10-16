@@ -5,23 +5,14 @@ import com.android.unio.model.association.AssociationRepositoryFirestore
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventRepositoryFirestore
 import com.android.unio.model.event.EventType
-import com.android.unio.model.firestore.FirestorePaths.ASSOCIATION_PATH
-import com.android.unio.model.firestore.FirestorePaths.USER_PATH
-import com.android.unio.model.firestore.FirestoreReferenceList
 import com.android.unio.model.map.Location
 import com.android.unio.model.user.User
 import com.android.unio.model.user.UserRepositoryFirestore
-import com.google.firebase.Firebase
 import com.google.firebase.Timestamp
-import com.google.firebase.firestore.firestore
 
 fun AssociationRepositoryFirestore.Companion.hydrate(data: Map<String, Any>?): Association {
   val memberUids = data?.get("members") as? List<String> ?: emptyList()
-  val members =
-      FirestoreReferenceList.fromList(
-          list = memberUids,
-          collection = Firebase.firestore.collection(USER_PATH),
-          hydrate = UserRepositoryFirestore::hydrate)
+  val members = User.firestoreReferenceListWith(memberUids)
 
   return Association(
       uid = data?.get("uid") as? String ?: "",
@@ -34,11 +25,7 @@ fun AssociationRepositoryFirestore.Companion.hydrate(data: Map<String, Any>?): A
 
 fun UserRepositoryFirestore.Companion.hydrate(data: Map<String, Any>?): User {
   val followingAssociationsUids = data?.get("followingAssociations") as? List<String> ?: emptyList()
-  val followingAssociations =
-      FirestoreReferenceList.fromList(
-          followingAssociationsUids,
-          Firebase.firestore.collection(ASSOCIATION_PATH),
-          AssociationRepositoryFirestore::hydrate)
+  val followingAssociations = Association.firestoreReferenceListWith(followingAssociationsUids)
 
   return User(
       uid = data?.get("uid") as? String ?: "",
@@ -49,16 +36,12 @@ fun UserRepositoryFirestore.Companion.hydrate(data: Map<String, Any>?): User {
 
 fun EventRepositoryFirestore.Companion.hydrate(data: Map<String, Any>?): Event {
   val organisers =
-      FirestoreReferenceList.fromList(
-          data?.get("organisers") as? List<String> ?: emptyList(),
-          Firebase.firestore.collection(ASSOCIATION_PATH),
-          AssociationRepositoryFirestore::hydrate)
+      Association.firestoreReferenceListWith(
+          data?.get("organisers") as? List<String> ?: emptyList())
 
   val taggedAssociations =
-      FirestoreReferenceList.fromList(
-          data?.get("taggedAssociations") as? List<String> ?: emptyList(),
-          Firebase.firestore.collection(ASSOCIATION_PATH),
-          AssociationRepositoryFirestore::hydrate)
+      Association.firestoreReferenceListWith(
+          data?.get("taggedAssociations") as? List<String> ?: emptyList())
 
   val types = (data?.get("types") as? List<String> ?: emptyList())
 

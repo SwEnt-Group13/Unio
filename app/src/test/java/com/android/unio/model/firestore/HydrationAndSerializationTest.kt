@@ -12,7 +12,6 @@ import com.android.unio.model.user.User
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.google.firebase.FirebaseApp
 import com.google.firebase.Timestamp
-import com.google.firebase.firestore.FirebaseFirestore
 import junit.framework.TestCase.assertEquals
 import org.junit.Before
 import org.junit.Test
@@ -40,11 +39,7 @@ class HydrationAndSerializationTest {
             uid = "1",
             email = "1@gmail.com",
             name = "User 1",
-            followingAssociations =
-                FirestoreReferenceList.fromList(
-                    listOf("1", "2"),
-                    FirebaseFirestore.getInstance().collection("associations"),
-                    AssociationRepositoryFirestore::hydrate))
+            followingAssociations = Association.firestoreReferenceListWith(listOf("1", "2")))
 
     association =
         Association(
@@ -53,11 +48,7 @@ class HydrationAndSerializationTest {
             acronym = "EX",
             fullName = "Example Association",
             description = "An example association",
-            members =
-                FirestoreReferenceList.fromList(
-                    listOf("1", "2"),
-                    FirebaseFirestore.getInstance().collection("users"),
-                    UserRepositoryFirestore::hydrate))
+            members = User.firestoreReferenceListWith(listOf("1", "2")))
 
     event =
         Event(
@@ -69,17 +60,8 @@ class HydrationAndSerializationTest {
             price = 0.0,
             date = Timestamp.now(),
             location = Location(latitude = 0.0, longitude = 0.0, name = "Example Location"),
-            organisers =
-                FirestoreReferenceList.fromList(
-                    listOf("1", "2"),
-                    FirebaseFirestore.getInstance().collection("associations"),
-                    AssociationRepositoryFirestore::hydrate),
-            taggedAssociations =
-                FirestoreReferenceList.fromList(
-                    listOf("1", "2"),
-                    FirebaseFirestore.getInstance().collection("associations"),
-                    AssociationRepositoryFirestore::hydrate),
-        )
+            organisers = Association.firestoreReferenceListWith(listOf("1", "2")),
+            taggedAssociations = Association.firestoreReferenceListWith(listOf("1", "2")))
   }
 
   /** Round-trip tests for serialization and hydration of user, association, and event instances. */

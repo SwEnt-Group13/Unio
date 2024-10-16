@@ -1,9 +1,8 @@
 package com.android.unio.model.association
 
-import com.android.unio.model.firestore.FirestorePaths.USER_PATH
-import com.android.unio.model.firestore.FirestoreReferenceList
-import com.android.unio.model.firestore.transform.hydrate
-import com.android.unio.model.user.UserRepositoryFirestore
+import androidx.test.core.app.ApplicationProvider
+import com.android.unio.model.user.User
+import com.google.firebase.FirebaseApp
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import junit.framework.TestCase.assertEquals
@@ -17,12 +16,15 @@ import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
+import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
 import org.mockito.MockitoAnnotations
 import org.mockito.kotlin.any
+import org.robolectric.RobolectricTestRunner
 
+@RunWith(RobolectricTestRunner::class)
 class AssociationViewModelTest {
   @Mock private lateinit var repository: AssociationRepositoryFirestore
   @Mock private lateinit var db: FirebaseFirestore
@@ -39,6 +41,11 @@ class AssociationViewModelTest {
     MockitoAnnotations.openMocks(this)
     Dispatchers.setMain(testDispatcher)
 
+    // Initialize Firebase if necessary
+    if (FirebaseApp.getApps(ApplicationProvider.getApplicationContext()).isEmpty()) {
+      FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext())
+    }
+
     `when`(db.collection(any())).thenReturn(collectionReference)
 
     testAssociations =
@@ -49,21 +56,13 @@ class AssociationViewModelTest {
                 fullName = "Association for Computing Machinery",
                 description =
                     "ACM is the world's largest educational and scientific computing society.",
-                members =
-                    FirestoreReferenceList.fromList(
-                        listOf("1", "2"),
-                        db.collection(USER_PATH),
-                        UserRepositoryFirestore.Companion::hydrate)),
+                members = User.firestoreReferenceListWith(listOf("1", "2"))),
             Association(
                 uid = "2",
                 acronym = "IEEE",
                 fullName = "Institute of Electrical and Electronics Engineers",
                 description = "IEEE is the world's largest technical professional organization.",
-                members =
-                    FirestoreReferenceList.fromList(
-                        listOf("3", "4"),
-                        db.collection(USER_PATH),
-                        UserRepositoryFirestore.Companion::hydrate)))
+                members = User.firestoreReferenceListWith(listOf("3", "4"))))
 
     viewModel = AssociationViewModel(repository)
   }

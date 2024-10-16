@@ -1,6 +1,7 @@
 package com.android.unio.model.user
 
 import androidx.test.core.app.ApplicationProvider
+import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationRepositoryFirestore
 import com.android.unio.model.firestore.FirestorePaths.ASSOCIATION_PATH
 import com.android.unio.model.firestore.FirestorePaths.USER_PATH
@@ -63,18 +64,14 @@ class UserRepositoryFirestoreTest {
             uid = "1",
             email = "example1@abcd.com",
             name = "Example 1",
-            followingAssociations =
-                FirestoreReferenceList.empty(
-                    db.collection(ASSOCIATION_PATH), AssociationRepositoryFirestore::hydrate))
+            followingAssociations = Association.emptyFirestoreReferenceList())
 
     user2 =
         User(
             uid = "2",
             email = "example2@abcd.com",
             name = "Example 2",
-            followingAssociations =
-                FirestoreReferenceList.empty(
-                    db.collection(ASSOCIATION_PATH), AssociationRepositoryFirestore::hydrate))
+            followingAssociations = Association.emptyFirestoreReferenceList())
 
     `when`(userCollectionReference.get()).thenReturn(querySnapshotTask)
     `when`(userCollectionReference.document(eq(user1.uid))).thenReturn(documentReference)

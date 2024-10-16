@@ -3,9 +3,7 @@ package com.android.unio.model.association
 import androidx.test.core.app.ApplicationProvider
 import com.android.unio.model.firestore.FirestorePaths.ASSOCIATION_PATH
 import com.android.unio.model.firestore.FirestorePaths.USER_PATH
-import com.android.unio.model.firestore.FirestoreReferenceList
-import com.android.unio.model.firestore.transform.hydrate
-import com.android.unio.model.user.UserRepositoryFirestore
+import com.android.unio.model.user.User
 import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
@@ -68,9 +66,7 @@ class AssociationRepositoryFirestoreTest {
             fullName = "Association for Computing Machinery",
             description =
                 "ACM is the world's largest educational and scientific computing society.",
-            members =
-                FirestoreReferenceList.fromList(
-                    listOf("1", "2"), db.collection(USER_PATH), UserRepositoryFirestore::hydrate))
+            members = User.firestoreReferenceListWith(listOf("1", "2")))
 
     association2 =
         Association(
@@ -80,9 +76,7 @@ class AssociationRepositoryFirestoreTest {
             fullName = "Institute of Electrical and Electronics Engineers",
             description =
                 "IEEE is the world's largest technical professional organization dedicated to advancing technology for the benefit of humanity.",
-            members =
-                FirestoreReferenceList.fromList(
-                    listOf("3", "4"), db.collection(USER_PATH), UserRepositoryFirestore::hydrate))
+            members = User.firestoreReferenceListWith(listOf("3", "4")))
 
     // When getting the collection, return the task
     `when`(associationCollectionReference.get()).thenReturn(querySnapshotTask)
@@ -161,11 +155,7 @@ class AssociationRepositoryFirestoreTest {
     repository.getAssociations(
         onSuccess = { associations ->
           val emptyAssociation =
-              Association(
-                  uid = association2.uid,
-                  members =
-                      FirestoreReferenceList.empty(
-                          db.collection(USER_PATH), UserRepositoryFirestore::hydrate))
+              Association(uid = association2.uid, members = User.emptyFirestoreReferenceList())
 
           assertEquals(2, associations.size)
 
