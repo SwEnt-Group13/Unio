@@ -60,7 +60,8 @@ class AssociationProfileTest {
                     "ACM is the world's largest educational and scientific computing society.",
                 members =
                     FirestoreReferenceList.empty(
-                        db.collection(USER_PATH), UserRepositoryFirestore.Companion::hydrate)))
+                        db.collection(USER_PATH), UserRepositoryFirestore.Companion::hydrate),
+                image = "https://www.example.com/image.jpg"))
 
     navHostController = mock { NavHostController::class.java }
     navigationAction = NavigationAction(navHostController)

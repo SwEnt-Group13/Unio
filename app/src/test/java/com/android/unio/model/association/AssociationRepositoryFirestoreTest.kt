@@ -71,7 +71,8 @@ class AssociationRepositoryFirestoreTest {
                 "ACM is the world's largest educational and scientific computing society.",
             members =
                 FirestoreReferenceList.fromList(
-                    listOf("1", "2"), db.collection(USER_PATH), UserRepositoryFirestore::hydrate))
+                    listOf("1", "2"), db.collection(USER_PATH), UserRepositoryFirestore::hydrate),
+            image = "https://www.example.com/image.jpg")
 
     association2 =
         Association(
@@ -84,7 +85,8 @@ class AssociationRepositoryFirestoreTest {
                 "IEEE is the world's largest technical professional organization dedicated to advancing technology for the benefit of humanity.",
             members =
                 FirestoreReferenceList.fromList(
-                    listOf("3", "4"), db.collection(USER_PATH), UserRepositoryFirestore::hydrate))
+                    listOf("3", "4"), db.collection(USER_PATH), UserRepositoryFirestore::hydrate),
+            image = "https://www.example.com/image.jpg")
 
     // When getting the collection, return the task
     `when`(associationCollectionReference.get()).thenReturn(querySnapshotTask)
@@ -174,7 +176,8 @@ class AssociationRepositoryFirestoreTest {
                   description = "",
                   members =
                       FirestoreReferenceList.empty(
-                          db.collection(USER_PATH), UserRepositoryFirestore::hydrate))
+                          db.collection(USER_PATH), UserRepositoryFirestore::hydrate),
+                  image = "")
 
           assertEquals(2, associations.size)
 

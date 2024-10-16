@@ -71,7 +71,8 @@ class HydrationAndSerializationTest {
                 FirestoreReferenceList.fromList(
                     listOf("1", "2"),
                     FirebaseFirestore.getInstance().collection("users"),
-                    UserRepositoryFirestore::hydrate))
+                    UserRepositoryFirestore::hydrate),
+            "https://www.example.com/image.jpg")
 
     event =
         Event(
