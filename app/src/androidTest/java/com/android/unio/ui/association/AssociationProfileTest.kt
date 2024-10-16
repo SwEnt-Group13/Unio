@@ -69,7 +69,7 @@ class AssociationProfileTest {
 
   @Test
   fun testAssociationProfileDisplayedBadId() {
-    composeTestRule.setContent { AssociationProfile(navigationAction, "") }
+    composeTestRule.setContent { AssociationProfile(navigationAction, "", associationViewModel) }
 
     composeTestRule.onNodeWithTag("AssociationProfileTitle").assertIsDisplayed()
     composeTestRule.onNodeWithTag("goBackButton").assertIsDisplayed()
