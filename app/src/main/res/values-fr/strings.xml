@@ -54,6 +54,13 @@
     <string name="association_go_back">Retour</string>
     <string name="association_see_more">Voir plus</string>
     <string name="association_contact_members">Membres à contacter</string>
+    <string name="association_help_us">
+        Voici comment vous pouvez nous aider. Cliquez sur une fonction pour en savoir plus
+    </string>
+    <string name="association_follower">abonnés</string>
+    <string name="association_member">membres</string>
+    <string name="association_follow">S\'abonner</string>
+    <string name="association_join">Rejoindre</string>
 
 
 </resources>

@@ -65,7 +65,7 @@ fun AssociationProfileScreen(
           ?: run {
             Log.e("AssociationProfile", "Association not found")
             return AssociationProfileScaffold(
-                title = "Association Profile", navigationAction = navigationAction) { padding ->
+                title = "<Association Profile>", navigationAction = navigationAction) { padding ->
                   Column(modifier = Modifier.padding(padding)) {
                     Text(
                         text = "Association not found. Shouldn't happen.",
@@ -75,7 +75,7 @@ fun AssociationProfileScreen(
                 }
           }
 
-  AssociationProfileScaffold(title = "Association Profile", navigationAction = navigationAction) {
+  AssociationProfileScaffold(title = "<Association Profile>", navigationAction = navigationAction) {
       padding ->
     Column(modifier = Modifier.padding(padding)) {
       Text(
@@ -119,7 +119,6 @@ fun AssociationProfileScaffold(
             actions = {
               IconButton(
                   onClick = {
-                    // TODO: Implement association sharing
                     Toast.makeText(context, "<DEBUG> Not implemented yet", Toast.LENGTH_SHORT)
                         .show()
                   }) {
@@ -154,12 +153,12 @@ fun AssociationProfileContent(padding: PaddingValues, context: Context) {
 @Composable
 fun AssociationRecruitment(context: Context) {
   Text(
-      text = "Join <Association> ?",
+      text = getString(R.string.association_join) +" <Association> ?",
       style = AppTypography.headlineMedium,
       modifier = Modifier.padding(horizontal = 20.dp).testTag("AssociationRecruitmentTitle"))
   Spacer(modifier = Modifier.size(13.dp))
   Text(
-      text = "Here’s where you could help us. Click on a role to learn more",
+      text = getString(R.string.association_help_us),
       style = AppTypography.bodySmall,
       modifier = Modifier.padding(horizontal = 23.dp).testTag("AssociationRecruitmentDescription"))
   Spacer(modifier = Modifier.size(18.dp))
@@ -171,7 +170,7 @@ fun AssociationRecruitment(context: Context) {
         enabled = true) {
           Icon(Icons.Filled.Add, contentDescription = "Add icon")
           Spacer(Modifier.width(2.dp))
-          Text("Graphic Designer")
+          Text("<Graphic Designer>")
         }
     Spacer(modifier = Modifier.width(10.dp))
     OutlinedButton(
@@ -181,7 +180,7 @@ fun AssociationRecruitment(context: Context) {
         enabled = true) {
           Icon(Icons.Filled.Add, contentDescription = "Add icon")
           Spacer(Modifier.width(2.dp))
-          Text("Treasurer")
+          Text("<Treasurer>")
         }
   }
 }
@@ -210,11 +209,10 @@ fun UserCard(context: Context) {
         verticalAlignment = Alignment.CenterVertically,
     ) {
       Icon(
-          // TODO: Replace with user's profile picture
           Icons.Filled.Person,
           contentDescription = "user's profile picture",
           Modifier.size(36.dp))
-      Text(text = "Casey Rue", style = AppTypography.headlineSmall)
+      Text(text = "<Casey Rue>", style = AppTypography.headlineSmall)
     }
   }
 }
@@ -271,22 +269,21 @@ fun AssociationHeader(context: Context) {
     }
     Column {
       Text(
-          "xxx followers",
+          "xxx "+ getString(R.string.association_follower),
           style = AppTypography.headlineSmall,
           modifier = Modifier.padding(bottom = 5.dp).testTag("AssociationHeaderFollowers"))
       Text(
-          "yyy members",
+          "yyy "+ getString(R.string.association_member),
           style = AppTypography.headlineSmall,
           modifier = Modifier.padding(bottom = 14.dp).testTag("AssociationHeaderMembers"))
       Button(
           onClick = {
             Toast.makeText(context, "<DEBUG> Not implemented yet", Toast.LENGTH_SHORT).show()
           },
-          enabled = false,
           modifier = Modifier.testTag("AssociationFollowButton")) {
             Icon(Icons.Filled.Add, contentDescription = "Follow icon")
             Spacer(Modifier.width(2.dp))
-            Text("Follow")
+            Text(getString(R.string.association_follow))
           }
     }
   }
