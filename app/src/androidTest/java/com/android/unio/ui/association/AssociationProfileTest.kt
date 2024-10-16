@@ -3,7 +3,6 @@ package com.android.unio.ui.association
 import androidx.compose.ui.test.SemanticsNodeInteraction
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotDisplayed
-import androidx.compose.ui.test.isDisplayed
 import androidx.compose.ui.test.isNotDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
@@ -21,7 +20,6 @@ import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.ui.navigation.NavigationAction
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
-import java.lang.Thread.sleep
 import junit.framework.TestCase.assertEquals
 import org.junit.Before
 import org.junit.Rule
@@ -121,12 +119,7 @@ class AssociationProfileTest {
 
   private fun assertSnackBarIsDisplayed() {
     composeTestRule.onNodeWithTag("associationSnackbarHost").assertIsDisplayed()
-    var thresh = 0
-    while (composeTestRule.onNodeWithTag("associationSnackbarHost").isDisplayed() || thresh < 10) {
-      composeTestRule.onNodeWithTag("snackbarActionButton").performClick()
-      sleep(1000)
-      thresh++
-    }
+    composeTestRule.onNodeWithTag("snackbarActionButton").performClick()
     composeTestRule.onNodeWithTag("associationSnackbarHost").assertIsNotDisplayed()
   }
 
