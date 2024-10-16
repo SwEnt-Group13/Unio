@@ -21,7 +21,6 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
 import junit.framework.TestCase.assertEquals
-import org.bouncycastle.asn1.x500.style.RFC4519Style.uid
 import org.junit.Before
 import org.junit.Test
 import org.mockito.MockitoAnnotations
