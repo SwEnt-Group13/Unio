@@ -122,6 +122,14 @@ class AssociationProfileTest {
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationContactMembersCard"))
     composeTestRule.onNodeWithTag("AssociationContactMembersCard").performClick()
     assertSnackBarIsDisplayed()
+
+    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationTreasurerRoles"))
+    composeTestRule.onNodeWithTag("AssociationTreasurerRoles").performClick()
+    assertSnackBarIsDisplayed()
+
+    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationDesignerRoles"))
+    composeTestRule.onNodeWithTag("AssociationDesignerRoles").performClick()
+    assertSnackBarIsDisplayed()
   }
 
   private fun assertSnackBarIsDisplayed() {

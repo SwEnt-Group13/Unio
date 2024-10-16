@@ -198,6 +198,7 @@ fun AssociationRecruitment(context: Context) {
   Spacer(modifier = Modifier.size(18.dp))
   Row(modifier = Modifier.padding(horizontal = 24.dp).testTag("AssociationRecruitmentRoles")) {
     OutlinedButton(
+        modifier = Modifier.testTag("AssociationDesignerRoles"),
         onClick = {
           scope!!.launch {
             testSnackbar!!.showSnackbar(message = DEBUG_MESSAGE, duration = SnackbarDuration.Short)
@@ -210,6 +211,7 @@ fun AssociationRecruitment(context: Context) {
         }
     Spacer(modifier = Modifier.width(10.dp))
     OutlinedButton(
+        modifier = Modifier.testTag("AssociationTreasurerRoles"),
         onClick = {
           scope!!.launch {
             testSnackbar!!.showSnackbar(message = DEBUG_MESSAGE, duration = SnackbarDuration.Short)
