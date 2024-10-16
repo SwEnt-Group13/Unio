@@ -9,6 +9,7 @@ import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventListViewModel
 import com.android.unio.model.event.EventRepositoryMock
 import com.android.unio.ui.event.EventListOverview
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Rule
 import org.junit.Test
@@ -102,6 +103,7 @@ class EventListOverviewTest {
    * Tests the sequence of clicking on the 'Following' tab and then on the 'Add' button to ensure
    * that both actions trigger their respective animations and behaviors.
    */
+  @OptIn(ExperimentalCoroutinesApi::class)
   @Test
   fun testClickFollowingAndAdd() = runBlockingTest {
     var addClicked = false
