@@ -1,7 +1,12 @@
 package com.android.unio.model.association
 
+import com.android.unio.model.firestore.FirestorePaths.ASSOCIATION_PATH
+import com.android.unio.model.firestore.FirestoreReferenceList
 import com.android.unio.model.firestore.ReferenceList
+import com.android.unio.model.firestore.transform.hydrate
 import com.android.unio.model.user.User
+import com.google.firebase.Firebase
+import com.google.firebase.firestore.firestore
 
 /**
  * Association data class Make sure to update the hydration and serialization methods when changing
@@ -21,4 +26,19 @@ data class Association(
     val fullName: String = "",
     val description: String = "",
     val members: ReferenceList<User>
-)
+) {
+  companion object {
+    fun emptyFirestoreReferenceList(): FirestoreReferenceList<Association> {
+      return FirestoreReferenceList.empty(
+          collection = Firebase.firestore.collection(ASSOCIATION_PATH),
+          hydrate = AssociationRepositoryFirestore.Companion::hydrate)
+    }
+
+    fun firestoreReferenceListWith(uids: List<String>): FirestoreReferenceList<Association> {
+      return FirestoreReferenceList.fromList(
+          list = uids,
+          collection = Firebase.firestore.collection(ASSOCIATION_PATH),
+          hydrate = AssociationRepositoryFirestore.Companion::hydrate)
+    }
+  }
+}

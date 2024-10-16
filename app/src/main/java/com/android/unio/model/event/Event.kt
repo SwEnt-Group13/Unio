@@ -1,9 +1,14 @@
 package com.android.unio.model.event
 
 import com.android.unio.model.association.Association
+import com.android.unio.model.firestore.FirestorePaths.EVENT_PATH
+import com.android.unio.model.firestore.FirestoreReferenceList
 import com.android.unio.model.firestore.ReferenceList
+import com.android.unio.model.firestore.transform.hydrate
 import com.android.unio.model.map.Location
+import com.google.firebase.Firebase
 import com.google.firebase.Timestamp
+import com.google.firebase.firestore.firestore
 import java.util.Date
 
 /**
@@ -34,4 +39,18 @@ data class Event(
     val date: Timestamp = Timestamp(Date()),
     val location: Location = Location(),
     val types: List<EventType> = mutableListOf()
-)
+) {
+  companion object {
+    fun emptyFirestoreReferenceList(): FirestoreReferenceList<Event> {
+      return FirestoreReferenceList.empty(
+          Firebase.firestore.collection(EVENT_PATH), EventRepositoryFirestore.Companion::hydrate)
+    }
+
+    fun firestoreReferenceListWith(uids: List<String>): FirestoreReferenceList<Event> {
+      return FirestoreReferenceList.fromList(
+          uids,
+          Firebase.firestore.collection(EVENT_PATH),
+          EventRepositoryFirestore.Companion::hydrate)
+    }
+  }
+}
