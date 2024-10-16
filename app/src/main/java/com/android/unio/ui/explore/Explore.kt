@@ -94,8 +94,18 @@ fun ExploreScreenContent(
               onSearch = { /* Handle search here */},
               expanded = false,
               onExpandedChange = { /* Handle expanded state change here */},
-              placeholder = { Text(text = "Search", style = AppTypography.bodyLarge) },
-              trailingIcon = { Icon(Icons.Default.Search, contentDescription = "Search icon") },
+              placeholder = {
+                Text(
+                    text = "Search",
+                    style = AppTypography.bodyLarge,
+                    modifier = Modifier.testTag("searchPlaceHolder"))
+              },
+              trailingIcon = {
+                Icon(
+                    Icons.Default.Search,
+                    contentDescription = "Search icon",
+                    modifier = Modifier.testTag("searchTrailingIcon"))
+              },
           )
         },
         expanded = false,

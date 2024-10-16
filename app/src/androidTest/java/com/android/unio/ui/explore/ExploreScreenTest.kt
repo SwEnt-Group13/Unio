@@ -96,6 +96,8 @@ class ExploreScreenTest {
   fun allComponentsAreDisplayed() {
     composeTestRule.setContent { ExploreScreen(navigationAction, associationViewModel) }
     composeTestRule.onNodeWithTag("exploreScreen").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("searchPlaceHolder").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("searchTrailingIcon").assertIsDisplayed()
     composeTestRule.onNodeWithTag("searchBar").assertIsDisplayed()
     composeTestRule.onNodeWithTag("exploreTitle").assertIsDisplayed()
     composeTestRule.onNodeWithTag("categoriesList").assertIsDisplayed()
