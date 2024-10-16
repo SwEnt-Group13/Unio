@@ -6,4 +6,6 @@ interface UserRepository {
   fun getUsers(onSuccess: (List<User>) -> Unit, onFailure: (Exception) -> Unit)
 
   fun getUserWithId(id: String, onSuccess: (User) -> Unit, onFailure: (Exception) -> Unit)
+
+    fun updateUser(user: User, onSuccess: () -> Unit, onFailure: (Exception) -> Unit)
 }

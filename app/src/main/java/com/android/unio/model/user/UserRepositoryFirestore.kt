@@ -41,6 +41,14 @@ class UserRepositoryFirestore(private val db: FirebaseFirestore) : UserRepositor
         .addOnFailureListener { exception -> onFailure(exception) }
   }
 
+    override fun updateUser(user: User, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+        db.collection(USER_PATH)
+            .document(user.uid)
+            .set(user)
+            .addOnSuccessListener {document -> onSuccess() }
+            .addOnFailureListener { exception -> onFailure(exception) }
+    }
+
   // Note: the following line is needed to add external methods to the companion object
   companion object
 }

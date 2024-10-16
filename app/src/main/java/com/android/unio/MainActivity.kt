@@ -16,8 +16,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
 import com.android.unio.model.association.AssociationViewModel
+import com.android.unio.model.user.UserRepositoryFirestore
+import com.android.unio.ui.accountCreation.AccountDetails
 import com.android.unio.ui.association.AssociationProfileScreen
-import com.android.unio.ui.authentication.AccountDetails
 import com.android.unio.ui.authentication.EmailVerificationScreen
 import com.android.unio.ui.authentication.WelcomeScreen
 import com.android.unio.ui.explore.ExploreScreen
@@ -28,8 +29,10 @@ import com.android.unio.ui.navigation.Screen
 import com.android.unio.ui.saved.SavedScreen
 import com.android.unio.ui.theme.AppTheme
 import com.android.unio.ui.user.UserProfileScreen
+import com.google.android.play.core.assetpacks.db
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
+import com.google.firebase.firestore.firestore
 
 class MainActivity : ComponentActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,6 +46,8 @@ fun UnioApp() {
   val navController = rememberNavController()
   val navigationActions = NavigationAction(navController)
   val associationViewModel: AssociationViewModel = viewModel(factory = AssociationViewModel.Factory)
+
+  val userRepositoryFirestore = UserRepositoryFirestore(Firebase.firestore)
 
   val context = LocalContext.current
 
@@ -64,7 +69,7 @@ fun UnioApp() {
     navigation(startDestination = Screen.WELCOME, route = Route.AUTH) {
       composable(Screen.WELCOME) { WelcomeScreen(navigationActions) }
       composable(Screen.EMAIL_VERIFICATION) { EmailVerificationScreen(navigationActions) }
-      composable(Screen.ACCOUNT_DETAILS) { AccountDetails(navigationActions) }
+      composable(Screen.ACCOUNT_DETAILS) { AccountDetails(navigationActions, userRepositoryFirestore ) }
     }
     navigation(startDestination = Screen.HOME, route = Route.HOME) {
       composable(Screen.HOME) { HomeScreen(navigationActions) }
