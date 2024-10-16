@@ -13,10 +13,6 @@ import com.android.unio.model.event.EventListViewModel
 import com.android.unio.model.event.EventRepositoryMock
 import com.android.unio.ui.home.HomeScreen
 import com.android.unio.ui.navigation.NavigationAction
-import com.android.unio.model.event.Event
-import com.android.unio.model.event.EventListViewModel
-import com.android.unio.model.event.EventRepositoryMock
-import com.android.unio.ui.event.EventListOverview
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Before
@@ -29,13 +25,9 @@ import org.mockito.kotlin.mock
  * Test class for the EventListOverview Composable. This class contains unit tests to validate the
  * behavior of the Event List UI.
  */
-
 @ExperimentalUnitApi
 @RunWith(AndroidJUnit4::class)
-class HomeScreenTest {
-
 class EventListOverviewTest {
-
 
   @get:Rule val composeTestRule = createComposeRule()
 

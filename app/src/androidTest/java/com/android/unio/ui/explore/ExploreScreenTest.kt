@@ -81,7 +81,7 @@ class ExploreScreenTest {
             //                category = AssociationCategory.EPFL_BODIES,
             //                description = "Student’s general association.",
             //                members = User.emptyFirestoreReferenceList())
-            )
+        )
 
     associationViewModel = AssociationViewModel(associationRepository)
   }

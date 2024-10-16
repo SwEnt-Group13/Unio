@@ -27,7 +27,6 @@ data class Association(
   companion object
 }
 
-
 enum class AssociationCategory(val displayName: String) {
   EPFL_BODIES("EPFL bodies"),
   REPRESENTATION("Representation"),
