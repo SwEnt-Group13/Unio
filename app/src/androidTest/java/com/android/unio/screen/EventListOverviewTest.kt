@@ -5,8 +5,6 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import androidx.compose.ui.unit.ExperimentalUnitApi
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventListViewModel
 import com.android.unio.model.event.EventRepositoryMock
@@ -14,14 +12,11 @@ import com.android.unio.ui.event.EventListOverview
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Rule
 import org.junit.Test
-import org.junit.runner.RunWith
 
 /**
  * Test class for the EventListOverview Composable. This class contains unit tests to validate the
  * behavior of the Event List UI.
  */
-@ExperimentalUnitApi
-@RunWith(AndroidJUnit4::class)
 class EventListOverviewTest {
 
   @get:Rule val composeTestRule = createComposeRule()
