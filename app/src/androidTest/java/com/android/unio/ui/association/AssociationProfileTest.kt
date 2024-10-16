@@ -2,6 +2,8 @@ package com.android.unio.ui.association
 
 import androidx.compose.ui.test.SemanticsNodeInteraction
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsNotDisplayed
+import androidx.compose.ui.test.isDisplayed
 import androidx.compose.ui.test.isNotDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
@@ -19,6 +21,7 @@ import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.ui.navigation.NavigationAction
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
+import java.lang.Thread.sleep
 import junit.framework.TestCase.assertEquals
 import org.junit.Before
 import org.junit.Rule
@@ -79,6 +82,7 @@ class AssociationProfileTest {
 
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationImageHeader"))
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationProfileTitle"))
+    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("associationShareButton"))
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationHeaderFollowers"))
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationHeaderMembers"))
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationFollowButton"))
@@ -98,6 +102,32 @@ class AssociationProfileTest {
       compose.performScrollTo()
     }
     compose.assertIsDisplayed()
+  }
+
+  @Test
+  fun testButtonBehavior() {
+    composeTestRule.setContent {
+      AssociationProfileScreen(navigationAction, "", associationViewModel)
+    }
+    composeTestRule.onNodeWithTag("associationShareButton").performClick()
+    assertSnackBarIsDisplayed()
+    composeTestRule.onNodeWithTag("AssociationFollowButton").performClick()
+    assertSnackBarIsDisplayed()
+    composeTestRule.onNodeWithTag("AssociationSeeMoreButton").performClick()
+    assertSnackBarIsDisplayed()
+    composeTestRule.onNodeWithTag("AssociationContactMembersCard").performClick()
+    assertSnackBarIsDisplayed()
+  }
+
+  private fun assertSnackBarIsDisplayed() {
+    composeTestRule.onNodeWithTag("associationSnackbarHost").assertIsDisplayed()
+    var thresh = 0
+    while (composeTestRule.onNodeWithTag("associationSnackbarHost").isDisplayed() || thresh < 10) {
+      composeTestRule.onNodeWithTag("snackbarActionButton").performClick()
+      sleep(1000)
+      thresh++
+    }
+    composeTestRule.onNodeWithTag("associationSnackbarHost").assertIsNotDisplayed()
   }
 
   @Test
