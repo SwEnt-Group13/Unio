@@ -34,7 +34,8 @@ fun AssociationRepositoryFirestore.Companion.hydrate(data: Map<String, Any>?): A
           if (category is String) AssociationCategory.valueOf(category)
           else AssociationCategory.UNKNOWN,
       description = data?.get("description") as? String ?: "",
-      members = members)
+      members = members,
+      image = data?.get("image") as? String ?: "")
 }
 
 fun UserRepositoryFirestore.Companion.hydrate(data: Map<String, Any>?): User {

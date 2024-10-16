@@ -15,12 +15,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
-import com.android.unio.model.association.AssociationRepositoryFirestore
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.event.EventListViewModel
 import com.android.unio.model.event.EventRepositoryFirestore
-import com.android.unio.ui.association.AssociationProfile
-import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.ui.association.AssociationProfileScreen
 import com.android.unio.ui.authentication.AccountDetails
 import com.android.unio.ui.authentication.EmailVerificationScreen
@@ -53,6 +50,12 @@ fun UnioApp() {
 
   val context = LocalContext.current
 
+  /*val imageRep = ImageRepositoryFirebaseStorage()
+  imageRep.getImageUrl("images/associations/x1GeH0NGw5ScCRyMKwca",
+    {url ->  Log.e("ASSOOO", url)}, {})*/
+  /*imageRep.uploadImage(context.assets.open("polysi.jpg"),
+    "images/associations/x1GeH0NGw5ScCRyMKwca", {url -> Log.e("ASSOOO", "IMAGE UPLOADED")}, {})
+  */
   // Redirect user based on authentication state
   Firebase.auth.addAuthStateListener { auth ->
     val user = auth.currentUser
@@ -75,11 +78,11 @@ fun UnioApp() {
     }
     navigation(startDestination = Screen.HOME, route = Route.HOME) {
       composable(Screen.HOME) {
-          HomeScreen(
-              navigationActions,
+        HomeScreen(
+            navigationActions,
             EventListViewModel(EventRepositoryFirestore(db)),
-              onAddEvent = {},
-              onEventClick = {})
+            onAddEvent = {},
+            onEventClick = {})
       }
     }
     navigation(startDestination = Screen.EXPLORE, route = Route.EXPLORE) {

@@ -51,10 +51,10 @@ class HomeScreenTest {
     composeTestRule.setContent {
       val eventListViewModel = EventListViewModel(mockEventRepository)
       HomeScreen(
-        navigationAction,
-        eventListViewModel = eventListViewModel,
-        onAddEvent = {},
-        onEventClick = {})
+          navigationAction,
+          eventListViewModel = eventListViewModel,
+          onAddEvent = {},
+          onEventClick = {})
     }
 
     // Assert that the 'All' tab exists and has a click action.
@@ -91,10 +91,10 @@ class HomeScreenTest {
           }
       val eventListViewModel = EventListViewModel(emptyEventRepository)
       HomeScreen(
-        navigationAction,
-        eventListViewModel = eventListViewModel,
-        onAddEvent = {},
-        onEventClick = {})
+          navigationAction,
+          eventListViewModel = eventListViewModel,
+          onAddEvent = {},
+          onEventClick = {})
     }
 
     // Assert that the empty event prompt is displayed.
@@ -113,7 +113,7 @@ class HomeScreenTest {
     composeTestRule.setContent {
       val eventListViewModel = EventListViewModel(mockEventRepository)
       HomeScreen(
-        navigationAction = navigationAction,
+          navigationAction = navigationAction,
           eventListViewModel = eventListViewModel,
           onAddEvent = { mapClicked = true },
           onEventClick = {})
@@ -135,7 +135,7 @@ class HomeScreenTest {
     composeTestRule.setContent {
       val eventListViewModel = EventListViewModel(mockEventRepository)
       HomeScreen(
-        navigationAction,
+          navigationAction,
           eventListViewModel = eventListViewModel,
           onAddEvent = { addClicked = true },
           onEventClick = {})

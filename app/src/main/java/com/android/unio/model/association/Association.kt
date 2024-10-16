@@ -21,9 +21,8 @@ data class Association(
     val fullName: String,
     val category: AssociationCategory,
     val description: String,
-    val members: ReferenceList<User>
-    val image: String,
-    
+    val members: ReferenceList<User>,
+    var image: String
 )
 
 enum class AssociationCategory(val displayName: String) {

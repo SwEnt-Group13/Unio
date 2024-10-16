@@ -30,8 +30,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.android.unio.R
+import coil.compose.AsyncImage
 import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationCategory
 import com.android.unio.model.association.AssociationViewModel
@@ -80,11 +81,9 @@ fun ExploreScreenContent(
         /** Will go in the string.xml */
         style = AppTypography.headlineLarge,
         modifier =
-        Modifier
-            .padding(vertical = 16.dp)
-            .align(Alignment.CenterHorizontally)
-            .testTag("exploreTitle")
-    )
+            Modifier.padding(vertical = 16.dp)
+                .align(Alignment.CenterHorizontally)
+                .testTag("exploreTitle"))
 
     SearchBar(
         inputField = {
@@ -101,16 +100,12 @@ fun ExploreScreenContent(
         },
         expanded = false,
         onExpandedChange = { /* Also handle expanded state change here */},
-        modifier = Modifier
-            .padding(horizontal = 26.dp, vertical = 8.dp)
-            .testTag("searchBar"),
+        modifier = Modifier.padding(horizontal = 26.dp, vertical = 8.dp).testTag("searchBar"),
         content = {},
     )
 
     LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .testTag("categoriesList"),
+        modifier = Modifier.fillMaxSize().testTag("categoriesList"),
         contentPadding = PaddingValues(vertical = 16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
@@ -158,25 +153,21 @@ fun ExploreScreenContent(
 fun AssociationItem(association: Association, navigationAction: NavigationAction) {
   Column(
       modifier =
-      Modifier
-          .clickable {
-              navigationAction.navigateTo(
-                  Screen.withParams(Screen.ASSOCIATION_PROFILE, association.uid)
-              )
-          }
-          .testTag("associationItem")) {
+          Modifier.clickable {
+                navigationAction.navigateTo(
+                    Screen.withParams(Screen.ASSOCIATION_PROFILE, association.uid))
+              }
+              .testTag("associationItem")) {
         /**
          * AdEC image is used as the placeholder. Will need to add the actual image later, when the
          * actual view model is used.
          */
-      AsyncImage(
-          model = association.image.toUri(),
-          contentDescription = "Translated description of what the image contains",
-          modifier = Modifier
-              .size(124.dp)
-              .testTag("associationImage"),
-          contentScale = ContentScale.Crop // crop the image to fit
-      )
+        AsyncImage(
+            model = association.image.toUri(),
+            contentDescription = "Translated description of what the image contains",
+            modifier = Modifier.size(124.dp).testTag("associationImage"),
+            contentScale = ContentScale.Crop // crop the image to fit
+            )
 
         Spacer(modifier = Modifier.height(8.dp))
 

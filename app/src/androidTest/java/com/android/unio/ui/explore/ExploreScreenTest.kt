@@ -58,7 +58,8 @@ class ExploreScreenTest {
                     "ACM is the world's largest educational and scientific computing society.",
                 members =
                     FirestoreReferenceList.empty(
-                        db.collection(USER_PATH), UserRepositoryFirestore.Companion::hydrate)),
+                        db.collection(USER_PATH), UserRepositoryFirestore.Companion::hydrate),
+                image = ""),
             Association(
                 uid = "2",
                 url = "",
@@ -68,7 +69,8 @@ class ExploreScreenTest {
                 description = "Musical is the world's largest music society.",
                 members =
                     FirestoreReferenceList.empty(
-                        db.collection(USER_PATH), UserRepositoryFirestore.Companion::hydrate)),
+                        db.collection(USER_PATH), UserRepositoryFirestore.Companion::hydrate),
+                image = ""),
             //            Association(
             //                uid = "3",
             //                url = "",

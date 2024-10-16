@@ -4,6 +4,8 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.navigation.NavHostController
+import com.android.unio.model.association.AssociationViewModel
+import com.android.unio.model.event.EventListViewModel
 import com.android.unio.ui.association.AssociationProfileScreen
 import com.android.unio.ui.authentication.AccountDetails
 import com.android.unio.ui.authentication.EmailVerificationScreen
@@ -21,11 +23,14 @@ import com.android.unio.ui.user.UserProfileScreen
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.mockito.Mock
 import org.mockito.kotlin.mock
 
 class ScreenDisplayingTest {
 
   private lateinit var navigationAction: NavigationAction
+  @Mock private lateinit var eventViewModel: EventListViewModel
+  @Mock private lateinit var associationViewModel: AssociationViewModel
 
   @get:Rule val composeTestRule = createComposeRule()
 
@@ -54,13 +59,13 @@ class ScreenDisplayingTest {
 
   @Test
   fun testHomeDisplayed() {
-    composeTestRule.setContent { HomeScreen(navigationAction) }
+    composeTestRule.setContent { HomeScreen(navigationAction, eventViewModel, {}, {}) }
     composeTestRule.onNodeWithTag("HomeScreen").assertIsDisplayed()
   }
 
   @Test
   fun testExploreDisplayed() {
-    composeTestRule.setContent { ExploreScreen(navigationAction) }
+    composeTestRule.setContent { ExploreScreen(navigationAction, associationViewModel) }
     composeTestRule.onNodeWithTag("exploreScreen").assertIsDisplayed()
     composeTestRule.onNodeWithTag("searchBar").assertIsDisplayed()
   }

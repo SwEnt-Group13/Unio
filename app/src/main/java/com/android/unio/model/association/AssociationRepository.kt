@@ -5,11 +5,11 @@ interface AssociationRepository {
 
   fun getAssociations(onSuccess: (List<Association>) -> Unit, onFailure: (Exception) -> Unit)
 
-    fun getAssociationsByCategory(
-        category: MockAssociationType,
-        onSuccess: (List<Association>) -> Unit,
-        onFailure: (Exception) -> Unit
-    )
+  fun getAssociationsByCategory(
+      category: AssociationCategory,
+      onSuccess: (List<Association>) -> Unit,
+      onFailure: (Exception) -> Unit
+  )
 
   fun getAssociationWithId(
       id: String,
