@@ -13,7 +13,6 @@ import com.android.unio.model.user.Social
 import com.android.unio.model.user.User
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserSocial
-import com.google.firebase.Firebase
 import com.google.firebase.Timestamp
 
 fun AssociationRepositoryFirestore.Companion.hydrate(data: Map<String, Any>?): Association {

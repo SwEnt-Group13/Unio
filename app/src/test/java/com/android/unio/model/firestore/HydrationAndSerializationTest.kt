@@ -12,9 +12,8 @@ import com.android.unio.model.user.Interest
 import com.android.unio.model.user.Social
 import com.android.unio.model.user.User
 import com.android.unio.model.user.UserRepositoryFirestore
-import com.google.firebase.Firebase
 import com.android.unio.model.user.UserSocial
-import com.google.firebase.FirebaseApp
+import com.google.firebase.Firebase
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
