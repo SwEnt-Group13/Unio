@@ -211,6 +211,18 @@ class AssociationRepositoryFirestoreTest {
   }
 
   @Test
+  fun testGetAssociationsByCategory() {
+    repository.getAssociationsByCategory(
+        AssociationCategory.EPFL_STUDENTS,
+        onSuccess = { associations ->
+          for (asso in associations) {
+            assertEquals(asso.category, AssociationCategory.EPFL_STUDENTS)
+          }
+        },
+        onFailure = { exception -> assert(false) })
+  }
+
+  @Test
   fun testAddAssociationSuccess() {
     `when`(documentReference.set(map1)).thenReturn(Tasks.forResult(null))
 
