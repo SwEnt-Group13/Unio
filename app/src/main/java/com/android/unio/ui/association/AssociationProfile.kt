@@ -65,19 +65,24 @@ fun AssociationProfileScreen(
           ?: run {
             Log.e("AssociationProfile", "Association not found")
             return AssociationProfileScaffold(
-                title = "Association Profile", navigationAction = navigationAction) {
-                  Text(
-                      text = "Association not found. Shouldn't happen.",
-                      modifier = Modifier.testTag("associationNotFound"),
-                      color = Color.Red)
+                title = "Association Profile", navigationAction = navigationAction) { padding ->
+                  Column(modifier = Modifier.padding(padding)) {
+                    Text(
+                        text = "Association not found. Shouldn't happen.",
+                        modifier = Modifier.testTag("associationNotFound"),
+                        color = Color.Red)
+                  }
                 }
           }
 
   AssociationProfileScaffold(title = "Association Profile", navigationAction = navigationAction) {
-    Text(
-        "Association acronym: ${association.acronym}",
-        style = AppTypography.bodyMedium,
-        modifier = Modifier.testTag("associationAcronym"))
+      padding ->
+    Column(modifier = Modifier.padding(padding)) {
+      Text(
+          "Association name: ${association.name}",
+          style = AppTypography.bodyMedium,
+          modifier = Modifier.testTag("associationName"))
+    }
   }
 }
 
@@ -94,7 +99,7 @@ fun AssociationProfileScreen(
 fun AssociationProfileScaffold(
     title: String,
     navigationAction: NavigationAction,
-    content: @Composable () -> Unit
+    content: @Composable (padding: PaddingValues) -> Unit
 ) {
   val context = LocalContext.current
   init(context)

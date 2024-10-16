@@ -1,6 +1,7 @@
 package com.android.unio.model.firestore.transform
 
 import com.android.unio.model.association.Association
+import com.android.unio.model.association.AssociationCategory
 import com.android.unio.model.association.AssociationRepositoryFirestore
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventRepositoryFirestore
@@ -16,6 +17,7 @@ import com.google.firebase.Timestamp
 import com.google.firebase.firestore.firestore
 
 fun AssociationRepositoryFirestore.Companion.hydrate(data: Map<String, Any>?): Association {
+  val category = data?.get("category")
   val memberUids = data?.get("members") as? List<String> ?: emptyList()
   val members =
       FirestoreReferenceList.fromList(
@@ -26,8 +28,11 @@ fun AssociationRepositoryFirestore.Companion.hydrate(data: Map<String, Any>?): A
   return Association(
       uid = data?.get("uid") as? String ?: "",
       url = data?.get("url") as? String ?: "",
-      acronym = data?.get("acronym") as? String ?: "",
+      name = data?.get("name") as? String ?: "",
       fullName = data?.get("fullName") as? String ?: "",
+      category =
+          if (category is String) AssociationCategory.valueOf(category)
+          else AssociationCategory.UNKNOWN,
       description = data?.get("description") as? String ?: "",
       members = members)
 }

@@ -2,6 +2,7 @@ package com.android.unio.model.firestore
 
 import androidx.test.core.app.ApplicationProvider
 import com.android.unio.model.association.Association
+import com.android.unio.model.association.AssociationCategory
 import com.android.unio.model.association.AssociationRepositoryFirestore
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventRepositoryFirestore
@@ -50,8 +51,9 @@ class HydrationAndSerializationTest {
         Association(
             uid = "1",
             url = "https://www.example.com",
-            acronym = "EX",
+            name = "EX",
             fullName = "Example Association",
+            category = AssociationCategory.ARTS,
             description = "An example association",
             members =
                 FirestoreReferenceList.fromList(
@@ -106,7 +108,7 @@ class HydrationAndSerializationTest {
 
     assertEquals(association.uid, serialized["uid"])
     assertEquals(association.url, serialized["url"])
-    assertEquals(association.acronym, serialized["acronym"])
+    assertEquals(association.name, serialized["name"])
     assertEquals(association.fullName, serialized["fullName"])
     assertEquals(association.description, serialized["description"])
     assertEquals(association.members.list.value, serialized["members"])
@@ -115,7 +117,7 @@ class HydrationAndSerializationTest {
 
     assertEquals(association.uid, hydrated.uid)
     assertEquals(association.url, hydrated.url)
-    assertEquals(association.acronym, hydrated.acronym)
+    assertEquals(association.name, hydrated.name)
     assertEquals(association.fullName, hydrated.fullName)
     assertEquals(association.description, hydrated.description)
     assertEquals(association.members.list.value, hydrated.members.list.value)
@@ -174,7 +176,7 @@ class HydrationAndSerializationTest {
 
     assertEquals("", hydrated.uid)
     assertEquals("", hydrated.url)
-    assertEquals("", hydrated.acronym)
+    assertEquals("", hydrated.name)
     assertEquals("", hydrated.fullName)
     assertEquals("", hydrated.description)
     assertEquals(emptyList<String>(), hydrated.members.list.value)

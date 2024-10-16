@@ -9,6 +9,7 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.navigation.NavHostController
 import com.android.unio.model.association.Association
+import com.android.unio.model.association.AssociationCategory
 import com.android.unio.model.association.AssociationRepository
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.firestore.FirestorePaths.USER_PATH
@@ -51,8 +52,10 @@ class AssociationProfileTest {
         listOf(
             Association(
                 uid = "1",
-                acronym = "ACM",
+                url = "",
+                name = "ACM",
                 fullName = "Association for Computing Machinery",
+                category = AssociationCategory.SCIENCE_TECH,
                 description =
                     "ACM is the world's largest educational and scientific computing society.",
                 members =
@@ -66,8 +69,9 @@ class AssociationProfileTest {
   }
 
   @Test
+
   fun testAssociationProfileDisplayComponent() {
-    composeTestRule.setContent { AssociationProfileScreen(navigationAction, "") }
+    composeTestRule.setContent { AssociationProfileScreen(navigationAction, "", associationViewModel) }
 
     composeTestRule.onNodeWithTag("AssociationScreen").assertIsDisplayed()
     composeTestRule.onNodeWithTag("goBackButton").assertIsDisplayed()
@@ -97,7 +101,7 @@ class AssociationProfileTest {
 
   @Test
   fun testGoBackButton() {
-    composeTestRule.setContent { AssociationProfileScreen(navigationAction, "") }
+    composeTestRule.setContent { AssociationProfileScreen(navigationAction, "", associationViewModel) }
 
     composeTestRule.onNodeWithTag("goBackButton").performClick()
 
