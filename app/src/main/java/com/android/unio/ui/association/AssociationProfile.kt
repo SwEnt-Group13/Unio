@@ -75,15 +75,15 @@ fun AssociationProfileScreen(
                 }
           }
 
-  AssociationProfileScaffold(title = "<Association Profile>", navigationAction = navigationAction) {
-      padding ->
-    Column(modifier = Modifier.padding(padding)) {
-      Text(
-          "Association name: ${association.name}",
-          style = AppTypography.bodyMedium,
-          modifier = Modifier.testTag("associationName"))
-    }
-  }
+  AssociationProfileScaffold(
+      title = "<Association Profile>", navigationAction = navigationAction) { padding ->
+        Column(modifier = Modifier.padding(padding)) {
+          Text(
+              "Association name: ${association.name}",
+              style = AppTypography.bodyMedium,
+              modifier = Modifier.testTag("associationName"))
+        }
+      }
 }
 
 /**
@@ -153,7 +153,7 @@ fun AssociationProfileContent(padding: PaddingValues, context: Context) {
 @Composable
 fun AssociationRecruitment(context: Context) {
   Text(
-      text = getString(R.string.association_join) +" <Association> ?",
+      text = getString(R.string.association_join) + " <Association> ?",
       style = AppTypography.headlineMedium,
       modifier = Modifier.padding(horizontal = 20.dp).testTag("AssociationRecruitmentTitle"))
   Spacer(modifier = Modifier.size(13.dp))
@@ -208,10 +208,7 @@ fun UserCard(context: Context) {
         horizontalArrangement = Arrangement.spacedBy(115.dp, Alignment.Start),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-      Icon(
-          Icons.Filled.Person,
-          contentDescription = "user's profile picture",
-          Modifier.size(36.dp))
+      Icon(Icons.Filled.Person, contentDescription = "user's profile picture", Modifier.size(36.dp))
       Text(text = "<Casey Rue>", style = AppTypography.headlineSmall)
     }
   }
@@ -269,11 +266,11 @@ fun AssociationHeader(context: Context) {
     }
     Column {
       Text(
-          "xxx "+ getString(R.string.association_follower),
+          "xxx " + getString(R.string.association_follower),
           style = AppTypography.headlineSmall,
           modifier = Modifier.padding(bottom = 5.dp).testTag("AssociationHeaderFollowers"))
       Text(
-          "yyy "+ getString(R.string.association_member),
+          "yyy " + getString(R.string.association_member),
           style = AppTypography.headlineSmall,
           modifier = Modifier.padding(bottom = 14.dp).testTag("AssociationHeaderMembers"))
       Button(
