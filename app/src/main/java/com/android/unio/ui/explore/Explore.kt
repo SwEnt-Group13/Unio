@@ -157,7 +157,7 @@ fun AssociationItem(association: Association, navigationAction: NavigationAction
                 navigationAction.navigateTo(
                     Screen.withParams(Screen.ASSOCIATION_PROFILE, association.uid))
               }
-              .testTag("associationItem")) {
+              .testTag("associationItem_${association.name}")) {
         /**
          * AdEC image is used as the placeholder. Will need to add the actual image later, when the
          * actual view model is used.
