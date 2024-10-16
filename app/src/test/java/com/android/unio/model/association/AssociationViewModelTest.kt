@@ -1,8 +1,10 @@
 package com.android.unio.model.association
 
+import androidx.test.core.app.ApplicationProvider
 import com.android.unio.model.firestore.firestoreReferenceListWith
 import com.android.unio.model.user.User
 import com.google.firebase.Firebase
+import com.google.firebase.FirebaseApp
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
@@ -21,13 +23,16 @@ import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
+import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
 import org.mockito.MockitoAnnotations
 import org.mockito.kotlin.any
 import org.mockito.kotlin.eq
+import org.robolectric.RobolectricTestRunner
 
+@RunWith(RobolectricTestRunner::class)
 class AssociationViewModelTest {
   private lateinit var db: FirebaseFirestore
   @Mock private lateinit var repository: AssociationRepositoryFirestore
@@ -44,7 +49,9 @@ class AssociationViewModelTest {
   fun setUp() {
     MockitoAnnotations.openMocks(this)
     Dispatchers.setMain(testDispatcher)
-
+    if (FirebaseApp.getApps(ApplicationProvider.getApplicationContext()).isEmpty()) {
+      FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext())
+    }
     db = mockk()
     mockkStatic(FirebaseFirestore::class)
     every { Firebase.firestore } returns db

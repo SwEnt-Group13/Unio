@@ -13,6 +13,7 @@ import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QueryDocumentSnapshot
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.firestore
@@ -39,6 +40,7 @@ class AssociationRepositoryFirestoreTest {
   @Mock private lateinit var documentReference: DocumentReference
   @Mock private lateinit var querySnapshotTask: Task<QuerySnapshot>
   @Mock private lateinit var documentSnapshotTask: Task<DocumentSnapshot>
+  @Mock private lateinit var query: Query
 
   private lateinit var repository: AssociationRepositoryFirestore
 
@@ -204,11 +206,13 @@ class AssociationRepositoryFirestoreTest {
 
   @Test
   fun testGetAssociationsByCategory() {
+    `when`(associationCollectionReference.whereEqualTo(eq("category"), any()))
+        .thenReturn(associationCollectionReference)
     repository.getAssociationsByCategory(
-        AssociationCategory.EPFL_STUDENTS,
+        AssociationCategory.SCIENCE_TECH,
         onSuccess = { associations ->
           for (asso in associations) {
-            assertEquals(asso.category, AssociationCategory.EPFL_STUDENTS)
+            assertEquals(asso.category, AssociationCategory.SCIENCE_TECH)
           }
         },
         onFailure = { exception -> assert(false) })
