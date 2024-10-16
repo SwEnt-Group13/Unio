@@ -9,12 +9,8 @@ import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationCategory
 import com.android.unio.model.association.AssociationRepository
 import com.android.unio.model.association.AssociationViewModel
-import com.android.unio.model.firestore.FirestorePaths.USER_PATH
-import com.android.unio.model.firestore.FirestoreReferenceList
 import com.android.unio.model.firestore.emptyFirestoreReferenceList
-import com.android.unio.model.firestore.transform.hydrate
 import com.android.unio.model.user.User
-import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.ui.navigation.NavigationAction
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
@@ -83,7 +79,7 @@ class ExploreScreenTest {
             //                category = AssociationCategory.EPFL_BODIES,
             //                description = "Student’s general association.",
             //                members = User.emptyFirestoreReferenceList())
-        )
+            )
 
     associationViewModel = AssociationViewModel(associationRepository)
   }
