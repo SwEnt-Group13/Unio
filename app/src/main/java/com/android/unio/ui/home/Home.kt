@@ -1,6 +1,7 @@
 package com.android.unio.ui.home
 
 import android.annotation.SuppressLint
+import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -10,12 +11,19 @@ import com.android.unio.ui.navigation.BottomNavigationMenu
 import com.android.unio.ui.navigation.LIST_TOP_LEVEL_DESTINATION
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Route
+import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun HomeScreen(navigationAction: NavigationAction) {
   Scaffold(
-      content = { Text("Home screen") },
+      content = {
+          Button(
+              onClick = { Firebase.auth.signOut() },
+          ) {
+              Text("Sign out (this is a place holder)")
+          }},
       modifier = Modifier.testTag("HomeScreen"),
       bottomBar = {
         BottomNavigationMenu(
