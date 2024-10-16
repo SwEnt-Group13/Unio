@@ -2,6 +2,9 @@ package com.android.unio.ui.association
 
 import android.annotation.SuppressLint
 import android.util.Log
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -31,19 +34,24 @@ fun AssociationProfile(
           ?: run {
             Log.e("AssociationProfile", "Association not found")
             return AssociationProfileScaffold(
-                title = "Association Profile", navigationAction = navigationAction) {
-                  Text(
-                      text = "Association not found. Shouldn't happen.",
-                      modifier = Modifier.testTag("associationNotFound"),
-                      color = Color.Red)
+                title = "Association Profile", navigationAction = navigationAction) { padding ->
+                  Column(modifier = Modifier.padding(padding)) {
+                    Text(
+                        text = "Association not found. Shouldn't happen.",
+                        modifier = Modifier.testTag("associationNotFound"),
+                        color = Color.Red)
+                  }
                 }
           }
 
   AssociationProfileScaffold(title = "Association Profile", navigationAction = navigationAction) {
-    Text(
-        "Association name: ${association.name}",
-        style = AppTypography.bodyMedium,
-        modifier = Modifier.testTag("associationName"))
+      padding ->
+    Column(modifier = Modifier.padding(padding)) {
+      Text(
+          "Association name: ${association.name}",
+          style = AppTypography.bodyMedium,
+          modifier = Modifier.testTag("associationName"))
+    }
   }
 }
 
@@ -60,7 +68,7 @@ fun AssociationProfile(
 fun AssociationProfileScaffold(
     title: String,
     navigationAction: NavigationAction,
-    content: @Composable () -> Unit
+    content: @Composable (padding: PaddingValues) -> Unit
 ) {
   Scaffold(
       topBar = {
@@ -76,7 +84,7 @@ fun AssociationProfileScaffold(
                   }
             })
       },
-      modifier = Modifier.testTag("AssociationProfileScreen")) {
-        content()
+      modifier = Modifier.testTag("AssociationProfileScreen")) { padding ->
+        content(padding)
       }
 }
