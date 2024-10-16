@@ -30,12 +30,25 @@ class UserTest {
     val user =
         User(
             "1",
-            "John",
             "john@example.com",
+            "John",
+            "Doe",
+            "An example user",
             FirestoreReferenceList.empty(
-                db.collection(ASSOCIATION_PATH), AssociationRepositoryFirestore::hydrate))
+                db.collection(ASSOCIATION_PATH), AssociationRepositoryFirestore::hydrate),
+            listOf(Interest.SPORTS, Interest.MUSIC),
+            listOf(
+                UserSocial(Social.INSTAGRAM, "Insta"), UserSocial(Social.WEBSITE, "example.com")),
+            "https://www.example.com/image")
     assertEquals("1", user.uid)
-    assertEquals("John", user.name)
     assertEquals("john@example.com", user.email)
+    assertEquals("John", user.firstName)
+    assertEquals("Doe", user.lastName)
+    assertEquals("An example user", user.biography)
+    assertEquals(listOf(Interest.SPORTS, Interest.MUSIC), user.interests)
+    assertEquals(
+        listOf(UserSocial(Social.INSTAGRAM, "Insta"), UserSocial(Social.WEBSITE, "example.com")),
+        user.socials)
+    assertEquals("https://www.example.com/image", user.profilePicture)
   }
 }
