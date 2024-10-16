@@ -1,9 +1,10 @@
 package com.android.unio.model.firestore
 
 import android.util.Log
-import com.google.firebase.firestore.CollectionReference
+import com.google.firebase.Firebase
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FieldPath
+import com.google.firebase.firestore.firestore
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
@@ -17,11 +18,11 @@ import kotlinx.coroutines.flow.StateFlow
  * ```
  *
  * @param T The type of the objects in the list.
- * @property collection The reference to the Firestore collection.
+ * @property collectionPath The path to the Firestore collection.
  * @property hydrate A function that converts a [DocumentSnapshot] to a [T].
  */
 class FirestoreReferenceList<T>(
-    private val collection: CollectionReference,
+    private val collectionPath: String,
     private val hydrate: (Map<String, Any>?) -> T
 ) : ReferenceList<T> {
   // The internal list of UIDs.
@@ -54,7 +55,8 @@ class FirestoreReferenceList<T>(
   /** Requests all documents from Firestore and updates the list. */
   override fun requestAll() {
     _list.value = emptyList()
-    collection
+    Firebase.firestore
+        .collection(collectionPath)
         .whereIn(FieldPath.documentId(), _uids.filter { it.isNotEmpty() })
         .get()
         .addOnSuccessListener { result ->
@@ -70,20 +72,20 @@ class FirestoreReferenceList<T>(
     /** Creates a [FirestoreReferenceList] from a list of UIDs. */
     fun <T> fromList(
         list: List<String>,
-        collection: CollectionReference,
+        collectionPath: String,
         hydrate: (Map<String, Any>?) -> T
     ): FirestoreReferenceList<T> {
-      val result = FirestoreReferenceList(collection, hydrate)
+      val result = FirestoreReferenceList(collectionPath, hydrate)
       result.addAll(list)
       return result
     }
 
     /** Creates an empty [FirestoreReferenceList]. */
     fun <T> empty(
-        collection: CollectionReference,
+        collectionPath: String,
         hydrate: (Map<String, Any>?) -> T
     ): FirestoreReferenceList<T> {
-      return FirestoreReferenceList(collection, hydrate)
+      return FirestoreReferenceList(collectionPath, hydrate)
     }
   }
 }
