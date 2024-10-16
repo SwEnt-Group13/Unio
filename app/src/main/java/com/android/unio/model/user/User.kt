@@ -38,7 +38,7 @@ data class UserSocial(val social: Social, val content: String)
  * @param followingAssociations The associations that the user is following.
  * @param interests The interests of the user.
  * @param socials The socials of the user.
- * @param profilePicture The URL to the profile picture in firestore.
+ * @param profilePicture The URL to the profile picture in Firebase storage.
  */
 data class User(
     val uid: String,
@@ -49,5 +49,7 @@ data class User(
     val followingAssociations: ReferenceList<Association>,
     val interests: List<Interest>,
     val socials: List<UserSocial>,
-    val profilePicture: String // URL to the profile picture in firestore
-)
+    val profilePicture: String
+) {
+  companion object
+}

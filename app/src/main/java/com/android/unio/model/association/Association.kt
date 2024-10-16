@@ -23,7 +23,10 @@ data class Association(
     val description: String,
     val members: ReferenceList<User>,
     var image: String
-)
+) {
+  companion object
+}
+
 
 enum class AssociationCategory(val displayName: String) {
   EPFL_BODIES("EPFL bodies"),
