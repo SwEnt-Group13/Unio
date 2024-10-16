@@ -107,12 +107,19 @@ class AssociationProfileTest {
     composeTestRule.setContent {
       AssociationProfileScreen(navigationAction, "", associationViewModel)
     }
+    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("associationShareButton"))
     composeTestRule.onNodeWithTag("associationShareButton").performClick()
     assertSnackBarIsDisplayed()
+
+    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationFollowButton"))
     composeTestRule.onNodeWithTag("AssociationFollowButton").performClick()
     assertSnackBarIsDisplayed()
+
+    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationSeeMoreButton"))
     composeTestRule.onNodeWithTag("AssociationSeeMoreButton").performClick()
     assertSnackBarIsDisplayed()
+
+    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationContactMembersCard"))
     composeTestRule.onNodeWithTag("AssociationContactMembersCard").performClick()
     assertSnackBarIsDisplayed()
   }
