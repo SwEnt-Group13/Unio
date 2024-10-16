@@ -20,8 +20,8 @@ class UserRepositoryFirestore(private val db: FirebaseFirestore) : UserRepositor
     db.collection(USER_PATH)
         .get()
         .addOnSuccessListener { result ->
-          val associations = result.map { hydrate(it.data) }
-          onSuccess(associations)
+          val user = result.map { hydrate(it.data) }
+          onSuccess(user)
         }
         .addOnFailureListener { exception -> onFailure(exception) }
   }
@@ -35,8 +35,8 @@ class UserRepositoryFirestore(private val db: FirebaseFirestore) : UserRepositor
         .document(id)
         .get()
         .addOnSuccessListener { document ->
-          val association = hydrate(document.data)
-          onSuccess(association)
+          val user = hydrate(document.data)
+          onSuccess(user)
         }
         .addOnFailureListener { exception -> onFailure(exception) }
   }
