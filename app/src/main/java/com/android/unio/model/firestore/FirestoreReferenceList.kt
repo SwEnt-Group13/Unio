@@ -1,6 +1,16 @@
 package com.android.unio.model.firestore
 
 import android.util.Log
+import com.android.unio.model.association.Association
+import com.android.unio.model.association.AssociationRepositoryFirestore
+import com.android.unio.model.event.Event
+import com.android.unio.model.event.EventRepositoryFirestore
+import com.android.unio.model.firestore.FirestorePaths.ASSOCIATION_PATH
+import com.android.unio.model.firestore.FirestorePaths.EVENT_PATH
+import com.android.unio.model.firestore.FirestorePaths.USER_PATH
+import com.android.unio.model.firestore.transform.hydrate
+import com.android.unio.model.user.User
+import com.android.unio.model.user.UserRepositoryFirestore
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FieldPath
@@ -88,4 +98,41 @@ class FirestoreReferenceList<T>(
       return FirestoreReferenceList(collectionPath, hydrate)
     }
   }
+}
+
+/**
+ * Extension functions for creating [FirestoreReferenceList] objects for [Association], [User], and
+ * [Event].
+ */
+fun Association.Companion.emptyFirestoreReferenceList(): FirestoreReferenceList<Association> {
+  return FirestoreReferenceList.empty(
+      collectionPath = ASSOCIATION_PATH,
+      hydrate = AssociationRepositoryFirestore.Companion::hydrate)
+}
+
+fun Association.Companion.firestoreReferenceListWith(
+    uids: List<String>
+): FirestoreReferenceList<Association> {
+  return FirestoreReferenceList.fromList(
+      list = uids,
+      collectionPath = ASSOCIATION_PATH,
+      hydrate = AssociationRepositoryFirestore.Companion::hydrate)
+}
+
+fun User.Companion.emptyFirestoreReferenceList(): FirestoreReferenceList<User> {
+  return FirestoreReferenceList.empty(USER_PATH, UserRepositoryFirestore.Companion::hydrate)
+}
+
+fun User.Companion.firestoreReferenceListWith(uids: List<String>): FirestoreReferenceList<User> {
+  return FirestoreReferenceList.fromList(
+      uids, USER_PATH, UserRepositoryFirestore.Companion::hydrate)
+}
+
+fun Event.Companion.emptyFirestoreReferenceList(): FirestoreReferenceList<Event> {
+  return FirestoreReferenceList.empty(EVENT_PATH, EventRepositoryFirestore.Companion::hydrate)
+}
+
+fun Event.Companion.firestoreReferenceListWith(uids: List<String>): FirestoreReferenceList<Event> {
+  return FirestoreReferenceList.fromList(
+      uids, EVENT_PATH, EventRepositoryFirestore.Companion::hydrate)
 }

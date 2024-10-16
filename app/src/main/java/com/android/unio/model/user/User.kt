@@ -1,10 +1,7 @@
 package com.android.unio.model.user
 
 import com.android.unio.model.association.Association
-import com.android.unio.model.firestore.FirestorePaths.USER_PATH
-import com.android.unio.model.firestore.FirestoreReferenceList
 import com.android.unio.model.firestore.ReferenceList
-import com.android.unio.model.firestore.transform.hydrate
 
 /**
  * User data class Make sure to update the hydration and serialization methods when changing the
@@ -21,14 +18,5 @@ data class User(
     val email: String,
     val followingAssociations: ReferenceList<Association>
 ) {
-  companion object {
-    fun emptyFirestoreReferenceList(): FirestoreReferenceList<User> {
-      return FirestoreReferenceList.empty(USER_PATH, UserRepositoryFirestore.Companion::hydrate)
-    }
-
-    fun firestoreReferenceListWith(uids: List<String>): FirestoreReferenceList<User> {
-      return FirestoreReferenceList.fromList(
-          uids, USER_PATH, UserRepositoryFirestore.Companion::hydrate)
-    }
-  }
+  companion object
 }
