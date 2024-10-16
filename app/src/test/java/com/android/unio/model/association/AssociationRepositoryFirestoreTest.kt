@@ -62,8 +62,9 @@ class AssociationRepositoryFirestoreTest {
         Association(
             uid = "1",
             url = "https://www.acm.org/",
-            acronym = "ACM",
+            name = "ACM",
             fullName = "Association for Computing Machinery",
+            category = AssociationCategory.SCIENCE_TECH,
             description =
                 "ACM is the world's largest educational and scientific computing society.",
             members = User.firestoreReferenceListWith(listOf("1", "2")))
@@ -72,8 +73,9 @@ class AssociationRepositoryFirestoreTest {
         Association(
             uid = "2",
             url = "https://www.ieee.org/",
-            acronym = "IEEE",
+            name = "IEEE",
             fullName = "Institute of Electrical and Electronics Engineers",
+            category = AssociationCategory.SCIENCE_TECH,
             description =
                 "IEEE is the world's largest technical professional organization dedicated to advancing technology for the benefit of humanity.",
             members = User.firestoreReferenceListWith(listOf("3", "4")))
@@ -106,8 +108,9 @@ class AssociationRepositoryFirestoreTest {
         mapOf(
             "uid" to association1.uid,
             "url" to association1.url,
-            "acronym" to association1.acronym,
+            "name" to association1.name,
             "fullName" to association1.fullName,
+            "category" to association1.category.name,
             "description" to association1.description,
             "members" to association1.members.list.value.map { it.uid })
 
@@ -115,8 +118,9 @@ class AssociationRepositoryFirestoreTest {
         mapOf(
             "uid" to association2.uid,
             "url" to association2.url,
-            "acronym" to association2.acronym,
+            "name" to association2.name,
             "fullName" to association2.fullName,
+            "category" to association2.category.name,
             "description" to association2.description,
             "members" to association2.members.list.value.map { it.uid })
 
@@ -133,13 +137,13 @@ class AssociationRepositoryFirestoreTest {
         onSuccess = { associations ->
           assertEquals(2, associations.size)
           assertEquals(association1.uid, associations[0].uid)
-          assertEquals(association1.acronym, associations[0].acronym)
+          assertEquals(association1.name, associations[0].name)
           assertEquals(association1.fullName, associations[0].fullName)
           assertEquals(association1.description, associations[0].description)
           assertEquals(association1.members.list.value, associations[0].members.list.value)
 
           assertEquals(association2.uid, associations[1].uid)
-          assertEquals(association2.acronym, associations[1].acronym)
+          assertEquals(association2.name, associations[1].name)
           assertEquals(association2.fullName, associations[1].fullName)
           assertEquals(association2.description, associations[1].description)
           assertEquals(association2.members.list.value, associations[1].members.list.value)
@@ -155,18 +159,25 @@ class AssociationRepositoryFirestoreTest {
     repository.getAssociations(
         onSuccess = { associations ->
           val emptyAssociation =
-              Association(uid = association2.uid, members = User.emptyFirestoreReferenceList())
+              Association(
+                  uid = association2.uid,
+                  url = "",
+                  name = "",
+                  fullName = "",
+                  category = AssociationCategory.ARTS,
+                  description = "",
+                  members = User.emptyFirestoreReferenceList())
 
           assertEquals(2, associations.size)
 
           assertEquals(association1.uid, associations[0].uid)
-          assertEquals(association1.acronym, associations[0].acronym)
+          assertEquals(association1.name, associations[0].name)
           assertEquals(association1.fullName, associations[0].fullName)
           assertEquals(association1.description, associations[0].description)
           assertEquals(association1.members.list.value, associations[0].members.list.value)
 
           assertEquals(emptyAssociation.uid, associations[1].uid)
-          assertEquals("", associations[1].acronym)
+          assertEquals("", associations[1].name)
           assertEquals("", associations[1].fullName)
           assertEquals("", associations[1].description)
           assertEquals(emptyList<String>(), associations[1].members.list.value)
@@ -180,7 +191,7 @@ class AssociationRepositoryFirestoreTest {
         association1.uid,
         onSuccess = { association ->
           assertEquals(association1.uid, association.uid)
-          assertEquals(association1.acronym, association.acronym)
+          assertEquals(association1.name, association.name)
           assertEquals(association1.fullName, association.fullName)
           assertEquals(association1.description, association.description)
           assertEquals(association1.members.list.value, association.members.list.value)

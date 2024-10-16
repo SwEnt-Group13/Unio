@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- String values for French language -->
+<?xml version="1.0" encoding="utf-8"?><!-- String values for French language -->
 <!-- example in code : val greeting = getString(R.string.greeting) -->
 <resources>
     <!-- App name and activity titles -->
@@ -49,6 +48,20 @@
 
     <!-- Explore Screen Strings -->
     <string name="explore_search_placeholder">Recherche</string>
+
+    <!-- Association Strings -->
+    <string name="association_upcoming_events">Evenement à venir</string>
+    <string name="association_go_back">Retour</string>
+    <string name="association_see_more">Voir plus</string>
+    <string name="association_contact_members">Membres à contacter</string>
+    <string name="association_help_us">
+        Voici comment vous pouvez nous aider. Cliquez sur une fonction pour en savoir plus
+    </string>
+    <string name="association_follower">abonnés</string>
+    <string name="association_member">membres</string>
+    <string name="association_follow">S\'abonner</string>
+    <string name="association_join">Rejoindre</string>
+
 
 </resources>
 

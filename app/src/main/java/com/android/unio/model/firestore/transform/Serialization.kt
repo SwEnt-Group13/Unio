@@ -11,8 +11,9 @@ fun AssociationRepositoryFirestore.Companion.serialize(association: Association)
   return mapOf(
       "uid" to association.uid,
       "url" to association.url,
-      "acronym" to association.acronym,
+      "name" to association.name,
       "fullName" to association.fullName,
+      "category" to association.category.name,
       "description" to association.description,
       "members" to association.members.list.value.map { it.uid })
 }
@@ -20,9 +21,15 @@ fun AssociationRepositoryFirestore.Companion.serialize(association: Association)
 fun UserRepositoryFirestore.Companion.serialize(user: User): Map<String, Any> {
   return mapOf(
       "uid" to user.uid,
-      "name" to user.name,
       "email" to user.email,
-      "followingAssociations" to user.followingAssociations.list.value.map { it.uid })
+      "firstName" to user.firstName,
+      "lastName" to user.lastName,
+      "biography" to user.biography,
+      "followingAssociations" to user.followingAssociations.list.value.map { it.uid },
+      "interests" to user.interests.map { it.name },
+      "socials" to user.socials.map { mapOf("social" to it.social.name, "content" to it.content) },
+      "profilePicture" to user.profilePicture,
+  )
 }
 
 fun EventRepositoryFirestore.Companion.serialize(event: Event): Map<String, Any> {

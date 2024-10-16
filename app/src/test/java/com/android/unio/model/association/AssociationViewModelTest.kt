@@ -51,15 +51,19 @@ class AssociationViewModelTest {
         listOf(
             Association(
                 uid = "1",
-                acronym = "ACM",
+                url = "https://acm.org",
+                name = "ACM",
                 fullName = "Association for Computing Machinery",
+                category = AssociationCategory.SCIENCE_TECH,
                 description =
                     "ACM is the world's largest educational and scientific computing society.",
                 members = User.firestoreReferenceListWith(listOf("1", "2"))),
             Association(
                 uid = "2",
-                acronym = "IEEE",
+                url = "https://ieee.org",
+                name = "IEEE",
                 fullName = "Institute of Electrical and Electronics Engineers",
+                category = AssociationCategory.SCIENCE_TECH,
                 description = "IEEE is the world's largest technical professional organization.",
                 members = User.firestoreReferenceListWith(listOf("3", "4"))))
 
@@ -86,8 +90,8 @@ class AssociationViewModelTest {
       val result = viewModel.associations.first()
 
       assertEquals(2, result.size)
-      assertEquals("ACM", result[0].acronym)
-      assertEquals("IEEE", result[1].acronym)
+      assertEquals("ACM", result[0].name)
+      assertEquals("IEEE", result[1].name)
     }
 
     // Verify that the repository method was called
@@ -145,8 +149,8 @@ class AssociationViewModelTest {
       val result = viewModel.associations.first()
 
       assertEquals(2, result.size)
-      assertEquals("ACM", result[0].acronym)
-      assertEquals("IEEE", result[1].acronym)
+      assertEquals("ACM", result[0].name)
+      assertEquals("IEEE", result[1].name)
     }
 
     assertEquals(testAssociations[0], viewModel.findAssociationById("1"))

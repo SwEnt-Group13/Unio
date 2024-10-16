@@ -1,25 +1,34 @@
 package com.android.unio.model.firestore.transform
 
 import com.android.unio.model.association.Association
+import com.android.unio.model.association.AssociationCategory
 import com.android.unio.model.association.AssociationRepositoryFirestore
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventRepositoryFirestore
 import com.android.unio.model.event.EventType
 import com.android.unio.model.firestore.firestoreReferenceListWith
 import com.android.unio.model.map.Location
+import com.android.unio.model.user.Interest
+import com.android.unio.model.user.Social
 import com.android.unio.model.user.User
 import com.android.unio.model.user.UserRepositoryFirestore
+import com.android.unio.model.user.UserSocial
+import com.google.firebase.Firebase
 import com.google.firebase.Timestamp
 
 fun AssociationRepositoryFirestore.Companion.hydrate(data: Map<String, Any>?): Association {
+  val category = data?.get("category")
   val memberUids = data?.get("members") as? List<String> ?: emptyList()
   val members = User.firestoreReferenceListWith(memberUids)
 
   return Association(
       uid = data?.get("uid") as? String ?: "",
       url = data?.get("url") as? String ?: "",
-      acronym = data?.get("acronym") as? String ?: "",
+      name = data?.get("name") as? String ?: "",
       fullName = data?.get("fullName") as? String ?: "",
+      category =
+          if (category is String) AssociationCategory.valueOf(category)
+          else AssociationCategory.UNKNOWN,
       description = data?.get("description") as? String ?: "",
       members = members)
 }
@@ -30,9 +39,19 @@ fun UserRepositoryFirestore.Companion.hydrate(data: Map<String, Any>?): User {
 
   return User(
       uid = data?.get("uid") as? String ?: "",
-      name = data?.get("name") as? String ?: "",
       email = data?.get("email") as? String ?: "",
-      followingAssociations = followingAssociations)
+      firstName = data?.get("firstName") as? String ?: "",
+      lastName = data?.get("lastName") as? String ?: "",
+      biography = data?.get("biography") as? String ?: "",
+      followingAssociations = followingAssociations,
+      interests =
+          (data?.get("interests") as? List<String> ?: emptyList()).map { Interest.valueOf(it) },
+      socials =
+          (data?.get("socials") as? List<Map<String, String>> ?: emptyList()).map {
+            UserSocial(Social.valueOf(it["social"] ?: ""), it["content"] ?: "")
+          },
+      profilePicture = data?.get("profilePicture") as? String ?: "",
+  )
 }
 
 fun EventRepositoryFirestore.Companion.hydrate(data: Map<String, Any>?): Event {
