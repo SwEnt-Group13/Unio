@@ -1,6 +1,5 @@
 package com.android.unio.model.firestore
 
-import androidx.test.core.app.ApplicationProvider
 import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationCategory
 import com.android.unio.model.association.AssociationRepositoryFirestore
@@ -14,19 +13,20 @@ import com.android.unio.model.user.Social
 import com.android.unio.model.user.User
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserSocial
-import com.google.firebase.FirebaseApp
+import com.google.firebase.Firebase
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.firestore
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.mockkStatic
 import junit.framework.TestCase.assertEquals
-import org.bouncycastle.asn1.x500.style.RFC4519Style.uid
 import org.junit.Before
 import org.junit.Test
-import org.junit.runner.RunWith
 import org.mockito.MockitoAnnotations
-import org.robolectric.RobolectricTestRunner
 
-@RunWith(RobolectricTestRunner::class)
 class HydrationAndSerializationTest {
+  private lateinit var db: FirebaseFirestore
   private lateinit var user: User
   private lateinit var association: Association
   private lateinit var event: Event
@@ -35,10 +35,9 @@ class HydrationAndSerializationTest {
   fun setUp() {
     MockitoAnnotations.openMocks(this)
 
-    // Initialize Firebase if necessary
-    if (FirebaseApp.getApps(ApplicationProvider.getApplicationContext()).isEmpty()) {
-      FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext())
-    }
+    db = mockk()
+    mockkStatic(FirebaseFirestore::class)
+    every { Firebase.firestore } returns db
 
     user =
         User(
@@ -47,11 +46,7 @@ class HydrationAndSerializationTest {
             firstName = "userFirst",
             lastName = "userLast",
             biography = "An example user",
-            followingAssociations =
-                FirestoreReferenceList.fromList(
-                    listOf("1", "2"),
-                    FirebaseFirestore.getInstance().collection("associations"),
-                    AssociationRepositoryFirestore::hydrate),
+            followingAssociations = Association.firestoreReferenceListWith(listOf("1", "2")),
             interests = listOf(Interest.SPORTS, Interest.MUSIC),
             socials =
                 listOf(
@@ -67,11 +62,7 @@ class HydrationAndSerializationTest {
             fullName = "Example Association",
             category = AssociationCategory.ARTS,
             description = "An example association",
-            members =
-                FirestoreReferenceList.fromList(
-                    listOf("1", "2"),
-                    FirebaseFirestore.getInstance().collection("users"),
-                    UserRepositoryFirestore::hydrate))
+            members = User.firestoreReferenceListWith(listOf("1", "2")))
 
     event =
         Event(
@@ -83,17 +74,8 @@ class HydrationAndSerializationTest {
             price = 0.0,
             date = Timestamp.now(),
             location = Location(latitude = 0.0, longitude = 0.0, name = "Example Location"),
-            organisers =
-                FirestoreReferenceList.fromList(
-                    listOf("1", "2"),
-                    FirebaseFirestore.getInstance().collection("associations"),
-                    AssociationRepositoryFirestore::hydrate),
-            taggedAssociations =
-                FirestoreReferenceList.fromList(
-                    listOf("1", "2"),
-                    FirebaseFirestore.getInstance().collection("associations"),
-                    AssociationRepositoryFirestore::hydrate),
-        )
+            organisers = Association.firestoreReferenceListWith(listOf("1", "2")),
+            taggedAssociations = Association.firestoreReferenceListWith(listOf("1", "2")))
   }
 
   /** Round-trip tests for serialization and hydration of user, association, and event instances. */

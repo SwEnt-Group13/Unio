@@ -9,10 +9,8 @@ import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationCategory
 import com.android.unio.model.association.AssociationRepository
 import com.android.unio.model.association.AssociationViewModel
-import com.android.unio.model.firestore.FirestorePaths.USER_PATH
-import com.android.unio.model.firestore.FirestoreReferenceList
-import com.android.unio.model.firestore.transform.hydrate
-import com.android.unio.model.user.UserRepositoryFirestore
+import com.android.unio.model.firestore.emptyFirestoreReferenceList
+import com.android.unio.model.user.User
 import com.android.unio.ui.navigation.NavigationAction
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
@@ -56,9 +54,7 @@ class ExploreScreenTest {
                 category = AssociationCategory.SCIENCE_TECH,
                 description =
                     "ACM is the world's largest educational and scientific computing society.",
-                members =
-                    FirestoreReferenceList.empty(
-                        db.collection(USER_PATH), UserRepositoryFirestore.Companion::hydrate)),
+                members = User.emptyFirestoreReferenceList()),
             Association(
                 uid = "2",
                 url = "",
@@ -66,9 +62,7 @@ class ExploreScreenTest {
                 fullName = "Music club",
                 category = AssociationCategory.ARTS,
                 description = "Musical is the world's largest music society.",
-                members =
-                    FirestoreReferenceList.empty(
-                        db.collection(USER_PATH), UserRepositoryFirestore.Companion::hydrate)),
+                members = User.emptyFirestoreReferenceList())
             //            Association(
             //                uid = "3",
             //                url = "",
@@ -76,10 +70,7 @@ class ExploreScreenTest {
             //                fullName = "Orchestre de chambre des étudiant-e-s de Lausanne",
             //                category = AssociationCategory.ARTS,
             //                description = "Orchestre de chambre.",
-            //                members =
-            //                    FirestoreReferenceList.empty(
-            //                        db.collection(USER_PATH),
-            // UserRepositoryFirestore.Companion::hydrate)),
+            //                members = User.emptyFirestoreReferenceList()),
             //            Association(
             //                uid = "4",
             //                url = "",
@@ -87,11 +78,8 @@ class ExploreScreenTest {
             //                fullName = "Student’s general association of the EPFL",
             //                category = AssociationCategory.EPFL_BODIES,
             //                description = "Student’s general association.",
-            //                members =
-            //                    FirestoreReferenceList.empty(
-            //                        db.collection(USER_PATH),
-            // UserRepositoryFirestore.Companion::hydrate))
-        )
+            //                members = User.emptyFirestoreReferenceList())
+            )
 
     associationViewModel = AssociationViewModel(associationRepository)
   }
