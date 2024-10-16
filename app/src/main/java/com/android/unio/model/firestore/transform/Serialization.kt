@@ -11,8 +11,9 @@ fun AssociationRepositoryFirestore.Companion.serialize(association: Association)
   return mapOf(
       "uid" to association.uid,
       "url" to association.url,
-      "acronym" to association.acronym,
+      "name" to association.name,
       "fullName" to association.fullName,
+      "category" to association.category.name,
       "description" to association.description,
       "members" to association.members.list.value.map { it.uid })
 }
