@@ -5,8 +5,6 @@ import com.android.unio.model.firestore.FirestorePaths.USER_PATH
 import com.android.unio.model.firestore.FirestoreReferenceList
 import com.android.unio.model.firestore.ReferenceList
 import com.android.unio.model.firestore.transform.hydrate
-import com.google.firebase.Firebase
-import com.google.firebase.firestore.firestore
 
 /**
  * User data class Make sure to update the hydration and serialization methods when changing the
@@ -25,15 +23,12 @@ data class User(
 ) {
   companion object {
     fun emptyFirestoreReferenceList(): FirestoreReferenceList<User> {
-      return FirestoreReferenceList.empty(
-          Firebase.firestore.collection(USER_PATH), UserRepositoryFirestore.Companion::hydrate)
+      return FirestoreReferenceList.empty(USER_PATH, UserRepositoryFirestore.Companion::hydrate)
     }
 
     fun firestoreReferenceListWith(uids: List<String>): FirestoreReferenceList<User> {
       return FirestoreReferenceList.fromList(
-          uids,
-          Firebase.firestore.collection(USER_PATH),
-          UserRepositoryFirestore.Companion::hydrate)
+          uids, USER_PATH, UserRepositoryFirestore.Companion::hydrate)
     }
   }
 }
