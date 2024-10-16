@@ -29,7 +29,6 @@ import com.android.unio.ui.navigation.Screen
 import com.android.unio.ui.saved.SavedScreen
 import com.android.unio.ui.theme.AppTheme
 import com.android.unio.ui.user.UserProfileScreen
-import com.google.android.play.core.assetpacks.db
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.firestore
@@ -56,7 +55,7 @@ fun UnioApp() {
     val user = auth.currentUser
     if (user != null) {
       if (user.isEmailVerified) {
-        navController.navigate(Route.HOME)
+        navController.navigate(Screen.ACCOUNT_DETAILS)
       } else {
         navController.navigate(Screen.EMAIL_VERIFICATION)
       }
@@ -69,7 +68,9 @@ fun UnioApp() {
     navigation(startDestination = Screen.WELCOME, route = Route.AUTH) {
       composable(Screen.WELCOME) { WelcomeScreen(navigationActions) }
       composable(Screen.EMAIL_VERIFICATION) { EmailVerificationScreen(navigationActions) }
-      composable(Screen.ACCOUNT_DETAILS) { AccountDetails(navigationActions, userRepositoryFirestore ) }
+      composable(Screen.ACCOUNT_DETAILS) {
+        AccountDetails(navigationActions, userRepositoryFirestore)
+      }
     }
     navigation(startDestination = Screen.HOME, route = Route.HOME) {
       composable(Screen.HOME) { HomeScreen(navigationActions) }
