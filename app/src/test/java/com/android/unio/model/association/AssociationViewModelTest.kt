@@ -1,5 +1,6 @@
 package com.android.unio.model.association
 
+import com.android.unio.model.firestore.firestoreReferenceListWith
 import com.android.unio.model.user.User
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.CollectionReference

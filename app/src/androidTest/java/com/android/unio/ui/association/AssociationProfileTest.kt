@@ -10,6 +10,7 @@ import androidx.navigation.NavHostController
 import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationRepository
 import com.android.unio.model.association.AssociationViewModel
+import com.android.unio.model.firestore.emptyFirestoreReferenceList
 import com.android.unio.model.user.User
 import com.android.unio.ui.navigation.NavigationAction
 import com.google.firebase.firestore.CollectionReference

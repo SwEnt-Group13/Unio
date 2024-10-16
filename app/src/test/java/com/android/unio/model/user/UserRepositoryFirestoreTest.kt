@@ -3,6 +3,7 @@ package com.android.unio.model.user
 import com.android.unio.model.association.Association
 import com.android.unio.model.firestore.FirestorePaths.ASSOCIATION_PATH
 import com.android.unio.model.firestore.FirestorePaths.USER_PATH
+import com.android.unio.model.firestore.emptyFirestoreReferenceList
 import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.gms.tasks.Task
 import com.google.firebase.Firebase

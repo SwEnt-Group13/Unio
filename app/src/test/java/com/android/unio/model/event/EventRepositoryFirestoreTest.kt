@@ -2,6 +2,7 @@ package com.android.unio.model.event
 
 import com.android.unio.model.association.Association
 import com.android.unio.model.firestore.FirestorePaths.EVENT_PATH
+import com.android.unio.model.firestore.emptyFirestoreReferenceList
 import com.android.unio.model.map.Location
 import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.gms.tasks.Task

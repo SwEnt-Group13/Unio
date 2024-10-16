@@ -5,6 +5,7 @@ import com.android.unio.model.association.AssociationRepositoryFirestore
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventRepositoryFirestore
 import com.android.unio.model.event.EventType
+import com.android.unio.model.firestore.firestoreReferenceListWith
 import com.android.unio.model.map.Location
 import com.android.unio.model.user.User
 import com.android.unio.model.user.UserRepositoryFirestore
