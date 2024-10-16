@@ -1,6 +1,5 @@
 package com.android.unio.model.firestore
 
-import androidx.test.core.app.ApplicationProvider
 import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationRepositoryFirestore
 import com.android.unio.model.event.Event
@@ -10,17 +9,20 @@ import com.android.unio.model.firestore.transform.serialize
 import com.android.unio.model.map.Location
 import com.android.unio.model.user.User
 import com.android.unio.model.user.UserRepositoryFirestore
-import com.google.firebase.FirebaseApp
+import com.google.firebase.Firebase
 import com.google.firebase.Timestamp
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.firestore
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.mockkStatic
 import junit.framework.TestCase.assertEquals
 import org.junit.Before
 import org.junit.Test
-import org.junit.runner.RunWith
 import org.mockito.MockitoAnnotations
-import org.robolectric.RobolectricTestRunner
 
-@RunWith(RobolectricTestRunner::class)
 class HydrationAndSerializationTest {
+  private lateinit var db: FirebaseFirestore
   private lateinit var user: User
   private lateinit var association: Association
   private lateinit var event: Event
@@ -29,10 +31,9 @@ class HydrationAndSerializationTest {
   fun setUp() {
     MockitoAnnotations.openMocks(this)
 
-    // Initialize Firebase if necessary
-    if (FirebaseApp.getApps(ApplicationProvider.getApplicationContext()).isEmpty()) {
-      FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext())
-    }
+    db = mockk()
+    mockkStatic(FirebaseFirestore::class)
+    every { Firebase.firestore } returns db
 
     user =
         User(

@@ -1,35 +1,32 @@
 package com.android.unio.model.user
 
-import androidx.test.core.app.ApplicationProvider
 import com.android.unio.model.association.Association
-import com.google.firebase.FirebaseApp
+import com.google.firebase.Firebase
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.firestore
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.mockkStatic
 import junit.framework.TestCase.assertEquals
 import org.junit.Before
 import org.junit.Test
-import org.junit.runner.RunWith
 import org.mockito.Mock
-import org.mockito.Mockito.`when`
 import org.mockito.MockitoAnnotations
-import org.mockito.kotlin.any
-import org.robolectric.RobolectricTestRunner
 
-@RunWith(RobolectricTestRunner::class)
 class UserTest {
-  @Mock private lateinit var db: FirebaseFirestore
+  private lateinit var db: FirebaseFirestore
   @Mock private lateinit var collectionReference: CollectionReference
 
   @Before
   fun setUp() {
     MockitoAnnotations.openMocks(this)
 
-    // Initialize Firebase if necessary
-    if (FirebaseApp.getApps(ApplicationProvider.getApplicationContext()).isEmpty()) {
-      FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext())
-    }
-
-    `when`(db.collection(any())).thenReturn(collectionReference)
+    // Use MockK to mock Firebase.firestore calls without dependency injection
+    db = mockk()
+    mockkStatic(FirebaseFirestore::class)
+    every { Firebase.firestore } returns db
+    every { db.collection(any()) } returns collectionReference
   }
 
   @Test
