@@ -259,6 +259,10 @@ dependencies {
 
     implementation(libs.androidx.material.icons.extended)
 
+    // AppSearch
+    val appsearch_version = "1.1.0-alpha05"
+    implementation("androidx.appsearch:appsearch:$appsearch_version")
+    implementation("androidx.appsearch:appsearch-local-storage:$appsearch_version")
 }
 
 
