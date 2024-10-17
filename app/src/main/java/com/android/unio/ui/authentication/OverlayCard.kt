@@ -47,15 +47,23 @@ fun InterestOverlay(
         Card(
             elevation = CardDefaults.cardElevation(8.dp),
             shape = RoundedCornerShape(15.dp),
-            modifier = Modifier.fillMaxWidth().padding(20.dp)) {
+            modifier = Modifier.fillMaxWidth().padding(20.dp).testTag("InterestOverlayCard")) {
               Column(
-                  modifier = Modifier.fillMaxWidth().padding(15.dp).sizeIn(maxHeight = 400.dp).testTag("InterestOverlayColumn"),
+                  modifier =
+                      Modifier.fillMaxWidth()
+                          .padding(15.dp)
+                          .sizeIn(maxHeight = 400.dp)
+                          .testTag("InterestOverlayColumn"),
                   verticalArrangement = Arrangement.SpaceBetween) {
-                    Text(text = "Your interests", style = AppTypography.headlineSmall, modifier = Modifier.testTag("InterestOverlayTitle"))
+                    Text(
+                        text = "Your interests",
+                        style = AppTypography.headlineSmall,
+                        modifier = Modifier.testTag("InterestOverlayTitle"))
                     Text(
                         text = "Choose as many interests as you feel apply to you",
                         style = AppTypography.bodyMedium,
-                        modifier = Modifier.padding(bottom = 5.dp).testTag("InterestOverlaySubtitle"))
+                        modifier =
+                            Modifier.padding(bottom = 5.dp).testTag("InterestOverlaySubtitle"))
                     Surface(
                         modifier = Modifier.sizeIn(maxHeight = 250.dp), color = Color.Transparent) {
                           Column(modifier = Modifier.verticalScroll(scrollState)) {
@@ -64,20 +72,26 @@ fun InterestOverlay(
                                   horizontalArrangement = Arrangement.SpaceBetween,
                                   verticalAlignment = Alignment.CenterVertically,
                                   modifier =
-                                      Modifier.padding(5.dp).fillMaxWidth().testTag("InterestOverlayClickableRow : $index").clickable {
-                                        pair.second.value = !pair.second.value
-                                      }) {
+                                      Modifier.padding(5.dp)
+                                          .fillMaxWidth()
+                                          .testTag("InterestOverlayClickableRow: $index")
+                                          .clickable { pair.second.value = !pair.second.value }) {
                                     Text(
                                         text = pair.first.name,
                                         style = AppTypography.bodyMedium,
-                                        modifier = Modifier.padding(start = 5.dp).testTag("InterestOverlayText: ${pair.first.name}"))
+                                        modifier =
+                                            Modifier.padding(start = 5.dp)
+                                                .testTag("InterestOverlayText: ${pair.first.name}"))
                                     Checkbox(
                                         checked = pair.second.value,
                                         onCheckedChange = { pair.second.value = it },
-                                        modifier = Modifier.testTag("InterestOverlayCheckbox: ${pair.first.name}"))
+                                        modifier =
+                                            Modifier.testTag(
+                                                "InterestOverlayCheckbox: ${pair.first.name}"))
                                   }
                               if (index != interestsState.size - 1) {
-                                Divider(modifier = Modifier.testTag("InterestOverlayDivider: $index"))
+                                Divider(
+                                    modifier = Modifier.testTag("InterestOverlayDivider: $index"))
                               }
                             }
                           }
@@ -86,9 +100,12 @@ fun InterestOverlay(
                         modifier = Modifier.fillMaxWidth().padding(8.dp),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.Absolute.Right) {
-                          Button(onClick = onSave, modifier = Modifier.padding(5.dp).testTag("InterestOverlaySaveButton")) {
-                            Text(text = "Save")
-                          }
+                          Button(
+                              onClick = onSave,
+                              modifier =
+                                  Modifier.padding(5.dp).testTag("InterestOverlaySaveButton")) {
+                                Text(text = "Save")
+                              }
                         }
                   }
             }

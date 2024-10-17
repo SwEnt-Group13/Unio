@@ -21,7 +21,6 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.rounded.AccountCircle
@@ -41,6 +40,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
 import com.android.unio.model.association.Association
@@ -48,7 +48,6 @@ import com.android.unio.model.firestore.emptyFirestoreReferenceList
 import com.android.unio.model.user.Interest
 import com.android.unio.model.user.User
 import com.android.unio.model.user.UserRepositoryFirestore
-import com.android.unio.model.user.UserSocial
 import com.android.unio.ui.authentication.InterestOverlay
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
@@ -59,7 +58,6 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.firestore
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.forEach
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -77,36 +75,49 @@ fun AccountDetails(
 
   val interests by interestsFlow.collectAsState()
 
+  val context = LocalContext.current
+  var showInterestsOverlay by remember { mutableStateOf(false) }
+  val scrollState = rememberScrollState()
+
   //    if(Firebase.auth.currentUser == null){
   //        navigationAction.navigateTo(Screen.WELCOME)
   //        return
   //    }
-  //    val uid = Firebase.auth.currentUser?.uid
-  //    val email = Firebase.auth.currentUser?.email
-
-  val context = LocalContext.current
-  var showOverlay1 by remember { mutableStateOf(false) }
-
-  val scrollState = rememberScrollState()
   Column(
-      modifier = Modifier.padding(vertical = 20.dp, horizontal = 40.dp).verticalScroll(scrollState),
+      modifier =
+          Modifier.padding(vertical = 20.dp, horizontal = 40.dp)
+              .verticalScroll(scrollState)
+              .testTag("AccountDetails"),
       verticalArrangement = Arrangement.SpaceBetween,
       horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(text = "Tell us about yourself", style = AppTypography.headlineSmall)
+        Text(
+            text = "Tell us about yourself",
+            style = AppTypography.headlineSmall,
+            modifier = Modifier.testTag("AccountDetailsTitleText"))
 
         OutlinedTextField(
-            modifier = Modifier.padding(4.dp).fillMaxWidth(),
-            label = { Text("First name") },
+            modifier =
+                Modifier.padding(4.dp).fillMaxWidth().testTag("AccountDetailsFirstNameTextField"),
+            label = {
+              Text("First name", modifier = Modifier.testTag("AccountDetailsFirstNameText"))
+            },
             onValueChange = { firstName = it },
             value = firstName)
         OutlinedTextField(
-            modifier = Modifier.padding(4.dp).fillMaxWidth(),
-            label = { Text("Last name") },
+            modifier =
+                Modifier.padding(4.dp).fillMaxWidth().testTag("AccountDetailsLastNameTextField"),
+            label = {
+              Text("Last name", modifier = Modifier.testTag("AccountDetailsLastNameText"))
+            },
             onValueChange = { lastName = it },
             value = lastName)
         OutlinedTextField(
-            modifier = Modifier.padding(4.dp).fillMaxWidth().height(200.dp),
-            label = { Text("Bio") },
+            modifier =
+                Modifier.padding(4.dp)
+                    .fillMaxWidth()
+                    .height(200.dp)
+                    .testTag("AccountDetailsBioTextField"),
+            label = { Text("Bio", modifier = Modifier.testTag("AccountDetailsBioText")) },
             onValueChange = { bio = it },
             value = bio)
 
@@ -116,7 +127,8 @@ fun AccountDetails(
             verticalAlignment = Alignment.CenterVertically) {
               Text(
                   text = "Maybe add a profile picture?",
-                  modifier = Modifier.widthIn(max = 140.dp),
+                  modifier =
+                      Modifier.widthIn(max = 140.dp).testTag("AccountDetailsProfilePictureText"),
                   style = AppTypography.bodyLarge)
               Icon(
                   Icons.Rounded.AccountCircle,
@@ -127,20 +139,23 @@ fun AccountDetails(
                             Toast.makeText(context, "Not yet implemented", Toast.LENGTH_SHORT)
                                 .show()
                           }
-                          .size(100.dp))
+                          .size(100.dp)
+                          .testTag("AccountDetailsProfilePictureIcon"))
             }
-        OutlinedButton(modifier = Modifier.fillMaxWidth(), onClick = { showOverlay1 = true }) {
-          Icon(Icons.Default.Add, contentDescription = "Add")
-          Text("Add centers of interest")
-        }
+        OutlinedButton(
+            modifier = Modifier.fillMaxWidth().testTag("AccountDetailsInterestsButton"),
+            onClick = { showInterestsOverlay = true }) {
+              Icon(Icons.Default.Add, contentDescription = "Add")
+              Text("Add centers of interest")
+            }
         FlowRow() {
-          interests.forEach { pair ->
+          interests.forEachIndexed() { index, pair ->
             if (pair.second.value) {
               InputChip(
                   label = { Text(pair.first.name) },
                   onClick = {},
                   selected = pair.second.value,
-                  modifier = Modifier.padding(3.dp),
+                  modifier = Modifier.padding(3.dp).testTag("AccountDetailsInterestChip: $index"),
                   avatar = {
                     Icon(
                         Icons.Default.Close,
@@ -151,17 +166,18 @@ fun AccountDetails(
           }
         }
         OutlinedButton(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().testTag("AccountDetailsSocialsButton"),
             onClick = {
               Toast.makeText(context, "Not yet implemented", Toast.LENGTH_SHORT).show()
             }) {
               Icon(Icons.Default.Add, contentDescription = "Add")
               Text("Add links to other social media")
             }
-        Row() {
+        FlowRow() {
           /* TODO row containing dynamic list of social media links */
         }
         Button(
+            modifier = Modifier.testTag("AccountDetailsContinueButton"),
             onClick = {
               val user =
                   User(
@@ -172,7 +188,7 @@ fun AccountDetails(
                       biography = bio,
                       followingAssociations = Association.emptyFirestoreReferenceList(),
                       interests = interests.filter { it.second.value }.map { it.first },
-                      socials = emptyList<UserSocial>(),
+                      socials = emptyList(),
                       profilePicture = "")
               uploadUser(user, userRepositoryFirestore, navigationAction, context)
               navigationAction.navigateTo(Screen.HOME)
@@ -181,10 +197,10 @@ fun AccountDetails(
             }
       }
 
-  if (showOverlay1) {
+  if (showInterestsOverlay) {
     InterestOverlay(
-        onDismiss = { showOverlay1 = false },
-        onSave = { showOverlay1 = false },
+        onDismiss = { showInterestsOverlay = false },
+        onSave = { showInterestsOverlay = false },
         interests = interestsFlow)
   }
 }
@@ -201,7 +217,10 @@ fun uploadUser(
         Toast.makeText(context, "Account Created Successfully", Toast.LENGTH_SHORT).show()
         navigationAction.navigateTo(Screen.HOME)
       },
-      onFailure = { Log.e("AccountDetails", "Failed to upload user", it) })
+      onFailure = {
+        Toast.makeText(context, "Failed to create Account", Toast.LENGTH_SHORT).show()
+        Log.e("AccountDetails", "Failed to upload user", it)
+      })
 }
 
 class ComposableTestActivity : ComponentActivity() {
