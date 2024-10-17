@@ -1,16 +1,21 @@
 package com.android.unio
 
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
+import com.android.unio.model.association.AssociationRepositoryFirestore
+import com.android.unio.model.search.SearchViewModel
 import com.android.unio.ui.association.AssociationProfile
 import com.android.unio.ui.authentication.AccountDetails
 import com.android.unio.ui.authentication.EmailVerificationScreen
@@ -25,16 +30,28 @@ import com.android.unio.ui.theme.AppTheme
 import com.android.unio.ui.user.UserProfileScreen
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
+import com.google.firebase.firestore.firestore
 
 class MainActivity : ComponentActivity() {
+  private lateinit var searchViewModel: SearchViewModel
+
+  @RequiresApi(Build.VERSION_CODES.S)
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    setContent { Surface(modifier = Modifier.fillMaxSize()) { AppTheme { UnioApp() } } }
+
+    val associationRepository = AssociationRepositoryFirestore(Firebase.firestore)
+    searchViewModel =
+        ViewModelProvider(this, SearchViewModel.provideFactory(this, associationRepository))
+            .get(SearchViewModel::class.java)
+
+    setContent {
+      Surface(modifier = Modifier.fillMaxSize()) { AppTheme { UnioApp(searchViewModel) } }
+    }
   }
 }
 
 @Composable
-fun UnioApp() {
+fun UnioApp(searchViewModel: SearchViewModel) {
   val navController = rememberNavController()
   val navigationActions = NavigationAction(navController)
 
@@ -62,7 +79,7 @@ fun UnioApp() {
       composable(Screen.HOME) { HomeScreen(navigationActions) }
     }
     navigation(startDestination = Screen.EXPLORE, route = Route.EXPLORE) {
-      composable(Screen.EXPLORE) { ExploreScreen(navigationActions) }
+      composable(Screen.EXPLORE) { ExploreScreen(navigationActions, searchViewModel) }
       composable(Screen.ASSOCIATION) { AssociationProfile(navigationActions) }
     }
     navigation(startDestination = Screen.SAVED, route = Route.SAVED) {
