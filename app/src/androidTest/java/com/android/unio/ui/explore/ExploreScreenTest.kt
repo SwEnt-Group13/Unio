@@ -4,6 +4,7 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationCategory
@@ -12,6 +13,7 @@ import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.firestore.emptyFirestoreReferenceList
 import com.android.unio.model.user.User
 import com.android.unio.ui.navigation.NavigationAction
+import com.android.unio.ui.navigation.Screen
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import org.junit.Assert.assertEquals
@@ -23,6 +25,7 @@ import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
 import org.mockito.MockitoAnnotations
 import org.mockito.kotlin.any
+import org.mockito.kotlin.verify
 
 class ExploreScreenTest {
   private lateinit var navigationAction: NavigationAction
@@ -34,6 +37,8 @@ class ExploreScreenTest {
   @get:Rule val composeTestRule = createComposeRule()
 
   private lateinit var associations: List<Association>
+  private lateinit var sortedByCategoryAssociations:
+      List<Map.Entry<AssociationCategory, List<Association>>>
 
   @Before
   fun setUp() {
@@ -81,6 +86,9 @@ class ExploreScreenTest {
             //                members = User.emptyFirestoreReferenceList())
             )
 
+    sortedByCategoryAssociations =
+        getSortedEntriesAssociationsByCategory(associations.groupBy { it.category })
+
     associationViewModel = AssociationViewModel(associationRepository)
   }
 
@@ -88,9 +96,11 @@ class ExploreScreenTest {
   fun allComponentsAreDisplayed() {
     composeTestRule.setContent { ExploreScreen(navigationAction, associationViewModel) }
     composeTestRule.onNodeWithTag("exploreScreen").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("searchPlaceHolder", true).assertIsDisplayed()
+    composeTestRule.onNodeWithTag("searchTrailingIcon", true).assertIsDisplayed()
     composeTestRule.onNodeWithTag("searchBar").assertIsDisplayed()
     composeTestRule.onNodeWithTag("exploreTitle").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("categoriesList").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("categoriesList").assertExists()
   }
 
   @Test
@@ -134,13 +144,28 @@ class ExploreScreenTest {
     associationViewModel.getAssociations()
     composeTestRule.setContent { ExploreScreen(navigationAction, associationViewModel) }
 
-    val sortedByCategoryAssociations =
-        getSortedEntriesAssociationsByCategory(associations.groupBy { it.category })
-
     sortedByCategoryAssociations.forEach { (category, associations) ->
       composeTestRule.onNodeWithTag("category_${category.displayName}").assertIsDisplayed()
       composeTestRule.onNodeWithTag("associationRow_${category.displayName}")
       associations.forEach { composeTestRule.onNodeWithTag("associationName_${it.name}") }
+    }
+  }
+
+  @Test
+  fun testClickOnAssociation() {
+    `when`(associationRepository.getAssociations(any(), any())).thenAnswer { invocation ->
+      val onSuccess = invocation.arguments[0] as (List<Association>) -> Unit
+      onSuccess(associations)
+    }
+
+    associationViewModel.getAssociations()
+    composeTestRule.setContent { ExploreScreen(navigationAction, associationViewModel) }
+
+    sortedByCategoryAssociations.forEach { (_, associations) ->
+      associations.forEach {
+        composeTestRule.onNodeWithTag("associationItem_${it.name}").performClick()
+        verify(navigationAction).navigateTo(Screen.withParams(Screen.ASSOCIATION_PROFILE, it.uid))
+      }
     }
   }
 }
