@@ -12,16 +12,17 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
-import com.android.unio.model.association.AssociationViewModel
-import com.android.unio.ui.association.AssociationProfileScreen
 import com.android.unio.model.association.AssociationRepositoryFirestore
+import com.android.unio.model.association.AssociationViewModel
+import com.android.unio.model.search.SearchRepository
 import com.android.unio.model.search.SearchViewModel
+import com.android.unio.ui.association.AssociationProfileScreen
 import com.android.unio.ui.authentication.AccountDetails
 import com.android.unio.ui.authentication.EmailVerificationScreen
 import com.android.unio.ui.authentication.WelcomeScreen
@@ -38,16 +39,12 @@ import com.google.firebase.auth.auth
 import com.google.firebase.firestore.firestore
 
 class MainActivity : ComponentActivity() {
-  private lateinit var searchViewModel: SearchViewModel
-
-  @RequiresApi(Build.VERSION_CODES.S)
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
 
     val associationRepository = AssociationRepositoryFirestore(Firebase.firestore)
-    searchViewModel =
-        ViewModelProvider(this, SearchViewModel.provideFactory(this, associationRepository))
-            .get(SearchViewModel::class.java)
+    val searchRepository = SearchRepository(this, associationRepository)
+    val searchViewModel = SearchViewModel(searchRepository)
 
     setContent {
       Surface(modifier = Modifier.fillMaxSize()) { AppTheme { UnioApp(searchViewModel) } }
@@ -55,7 +52,6 @@ class MainActivity : ComponentActivity() {
   }
 }
 
-@RequiresApi(Build.VERSION_CODES.S)
 @Composable
 fun UnioApp(searchViewModel: SearchViewModel) {
   val navController = rememberNavController()
@@ -88,7 +84,9 @@ fun UnioApp(searchViewModel: SearchViewModel) {
       composable(Screen.HOME) { HomeScreen(navigationActions) }
     }
     navigation(startDestination = Screen.EXPLORE, route = Route.EXPLORE) {
-      composable(Screen.EXPLORE) { ExploreScreen(navigationActions, associationViewModel, searchViewModel) }
+      composable(Screen.EXPLORE) {
+        ExploreScreen(navigationActions, associationViewModel, searchViewModel)
+      }
       composable(Screen.ASSOCIATION_PROFILE) { navBackStackEntry ->
         // Get the association UID from the arguments
         val uid = navBackStackEntry.arguments?.getString("uid")
