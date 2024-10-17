@@ -13,6 +13,7 @@ import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QueryDocumentSnapshot
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.firestore
@@ -39,6 +40,7 @@ class AssociationRepositoryFirestoreTest {
   @Mock private lateinit var documentReference: DocumentReference
   @Mock private lateinit var querySnapshotTask: Task<QuerySnapshot>
   @Mock private lateinit var documentSnapshotTask: Task<DocumentSnapshot>
+  @Mock private lateinit var query: Query
 
   private lateinit var repository: AssociationRepositoryFirestore
 
@@ -67,7 +69,8 @@ class AssociationRepositoryFirestoreTest {
             category = AssociationCategory.SCIENCE_TECH,
             description =
                 "ACM is the world's largest educational and scientific computing society.",
-            members = User.firestoreReferenceListWith(listOf("1", "2")))
+            members = User.firestoreReferenceListWith(listOf("1", "2")),
+            image = "https://www.example.com/image.jpg")
 
     association2 =
         Association(
@@ -78,7 +81,8 @@ class AssociationRepositoryFirestoreTest {
             category = AssociationCategory.SCIENCE_TECH,
             description =
                 "IEEE is the world's largest technical professional organization dedicated to advancing technology for the benefit of humanity.",
-            members = User.firestoreReferenceListWith(listOf("3", "4")))
+            members = User.firestoreReferenceListWith(listOf("3", "4")),
+            image = "https://www.example.com/image.jpg")
 
     // When getting the collection, return the task
     `when`(associationCollectionReference.get()).thenReturn(querySnapshotTask)
@@ -166,7 +170,8 @@ class AssociationRepositoryFirestoreTest {
                   fullName = "",
                   category = AssociationCategory.ARTS,
                   description = "",
-                  members = User.emptyFirestoreReferenceList())
+                  members = User.emptyFirestoreReferenceList(),
+                  image = "")
 
           assertEquals(2, associations.size)
 
@@ -195,6 +200,20 @@ class AssociationRepositoryFirestoreTest {
           assertEquals(association1.fullName, association.fullName)
           assertEquals(association1.description, association.description)
           assertEquals(association1.members.list.value, association.members.list.value)
+        },
+        onFailure = { exception -> assert(false) })
+  }
+
+  @Test
+  fun testGetAssociationsByCategory() {
+    `when`(associationCollectionReference.whereEqualTo(eq("category"), any()))
+        .thenReturn(associationCollectionReference)
+    repository.getAssociationsByCategory(
+        AssociationCategory.SCIENCE_TECH,
+        onSuccess = { associations ->
+          for (asso in associations) {
+            assertEquals(asso.category, AssociationCategory.SCIENCE_TECH)
+          }
         },
         onFailure = { exception -> assert(false) })
   }

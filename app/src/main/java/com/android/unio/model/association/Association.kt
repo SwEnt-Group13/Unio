@@ -21,7 +21,8 @@ data class Association(
     val fullName: String,
     val category: AssociationCategory,
     val description: String,
-    val members: ReferenceList<User>
+    val members: ReferenceList<User>,
+    var image: String
 ) {
   companion object
 }

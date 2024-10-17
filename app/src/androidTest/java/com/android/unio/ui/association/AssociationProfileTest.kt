@@ -57,7 +57,8 @@ class AssociationProfileTest {
                 category = AssociationCategory.SCIENCE_TECH,
                 description =
                     "ACM is the world's largest educational and scientific computing society.",
-                members = User.emptyFirestoreReferenceList()))
+                members = User.emptyFirestoreReferenceList(),
+                image = "https://www.example.com/image.jpg"))
 
     navHostController = mock { NavHostController::class.java }
     navigationAction = NavigationAction(navHostController)

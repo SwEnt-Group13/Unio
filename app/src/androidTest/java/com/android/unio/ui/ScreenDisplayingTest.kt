@@ -54,7 +54,7 @@ class ScreenDisplayingTest {
 
   @Test
   fun testHomeDisplayed() {
-    composeTestRule.setContent { HomeScreen(navigationAction) }
+    composeTestRule.setContent { HomeScreen(navigationAction, onAddEvent = {}, onEventClick = {}) }
     composeTestRule.onNodeWithTag("HomeScreen").assertIsDisplayed()
   }
 

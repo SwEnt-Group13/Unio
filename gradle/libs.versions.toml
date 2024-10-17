@@ -1,6 +1,7 @@
 [versions]
 # Plugins
 agp = "8.4.2"
+coilCompose = "2.2.2"
 firebaseBom = "33.3.0"
 googleServices = "4.4.2"
 json = "20240303"
@@ -15,6 +16,7 @@ ktfmt = "0.17.0"
 lifecycleLivedataKtx = "2.8.6"
 materialIconsExtended = "1.7.3"
 mockitoAndroid = "5.13.0"
+mockkMockk = "1.9.3"
 mockkVersion = "1.13.0"
 ui = "1.7.2"
 uiTestJunit4 = "1.7.2"
@@ -83,6 +85,7 @@ uiTextGoogleFonts = "1.7.3"
 
 [libraries]
 androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "materialIconsExtended" }
+coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilCompose" }
 compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
 compose-material3 = { group = "androidx.compose.material3", name = "material3" }
 compose-ui = { group = "androidx.compose.ui", name = "ui" }
@@ -148,6 +151,7 @@ mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 mockk-agent = { module = "io.mockk:mockk-agent", version.ref = "mockkAgent" }
 mockk-android = { module = "io.mockk:mockk-android", version.ref = "mockkAndroid" }
 mockk-v1130 = { module = "io.mockk:mockk", version.ref = "mockkVersion" }
+mockk-v193 = { module = "io.mockk:mockk", version.ref = "mockkMockk" }
 okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
 play-services-auth = { module = "com.google.android.gms:play-services-auth", version.ref = "playServicesAuth" }
 play-services-maps = { module = "com.google.android.gms:play-services-maps", version.ref = "playServicesMaps" }

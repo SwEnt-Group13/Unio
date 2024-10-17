@@ -59,7 +59,8 @@ class ExploreScreenTest {
                 category = AssociationCategory.SCIENCE_TECH,
                 description =
                     "ACM is the world's largest educational and scientific computing society.",
-                members = User.emptyFirestoreReferenceList()),
+                members = User.emptyFirestoreReferenceList(),
+                image = ""),
             Association(
                 uid = "2",
                 url = "",
@@ -67,7 +68,8 @@ class ExploreScreenTest {
                 fullName = "Music club",
                 category = AssociationCategory.ARTS,
                 description = "Musical is the world's largest music society.",
-                members = User.emptyFirestoreReferenceList())
+                members = User.emptyFirestoreReferenceList(),
+                image = ""),
             //            Association(
             //                uid = "3",
             //                url = "",
@@ -84,7 +86,7 @@ class ExploreScreenTest {
             //                category = AssociationCategory.EPFL_BODIES,
             //                description = "Student’s general association.",
             //                members = User.emptyFirestoreReferenceList())
-            )
+        )
 
     sortedByCategoryAssociations =
         getSortedEntriesAssociationsByCategory(associations.groupBy { it.category })

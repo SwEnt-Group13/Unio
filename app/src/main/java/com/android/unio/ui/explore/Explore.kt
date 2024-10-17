@@ -1,6 +1,5 @@
 package com.android.unio.ui.explore
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -28,11 +27,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.android.unio.R
+import coil.compose.AsyncImage
 import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationCategory
 import com.android.unio.model.association.AssociationViewModel
@@ -172,10 +172,12 @@ fun AssociationItem(association: Association, navigationAction: NavigationAction
          * AdEC image is used as the placeholder. Will need to add the actual image later, when the
          * actual view model is used.
          */
-        Image(
-            painter = painterResource(id = R.drawable.adec),
-            contentDescription = "image description",
-            modifier = Modifier.size(124.dp))
+        AsyncImage(
+            model = association.image.toUri(),
+            contentDescription = "Translated description of what the image contains",
+            modifier = Modifier.size(124.dp).testTag("associationImage"),
+            contentScale = ContentScale.Crop // crop the image to fit
+            )
 
         Spacer(modifier = Modifier.height(8.dp))
 

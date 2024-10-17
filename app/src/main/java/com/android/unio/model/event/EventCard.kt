@@ -28,8 +28,9 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.net.toUri
+import coil.compose.AsyncImage
 import com.android.unio.R
-import com.android.unio.utils.EventUtils.DynamicImage
 import com.android.unio.utils.EventUtils.addAlphaToColor
 import com.android.unio.utils.EventUtils.formatTimestamp
 import java.text.SimpleDateFormat
@@ -46,9 +47,9 @@ fun EventCard(event: Event, onClick: () -> Unit) {
               .testTag("event_EventListItem")
               .clip(RoundedCornerShape(10.dp))
               .background(Color(0xFFF0ECF4))) {
-        Image(
-            painter = DynamicImage(event.image),
-            contentDescription = null,
+        AsyncImage(
+            model = event.image.toUri(),
+            contentDescription = "Image of the event",
             modifier =
                 Modifier.fillMaxWidth()
                     .height(100.dp)
@@ -72,14 +73,17 @@ fun EventCard(event: Event, onClick: () -> Unit) {
                   color = Color.Black)
 
               Spacer(modifier = Modifier.width(6.dp))
-
+              val type: EventType =
+                  if (event.types.isEmpty()) {
+                    EventType.OTHER
+                  } else event.types[0]
               Box(
                   modifier =
                       Modifier.clip(RoundedCornerShape(4.dp))
-                          .background(addAlphaToColor(event.types.get(0).color, 200))
+                          .background(addAlphaToColor(type.color, 200))
                           .wrapContentWidth()) {
                     Text(
-                        text = event.types.get(0).text,
+                        text = type.text,
                         modifier =
                             Modifier.padding(horizontal = 4.dp, vertical = 4.dp)
                                 .testTag("event_EventMainType"),
@@ -87,7 +91,6 @@ fun EventCard(event: Event, onClick: () -> Unit) {
                         style = TextStyle(fontSize = 8.sp))
                   }
             }
-
             Spacer(modifier = Modifier.width(6.dp))
 
             Image(
@@ -119,7 +122,7 @@ fun EventCard(event: Event, onClick: () -> Unit) {
                     Modifier.padding(vertical = 1.dp, horizontal = 4.dp)
                         .testTag("event_EventDate")
                         .wrapContentWidth(),
-                text = formatTimestamp(event.date, SimpleDateFormat("MM/dd", Locale.getDefault())),
+                text = formatTimestamp(event.date, SimpleDateFormat("dd/MM", Locale.getDefault())),
                 style = MaterialTheme.typography.titleMedium,
                 color = Color.Black)
 
