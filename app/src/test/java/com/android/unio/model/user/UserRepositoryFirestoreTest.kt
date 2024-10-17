@@ -1,34 +1,33 @@
 package com.android.unio.model.user
 
-import androidx.test.core.app.ApplicationProvider
-import com.android.unio.model.association.AssociationRepositoryFirestore
+import com.android.unio.model.association.Association
 import com.android.unio.model.firestore.FirestorePaths.ASSOCIATION_PATH
 import com.android.unio.model.firestore.FirestorePaths.USER_PATH
-import com.android.unio.model.firestore.FirestoreReferenceList
-import com.android.unio.model.firestore.transform.hydrate
+import com.android.unio.model.firestore.emptyFirestoreReferenceList
 import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.gms.tasks.Task
-import com.google.firebase.FirebaseApp
+import com.google.firebase.Firebase
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QueryDocumentSnapshot
 import com.google.firebase.firestore.QuerySnapshot
+import com.google.firebase.firestore.firestore
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.mockkStatic
 import junit.framework.TestCase.assertEquals
 import org.junit.Before
 import org.junit.Test
-import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.Mockito.`when`
 import org.mockito.MockitoAnnotations
 import org.mockito.kotlin.any
 import org.mockito.kotlin.eq
-import org.robolectric.RobolectricTestRunner
 
-@RunWith(RobolectricTestRunner::class)
 class UserRepositoryFirestoreTest {
-  @Mock private lateinit var db: FirebaseFirestore
+  private lateinit var db: FirebaseFirestore
   @Mock private lateinit var userCollectionReference: CollectionReference
   @Mock private lateinit var associationCollectionReference: CollectionReference
   @Mock private lateinit var querySnapshot: QuerySnapshot
@@ -49,32 +48,43 @@ class UserRepositoryFirestoreTest {
   fun setUp() {
     MockitoAnnotations.openMocks(this)
 
-    // Initialize Firebase if necessary
-    if (FirebaseApp.getApps(ApplicationProvider.getApplicationContext()).isEmpty()) {
-      FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext())
-    }
+    db = mockk()
+    mockkStatic(FirebaseFirestore::class)
+    every { Firebase.firestore } returns db
 
     // When getting the collection, return the task
-    `when`(db.collection(eq(USER_PATH))).thenReturn(userCollectionReference)
-    `when`(db.collection(eq(ASSOCIATION_PATH))).thenReturn(associationCollectionReference)
+    every { db.collection(USER_PATH) } returns userCollectionReference
+    every { db.collection(ASSOCIATION_PATH) } returns associationCollectionReference
 
     user1 =
         User(
             uid = "1",
             email = "example1@abcd.com",
-            name = "Example 1",
-            followingAssociations =
-                FirestoreReferenceList.empty(
-                    db.collection(ASSOCIATION_PATH), AssociationRepositoryFirestore::hydrate))
+            firstName = "Example 1",
+            lastName = "Last name 1",
+            biography = "An example user",
+            followingAssociations = Association.emptyFirestoreReferenceList(),
+            interests = listOf(Interest.SPORTS, Interest.MUSIC),
+            socials =
+                listOf(
+                    UserSocial(Social.INSTAGRAM, "Insta"),
+                    UserSocial(Social.WEBSITE, "example.com")),
+            profilePicture = "https://www.example.com/image")
 
     user2 =
         User(
             uid = "2",
             email = "example2@abcd.com",
-            name = "Example 2",
-            followingAssociations =
-                FirestoreReferenceList.empty(
-                    db.collection(ASSOCIATION_PATH), AssociationRepositoryFirestore::hydrate))
+            firstName = "Example 2",
+            lastName = "Last name 2",
+            biography = "An example user 2",
+            followingAssociations = Association.emptyFirestoreReferenceList(),
+            interests = listOf(Interest.FESTIVALS, Interest.GAMING),
+            socials =
+                listOf(
+                    UserSocial(Social.SNAPCHAT, "Snap"),
+                    UserSocial(Social.WEBSITE, "example2.com")),
+            profilePicture = "https://www.example.com/image2")
 
     `when`(userCollectionReference.get()).thenReturn(querySnapshotTask)
     `when`(userCollectionReference.document(eq(user1.uid))).thenReturn(documentReference)
@@ -103,10 +113,17 @@ class UserRepositoryFirestoreTest {
     `when`(queryDocumentSnapshot2.data).thenReturn(map2)
 
     `when`(map1.get("uid")).thenReturn(user1.uid)
-    `when`(map1.get("name")).thenReturn(user1.name)
     `when`(map1.get("email")).thenReturn(user1.email)
+    `when`(map1.get("firstName")).thenReturn(user1.firstName)
+    `when`(map1.get("lastName")).thenReturn(user1.lastName)
+    `when`(map1.get("biography")).thenReturn(user1.biography)
     `when`(map1.get("followingAssociations"))
         .thenReturn(user1.followingAssociations.list.value.map { it.uid })
+    `when`(map1.get("interests")).thenReturn(user1.interests.map { it.name })
+    `when`(map1.get("socials"))
+        .thenReturn(
+            user1.socials.map { mapOf("social" to it.social.name, "content" to it.content) })
+    `when`(map1.get("profilePicture")).thenReturn(user1.profilePicture)
 
     // Only set the uid field for user2
     `when`(map2.get("uid")).thenReturn(user2.uid)
@@ -116,22 +133,49 @@ class UserRepositoryFirestoreTest {
 
   @Test
   fun testGetUsers() {
-    `when`(map2.get("name")).thenReturn(user2.name)
     `when`(map2.get("email")).thenReturn(user2.email)
+    `when`(map2.get("firstName")).thenReturn(user2.firstName)
+    `when`(map2.get("lastName")).thenReturn(user2.lastName)
+    `when`(map2.get("biography")).thenReturn(user2.biography)
     `when`(map2.get("followingAssociations"))
         .thenReturn(user2.followingAssociations.list.value.map { it.uid })
+    `when`(map2.get("interests")).thenReturn(user2.interests.map { it.name })
+    `when`(map2.get("socials"))
+        .thenReturn(
+            user2.socials.map { mapOf("social" to it.social.name, "content" to it.content) })
+    `when`(map2.get("profilePicture")).thenReturn(user2.profilePicture)
 
     repository.getUsers(
         onSuccess = { users ->
           assertEquals(2, users.size)
 
           assertEquals(user1.uid, users[0].uid)
-          assertEquals(user1.name, users[0].name)
           assertEquals(user1.email, users[0].email)
+          assertEquals(user1.firstName, users[0].firstName)
+          assertEquals(user1.lastName, users[0].lastName)
+          assertEquals(user1.biography, users[0].biography)
+          assertEquals(
+              user1.followingAssociations.list.value.map { it.uid },
+              users[0].followingAssociations.list.value.map { it.uid })
+          assertEquals(user1.interests.map { it.name }, users[0].interests.map { it.name })
+          assertEquals(
+              user1.socials.map { mapOf("social" to it.social.name, "content" to it.content) },
+              users[0].socials.map { mapOf("social" to it.social.name, "content" to it.content) })
+          assertEquals(user1.profilePicture, users[0].profilePicture)
 
           assertEquals(user2.uid, users[1].uid)
-          assertEquals(user2.name, users[1].name)
           assertEquals(user2.email, users[1].email)
+          assertEquals(user2.firstName, users[1].firstName)
+          assertEquals(user2.lastName, users[1].lastName)
+          assertEquals(user2.biography, users[1].biography)
+          assertEquals(
+              user2.followingAssociations.list.value.map { it.uid },
+              users[1].followingAssociations.list.value.map { it.uid })
+          assertEquals(user2.interests.map { it.name }, users[1].interests.map { it.name })
+          assertEquals(
+              user2.socials.map { mapOf("social" to it.social.name, "content" to it.content) },
+              users[1].socials.map { mapOf("social" to it.social.name, "content" to it.content) })
+          assertEquals(user2.profilePicture, users[1].profilePicture)
         },
         onFailure = { exception -> assert(false) })
   }
@@ -146,19 +190,42 @@ class UserRepositoryFirestoreTest {
               User(
                   uid = user2.uid,
                   email = "",
-                  name = "",
-                  followingAssociations =
-                      FirestoreReferenceList.empty(
-                          db.collection(ASSOCIATION_PATH), AssociationRepositoryFirestore::hydrate))
+                  firstName = "",
+                  lastName = "",
+                  biography = "",
+                  followingAssociations = Association.emptyFirestoreReferenceList(),
+                  interests = emptyList(),
+                  socials = emptyList(),
+                  profilePicture = "")
           assertEquals(2, users.size)
 
           assertEquals(user1.uid, users[0].uid)
-          assertEquals(user1.name, users[0].name)
           assertEquals(user1.email, users[0].email)
+          assertEquals(user1.firstName, users[0].firstName)
+          assertEquals(user1.lastName, users[0].lastName)
+          assertEquals(user1.biography, users[0].biography)
+          assertEquals(
+              user1.followingAssociations.list.value.map { it.uid },
+              users[0].followingAssociations.list.value.map { it.uid })
+          assertEquals(user1.interests.map { it.name }, users[0].interests.map { it.name })
+          assertEquals(
+              user1.socials.map { mapOf("social" to it.social.name, "content" to it.content) },
+              users[0].socials.map { mapOf("social" to it.social.name, "content" to it.content) })
+          assertEquals(user1.profilePicture, users[0].profilePicture)
 
           assertEquals(emptyUser.uid, users[1].uid)
-          assertEquals("", users[1].name)
           assertEquals("", users[1].email)
+          assertEquals("", users[1].firstName)
+          assertEquals("", users[1].lastName)
+          assertEquals("", users[1].biography)
+          assertEquals(
+              emptyUser.followingAssociations.list.value.map { it.uid },
+              users[1].followingAssociations.list.value.map { it.uid })
+          assertEquals(emptyUser.interests.map { it.name }, users[1].interests.map { it.name })
+          assertEquals(
+              emptyUser.socials.map { mapOf("social" to it.social.name, "content" to it.content) },
+              users[1].socials.map { mapOf("social" to it.social.name, "content" to it.content) })
+          assertEquals(emptyUser.profilePicture, users[1].profilePicture)
         },
         onFailure = { exception -> assert(false) })
   }
@@ -169,8 +236,18 @@ class UserRepositoryFirestoreTest {
         id = user1.uid,
         onSuccess = { user ->
           assertEquals(user1.uid, user.uid)
-          assertEquals(user1.name, user.name)
           assertEquals(user1.email, user.email)
+          assertEquals(user1.firstName, user.firstName)
+          assertEquals(user1.lastName, user.lastName)
+          assertEquals(user1.biography, user.biography)
+          assertEquals(
+              user1.followingAssociations.list.value.map { it.uid },
+              user.followingAssociations.list.value.map { it.uid })
+          assertEquals(user1.interests.map { it.name }, user.interests.map { it.name })
+          assertEquals(
+              user1.socials.map { mapOf("social" to it.social.name, "content" to it.content) },
+              user.socials.map { mapOf("social" to it.social.name, "content" to it.content) })
+          assertEquals(user1.profilePicture, user.profilePicture)
         },
         onFailure = { exception -> assert(false) })
   }

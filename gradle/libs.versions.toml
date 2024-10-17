@@ -15,6 +15,7 @@ ktfmt = "0.17.0"
 lifecycleLivedataKtx = "2.8.6"
 materialIconsExtended = "1.7.3"
 mockitoAndroid = "5.13.0"
+mockkVersion = "1.13.0"
 ui = "1.7.2"
 uiTestJunit4 = "1.7.2"
 uiTestManifest = "1.7.2"
@@ -146,6 +147,7 @@ mockito-kotlin = { module = "org.mockito.kotlin:mockito-kotlin" , version.ref="m
 mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 mockk-agent = { module = "io.mockk:mockk-agent", version.ref = "mockkAgent" }
 mockk-android = { module = "io.mockk:mockk-android", version.ref = "mockkAndroid" }
+mockk-v1130 = { module = "io.mockk:mockk", version.ref = "mockkVersion" }
 okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
 play-services-auth = { module = "com.google.android.gms:play-services-auth", version.ref = "playServicesAuth" }
 play-services-maps = { module = "com.google.android.gms:play-services-maps", version.ref = "playServicesMaps" }
