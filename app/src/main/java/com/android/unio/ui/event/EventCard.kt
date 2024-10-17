@@ -52,40 +52,31 @@ fun EventCard(event: Event, onClick: () -> Unit) {
               .testTag("event_EventListItem")
               .clip(RoundedCornerShape(10.dp))
               .background(secondaryDark)) {
-      Box(
-          modifier = Modifier
-              .fillMaxWidth()
-              .height(100.dp)
-      ) {
+        Box(modifier = Modifier.fillMaxWidth().height(100.dp)) {
           // Main image
           Image(
               painter = DynamicImage(event.image),
               contentDescription = null,
-              modifier = Modifier
-                  .fillMaxWidth()
-                  .height(100.dp)
-                  .clip(RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp))
-                  .testTag("event_EventImage"),
+              modifier =
+                  Modifier.fillMaxWidth()
+                      .height(100.dp)
+                      .clip(RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp))
+                      .testTag("event_EventImage"),
               contentScale = ContentScale.Crop // crop the image to fit
-          )
+              )
 
           Box(
-              modifier = Modifier
-                  .size(28.dp)
-                  .clip(RoundedCornerShape(14.dp))
-                  .background(Color(0xFF6200EE))
-                  .align(Alignment.TopEnd)
-                  .padding(4.dp)
+              modifier =
+                  Modifier.size(28.dp)
+                      .clip(RoundedCornerShape(14.dp))
+                      .background(Color(0xFF6200EE))
+                      .align(Alignment.TopEnd)
+                      .padding(4.dp)) {
 
-
-          ) {
-              // Icon inside the circle
-              Icon(
-                  Icons.Rounded.FavoriteBorder,
-                  contentDescription = ""
-              )
-          }
-      }
+                // Icon inside the circle
+                Icon(Icons.Rounded.FavoriteBorder, contentDescription = "")
+              }
+        }
 
         Column(modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp)) {
           Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
@@ -147,21 +138,17 @@ fun EventCard(event: Event, onClick: () -> Unit) {
 
             Text(
                 modifier =
-                    Modifier.padding(vertical = 1.dp, horizontal = 0.dp)
-                        .testTag("event_EventDate"),
-                        //.wrapContentWidth(),
+                    Modifier.padding(vertical = 1.dp, horizontal = 0.dp).testTag("event_EventDate"),
+                // .wrapContentWidth(),
                 text = formatTimestamp(event.date, SimpleDateFormat("dd/MM", Locale.getDefault())),
                 style = MaterialTheme.typography.bodySmall,
                 color = Color.Black)
 
             Spacer(modifier = Modifier.width(2.dp))
 
-            Spacer(modifier = Modifier
-                .height(10.dp)
-                .width(1.dp)
-                .background(primaryContainerLight))
+            Spacer(modifier = Modifier.height(10.dp).width(1.dp).background(primaryContainerLight))
 
-              Spacer(modifier = Modifier.width(2.dp))
+            Spacer(modifier = Modifier.width(2.dp))
 
             Text(
                 modifier = Modifier.testTag("event_EventTime").wrapContentWidth(),
@@ -169,20 +156,17 @@ fun EventCard(event: Event, onClick: () -> Unit) {
                 style = MaterialTheme.typography.bodySmall,
                 color = Color.Black)
           }
-            Row {
-                Spacer(modifier = Modifier.width(4.dp))
-                Spacer(modifier = Modifier
-                    .fillMaxWidth()
-                    .height(1.dp)
-                    .background(primaryContainerLight)
-                )
-            }
-
+          Row {
+            Spacer(modifier = Modifier.width(4.dp))
+            Spacer(
+                modifier = Modifier.fillMaxWidth().height(1.dp).background(primaryContainerLight))
+          }
 
           Text(
-              modifier = Modifier
-                  .padding(vertical = 1.dp, horizontal = 4.dp)
-                  .testTag("event_EventCatchyDescription").wrapContentWidth(),
+              modifier =
+                  Modifier.padding(vertical = 1.dp, horizontal = 4.dp)
+                      .testTag("event_EventCatchyDescription")
+                      .wrapContentWidth(),
               text = event.catchyDescription,
               style = MaterialTheme.typography.bodySmall,
               color = Color.Black)

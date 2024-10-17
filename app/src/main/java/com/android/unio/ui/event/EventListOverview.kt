@@ -42,7 +42,11 @@ fun EventListOverviewPreview() {
   val navController = rememberNavController()
   val navigationActions = NavigationAction(navController)
 
-  EventListOverview(eventListViewModel = eventListViewModel, onAddEvent = {}, onEventClick = {}, navigationActions)
+  EventListOverview(
+      eventListViewModel = eventListViewModel,
+      onAddEvent = {},
+      onEventClick = {},
+      navigationActions)
 }
 
 @Composable

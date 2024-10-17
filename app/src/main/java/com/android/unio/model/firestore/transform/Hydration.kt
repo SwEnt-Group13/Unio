@@ -34,29 +34,28 @@ fun AssociationRepositoryFirestore.Companion.hydrate(data: Map<String, Any>?): A
 }
 
 fun UserRepositoryFirestore.Companion.hydrate(data: Map<String, Any>?): User {
-    val followingAssociationsUids = data?.get("followingAssociations") as? List<String> ?: emptyList()
-    val followingAssociations = FirestoreReferenceList.fromList(
-        followingAssociationsUids,
-        Firebase.firestore.collection(ASSOCIATION_PATH),
-        AssociationRepositoryFirestore::hydrate
-    )
+  val followingAssociationsUids = data?.get("followingAssociations") as? List<String> ?: emptyList()
+  val followingAssociations =
+      FirestoreReferenceList.fromList(
+          followingAssociationsUids,
+          Firebase.firestore.collection(ASSOCIATION_PATH),
+          AssociationRepositoryFirestore::hydrate)
 
-    val savedEventsUids = data?.get("savedEvents") as? List<String> ?: emptyList()
-    val savedEvents = FirestoreReferenceList.fromList(
-        savedEventsUids,
-        Firebase.firestore.collection(EVENT_PATH),
-        EventRepositoryFirestore::hydrate
-    )
+  val savedEventsUids = data?.get("savedEvents") as? List<String> ?: emptyList()
+  val savedEvents =
+      FirestoreReferenceList.fromList(
+          savedEventsUids,
+          Firebase.firestore.collection(EVENT_PATH),
+          EventRepositoryFirestore::hydrate)
 
-    return User(
-        uid = data?.get("uid") as? String ?: "",
-        name = data?.get("name") as? String ?: "",
-        email = data?.get("email") as? String ?: "",
-        followingAssociations = followingAssociations,
-        savedEvents = savedEvents  // Added savedEvents here
-    )
+  return User(
+      uid = data?.get("uid") as? String ?: "",
+      name = data?.get("name") as? String ?: "",
+      email = data?.get("email") as? String ?: "",
+      followingAssociations = followingAssociations,
+      savedEvents = savedEvents // Added savedEvents here
+      )
 }
-
 
 fun EventRepositoryFirestore.Companion.hydrate(data: Map<String, Any>?): Event {
   val organisers =
