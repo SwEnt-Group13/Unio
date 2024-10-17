@@ -6,6 +6,7 @@ import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventRepositoryFirestore
 import com.android.unio.model.event.EventType
 import com.android.unio.model.firestore.FirestorePaths.ASSOCIATION_PATH
+import com.android.unio.model.firestore.FirestorePaths.EVENT_PATH
 import com.android.unio.model.firestore.FirestorePaths.USER_PATH
 import com.android.unio.model.firestore.FirestoreReferenceList
 import com.android.unio.model.map.Location
@@ -33,19 +34,29 @@ fun AssociationRepositoryFirestore.Companion.hydrate(data: Map<String, Any>?): A
 }
 
 fun UserRepositoryFirestore.Companion.hydrate(data: Map<String, Any>?): User {
-  val followingAssociationsUids = data?.get("followingAssociations") as? List<String> ?: emptyList()
-  val followingAssociations =
-      FirestoreReferenceList.fromList(
-          followingAssociationsUids,
-          Firebase.firestore.collection(ASSOCIATION_PATH),
-          AssociationRepositoryFirestore::hydrate)
+    val followingAssociationsUids = data?.get("followingAssociations") as? List<String> ?: emptyList()
+    val followingAssociations = FirestoreReferenceList.fromList(
+        followingAssociationsUids,
+        Firebase.firestore.collection(ASSOCIATION_PATH),
+        AssociationRepositoryFirestore::hydrate
+    )
 
-  return User(
-      uid = data?.get("uid") as? String ?: "",
-      name = data?.get("name") as? String ?: "",
-      email = data?.get("email") as? String ?: "",
-      followingAssociations = followingAssociations)
+    val savedEventsUids = data?.get("savedEvents") as? List<String> ?: emptyList()
+    val savedEvents = FirestoreReferenceList.fromList(
+        savedEventsUids,
+        Firebase.firestore.collection(EVENT_PATH),
+        EventRepositoryFirestore::hydrate
+    )
+
+    return User(
+        uid = data?.get("uid") as? String ?: "",
+        name = data?.get("name") as? String ?: "",
+        email = data?.get("email") as? String ?: "",
+        followingAssociations = followingAssociations,
+        savedEvents = savedEvents  // Added savedEvents here
+    )
 }
+
 
 fun EventRepositoryFirestore.Companion.hydrate(data: Map<String, Any>?): Event {
   val organisers =

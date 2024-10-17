@@ -5,5 +5,7 @@ interface UserRepository {
 
   fun getUsers(onSuccess: (List<User>) -> Unit, onFailure: (Exception) -> Unit)
 
-  fun getUserWithId(id: String, onSuccess: (User) -> Unit, onFailure: (Exception) -> Unit)
+  fun getUserWithId(userId: String, onSuccess: (User) -> Unit, onFailure: (Exception) -> Unit)
+
+  fun saveEvent(userId: String, eventId: String, onSuccess: () -> Unit, onFailure: (Exception) -> Unit)
 }

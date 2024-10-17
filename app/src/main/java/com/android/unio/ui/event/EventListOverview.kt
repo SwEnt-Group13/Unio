@@ -26,7 +26,6 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
 import com.android.unio.model.event.Event
-import com.android.unio.model.event.EventCard
 import com.android.unio.model.event.EventListViewModel
 import com.android.unio.model.event.EventRepository
 import com.android.unio.model.event.EventRepositoryMock
