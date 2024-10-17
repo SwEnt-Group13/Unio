@@ -91,7 +91,7 @@ fun EmailVerificationScreen(navigationAction: NavigationAction) {
               if (success) {
                 Text("Email verified!", style = AppTypography.titleLarge)
                 Button(
-                    onClick = { navigationAction.navigateTo(Screen.HOME) },
+                    onClick = { navigationAction.navigateTo(Screen.ACCOUNT_DETAILS) },
                 ) {
                   Text("Continue")
                 }

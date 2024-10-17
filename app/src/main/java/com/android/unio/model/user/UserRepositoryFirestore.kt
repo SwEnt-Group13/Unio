@@ -2,6 +2,7 @@ package com.android.unio.model.user
 
 import com.android.unio.model.firestore.FirestorePaths.USER_PATH
 import com.android.unio.model.firestore.transform.hydrate
+import com.android.unio.model.firestore.transform.serialize
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -38,6 +39,14 @@ class UserRepositoryFirestore(private val db: FirebaseFirestore) : UserRepositor
           val user = hydrate(document.data)
           onSuccess(user)
         }
+        .addOnFailureListener { exception -> onFailure(exception) }
+  }
+
+  override fun updateUser(user: User, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+    db.collection(USER_PATH)
+        .document(user.uid)
+        .set(serialize(user))
+        .addOnSuccessListener { document -> onSuccess() }
         .addOnFailureListener { exception -> onFailure(exception) }
   }
 
