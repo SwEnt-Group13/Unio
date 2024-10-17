@@ -41,10 +41,15 @@ class HydrationAndSerializationTest {
             email = "1@gmail.com",
             name = "User 1",
             followingAssociations =
-                FirestoreReferenceList.fromList(
-                    listOf("1", "2"),
-                    FirebaseFirestore.getInstance().collection("associations"),
-                    AssociationRepositoryFirestore::hydrate))
+            FirestoreReferenceList.fromList(
+                listOf("1", "2"),
+                FirebaseFirestore.getInstance().collection("associations"),
+                AssociationRepositoryFirestore::hydrate),
+            savedEvents = FirestoreReferenceList.fromList(
+                listOf("1", "2"),
+                FirebaseFirestore.getInstance().collection("events"),
+                EventRepositoryFirestore::hydrate)
+        )
 
     association =
         Association(
