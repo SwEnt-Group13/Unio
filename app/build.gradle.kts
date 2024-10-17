@@ -28,7 +28,7 @@ android {
 
     defaultConfig {
         applicationId = "com.android.unio"
-        minSdk = 29
+        minSdk = 31
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -261,10 +261,9 @@ dependencies {
     implementation(libs.androidx.material.icons.extended)
 
     // AppSearch
-    val appsearch_version = "1.1.0-alpha05"
-    implementation("androidx.appsearch:appsearch:$appsearch_version")
-    implementation("androidx.appsearch:appsearch-local-storage:$appsearch_version")
-}
+    implementation(libs.androidx.appsearch)
+    implementation(libs.androidx.appsearch.local.storage)
+    implementation(libs.guava)}
 
 
 tasks.withType<Test> {
