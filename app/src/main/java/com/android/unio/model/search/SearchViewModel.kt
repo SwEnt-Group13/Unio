@@ -1,8 +1,6 @@
 package com.android.unio.model.search
 
 import android.content.Context
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -11,12 +9,15 @@ import androidx.lifecycle.viewModelScope
 import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationRepository
 import com.android.unio.model.event.Event
+import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
 import kotlinx.coroutines.launch
 
-/** ViewModel for searching associations and events. It uses a [SearchRepository] to create the
+/**
+ * ViewModel for searching associations and events. It uses a [SearchRepository] to create the
  * AppSearch database and exposes the results through a [LiveData] containing a list of respectively
- * [Association] and [Event] */
-@RequiresApi(Build.VERSION_CODES.S)
+ * [Association] and [Event]
+ */
 class SearchViewModel(private val repository: SearchRepository) : ViewModel() {
   private val _associations = MutableLiveData<List<Association>>()
   val associations: LiveData<List<Association>>
@@ -28,12 +29,16 @@ class SearchViewModel(private val repository: SearchRepository) : ViewModel() {
 
   /** Initializes the ViewModel by creating the search database and connecting it to the session. */
   init {
-    viewModelScope.launch { repository.init() }
+    Firebase.auth.addAuthStateListener {
+      if (it.currentUser != null) {
+        viewModelScope.launch { repository.init() }
+      }
+    }
   }
 
   /**
-   * Searches the associations in the search database using the given query and
-   * updates the internal [MutableLiveData].
+   * Searches the associations in the search database using the given query and updates the internal
+   * [MutableLiveData].
    *
    * @param query The query to search for.
    */
