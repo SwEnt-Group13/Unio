@@ -50,12 +50,6 @@ fun UnioApp() {
 
   val context = LocalContext.current
 
-  /*val imageRep = ImageRepositoryFirebaseStorage()
-  imageRep.getImageUrl("images/associations/x1GeH0NGw5ScCRyMKwca",
-    {url ->  Log.e("ASSOOO", url)}, {})*/
-  /*imageRep.uploadImage(context.assets.open("polysi.jpg"),
-    "images/associations/x1GeH0NGw5ScCRyMKwca", {url -> Log.e("ASSOOO", "IMAGE UPLOADED")}, {})
-  */
   // Redirect user based on authentication state
   Firebase.auth.addAuthStateListener { auth ->
     val user = auth.currentUser
