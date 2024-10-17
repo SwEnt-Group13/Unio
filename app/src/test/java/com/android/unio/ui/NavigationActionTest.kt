@@ -9,6 +9,7 @@ import com.android.unio.ui.navigation.Route
 import com.android.unio.ui.navigation.Screen
 import com.android.unio.ui.navigation.TopLevelDestinations
 import org.hamcrest.CoreMatchers.`is`
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito.`when`
@@ -51,5 +52,33 @@ class NavigationActionTest {
     `when`(navigationDestination.route).thenReturn(Route.HOME)
 
     assertThat(navigationAction.getCurrentRoute(), `is`(Route.HOME))
+  }
+
+  @Test
+  fun testNavigateToAssociationProfileFromExplore() {
+    navigationAction.navigateTo(TopLevelDestinations.EXPLORE)
+    verify(navHostController).navigate(eq(Route.EXPLORE), any<NavOptionsBuilder.() -> Unit>())
+
+    navigationAction.navigateTo(Screen.ASSOCIATION_PROFILE)
+    verify(navHostController).navigate(Screen.ASSOCIATION_PROFILE)
+  }
+
+  @Test
+  fun testScreenWithSingleParam() {
+    val screen = Screen.ASSOCIATION_PROFILE
+    val uid = "2024"
+    val result = Screen.withParams(screen, uid)
+    val expected = Screen.ASSOCIATION_PROFILE.replace("{uid}", uid)
+    assertEquals(expected, result)
+  }
+
+  @Test
+  fun testScreenWithMultipleParams() {
+    val screen = "association/{uid}/{eid}"
+    val uid = "2024"
+    val eid = "2025"
+    val result = Screen.withParams(screen, uid, eid)
+    val expected = screen.replace("{uid}", uid).replace("{eid}", eid)
+    assertEquals(expected, result)
   }
 }

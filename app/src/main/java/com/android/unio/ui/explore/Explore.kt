@@ -1,5 +1,7 @@
 package com.android.unio.ui.explore
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -22,6 +24,8 @@ import androidx.compose.material3.SearchBar
 import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -29,11 +33,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.android.unio.R
 import com.android.unio.model.association.Association
-import com.android.unio.model.association.MockAssociation
-import com.android.unio.model.association.MockAssociationType
-import com.android.unio.model.association.mockAssociations
+import com.android.unio.model.association.AssociationCategory
+import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.search.SearchViewModel
 import com.android.unio.ui.navigation.BottomNavigationMenu
 import com.android.unio.ui.navigation.LIST_TOP_LEVEL_DESTINATION
@@ -42,8 +46,13 @@ import com.android.unio.ui.navigation.Route
 import com.android.unio.ui.navigation.Screen
 import com.android.unio.ui.theme.AppTypography
 
+@RequiresApi(Build.VERSION_CODES.S)
 @Composable
-fun ExploreScreen(navigationAction: NavigationAction, searchViewModel: SearchViewModel) {
+fun ExploreScreen(
+    navigationAction: NavigationAction,
+    associationViewModel: AssociationViewModel = viewModel(factory = AssociationViewModel.Factory),
+    searchViewModel: SearchViewModel
+) {
 
   Scaffold(
       bottomBar = {
@@ -51,16 +60,27 @@ fun ExploreScreen(navigationAction: NavigationAction, searchViewModel: SearchVie
             { navigationAction.navigateTo(it.route) }, LIST_TOP_LEVEL_DESTINATION, Route.EXPLORE)
       },
       modifier = Modifier.testTag("exploreScreen"),
-      content = { padding -> ExploreScreenContent(padding, navigationAction, searchViewModel) })
+      content = { padding ->
+        ExploreScreenContent(padding, navigationAction, associationViewModel, searchViewModel)
+      })
 }
 
+/**
+ * The content of the Explore screen. It displays a list of associations grouped by category.
+ *
+ * @param padding The padding values to apply to the content.
+ * @param navigationAction The navigation action to use when an association is clicked.
+ */
+@RequiresApi(Build.VERSION_CODES.S)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ExploreScreenContent(
     padding: PaddingValues,
     navigationAction: NavigationAction,
+    associationViewModel: AssociationViewModel,
     searchViewModel: SearchViewModel
 ) {
+  val associationsByCategory by associationViewModel.associationsByCategory.collectAsState()
   val searchQuery = remember { mutableStateOf("") }
   Column(modifier = Modifier.padding(padding)) {
     Text(
@@ -81,8 +101,18 @@ fun ExploreScreenContent(
               onSearch = { searchViewModel.searchAssociations(searchQuery.value) },
               expanded = false,
               onExpandedChange = { /* Handle expanded state change here */},
-              placeholder = { Text(text = "Search", style = AppTypography.bodyLarge) },
-              trailingIcon = { Icon(Icons.Default.Search, contentDescription = "Search icon") },
+              placeholder = {
+                Text(
+                    text = "Search",
+                    style = AppTypography.bodyLarge,
+                    modifier = Modifier.testTag("searchPlaceHolder"))
+              },
+              trailingIcon = {
+                Icon(
+                    Icons.Default.Search,
+                    contentDescription = "Search icon",
+                    modifier = Modifier.testTag("searchTrailingIcon"))
+              },
           )
         },
         expanded = false,
@@ -96,24 +126,30 @@ fun ExploreScreenContent(
         contentPadding = PaddingValues(vertical = 16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-      MockAssociationType.entries.forEach { category ->
-        val filteredAssociations = getFilteredAssociationsByCategoryAndAlphabeticalOrder(category)
+      getSortedEntriesAssociationsByCategory(associationsByCategory).forEach {
+          (category, associations) ->
+        val alphabeticalAssociations = getFilteredAssociationsByAlphabeticalOrder(associations)
 
-        if (filteredAssociations.isNotEmpty()) {
+        if (alphabeticalAssociations.isNotEmpty()) {
           item {
             Text(
-                text = getCategoryNameWithFirstLetterUppercase(category),
+                text = category.displayName,
                 style = AppTypography.headlineSmall,
-                modifier = Modifier.padding(horizontal = 16.dp))
+                modifier =
+                    Modifier.padding(horizontal = 16.dp)
+                        .testTag("category_${category.displayName}"))
 
             // Horizontal scrollable list of associations
             LazyRow(
-                modifier = Modifier.fillMaxSize().padding(vertical = 16.dp),
+                modifier =
+                    Modifier.fillMaxSize()
+                        .padding(vertical = 16.dp)
+                        .testTag("associationRow_${category.displayName}"),
                 contentPadding = PaddingValues(horizontal = 16.dp),
                 horizontalArrangement = Arrangement.spacedBy(32.dp, Alignment.Start),
                 verticalAlignment = Alignment.CenterVertically) {
-                  items(filteredAssociations.size) { index ->
-                    AssociationItem(filteredAssociations[index].association, navigationAction)
+                  items(alphabeticalAssociations.size) { index ->
+                    AssociationItem(alphabeticalAssociations[index], navigationAction)
                   }
                 }
           }
@@ -123,35 +159,51 @@ fun ExploreScreenContent(
   }
 }
 
+/**
+ * A single item in the horizontal list of associations. When clicked, it navigates to the
+ * association profile.
+ *
+ * @param association The association to display.
+ * @param navigationAction The navigation action to use when the item is clicked.
+ */
 @Composable
 fun AssociationItem(association: Association, navigationAction: NavigationAction) {
-  Column(modifier = Modifier.clickable { navigationAction.navigateTo(Screen.ASSOCIATION) }) {
-    /**
-     * AdEC image is used as the placeholder. Will need to add the actual image later, when the
-     * actual view model is used.
-     */
-    Image(
-        painter = painterResource(id = R.drawable.adec),
-        contentDescription = "image description",
-        modifier = Modifier.size(124.dp))
+  Column(
+      modifier =
+          Modifier.clickable {
+                navigationAction.navigateTo(
+                    Screen.withParams(Screen.ASSOCIATION_PROFILE, association.uid))
+              }
+              .testTag("associationItem_${association.name}")) {
+        /**
+         * AdEC image is used as the placeholder. Will need to add the actual image later, when the
+         * actual view model is used.
+         */
+        Image(
+            painter = painterResource(id = R.drawable.adec),
+            contentDescription = "image description",
+            modifier = Modifier.size(124.dp))
 
-    Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
-    Text(
-        text = association.acronym,
-        style = AppTypography.bodyMedium,
-        modifier = Modifier.fillMaxWidth().align(Alignment.CenterHorizontally))
-  }
+        Text(
+            text = association.name,
+            style = AppTypography.bodyMedium,
+            modifier =
+                Modifier.fillMaxWidth()
+                    .align(Alignment.CenterHorizontally)
+                    .testTag("associationName_${association.name}"))
+      }
 }
 
-/** Returns a list of associations filtered by the given category. */
-fun getFilteredAssociationsByCategoryAndAlphabeticalOrder(
-    category: MockAssociationType
-): List<MockAssociation> {
-  return mockAssociations().filter { it.type == category }.sortedBy { it.association.acronym }
+/** Returns a list of associations sorted by alphabetical order. */
+fun getFilteredAssociationsByAlphabeticalOrder(associations: List<Association>): List<Association> {
+  return associations.sortedBy { it.name }
 }
 
-/** Returns the name of the category with the first letter in uppercase. */
-fun getCategoryNameWithFirstLetterUppercase(category: MockAssociationType): String {
-  return category.name.lowercase().replaceFirstChar { it.uppercase() }
+/** Returns the entries of the association map sorted by the key's display name. */
+fun getSortedEntriesAssociationsByCategory(
+    associationsByCategory: Map<AssociationCategory, List<Association>>
+): List<Map.Entry<AssociationCategory, List<Association>>> {
+  return associationsByCategory.entries.sortedBy { it.key.displayName }
 }

@@ -2,13 +2,11 @@ package com.android.unio.model.association
 
 import android.util.Log
 import com.android.unio.model.firestore.FirestorePaths.ASSOCIATION_PATH
-import com.android.unio.model.firestore.FirestorePaths.USER_PATH
-import com.android.unio.model.firestore.FirestoreReferenceList
-import com.android.unio.model.user.UserRepositoryFirestore
+import com.android.unio.model.firestore.transform.hydrate
+import com.android.unio.model.firestore.transform.serialize
 import com.google.android.gms.tasks.Task
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
-import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.firestore
@@ -45,7 +43,7 @@ class AssociationRepositoryFirestore(private val db: FirebaseFirestore) : Associ
         onSuccess = { result ->
           val associations = mutableListOf<Association>()
           for (document in result) {
-            val association = hydrate(document)
+            val association = hydrate(document.data)
 
             associations.add(association)
           }
@@ -61,7 +59,7 @@ class AssociationRepositoryFirestore(private val db: FirebaseFirestore) : Associ
   ) {
     performFirestoreOperation(
         db.collection(ASSOCIATION_PATH).document(id).get(),
-        onSuccess = { document -> onSuccess(hydrate(document)) },
+        onSuccess = { document -> onSuccess(hydrate(document.data)) },
         onFailure = { exception -> onFailure(exception) })
   }
 
@@ -71,7 +69,7 @@ class AssociationRepositoryFirestore(private val db: FirebaseFirestore) : Associ
       onFailure: (Exception) -> Unit
   ) {
     performFirestoreOperation(
-        db.collection(ASSOCIATION_PATH).document(association.uid).set(association),
+        db.collection(ASSOCIATION_PATH).document(association.uid).set(serialize(association)),
         onSuccess = { onSuccess() },
         onFailure)
   }
@@ -82,7 +80,7 @@ class AssociationRepositoryFirestore(private val db: FirebaseFirestore) : Associ
       onFailure: (Exception) -> Unit
   ) {
     performFirestoreOperation(
-        db.collection(ASSOCIATION_PATH).document(association.uid).set(association),
+        db.collection(ASSOCIATION_PATH).document(association.uid).set(serialize(association)),
         onSuccess = { onSuccess() },
         onFailure)
   }
@@ -116,22 +114,6 @@ class AssociationRepositoryFirestore(private val db: FirebaseFirestore) : Associ
     }
   }
 
-  companion object {
-    fun hydrate(doc: DocumentSnapshot): Association {
-      val memberUids = doc.get("members") as? List<String> ?: emptyList()
-      val members =
-          FirestoreReferenceList.fromList(
-              list = memberUids,
-              collection = Firebase.firestore.collection(USER_PATH),
-              hydrate = UserRepositoryFirestore::hydrate)
-
-      return Association(
-          uid = doc.id,
-          url = doc.getString("url") ?: "",
-          acronym = doc.getString("acronym") ?: "",
-          fullName = doc.getString("fullName") ?: "",
-          description = doc.getString("description") ?: "",
-          members = members)
-    }
-  }
+  // Note: the following line is needed to add external methods to the companion object
+  companion object
 }

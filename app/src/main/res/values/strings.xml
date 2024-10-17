@@ -71,6 +71,25 @@
     <string name="screen_explore" translatable="false">Explore Screen</string>
     <string name="screen_saved" translatable="false">Saved Screen</string>
     <string name="screen_my_profile" translatable="false">My Profile Screen</string>
-    <string name="screen_association" translatable="false">Association Screen</string>
+
+    <!-- Association Strings -->
+    <string name="association_upcoming_events" translatable="true">Upcoming Events</string>
+    <string name="association_go_back" translatable="true">Go Back</string>
+    <string name="association_see_more" translatable="true">See More</string>
+    <string name="association_contact_members" translatable="true">Contact Members</string>
+    <string name="association_help_us" translatable="true">
+        Here’s where you could help us. Click on a role to learn more.
+    </string>
+    <string name="association_follower" translatable="true">followers</string>
+    <string name="association_member" translatable="true">members</string>
+    <string name="association_follow" translatable="true">follow</string>
+    <string name="association_join" translatable="true">Join</string>
+
+    <!-- Debug Strings -->
+    <string name="debug_lorem_ipsum" translatable="false">Lorem ipsum dolor sit amet, consectetur
+        adipiscing elit. Nam nec fermentum orci. Praesent tortor purus, porta at ligula id, vehicula sodales
+        sem. Morbi id leo nisi. Cras pretium orci vitae sapien aliquet aliquam. Phasellus vestibulum
+        diam nec consequat hendrerit.
+    </string>
 </resources>
 

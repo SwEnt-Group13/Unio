@@ -2,6 +2,8 @@ package com.android.unio
 
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
@@ -9,14 +11,17 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
+import com.android.unio.model.association.AssociationViewModel
+import com.android.unio.ui.association.AssociationProfileScreen
 import com.android.unio.model.association.AssociationRepositoryFirestore
 import com.android.unio.model.search.SearchViewModel
-import com.android.unio.ui.association.AssociationProfile
 import com.android.unio.ui.authentication.AccountDetails
 import com.android.unio.ui.authentication.EmailVerificationScreen
 import com.android.unio.ui.authentication.WelcomeScreen
@@ -50,10 +55,14 @@ class MainActivity : ComponentActivity() {
   }
 }
 
+@RequiresApi(Build.VERSION_CODES.S)
 @Composable
 fun UnioApp(searchViewModel: SearchViewModel) {
   val navController = rememberNavController()
   val navigationActions = NavigationAction(navController)
+  val associationViewModel: AssociationViewModel = viewModel(factory = AssociationViewModel.Factory)
+
+  val context = LocalContext.current
 
   // Redirect user based on authentication state
   Firebase.auth.addAuthStateListener { auth ->
@@ -79,8 +88,21 @@ fun UnioApp(searchViewModel: SearchViewModel) {
       composable(Screen.HOME) { HomeScreen(navigationActions) }
     }
     navigation(startDestination = Screen.EXPLORE, route = Route.EXPLORE) {
-      composable(Screen.EXPLORE) { ExploreScreen(navigationActions, searchViewModel) }
-      composable(Screen.ASSOCIATION) { AssociationProfile(navigationActions) }
+      composable(Screen.EXPLORE) { ExploreScreen(navigationActions, associationViewModel, searchViewModel) }
+      composable(Screen.ASSOCIATION_PROFILE) { navBackStackEntry ->
+        // Get the association UID from the arguments
+        val uid = navBackStackEntry.arguments?.getString("uid")
+
+        // Create the AssociationProfile screen with the association UID
+        uid?.let {
+          AssociationProfileScreen(navigationAction = navigationActions, associationId = it)
+        }
+        uid?.let { AssociationProfileScreen(navigationActions, it, associationViewModel) }
+            ?: run {
+              Log.e("AssociationProfile", "Association UID is null")
+              Toast.makeText(context, "Association UID is null", Toast.LENGTH_SHORT).show()
+            }
+      }
     }
     navigation(startDestination = Screen.SAVED, route = Route.SAVED) {
       composable(Screen.SAVED) { SavedScreen(navigationActions) }
