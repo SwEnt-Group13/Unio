@@ -9,7 +9,6 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
-import com.google.firebase.firestore.firestore
 
 class AssociationRepositoryFirestore(private val db: FirebaseFirestore) : AssociationRepository {
 
@@ -22,7 +21,7 @@ class AssociationRepositoryFirestore(private val db: FirebaseFirestore) : Associ
   }
 
   override fun addAssociationsListener(onAssociationsChanged: (QuerySnapshot) -> Unit) {
-    db.collection("associations").addSnapshotListener { snapshots, e ->
+    db.collection(ASSOCIATION_PATH).addSnapshotListener { snapshots, e ->
       if (e != null) {
         // TODO Handle exception
         return@addSnapshotListener
