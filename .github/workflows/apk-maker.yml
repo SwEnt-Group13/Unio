@@ -35,6 +35,19 @@ jobs:
           restore-keys: |
             gradle-${{ runner.os }}-
 
+      # Load google-services.json and local.properties from the secrets
+      - name: Decode secrets
+        env:
+          GOOGLE_SERVICES: ${{ secrets.GOOGLE_SERVICES }}
+          LOCAL_PROPERTIES: ${{ secrets.LOCAL_PROPERTIES }}
+        run: |
+          echo "$GOOGLE_SERVICES" | base64 --decode > ./app/google-services.json
+          echo "$LOCAL_PROPERTIES" | base64 --decode > ./local.properties
+
+      - name: Grant execute permission for gradlew
+        run: |
+          chmod +x ./gradlew
+
       - name: Assemble app debug APK
         run: bash ./gradlew assembleDebug --stacktrace
 
