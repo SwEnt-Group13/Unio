@@ -79,10 +79,10 @@ fun AccountDetails(
   var showInterestsOverlay by remember { mutableStateOf(false) }
   val scrollState = rememberScrollState()
 
-  //    if(Firebase.auth.currentUser == null){
-  //        navigationAction.navigateTo(Screen.WELCOME)
-  //        return
-  //    }
+  if (Firebase.auth.currentUser == null) {
+    navigationAction.navigateTo(Screen.WELCOME)
+    return
+  }
   Column(
       modifier =
           Modifier.padding(vertical = 20.dp, horizontal = 40.dp)
