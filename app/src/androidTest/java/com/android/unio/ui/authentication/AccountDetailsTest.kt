@@ -8,19 +8,14 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
-import androidx.navigation.NavHostController
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.ui.accountCreation.AccountDetails
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.auth
-import com.google.firebase.firestore.CollectionReference
-import com.google.firebase.firestore.FirebaseFirestore
-import com.kaspersky.components.kautomator.common.Environment
+import com.google.firebase.auth.internal.zzac
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
@@ -29,49 +24,38 @@ import io.mockk.mockkStatic
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.mockito.Mock
-import org.mockito.MockitoAnnotations
+import org.mockito.Mockito.mock
+import org.mockito.Mockito.`when`
 import org.mockito.kotlin.verify
 
-@RunWith(AndroidJUnit4::class)
 class AccountDetailsTest {
 
-  @Mock private lateinit var db: FirebaseFirestore
-  @Mock private lateinit var collectionReference: CollectionReference
-
-  @MockK private lateinit var navigationAction: NavigationAction
-  @MockK private lateinit var navHostController: NavHostController
+  @MockK private lateinit var firebaseAuth: FirebaseAuth
+  private lateinit var navigationAction: NavigationAction
   @MockK private lateinit var userRepositoryFirestore: UserRepositoryFirestore
 
-  private lateinit var mockFirebaseUser: FirebaseUser
-  private lateinit var mockFirebaseAuth: FirebaseAuth
+  // This is the implementation of the abstract method getUid() from FirebaseUser.
+  // Because it is impossible to mock abstract method, this is the only way to mock it.
+  @MockK private lateinit var mockFirebaseUser: zzac
 
   @get:Rule val composeTestRule = createComposeRule()
 
   @Before
   fun setUp() {
-    MockitoAnnotations.initMocks(this)
-
-    // Initialize MockK annotations if you have any @MockK annotations
     MockKAnnotations.init(this, relaxed = true)
 
-    // Mock FirebaseAuth and FirebaseUser
-    mockFirebaseAuth = mockk(relaxed = true)
-    mockFirebaseUser = mockk(relaxed = true)
-
-    // Mock the static Firebase.auth to return our mockFirebaseAuth
-    mockkStatic(Firebase::class)
-    mockkStatic(com.google.firebase.ktx.Firebase::class)
-    every { Firebase.auth } returns mockFirebaseAuth
-
-    // Set up the behavior for mockFirebaseAuth and mockFirebaseUser
-    every { mockFirebaseAuth.currentUser } returns mockFirebaseUser
+    // Mocking the Firebase.auth object and it's behaviour
+    mockkStatic(FirebaseAuth::class)
+    every { Firebase.auth } returns firebaseAuth
+    every { firebaseAuth.currentUser } returns mockFirebaseUser
     every { mockFirebaseUser.uid } returns "mocked-uid"
 
-    navHostController = mockk(relaxed = true)
-    navigationAction = NavigationAction(navHostController)
+    // Mocking the UserRepositoryFirestore object
     userRepositoryFirestore = mockk(relaxed = true)
+
+    // Mocking the navigationAction object
+    navigationAction = mock(NavigationAction::class.java)
+    `when`(navigationAction.getCurrentRoute()).thenReturn(Screen.ACCOUNT_DETAILS)
 
     composeTestRule.setContent { AccountDetails(navigationAction, userRepositoryFirestore) }
   }
@@ -141,6 +125,6 @@ class AccountDetailsTest {
   @Test
   fun testContinueButtonCorrectlyNavigatesToHome() {
     composeTestRule.onNodeWithTag("AccountDetailsContinueButton").performClick()
-    verify(navHostController).navigate(Screen.HOME)
+    verify(navigationAction).navigateTo(screen = Screen.HOME)
   }
 }
