@@ -1,27 +1,32 @@
 package com.android.unio.model.firestore
 
-import androidx.test.core.app.ApplicationProvider
 import com.android.unio.model.association.Association
+import com.android.unio.model.association.AssociationCategory
 import com.android.unio.model.association.AssociationRepositoryFirestore
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventRepositoryFirestore
 import com.android.unio.model.firestore.transform.hydrate
 import com.android.unio.model.firestore.transform.serialize
 import com.android.unio.model.map.Location
+import com.android.unio.model.user.Interest
+import com.android.unio.model.user.Social
 import com.android.unio.model.user.User
 import com.android.unio.model.user.UserRepositoryFirestore
-import com.google.firebase.FirebaseApp
+import com.android.unio.model.user.UserSocial
+import com.google.firebase.Firebase
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.firestore
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.mockkStatic
 import junit.framework.TestCase.assertEquals
 import org.junit.Before
 import org.junit.Test
-import org.junit.runner.RunWith
 import org.mockito.MockitoAnnotations
-import org.robolectric.RobolectricTestRunner
 
-@RunWith(RobolectricTestRunner::class)
 class HydrationAndSerializationTest {
+  private lateinit var db: FirebaseFirestore
   private lateinit var user: User
   private lateinit var association: Association
   private lateinit var event: Event
@@ -30,39 +35,35 @@ class HydrationAndSerializationTest {
   fun setUp() {
     MockitoAnnotations.openMocks(this)
 
-    // Initialize Firebase if necessary
-    if (FirebaseApp.getApps(ApplicationProvider.getApplicationContext()).isEmpty()) {
-      FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext())
-    }
+    db = mockk()
+    mockkStatic(FirebaseFirestore::class)
+    every { Firebase.firestore } returns db
 
     user =
         User(
             uid = "1",
             email = "1@gmail.com",
-            name = "User 1",
-            followingAssociations =
-                FirestoreReferenceList.fromList(
-                    listOf("1", "2"),
-                    FirebaseFirestore.getInstance().collection("associations"),
-                    AssociationRepositoryFirestore::hydrate),
-            savedEvents =
-                FirestoreReferenceList.fromList(
-                    listOf("1", "2"),
-                    FirebaseFirestore.getInstance().collection("events"),
-                    EventRepositoryFirestore::hydrate))
+            firstName = "userFirst",
+            lastName = "userLast",
+            biography = "An example user",
+            followingAssociations = Association.firestoreReferenceListWith(listOf("1", "2")),
+            interests = listOf(Interest.SPORTS, Interest.MUSIC),
+            socials =
+                listOf(
+                    UserSocial(Social.INSTAGRAM, "Insta"),
+                    UserSocial(Social.WEBSITE, "example.com")),
+            profilePicture = "https://www.example.com/image")
 
     association =
         Association(
             uid = "1",
             url = "https://www.example.com",
-            acronym = "EX",
+            name = "EX",
             fullName = "Example Association",
+            category = AssociationCategory.ARTS,
             description = "An example association",
-            members =
-                FirestoreReferenceList.fromList(
-                    listOf("1", "2"),
-                    FirebaseFirestore.getInstance().collection("users"),
-                    UserRepositoryFirestore::hydrate))
+            members = User.firestoreReferenceListWith(listOf("1", "2")),
+            image = "https://www.example.com/image.jpg")
 
     event =
         Event(
@@ -74,17 +75,8 @@ class HydrationAndSerializationTest {
             price = 0.0,
             date = Timestamp.now(),
             location = Location(latitude = 0.0, longitude = 0.0, name = "Example Location"),
-            organisers =
-                FirestoreReferenceList.fromList(
-                    listOf("1", "2"),
-                    FirebaseFirestore.getInstance().collection("associations"),
-                    AssociationRepositoryFirestore::hydrate),
-            taggedAssociations =
-                FirestoreReferenceList.fromList(
-                    listOf("1", "2"),
-                    FirebaseFirestore.getInstance().collection("associations"),
-                    AssociationRepositoryFirestore::hydrate),
-        )
+            organisers = Association.firestoreReferenceListWith(listOf("1", "2")),
+            taggedAssociations = Association.firestoreReferenceListWith(listOf("1", "2")))
   }
 
   /** Round-trip tests for serialization and hydration of user, association, and event instances. */
@@ -93,16 +85,28 @@ class HydrationAndSerializationTest {
     val serialized = UserRepositoryFirestore.serialize(user)
 
     assertEquals(user.uid, serialized["uid"])
-    assertEquals(user.name, serialized["name"])
     assertEquals(user.email, serialized["email"])
+    assertEquals(user.firstName, serialized["firstName"])
+    assertEquals(user.lastName, serialized["lastName"])
+    assertEquals(user.biography, serialized["biography"])
     assertEquals(user.followingAssociations.list.value, serialized["followingAssociations"])
+    assertEquals(user.interests.map { it.name }, serialized["interests"])
+    assertEquals(
+        user.socials.map { mapOf("social" to it.social.name, "content" to it.content) },
+        serialized["socials"])
+    assertEquals(user.profilePicture, serialized["profilePicture"])
 
     val hydrated = UserRepositoryFirestore.hydrate(serialized)
 
     assertEquals(user.uid, hydrated.uid)
-    assertEquals(user.name, hydrated.name)
     assertEquals(user.email, hydrated.email)
+    assertEquals(user.firstName, hydrated.firstName)
+    assertEquals(user.lastName, hydrated.lastName)
+    assertEquals(user.biography, hydrated.biography)
     assertEquals(user.followingAssociations.list.value, hydrated.followingAssociations.list.value)
+    assertEquals(user.interests, hydrated.interests)
+    assertEquals(user.socials, hydrated.socials)
+    assertEquals(user.profilePicture, hydrated.profilePicture)
   }
 
   @Test
@@ -111,7 +115,7 @@ class HydrationAndSerializationTest {
 
     assertEquals(association.uid, serialized["uid"])
     assertEquals(association.url, serialized["url"])
-    assertEquals(association.acronym, serialized["acronym"])
+    assertEquals(association.name, serialized["name"])
     assertEquals(association.fullName, serialized["fullName"])
     assertEquals(association.description, serialized["description"])
     assertEquals(association.members.list.value, serialized["members"])
@@ -120,7 +124,7 @@ class HydrationAndSerializationTest {
 
     assertEquals(association.uid, hydrated.uid)
     assertEquals(association.url, hydrated.url)
-    assertEquals(association.acronym, hydrated.acronym)
+    assertEquals(association.name, hydrated.name)
     assertEquals(association.fullName, hydrated.fullName)
     assertEquals(association.description, hydrated.description)
     assertEquals(association.members.list.value, hydrated.members.list.value)
@@ -166,9 +170,14 @@ class HydrationAndSerializationTest {
     val hydrated = UserRepositoryFirestore.hydrate(serialized)
 
     assertEquals("", hydrated.uid)
-    assertEquals("", hydrated.name)
     assertEquals("", hydrated.email)
+    assertEquals("", hydrated.firstName)
+    assertEquals("", hydrated.lastName)
+    assertEquals("", hydrated.biography)
     assertEquals(emptyList<String>(), hydrated.followingAssociations.list.value)
+    assertEquals(emptyList<Interest>(), hydrated.interests)
+    assertEquals(emptyList<UserSocial>(), hydrated.socials)
+    assertEquals("", hydrated.profilePicture)
   }
 
   @Test
@@ -179,7 +188,7 @@ class HydrationAndSerializationTest {
 
     assertEquals("", hydrated.uid)
     assertEquals("", hydrated.url)
-    assertEquals("", hydrated.acronym)
+    assertEquals("", hydrated.name)
     assertEquals("", hydrated.fullName)
     assertEquals("", hydrated.description)
     assertEquals(emptyList<String>(), hydrated.members.list.value)

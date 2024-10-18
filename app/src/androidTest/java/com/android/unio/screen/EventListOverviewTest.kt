@@ -6,15 +6,20 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.unit.ExperimentalUnitApi
+import androidx.navigation.NavHostController
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventListViewModel
 import com.android.unio.model.event.EventRepositoryMock
-import com.android.unio.ui.event.EventListOverview
+import com.android.unio.ui.home.HomeScreen
+import com.android.unio.ui.navigation.NavigationAction
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.kotlin.mock
 
 /**
  * Test class for the EventListOverview Composable. This class contains unit tests to validate the
@@ -28,6 +33,14 @@ class EventListOverviewTest {
 
   // Mock event repository to provide test data.
   private val mockEventRepository = EventRepositoryMock()
+  private lateinit var navHostController: NavHostController
+  private lateinit var navigationAction: NavigationAction
+
+  @Before
+  fun setUp() {
+    navHostController = mock { NavHostController::class.java }
+    navigationAction = NavigationAction(navHostController)
+  }
 
   /**
    * Tests the functionality of switching between tabs and verifying animations. Ensures that the
@@ -38,7 +51,11 @@ class EventListOverviewTest {
   fun testTabSwitchingAndAnimation() {
     composeTestRule.setContent {
       val eventListViewModel = EventListViewModel(mockEventRepository)
-      EventListOverview(eventListViewModel = eventListViewModel, onAddEvent = {}, onEventClick = {})
+      HomeScreen(
+          navigationAction,
+          eventListViewModel = eventListViewModel,
+          onAddEvent = {},
+          onEventClick = {})
     }
 
     // Assert that the 'All' tab exists and has a click action.
@@ -74,7 +91,11 @@ class EventListOverviewTest {
             }
           }
       val eventListViewModel = EventListViewModel(emptyEventRepository)
-      EventListOverview(eventListViewModel = eventListViewModel, onAddEvent = {}, onEventClick = {})
+      HomeScreen(
+          navigationAction,
+          eventListViewModel = eventListViewModel,
+          onAddEvent = {},
+          onEventClick = {})
     }
 
     // Assert that the empty event prompt is displayed.
@@ -92,7 +113,8 @@ class EventListOverviewTest {
 
     composeTestRule.setContent {
       val eventListViewModel = EventListViewModel(mockEventRepository)
-      EventListOverview(
+      HomeScreen(
+          navigationAction = navigationAction,
           eventListViewModel = eventListViewModel,
           onAddEvent = { mapClicked = true },
           onEventClick = {})
@@ -107,13 +129,15 @@ class EventListOverviewTest {
    * Tests the sequence of clicking on the 'Following' tab and then on the 'Add' button to ensure
    * that both actions trigger their respective animations and behaviors.
    */
+  @OptIn(ExperimentalCoroutinesApi::class)
   @Test
   fun testClickFollowingAndAdd() = runBlockingTest {
     var addClicked = false
 
     composeTestRule.setContent {
       val eventListViewModel = EventListViewModel(mockEventRepository)
-      EventListOverview(
+      HomeScreen(
+          navigationAction,
           eventListViewModel = eventListViewModel,
           onAddEvent = { addClicked = true },
           onEventClick = {})

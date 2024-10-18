@@ -32,27 +32,17 @@ import java.util.Date
  * @property types list of event types
  */
 data class Event(
-    val uid: String = "",
+    var uid: String = "",
     val title: String = "",
     val organisers: ReferenceList<Association>,
     val taggedAssociations: ReferenceList<Association>,
-    val image: String = "",
+    var image: String = "",
     val description: String = "",
     val catchyDescription: String = "",
     val price: Double = 0.0,
     val date: Timestamp = Timestamp(Date()),
     val location: Location = Location(),
-    val types: List<EventType> = mutableListOf()
-)
-
-enum class EventType(val color: Color, val text: String) {
-  FESTIVAL(eventTypeFestival, "festival"),
-  APERITIF(eventTypeAperitif, "aperitif"),
-  NIGHT_PARTY(eventTypeNightParty, "night party"),
-  JAM(eventTypeJam, "jam"),
-  NETWORKING(eventTypeNetworking, "networking"),
-  SPORT(eventTypeSport, "sport"),
-  TRIP(eventTypeTrip, "trip"),
-  OTHER(eventTypeOther, "other")
-  // Default color
+    val types: List<EventType> = mutableListOf(EventType.OTHER)
+) {
+  companion object
 }

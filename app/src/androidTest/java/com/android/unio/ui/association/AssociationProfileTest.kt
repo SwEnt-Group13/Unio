@@ -1,19 +1,20 @@
 package com.android.unio.ui.association
 
-import androidx.compose.material3.Text
+import androidx.compose.ui.test.SemanticsNodeInteraction
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsNotDisplayed
+import androidx.compose.ui.test.isNotDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
-import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import androidx.navigation.NavHostController
 import com.android.unio.model.association.Association
+import com.android.unio.model.association.AssociationCategory
 import com.android.unio.model.association.AssociationRepository
 import com.android.unio.model.association.AssociationViewModel
-import com.android.unio.model.firestore.FirestorePaths.USER_PATH
-import com.android.unio.model.firestore.FirestoreReferenceList
-import com.android.unio.model.firestore.transform.hydrate
-import com.android.unio.model.user.UserRepositoryFirestore
+import com.android.unio.model.firestore.emptyFirestoreReferenceList
+import com.android.unio.model.user.User
 import com.android.unio.ui.navigation.NavigationAction
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
@@ -50,13 +51,14 @@ class AssociationProfileTest {
         listOf(
             Association(
                 uid = "1",
-                acronym = "ACM",
+                url = "",
+                name = "ACM",
                 fullName = "Association for Computing Machinery",
+                category = AssociationCategory.SCIENCE_TECH,
                 description =
                     "ACM is the world's largest educational and scientific computing society.",
-                members =
-                    FirestoreReferenceList.empty(
-                        db.collection(USER_PATH), UserRepositoryFirestore.Companion::hydrate)))
+                members = User.emptyFirestoreReferenceList(),
+                image = "https://www.example.com/image.jpg"))
 
     navHostController = mock { NavHostController::class.java }
     navigationAction = NavigationAction(navHostController)
@@ -65,18 +67,79 @@ class AssociationProfileTest {
   }
 
   @Test
-  fun testAssociationProfileDisplayedBadId() {
-    composeTestRule.setContent { AssociationProfile(navigationAction, "") }
+  fun testAssociationProfileDisplayComponent() {
+    composeTestRule.setContent {
+      AssociationProfileScreen(navigationAction, "", associationViewModel)
+    }
 
-    composeTestRule.onNodeWithTag("AssociationProfileTitle").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("AssociationScreen").assertIsDisplayed()
     composeTestRule.onNodeWithTag("goBackButton").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("AssociationProfileScreen").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("associationNotFound").assertIsDisplayed()
+
+    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationImageHeader"))
+    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationProfileTitle"))
+    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("associationShareButton"))
+    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationHeaderFollowers"))
+    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationHeaderMembers"))
+    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationFollowButton"))
+    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationDescription"))
+    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationEventTitle"))
+    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationEventCard"))
+    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationSeeMoreButton"))
+    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationContactMembersTitle"))
+    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationContactMembersCard"))
+    assertDisplayComponentInScroll(
+        composeTestRule.onNodeWithTag("AssociationRecruitmentDescription"))
+    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationRecruitmentRoles"))
+  }
+
+  private fun assertDisplayComponentInScroll(compose: SemanticsNodeInteraction) {
+    if (compose.isNotDisplayed()) {
+      compose.performScrollTo()
+    }
+    compose.assertIsDisplayed()
+  }
+
+  @Test
+  fun testButtonBehavior() {
+    composeTestRule.setContent {
+      AssociationProfileScreen(navigationAction, "", associationViewModel)
+    }
+    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("associationShareButton"))
+    composeTestRule.onNodeWithTag("associationShareButton").performClick()
+    assertSnackBarIsDisplayed()
+
+    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationFollowButton"))
+    composeTestRule.onNodeWithTag("AssociationFollowButton").performClick()
+    assertSnackBarIsDisplayed()
+
+    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationSeeMoreButton"))
+    composeTestRule.onNodeWithTag("AssociationSeeMoreButton").performClick()
+    assertSnackBarIsDisplayed()
+
+    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationContactMembersCard"))
+    composeTestRule.onNodeWithTag("AssociationContactMembersCard").performClick()
+    assertSnackBarIsDisplayed()
+
+    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationTreasurerRoles"))
+    composeTestRule.onNodeWithTag("AssociationTreasurerRoles").performClick()
+    assertSnackBarIsDisplayed()
+
+    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationDesignerRoles"))
+    composeTestRule.onNodeWithTag("AssociationDesignerRoles").performClick()
+    assertSnackBarIsDisplayed()
+  }
+
+  private fun assertSnackBarIsDisplayed() {
+    composeTestRule.onNodeWithTag("associationSnackbarHost").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("snackbarActionButton").performClick()
+    composeTestRule.onNodeWithTag("associationSnackbarHost").assertIsNotDisplayed()
   }
 
   @Test
   fun testGoBackButton() {
-    composeTestRule.setContent { AssociationProfile(navigationAction, "") }
+    composeTestRule.setContent {
+      AssociationProfileScreen(navigationAction, "", associationViewModel)
+    }
 
     composeTestRule.onNodeWithTag("goBackButton").performClick()
 
@@ -97,32 +160,16 @@ class AssociationProfileTest {
     }
 
     composeTestRule.setContent {
-      AssociationProfile(navigationAction, associations.first().uid, associationViewModel)
+      AssociationProfileScreen(navigationAction, associations.first().uid, associationViewModel)
     }
 
     composeTestRule.onNodeWithTag("AssociationProfileTitle").assertIsDisplayed()
     composeTestRule.onNodeWithTag("goBackButton").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("AssociationProfileScreen").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("associationAcronym").assertIsDisplayed()
-    composeTestRule
-        .onNodeWithText("Association acronym: ${associations.first().acronym}")
-        .assertIsDisplayed()
-  }
-
-  @Test
-  fun testAssociationProfileScaffold() {
-    composeTestRule.setContent {
-      AssociationProfileScaffold(
-          title = "Test Title",
-          navigationAction = navigationAction,
-      ) {
-        Text("Test Content")
-      }
-    }
-
-    composeTestRule.onNodeWithTag("AssociationProfileTitle").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("goBackButton").assertIsDisplayed()
-
-    composeTestRule.onNodeWithText("Test Content").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("AssociationScreen").assertIsDisplayed()
+    // TODO uncomment when implementing the association logic
+    //    composeTestRule.onNodeWithTag("associationAcronym").assertIsDisplayed()
+    //    composeTestRule
+    //        .onNodeWithText("Association acronym: ${associations.first().acronym}")
+    //        .assertIsDisplayed()
   }
 }

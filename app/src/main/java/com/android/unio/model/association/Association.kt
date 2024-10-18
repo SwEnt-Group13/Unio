@@ -9,16 +9,36 @@ import com.android.unio.model.user.User
  *
  * @property uid association id
  * @property url association url
- * @property acronym association acronym
+ * @property name association acronym
  * @property fullName association full name
  * @property description association description
  * @property members list of association members
  */
 data class Association(
     val uid: String,
-    val url: String = "",
-    val acronym: String = "",
-    val fullName: String = "",
-    val description: String = "",
-    val members: ReferenceList<User>
-)
+    val url: String,
+    val name: String,
+    val fullName: String,
+    val category: AssociationCategory,
+    val description: String,
+    val members: ReferenceList<User>,
+    var image: String
+) {
+  companion object
+}
+
+enum class AssociationCategory(val displayName: String) {
+  EPFL_BODIES("EPFL bodies"),
+  REPRESENTATION("Representation"),
+  PROJECTS("Interdisciplinary projects"),
+  EPFL_STUDENTS("EPFL Students"),
+  COUNTRIES("Students by country"),
+  SUSTAINABILITY("Sustainability"),
+  SCIENCE_TECH("Science and technology"),
+  CULTURE_SOCIETY("Culture and society"),
+  ARTS("Arts"),
+  ENTERTAINMENT("Entertainment"),
+  SPORTS("Sports"),
+  GUIDANCE("Vocational guidance"),
+  UNKNOWN("Unknown")
+}

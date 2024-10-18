@@ -1,11 +1,12 @@
 package com.android.unio.model.event
 
-import androidx.test.core.app.ApplicationProvider
-import com.android.unio.model.firestore.MockReferenceList
+import com.android.unio.model.association.Association
+import com.android.unio.model.firestore.FirestorePaths.EVENT_PATH
+import com.android.unio.model.firestore.emptyFirestoreReferenceList
 import com.android.unio.model.map.Location
 import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.gms.tasks.Task
-import com.google.firebase.FirebaseApp
+import com.google.firebase.Firebase
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
@@ -13,22 +14,22 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QueryDocumentSnapshot
 import com.google.firebase.firestore.QuerySnapshot
+import com.google.firebase.firestore.firestore
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.mockkStatic
 import java.util.GregorianCalendar
 import junit.framework.TestCase.assertEquals
 import org.junit.Assert.assertThrows
 import org.junit.Before
 import org.junit.Test
-import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.Mockito.`when`
 import org.mockito.MockitoAnnotations
 import org.mockito.kotlin.any
-import org.mockito.kotlin.eq
-import org.robolectric.RobolectricTestRunner
 
-@RunWith(RobolectricTestRunner::class)
 class EventRepositoryFirestoreTest {
-  @Mock private lateinit var db: FirebaseFirestore
+  private lateinit var db: FirebaseFirestore
 
   @Mock private lateinit var collectionReference: CollectionReference
 
@@ -53,14 +54,16 @@ class EventRepositoryFirestoreTest {
 
   private lateinit var repository: EventRepositoryFirestore
   private val defaultEvent =
-      Event(organisers = MockReferenceList(), taggedAssociations = MockReferenceList())
+      Event(
+          organisers = Association.emptyFirestoreReferenceList(),
+          taggedAssociations = Association.emptyFirestoreReferenceList())
   private val event1 =
       Event(
           uid = "1",
           title = "Balelec",
-          organisers = MockReferenceList(),
-          taggedAssociations = MockReferenceList(),
-          image = "",
+          organisers = Association.emptyFirestoreReferenceList(),
+          taggedAssociations = Association.emptyFirestoreReferenceList(),
+          image = "https://imageurl.jpg",
           description = "Plus grand festival du monde (non contractuel)",
           price = 40.5,
           date = Timestamp(GregorianCalendar(2004, 7, 1).time),
@@ -69,9 +72,9 @@ class EventRepositoryFirestoreTest {
       Event(
           uid = "3",
           title = "Tremplin Sysmic",
-          organisers = MockReferenceList(),
-          taggedAssociations = MockReferenceList(),
-          image = "",
+          organisers = Association.emptyFirestoreReferenceList(),
+          taggedAssociations = Association.emptyFirestoreReferenceList(),
+          image = "https://imageurl.jpg",
           description = "Plus grand festival du monde (non contractuel)",
           price = 40.5,
           date = Timestamp(GregorianCalendar(2008, 7, 1).time),
@@ -81,13 +84,12 @@ class EventRepositoryFirestoreTest {
   fun setUp() {
     MockitoAnnotations.openMocks(this)
 
-    // Initialize Firebase if necessary
-    if (FirebaseApp.getApps(ApplicationProvider.getApplicationContext()).isEmpty()) {
-      FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext())
-    }
-
     // When getting the collection, return the task
-    `when`(db.collection(eq("events"))).thenReturn(collectionReference)
+    db = mockk()
+    mockkStatic(FirebaseFirestore::class)
+    every { Firebase.firestore } returns db
+    every { db.collection(EVENT_PATH) } returns collectionReference
+
     `when`(collectionReference.get()).thenReturn(getTask)
 
     // When the task is successful, return the query snapshot

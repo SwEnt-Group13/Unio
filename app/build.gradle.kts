@@ -256,8 +256,11 @@ dependencies {
     androidTestImplementation(libs.kaspresso.compose.support)
 
     testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.mockk.v193)
 
     implementation(libs.androidx.material.icons.extended)
+    //for AsyncImage
+    implementation(libs.coil.compose)
 
 }
 

@@ -1,36 +1,37 @@
 package com.android.unio.model.association
 
-import androidx.test.core.app.ApplicationProvider
 import com.android.unio.model.firestore.FirestorePaths.ASSOCIATION_PATH
 import com.android.unio.model.firestore.FirestorePaths.USER_PATH
-import com.android.unio.model.firestore.FirestoreReferenceList
-import com.android.unio.model.firestore.transform.hydrate
-import com.android.unio.model.user.UserRepositoryFirestore
+import com.android.unio.model.firestore.emptyFirestoreReferenceList
+import com.android.unio.model.firestore.firestoreReferenceListWith
+import com.android.unio.model.user.User
 import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
-import com.google.firebase.FirebaseApp
+import com.google.firebase.Firebase
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QueryDocumentSnapshot
 import com.google.firebase.firestore.QuerySnapshot
+import com.google.firebase.firestore.firestore
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.mockkStatic
 import junit.framework.TestCase.assertEquals
 import org.junit.Before
 import org.junit.Test
-import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.Mockito.`when`
 import org.mockito.MockitoAnnotations
 import org.mockito.kotlin.any
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.verify
-import org.robolectric.RobolectricTestRunner
 
-@RunWith(RobolectricTestRunner::class)
 class AssociationRepositoryFirestoreTest {
-  @Mock private lateinit var db: FirebaseFirestore
+  private lateinit var db: FirebaseFirestore
   @Mock private lateinit var associationCollectionReference: CollectionReference
   @Mock private lateinit var userCollectionReference: CollectionReference
   @Mock private lateinit var querySnapshot: QuerySnapshot
@@ -39,6 +40,7 @@ class AssociationRepositoryFirestoreTest {
   @Mock private lateinit var documentReference: DocumentReference
   @Mock private lateinit var querySnapshotTask: Task<QuerySnapshot>
   @Mock private lateinit var documentSnapshotTask: Task<DocumentSnapshot>
+  @Mock private lateinit var query: Query
 
   private lateinit var repository: AssociationRepositoryFirestore
 
@@ -52,37 +54,35 @@ class AssociationRepositoryFirestoreTest {
   fun setUp() {
     MockitoAnnotations.openMocks(this)
 
-    // Initialize Firebase if necessary
-    if (FirebaseApp.getApps(ApplicationProvider.getApplicationContext()).isEmpty()) {
-      FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext())
-    }
-
-    `when`(db.collection(eq(ASSOCIATION_PATH))).thenReturn(associationCollectionReference)
-    `when`(db.collection(eq(USER_PATH))).thenReturn(userCollectionReference)
+    db = mockk()
+    mockkStatic(FirebaseFirestore::class)
+    every { Firebase.firestore } returns db
+    every { db.collection(ASSOCIATION_PATH) } returns associationCollectionReference
+    every { db.collection(USER_PATH) } returns userCollectionReference
 
     association1 =
         Association(
             uid = "1",
             url = "https://www.acm.org/",
-            acronym = "ACM",
+            name = "ACM",
             fullName = "Association for Computing Machinery",
+            category = AssociationCategory.SCIENCE_TECH,
             description =
                 "ACM is the world's largest educational and scientific computing society.",
-            members =
-                FirestoreReferenceList.fromList(
-                    listOf("1", "2"), db.collection(USER_PATH), UserRepositoryFirestore::hydrate))
+            members = User.firestoreReferenceListWith(listOf("1", "2")),
+            image = "https://www.example.com/image.jpg")
 
     association2 =
         Association(
             uid = "2",
             url = "https://www.ieee.org/",
-            acronym = "IEEE",
+            name = "IEEE",
             fullName = "Institute of Electrical and Electronics Engineers",
+            category = AssociationCategory.SCIENCE_TECH,
             description =
                 "IEEE is the world's largest technical professional organization dedicated to advancing technology for the benefit of humanity.",
-            members =
-                FirestoreReferenceList.fromList(
-                    listOf("3", "4"), db.collection(USER_PATH), UserRepositoryFirestore::hydrate))
+            members = User.firestoreReferenceListWith(listOf("3", "4")),
+            image = "https://www.example.com/image.jpg")
 
     // When getting the collection, return the task
     `when`(associationCollectionReference.get()).thenReturn(querySnapshotTask)
@@ -112,8 +112,9 @@ class AssociationRepositoryFirestoreTest {
         mapOf(
             "uid" to association1.uid,
             "url" to association1.url,
-            "acronym" to association1.acronym,
+            "name" to association1.name,
             "fullName" to association1.fullName,
+            "category" to association1.category.name,
             "description" to association1.description,
             "members" to association1.members.list.value.map { it.uid })
 
@@ -121,8 +122,9 @@ class AssociationRepositoryFirestoreTest {
         mapOf(
             "uid" to association2.uid,
             "url" to association2.url,
-            "acronym" to association2.acronym,
+            "name" to association2.name,
             "fullName" to association2.fullName,
+            "category" to association2.category.name,
             "description" to association2.description,
             "members" to association2.members.list.value.map { it.uid })
 
@@ -139,13 +141,13 @@ class AssociationRepositoryFirestoreTest {
         onSuccess = { associations ->
           assertEquals(2, associations.size)
           assertEquals(association1.uid, associations[0].uid)
-          assertEquals(association1.acronym, associations[0].acronym)
+          assertEquals(association1.name, associations[0].name)
           assertEquals(association1.fullName, associations[0].fullName)
           assertEquals(association1.description, associations[0].description)
           assertEquals(association1.members.list.value, associations[0].members.list.value)
 
           assertEquals(association2.uid, associations[1].uid)
-          assertEquals(association2.acronym, associations[1].acronym)
+          assertEquals(association2.name, associations[1].name)
           assertEquals(association2.fullName, associations[1].fullName)
           assertEquals(association2.description, associations[1].description)
           assertEquals(association2.members.list.value, associations[1].members.list.value)
@@ -163,20 +165,24 @@ class AssociationRepositoryFirestoreTest {
           val emptyAssociation =
               Association(
                   uid = association2.uid,
-                  members =
-                      FirestoreReferenceList.empty(
-                          db.collection(USER_PATH), UserRepositoryFirestore::hydrate))
+                  url = "",
+                  name = "",
+                  fullName = "",
+                  category = AssociationCategory.ARTS,
+                  description = "",
+                  members = User.emptyFirestoreReferenceList(),
+                  image = "")
 
           assertEquals(2, associations.size)
 
           assertEquals(association1.uid, associations[0].uid)
-          assertEquals(association1.acronym, associations[0].acronym)
+          assertEquals(association1.name, associations[0].name)
           assertEquals(association1.fullName, associations[0].fullName)
           assertEquals(association1.description, associations[0].description)
           assertEquals(association1.members.list.value, associations[0].members.list.value)
 
           assertEquals(emptyAssociation.uid, associations[1].uid)
-          assertEquals("", associations[1].acronym)
+          assertEquals("", associations[1].name)
           assertEquals("", associations[1].fullName)
           assertEquals("", associations[1].description)
           assertEquals(emptyList<String>(), associations[1].members.list.value)
@@ -190,10 +196,24 @@ class AssociationRepositoryFirestoreTest {
         association1.uid,
         onSuccess = { association ->
           assertEquals(association1.uid, association.uid)
-          assertEquals(association1.acronym, association.acronym)
+          assertEquals(association1.name, association.name)
           assertEquals(association1.fullName, association.fullName)
           assertEquals(association1.description, association.description)
           assertEquals(association1.members.list.value, association.members.list.value)
+        },
+        onFailure = { exception -> assert(false) })
+  }
+
+  @Test
+  fun testGetAssociationsByCategory() {
+    `when`(associationCollectionReference.whereEqualTo(eq("category"), any()))
+        .thenReturn(associationCollectionReference)
+    repository.getAssociationsByCategory(
+        AssociationCategory.SCIENCE_TECH,
+        onSuccess = { associations ->
+          for (asso in associations) {
+            assertEquals(asso.category, AssociationCategory.SCIENCE_TECH)
+          }
         },
         onFailure = { exception -> assert(false) })
   }

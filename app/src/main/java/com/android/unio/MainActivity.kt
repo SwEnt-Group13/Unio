@@ -10,6 +10,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -31,6 +32,7 @@ import com.android.unio.ui.theme.AppTheme
 import com.android.unio.ui.user.UserProfileScreen
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
+import com.google.firebase.firestore.FirebaseFirestore
 
 class MainActivity : ComponentActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,6 +45,8 @@ class MainActivity : ComponentActivity() {
 fun UnioApp() {
   val navController = rememberNavController()
   val navigationActions = NavigationAction(navController)
+  val db = FirebaseFirestore.getInstance()
+  val associationViewModel: AssociationViewModel = viewModel(factory = AssociationViewModel.Factory)
 
   val context = LocalContext.current
 
@@ -67,21 +71,19 @@ fun UnioApp() {
       composable(Screen.ACCOUNT_DETAILS) { AccountDetails(navigationActions) }
     }
     navigation(startDestination = Screen.HOME, route = Route.HOME) {
-      val mockEventRepository = EventRepositoryMock()
-
-      val eventListViewModel = EventListViewModel(mockEventRepository as EventRepository)
-      composable(Screen.HOME) {
-        EventListOverview(eventListViewModel, onAddEvent = {}, onEventClick = {}, navigationActions)
-      }
+      composable(Screen.HOME) { HomeScreen(navigationActions) }
     }
     navigation(startDestination = Screen.EXPLORE, route = Route.EXPLORE) {
-      composable(Screen.EXPLORE) { ExploreScreen(navigationActions) }
+      composable(Screen.EXPLORE) { ExploreScreen(navigationActions, associationViewModel) }
       composable(Screen.ASSOCIATION_PROFILE) { navBackStackEntry ->
         // Get the association UID from the arguments
         val uid = navBackStackEntry.arguments?.getString("uid")
 
         // Create the AssociationProfile screen with the association UID
-        uid?.let { AssociationProfile(navigationAction = navigationActions, associationId = it) }
+        uid?.let {
+          AssociationProfileScreen(navigationAction = navigationActions, associationId = it)
+        }
+        uid?.let { AssociationProfileScreen(navigationActions, it, associationViewModel) }
             ?: run {
               Log.e("AssociationProfile", "Association UID is null")
               Toast.makeText(context, "Association UID is null", Toast.LENGTH_SHORT).show()

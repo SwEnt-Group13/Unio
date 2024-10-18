@@ -1,11 +1,17 @@
 package com.android.unio.model.association
 
-import com.android.unio.model.firestore.FirestorePaths.USER_PATH
-import com.android.unio.model.firestore.FirestoreReferenceList
-import com.android.unio.model.firestore.transform.hydrate
-import com.android.unio.model.user.UserRepositoryFirestore
+import androidx.test.core.app.ApplicationProvider
+import com.android.unio.model.firestore.firestoreReferenceListWith
+import com.android.unio.model.user.User
+import com.google.firebase.Firebase
+import com.google.firebase.FirebaseApp
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.firestore
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.mockkStatic
+import java.io.InputStream
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -17,16 +23,21 @@ import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
+import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
 import org.mockito.MockitoAnnotations
 import org.mockito.kotlin.any
+import org.mockito.kotlin.eq
+import org.robolectric.RobolectricTestRunner
 
+@RunWith(RobolectricTestRunner::class)
 class AssociationViewModelTest {
+  private lateinit var db: FirebaseFirestore
   @Mock private lateinit var repository: AssociationRepositoryFirestore
-  @Mock private lateinit var db: FirebaseFirestore
   @Mock private lateinit var collectionReference: CollectionReference
+  @Mock private lateinit var inputStream: InputStream
 
   private lateinit var viewModel: AssociationViewModel
 
@@ -38,32 +49,35 @@ class AssociationViewModelTest {
   fun setUp() {
     MockitoAnnotations.openMocks(this)
     Dispatchers.setMain(testDispatcher)
-
-    `when`(db.collection(any())).thenReturn(collectionReference)
+    if (FirebaseApp.getApps(ApplicationProvider.getApplicationContext()).isEmpty()) {
+      FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext())
+    }
+    db = mockk()
+    mockkStatic(FirebaseFirestore::class)
+    every { Firebase.firestore } returns db
+    every { db.collection(any()) } returns collectionReference
 
     testAssociations =
         listOf(
             Association(
                 uid = "1",
-                acronym = "ACM",
+                url = "https://acm.org",
+                name = "ACM",
                 fullName = "Association for Computing Machinery",
+                category = AssociationCategory.SCIENCE_TECH,
                 description =
                     "ACM is the world's largest educational and scientific computing society.",
-                members =
-                    FirestoreReferenceList.fromList(
-                        listOf("1", "2"),
-                        db.collection(USER_PATH),
-                        UserRepositoryFirestore.Companion::hydrate)),
+                members = User.firestoreReferenceListWith(listOf("1", "2")),
+                image = ""),
             Association(
                 uid = "2",
-                acronym = "IEEE",
+                url = "https://ieee.org",
+                name = "IEEE",
                 fullName = "Institute of Electrical and Electronics Engineers",
+                category = AssociationCategory.SCIENCE_TECH,
                 description = "IEEE is the world's largest technical professional organization.",
-                members =
-                    FirestoreReferenceList.fromList(
-                        listOf("3", "4"),
-                        db.collection(USER_PATH),
-                        UserRepositoryFirestore.Companion::hydrate)))
+                members = User.firestoreReferenceListWith(listOf("3", "4")),
+                image = ""))
 
     viewModel = AssociationViewModel(repository)
   }
@@ -88,8 +102,8 @@ class AssociationViewModelTest {
       val result = viewModel.associations.first()
 
       assertEquals(2, result.size)
-      assertEquals("ACM", result[0].acronym)
-      assertEquals("IEEE", result[1].acronym)
+      assertEquals("ACM", result[0].name)
+      assertEquals("IEEE", result[1].name)
     }
 
     // Verify that the repository method was called
@@ -147,12 +161,26 @@ class AssociationViewModelTest {
       val result = viewModel.associations.first()
 
       assertEquals(2, result.size)
-      assertEquals("ACM", result[0].acronym)
-      assertEquals("IEEE", result[1].acronym)
+      assertEquals("ACM", result[0].name)
+      assertEquals("IEEE", result[1].name)
     }
 
     assertEquals(testAssociations[0], viewModel.findAssociationById("1"))
     assertEquals(testAssociations[1], viewModel.findAssociationById("2"))
     assertEquals(null, viewModel.findAssociationById("3"))
+  }
+
+  @Test
+  fun testAddAssociation() {
+    `when`(repository.addAssociation(eq(testAssociations[0]), any(), any())).thenAnswer { invocation
+      ->
+      val onSuccess = invocation.arguments[0] as () -> Unit
+      onSuccess()
+    }
+    viewModel.addAssociation(
+        inputStream,
+        testAssociations[0],
+        { verify(repository).addAssociation(eq(testAssociations[0]), any(), any()) },
+        {})
   }
 }

@@ -1,45 +1,43 @@
 package com.android.unio.model.firestore.transform
 
 import com.android.unio.model.association.Association
+import com.android.unio.model.association.AssociationCategory
 import com.android.unio.model.association.AssociationRepositoryFirestore
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventRepositoryFirestore
 import com.android.unio.model.event.EventType
 import com.android.unio.model.firestore.FirestorePaths.ASSOCIATION_PATH
-import com.android.unio.model.firestore.FirestorePaths.EVENT_PATH
 import com.android.unio.model.firestore.FirestorePaths.USER_PATH
 import com.android.unio.model.firestore.FirestoreReferenceList
 import com.android.unio.model.map.Location
+import com.android.unio.model.user.Interest
+import com.android.unio.model.user.Social
 import com.android.unio.model.user.User
 import com.android.unio.model.user.UserRepositoryFirestore
-import com.google.firebase.Firebase
+import com.android.unio.model.user.UserSocial
 import com.google.firebase.Timestamp
-import com.google.firebase.firestore.firestore
 
 fun AssociationRepositoryFirestore.Companion.hydrate(data: Map<String, Any>?): Association {
+  val category = data?.get("category")
   val memberUids = data?.get("members") as? List<String> ?: emptyList()
-  val members =
-      FirestoreReferenceList.fromList(
-          list = memberUids,
-          collection = Firebase.firestore.collection(USER_PATH),
-          hydrate = UserRepositoryFirestore::hydrate)
+  val members = User.firestoreReferenceListWith(memberUids)
 
   return Association(
       uid = data?.get("uid") as? String ?: "",
       url = data?.get("url") as? String ?: "",
-      acronym = data?.get("acronym") as? String ?: "",
+      name = data?.get("name") as? String ?: "",
       fullName = data?.get("fullName") as? String ?: "",
+      category =
+          if (category is String) AssociationCategory.valueOf(category)
+          else AssociationCategory.UNKNOWN,
       description = data?.get("description") as? String ?: "",
-      members = members)
+      members = members,
+      image = data?.get("image") as? String ?: "")
 }
 
 fun UserRepositoryFirestore.Companion.hydrate(data: Map<String, Any>?): User {
   val followingAssociationsUids = data?.get("followingAssociations") as? List<String> ?: emptyList()
-  val followingAssociations =
-      FirestoreReferenceList.fromList(
-          followingAssociationsUids,
-          Firebase.firestore.collection(ASSOCIATION_PATH),
-          AssociationRepositoryFirestore::hydrate)
+  val followingAssociations = Association.firestoreReferenceListWith(followingAssociationsUids)
 
   val savedEventsUids = data?.get("savedEvents") as? List<String> ?: emptyList()
   val savedEvents =
@@ -50,25 +48,18 @@ fun UserRepositoryFirestore.Companion.hydrate(data: Map<String, Any>?): User {
 
   return User(
       uid = data?.get("uid") as? String ?: "",
-      name = data?.get("name") as? String ?: "",
       email = data?.get("email") as? String ?: "",
-      followingAssociations = followingAssociations,
-      savedEvents = savedEvents // Added savedEvents here
-      )
+      followingAssociations = followingAssociations)
 }
 
 fun EventRepositoryFirestore.Companion.hydrate(data: Map<String, Any>?): Event {
   val organisers =
-      FirestoreReferenceList.fromList(
-          data?.get("organisers") as? List<String> ?: emptyList(),
-          Firebase.firestore.collection(ASSOCIATION_PATH),
-          AssociationRepositoryFirestore::hydrate)
+      Association.firestoreReferenceListWith(
+          data?.get("organisers") as? List<String> ?: emptyList())
 
   val taggedAssociations =
-      FirestoreReferenceList.fromList(
-          data?.get("taggedAssociations") as? List<String> ?: emptyList(),
-          Firebase.firestore.collection(ASSOCIATION_PATH),
-          AssociationRepositoryFirestore::hydrate)
+      Association.firestoreReferenceListWith(
+          data?.get("taggedAssociations") as? List<String> ?: emptyList())
 
   val types = (data?.get("types") as? List<String> ?: emptyList())
 
