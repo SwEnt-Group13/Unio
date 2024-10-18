@@ -222,21 +222,3 @@ fun uploadUser(
         Log.e("AccountDetails", "Failed to upload user", it)
       })
 }
-
-class ComposableTestActivity : ComponentActivity() {
-
-  val userRepositoryFirestore = UserRepositoryFirestore(Firebase.firestore)
-
-  override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
-    setContent {
-      val navController = rememberNavController()
-      val navigationActions = NavigationAction(navController)
-      setContent {
-        Surface(modifier = Modifier.fillMaxSize()) {
-          AppTheme { AccountDetails(navigationActions, userRepositoryFirestore) }
-        }
-      }
-    }
-  }
-}
