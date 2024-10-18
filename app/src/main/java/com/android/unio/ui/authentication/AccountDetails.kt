@@ -1,18 +1,14 @@
 package com.android.unio.ui.accountCreation
 
 import android.content.Context
-import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -29,7 +25,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.InputChip
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -42,7 +37,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
-import androidx.navigation.compose.rememberNavController
 import com.android.unio.model.association.Association
 import com.android.unio.model.firestore.emptyFirestoreReferenceList
 import com.android.unio.model.user.Interest
@@ -51,12 +45,10 @@ import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.ui.authentication.InterestOverlay
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
-import com.android.unio.ui.theme.AppTheme
 import com.android.unio.ui.theme.AppTypography
 import com.android.unio.ui.theme.primaryLight
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
-import com.google.firebase.firestore.firestore
 import kotlinx.coroutines.flow.MutableStateFlow
 
 @OptIn(ExperimentalLayoutApi::class)
