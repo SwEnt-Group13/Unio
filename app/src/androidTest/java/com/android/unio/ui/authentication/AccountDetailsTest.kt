@@ -7,6 +7,7 @@ import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextInput
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.ui.accountCreation.AccountDetails
@@ -74,18 +75,18 @@ class AccountDetailsTest {
     composeTestRule
         .onNodeWithTag("AccountDetailsLastNameText", useUnmergedTree = true)
         .assertTextEquals("Last name")
-    composeTestRule.onNodeWithTag("AccountDetailsBioTextField").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("AccountDetailsBioTextField").assertExists()
     composeTestRule
         .onNodeWithTag("AccountDetailsBioText", useUnmergedTree = true)
         .assertTextEquals("Bio")
-    composeTestRule.onNodeWithTag("AccountDetailsProfilePictureText").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("AccountDetailsProfilePictureText").assertExists()
     composeTestRule
         .onNodeWithTag("AccountDetailsProfilePictureText")
         .assertTextEquals("Maybe add a profile picture?")
-    composeTestRule.onNodeWithTag("AccountDetailsProfilePictureIcon").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("AccountDetailsInterestsButton").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("AccountDetailsSocialsButton").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("AccountDetailsContinueButton").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("AccountDetailsProfilePictureIcon").assertExists()
+    composeTestRule.onNodeWithTag("AccountDetailsInterestsButton").assertExists()
+    composeTestRule.onNodeWithTag("AccountDetailsSocialsButton").assertExists()
+    composeTestRule.onNodeWithTag("AccountDetailsContinueButton").assertExists()
   }
 
   @Test
@@ -101,7 +102,7 @@ class AccountDetailsTest {
 
   @Test
   fun testInterestsButtonWorksCorrectly() {
-    composeTestRule.onNodeWithTag("AccountDetailsInterestsButton").performClick()
+    composeTestRule.onNodeWithTag("AccountDetailsInterestsButton").performScrollTo().performClick()
     composeTestRule.onNodeWithTag("InterestOverlayTitle").assertIsDisplayed()
   }
 
@@ -124,7 +125,7 @@ class AccountDetailsTest {
 
   @Test
   fun testContinueButtonCorrectlyNavigatesToHome() {
-    composeTestRule.onNodeWithTag("AccountDetailsContinueButton").performClick()
+    composeTestRule.onNodeWithTag("AccountDetailsContinueButton").performScrollTo().performClick()
     verify(navigationAction).navigateTo(screen = Screen.HOME)
   }
 }
