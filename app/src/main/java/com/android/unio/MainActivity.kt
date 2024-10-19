@@ -44,6 +44,7 @@ class MainActivity : ComponentActivity() {
 fun UnioApp() {
   val navController = rememberNavController()
   val navigationActions = NavigationAction(navController)
+  val db = FirebaseFirestore.getInstance()
   val associationViewModel: AssociationViewModel = viewModel(factory = AssociationViewModel.Factory)
 
   val userRepositoryFirestore = UserRepositoryFirestore(Firebase.firestore)
@@ -73,7 +74,13 @@ fun UnioApp() {
       }
     }
     navigation(startDestination = Screen.HOME, route = Route.HOME) {
-      composable(Screen.HOME) { HomeScreen(navigationActions) }
+      composable(Screen.HOME) {
+        HomeScreen(
+            navigationActions,
+            EventListViewModel(EventRepositoryFirestore(db)),
+            onAddEvent = {},
+            onEventClick = {})
+      }
     }
     navigation(startDestination = Screen.EXPLORE, route = Route.EXPLORE) {
       composable(Screen.EXPLORE) { ExploreScreen(navigationActions, associationViewModel) }

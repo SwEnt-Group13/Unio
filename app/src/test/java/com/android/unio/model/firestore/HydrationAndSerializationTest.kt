@@ -62,7 +62,8 @@ class HydrationAndSerializationTest {
             fullName = "Example Association",
             category = AssociationCategory.ARTS,
             description = "An example association",
-            members = User.firestoreReferenceListWith(listOf("1", "2")))
+            members = User.firestoreReferenceListWith(listOf("1", "2")),
+            image = "https://www.example.com/image.jpg")
 
     event =
         Event(

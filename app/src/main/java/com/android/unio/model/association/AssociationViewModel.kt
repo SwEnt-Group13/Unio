@@ -4,8 +4,10 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
+import java.io.InputStream
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -13,6 +15,7 @@ import kotlinx.coroutines.launch
 class AssociationViewModel(val repository: AssociationRepository) : ViewModel() {
   private val _associations = MutableStateFlow<List<Association>>(emptyList())
   val associations: StateFlow<List<Association>> = _associations
+  private val imageRepository = ImageRepositoryFirebaseStorage()
 
   private val _associationsByCategory =
       MutableStateFlow<Map<AssociationCategory, List<Association>>>(emptyMap())
@@ -44,6 +47,24 @@ class AssociationViewModel(val repository: AssociationRepository) : ViewModel() 
             _associations.value = emptyList()
             Log.e("ExploreViewModel", "Failed to fetch associations", exception)
           })
+    }
+  }
+
+  fun addAssociation(
+      inputStream: InputStream,
+      association: Association,
+      onSuccess: () -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+    viewModelScope.launch {
+      imageRepository.uploadImage(
+          inputStream,
+          "images/associations/${association.uid}",
+          { uri ->
+            association.image = uri
+            repository.addAssociation(association, onSuccess, onFailure)
+          },
+          { e -> Log.e("ImageRepository", "Failed to store image : $e") })
     }
   }
 

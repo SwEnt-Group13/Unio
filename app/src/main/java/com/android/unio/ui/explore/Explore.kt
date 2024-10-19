@@ -94,8 +94,18 @@ fun ExploreScreenContent(
               onSearch = { /* Handle search here */},
               expanded = false,
               onExpandedChange = { /* Handle expanded state change here */},
-              placeholder = { Text(text = "Search", style = AppTypography.bodyLarge) },
-              trailingIcon = { Icon(Icons.Default.Search, contentDescription = "Search icon") },
+              placeholder = {
+                Text(
+                    text = "Search",
+                    style = AppTypography.bodyLarge,
+                    modifier = Modifier.testTag("searchPlaceHolder"))
+              },
+              trailingIcon = {
+                Icon(
+                    Icons.Default.Search,
+                    contentDescription = "Search icon",
+                    modifier = Modifier.testTag("searchTrailingIcon"))
+              },
           )
         },
         expanded = false,
@@ -157,7 +167,7 @@ fun AssociationItem(association: Association, navigationAction: NavigationAction
                 navigationAction.navigateTo(
                     Screen.withParams(Screen.ASSOCIATION_PROFILE, association.uid))
               }
-              .testTag("associationItem")) {
+              .testTag("associationItem_${association.name}")) {
         /**
          * AdEC image is used as the placeholder. Will need to add the actual image later, when the
          * actual view model is used.
@@ -167,6 +177,12 @@ fun AssociationItem(association: Association, navigationAction: NavigationAction
             contentDescription = "image description",
             modifier = Modifier.size(124.dp))
 
+        /**
+         * AsyncImage( model = association.image.toUri(), contentDescription = "Translated
+         * description of what the image contains", modifier =
+         * Modifier.size(124.dp).testTag("associationImage"), contentScale = ContentScale.Crop //
+         * crop the image to fit )
+         */
         Spacer(modifier = Modifier.height(8.dp))
 
         Text(
