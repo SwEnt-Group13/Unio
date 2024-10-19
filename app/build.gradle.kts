@@ -173,6 +173,7 @@ dependencies {
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.firebase.storage.ktx)
     implementation(libs.androidx.ui.text.google.fonts)
+    implementation(libs.volley)
 
     testImplementation(libs.test.core.ktx)
     debugImplementation(libs.androidx.ui.tooling)
