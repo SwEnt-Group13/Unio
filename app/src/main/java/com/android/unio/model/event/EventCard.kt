@@ -15,6 +15,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.FavoriteBorder
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -81,35 +84,60 @@ fun EventCard(event: Event, onClick: () -> Unit) {
             .clip(RoundedCornerShape(10.dp))
             .background(secondaryDark)
     ) {
-        // Fallback to a local placeholder image in case of an invalid URI
-        val imageUrl = event.image.takeIf { it.isNotEmpty() }?.toUri()
 
-        if (LocalInspectionMode.current) { //preview mode
-            Image(
-                painter = painterResource(id = R.drawable.preview_mode), // Fallback image
-                contentDescription = "Fallback image of the event",
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(100.dp)
+        ) {
+            // Fallback to a local placeholder image in case of an invalid URI
+            val imageUrl = event.image.takeIf { it.isNotEmpty() }?.toUri()
+
+            if (LocalInspectionMode.current) { //preview mode
+                Image(
+                    painter = painterResource(id = R.drawable.preview_mode), // Fallback image
+                    contentDescription = "Fallback image of the event",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(100.dp)
+                        .clip(RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp))
+                        .testTag("event_EventImage"),
+                    contentScale = ContentScale.Crop // Crop the image to fit
+                )
+            } else {
+                AsyncImage( //running mode
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(imageUrl)
+                        .error(R.drawable.no_picture_found) // Placeholder in case of loading error
+                        .build(),
+                    contentDescription = "Image of the event",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(100.dp)
+                        .clip(RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp))
+                        .testTag("event_EventImage"),
+                    contentScale = ContentScale.Crop // Crop the image to fit
+                )
+            }
+
+            Box(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(100.dp)
-                    .clip(RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp))
-                    .testTag("event_EventImage"),
-                contentScale = ContentScale.Crop // Crop the image to fit
-            )
-        } else {
-            AsyncImage( //running mode
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(imageUrl)
-                    .error(R.drawable.no_picture_found) // Placeholder in case of loading error
-                    .build(),
-                contentDescription = "Image of the event",
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(100.dp)
-                    .clip(RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp))
-                    .testTag("event_EventImage"),
-                contentScale = ContentScale.Crop // Crop the image to fit
-            )
+                    .size(28.dp)
+                    .clip(RoundedCornerShape(14.dp))
+                    .background(Color(0xFF6200EE))
+                    .align(Alignment.TopEnd)
+                    .padding(4.dp)
+
+
+            ) {
+                // Icon inside the circle
+                Icon(
+                    Icons.Rounded.FavoriteBorder,
+                    contentDescription = ""
+                )
+            }
         }
+
 
 
         Column(modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp)) {
