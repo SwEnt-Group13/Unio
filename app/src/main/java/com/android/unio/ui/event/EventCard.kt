@@ -1,6 +1,5 @@
-package com.android.unio.model.event
+package com.android.unio.ui.event
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -21,12 +20,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
@@ -42,6 +39,8 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.android.unio.R
 import com.android.unio.model.association.Association
+import com.android.unio.model.event.Event
+import com.android.unio.model.event.EventType
 import com.android.unio.model.firestore.MockReferenceList
 import com.android.unio.model.map.Location
 import com.android.unio.ui.theme.primaryContainerLight
@@ -49,8 +48,6 @@ import com.android.unio.ui.theme.secondaryDark
 import com.android.unio.utils.EventUtils.addAlphaToColor
 import com.android.unio.utils.EventUtils.formatTimestamp
 import com.google.firebase.Timestamp
-import java.net.HttpURLConnection
-import java.net.URL
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale

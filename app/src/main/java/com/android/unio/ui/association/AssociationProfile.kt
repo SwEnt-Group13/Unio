@@ -52,7 +52,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.android.unio.R
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.event.Event
-import com.android.unio.model.event.EventCard
+import com.android.unio.ui.event.EventCard
 import com.android.unio.model.firestore.MockReferenceList
 import com.android.unio.resources.ResourceManager.getString
 import com.android.unio.resources.ResourceManager.init
