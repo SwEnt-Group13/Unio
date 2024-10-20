@@ -32,11 +32,6 @@ class EventListViewModel(private val repository: EventRepository) : ViewModel() 
      */
     val events: StateFlow<List<Event>> = _events
 
-    // Image repository - avoid initializing in preview mode
-    private val imageRepository by lazy {
-        if (!isPreviewMode()) ImageRepositoryFirebaseStorage() else null
-    }
-
     /** Initializes the ViewModel by loading the events from the repository. */
     init {
         loadEvents()
@@ -62,36 +57,6 @@ class EventListViewModel(private val repository: EventRepository) : ViewModel() 
         }
     }
 
-    /**
-     * Add a new event to the repository. It uploads the event image first, then adds the event.
-     */
-    fun addEvent(
-        inputStream: InputStream,
-        event: Event,
-        onSuccess: () -> Unit,
-        onFailure: (Exception) -> Unit
-    ) {
-        imageRepository?.uploadImage(
-            inputStream,
-            "images/events/${event.uid}",
-            { uri ->
-                event.image = uri
-                event.uid = repository.getNewUid()
-                repository.addEvent(event, onSuccess, onFailure)
-            },
-            { e -> Log.e("ImageRepository", "Failed to store image: $e") }
-        ) ?: Log.e("EventListViewModel", "ImageRepository is not available in preview mode.")
-    }
-
-    /**
-     * Helper function to determine if the app is running in preview mode.
-     */
-    private fun isPreviewMode(): Boolean {
-        // Check if the current environment is a preview (used in Compose Previews)
-        return android.os.Build.FINGERPRINT.contains("generic") ||
-                android.os.Build.FINGERPRINT.contains("emulator") ||
-                android.os.Build.MODEL.contains("sdk_gphone")
-    }
 
     /**
      * Companion object that provides a factory for creating instances of [EventListViewModel].
