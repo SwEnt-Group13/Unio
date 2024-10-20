@@ -8,7 +8,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 
 class UserRepositoryFirestore(private val db: FirebaseFirestore) : UserRepository {
 
-  override fun init(onSuccess: () -> Unit) {
+  override fun init(onSuccess: () -> Unit) { //repository is only considered "initialized" when a user is authenticated
     Firebase.auth.addAuthStateListener {
       if (it.currentUser != null) {
         onSuccess()
@@ -20,8 +20,8 @@ class UserRepositoryFirestore(private val db: FirebaseFirestore) : UserRepositor
     db.collection(USER_PATH)
         .get()
         .addOnSuccessListener { result ->
-          val user = result.map { hydrate(it.data) }
-          onSuccess(user)
+          val users = result.map { hydrate(it.data) }
+          onSuccess(users)
         }
         .addOnFailureListener { exception -> onFailure(exception) }
   }

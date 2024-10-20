@@ -1,6 +1,7 @@
 package com.android.unio.model.user
 
 import com.android.unio.model.association.Association
+import com.android.unio.model.event.Event
 import com.android.unio.model.firestore.FirestorePaths.ASSOCIATION_PATH
 import com.android.unio.model.firestore.FirestorePaths.USER_PATH
 import com.android.unio.model.firestore.emptyFirestoreReferenceList
@@ -30,6 +31,7 @@ class UserRepositoryFirestoreTest {
   private lateinit var db: FirebaseFirestore
   @Mock private lateinit var userCollectionReference: CollectionReference
   @Mock private lateinit var associationCollectionReference: CollectionReference
+  @Mock private lateinit var eventCollectionReference: CollectionReference
   @Mock private lateinit var querySnapshot: QuerySnapshot
   @Mock private lateinit var queryDocumentSnapshot1: QueryDocumentSnapshot
   @Mock private lateinit var map1: Map<String, Any>
@@ -64,6 +66,7 @@ class UserRepositoryFirestoreTest {
             lastName = "Last name 1",
             biography = "An example user",
             followingAssociations = Association.emptyFirestoreReferenceList(),
+            savedEvents = Event.emptyFirestoreReferenceList(),
             interests = listOf(Interest.SPORTS, Interest.MUSIC),
             socials =
                 listOf(
@@ -79,6 +82,7 @@ class UserRepositoryFirestoreTest {
             lastName = "Last name 2",
             biography = "An example user 2",
             followingAssociations = Association.emptyFirestoreReferenceList(),
+            savedEvents = Event.emptyFirestoreReferenceList(),
             interests = listOf(Interest.FESTIVALS, Interest.GAMING),
             socials =
                 listOf(
@@ -194,6 +198,7 @@ class UserRepositoryFirestoreTest {
                   lastName = "",
                   biography = "",
                   followingAssociations = Association.emptyFirestoreReferenceList(),
+                  savedEvents = Event.emptyFirestoreReferenceList(),
                   interests = emptyList(),
                   socials = emptyList(),
                   profilePicture = "")
