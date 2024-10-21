@@ -23,7 +23,7 @@ class UserViewModel(val repository: UserRepository, initializeWithAuthenticatedU
     if (initializeWithAuthenticatedUser) {
       Firebase.auth.addAuthStateListener { auth ->
         if (auth.currentUser != null) {
-          repository.init { getUserByUid(auth.currentUser!!.uid) }
+          repository.init { getUserByUid(auth.currentUser!!.uid, true) }
         }
       }
     } else {
@@ -31,14 +31,30 @@ class UserViewModel(val repository: UserRepository, initializeWithAuthenticatedU
     }
   }
 
-  fun getUserByUid(uid: String) {
+  fun getUserByUid(uid: String, fetchReferences: Boolean = false) {
     _refreshState.value = true
     _user.value = null
     repository.getUserWithId(
         uid,
         onSuccess = { fetchedUser ->
-          _refreshState.value = false
           _user.value = fetchedUser
+
+          if (fetchReferences) {
+            _user.value?.let {
+              var first = true
+              val handleSuccess = {
+                if (first) {
+                  first = false
+                } else {
+                  _refreshState.value = false
+                }
+              }
+              it.joinedAssociations.requestAll(handleSuccess)
+              it.followedAssociations.requestAll(handleSuccess)
+            }
+          } else {
+            _refreshState.value = false
+          }
         },
         onFailure = { exception ->
           _refreshState.value = false
@@ -47,7 +63,7 @@ class UserViewModel(val repository: UserRepository, initializeWithAuthenticatedU
   }
 
   fun refreshUser() {
-    _user.value?.let { getUserByUid(it.uid) }
+    _user.value?.let { getUserByUid(it.uid, true) }
   }
 
   companion object {
