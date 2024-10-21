@@ -32,11 +32,11 @@ fun signInOrCreateAccount(
 ) {
   if (isValidEmail(email)) {
     auth
-        .signInWithEmailAndPassword(email, password)
+        .signInWithEmailAndPassword(email.trim(), password.trim())
         .addOnSuccessListener { onResult(SignInResult(SignInState.SUCCESS_SIGN_IN, it.user)) }
         .addOnFailureListener {
           if (it is FirebaseAuthInvalidCredentialsException) {
-            createAccount(email, password, auth, onResult)
+            createAccount(email.trim(), password.trim(), auth, onResult)
           } else {
             Log.e("Auth", "Failed to sign in", it)
             onResult(SignInResult(SignInState.INVALID_CREDENTIALS, null))
@@ -63,7 +63,7 @@ fun createAccount(
 ) {
   if (isValidEmail(email)) {
     auth
-        .createUserWithEmailAndPassword(email, password)
+        .createUserWithEmailAndPassword(email.trim(), password.trim())
         .addOnSuccessListener {
           onResult(SignInResult(SignInState.SUCCESS_CREATE_ACCOUNT, it.user))
         }
@@ -80,7 +80,7 @@ fun createAccount(
  * Check if the given text is a valid email.
  *
  * @param text The text to check.
- * @return True if the text is a valid email, false otherwise.
+ * @return true if the text is a valid email, false otherwise.
  */
 fun isValidEmail(text: String): Boolean {
   return text.trim().let { it.isNotEmpty() && it.matches(Regex("^.+@.+\\..+$")) }
