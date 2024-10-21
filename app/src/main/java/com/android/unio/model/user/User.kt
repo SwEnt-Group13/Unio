@@ -1,6 +1,7 @@
 package com.android.unio.model.user
 
 import com.android.unio.model.association.Association
+import com.android.unio.model.event.Event
 import com.android.unio.model.firestore.ReferenceList
 
 enum class Interest(val title: String) {
@@ -47,6 +48,7 @@ data class User(
     val lastName: String,
     val biography: String,
     val followingAssociations: ReferenceList<Association>,
+    val savedEvents: ReferenceList<Event>,
     val interests: List<Interest>,
     val socials: List<UserSocial>,
     val profilePicture: String

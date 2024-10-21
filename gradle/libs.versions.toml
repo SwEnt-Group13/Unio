@@ -81,6 +81,7 @@ androidxCoreKtx = "1.6.1"
 firebaseCommonKtx = "21.0.0"
 firebaseStorageKtx = "21.0.1"
 uiTextGoogleFonts = "1.7.3"
+volley = "1.2.1"
 
 
 [libraries]
@@ -159,6 +160,7 @@ robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectr
 test-core-ktx = { group = "androidx.test", name = "core-ktx", version.ref = "androidxCoreKtx" }
 firebase-storage-ktx = { group = "com.google.firebase", name = "firebase-storage-ktx", version.ref = "firebaseStorageKtx" }
 androidx-ui-text-google-fonts = { group = "androidx.compose.ui", name = "ui-text-google-fonts", version.ref = "uiTextGoogleFonts" }
+volley = { group = "com.android.volley", name = "volley", version.ref = "volley" }
 
 
 
