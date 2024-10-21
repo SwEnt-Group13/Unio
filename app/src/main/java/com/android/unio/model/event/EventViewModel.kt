@@ -108,4 +108,16 @@ open class EventViewModel(private val repository: EventRepository, private val u
     }
 }
 
+class PreviewEventViewModel(repository: EventRepository,
+                            userRepository: UserRepository
+) : EventViewModel(repository, userRepository) {
 
+    var events: List<Event> = mutableListOf()
+
+    init {
+        repository.getEvents(
+            onSuccess = { events = it },
+            onFailure = { }
+        )
+    }
+}

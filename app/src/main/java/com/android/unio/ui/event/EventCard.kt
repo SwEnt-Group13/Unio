@@ -80,8 +80,8 @@ fun EventCardPreview() {
         types = listOf(EventType.TRIP)
     )
 
-
-    EventCard(event = sampleEvent, viewModel = viewModel(factory = EventViewModel.Factory), onClick = { })
+    val previewViewModel = PreviewEventViewModel(MockEventRepository(), MockUserRepository())
+    EventCard(event = sampleEvent, viewModel = previewViewModel, onClick = { })
 }
 
 @Composable

@@ -69,12 +69,12 @@ fun EventListOverviewPreview() {
 
   val eventListViewModel = EventListViewModel(mockEventRepository as EventRepository)
 
-  HomeScreen(
-      NavigationAction(NavHostController(LocalContext.current)),
-      eventListViewModel = eventListViewModel,
-      onAddEvent = {},
-      onEventClick = {},
-      eventViewModel = viewModel(factory = EventViewModel.Factory))
+    HomeScreen(
+        NavigationAction(NavHostController(LocalContext.current)),
+        eventListViewModel = eventListViewModel,
+        onAddEvent = {},
+        onEventClick = {},
+        eventViewModel = PreviewEventViewModel(MockEventRepository(), MockUserRepository()))
 }
 
 @Composable
