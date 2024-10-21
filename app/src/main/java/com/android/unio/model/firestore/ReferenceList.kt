@@ -10,7 +10,7 @@ interface ReferenceList<T> {
 
   fun addAll(uids: List<String>)
 
-  fun requestAll()
+  fun requestAll(onSuccess: () -> Unit)
 }
 
 class MockReferenceList<T>(elements: List<T> = emptyList()) : ReferenceList<T> {
@@ -21,5 +21,5 @@ class MockReferenceList<T>(elements: List<T> = emptyList()) : ReferenceList<T> {
 
   override fun addAll(uids: List<String>) {}
 
-  override fun requestAll() {}
+  override fun requestAll(onSuccess: () -> Unit) {}
 }
