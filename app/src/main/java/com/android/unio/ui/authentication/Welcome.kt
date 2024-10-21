@@ -1,6 +1,7 @@
 package com.android.unio.ui.authentication
 
 import android.content.Context
+import android.net.ConnectivityManager
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
@@ -37,6 +38,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign.Companion.Center
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat.getSystemService
 import com.android.unio.model.user.SignInState
 import com.android.unio.model.user.isValidEmail
 import com.android.unio.model.user.isValidPassword
@@ -131,6 +133,14 @@ fun WelcomeScreen(navigationAction: NavigationAction) {
 }
 
 fun handleAuthentication(email: String, password: String, context: Context) {
+
+  // Check internet connectivity
+  val connectivityManager = getSystemService(context, ConnectivityManager::class.java)
+  if (connectivityManager?.activeNetwork == null) {
+    Toast.makeText(context, "You appear to be offline.", Toast.LENGTH_SHORT).show()
+    return
+  }
+
   signInOrCreateAccount(email, password, Firebase.auth) { signInResult ->
     // NOTE: No need to navigate to other screens, that is already handled by the listener in
     // MainActivity
