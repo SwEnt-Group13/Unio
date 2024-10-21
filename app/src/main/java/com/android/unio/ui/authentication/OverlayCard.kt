@@ -264,8 +264,8 @@ fun SocialPrompt(
     }
 
 
-    Log.e("Caca9000", isExpanded.toString())
-    Log.e("Caca9001", selectedSocial.toString())
+    Log.e("9000", isExpanded.toString())
+    Log.e("9001", selectedSocial.toString())
 
     Dialog(onDismissRequest = {},
         properties = DialogProperties(usePlatformDefaultWidth = false)
