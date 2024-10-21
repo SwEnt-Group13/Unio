@@ -41,8 +41,8 @@ class UserProfileTest {
           firstName = "userFirst",
           lastName = "userLast",
           biography = "An example user",
-          followedAssociations = MockReferenceList(listOf(association1, association1)),
-          joinedAssociations = MockReferenceList(listOf(association1, association1)),
+          followedAssociations = MockReferenceList(listOf(association, association)),
+          joinedAssociations = MockReferenceList(listOf(association, association)),
           interests = listOf(Interest.SPORTS, Interest.MUSIC),
           socials =
               listOf(
