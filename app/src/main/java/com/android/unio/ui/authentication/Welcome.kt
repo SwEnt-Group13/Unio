@@ -61,7 +61,11 @@ fun WelcomeScreen(navigationAction: NavigationAction) {
 
   val context = LocalContext.current
 
-  val enabled = isValidEmail(email) && password.isNotEmpty()
+  val validEmail = isValidEmail(email)
+  val validPassword = isValidPassword(password)
+  val enabled = validEmail && validPassword
+
+  val passwordError = !validPassword && password.isNotEmpty()
 
   Scaffold(
       modifier = Modifier.testTag("WelcomeScreen").fillMaxSize(),
