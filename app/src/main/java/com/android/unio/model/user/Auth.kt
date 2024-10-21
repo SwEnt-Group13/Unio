@@ -85,3 +85,13 @@ fun createAccount(
 fun isValidEmail(text: String): Boolean {
   return text.trim().let { it.isNotEmpty() && it.matches(Regex("^.+@.+\\..+$")) }
 }
+
+/**
+ * Check if the given text is a valid password.
+ *
+ * @param text The text to check.
+ * @return true if the password meets the requirements, false otherwise.
+ */
+fun isValidPassword(text: String): Boolean {
+  return text.trim().length in 6..4096 && text.contains(Regex("[0-9]"))
+}
