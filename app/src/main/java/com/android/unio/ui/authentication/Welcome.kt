@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
@@ -34,6 +35,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign.Companion.Center
@@ -76,12 +80,18 @@ fun WelcomeScreen(navigationAction: NavigationAction) {
                   textAlign = Center)
 
               Spacer(modifier = Modifier.size(50.dp))
-              Text("Sign up or log in to get started.", style = AppTypography.titleSmall)
+              Text("Sign up or log in to get started.", style = AppTypography.titleMedium)
 
               OutlinedTextField(
                   modifier = Modifier.testTag("WelcomeEmail"),
                   value = email,
                   onValueChange = { email = it },
+                  keyboardOptions =
+                      KeyboardOptions(
+                          keyboardType = KeyboardType.Email,
+                          imeAction = ImeAction.Done,
+                          capitalization = KeyboardCapitalization.None),
+                  singleLine = true,
                   label = { Text("Enter your email address") },
                   placeholder = { Text("john.doe@epfl.ch") },
               )
@@ -90,6 +100,12 @@ fun WelcomeScreen(navigationAction: NavigationAction) {
                   modifier = Modifier.testTag("WelcomePassword"),
                   value = password,
                   onValueChange = { password = it },
+                  keyboardOptions =
+                      KeyboardOptions(
+                          keyboardType = KeyboardType.Password,
+                          imeAction = ImeAction.Done,
+                          capitalization = KeyboardCapitalization.None),
+                  singleLine = true,
                   label = { Text("Enter your password") },
                   isError = passwordError,
                   supportingText = {
