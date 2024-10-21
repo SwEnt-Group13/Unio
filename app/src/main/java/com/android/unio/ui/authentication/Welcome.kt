@@ -39,6 +39,7 @@ import androidx.compose.ui.text.style.TextAlign.Companion.Center
 import androidx.compose.ui.unit.dp
 import com.android.unio.model.user.SignInState
 import com.android.unio.model.user.isValidEmail
+import com.android.unio.model.user.isValidPassword
 import com.android.unio.model.user.signInOrCreateAccount
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.theme.AppTypography
@@ -88,6 +89,12 @@ fun WelcomeScreen(navigationAction: NavigationAction) {
                   value = password,
                   onValueChange = { password = it },
                   label = { Text("Enter your password") },
+                  isError = passwordError,
+                  supportingText = {
+                    if (passwordError) {
+                      Text("Min. 6 characters and 1 digit")
+                    }
+                  },
                   trailingIcon = {
                     IconButton(
                         onClick = { showPassword = !showPassword },
@@ -108,7 +115,14 @@ fun WelcomeScreen(navigationAction: NavigationAction) {
 
               Button(
                   modifier = Modifier.testTag("WelcomeButton"),
-                  onClick = { handleAuthentication(email, password, context) },
+                  onClick = {
+                    if (!enabled) {
+                      Toast.makeText(context, "Malformed email or password.", Toast.LENGTH_SHORT)
+                          .show()
+                    } else {
+                      handleAuthentication(email, password, context)
+                    }
+                  },
                   enabled = enabled) {
                     Text("Continue")
                   }
