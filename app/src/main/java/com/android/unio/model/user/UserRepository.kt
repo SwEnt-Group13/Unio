@@ -40,8 +40,8 @@ class MockUserRepository : UserRepository {
               lastName = "Doe",
               biography = "Just a regular guy.",
               followingAssociations =
-                  MockReferenceList<Association>(), // You may implement a mock ReferenceList
-              savedEvents = MockReferenceList<Event>(), // Similarly, implement a mock ReferenceList
+                  MockReferenceList<Association>(), 
+              savedEvents = MockReferenceList<Event>(), 
               interests = listOf(Interest.SPORTS, Interest.MUSIC),
               socials =
                   listOf(
@@ -109,4 +109,7 @@ class MockUserRepository : UserRepository {
   override fun isEventSaved(userUid: String, eventUid: String, onResult: (Boolean) -> Unit) {
     onResult(false)
   }
+
+  fun updateUser(user: User, onSuccess: () -> Unit, onFailure: (Exception) -> Unit)
+
 }
