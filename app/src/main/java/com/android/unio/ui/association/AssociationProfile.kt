@@ -52,6 +52,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.android.unio.R
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.event.Event
+import com.android.unio.model.event.EventViewModel
 import com.android.unio.ui.event.EventCard
 import com.android.unio.model.firestore.MockReferenceList
 import com.android.unio.resources.ResourceManager.getString
@@ -259,6 +260,8 @@ fun UserCard(context: Context) {
 
 @Composable
 fun AssociationProfileEvents(context: Context) {
+    val eventViewModel: EventViewModel = viewModel(factory = EventViewModel.Factory)
+
   Column(
       modifier = Modifier.padding(horizontal = 28.dp),
       horizontalAlignment = Alignment.CenterHorizontally) {
@@ -267,7 +270,8 @@ fun AssociationProfileEvents(context: Context) {
               event =
                   Event(
                       organisers = MockReferenceList(),
-                      taggedAssociations = MockReferenceList())) {}
+                      taggedAssociations = MockReferenceList()),
+              viewModel = eventViewModel) {}
         }
         Spacer(modifier = Modifier.size(11.dp))
         OutlinedButton(

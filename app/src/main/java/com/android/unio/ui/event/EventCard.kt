@@ -1,5 +1,6 @@
 package com.android.unio.ui.event
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -15,11 +16,17 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -35,14 +42,21 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.android.unio.R
 import com.android.unio.model.association.Association
+import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.event.Event
+import com.android.unio.model.event.EventListViewModel
 import com.android.unio.model.event.EventType
+import com.android.unio.model.event.EventViewModel
+import com.android.unio.model.event.MockEventRepository
+import com.android.unio.model.event.PreviewEventViewModel
 import com.android.unio.model.firestore.MockReferenceList
 import com.android.unio.model.map.Location
+import com.android.unio.model.user.MockUserRepository
 import com.android.unio.ui.theme.primaryContainerLight
 import com.android.unio.ui.theme.secondaryDark
 import com.android.unio.utils.EventUtils.addAlphaToColor
@@ -66,11 +80,20 @@ fun EventCardPreview() {
         types = listOf(EventType.TRIP)
     )
 
-    EventCard(event = sampleEvent, onClick = { /* Handle click */ })
+
+    EventCard(event = sampleEvent, viewModel = viewModel(factory = EventViewModel.Factory), onClick = { })
 }
 
 @Composable
-fun EventCard(event: Event, onClick: () -> Unit) {
+fun EventCard(event: Event, viewModel: EventViewModel, onClick: () -> Unit) {
+
+    var isSaved by remember { mutableStateOf(false) }
+
+    LaunchedEffect(event.uid) {
+        viewModel.isEventSavedForCurrentUser(event.uid) { saved ->
+            isSaved = saved
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -123,14 +146,30 @@ fun EventCard(event: Event, onClick: () -> Unit) {
                     .clip(RoundedCornerShape(14.dp))
                     .background(Color(0xFF6200EE))
                     .align(Alignment.TopEnd)
+                    .clickable {
+                        if (isSaved) {
+                            viewModel.unsaveEventForCurrentUser(event.uid, onSuccess = {
+                                isSaved = false
+                            }, onFailure = {e ->
+                                Log.e("EventCard","Failed to unsave event ", e)
+                            })
+                        } else {
+                            viewModel.saveEventForCurrentUser(event.uid, onSuccess = {
+                                isSaved = true
+                            }, onFailure = {e ->
+                                Log.e("EventCard","Failed to save event ", e)
+                            })
+                        }
+                    }
                     .padding(4.dp)
 
 
             ) {
-                // Icon inside the circle
+
                 Icon(
-                    Icons.Rounded.FavoriteBorder,
-                    contentDescription = ""
+                    imageVector = if (isSaved) Icons.Rounded.Favorite else Icons.Rounded.FavoriteBorder,
+                    contentDescription = if (isSaved) "Saved" else "Not saved",
+                    tint = if (isSaved) Color.Red else Color.White
                 )
             }
         }

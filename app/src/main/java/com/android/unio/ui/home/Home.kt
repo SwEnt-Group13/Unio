@@ -51,6 +51,10 @@ import com.android.unio.ui.event.EventCard
 import com.android.unio.model.event.EventListViewModel
 import com.android.unio.model.event.EventRepository
 import com.android.unio.model.event.EventRepositoryMock
+import com.android.unio.model.event.EventViewModel
+import com.android.unio.model.event.MockEventRepository
+import com.android.unio.model.event.PreviewEventViewModel
+import com.android.unio.model.user.MockUserRepository
 import com.android.unio.ui.navigation.BottomNavigationMenu
 import com.android.unio.ui.navigation.LIST_TOP_LEVEL_DESTINATION
 import com.android.unio.ui.navigation.NavigationAction
@@ -69,7 +73,8 @@ fun EventListOverviewPreview() {
       NavigationAction(NavHostController(LocalContext.current)),
       eventListViewModel = eventListViewModel,
       onAddEvent = {},
-      onEventClick = {})
+      onEventClick = {},
+      eventViewModel = viewModel(factory = EventViewModel.Factory))
 }
 
 @Composable
@@ -77,7 +82,8 @@ fun HomeScreen(
     navigationAction: NavigationAction,
     eventListViewModel: EventListViewModel = viewModel(factory = EventListViewModel.Factory),
     onAddEvent: () -> Unit,
-    onEventClick: (Event) -> Unit
+    onEventClick: (Event) -> Unit,
+    eventViewModel: EventViewModel = viewModel(factory = EventViewModel.Factory)
 ) {
   val events by eventListViewModel.events.collectAsState()
   var selectedTab by remember { mutableStateOf("All") }
@@ -197,7 +203,7 @@ fun HomeScreen(
                 contentPadding = PaddingValues(vertical = 8.dp),
                 modifier = Modifier.fillMaxSize().padding(horizontal = 32.dp)) {
                   items(events) { event ->
-                    EventCard(event = event, onClick = { onEventClick(event) })
+                    EventCard(event = event, viewModel = eventViewModel, onClick = { onEventClick(event) })
                   }
                 }
           } else {
