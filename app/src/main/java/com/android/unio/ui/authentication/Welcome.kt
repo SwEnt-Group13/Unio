@@ -1,6 +1,7 @@
 package com.android.unio.ui.authentication
 
 import android.content.Context
+import android.net.ConnectivityManager
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
@@ -13,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
@@ -33,12 +35,17 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign.Companion.Center
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat.getSystemService
 import com.android.unio.model.user.SignInState
 import com.android.unio.model.user.isValidEmail
+import com.android.unio.model.user.isValidPassword
 import com.android.unio.model.user.signInOrCreateAccount
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.theme.AppTypography
@@ -54,7 +61,11 @@ fun WelcomeScreen(navigationAction: NavigationAction) {
 
   val context = LocalContext.current
 
-  val enabled = isValidEmail(email) && password.isNotEmpty()
+  val validEmail = isValidEmail(email)
+  val validPassword = isValidPassword(password)
+  val enabled = validEmail && validPassword
+
+  val passwordError = !validPassword && password.isNotEmpty()
 
   Scaffold(
       modifier = Modifier.testTag("WelcomeScreen").fillMaxSize(),
@@ -73,12 +84,18 @@ fun WelcomeScreen(navigationAction: NavigationAction) {
                   textAlign = Center)
 
               Spacer(modifier = Modifier.size(50.dp))
-              Text("Sign up or log in to get started.", style = AppTypography.titleSmall)
+              Text("Sign up or log in to get started.", style = AppTypography.titleMedium)
 
               OutlinedTextField(
                   modifier = Modifier.testTag("WelcomeEmail"),
                   value = email,
                   onValueChange = { email = it },
+                  keyboardOptions =
+                      KeyboardOptions(
+                          keyboardType = KeyboardType.Email,
+                          imeAction = ImeAction.Done,
+                          capitalization = KeyboardCapitalization.None),
+                  singleLine = true,
                   label = { Text("Enter your email address") },
                   placeholder = { Text("john.doe@epfl.ch") },
               )
@@ -87,7 +104,19 @@ fun WelcomeScreen(navigationAction: NavigationAction) {
                   modifier = Modifier.testTag("WelcomePassword"),
                   value = password,
                   onValueChange = { password = it },
+                  keyboardOptions =
+                      KeyboardOptions(
+                          keyboardType = KeyboardType.Password,
+                          imeAction = ImeAction.Done,
+                          capitalization = KeyboardCapitalization.None),
+                  singleLine = true,
                   label = { Text("Enter your password") },
+                  isError = passwordError,
+                  supportingText = {
+                    if (passwordError) {
+                      Text("Min. 6 characters and 1 digit")
+                    }
+                  },
                   trailingIcon = {
                     IconButton(
                         onClick = { showPassword = !showPassword },
@@ -108,7 +137,14 @@ fun WelcomeScreen(navigationAction: NavigationAction) {
 
               Button(
                   modifier = Modifier.testTag("WelcomeButton"),
-                  onClick = { handleAuthentication(email, password, context) },
+                  onClick = {
+                    if (!enabled) {
+                      Toast.makeText(context, "Malformed email or password.", Toast.LENGTH_SHORT)
+                          .show()
+                    } else {
+                      handleAuthentication(email, password, context)
+                    }
+                  },
                   enabled = enabled) {
                     Text("Continue")
                   }
@@ -117,6 +153,14 @@ fun WelcomeScreen(navigationAction: NavigationAction) {
 }
 
 fun handleAuthentication(email: String, password: String, context: Context) {
+
+  // Check internet connectivity
+  val connectivityManager = getSystemService(context, ConnectivityManager::class.java)
+  if (connectivityManager?.activeNetwork == null) {
+    Toast.makeText(context, "You appear to be offline.", Toast.LENGTH_SHORT).show()
+    return
+  }
+
   signInOrCreateAccount(email, password, Firebase.auth) { signInResult ->
     // NOTE: No need to navigate to other screens, that is already handled by the listener in
     // MainActivity

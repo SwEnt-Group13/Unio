@@ -40,7 +40,7 @@ class WelcomeTest {
     composeTestRule.onNodeWithTag("WelcomeButton").assertIsNotEnabled()
 
     composeTestRule.onNodeWithTag("WelcomeEmail").performTextInput("john.doe@epfl.ch")
-    composeTestRule.onNodeWithTag("WelcomePassword").performTextInput("1234")
+    composeTestRule.onNodeWithTag("WelcomePassword").performTextInput("123456")
 
     composeTestRule.onNodeWithTag("WelcomeButton").assertIsEnabled()
   }
