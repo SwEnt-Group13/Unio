@@ -13,46 +13,55 @@ interface UserRepository {
 
   fun listenToSavedEvents(userUid: String, onSavedEventsChanged: (List<String>) -> Unit)
 
-  fun saveEvent(userUid: String, eventUid: String, onSuccess: () -> Unit, onFailure: (Exception) -> Unit)
+  fun saveEvent(
+      userUid: String,
+      eventUid: String,
+      onSuccess: () -> Unit,
+      onFailure: (Exception) -> Unit
+  )
 
-  fun unsaveEvent(userUid: String, eventUid: String, onSuccess: () -> Unit, onFailure: (Exception) -> Unit)
+  fun unsaveEvent(
+      userUid: String,
+      eventUid: String,
+      onSuccess: () -> Unit,
+      onFailure: (Exception) -> Unit
+  )
 
   fun isEventSaved(userUid: String, eventUid: String, onResult: (Boolean) -> Unit)
 }
 
 class MockUserRepository : UserRepository {
-  private val mockUsers = listOf(
-    User(
-      uid = "1",
-      email = "john.doe@example.com",
-      firstName = "John",
-      lastName = "Doe",
-      biography = "Just a regular guy.",
-      followingAssociations = MockReferenceList<Association>(), // You may implement a mock ReferenceList
-      savedEvents = MockReferenceList<Event>(), // Similarly, implement a mock ReferenceList
-      interests = listOf(Interest.SPORTS, Interest.MUSIC),
-      socials = listOf(
-        UserSocial(Social.INSTAGRAM, "john_doe"),
-        UserSocial(Social.WHATSAPP, "john.doe.whatsapp")
-      ),
-      profilePicture = "https://example.com/profile_picture1.jpg"
-    ),
-    User(
-      uid = "2",
-      email = "jane.smith@example.com",
-      firstName = "Jane",
-      lastName = "Smith",
-      biography = "Lover of arts and technology.",
-      followingAssociations = MockReferenceList<Association>(),
-      savedEvents = MockReferenceList<Event>(),
-      interests = listOf(Interest.ART, Interest.TECHNOLOGY),
-      socials = listOf(
-        UserSocial(Social.DISCORD, "jane_smith"),
-        UserSocial(Social.TELEGRAM, "jane.smith.telegram")
-      ),
-      profilePicture = "https://example.com/profile_picture2.jpg"
-    )
-  )
+  private val mockUsers =
+      listOf(
+          User(
+              uid = "1",
+              email = "john.doe@example.com",
+              firstName = "John",
+              lastName = "Doe",
+              biography = "Just a regular guy.",
+              followingAssociations =
+                  MockReferenceList<Association>(), // You may implement a mock ReferenceList
+              savedEvents = MockReferenceList<Event>(), // Similarly, implement a mock ReferenceList
+              interests = listOf(Interest.SPORTS, Interest.MUSIC),
+              socials =
+                  listOf(
+                      UserSocial(Social.INSTAGRAM, "john_doe"),
+                      UserSocial(Social.WHATSAPP, "john.doe.whatsapp")),
+              profilePicture = "https://example.com/profile_picture1.jpg"),
+          User(
+              uid = "2",
+              email = "jane.smith@example.com",
+              firstName = "Jane",
+              lastName = "Smith",
+              biography = "Lover of arts and technology.",
+              followingAssociations = MockReferenceList<Association>(),
+              savedEvents = MockReferenceList<Event>(),
+              interests = listOf(Interest.ART, Interest.TECHNOLOGY),
+              socials =
+                  listOf(
+                      UserSocial(Social.DISCORD, "jane_smith"),
+                      UserSocial(Social.TELEGRAM, "jane.smith.telegram")),
+              profilePicture = "https://example.com/profile_picture2.jpg"))
 
   override fun init(onSuccess: () -> Unit) {
     onSuccess()
@@ -62,7 +71,11 @@ class MockUserRepository : UserRepository {
     onSuccess(mockUsers)
   }
 
-  override fun getUserWithId(id: String, onSuccess: (User) -> Unit, onFailure: (Exception) -> Unit) {
+  override fun getUserWithId(
+      id: String,
+      onSuccess: (User) -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
     val user = mockUsers.find { it.uid == id }
     if (user != null) {
       onSuccess(user)
@@ -75,11 +88,21 @@ class MockUserRepository : UserRepository {
     onSavedEventsChanged(listOf("1", "2"))
   }
 
-  override fun saveEvent(userUid: String, eventUid: String, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+  override fun saveEvent(
+      userUid: String,
+      eventUid: String,
+      onSuccess: () -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
     onSuccess()
   }
 
-  override fun unsaveEvent(userUid: String, eventUid: String, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+  override fun unsaveEvent(
+      userUid: String,
+      eventUid: String,
+      onSuccess: () -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
     onSuccess()
   }
 

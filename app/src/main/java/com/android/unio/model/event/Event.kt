@@ -43,17 +43,18 @@ data class Event(
     val date: Timestamp = Timestamp(Date()),
     val location: Location = Location(),
     val types: List<EventType> = mutableListOf(EventType.OTHER)
-){
-    companion object
+) {
+  companion object
 }
 
 enum class EventType(val color: Color, val text: String) {
-    FESTIVAL(eventTypeFestival, "festival"),
-    APERITIF(eventTypeAperitif, "aperitif"),
-    NIGHT_PARTY(eventTypeNightParty, "night party"),
-    JAM(eventTypeJam, "jam"),
-    NETWORKING(eventTypeNetworking, "networking"),
-    SPORT(eventTypeSport, "sport"),
-    TRIP(eventTypeTrip, "trip"),
-    OTHER(eventTypeOther, "other"); // Default color
+  FESTIVAL(eventTypeFestival, "festival"),
+  APERITIF(eventTypeAperitif, "aperitif"),
+  NIGHT_PARTY(eventTypeNightParty, "night party"),
+  JAM(eventTypeJam, "jam"),
+  NETWORKING(eventTypeNetworking, "networking"),
+  SPORT(eventTypeSport, "sport"),
+  TRIP(eventTypeTrip, "trip"),
+  OTHER(eventTypeOther, "other")
+  // Default color
 }

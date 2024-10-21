@@ -46,8 +46,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import com.android.unio.model.event.Event
-import com.android.unio.ui.event.EventCard
 import com.android.unio.model.event.EventListViewModel
 import com.android.unio.model.event.EventRepository
 import com.android.unio.model.event.EventRepositoryMock
@@ -55,6 +53,7 @@ import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.event.MockEventRepository
 import com.android.unio.model.event.PreviewEventViewModel
 import com.android.unio.model.user.MockUserRepository
+import com.android.unio.ui.event.EventCard
 import com.android.unio.ui.navigation.BottomNavigationMenu
 import com.android.unio.ui.navigation.LIST_TOP_LEVEL_DESTINATION
 import com.android.unio.ui.navigation.NavigationAction
@@ -69,10 +68,10 @@ fun EventListOverviewPreview() {
 
   val eventListViewModel = EventListViewModel(mockEventRepository as EventRepository)
 
-    HomeScreen(
-        NavigationAction(NavHostController(LocalContext.current)),
-        eventListViewModel = eventListViewModel,
-        eventViewModel = PreviewEventViewModel(MockEventRepository(), MockUserRepository()))
+  HomeScreen(
+      NavigationAction(NavHostController(LocalContext.current)),
+      eventListViewModel = eventListViewModel,
+      eventViewModel = PreviewEventViewModel(MockEventRepository(), MockUserRepository()))
 }
 
 @Composable
@@ -107,18 +106,14 @@ fun HomeScreen(
       },
       modifier = Modifier.testTag("HomeScreen"),
       content = { paddingValues ->
-        Column(modifier = Modifier
-            .fillMaxSize()
-            .padding(paddingValues)
-            .background(Color.Black)) {
+        Column(modifier = Modifier.fillMaxSize().padding(paddingValues).background(Color.Black)) {
           // Sticky Header
           Box(
               modifier =
-              Modifier
-                  .fillMaxWidth()
-                  .background(Color.Black)
-                  .padding(vertical = 16.dp, horizontal = horizontalHeaderPadding)
-                  .testTag("event_Header")) {
+                  Modifier.fillMaxWidth()
+                      .background(Color.Black)
+                      .padding(vertical = 16.dp, horizontal = horizontalHeaderPadding)
+                      .testTag("event_Header")) {
                 Column {
                   Text(
                       text = "Upcoming Events",
@@ -134,70 +129,65 @@ fun HomeScreen(
                             text = "All",
                             color = if (selectedTab == "All") Color.White else Color.Gray,
                             modifier =
-                            Modifier
-                                .clickable {
-                                    selectedTab = "All"
-                                    coroutineScope.launch {
+                                Modifier.clickable {
+                                      selectedTab = "All"
+                                      coroutineScope.launch {
                                         animatablePosition.animateTo(
                                             0f, // Starting point for "All"
                                             animationSpec =
-                                            tween(durationMillis = 1000) // Animation duration
-                                        )
+                                                tween(durationMillis = 1000) // Animation duration
+                                            )
+                                      }
                                     }
-                                }
-                                .padding(horizontal = 16.dp)
-                                .onGloballyPositioned { coordinates ->
-                                    allTabWidth = (coordinates.size.width / density).dp
-                                    allTabXCoordinate = coordinates.positionInRoot().x
-                                }
-                                .testTag("event_tabAll"))
+                                    .padding(horizontal = 16.dp)
+                                    .onGloballyPositioned { coordinates ->
+                                      allTabWidth = (coordinates.size.width / density).dp
+                                      allTabXCoordinate = coordinates.positionInRoot().x
+                                    }
+                                    .testTag("event_tabAll"))
 
                         // Clickable text for "Following"
                         Text(
                             text = "Following",
                             color = if (selectedTab == "Following") Color.White else Color.Gray,
                             modifier =
-                            Modifier
-                                .clickable {
-                                    selectedTab = "Following"
-                                    coroutineScope.launch {
+                                Modifier.clickable {
+                                      selectedTab = "Following"
+                                      coroutineScope.launch {
                                         animatablePosition.animateTo(
                                             1f, // Ending point for "Following"
                                             animationSpec =
-                                            tween(durationMillis = 1000) // Animation duration
-                                        )
+                                                tween(durationMillis = 1000) // Animation duration
+                                            )
+                                      }
                                     }
-                                }
-                                .padding(horizontal = 16.dp)
-                                .onGloballyPositioned { coordinates ->
-                                    followingTabWidth = (coordinates.size.width / density).dp
-                                    followingTabXCoordinate = coordinates.positionInRoot().x
-                                }
-                                .testTag("event_tabFollowing"))
+                                    .padding(horizontal = 16.dp)
+                                    .onGloballyPositioned { coordinates ->
+                                      followingTabWidth = (coordinates.size.width / density).dp
+                                      followingTabXCoordinate = coordinates.positionInRoot().x
+                                    }
+                                    .testTag("event_tabFollowing"))
                       }
 
                   // Underline to indicate selected tab with smooth sliding animation
                   Box(
                       modifier =
-                      Modifier
-                          .fillMaxWidth() // Makes sure the underline spans the entire width
-                          .padding(top = 4.dp)) {
+                          Modifier.fillMaxWidth() // Makes sure the underline spans the entire width
+                              .padding(top = 4.dp)) {
                         val selectedTabWidth =
                             if (selectedTab == "All") allTabWidth else followingTabWidth
                         Box(
                             modifier =
-                            Modifier
-                                .offset(
-                                    x =
-                                    ((animatablePosition.value *
-                                            (followingTabXCoordinate - allTabXCoordinate) +
-                                            allTabXCoordinate) / density)
-                                        .dp - horizontalHeaderPadding
-                                )
-                                .width(selectedTabWidth) // Use the width of the selected tab
-                                .height(2.dp)
-                                .background(Color.Blue)
-                                .testTag("event_UnderlyingBar"))
+                                Modifier.offset(
+                                        x =
+                                            ((animatablePosition.value *
+                                                    (followingTabXCoordinate - allTabXCoordinate) +
+                                                    allTabXCoordinate) / density)
+                                                .dp - horizontalHeaderPadding)
+                                    .width(selectedTabWidth) // Use the width of the selected tab
+                                    .height(2.dp)
+                                    .background(Color.Blue)
+                                    .testTag("event_UnderlyingBar"))
                       }
                 }
               }
@@ -206,18 +196,12 @@ fun HomeScreen(
           if (events.isNotEmpty()) {
             LazyColumn(
                 contentPadding = PaddingValues(vertical = 8.dp),
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 32.dp)) {
-                  items(events) { event ->
-                    EventCard(event = event, viewModel = eventViewModel)
-                  }
+                modifier = Modifier.fillMaxSize().padding(horizontal = 32.dp)) {
+                  items(events) { event -> EventCard(event = event, viewModel = eventViewModel) }
                 }
           } else {
             Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues),
+                modifier = Modifier.fillMaxSize().padding(paddingValues),
                 contentAlignment = Alignment.Center) {
                   Text(
                       modifier = Modifier.testTag("event_emptyEventPrompt"),

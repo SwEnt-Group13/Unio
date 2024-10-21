@@ -47,9 +47,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.android.unio.R
 import com.android.unio.model.association.Association
-import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.event.Event
-import com.android.unio.model.event.EventListViewModel
 import com.android.unio.model.event.EventType
 import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.event.MockEventRepository
@@ -69,222 +67,192 @@ import java.util.Locale
 @Preview(showBackground = true)
 @Composable
 fun EventCardPreview() {
-    val sampleEvent = Event(
-        title = "Sample Event",
-        image = "", // Empty string to test the placeholder
-        organisers = MockReferenceList<Association>(),
-        taggedAssociations = MockReferenceList<Association>(),
-        location = Location(0.0, 0.0, "aaaa"),
-        date = Timestamp(Date(2024 - 1900, 6, 20)),
-        catchyDescription = "This is a catchy description.",
-        types = listOf(EventType.TRIP)
-    )
+  val sampleEvent =
+      Event(
+          title = "Sample Event",
+          image = "", // Empty string to test the placeholder
+          organisers = MockReferenceList<Association>(),
+          taggedAssociations = MockReferenceList<Association>(),
+          location = Location(0.0, 0.0, "aaaa"),
+          date = Timestamp(Date(2024 - 1900, 6, 20)),
+          catchyDescription = "This is a catchy description.",
+          types = listOf(EventType.TRIP))
 
-    val previewViewModel = PreviewEventViewModel(MockEventRepository(), MockUserRepository())
-    EventCard(event = sampleEvent, viewModel = previewViewModel)
+  val previewViewModel = PreviewEventViewModel(MockEventRepository(), MockUserRepository())
+  EventCard(event = sampleEvent, viewModel = previewViewModel)
 }
 
 @Composable
 fun EventCard(event: Event, viewModel: EventViewModel) {
 
-    var isSaved by remember { mutableStateOf(false) }
+  var isSaved by remember { mutableStateOf(false) }
 
-    LaunchedEffect(event.uid) {
-        viewModel.isEventSavedForCurrentUser(event.uid) { saved ->
-            isSaved = saved
-        }
-    }
+  LaunchedEffect(event.uid) {
+    viewModel.isEventSavedForCurrentUser(event.uid) { saved -> isSaved = saved }
+  }
 
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp)
-            .clickable(onClick = { })
-            .testTag("event_EventListItem")
-            .clip(RoundedCornerShape(10.dp))
-            .background(secondaryDark)
-    ) {
+  Column(
+      modifier =
+          Modifier.fillMaxWidth()
+              .padding(vertical = 8.dp)
+              .clickable(onClick = {})
+              .testTag("event_EventListItem")
+              .clip(RoundedCornerShape(10.dp))
+              .background(secondaryDark)) {
+        Box(modifier = Modifier.fillMaxWidth().height(100.dp)) {
+          // Fallback to a local placeholder image in case of an invalid URI
+          val imageUrl = event.image.takeIf { it.isNotEmpty() }?.toUri()
 
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(100.dp)
-        ) {
-            // Fallback to a local placeholder image in case of an invalid URI
-            val imageUrl = event.image.takeIf { it.isNotEmpty() }?.toUri()
-
-            if (LocalInspectionMode.current) { //preview mode
-                Image(
-                    painter = painterResource(id = R.drawable.preview_mode), // Fallback image
-                    contentDescription = "Fallback image of the event",
-                    modifier = Modifier
-                        .fillMaxWidth()
+          if (LocalInspectionMode.current) { // preview mode
+            Image(
+                painter = painterResource(id = R.drawable.preview_mode), // Fallback image
+                contentDescription = "Fallback image of the event",
+                modifier =
+                    Modifier.fillMaxWidth()
                         .height(100.dp)
                         .clip(RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp))
                         .testTag("event_EventImage"),
-                    contentScale = ContentScale.Crop // Crop the image to fit
+                contentScale = ContentScale.Crop // Crop the image to fit
                 )
-            } else {
-                AsyncImage( //running mode
-                    model = ImageRequest.Builder(LocalContext.current)
+          } else {
+            AsyncImage( // running mode
+                model =
+                    ImageRequest.Builder(LocalContext.current)
                         .data(imageUrl)
                         .error(R.drawable.no_picture_found) // Placeholder in case of loading error
                         .build(),
-                    contentDescription = "Image of the event",
-                    modifier = Modifier
-                        .fillMaxWidth()
+                contentDescription = "Image of the event",
+                modifier =
+                    Modifier.fillMaxWidth()
                         .height(100.dp)
                         .clip(RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp))
                         .testTag("event_EventImage"),
-                    contentScale = ContentScale.Crop // Crop the image to fit
+                contentScale = ContentScale.Crop // Crop the image to fit
                 )
-            }
+          }
 
-            Box(
-                modifier = Modifier
-                    .size(28.dp)
-                    .clip(RoundedCornerShape(14.dp))
-                    .background(Color(0xFF6200EE))
-                    .align(Alignment.TopEnd)
-                    .clickable {
+          Box(
+              modifier =
+                  Modifier.size(28.dp)
+                      .clip(RoundedCornerShape(14.dp))
+                      .background(Color(0xFF6200EE))
+                      .align(Alignment.TopEnd)
+                      .clickable {
                         if (isSaved) {
-                            viewModel.unsaveEventForCurrentUser(event.uid, onSuccess = {
-                                isSaved = false
-                            }, onFailure = { e ->
-                                Log.e("EventCard", "Failed to unsave event ", e)
-                            })
+                          viewModel.unsaveEventForCurrentUser(
+                              event.uid,
+                              onSuccess = { isSaved = false },
+                              onFailure = { e -> Log.e("EventCard", "Failed to unsave event ", e) })
                         } else {
-                            viewModel.saveEventForCurrentUser(event.uid, onSuccess = {
-                                isSaved = true
-                            }, onFailure = { e ->
-                                Log.e("EventCard", "Failed to save event ", e)
-                            })
+                          viewModel.saveEventForCurrentUser(
+                              event.uid,
+                              onSuccess = { isSaved = true },
+                              onFailure = { e -> Log.e("EventCard", "Failed to save event ", e) })
                         }
-                    }
-                    .padding(4.dp)
-
-
-            ) {
-
+                      }
+                      .padding(4.dp)) {
                 Icon(
-                    imageVector = if (isSaved) Icons.Rounded.Favorite else Icons.Rounded.FavoriteBorder,
+                    imageVector =
+                        if (isSaved) Icons.Rounded.Favorite else Icons.Rounded.FavoriteBorder,
                     contentDescription = if (isSaved) "Saved" else "Not saved",
-                    tint = if (isSaved) Color.Red else Color.White
-                )
-            }
+                    tint = if (isSaved) Color.Red else Color.White)
+              }
         }
-
-
 
         Column(modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp)) {
-            Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
-                Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.weight(1f)) {
+          Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
+            Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.weight(1f)) {
+              Text(
+                  modifier =
+                      Modifier.padding(vertical = 1.dp, horizontal = 4.dp)
+                          .testTag("event_EventTitle")
+                          .wrapContentWidth(), // Make sure the text only takes as much space as
+                                               // needed
+                  text = event.title,
+                  style = MaterialTheme.typography.labelLarge,
+                  fontWeight = FontWeight.Bold,
+                  color = Color.Black)
+
+              Spacer(modifier = Modifier.width(6.dp))
+              val type: EventType =
+                  if (event.types.isEmpty()) {
+                    EventType.OTHER
+                  } else event.types[0]
+              Box(
+                  modifier =
+                      Modifier.clip(RoundedCornerShape(4.dp))
+                          .background(addAlphaToColor(type.color, 200))
+                          .wrapContentWidth()) {
                     Text(
-                        modifier = Modifier
-                            .padding(vertical = 1.dp, horizontal = 4.dp)
-                            .testTag("event_EventTitle")
-                            .wrapContentWidth(), // Make sure the text only takes as much space as needed
-                        text = event.title,
-                        style = MaterialTheme.typography.labelLarge,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.Black
-                    )
-
-                    Spacer(modifier = Modifier.width(6.dp))
-                    val type: EventType =
-                        if (event.types.isEmpty()) {
-                            EventType.OTHER
-                        } else event.types[0]
-                    Box(
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(4.dp))
-                            .background(addAlphaToColor(type.color, 200))
-                            .wrapContentWidth()
-                    ) {
-                        Text(
-                            text = type.text,
-                            modifier = Modifier
-                                .padding(horizontal = 4.dp, vertical = 4.dp)
+                        text = type.text,
+                        modifier =
+                            Modifier.padding(horizontal = 4.dp, vertical = 4.dp)
                                 .testTag("event_EventMainType"),
-                            color = Color.Black,
-                            style = TextStyle(fontSize = 8.sp)
-                        )
-                    }
-                }
-                Spacer(modifier = Modifier.width(6.dp))
+                        color = Color.Black,
+                        style = TextStyle(fontSize = 8.sp))
+                  }
+            }
+            Spacer(modifier = Modifier.width(6.dp))
 
-                Image(
-                    painter = painterResource(id = R.drawable.clic),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(24.dp)
+            Image(
+                painter = painterResource(id = R.drawable.clic),
+                contentDescription = null,
+                modifier =
+                    Modifier.size(24.dp)
                         .align(Alignment.CenterVertically)
                         .clip(RoundedCornerShape(5.dp))
-                        .testTag("event_ClicImage")
-                )
+                        .testTag("event_ClicImage"))
+          }
+
+          Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
+            Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.weight(1f)) {
+              Text(
+                  modifier =
+                      Modifier.padding(vertical = 1.dp, horizontal = 4.dp)
+                          .testTag("event_EventLocation")
+                          .wrapContentWidth(), // Make sure the text only takes as much space as
+                                               // needed
+                  text = event.location.name,
+                  style = MaterialTheme.typography.bodySmall,
+                  color = Color.Black)
             }
 
-            Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
-                Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.weight(1f)) {
-                    Text(
-                        modifier = Modifier
-                            .padding(vertical = 1.dp, horizontal = 4.dp)
-                            .testTag("event_EventLocation")
-                            .wrapContentWidth(), // Make sure the text only takes as much space as needed
-                        text = event.location.name,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = Color.Black
-                    )
-                }
-
-                Spacer(modifier = Modifier.width(1.dp))
-
-                Text(
-                    modifier = Modifier
-                        .padding(vertical = 1.dp, horizontal = 0.dp)
-                        .testTag("event_EventDate"),
-                    text = formatTimestamp(event.date, SimpleDateFormat("dd/MM", Locale.getDefault())),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = Color.Black
-                )
-
-                Spacer(modifier = Modifier.width(2.dp))
-
-                Spacer(modifier = Modifier
-                    .height(10.dp)
-                    .width(1.dp)
-                    .background(primaryContainerLight))
-
-                Spacer(modifier = Modifier.width(2.dp))
-
-                Text(
-                    modifier = Modifier
-                        .testTag("event_EventTime")
-                        .wrapContentWidth(),
-                    text = formatTimestamp(event.date, SimpleDateFormat("HH:mm", Locale.getDefault())),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = Color.Black
-                )
-            }
-
-            Row {
-                Spacer(modifier = Modifier.width(4.dp))
-                Spacer(modifier = Modifier
-                    .fillMaxWidth()
-                    .height(1.dp)
-                    .background(primaryContainerLight)
-                )
-            }
+            Spacer(modifier = Modifier.width(1.dp))
 
             Text(
-                modifier = Modifier
-                    .padding(vertical = 1.dp, horizontal = 4.dp)
-                    .testTag("event_EventCatchyDescription")
-                    .wrapContentWidth(),
-                text = event.catchyDescription,
+                modifier =
+                    Modifier.padding(vertical = 1.dp, horizontal = 0.dp).testTag("event_EventDate"),
+                text = formatTimestamp(event.date, SimpleDateFormat("dd/MM", Locale.getDefault())),
                 style = MaterialTheme.typography.bodySmall,
-                color = Color.Black
-            )
+                color = Color.Black)
+
+            Spacer(modifier = Modifier.width(2.dp))
+
+            Spacer(modifier = Modifier.height(10.dp).width(1.dp).background(primaryContainerLight))
+
+            Spacer(modifier = Modifier.width(2.dp))
+
+            Text(
+                modifier = Modifier.testTag("event_EventTime").wrapContentWidth(),
+                text = formatTimestamp(event.date, SimpleDateFormat("HH:mm", Locale.getDefault())),
+                style = MaterialTheme.typography.bodySmall,
+                color = Color.Black)
+          }
+
+          Row {
+            Spacer(modifier = Modifier.width(4.dp))
+            Spacer(
+                modifier = Modifier.fillMaxWidth().height(1.dp).background(primaryContainerLight))
+          }
+
+          Text(
+              modifier =
+                  Modifier.padding(vertical = 1.dp, horizontal = 4.dp)
+                      .testTag("event_EventCatchyDescription")
+                      .wrapContentWidth(),
+              text = event.catchyDescription,
+              style = MaterialTheme.typography.bodySmall,
+              color = Color.Black)
         }
-    }
+      }
 }

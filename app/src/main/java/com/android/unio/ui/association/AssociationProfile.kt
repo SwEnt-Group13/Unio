@@ -53,10 +53,10 @@ import com.android.unio.R
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventViewModel
-import com.android.unio.ui.event.EventCard
 import com.android.unio.model.firestore.MockReferenceList
 import com.android.unio.resources.ResourceManager.getString
 import com.android.unio.resources.ResourceManager.init
+import com.android.unio.ui.event.EventCard
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.theme.AppTypography
 import kotlinx.coroutines.CoroutineScope
@@ -260,7 +260,7 @@ fun UserCard(context: Context) {
 
 @Composable
 fun AssociationProfileEvents(context: Context) {
-    val eventViewModel: EventViewModel = viewModel(factory = EventViewModel.Factory)
+  val eventViewModel: EventViewModel = viewModel(factory = EventViewModel.Factory)
 
   Column(
       modifier = Modifier.padding(horizontal = 28.dp),
@@ -268,9 +268,7 @@ fun AssociationProfileEvents(context: Context) {
         Box(modifier = Modifier.testTag("AssociationEventCard")) {
           EventCard(
               event =
-                  Event(
-                      organisers = MockReferenceList(),
-                      taggedAssociations = MockReferenceList()),
+                  Event(organisers = MockReferenceList(), taggedAssociations = MockReferenceList()),
               viewModel = eventViewModel)
         }
         Spacer(modifier = Modifier.size(11.dp))

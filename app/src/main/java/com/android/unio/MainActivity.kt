@@ -72,9 +72,7 @@ fun UnioApp() {
     }
     navigation(startDestination = Screen.HOME, route = Route.HOME) {
       composable(Screen.HOME) {
-        HomeScreen(
-            navigationActions,
-            EventListViewModel(EventRepositoryFirestore(db)))
+        HomeScreen(navigationActions, EventListViewModel(EventRepositoryFirestore(db)))
       }
     }
     navigation(startDestination = Screen.EXPLORE, route = Route.EXPLORE) {
