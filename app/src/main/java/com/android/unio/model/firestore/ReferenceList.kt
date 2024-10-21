@@ -13,8 +13,8 @@ interface ReferenceList<T> {
   fun requestAll()
 }
 
-class MockReferenceList<T>(associations: List<T> = emptyList()) : ReferenceList<T> {
-  private val _list = MutableStateFlow(associations)
+class MockReferenceList<T>(elements: List<T> = emptyList()) : ReferenceList<T> {
+  private val _list = MutableStateFlow(elements)
   override val list: StateFlow<List<T>> = _list
 
   override fun add(uid: String) {}
