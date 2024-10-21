@@ -88,8 +88,8 @@ fun AccountDetails(
         MutableStateFlow(emptyList<UserSocial>().toMutableList())
     }
 
-    val socials by userSocialsFlow.collectAsState()
   val interests by interestsFlow.collectAsState()
+    val socials by userSocialsFlow.collectAsState()
 
   val context = LocalContext.current
   var showInterestsOverlay by remember { mutableStateOf(false) }
@@ -240,8 +240,9 @@ fun AccountDetails(
   }
 
     if(showSocialsOverlay){
-        SocialsOverlay(onDismiss = { /*TODO*/ },
-            onSave = { /*TODO*/ },
+        SocialsOverlay(
+            onDismiss = {showSocialsOverlay = false},
+            onSave = {showSocialsOverlay = false},
             userSocials = userSocialsFlow)
     }
 }
