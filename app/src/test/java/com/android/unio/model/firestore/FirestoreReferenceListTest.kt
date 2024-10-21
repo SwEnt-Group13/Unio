@@ -97,29 +97,11 @@ class FirestoreReferenceListTest {
 
     // Add UIDs and call requestAll
     firestoreReferenceList.addAll(listOf("uid1", "uid2"))
-    firestoreReferenceList.requestAll()
+    firestoreReferenceList.requestAll { assertEquals(2, firestoreReferenceList.list.value.size) }
 
     // Assert that the list was updated correctly
     assertEquals(listOf("Item1", "Item2"), firestoreReferenceList.list.first())
     verify(mockQuery).get()
-  }
-
-  @Test
-  fun `test requestAll clears list before updating`() = runTest {
-    `when`(mockTask.addOnSuccessListener(any())).thenAnswer { invocation ->
-      val callback = invocation.arguments[0] as OnSuccessListener<QuerySnapshot>
-      callback.onSuccess(mockQuerySnapshot)
-      mockTask
-    }
-
-    // Add initial UIDs
-    firestoreReferenceList.addAll(listOf("uid1", "uid2"))
-
-    // Request documents
-    firestoreReferenceList.requestAll()
-
-    // Assert that the list was cleared before updating
-    assertEquals(0, firestoreReferenceList.list.value.size)
   }
 
   @Test

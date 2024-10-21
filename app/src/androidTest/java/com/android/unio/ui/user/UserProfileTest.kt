@@ -15,12 +15,18 @@ import com.android.unio.model.user.Interest
 import com.android.unio.model.user.Social
 import com.android.unio.model.user.User
 import com.android.unio.model.user.UserSocial
+import com.android.unio.ui.navigation.NavigationAction
+import io.mockk.MockKAnnotations
+import io.mockk.impl.annotations.MockK
 import junit.framework.TestCase.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 
 class UserProfileTest {
+
+  @MockK private lateinit var navigationAction: NavigationAction
+
   @get:Rule val composeTestRule = createComposeRule()
 
   private val association =
@@ -51,11 +57,14 @@ class UserProfileTest {
           profilePicture = "https://www.example.com/image",
           hasProvidedAccountDetails = true)
 
-  @Before fun setUp() {}
+  @Before
+  fun setUp() {
+    MockKAnnotations.init(this)
+  }
 
   @Test
   fun testEverythingIsDisplayed() {
-    composeTestRule.setContent { UserProfileScreenContent(user) }
+    composeTestRule.setContent { UserProfileScreenContent(navigationAction, user) }
 
     composeTestRule.onNodeWithTag("UserProfilePicture").assertIsDisplayed()
 
