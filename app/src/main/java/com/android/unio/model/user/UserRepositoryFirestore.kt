@@ -46,7 +46,7 @@ class UserRepositoryFirestore(private val db: FirebaseFirestore) : UserRepositor
         }
         .addOnFailureListener { exception -> onFailure(exception) }
   }
-  
+
   override fun saveEvent(
       userUid: String,
       eventUid: String,

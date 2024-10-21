@@ -167,7 +167,7 @@ fun EventCard(event: Event, viewModel: EventViewModel) {
                       Modifier.padding(vertical = 1.dp, horizontal = 4.dp)
                           .testTag("event_EventTitle")
                           .wrapContentWidth(), // Make sure the text only takes as much space as
-                                               // needed
+                  // needed
                   text = event.title,
                   style = MaterialTheme.typography.labelLarge,
                   fontWeight = FontWeight.Bold,
@@ -211,7 +211,7 @@ fun EventCard(event: Event, viewModel: EventViewModel) {
                       Modifier.padding(vertical = 1.dp, horizontal = 4.dp)
                           .testTag("event_EventLocation")
                           .wrapContentWidth(), // Make sure the text only takes as much space as
-                                               // needed
+                  // needed
                   text = event.location.name,
                   style = MaterialTheme.typography.bodySmall,
                   color = Color.Black)

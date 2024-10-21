@@ -11,20 +11,22 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.firestore
 import java.io.InputStream
 
-open class EventViewModel(
-    private val repository: EventRepository,
-    private val userRepository: UserRepository
-) : ViewModel() {
+open class EventViewModel(val repository: EventRepository, val userRepository: UserRepository) :
+    ViewModel() {
 
   companion object {
     val Factory: ViewModelProvider.Factory =
         object : ViewModelProvider.Factory {
           @Suppress("UNCHECKED_CAST")
           override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return EventViewModel(
-                EventRepositoryFirestore(Firebase.firestore),
-                UserRepositoryFirestore(Firebase.firestore))
-                as T
+            // Check if the requested model class is EventViewModel
+            if (modelClass.isAssignableFrom(EventViewModel::class.java)) {
+              return EventViewModel(
+                  EventRepositoryFirestore(Firebase.firestore),
+                  UserRepositoryFirestore(Firebase.firestore))
+                  as T
+            }
+            throw IllegalArgumentException("Unknown ViewModel class")
           }
         }
   }

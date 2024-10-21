@@ -28,6 +28,8 @@ interface UserRepository {
   )
 
   fun isEventSaved(userUid: String, eventUid: String, onResult: (Boolean) -> Unit)
+
+  fun updateUser(user: User, onSuccess: () -> Unit, onFailure: (Exception) -> Unit)
 }
 
 class MockUserRepository : UserRepository {
@@ -39,9 +41,8 @@ class MockUserRepository : UserRepository {
               firstName = "John",
               lastName = "Doe",
               biography = "Just a regular guy.",
-              followingAssociations =
-                  MockReferenceList<Association>(), 
-              savedEvents = MockReferenceList<Event>(), 
+              followingAssociations = MockReferenceList<Association>(),
+              savedEvents = MockReferenceList<Event>(),
               interests = listOf(Interest.SPORTS, Interest.MUSIC),
               socials =
                   listOf(
@@ -110,6 +111,7 @@ class MockUserRepository : UserRepository {
     onResult(false)
   }
 
-  fun updateUser(user: User, onSuccess: () -> Unit, onFailure: (Exception) -> Unit)
-
+  override fun updateUser(user: User, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+    TODO("Not yet implemented")
+  }
 }
