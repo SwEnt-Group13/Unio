@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -33,6 +34,7 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.ModalBottomSheetProperties
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SuggestionChip
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
@@ -53,6 +55,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
@@ -64,6 +67,7 @@ import com.android.unio.ui.navigation.BottomNavigationMenu
 import com.android.unio.ui.navigation.LIST_TOP_LEVEL_DESTINATION
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Route
+import com.android.unio.ui.navigation.Screen
 import com.android.unio.ui.theme.AppTypography
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
@@ -101,20 +105,20 @@ fun UserProfileScreen(
         BottomNavigationMenu(
             { navigationAction.navigateTo(it.route) }, LIST_TOP_LEVEL_DESTINATION, Route.MY_PROFILE)
       }) { padding ->
-        if (user != null) {
+        if (refreshState) {
+          Box(
+              modifier = Modifier.fillMaxSize().background(Color.White).padding(padding),
+              contentAlignment = Alignment.Center) {
+                CircularProgressIndicator(modifier = Modifier.width(64.dp))
+              }
+        } else {
           Box(
               modifier =
                   Modifier.padding(padding)
                       .pullRefresh(pullRefreshState)
                       .fillMaxHeight()
                       .verticalScroll(rememberScrollState())) {
-                UserProfileScreenContent(user!!)
-              }
-        } else {
-          Box(
-              modifier = Modifier.fillMaxWidth().fillMaxHeight().background(Color.White),
-              contentAlignment = Alignment.Center) {
-                CircularProgressIndicator(modifier = Modifier.width(64.dp))
+                UserProfileScreenContent(navigationAction, user!!)
               }
         }
       }
@@ -131,106 +135,108 @@ fun UserProfileScreen(
 
 @OptIn(ExperimentalLayoutApi::class, ExperimentalMaterialApi::class)
 @Composable
-fun UserProfileScreenContent(user: User) {
+fun UserProfileScreenContent(navigationAction: NavigationAction, user: User) {
 
   val uriHandler = LocalUriHandler.current
-  val context = LocalContext.current
 
   val followedAssociations by user.followedAssociations.list.collectAsState()
   val joinedAssociations by user.joinedAssociations.list.collectAsState()
 
-  Column(
-      horizontalAlignment = Alignment.CenterHorizontally,
-      modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
-      verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        AsyncImage(
-            model = user.profilePicture,
-            contentDescription = "Profile Picture",
-            modifier =
-                Modifier.size(100.dp)
-                    .clip(CircleShape)
-                    .background(Color.Gray)
-                    .testTag("UserProfilePicture"))
+  Surface(
+      modifier = Modifier.fillMaxWidth(),
+  ) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.fillMaxWidth(0.7f).padding(24.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)) {
+          AsyncImage(
+              model = user.profilePicture,
+              contentDescription = "Profile Picture",
+              modifier =
+                  Modifier.size(100.dp)
+                      .clip(CircleShape)
+                      .background(Color.Gray)
+                      .testTag("UserProfilePicture"))
 
-        // Display the user's name and biography.
-        Text(
-            user.firstName + " " + user.lastName,
-            style = AppTypography.headlineLarge,
-            modifier = Modifier.testTag("UserProfileName"))
-        Text(
-            user.biography,
-            style = AppTypography.bodyMedium,
-            modifier = Modifier.testTag("UserProfileBiography"))
+          // Display the user's name and biography.
+          Text(
+              user.firstName + " " + user.lastName,
+              style = AppTypography.headlineLarge,
+              modifier = Modifier.testTag("UserProfileName"))
+          Text(
+              user.biography,
+              style = AppTypography.bodyMedium,
+              textAlign = TextAlign.Center,
+              modifier = Modifier.testTag("UserProfileBiography"))
 
-        // Display the user's socials.
-        FlowRow(
-            modifier = Modifier.fillMaxWidth(0.8f), horizontalArrangement = Arrangement.Center) {
-              user.socials
-                  .filter { it.social != Social.OTHER }
-                  .forEach { userSocial ->
-                    IconButton(
-                        onClick = { uriHandler.openUri(userSocial.content) },
-                        modifier = Modifier.testTag("UserProfileSocialButton")) {
-                          Image(
-                              modifier = Modifier.size(32.dp).wrapContentSize(),
-                              painter = painterResource(userSocial.social.icon),
-                              contentDescription = userSocial.social.title,
-                              contentScale = ContentScale.Fit)
-                        }
-                  }
-            }
-
-        // Display the user's interests in Chips.
-        FlowRow(
-            modifier = Modifier.fillMaxWidth(0.8f),
-            horizontalArrangement =
-                Arrangement.spacedBy(
-                    space = 8.dp,
-                    alignment = Alignment.CenterHorizontally,
-                ),
-        ) {
-          user.interests.forEach { interest ->
-            SuggestionChip(
-                modifier = Modifier.testTag("UserProfileInterest"),
-                onClick = {},
-                label = { Text(interest.title, style = AppTypography.bodySmall) })
+          // Display the user's socials.
+          FlowRow(horizontalArrangement = Arrangement.Center) {
+            user.socials
+                .filter { it.social != Social.OTHER }
+                .forEach { userSocial ->
+                  IconButton(
+                      onClick = { uriHandler.openUri(userSocial.content) },
+                      modifier = Modifier.testTag("UserProfileSocialButton")) {
+                        Image(
+                            modifier = Modifier.size(32.dp).wrapContentSize(),
+                            painter = painterResource(userSocial.social.icon),
+                            contentDescription = userSocial.social.title,
+                            contentScale = ContentScale.Fit)
+                      }
+                }
           }
-        }
 
-        Divider(modifier = Modifier.fillMaxWidth(0.8f))
-
-        // Display the associations that the user is a member of.
-        if (joinedAssociations.isNotEmpty()) {
-          Text("Joined", style = AppTypography.headlineSmall)
-          Column(
-              modifier = Modifier.fillMaxWidth(0.8f).testTag("UserProfileJoinedAssociations"),
-              verticalArrangement = Arrangement.spacedBy(8.dp),
+          // Display the user's interests in Chips.
+          FlowRow(
+              horizontalArrangement =
+                  Arrangement.spacedBy(
+                      space = 8.dp,
+                      alignment = Alignment.CenterHorizontally,
+                  ),
           ) {
-            joinedAssociations.map {
-              AssociationSmall(it) {
-                Toast.makeText(context, "Not yet implemented.", Toast.LENGTH_SHORT).show()
+            user.interests.forEach { interest ->
+              SuggestionChip(
+                  modifier = Modifier.testTag("UserProfileInterest"),
+                  onClick = {},
+                  label = { Text(interest.title, style = AppTypography.bodySmall) })
+            }
+          }
+
+          // Display the associations that the user is a member of.
+          if (joinedAssociations.isNotEmpty()) {
+            Divider()
+
+            Text("Joined", style = AppTypography.headlineSmall)
+            Column(
+                modifier = Modifier.fillMaxWidth().testTag("UserProfileJoinedAssociations"),
+                verticalArrangement = Arrangement.spacedBy(4.dp),
+            ) {
+              joinedAssociations.map {
+                AssociationSmall(it) {
+                  navigationAction.navigateTo(Screen.withParams(Screen.ASSOCIATION_PROFILE, it.uid))
+                }
+              }
+            }
+          }
+
+          // Display the associations that the user is following.
+          if (followedAssociations.isNotEmpty()) {
+            Divider(modifier = Modifier)
+
+            Text("Following", style = AppTypography.headlineSmall)
+            Column(
+                modifier = Modifier.testTag("UserProfileFollowedAssociations"),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+              followedAssociations.map {
+                AssociationSmall(it) {
+                  navigationAction.navigateTo(Screen.withParams(Screen.ASSOCIATION_PROFILE, it.uid))
+                }
               }
             }
           }
         }
-
-        Divider(modifier = Modifier.fillMaxWidth(0.8f))
-
-        // Display the associations that the user is following.
-        if (followedAssociations.isNotEmpty()) {
-          Text("Following", style = AppTypography.headlineSmall)
-          Column(
-              modifier = Modifier.fillMaxWidth(0.8f).testTag("UserProfileFollowedAssociations"),
-              verticalArrangement = Arrangement.spacedBy(8.dp),
-          ) {
-            followedAssociations.map {
-              AssociationSmall(it) {
-                Toast.makeText(context, "Not yet implemented.", Toast.LENGTH_SHORT).show()
-              }
-            }
-          }
-        }
-      }
+  }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
