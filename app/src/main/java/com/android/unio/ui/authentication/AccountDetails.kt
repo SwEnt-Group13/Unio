@@ -36,39 +36,64 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.compose.rememberNavController
 import com.android.unio.model.association.Association
 import com.android.unio.model.firestore.emptyFirestoreReferenceList
 import com.android.unio.model.user.Interest
 import com.android.unio.model.user.User
 import com.android.unio.model.user.UserRepositoryFirestore
+import com.android.unio.model.user.UserSocial
 import com.android.unio.ui.authentication.InterestOverlay
+import com.android.unio.ui.authentication.SocialsOverlay
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
 import com.android.unio.ui.theme.AppTypography
 import com.android.unio.ui.theme.primaryLight
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
+import com.google.firebase.firestore.firestore
 import kotlinx.coroutines.flow.MutableStateFlow
+
+
+@Preview(showBackground = true)
+@Composable
+fun AccountDetailsPreview() {
+    val navController = rememberNavController()
+    val navigationActions = NavigationAction(navController)
+    val userRepositoryFirestore = UserRepositoryFirestore(Firebase.firestore)
+    AccountDetails(
+        navigationAction = navigationActions,
+        userRepositoryFirestore = userRepositoryFirestore
+    )
+}
+
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun AccountDetails(
     navigationAction: NavigationAction,
-    userRepositoryFirestore: UserRepositoryFirestore
+    userRepositoryFirestore: UserRepositoryFirestore,
 ) {
   var firstName: String by remember { mutableStateOf("") }
   var lastName: String by remember { mutableStateOf("") }
   var bio: String by remember { mutableStateOf("") }
 
   val interestsFlow = remember {
-    MutableStateFlow(Interest.entries.map { it to mutableStateOf(false) }.toMutableList())
+      MutableStateFlow(Interest.entries.map { it to mutableStateOf(false) }.toMutableList())
   }
 
+    val userSocialsFlow: MutableStateFlow<MutableList<UserSocial>> = remember {
+        MutableStateFlow(emptyList<UserSocial>().toMutableList())
+    }
+
+    val socials by userSocialsFlow.collectAsState()
   val interests by interestsFlow.collectAsState()
 
   val context = LocalContext.current
   var showInterestsOverlay by remember { mutableStateOf(false) }
+    var showSocialsOverlay by remember{ mutableStateOf(false) }
   val scrollState = rememberScrollState()
 
   if (Firebase.auth.currentUser == null) {
@@ -77,9 +102,10 @@ fun AccountDetails(
   }
   Column(
       modifier =
-          Modifier.padding(vertical = 20.dp, horizontal = 40.dp)
-              .verticalScroll(scrollState)
-              .testTag("AccountDetails"),
+      Modifier
+          .padding(vertical = 20.dp, horizontal = 40.dp)
+          .verticalScroll(scrollState)
+          .testTag("AccountDetails"),
       verticalArrangement = Arrangement.SpaceBetween,
       horizontalAlignment = Alignment.CenterHorizontally) {
         Text(
@@ -89,7 +115,10 @@ fun AccountDetails(
 
         OutlinedTextField(
             modifier =
-                Modifier.padding(4.dp).fillMaxWidth().testTag("AccountDetailsFirstNameTextField"),
+            Modifier
+                .padding(4.dp)
+                .fillMaxWidth()
+                .testTag("AccountDetailsFirstNameTextField"),
             label = {
               Text("First name", modifier = Modifier.testTag("AccountDetailsFirstNameText"))
             },
@@ -97,7 +126,10 @@ fun AccountDetails(
             value = firstName)
         OutlinedTextField(
             modifier =
-                Modifier.padding(4.dp).fillMaxWidth().testTag("AccountDetailsLastNameTextField"),
+            Modifier
+                .padding(4.dp)
+                .fillMaxWidth()
+                .testTag("AccountDetailsLastNameTextField"),
             label = {
               Text("Last name", modifier = Modifier.testTag("AccountDetailsLastNameText"))
             },
@@ -105,37 +137,46 @@ fun AccountDetails(
             value = lastName)
         OutlinedTextField(
             modifier =
-                Modifier.padding(4.dp)
-                    .fillMaxWidth()
-                    .height(200.dp)
-                    .testTag("AccountDetailsBioTextField"),
+            Modifier
+                .padding(4.dp)
+                .fillMaxWidth()
+                .height(200.dp)
+                .testTag("AccountDetailsBioTextField"),
             label = { Text("Bio", modifier = Modifier.testTag("AccountDetailsBioText")) },
             onValueChange = { bio = it },
             value = bio)
 
         Row(
-            modifier = Modifier.fillMaxWidth().padding(8.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp),
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically) {
               Text(
                   text = "Maybe add a profile picture?",
                   modifier =
-                      Modifier.widthIn(max = 140.dp).testTag("AccountDetailsProfilePictureText"),
+                  Modifier
+                      .widthIn(max = 140.dp)
+                      .testTag("AccountDetailsProfilePictureText"),
                   style = AppTypography.bodyLarge)
               Icon(
                   Icons.Rounded.AccountCircle,
                   contentDescription = "Add",
                   tint = primaryLight,
                   modifier =
-                      Modifier.clickable {
-                            Toast.makeText(context, "Not yet implemented", Toast.LENGTH_SHORT)
-                                .show()
-                          }
-                          .size(100.dp)
-                          .testTag("AccountDetailsProfilePictureIcon"))
+                  Modifier
+                      .clickable {
+                          Toast
+                              .makeText(context, "Not yet implemented", Toast.LENGTH_SHORT)
+                              .show()
+                      }
+                      .size(100.dp)
+                      .testTag("AccountDetailsProfilePictureIcon"))
             }
         OutlinedButton(
-            modifier = Modifier.fillMaxWidth().testTag("AccountDetailsInterestsButton"),
+            modifier = Modifier
+                .fillMaxWidth()
+                .testTag("AccountDetailsInterestsButton"),
             onClick = { showInterestsOverlay = true }) {
               Icon(Icons.Default.Add, contentDescription = "Add")
               Text("Add centers of interest")
@@ -147,7 +188,9 @@ fun AccountDetails(
                   label = { Text(pair.first.name) },
                   onClick = {},
                   selected = pair.second.value,
-                  modifier = Modifier.padding(3.dp).testTag("AccountDetailsInterestChip: $index"),
+                  modifier = Modifier
+                      .padding(3.dp)
+                      .testTag("AccountDetailsInterestChip: $index"),
                   avatar = {
                     Icon(
                         Icons.Default.Close,
@@ -158,10 +201,10 @@ fun AccountDetails(
           }
         }
         OutlinedButton(
-            modifier = Modifier.fillMaxWidth().testTag("AccountDetailsSocialsButton"),
-            onClick = {
-              Toast.makeText(context, "Not yet implemented", Toast.LENGTH_SHORT).show()
-            }) {
+            modifier = Modifier
+                .fillMaxWidth()
+                .testTag("AccountDetailsSocialsButton"),
+            onClick = {showSocialsOverlay = true}) {
               Icon(Icons.Default.Add, contentDescription = "Add")
               Text("Add links to other social media")
             }
@@ -195,6 +238,12 @@ fun AccountDetails(
         onSave = { showInterestsOverlay = false },
         interests = interestsFlow)
   }
+
+    if(showSocialsOverlay){
+        SocialsOverlay(onDismiss = { /*TODO*/ },
+            onSave = { /*TODO*/ },
+            userSocials = userSocialsFlow)
+    }
 }
 
 fun uploadUser(
