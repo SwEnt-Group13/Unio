@@ -271,7 +271,7 @@ fun AssociationProfileEvents(context: Context) {
                   Event(
                       organisers = MockReferenceList(),
                       taggedAssociations = MockReferenceList()),
-              viewModel = eventViewModel) {}
+              viewModel = eventViewModel)
         }
         Spacer(modifier = Modifier.size(11.dp))
         OutlinedButton(

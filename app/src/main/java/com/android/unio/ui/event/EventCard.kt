@@ -81,11 +81,11 @@ fun EventCardPreview() {
     )
 
     val previewViewModel = PreviewEventViewModel(MockEventRepository(), MockUserRepository())
-    EventCard(event = sampleEvent, viewModel = previewViewModel, onClick = { })
+    EventCard(event = sampleEvent, viewModel = previewViewModel)
 }
 
 @Composable
-fun EventCard(event: Event, viewModel: EventViewModel, onClick: () -> Unit) {
+fun EventCard(event: Event, viewModel: EventViewModel) {
 
     var isSaved by remember { mutableStateOf(false) }
 
@@ -99,7 +99,7 @@ fun EventCard(event: Event, viewModel: EventViewModel, onClick: () -> Unit) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp)
-            .clickable(onClick = onClick)
+            .clickable(onClick = { })
             .testTag("event_EventListItem")
             .clip(RoundedCornerShape(10.dp))
             .background(secondaryDark)
@@ -150,14 +150,14 @@ fun EventCard(event: Event, viewModel: EventViewModel, onClick: () -> Unit) {
                         if (isSaved) {
                             viewModel.unsaveEventForCurrentUser(event.uid, onSuccess = {
                                 isSaved = false
-                            }, onFailure = {e ->
-                                Log.e("EventCard","Failed to unsave event ", e)
+                            }, onFailure = { e ->
+                                Log.e("EventCard", "Failed to unsave event ", e)
                             })
                         } else {
                             viewModel.saveEventForCurrentUser(event.uid, onSuccess = {
                                 isSaved = true
-                            }, onFailure = {e ->
-                                Log.e("EventCard","Failed to save event ", e)
+                            }, onFailure = { e ->
+                                Log.e("EventCard", "Failed to save event ", e)
                             })
                         }
                     }
@@ -258,7 +258,9 @@ fun EventCard(event: Event, viewModel: EventViewModel, onClick: () -> Unit) {
                 Spacer(modifier = Modifier.width(2.dp))
 
                 Text(
-                    modifier = Modifier.testTag("event_EventTime").wrapContentWidth(),
+                    modifier = Modifier
+                        .testTag("event_EventTime")
+                        .wrapContentWidth(),
                     text = formatTimestamp(event.date, SimpleDateFormat("HH:mm", Locale.getDefault())),
                     style = MaterialTheme.typography.bodySmall,
                     color = Color.Black
