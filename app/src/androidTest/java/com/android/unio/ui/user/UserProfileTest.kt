@@ -6,6 +6,7 @@ import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.test.espresso.Espresso
 import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationCategory
 import com.android.unio.model.firestore.MockReferenceList
@@ -14,6 +15,7 @@ import com.android.unio.model.user.Interest
 import com.android.unio.model.user.Social
 import com.android.unio.model.user.User
 import com.android.unio.model.user.UserSocial
+import junit.framework.TestCase.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -72,5 +74,19 @@ class UserProfileTest {
 
     composeTestRule.onNodeWithTag("UserProfileJoinedAssociations").assertIsDisplayed()
     composeTestRule.onNodeWithTag("UserProfileFollowedAssociations").assertIsDisplayed()
+  }
+
+  @Test
+  fun testBottomSheet() {
+    var called = false
+
+    composeTestRule.setContent { UserProfileBottomSheet(true) { called = true } }
+
+    composeTestRule.onNodeWithTag("UserProfileBottomSheet").assertIsDisplayed()
+
+    // Press the android back button to close the bottom sheet
+    Espresso.pressBack()
+
+    assertEquals(true, called)
   }
 }
