@@ -17,6 +17,8 @@ enum class Interest(val title: String) {
 }
 
 enum class Social(val title: String) {
+    FACEBOOK("Facebook"),
+    TWITTER("Twitter"),
   INSTAGRAM("Instagram"),
   SNAPCHAT("Snapchat"),
   TELEGRAM("Telegram"),
