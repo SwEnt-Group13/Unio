@@ -40,10 +40,12 @@ class UserTest {
             "Doe",
             "An example user",
             Association.emptyFirestoreReferenceList(),
+            Association.emptyFirestoreReferenceList(),
             listOf(Interest.SPORTS, Interest.MUSIC),
             listOf(
                 UserSocial(Social.INSTAGRAM, "Insta"), UserSocial(Social.WEBSITE, "example.com")),
-            "https://www.example.com/image")
+            "https://www.example.com/image",
+            true)
     assertEquals("1", user.uid)
     assertEquals("john@example.com", user.email)
     assertEquals("John", user.firstName)

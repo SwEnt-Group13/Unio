@@ -46,13 +46,15 @@ class HydrationAndSerializationTest {
             firstName = "userFirst",
             lastName = "userLast",
             biography = "An example user",
-            followingAssociations = Association.firestoreReferenceListWith(listOf("1", "2")),
+            followedAssociations = Association.firestoreReferenceListWith(listOf("1", "2")),
+            joinedAssociations = Association.firestoreReferenceListWith(listOf("1", "2")),
             interests = listOf(Interest.SPORTS, Interest.MUSIC),
             socials =
                 listOf(
                     UserSocial(Social.INSTAGRAM, "Insta"),
                     UserSocial(Social.WEBSITE, "example.com")),
-            profilePicture = "https://www.example.com/image")
+            profilePicture = "https://www.example.com/image",
+            hasProvidedAccountDetails = true)
 
     association =
         Association(
@@ -89,12 +91,14 @@ class HydrationAndSerializationTest {
     assertEquals(user.firstName, serialized["firstName"])
     assertEquals(user.lastName, serialized["lastName"])
     assertEquals(user.biography, serialized["biography"])
-    assertEquals(user.followingAssociations.list.value, serialized["followingAssociations"])
+    assertEquals(user.followedAssociations.list.value, serialized["followingAssociations"])
+    assertEquals(user.joinedAssociations.list.value, serialized["joinedAssociations"])
     assertEquals(user.interests.map { it.name }, serialized["interests"])
     assertEquals(
         user.socials.map { mapOf("social" to it.social.name, "content" to it.content) },
         serialized["socials"])
     assertEquals(user.profilePicture, serialized["profilePicture"])
+    assertEquals(user.hasProvidedAccountDetails, serialized["hasProvidedAccountDetails"])
 
     val hydrated = UserRepositoryFirestore.hydrate(serialized)
 
@@ -103,10 +107,12 @@ class HydrationAndSerializationTest {
     assertEquals(user.firstName, hydrated.firstName)
     assertEquals(user.lastName, hydrated.lastName)
     assertEquals(user.biography, hydrated.biography)
-    assertEquals(user.followingAssociations.list.value, hydrated.followingAssociations.list.value)
+    assertEquals(user.followedAssociations.list.value, hydrated.followedAssociations.list.value)
+    assertEquals(user.joinedAssociations.list.value, hydrated.joinedAssociations.list.value)
     assertEquals(user.interests, hydrated.interests)
     assertEquals(user.socials, hydrated.socials)
     assertEquals(user.profilePicture, hydrated.profilePicture)
+    assertEquals(user.hasProvidedAccountDetails, hydrated.hasProvidedAccountDetails)
   }
 
   @Test
@@ -174,10 +180,12 @@ class HydrationAndSerializationTest {
     assertEquals("", hydrated.firstName)
     assertEquals("", hydrated.lastName)
     assertEquals("", hydrated.biography)
-    assertEquals(emptyList<String>(), hydrated.followingAssociations.list.value)
+    assertEquals(emptyList<String>(), hydrated.followedAssociations.list.value)
+    assertEquals(emptyList<String>(), hydrated.joinedAssociations.list.value)
     assertEquals(emptyList<Interest>(), hydrated.interests)
     assertEquals(emptyList<UserSocial>(), hydrated.socials)
     assertEquals("", hydrated.profilePicture)
+    assertEquals(false, hydrated.hasProvidedAccountDetails)
   }
 
   @Test
