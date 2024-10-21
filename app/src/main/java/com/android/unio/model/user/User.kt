@@ -36,6 +36,7 @@ data class UserSocial(val social: Social, val content: String)
  * @param lastName The last name of the user.
  * @param biography The biography of the user.
  * @param followedAssociations The associations that the user is following.
+ * @param joinedAssociations The associations that the user is member of.
  * @param interests The interests of the user.
  * @param socials The socials of the user.
  * @param profilePicture The URL to the profile picture in Firebase storage.
