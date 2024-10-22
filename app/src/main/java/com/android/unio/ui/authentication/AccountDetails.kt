@@ -46,7 +46,7 @@ import com.android.unio.model.user.User
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserSocial
 import com.android.unio.ui.authentication.InterestOverlay
-import com.android.unio.ui.authentication.SocialsOverlay
+import com.android.unio.ui.authentication.SocialOverlay
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
 import com.android.unio.ui.theme.AppTypography
@@ -81,10 +81,10 @@ fun AccountDetails(
   var bio: String by remember { mutableStateOf("") }
 
   val interestsFlow = remember {
-      MutableStateFlow(Interest.entries.map { it to mutableStateOf(false) }.toMutableList())
+      MutableStateFlow(Interest.entries.map { it to mutableStateOf(false) }.toList())
   }
 
-    val userSocialsFlow: MutableStateFlow<MutableList<UserSocial>> = remember {
+    val userSocialsFlow = remember {
         MutableStateFlow(emptyList<UserSocial>().toMutableList())
     }
 
@@ -181,8 +181,8 @@ fun AccountDetails(
               Icon(Icons.Default.Add, contentDescription = "Add")
               Text("Add centers of interest")
             }
-        FlowRow() {
-          interests.forEachIndexed() { index, pair ->
+        FlowRow{
+          interests.forEachIndexed { index, pair ->
             if (pair.second.value) {
               InputChip(
                   label = { Text(pair.first.name) },
@@ -208,8 +208,26 @@ fun AccountDetails(
               Icon(Icons.Default.Add, contentDescription = "Add")
               Text("Add links to other social media")
             }
-        FlowRow() {
-          /* TODO row containing dynamic list of social media links */
+        FlowRow(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            socials.forEachIndexed { index, userSocial ->
+                InputChip(
+                    label = { Text(userSocial.social.name) },
+                    onClick = {},
+                    selected = true,
+                    modifier = Modifier
+                        .padding(3.dp)
+                        .testTag("AccountDetailsSocialChip: $index"),
+                    avatar = {
+                        Icon(
+                            Icons.Default.Close,
+                            contentDescription = "Add",
+                            modifier = Modifier.clickable {
+                                userSocialsFlow.value = userSocialsFlow.value.toMutableList().apply { removeAt(index) }
+                            })
+                    })
+            }
         }
         Button(
             modifier = Modifier.testTag("AccountDetailsContinueButton"),
@@ -237,15 +255,17 @@ fun AccountDetails(
   if (showInterestsOverlay) {
     InterestOverlay(
         onDismiss = { showInterestsOverlay = false },
-        onSave = { showInterestsOverlay = false },
-        interests = interestsFlow)
+        onSave = {newInterests -> interestsFlow.value = newInterests
+                 showInterestsOverlay = false},
+        interests = interests)
   }
 
     if(showSocialsOverlay){
-        SocialsOverlay(
+        SocialOverlay(
             onDismiss = {showSocialsOverlay = false},
-            onSave = {showSocialsOverlay = false},
-            userSocials = userSocialsFlow)
+            onSave = {newUserSocials -> userSocialsFlow.value = newUserSocials
+                showSocialsOverlay = false},
+            userSocials = socials)
     }
 }
 

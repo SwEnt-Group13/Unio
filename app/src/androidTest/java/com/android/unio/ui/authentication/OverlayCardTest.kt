@@ -20,7 +20,7 @@ class OverlayCardTest {
 
   @Before
   fun setUp() {
-    composeTestRule.setContent { InterestOverlay({}, {}, MutableStateFlow(interests)) }
+    composeTestRule.setContent { InterestOverlay({}, {}, interests) }
   }
 
   @Test

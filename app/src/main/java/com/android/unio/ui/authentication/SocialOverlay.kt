@@ -1,13 +1,11 @@
 package com.android.unio.ui.authentication
 
-import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -15,23 +13,22 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ExposedDropdownMenuBox
 import androidx.compose.material.ExposedDropdownMenuDefaults
+import androidx.compose.material.OutlinedButton
 import androidx.compose.material.Surface
 import androidx.compose.material.TextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.AddCircleOutline
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -44,112 +41,23 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import com.android.unio.model.user.Interest
 import com.android.unio.model.user.Social
 import com.android.unio.model.user.UserSocial
 import com.android.unio.ui.theme.AppTypography
 import kotlinx.coroutines.flow.MutableStateFlow
 
 @Composable
-fun InterestOverlay(
+fun SocialOverlay(
     onDismiss: () -> Unit,
-    onSave: () -> Unit,
-    interests: MutableStateFlow<MutableList<Pair<Interest, MutableState<Boolean>>>>
+    onSave: (MutableList<UserSocial>) -> Unit,
+    userSocials: MutableList<UserSocial>
 ) {
-  val scrollState = rememberScrollState()
-  val interestsState by interests.collectAsState()
-
-  Dialog(
-      onDismissRequest = onDismiss,
-      properties = DialogProperties(usePlatformDefaultWidth = false)) {
-        Card(
-            elevation = CardDefaults.cardElevation(8.dp),
-            shape = RoundedCornerShape(15.dp),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(20.dp)
-                .testTag("InterestOverlayCard")) {
-              Column(
-                  modifier =
-                  Modifier
-                      .fillMaxWidth()
-                      .padding(15.dp)
-                      .sizeIn(maxHeight = 400.dp)
-                      .testTag("InterestOverlayColumn"),
-                  verticalArrangement = Arrangement.SpaceBetween) {
-                    Text(
-                        text = "Your interests",
-                        style = AppTypography.headlineSmall,
-                        modifier = Modifier.testTag("InterestOverlayTitle"))
-                    Text(
-                        text = "Choose as many interests as you feel apply to you",
-                        style = AppTypography.bodyMedium,
-                        modifier =
-                        Modifier
-                            .padding(bottom = 5.dp)
-                            .testTag("InterestOverlaySubtitle"))
-                    Surface(
-                        modifier = Modifier.sizeIn(maxHeight = 250.dp), color = Color.Transparent) {
-                          Column(modifier = Modifier.verticalScroll(scrollState)) {
-                            interestsState.forEachIndexed { index, pair ->
-                              Row(
-                                  horizontalArrangement = Arrangement.SpaceBetween,
-                                  verticalAlignment = Alignment.CenterVertically,
-                                  modifier =
-                                  Modifier
-                                      .padding(5.dp)
-                                      .fillMaxWidth()
-                                      .testTag("InterestOverlayClickableRow: $index")
-                                      .clickable { pair.second.value = !pair.second.value }) {
-                                    Text(
-                                        text = pair.first.name,
-                                        style = AppTypography.bodyMedium,
-                                        modifier =
-                                        Modifier
-                                            .padding(start = 5.dp)
-                                            .testTag("InterestOverlayText: ${pair.first.name}"))
-                                    Checkbox(
-                                        checked = pair.second.value,
-                                        onCheckedChange = { pair.second.value = it },
-                                        modifier =
-                                            Modifier.testTag(
-                                                "InterestOverlayCheckbox: ${pair.first.name}"))
-                                  }
-                              if (index != interestsState.size - 1) {
-                                Divider(
-                                    modifier = Modifier.testTag("InterestOverlayDivider: $index"))
-                              }
-                            }
-                          }
-                        }
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(8.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Absolute.Right) {
-                          Button(
-                              onClick = onSave,
-                              modifier =
-                              Modifier
-                                  .padding(5.dp)
-                                  .testTag("InterestOverlaySaveButton")) {
-                                Text(text = "Save")
-                              }
-                        }
-                  }
-            }
-      }
-}
-
-@Composable
-fun SocialsOverlay(
-    onDismiss: () -> Unit,
-    onSave: () -> Unit,
-    userSocials: MutableStateFlow<MutableList<UserSocial>>
-) {
-    val userSocialState by userSocials.collectAsState()
     val scrollState = rememberScrollState()
+
+    val copiedUserSocialsFlow = remember {
+        MutableStateFlow(userSocials.map { it }.toMutableList())
+    }
+    val copiedUserSocials by copiedUserSocialsFlow.collectAsState()
 
     var showAddSocialPrompt by remember{ mutableStateOf(false) }
 
@@ -159,7 +67,7 @@ fun SocialsOverlay(
     ){
         Card(
             elevation = CardDefaults.cardElevation(8.dp),
-            shape = RoundedCornerShape(15.dp),
+            shape = RoundedCornerShape(16.dp),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(20.dp)
@@ -186,8 +94,10 @@ fun SocialsOverlay(
                         .testTag("SocialsOverlaySubtitle"))
                 Surface(
                     modifier = Modifier.sizeIn(maxHeight = 250.dp), color = Color.Transparent) {
-                    Column(modifier = Modifier.verticalScroll(scrollState)) {
-                        userSocialState.forEachIndexed { index, userSocial ->
+                    Column(modifier = Modifier.verticalScroll(scrollState).fillMaxWidth(),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally){
+                        copiedUserSocials.forEachIndexed { index, userSocial ->
                             Row(
                                 horizontalArrangement = Arrangement.SpaceBetween,
                                 verticalAlignment = Alignment.CenterVertically,
@@ -195,7 +105,7 @@ fun SocialsOverlay(
                                 Modifier
                                     .padding(5.dp)
                                     .fillMaxWidth()
-                                    .testTag("InterestOverlayClickableRow: $index")){
+                                    .testTag("SocialsOverlayClickableRow: $index")){
                                 Row(
                                     modifier = Modifier
                                         .padding(8.dp)
@@ -209,29 +119,39 @@ fun SocialsOverlay(
                                         Icon(Icons.Default.AccountCircle, contentDescription = "AccountCircle")
                                         Text(userSocial.social.title)
                                     }
-                                    Icon(Icons.Default.Close, contentDescription = "Close",
-                                        modifier = Modifier.clickable { userSocialState.removeAt(index) })
+                                    Icon(
+                                        Icons.Default.Close, contentDescription = "Close",
+                                        modifier = Modifier.clickable {
+                                            copiedUserSocialsFlow.value = copiedUserSocialsFlow.value.toMutableList().apply { removeAt(index) }
+                                        })
                                 }
-
                             }
-                            if (index != userSocialState.size - 1) {
+                            if (index != copiedUserSocials.size - 1) {
                                 Divider(
                                     modifier = Modifier.testTag("InterestOverlayDivider: $index")
                                 )
                             }
                         }
-                        Column(
+                        Row(
                             modifier = Modifier.fillMaxWidth(),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
-                        )
-                        {
-                            Icon(Icons.Default.AddCircleOutline,
-                                contentDescription = "AddSocial",
+                            horizontalArrangement = Arrangement.End
+                        ) {
+                            OutlinedButton(
+                                onClick = { showAddSocialPrompt = true },
                                 modifier = Modifier
-                                    .clickable { showAddSocialPrompt = true }
-                                    .size(50.dp))
-                            Text("Add Social")
+                                    .padding(8.dp),
+                                shape = RoundedCornerShape(16.dp)
+                            ) {
+                                Icon(Icons.Default.Add, contentDescription = "Add")
+                                Text("Add Social")
+                            }
+                            Button(
+                                onClick = {onSave(copiedUserSocials)},
+                                modifier = Modifier.padding(8.dp),
+                                shape = RoundedCornerShape(16.dp)
+                            ) {
+                                Text("Save")
+                            }
                         }
                     }
                 }
@@ -240,7 +160,10 @@ fun SocialsOverlay(
     }
 
     if(showAddSocialPrompt){
-        SocialPrompt({showAddSocialPrompt = false}, userSocials)
+        SocialPrompt({showAddSocialPrompt = false}, {
+            copiedUserSocials.add(it)
+            showAddSocialPrompt = false
+        })
     }
 }
 
@@ -249,7 +172,7 @@ fun SocialsOverlay(
 @Composable
 fun SocialPrompt(
     onDismiss: () -> Unit,
-    userSocials: MutableStateFlow<MutableList<UserSocial>>
+    onSave: (UserSocial) -> Unit,
 ){
     val socialsList = Social.entries.toList()
 
@@ -263,16 +186,12 @@ fun SocialPrompt(
         mutableStateOf("")
     }
 
-
-    Log.e("9000", isExpanded.toString())
-    Log.e("9001", selectedSocial.toString())
-
     Dialog(onDismissRequest = {},
         properties = DialogProperties(usePlatformDefaultWidth = false)
     ) {
         Card(
             elevation = CardDefaults.cardElevation(8.dp),
-            shape = RoundedCornerShape(15.dp),
+            shape = RoundedCornerShape(16.dp),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(20.dp)
@@ -308,16 +227,27 @@ fun SocialPrompt(
                 }
                 OutlinedTextField(
                     value = socialURL,
+                    placeholder = {Text("Please enter the URL of your social")},
                     onValueChange = {socialURL = it},
                     modifier = Modifier.padding(10.dp))
-                Button(
-                    onClick = {
-                        val newUserSocial = UserSocial(selectedSocial, socialURL)
-                        userSocials.value.add(newUserSocial)
-                        onDismiss()
-                    },
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceEvenly
                 ){
-                    Text("Save changes")
+                    OutlinedButton(
+                        onClick = onDismiss,
+                        shape = RoundedCornerShape(16.dp)
+                    ) {
+                        Text("Cancel")
+                    }
+                    Button(
+                        onClick = {
+                            val newUserSocial = UserSocial(selectedSocial, socialURL)
+                            onSave(newUserSocial)
+                        },
+                    ){
+                        Text("Save changes")
+                    }
                 }
             }
         }
