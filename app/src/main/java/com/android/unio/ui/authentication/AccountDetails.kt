@@ -179,11 +179,13 @@ fun AccountDetails(
                       firstName = firstName,
                       lastName = lastName,
                       biography = bio,
-                      followingAssociations = Association.emptyFirestoreReferenceList(),
+                      followedAssociations = Association.emptyFirestoreReferenceList(),
+                      joinedAssociations = Association.emptyFirestoreReferenceList(),
                       savedEvents = Event.emptyFirestoreReferenceList(),
                       interests = interests.filter { it.second.value }.map { it.first },
                       socials = emptyList(),
-                      profilePicture = "")
+                      profilePicture = "",
+                      hasProvidedAccountDetails = true)
               uploadUser(user, userRepositoryFirestore, navigationAction, context)
               navigationAction.navigateTo(Screen.HOME)
             }) {
