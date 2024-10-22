@@ -41,28 +41,32 @@ class MockUserRepository : UserRepository {
               firstName = "John",
               lastName = "Doe",
               biography = "Just a regular guy.",
-              followingAssociations = MockReferenceList<Association>(),
+              followedAssociations = MockReferenceList<Association>(),
+              joinedAssociations = MockReferenceList<Association>(),
               savedEvents = MockReferenceList<Event>(),
               interests = listOf(Interest.SPORTS, Interest.MUSIC),
               socials =
                   listOf(
                       UserSocial(Social.INSTAGRAM, "john_doe"),
                       UserSocial(Social.WHATSAPP, "john.doe.whatsapp")),
-              profilePicture = "https://example.com/profile_picture1.jpg"),
+              profilePicture = "https://example.com/profile_picture1.jpg",
+              hasProvidedAccountDetails = false),
           User(
               uid = "2",
               email = "jane.smith@example.com",
               firstName = "Jane",
               lastName = "Smith",
               biography = "Lover of arts and technology.",
-              followingAssociations = MockReferenceList<Association>(),
+              followedAssociations = MockReferenceList<Association>(),
+              joinedAssociations = MockReferenceList<Association>(),
               savedEvents = MockReferenceList<Event>(),
               interests = listOf(Interest.ART, Interest.TECHNOLOGY),
               socials =
                   listOf(
                       UserSocial(Social.DISCORD, "jane_smith"),
                       UserSocial(Social.TELEGRAM, "jane.smith.telegram")),
-              profilePicture = "https://example.com/profile_picture2.jpg"))
+              profilePicture = "https://example.com/profile_picture2.jpg",
+              hasProvidedAccountDetails = false))
 
   override fun init(onSuccess: () -> Unit) {
     onSuccess()

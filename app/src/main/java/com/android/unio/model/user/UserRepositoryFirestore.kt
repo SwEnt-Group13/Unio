@@ -53,6 +53,11 @@ class UserRepositoryFirestore(private val db: FirebaseFirestore) : UserRepositor
       onSuccess: () -> Unit,
       onFailure: (Exception) -> Unit
   ) {
+    if (userUid.isBlank()) {
+      Log.e("Firestore", "Invalid userUid: $userUid")
+      onFailure(Exception("Invalid user ID"))
+      return
+    }
     val userDocumentRef = Firebase.firestore.collection("users").document(userUid)
 
     userDocumentRef
@@ -67,6 +72,11 @@ class UserRepositoryFirestore(private val db: FirebaseFirestore) : UserRepositor
       onSuccess: () -> Unit,
       onFailure: (Exception) -> Unit
   ) {
+    if (userUid.isBlank()) {
+      Log.e("Firestore", "Invalid userUid: $userUid")
+      onFailure(Exception("Invalid user ID"))
+      return
+    }
     val userDocRef = Firebase.firestore.collection("users").document(userUid)
     userDocRef
         .update("savedEvents", FieldValue.arrayRemove(eventUid))
@@ -81,6 +91,11 @@ class UserRepositoryFirestore(private val db: FirebaseFirestore) : UserRepositor
   }
 
   override fun isEventSaved(userUid: String, eventUid: String, onResult: (Boolean) -> Unit) {
+    if (userUid.isBlank()) {
+      Log.e("Firestore", "Invalid userUid: $userUid")
+      onResult(false)
+      return
+    }
     val userDocRef = Firebase.firestore.collection("users").document(userUid)
     userDocRef
         .get()

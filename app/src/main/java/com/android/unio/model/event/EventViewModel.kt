@@ -65,6 +65,11 @@ open class EventViewModel(val repository: EventRepository, val userRepository: U
 
   fun listenToSavedEventsForCurrentUser(onSavedEventsChanged: (List<String>) -> Unit) {
     val currentUser = FirebaseAuth.getInstance().currentUser
+    if (currentUser == null) {
+      Log.w("Firestore", "No user logged in, unable to listen to saved events")
+      onSavedEventsChanged(emptyList())
+      return
+    }
     currentUser?.uid?.let { userUid ->
       userRepository.listenToSavedEvents(userUid, onSavedEventsChanged)
     }
@@ -80,6 +85,11 @@ open class EventViewModel(val repository: EventRepository, val userRepository: U
       onFailure: (Exception) -> Unit
   ) {
     val currentUser = FirebaseAuth.getInstance().currentUser
+    if (currentUser == null) {
+      Log.w("Firestore", "No user logged in, unable to save event")
+      onFailure(Exception("No user logged in"))
+      return
+    }
     currentUser?.uid?.let { userUid ->
       userRepository.saveEvent(userUid, eventUid, onSuccess, onFailure)
     }
@@ -95,6 +105,11 @@ open class EventViewModel(val repository: EventRepository, val userRepository: U
       onFailure: (Exception) -> Unit
   ) {
     val currentUser = FirebaseAuth.getInstance().currentUser
+    if (currentUser == null) {
+      Log.w("Firestore", "No user logged in, unable to unsave event")
+      onFailure(Exception("No user logged in"))
+      return
+    }
     currentUser?.uid?.let { userUid ->
       userRepository.unsaveEvent(userUid, eventUid, onSuccess, onFailure)
     }
@@ -106,6 +121,11 @@ open class EventViewModel(val repository: EventRepository, val userRepository: U
 
   fun isEventSavedForCurrentUser(eventUid: String, onResult: (Boolean) -> Unit) {
     val currentUser = FirebaseAuth.getInstance().currentUser
+    if (currentUser == null) {
+      Log.w("Firestore", "No user logged in")
+      onResult(false)
+      return
+    }
     currentUser?.uid?.let { userUid -> userRepository.isEventSaved(userUid, eventUid, onResult) }
         ?: run {
           Log.w("Firestore", "No user logged in")

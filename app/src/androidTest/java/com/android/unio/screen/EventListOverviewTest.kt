@@ -47,22 +47,19 @@ class EventListOverviewTest {
    */
   @Test
   fun testTabSwitchingAndAnimation() {
+
     composeTestRule.setContent {
       val eventListViewModel = EventListViewModel(mockEventRepository)
       HomeScreen(navigationAction, eventListViewModel = eventListViewModel)
     }
 
-    // Assert that the 'All' tab exists and has a click action.
     composeTestRule.onNodeWithTag("event_tabAll").assertExists()
     composeTestRule.onNodeWithTag("event_tabAll").assertHasClickAction()
 
-    // Assert that the underlying bar exists.
     composeTestRule.onNodeWithTag("event_UnderlyingBar").assertExists()
 
-    // Perform a click on the 'Following' tab.
     composeTestRule.onNodeWithTag("event_tabFollowing").performClick()
 
-    // Assert that the 'Following' tab and the underlying bar still exist.
     composeTestRule.onNodeWithTag("event_tabFollowing").assertExists()
     composeTestRule.onNodeWithTag("event_UnderlyingBar").assertExists()
   }
