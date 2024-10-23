@@ -45,8 +45,8 @@ import com.android.unio.model.user.Interest
 import com.android.unio.model.user.User
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserSocial
-import com.android.unio.ui.authentication.InterestOverlay
-import com.android.unio.ui.authentication.SocialOverlay
+import com.android.unio.ui.authentication.overlay.InterestOverlay
+import com.android.unio.ui.authentication.overlay.SocialOverlay
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
 import com.android.unio.ui.theme.AppTypography

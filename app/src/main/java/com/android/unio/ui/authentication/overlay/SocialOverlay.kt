@@ -1,4 +1,4 @@
-package com.android.unio.ui.authentication
+package com.android.unio.ui.authentication.overlay
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -227,7 +227,8 @@ fun SocialPrompt(
                 }
                 OutlinedTextField(
                     value = socialURL,
-                    placeholder = {Text("Please enter the URL of your social")},
+                    placeholder = {Text("Please enter your username")},
+                    singleLine = true,
                     onValueChange = {socialURL = it},
                     modifier = Modifier.padding(10.dp))
                 Row(

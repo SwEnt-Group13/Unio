@@ -1,4 +1,4 @@
-package com.android.unio.ui.authentication
+package com.android.unio.ui.authentication.overlay
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
