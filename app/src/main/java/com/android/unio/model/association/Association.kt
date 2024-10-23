@@ -1,6 +1,7 @@
 package com.android.unio.model.association
 
 import com.android.unio.model.firestore.ReferenceList
+import com.android.unio.model.strings.AssociationStrings
 import com.android.unio.model.user.User
 
 /**
@@ -28,17 +29,17 @@ data class Association(
 }
 
 enum class AssociationCategory(val displayName: String) {
-  EPFL_BODIES("EPFL bodies"),
-  REPRESENTATION("Representation"),
-  PROJECTS("Interdisciplinary projects"),
-  EPFL_STUDENTS("EPFL Students"),
-  COUNTRIES("Students by country"),
-  SUSTAINABILITY("Sustainability"),
-  SCIENCE_TECH("Science and technology"),
-  CULTURE_SOCIETY("Culture and society"),
-  ARTS("Arts"),
-  ENTERTAINMENT("Entertainment"),
-  SPORTS("Sports"),
-  GUIDANCE("Vocational guidance"),
-  UNKNOWN("Unknown")
+    EPFL_BODIES(AssociationStrings.EPFL_BODIES),
+    REPRESENTATION(AssociationStrings.REPRESENTATION),
+    PROJECTS(AssociationStrings.PROJECTS),
+    EPFL_STUDENTS(AssociationStrings.EPFL_STUDENTS),
+    COUNTRIES(AssociationStrings.COUNTRIES),
+    SUSTAINABILITY(AssociationStrings.SUSTAINABILITY),
+    SCIENCE_TECH(AssociationStrings.SCIENCE_TECH),
+    CULTURE_SOCIETY(AssociationStrings.CULTURE_SOCIETY),
+    ARTS(AssociationStrings.ARTS),
+    ENTERTAINMENT(AssociationStrings.ENTERTAINMENT),
+    SPORTS(AssociationStrings.SPORTS),
+    GUIDANCE(AssociationStrings.GUIDANCE),
+    UNKNOWN(AssociationStrings.UNKNOWN)
 }
