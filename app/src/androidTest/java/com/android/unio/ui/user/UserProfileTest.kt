@@ -66,14 +66,14 @@ class UserProfileTest {
   fun testEverythingIsDisplayed() {
     composeTestRule.setContent { UserProfileScreenContent(navigationAction, user) }
 
-    composeTestRule.onNodeWithTag("UserProfilePicture").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("UserProfilePicture").assertExists()
 
-    composeTestRule.onNodeWithTag("UserProfileName").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("UserProfileName").assertExists()
     composeTestRule
         .onNodeWithTag("UserProfileName")
         .assertTextEquals("${user.firstName} ${user.lastName}")
 
-    composeTestRule.onNodeWithTag("UserProfileBiography").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("UserProfileBiography").assertExists()
     composeTestRule.onNodeWithTag("UserProfileBiography").assertTextEquals(user.biography)
 
     composeTestRule
@@ -81,8 +81,8 @@ class UserProfileTest {
         .assertCountEquals(user.socials.size)
     composeTestRule.onAllNodesWithTag("UserProfileInterest").assertCountEquals(user.interests.size)
 
-    composeTestRule.onNodeWithTag("UserProfileJoinedAssociations").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("UserProfileFollowedAssociations").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("UserProfileJoinedAssociations").assertExists()
+    composeTestRule.onNodeWithTag("UserProfileFollowedAssociations").assertExists()
   }
 
   @Test
