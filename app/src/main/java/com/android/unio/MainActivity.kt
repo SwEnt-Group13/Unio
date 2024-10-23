@@ -10,15 +10,16 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
+import com.android.unio.model.association.AssociationRepositoryFirestore
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.event.EventListViewModel
 import com.android.unio.model.event.EventRepositoryFirestore
 import com.android.unio.model.user.UserRepositoryFirestore
+import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.accountCreation.AccountDetails
 import com.android.unio.ui.association.AssociationProfileScreen
 import com.android.unio.ui.authentication.EmailVerificationScreen
@@ -48,9 +49,12 @@ fun UnioApp() {
   val navController = rememberNavController()
   val navigationActions = NavigationAction(navController)
   val db = FirebaseFirestore.getInstance()
-  val associationViewModel: AssociationViewModel = viewModel(factory = AssociationViewModel.Factory)
+
+  val associationRepository = AssociationRepositoryFirestore(Firebase.firestore)
+  val associationViewModel = AssociationViewModel(associationRepository)
 
   val userRepositoryFirestore = UserRepositoryFirestore(Firebase.firestore)
+  val userViewModel = UserViewModel(userRepositoryFirestore, true)
 
   val context = LocalContext.current
 
@@ -118,7 +122,7 @@ fun UnioApp() {
       composable(Screen.SAVED) { SavedScreen(navigationActions) }
     }
     navigation(startDestination = Screen.MY_PROFILE, route = Route.MY_PROFILE) {
-      composable(Screen.MY_PROFILE) { UserProfileScreen(navigationActions) }
+      composable(Screen.MY_PROFILE) { UserProfileScreen(navigationActions, userViewModel) }
     }
   }
 }
