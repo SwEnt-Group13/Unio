@@ -10,23 +10,16 @@ interface ReferenceList<T> {
 
   fun addAll(uids: List<String>)
 
-  fun requestAll()
+  fun requestAll(onSuccess: () -> Unit)
 }
 
-class MockReferenceList<T> : ReferenceList<T> {
-  private val _uids = mutableListOf<String>()
-  private val _list = MutableStateFlow<List<T>>(emptyList())
+class MockReferenceList<T>(elements: List<T> = emptyList()) : ReferenceList<T> {
+  private val _list = MutableStateFlow(elements)
   override val list: StateFlow<List<T>> = _list
 
-  override fun add(uid: String) {
-    _uids.add(uid)
-  }
+  override fun add(uid: String) {}
 
-  override fun addAll(uids: List<String>) {
-    _uids.addAll(uids)
-  }
+  override fun addAll(uids: List<String>) {}
 
-  override fun requestAll() {
-    _list.value = emptyList()
-  }
+  override fun requestAll(onSuccess: () -> Unit) {}
 }
