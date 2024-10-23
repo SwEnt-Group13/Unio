@@ -54,8 +54,6 @@ import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventCard
 import com.android.unio.model.firestore.MockReferenceList
-import com.android.unio.resources.ResourceManager.getString
-import com.android.unio.resources.ResourceManager.init
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.theme.AppTypography
 import kotlinx.coroutines.CoroutineScope
@@ -119,7 +117,6 @@ fun AssociationProfileScaffold(
   val context = LocalContext.current
   testSnackbar = remember { SnackbarHostState() }
   scope = rememberCoroutineScope()
-  init(context)
   Scaffold(
       snackbarHost = {
         SnackbarHost(
@@ -144,7 +141,7 @@ fun AssociationProfileScaffold(
                   modifier = Modifier.testTag("goBackButton")) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
-                        contentDescription = getString(R.string.association_go_back))
+                        contentDescription = context.getString(R.string.association_go_back))
                   }
             },
             actions = {
@@ -187,12 +184,12 @@ fun AssociationProfileContent(padding: PaddingValues, context: Context) {
 @Composable
 fun AssociationRecruitment(context: Context) {
   Text(
-      text = getString(R.string.association_join) + " <Association> ?",
+      text = context.getString(R.string.association_join) + " <Association> ?",
       style = AppTypography.headlineMedium,
       modifier = Modifier.padding(horizontal = 20.dp).testTag("AssociationRecruitmentTitle"))
   Spacer(modifier = Modifier.size(13.dp))
   Text(
-      text = getString(R.string.association_help_us),
+      text = context.getString(R.string.association_help_us),
       style = AppTypography.bodySmall,
       modifier = Modifier.padding(horizontal = 23.dp).testTag("AssociationRecruitmentDescription"))
   Spacer(modifier = Modifier.size(18.dp))
@@ -228,7 +225,7 @@ fun AssociationRecruitment(context: Context) {
 @Composable
 fun UserCard(context: Context) {
   Text(
-      getString(R.string.association_contact_members),
+      context.getString(R.string.association_contact_members),
       style = AppTypography.headlineMedium,
       modifier = Modifier.padding(horizontal = 20.dp).testTag("AssociationContactMembersTitle"))
   Spacer(modifier = Modifier.size(4.dp))
@@ -280,23 +277,25 @@ fun AssociationProfileEvents(context: Context) {
             modifier = Modifier.padding(horizontal = 28.dp).testTag("AssociationSeeMoreButton")) {
               Icon(Icons.AutoMirrored.Filled.ArrowForward, contentDescription = "See more")
               Spacer(Modifier.width(2.dp))
-              Text(getString(R.string.association_see_more))
+              Text(context.getString(R.string.association_see_more))
             }
       }
 }
 
 @Composable
 fun AssociationEventTitle() {
+    val context = LocalContext.current
   Text(
-      getString(R.string.association_upcoming_events),
+      context.getString(R.string.association_upcoming_events),
       modifier = Modifier.padding(horizontal = 20.dp).testTag("AssociationEventTitle"),
       style = AppTypography.headlineMedium)
 }
 
 @Composable
 fun AssociationDescription() {
+    val context = LocalContext.current
   Text(
-      getString(R.string.debug_lorem_ipsum),
+      context.getString(R.string.debug_lorem_ipsum),
       style = AppTypography.bodyMedium,
       modifier = Modifier.padding(horizontal = 24.dp).testTag("AssociationDescription"))
 }
@@ -312,11 +311,11 @@ fun AssociationHeader(context: Context) {
     }
     Column {
       Text(
-          "xxx " + getString(R.string.association_follower),
+          "xxx " + context.getString(R.string.association_follower),
           style = AppTypography.headlineSmall,
           modifier = Modifier.padding(bottom = 5.dp).testTag("AssociationHeaderFollowers"))
       Text(
-          "yyy " + getString(R.string.association_member),
+          "yyy " + context.getString(R.string.association_member),
           style = AppTypography.headlineSmall,
           modifier = Modifier.padding(bottom = 14.dp).testTag("AssociationHeaderMembers"))
       Button(
@@ -329,7 +328,7 @@ fun AssociationHeader(context: Context) {
           modifier = Modifier.testTag("AssociationFollowButton")) {
             Icon(Icons.Filled.Add, contentDescription = "Follow icon")
             Spacer(Modifier.width(2.dp))
-            Text(getString(R.string.association_follow))
+            Text(context.getString(R.string.association_follow))
           }
     }
   }
