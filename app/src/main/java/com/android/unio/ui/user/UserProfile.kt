@@ -105,7 +105,7 @@ fun UserProfileScreen(
         BottomNavigationMenu(
             { navigationAction.navigateTo(it.route) }, LIST_TOP_LEVEL_DESTINATION, Route.MY_PROFILE)
       }) { padding ->
-        if (refreshState) {
+        if (refreshState || user == null) {
           Box(
               modifier = Modifier.fillMaxSize().background(Color.White).padding(padding),
               contentAlignment = Alignment.Center) {
