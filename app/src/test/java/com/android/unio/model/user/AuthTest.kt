@@ -109,4 +109,23 @@ class AuthTest {
       assertNull(it.user)
     }
   }
+
+  @Test
+  fun testEmailValidator() {
+    assertEquals(true, isValidEmail("john.doe@abcd.com"))
+    assertEquals(true, isValidEmail("john@abcd.com"))
+    assertEquals(false, isValidEmail("john@abcd."))
+    assertEquals(false, isValidEmail("john@.abcd"))
+    assertEquals(false, isValidEmail("john@abcd"))
+    assertEquals(false, isValidEmail("@abcd"))
+    assertEquals(false, isValidEmail("abcd"))
+  }
+
+  @Test
+  fun testPasswordValidator() {
+    assertEquals(true, isValidPassword("ab6def"))
+    assertEquals(false, isValidPassword("123"))
+    assertEquals(false, isValidPassword("abc"))
+    assertEquals(false, isValidPassword("abcdef"))
+  }
 }

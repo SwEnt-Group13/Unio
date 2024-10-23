@@ -32,11 +32,11 @@ fun signInOrCreateAccount(
 ) {
   if (isValidEmail(email)) {
     auth
-        .signInWithEmailAndPassword(email, password)
+        .signInWithEmailAndPassword(email.trim(), password)
         .addOnSuccessListener { onResult(SignInResult(SignInState.SUCCESS_SIGN_IN, it.user)) }
         .addOnFailureListener {
           if (it is FirebaseAuthInvalidCredentialsException) {
-            createAccount(email, password, auth, onResult)
+            createAccount(email.trim(), password, auth, onResult)
           } else {
             Log.e("Auth", "Failed to sign in", it)
             onResult(SignInResult(SignInState.INVALID_CREDENTIALS, null))
@@ -63,7 +63,7 @@ fun createAccount(
 ) {
   if (isValidEmail(email)) {
     auth
-        .createUserWithEmailAndPassword(email, password)
+        .createUserWithEmailAndPassword(email.trim(), password)
         .addOnSuccessListener {
           onResult(SignInResult(SignInState.SUCCESS_CREATE_ACCOUNT, it.user))
         }
@@ -80,8 +80,18 @@ fun createAccount(
  * Check if the given text is a valid email.
  *
  * @param text The text to check.
- * @return True if the text is a valid email, false otherwise.
+ * @return true if the text is a valid email, false otherwise.
  */
 fun isValidEmail(text: String): Boolean {
   return text.trim().let { it.isNotEmpty() && it.matches(Regex("^.+@.+\\..+$")) }
+}
+
+/**
+ * Check if the given text is a valid password.
+ *
+ * @param text The text to check.
+ * @return true if the password meets the requirements, false otherwise.
+ */
+fun isValidPassword(text: String): Boolean {
+  return text.length in 6..4096 && text.contains(Regex("[0-9]"))
 }
