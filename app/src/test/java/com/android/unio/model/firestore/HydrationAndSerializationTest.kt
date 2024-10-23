@@ -48,6 +48,7 @@ class HydrationAndSerializationTest {
             biography = "An example user",
             followedAssociations = Association.firestoreReferenceListWith(listOf("1", "2")),
             joinedAssociations = Association.firestoreReferenceListWith(listOf("1", "2")),
+            savedEvents = Event.firestoreReferenceListWith(listOf("1", "2")),
             interests = listOf(Interest.SPORTS, Interest.MUSIC),
             socials =
                 listOf(

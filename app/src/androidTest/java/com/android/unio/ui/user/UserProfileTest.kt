@@ -9,15 +9,20 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.test.espresso.Espresso
 import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationCategory
+import com.android.unio.model.event.Event
+import com.android.unio.model.event.EventType
 import com.android.unio.model.firestore.MockReferenceList
 import com.android.unio.model.firestore.firestoreReferenceListWith
+import com.android.unio.model.map.Location
 import com.android.unio.model.user.Interest
 import com.android.unio.model.user.Social
 import com.android.unio.model.user.User
 import com.android.unio.model.user.UserSocial
 import com.android.unio.ui.navigation.NavigationAction
+import com.google.firebase.Timestamp
 import io.mockk.MockKAnnotations
 import io.mockk.impl.annotations.MockK
+import java.util.GregorianCalendar
 import junit.framework.TestCase.assertEquals
 import org.junit.Before
 import org.junit.Rule
@@ -40,6 +45,20 @@ class UserProfileTest {
           members = User.firestoreReferenceListWith(listOf("1234")),
           image = "https://www.epfl.ch/profile.jpg")
 
+  private val event =
+      Event(
+          uid = "1234",
+          title = "Best Event",
+          organisers = Association.firestoreReferenceListWith(listOf("1234")),
+          taggedAssociations = Association.firestoreReferenceListWith(listOf("1234")),
+          image = "1234",
+          description = "blablabla",
+          catchyDescription = "bla",
+          price = 0.1,
+          date = Timestamp(GregorianCalendar(2004, 7, 1).time),
+          location = Location(1.2345, 2.3455, "Somewhere"),
+          types = listOf(EventType.OTHER))
+
   private val user =
       User(
           uid = "1",
@@ -49,6 +68,7 @@ class UserProfileTest {
           biography = "An example user",
           followedAssociations = MockReferenceList(listOf(association, association)),
           joinedAssociations = MockReferenceList(listOf(association, association)),
+          savedEvents = MockReferenceList(listOf(event, event)),
           interests = listOf(Interest.SPORTS, Interest.MUSIC),
           socials =
               listOf(

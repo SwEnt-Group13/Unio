@@ -19,6 +19,7 @@ class UserViewModelTest {
           biography = "An example user",
           followedAssociations = MockReferenceList(listOf()),
           joinedAssociations = MockReferenceList(listOf()),
+          savedEvents = MockReferenceList(listOf()),
           interests = listOf(Interest.SPORTS, Interest.MUSIC),
           socials =
               listOf(

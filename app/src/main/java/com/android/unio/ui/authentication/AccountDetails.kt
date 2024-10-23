@@ -38,6 +38,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.android.unio.model.association.Association
+import com.android.unio.model.event.Event
 import com.android.unio.model.firestore.emptyFirestoreReferenceList
 import com.android.unio.model.user.Interest
 import com.android.unio.model.user.User
@@ -180,6 +181,7 @@ fun AccountDetails(
                       biography = bio,
                       followedAssociations = Association.emptyFirestoreReferenceList(),
                       joinedAssociations = Association.emptyFirestoreReferenceList(),
+                      savedEvents = Event.emptyFirestoreReferenceList(),
                       interests = interests.filter { it.second.value }.map { it.first },
                       socials = emptyList(),
                       profilePicture = "",
