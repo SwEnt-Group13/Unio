@@ -19,7 +19,7 @@ enum class EventType(val color: Color, val text: String) {
   NETWORKING(eventTypeNetworking, EventTypeStrings.NETWORKING),
   SPORT(eventTypeSport, EventTypeStrings.SPORT),
   TRIP(eventTypeTrip, EventTypeStrings.TRIP),
-  OTHER(eventTypeOther, EventTypeStrings.OTHER);  // default
+  OTHER(eventTypeOther, EventTypeStrings.OTHER); // default
 
   companion object {
     fun getColorForEventType(eventType: String): Color {

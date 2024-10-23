@@ -29,17 +29,17 @@ data class Association(
 }
 
 enum class AssociationCategory(val displayName: String) {
-    EPFL_BODIES(AssociationStrings.EPFL_BODIES),
-    REPRESENTATION(AssociationStrings.REPRESENTATION),
-    PROJECTS(AssociationStrings.PROJECTS),
-    EPFL_STUDENTS(AssociationStrings.EPFL_STUDENTS),
-    COUNTRIES(AssociationStrings.COUNTRIES),
-    SUSTAINABILITY(AssociationStrings.SUSTAINABILITY),
-    SCIENCE_TECH(AssociationStrings.SCIENCE_TECH),
-    CULTURE_SOCIETY(AssociationStrings.CULTURE_SOCIETY),
-    ARTS(AssociationStrings.ARTS),
-    ENTERTAINMENT(AssociationStrings.ENTERTAINMENT),
-    SPORTS(AssociationStrings.SPORTS),
-    GUIDANCE(AssociationStrings.GUIDANCE),
-    UNKNOWN(AssociationStrings.UNKNOWN)
+  EPFL_BODIES(AssociationStrings.EPFL_BODIES),
+  REPRESENTATION(AssociationStrings.REPRESENTATION),
+  PROJECTS(AssociationStrings.PROJECTS),
+  EPFL_STUDENTS(AssociationStrings.EPFL_STUDENTS),
+  COUNTRIES(AssociationStrings.COUNTRIES),
+  SUSTAINABILITY(AssociationStrings.SUSTAINABILITY),
+  SCIENCE_TECH(AssociationStrings.SCIENCE_TECH),
+  CULTURE_SOCIETY(AssociationStrings.CULTURE_SOCIETY),
+  ARTS(AssociationStrings.ARTS),
+  ENTERTAINMENT(AssociationStrings.ENTERTAINMENT),
+  SPORTS(AssociationStrings.SPORTS),
+  GUIDANCE(AssociationStrings.GUIDANCE),
+  UNKNOWN(AssociationStrings.UNKNOWN)
 }

@@ -284,7 +284,7 @@ fun AssociationProfileEvents(context: Context) {
 
 @Composable
 fun AssociationEventTitle() {
-    val context = LocalContext.current
+  val context = LocalContext.current
   Text(
       context.getString(R.string.association_upcoming_events),
       modifier = Modifier.padding(horizontal = 20.dp).testTag("AssociationEventTitle"),
@@ -293,7 +293,7 @@ fun AssociationEventTitle() {
 
 @Composable
 fun AssociationDescription() {
-    val context = LocalContext.current
+  val context = LocalContext.current
   Text(
       context.getString(R.string.debug_lorem_ipsum),
       style = AppTypography.bodyMedium,
