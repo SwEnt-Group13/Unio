@@ -1,5 +1,6 @@
 package com.android.unio.model.user
 
+import com.android.unio.R
 import com.android.unio.model.association.Association
 import com.android.unio.model.event.Event
 import com.android.unio.model.firestore.ReferenceList
@@ -17,15 +18,15 @@ enum class Interest(val title: String) {
   FESTIVALS("Festivals")
 }
 
-enum class Social(val title: String) {
-  INSTAGRAM("Instagram"),
-  SNAPCHAT("Snapchat"),
-  TELEGRAM("Telegram"),
-  WHATSAPP("WhatsApp"),
-  DISCORD("Discord"),
-  LINKEDIN("LinkedIn"),
-  WEBSITE("Website"),
-  OTHER("Other")
+enum class Social(val title: String, val icon: Int) {
+  INSTAGRAM("Instagram", R.drawable.instagram_icon),
+  SNAPCHAT("Snapchat", R.drawable.snapchat_icon),
+  TELEGRAM("Telegram", R.drawable.telegram_icon),
+  WHATSAPP("WhatsApp", R.drawable.whatsapp_icon),
+  DISCORD("Discord", R.drawable.discord_icon),
+  LINKEDIN("LinkedIn", R.drawable.linkedin_icon),
+  WEBSITE("Website", R.drawable.website_icon),
+  OTHER("Other", R.drawable.other_icon)
 }
 
 data class UserSocial(val social: Social, val content: String)
