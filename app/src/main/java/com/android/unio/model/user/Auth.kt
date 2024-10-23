@@ -32,11 +32,11 @@ fun signInOrCreateAccount(
 ) {
   if (isValidEmail(email)) {
     auth
-        .signInWithEmailAndPassword(email.trim(), password.trim())
+        .signInWithEmailAndPassword(email.trim(), password)
         .addOnSuccessListener { onResult(SignInResult(SignInState.SUCCESS_SIGN_IN, it.user)) }
         .addOnFailureListener {
           if (it is FirebaseAuthInvalidCredentialsException) {
-            createAccount(email.trim(), password.trim(), auth, onResult)
+            createAccount(email.trim(), password, auth, onResult)
           } else {
             Log.e("Auth", "Failed to sign in", it)
             onResult(SignInResult(SignInState.INVALID_CREDENTIALS, null))
@@ -63,7 +63,7 @@ fun createAccount(
 ) {
   if (isValidEmail(email)) {
     auth
-        .createUserWithEmailAndPassword(email.trim(), password.trim())
+        .createUserWithEmailAndPassword(email.trim(), password)
         .addOnSuccessListener {
           onResult(SignInResult(SignInState.SUCCESS_CREATE_ACCOUNT, it.user))
         }
@@ -93,5 +93,5 @@ fun isValidEmail(text: String): Boolean {
  * @return true if the password meets the requirements, false otherwise.
  */
 fun isValidPassword(text: String): Boolean {
-  return text.trim().length in 6..4096 && text.contains(Regex("[0-9]"))
+  return text.length in 6..4096 && text.contains(Regex("[0-9]"))
 }
