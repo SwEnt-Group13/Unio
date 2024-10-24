@@ -1,14 +1,18 @@
 package com.android.unio.ui.accountCreation
 
 import android.content.Context
+import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -25,6 +29,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.InputChip
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -36,7 +41,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
 import com.android.unio.model.association.Association
@@ -49,6 +53,7 @@ import com.android.unio.ui.authentication.overlay.InterestOverlay
 import com.android.unio.ui.authentication.overlay.SocialOverlay
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
+import com.android.unio.ui.theme.AppTheme
 import com.android.unio.ui.theme.AppTypography
 import com.android.unio.ui.theme.primaryLight
 import com.google.firebase.Firebase
@@ -57,17 +62,17 @@ import com.google.firebase.firestore.firestore
 import kotlinx.coroutines.flow.MutableStateFlow
 
 
-@Preview(showBackground = true)
-@Composable
-fun AccountDetailsPreview() {
-    val navController = rememberNavController()
-    val navigationActions = NavigationAction(navController)
-    val userRepositoryFirestore = UserRepositoryFirestore(Firebase.firestore)
-    AccountDetails(
-        navigationAction = navigationActions,
-        userRepositoryFirestore = userRepositoryFirestore
-    )
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun AccountDetailsPreview() {
+//    val navController = rememberNavController()
+//    val navigationActions = NavigationAction(navController)
+//    val userRepositoryFirestore = UserRepositoryFirestore(Firebase.firestore)
+//    AccountDetails(
+//        navigationAction = navigationActions,
+//        userRepositoryFirestore = userRepositoryFirestore
+//    )
+//}
 
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -285,4 +290,24 @@ fun uploadUser(
         Toast.makeText(context, "Failed to create Account", Toast.LENGTH_SHORT).show()
         Log.e("AccountDetails", "Failed to upload user", it)
       })
+}
+
+
+class AccountDetailsActivity : ComponentActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContent {
+            val userRepositoryFirestore = UserRepositoryFirestore(Firebase.firestore)
+            val navController = rememberNavController()
+            val navigationActions = NavigationAction(navController)
+            setContent {
+                Surface(modifier = Modifier.fillMaxSize()){
+                    AppTheme{AccountDetails(
+                        navigationAction = navigationActions,
+                        userRepositoryFirestore = userRepositoryFirestore
+                    )}
+                }
+            }
+        }
+    }
 }

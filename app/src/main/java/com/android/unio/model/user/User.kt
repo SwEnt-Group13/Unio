@@ -1,6 +1,5 @@
 package com.android.unio.model.user
 
-import androidx.compose.material3.Text
 import com.android.unio.R
 import com.android.unio.model.association.Association
 import com.android.unio.model.firestore.ReferenceList
@@ -18,14 +17,19 @@ enum class Interest(val title: String) {
   FESTIVALS("Festivals")
 }
 
-enum class Social(val title: String, val icon: Int, val URL: String) {
-    FACEBOOK("Facebook",R.drawable.facebook_icon , "https://www.facebook.com/"),
-    X("X",R.drawable.x_icon ,"https://x.com/"),
-  INSTAGRAM("Instagram", R.drawable.instagram_icon, "https://www.instagram.com/"),
-  SNAPCHAT("Snapchat", R.drawable.snapchat_icon, "https://www.snapchat.com/add/"),
-  TELEGRAM("Telegram", R.drawable.telegram_icon, "https://t.me/"),
-  WHATSAPP("WhatsApp", R.drawable.whatsapp_icon, "https://wa.me/"),
-  WEBSITE("Website", R.drawable.website_icon, "")
+enum class Social(val title: String, val icon: Int, val URL: String, val URLshort : String) {
+    FACEBOOK("Facebook",R.drawable.facebook_icon , "https://www.facebook.com/", "facebook.com/"),
+    X("X",R.drawable.x_icon ,"https://x.com/", "x.com/"),
+  INSTAGRAM("Instagram", R.drawable.instagram_icon, "https://www.instagram.com/", "instagram.com/"),
+  SNAPCHAT("Snapchat", R.drawable.snapchat_icon, "https://www.snapchat.com/add/", "snapchat.com/add/"),
+  TELEGRAM("Telegram", R.drawable.telegram_icon, "https://t.me/", "t.me/"),
+  WHATSAPP("WhatsApp", R.drawable.whatsapp_icon, "https://wa.me/", "wa.me/"),
+  WEBSITE("Website", R.drawable.website_icon, "", "")
+}
+
+enum class PhoneNumberRegex(val number: Regex){
+    SWISS(Regex("41[0-9]{9}")),
+    FRENCH(Regex("33[0-9]{9}"))
 }
 
 data class UserSocial(val social: Social, val content: String)
@@ -67,21 +71,30 @@ data class User(
  * @return 3: the website is not encoded with https
  */
 fun checkSocialURL(userSocial: UserSocial): Int{
+
     if(userSocial.content.isEmpty() || userSocial.content.isBlank()){
         return 1
     }
 
     when(userSocial.social){
-        //41 XX XXX XX XX
         Social.WHATSAPP -> {
-            return 0;
+            PhoneNumberRegex.entries.forEach{ regexNumber ->
+                if(!regexNumber.number.matches(userSocial.content)){
+                    return 2
+                }
+                return 0
+            }
         }
         Social.WEBSITE -> {
             val regex = Regex("https://")
+            if(regex.matchAt(userSocial.content, 0) != null){
+                return 3
+            }
             return 0
         }
         else -> {
             return 0
         }
     }
+    return 0
 }

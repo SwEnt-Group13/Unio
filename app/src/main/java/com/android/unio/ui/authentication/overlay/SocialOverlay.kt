@@ -21,7 +21,6 @@ import androidx.compose.material.OutlinedButton
 import androidx.compose.material.Surface
 import androidx.compose.material.TextField
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
@@ -103,7 +102,9 @@ fun SocialOverlay(
                         .testTag("SocialsOverlaySubtitle"))
                 Surface(
                     modifier = Modifier.sizeIn(maxHeight = 250.dp), color = Color.Transparent) {
-                    Column(modifier = Modifier.verticalScroll(scrollState).fillMaxWidth(),
+                    Column(modifier = Modifier
+                        .verticalScroll(scrollState)
+                        .fillMaxWidth(),
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally){
                         copiedUserSocials.forEachIndexed { index, userSocial ->
@@ -126,7 +127,9 @@ fun SocialOverlay(
                                         verticalAlignment = Alignment.CenterVertically
                                     ){
                                         Image(
-                                            modifier = Modifier.size(16.dp).wrapContentSize(),
+                                            modifier = Modifier
+                                                .size(16.dp)
+                                                .wrapContentSize(),
                                             painter = painterResource(userSocial.social.icon),
                                             contentDescription = userSocial.social.title,
                                             contentScale = ContentScale.Fit)
@@ -199,6 +202,14 @@ fun SocialPrompt(
         mutableStateOf("")
     }
 
+    var isError by remember {
+        mutableStateOf(0)
+    }
+
+    var errorText by remember {
+        mutableStateOf("")
+    }
+
     Dialog(onDismissRequest = {},
         properties = DialogProperties(usePlatformDefaultWidth = false)
     ) {
@@ -246,22 +257,28 @@ fun SocialPrompt(
                             Social.FACEBOOK, Social.X,
                             Social.INSTAGRAM, Social.SNAPCHAT,
                             Social.TELEGRAM -> Text(text = "username", fontWeight = FontWeight.Bold)
-                            Social.WHATSAPP -> Text(text = "number", fontWeight = FontWeight.Bold)
-                            Social.WEBSITE -> Text("url")
+                            Social.WHATSAPP -> Text(text = "41 XX XXX XX XX", fontWeight = FontWeight.Bold)
+                            Social.WEBSITE -> Text("https://www.mywebsite.com")
                         }},
                     prefix = {
                         when(selectedSocial){
-                            Social.FACEBOOK -> Text("facebook.com/")
-                            Social.X -> Text("x.com/")
-                            Social.INSTAGRAM -> Text("instagram.com/")
-                            Social.SNAPCHAT -> Text("snapchat.com/add/")
-                            Social.TELEGRAM -> Text("t.me/")
-                            Social.WHATSAPP -> Text("wa.me/")
-                            Social.WEBSITE -> Text("")
+                            Social.FACEBOOK -> Text(Social.FACEBOOK.URLshort)
+                            Social.X -> Text(Social.X.URLshort)
+                            Social.INSTAGRAM -> Text(Social.INSTAGRAM.URLshort)
+                            Social.SNAPCHAT -> Text(Social.SNAPCHAT.URLshort)
+                            Social.TELEGRAM -> Text(Social.TELEGRAM.URLshort)
+                            Social.WHATSAPP -> Text(Social.WHATSAPP.URLshort)
+                            Social.WEBSITE -> Text(Social.WEBSITE.URLshort)
                         }},
+                    isError = (isError != 0),
                     keyboardOptions = KeyboardOptions.Default.copy(
                         capitalization = KeyboardCapitalization.None // Disable automatic capitalization
                     ),
+                    supportingText = {
+                        if(isError != 0){
+                            Text(errorText)
+                        }
+                    },
                     singleLine = true,
                     modifier = Modifier.padding(10.dp))
                 Row(
@@ -277,7 +294,15 @@ fun SocialPrompt(
                     Button(
                         onClick = {
                             val newUserSocial = UserSocial(selectedSocial, socialURL)
-                            checkSocialURL(newUserSocial)
+                            isError = checkSocialURL(newUserSocial)
+                            if(isError != 0){
+                                errorText = when(isError){
+                                    1 -> "The text cannot be blank"
+                                    2 -> "The phone number has incorrect format"
+                                    3 -> "The website is not encoded with https://"
+                                    else -> ""
+                                }
+                            }
                             onSave(newUserSocial)
                         },
                     ){
