@@ -1,5 +1,6 @@
 package com.android.unio.model.user
 
+import androidx.compose.material3.Text
 import com.android.unio.R
 import com.android.unio.model.association.Association
 import com.android.unio.model.firestore.ReferenceList
@@ -17,15 +18,14 @@ enum class Interest(val title: String) {
   FESTIVALS("Festivals")
 }
 
-enum class Social(val title: String, val icon: Int) {
-  INSTAGRAM("Instagram", R.drawable.instagram_icon),
-  SNAPCHAT("Snapchat", R.drawable.snapchat_icon),
-  TELEGRAM("Telegram", R.drawable.telegram_icon),
-  WHATSAPP("WhatsApp", R.drawable.whatsapp_icon),
-  DISCORD("Discord", R.drawable.discord_icon),
-  LINKEDIN("LinkedIn", R.drawable.linkedin_icon),
-  WEBSITE("Website", R.drawable.website_icon),
-  OTHER("Other", R.drawable.other_icon)
+enum class Social(val title: String, val icon: Int, val URL: String) {
+    FACEBOOK("Facebook",R.drawable.facebook_icon , "https://www.facebook.com/"),
+    X("X",R.drawable.x_icon ,"https://x.com/"),
+  INSTAGRAM("Instagram", R.drawable.instagram_icon, "https://www.instagram.com/"),
+  SNAPCHAT("Snapchat", R.drawable.snapchat_icon, "https://www.snapchat.com/add/"),
+  TELEGRAM("Telegram", R.drawable.telegram_icon, "https://t.me/"),
+  WHATSAPP("WhatsApp", R.drawable.whatsapp_icon, "https://wa.me/"),
+  WEBSITE("Website", R.drawable.website_icon, "")
 }
 
 data class UserSocial(val social: Social, val content: String)
@@ -57,4 +57,31 @@ data class User(
     val hasProvidedAccountDetails: Boolean
 ) {
   companion object
+}
+
+//Helper methods
+/**
+ * @return 0: no problem is found
+ * @return 1: the input is empty or blank
+ * @return 2: the phone number has wrong format
+ * @return 3: the website is not encoded with https
+ */
+fun checkSocialURL(userSocial: UserSocial): Int{
+    if(userSocial.content.isEmpty() || userSocial.content.isBlank()){
+        return 1
+    }
+
+    when(userSocial.social){
+        //41 XX XXX XX XX
+        Social.WHATSAPP -> {
+            return 0;
+        }
+        Social.WEBSITE -> {
+            val regex = Regex("https://")
+            return 0
+        }
+        else -> {
+            return 0
+        }
+    }
 }

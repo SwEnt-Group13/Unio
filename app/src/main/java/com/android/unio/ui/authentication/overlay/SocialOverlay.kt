@@ -1,14 +1,18 @@
 package com.android.unio.ui.authentication.overlay
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ExposedDropdownMenuBox
@@ -37,12 +41,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.android.unio.model.user.Social
 import com.android.unio.model.user.UserSocial
+import com.android.unio.model.user.checkSocialURL
 import com.android.unio.ui.theme.AppTypography
 import kotlinx.coroutines.flow.MutableStateFlow
 
@@ -116,7 +125,11 @@ fun SocialOverlay(
                                     Row(
                                         verticalAlignment = Alignment.CenterVertically
                                     ){
-                                        Icon(Icons.Default.AccountCircle, contentDescription = "AccountCircle")
+                                        Image(
+                                            modifier = Modifier.size(16.dp).wrapContentSize(),
+                                            painter = painterResource(userSocial.social.icon),
+                                            contentDescription = userSocial.social.title,
+                                            contentScale = ContentScale.Fit)
                                         Text(userSocial.social.title)
                                     }
                                     Icon(
@@ -227,9 +240,29 @@ fun SocialPrompt(
                 }
                 OutlinedTextField(
                     value = socialURL,
-                    placeholder = {Text("Please enter your username")},
-                    singleLine = true,
                     onValueChange = {socialURL = it},
+                    placeholder = {
+                        when(selectedSocial){
+                            Social.FACEBOOK, Social.X,
+                            Social.INSTAGRAM, Social.SNAPCHAT,
+                            Social.TELEGRAM -> Text(text = "username", fontWeight = FontWeight.Bold)
+                            Social.WHATSAPP -> Text(text = "number", fontWeight = FontWeight.Bold)
+                            Social.WEBSITE -> Text("url")
+                        }},
+                    prefix = {
+                        when(selectedSocial){
+                            Social.FACEBOOK -> Text("facebook.com/")
+                            Social.X -> Text("x.com/")
+                            Social.INSTAGRAM -> Text("instagram.com/")
+                            Social.SNAPCHAT -> Text("snapchat.com/add/")
+                            Social.TELEGRAM -> Text("t.me/")
+                            Social.WHATSAPP -> Text("wa.me/")
+                            Social.WEBSITE -> Text("")
+                        }},
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        capitalization = KeyboardCapitalization.None // Disable automatic capitalization
+                    ),
+                    singleLine = true,
                     modifier = Modifier.padding(10.dp))
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -244,6 +277,7 @@ fun SocialPrompt(
                     Button(
                         onClick = {
                             val newUserSocial = UserSocial(selectedSocial, socialURL)
+                            checkSocialURL(newUserSocial)
                             onSave(newUserSocial)
                         },
                     ){

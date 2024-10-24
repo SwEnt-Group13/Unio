@@ -171,9 +171,7 @@ fun UserProfileScreenContent(navigationAction: NavigationAction, user: User) {
 
           // Display the user's socials.
           FlowRow(horizontalArrangement = Arrangement.Center) {
-            user.socials
-                .filter { it.social != Social.OTHER }
-                .forEach { userSocial ->
+            user.socials.forEach { userSocial ->
                   IconButton(
                       onClick = { uriHandler.openUri(userSocial.content) },
                       modifier = Modifier.testTag("UserProfileSocialButton")) {
