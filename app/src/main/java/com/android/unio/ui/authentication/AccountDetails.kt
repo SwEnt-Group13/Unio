@@ -1,18 +1,13 @@
 package com.android.unio.ui.accountCreation
 
 import android.content.Context
-import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -29,7 +24,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.InputChip
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -41,7 +35,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
 import com.android.unio.model.association.Association
 import com.android.unio.model.firestore.emptyFirestoreReferenceList
@@ -49,11 +45,11 @@ import com.android.unio.model.user.Interest
 import com.android.unio.model.user.User
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserSocial
+import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.authentication.overlay.InterestOverlay
 import com.android.unio.ui.authentication.overlay.SocialOverlay
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
-import com.android.unio.ui.theme.AppTheme
 import com.android.unio.ui.theme.AppTypography
 import com.android.unio.ui.theme.primaryLight
 import com.google.firebase.Firebase
@@ -62,28 +58,37 @@ import com.google.firebase.firestore.firestore
 import kotlinx.coroutines.flow.MutableStateFlow
 
 
-//@Preview(showBackground = true)
-//@Composable
-//fun AccountDetailsPreview() {
-//    val navController = rememberNavController()
-//    val navigationActions = NavigationAction(navController)
-//    val userRepositoryFirestore = UserRepositoryFirestore(Firebase.firestore)
-//    AccountDetails(
-//        navigationAction = navigationActions,
-//        userRepositoryFirestore = userRepositoryFirestore
-//    )
-//}
+@Preview(showBackground = true)
+@Composable
+fun AccountDetailsPreview() {
+    val navController = rememberNavController()
+    val navigationActions = NavigationAction(navController)
+    val userRepositoryFirestore = UserRepositoryFirestore(Firebase.firestore)
+    val userViewModel = UserViewModel(userRepositoryFirestore, false)
+    AccountDetails(
+        navigationAction = navigationActions,
+        userViewModel = userViewModel
+    )
+}
 
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun AccountDetails(
     navigationAction: NavigationAction,
-    userRepositoryFirestore: UserRepositoryFirestore,
+    userViewModel: UserViewModel = viewModel(factory = UserViewModel.Factory)
 ) {
   var firstName: String by remember { mutableStateOf("") }
   var lastName: String by remember { mutableStateOf("") }
   var bio: String by remember { mutableStateOf("") }
+
+    var isError by remember {
+        mutableStateOf(false)
+    }
+
+    var errorMessage by remember {
+        mutableStateOf("")
+    }
 
   val interestsFlow = remember {
       MutableStateFlow(Interest.entries.map { it to mutableStateOf(false) }.toList())
@@ -101,10 +106,10 @@ fun AccountDetails(
     var showSocialsOverlay by remember{ mutableStateOf(false) }
   val scrollState = rememberScrollState()
 
-  if (Firebase.auth.currentUser == null) {
-    navigationAction.navigateTo(Screen.WELCOME)
-    return
-  }
+//  if (Firebase.auth.currentUser == null) {
+//    navigationAction.navigateTo(Screen.WELCOME)
+//    return
+//  }
   Column(
       modifier =
       Modifier
@@ -127,6 +132,12 @@ fun AccountDetails(
             label = {
               Text("First name", modifier = Modifier.testTag("AccountDetailsFirstNameText"))
             },
+            isError = isError,
+            supportingText = {
+                if(isError){
+                    Text(errorMessage)
+                }
+            },
             onValueChange = { firstName = it },
             value = firstName)
         OutlinedTextField(
@@ -137,6 +148,12 @@ fun AccountDetails(
                 .testTag("AccountDetailsLastNameTextField"),
             label = {
               Text("Last name", modifier = Modifier.testTag("AccountDetailsLastNameText"))
+            },
+            isError = isError,
+            supportingText = {
+                if(isError){
+                    Text(errorMessage)
+                }
             },
             onValueChange = { lastName = it },
             value = lastName)
@@ -237,22 +254,29 @@ fun AccountDetails(
         Button(
             modifier = Modifier.testTag("AccountDetailsContinueButton"),
             onClick = {
-              val user =
-                  User(
-                      uid = Firebase.auth.currentUser?.uid!!,
-                      email = Firebase.auth.currentUser?.email!!,
-                      firstName = firstName,
-                      lastName = lastName,
-                      biography = bio,
-                      followedAssociations = Association.emptyFirestoreReferenceList(),
-                      joinedAssociations = Association.emptyFirestoreReferenceList(),
-                      interests = interests.filter { it.second.value }.map { it.first },
-                      socials = emptyList(),
-                      profilePicture = "",
-                      hasProvidedAccountDetails = true)
-              uploadUser(user, userRepositoryFirestore, navigationAction, context)
-              navigationAction.navigateTo(Screen.HOME)
-            }) {
+                if(firstName.isEmpty() || lastName.isEmpty()){
+                    isError = true
+                    errorMessage = "Please fill in your name"
+                }else {
+                    val user =
+                        User(
+                            uid = Firebase.auth.currentUser?.uid!!,
+                            email = Firebase.auth.currentUser?.email!!,
+                            firstName = firstName,
+                            lastName = lastName,
+                            biography = bio,
+                            followedAssociations = Association.emptyFirestoreReferenceList(),
+                            joinedAssociations = Association.emptyFirestoreReferenceList(),
+                            interests = interests.filter { it.second.value }.map { it.first },
+                            socials = emptyList(),
+                            profilePicture = "",
+                            hasProvidedAccountDetails = true)
+                    uploadUser(user, userViewModel, navigationAction, context)
+                    navigationAction.navigateTo(Screen.HOME)
+                }
+            })
+
+            {
               Text("Continue")
             }
       }
@@ -276,38 +300,9 @@ fun AccountDetails(
 
 fun uploadUser(
     user: User,
-    userRepositoryFirestore: UserRepositoryFirestore,
+    userViewModel: UserViewModel,
     navigationAction: NavigationAction,
     context: Context
 ) {
-  userRepositoryFirestore.updateUser(
-      user,
-      onSuccess = {
-        Toast.makeText(context, "Account Created Successfully", Toast.LENGTH_SHORT).show()
-        navigationAction.navigateTo(Screen.HOME)
-      },
-      onFailure = {
-        Toast.makeText(context, "Failed to create Account", Toast.LENGTH_SHORT).show()
-        Log.e("AccountDetails", "Failed to upload user", it)
-      })
-}
-
-
-class AccountDetailsActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-            val userRepositoryFirestore = UserRepositoryFirestore(Firebase.firestore)
-            val navController = rememberNavController()
-            val navigationActions = NavigationAction(navController)
-            setContent {
-                Surface(modifier = Modifier.fillMaxSize()){
-                    AppTheme{AccountDetails(
-                        navigationAction = navigationActions,
-                        userRepositoryFirestore = userRepositoryFirestore
-                    )}
-                }
-            }
-        }
-    }
+  userViewModel.addUser(user, navigationAction, context)
 }

@@ -57,4 +57,39 @@ class UserTest {
         user.socials)
     assertEquals("https://www.example.com/image", user.profilePicture)
   }
+
+    @Test
+    fun testCheckSocialContent(){
+        var userSocialEmptyContent = UserSocial(Social.INSTAGRAM, "")
+        assertEquals(1, checkSocialContent(userSocialEmptyContent))
+
+        val userSocialBlankContent = UserSocial(Social.X, "    ")
+        assertEquals(1, checkSocialContent(userSocialBlankContent))
+
+        val userSocialWrongNumber = UserSocial(Social.WHATSAPP, "123456789")
+        assertEquals(2, checkSocialContent(userSocialWrongNumber))
+
+        val listWrongUserSocialWebsiteURL =
+            listOf( UserSocial(Social.WEBSITE, "http://example.com"),
+                UserSocial(Social.WEBSITE, "example.com"),
+                UserSocial(Social.WEBSITE, "www.example.com"))
+        listWrongUserSocialWebsiteURL.forEach{
+            assertEquals(3, checkSocialContent(it))
+        }
+
+        val userSocialCorrectUsername = UserSocial(Social.INSTAGRAM, "username")
+        assertEquals(0, checkSocialContent(userSocialCorrectUsername))
+
+        val userSocialCorrectNumbers = listOf(
+            UserSocial(Social.WHATSAPP, "41000000000"),
+            UserSocial(Social.WHATSAPP, "33000000000")
+        )
+
+        userSocialCorrectNumbers.forEach{
+            assertEquals(0, checkSocialContent(it))
+        }
+
+        val userSocialCorrectWebsite = UserSocial(Social.WEBSITE, "https://example.com")
+        assertEquals(0, checkSocialContent(userSocialCorrectWebsite))
+    }
 }

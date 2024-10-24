@@ -4,7 +4,7 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.navigation.NavHostController
-import com.android.unio.model.user.UserRepositoryFirestore
+import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.accountCreation.AccountDetails
 import com.android.unio.ui.association.AssociationProfileScreen
 import com.android.unio.ui.authentication.EmailVerificationScreen
@@ -36,7 +36,7 @@ import org.mockito.kotlin.mock
 class ScreenDisplayingTest {
 
   private lateinit var navigationAction: NavigationAction
-  private lateinit var userRepositoryFirestore: UserRepositoryFirestore
+  private lateinit var userViewModel: UserViewModel
 
   @MockK private lateinit var firebaseAuth: FirebaseAuth
   // This is the implementation of the abstract method getUid() from FirebaseUser.
@@ -50,7 +50,7 @@ class ScreenDisplayingTest {
     MockKAnnotations.init(this, relaxed = true)
 
     navigationAction = mock { NavHostController::class.java }
-    userRepositoryFirestore = mockk() // { UserRepositoryFirestore::class.java }
+    userViewModel = mockk() // { UserRepositoryFirestore::class.java }
 
     // Mocking the Firebase.auth object and it's behaviour
     mockkStatic(FirebaseAuth::class)
@@ -72,7 +72,7 @@ class ScreenDisplayingTest {
 
   @Test
   fun testAccountDetailsDisplayed() {
-    composeTestRule.setContent { AccountDetails(navigationAction, userRepositoryFirestore) }
+    composeTestRule.setContent { AccountDetails(navigationAction, userViewModel) }
     composeTestRule.onNodeWithTag("AccountDetails").assertIsDisplayed()
   }
 

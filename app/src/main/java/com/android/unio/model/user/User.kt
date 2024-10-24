@@ -28,8 +28,8 @@ enum class Social(val title: String, val icon: Int, val URL: String, val URLshor
 }
 
 enum class PhoneNumberRegex(val number: Regex){
-    SWISS(Regex("41[0-9]{9}")),
-    FRENCH(Regex("33[0-9]{9}"))
+    SWISS(Regex("^41[0-9]{9}$")),
+    FRENCH(Regex("^33[0-9]{9}$"))
 }
 
 data class UserSocial(val social: Social, val content: String)
@@ -70,7 +70,7 @@ data class User(
  * @return 2: the phone number has wrong format
  * @return 3: the website is not encoded with https
  */
-fun checkSocialURL(userSocial: UserSocial): Int{
+fun checkSocialContent(userSocial: UserSocial): Int{
 
     if(userSocial.content.isEmpty() || userSocial.content.isBlank()){
         return 1
@@ -78,16 +78,15 @@ fun checkSocialURL(userSocial: UserSocial): Int{
 
     when(userSocial.social){
         Social.WHATSAPP -> {
-            PhoneNumberRegex.entries.forEach{ regexNumber ->
-                if(!regexNumber.number.matches(userSocial.content)){
-                    return 2
-                }
+            val listOfAcceptedContries = PhoneNumberRegex.entries.map { it.number}.toMutableList()
+            if(checkCorrectPhoneNumber(userSocial.content ,listOfAcceptedContries)){
                 return 0
             }
+            return 2
         }
         Social.WEBSITE -> {
             val regex = Regex("https://")
-            if(regex.matchAt(userSocial.content, 0) != null){
+            if(regex.find(userSocial.content, 0) == null){
                 return 3
             }
             return 0
@@ -96,5 +95,12 @@ fun checkSocialURL(userSocial: UserSocial): Int{
             return 0
         }
     }
-    return 0
+}
+
+private fun checkCorrectPhoneNumber(content: String , regexList: MutableList<Regex>) : Boolean{
+    return if(regexList.isEmpty()){
+        false
+    }else{
+        regexList.get(0).matches(content) || checkCorrectPhoneNumber(content, regexList.drop(1).toMutableList())
+    }
 }

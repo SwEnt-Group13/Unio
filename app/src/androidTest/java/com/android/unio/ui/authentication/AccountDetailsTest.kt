@@ -9,7 +9,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextInput
-import com.android.unio.model.user.UserRepositoryFirestore
+import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.accountCreation.AccountDetails
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
@@ -33,7 +33,7 @@ class AccountDetailsTest {
 
   @MockK private lateinit var firebaseAuth: FirebaseAuth
   private lateinit var navigationAction: NavigationAction
-  @MockK private lateinit var userRepositoryFirestore: UserRepositoryFirestore
+  @MockK private lateinit var userViewModel: UserViewModel
 
   // This is the implementation of the abstract method getUid() from FirebaseUser.
   // Because it is impossible to mock abstract method, this is the only way to mock it.
@@ -52,13 +52,13 @@ class AccountDetailsTest {
     every { mockFirebaseUser.uid } returns "mocked-uid"
 
     // Mocking the UserRepositoryFirestore object
-    userRepositoryFirestore = mockk(relaxed = true)
+    userViewModel = mockk(relaxed = true)
 
     // Mocking the navigationAction object
     navigationAction = mock(NavigationAction::class.java)
     `when`(navigationAction.getCurrentRoute()).thenReturn(Screen.ACCOUNT_DETAILS)
 
-    composeTestRule.setContent { AccountDetails(navigationAction, userRepositoryFirestore) }
+    composeTestRule.setContent { AccountDetails(navigationAction, userViewModel) }
   }
 
   @Test

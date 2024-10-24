@@ -50,7 +50,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.android.unio.model.user.Social
 import com.android.unio.model.user.UserSocial
-import com.android.unio.model.user.checkSocialURL
+import com.android.unio.model.user.checkSocialContent
 import com.android.unio.ui.theme.AppTypography
 import kotlinx.coroutines.flow.MutableStateFlow
 
@@ -257,7 +257,7 @@ fun SocialPrompt(
                             Social.FACEBOOK, Social.X,
                             Social.INSTAGRAM, Social.SNAPCHAT,
                             Social.TELEGRAM -> Text(text = "username", fontWeight = FontWeight.Bold)
-                            Social.WHATSAPP -> Text(text = "41 XX XXX XX XX", fontWeight = FontWeight.Bold)
+                            Social.WHATSAPP -> Text(text = "41XXXXXXXXX", fontWeight = FontWeight.Bold)
                             Social.WEBSITE -> Text("https://www.mywebsite.com")
                         }},
                     prefix = {
@@ -294,7 +294,7 @@ fun SocialPrompt(
                     Button(
                         onClick = {
                             val newUserSocial = UserSocial(selectedSocial, socialURL)
-                            isError = checkSocialURL(newUserSocial)
+                            isError = checkSocialContent(newUserSocial)
                             if(isError != 0){
                                 errorText = when(isError){
                                     1 -> "The text cannot be blank"
@@ -302,8 +302,9 @@ fun SocialPrompt(
                                     3 -> "The website is not encoded with https://"
                                     else -> ""
                                 }
+                            }else{
+                                onSave(newUserSocial)
                             }
-                            onSave(newUserSocial)
                         },
                     ){
                         Text("Save changes")
