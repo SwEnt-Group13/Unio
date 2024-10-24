@@ -34,6 +34,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -92,14 +93,14 @@ fun SocialOverlay(
                 Text(
                     text = "Your social media",
                     style = AppTypography.headlineSmall,
-                    modifier = Modifier.testTag("SocialsOverlayTitle"))
+                    modifier = Modifier.testTag("SocialOverlayTitle"))
                 Text(
                     text = "These will be displayed on your profile to allow other students to contact you",
                     style = AppTypography.bodyMedium,
                     modifier =
                     Modifier
                         .padding(bottom = 5.dp)
-                        .testTag("SocialsOverlaySubtitle"))
+                        .testTag("SocialOverlaySubtitle"))
                 Surface(
                     modifier = Modifier.sizeIn(maxHeight = 250.dp), color = Color.Transparent) {
                     Column(modifier = Modifier
@@ -115,36 +116,30 @@ fun SocialOverlay(
                                 Modifier
                                     .padding(5.dp)
                                     .fillMaxWidth()
-                                    .testTag("SocialsOverlayClickableRow: $index")){
+                                    .testTag("SocialOverlayClickableRow: ${userSocial.social.title}"))
+                            {
                                 Row(
-                                    modifier = Modifier
-                                        .padding(8.dp)
-                                        .fillMaxWidth(),
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.SpaceBetween
+                                    verticalAlignment = Alignment.CenterVertically
                                 ){
-                                    Row(
-                                        verticalAlignment = Alignment.CenterVertically
-                                    ){
-                                        Image(
-                                            modifier = Modifier
-                                                .size(16.dp)
-                                                .wrapContentSize(),
-                                            painter = painterResource(userSocial.social.icon),
-                                            contentDescription = userSocial.social.title,
-                                            contentScale = ContentScale.Fit)
-                                        Text(userSocial.social.title)
-                                    }
-                                    Icon(
-                                        Icons.Default.Close, contentDescription = "Close",
-                                        modifier = Modifier.clickable {
-                                            copiedUserSocialsFlow.value = copiedUserSocialsFlow.value.toMutableList().apply { removeAt(index) }
-                                        })
+                                    Image(
+                                        modifier = Modifier
+                                            .size(16.dp)
+                                            .wrapContentSize(),
+                                        painter = painterResource(userSocial.social.icon),
+                                        contentDescription = userSocial.social.title,
+                                        contentScale = ContentScale.Fit)
+                                    Text(userSocial.social.title)
                                 }
+                                Icon(
+                                    Icons.Default.Close, contentDescription = "Close",
+                                    modifier = Modifier.clickable {
+                                        copiedUserSocialsFlow.value = copiedUserSocialsFlow.value.toMutableList().apply { removeAt(index) }
+                                    }.testTag("SocialOverlayCloseIcon: ${userSocial.social.title}"))
+
                             }
                             if (index != copiedUserSocials.size - 1) {
                                 Divider(
-                                    modifier = Modifier.testTag("InterestOverlayDivider: $index")
+                                    modifier = Modifier.testTag("SocialOverlayDivider: $index")
                                 )
                             }
                         }
@@ -155,7 +150,7 @@ fun SocialOverlay(
                             OutlinedButton(
                                 onClick = { showAddSocialPrompt = true },
                                 modifier = Modifier
-                                    .padding(8.dp),
+                                    .padding(8.dp).testTag("SocialOverlayAddButton"),
                                 shape = RoundedCornerShape(16.dp)
                             ) {
                                 Icon(Icons.Default.Add, contentDescription = "Add")
@@ -163,7 +158,7 @@ fun SocialOverlay(
                             }
                             Button(
                                 onClick = {onSave(copiedUserSocials)},
-                                modifier = Modifier.padding(8.dp),
+                                modifier = Modifier.padding(8.dp).testTag( "SocialOverlaySaveButton"),
                                 shape = RoundedCornerShape(16.dp)
                             ) {
                                 Text("Save")
@@ -203,7 +198,7 @@ fun SocialPrompt(
     }
 
     var isError by remember {
-        mutableStateOf(0)
+        mutableIntStateOf(0)
     }
 
     var errorText by remember {
@@ -219,7 +214,7 @@ fun SocialPrompt(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(20.dp)
-                .testTag("SocialsOverlayCard")
+                .testTag("SocialPromptCard")
         ){
             Column(modifier = Modifier
                 .fillMaxWidth()
@@ -229,7 +224,7 @@ fun SocialPrompt(
                 ExposedDropdownMenuBox(
                     expanded = isExpanded,
                     onExpandedChange = {isExpanded = !isExpanded},
-                    modifier = Modifier.padding(10.dp)) {
+                    modifier = Modifier.padding(10.dp).testTag("SocialPromptDropdownMenuBox")) {
                     TextField(
                         value = selectedSocial.title,
                         onValueChange = {},
@@ -241,6 +236,7 @@ fun SocialPrompt(
                     ) {
                         socialsList.forEachIndexed { index, social ->
                             DropdownMenuItem(
+                                modifier = Modifier.testTag("SocialPromptDropdownMenuItem: ${social.title}"),
                                 text = { Text(social.title) },
                                 onClick = {
                                     selectedSocial = socialsList[index]
@@ -276,22 +272,24 @@ fun SocialPrompt(
                     ),
                     supportingText = {
                         if(isError != 0){
-                            Text(errorText)
+                            Text(errorText, modifier = Modifier.testTag("SocialPromptErrorText"))
                         }
                     },
                     singleLine = true,
-                    modifier = Modifier.padding(10.dp))
+                    modifier = Modifier.padding(10.dp).testTag("SocialPromptTextField"))
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ){
                     OutlinedButton(
+                        modifier = Modifier.testTag("SocialPromptCancelButton"),
                         onClick = onDismiss,
                         shape = RoundedCornerShape(16.dp)
                     ) {
                         Text("Cancel")
                     }
                     Button(
+                        modifier = Modifier.testTag("SocialPromptSaveButton"),
                         onClick = {
                             val newUserSocial = UserSocial(selectedSocial, socialURL)
                             isError = checkSocialContent(newUserSocial)

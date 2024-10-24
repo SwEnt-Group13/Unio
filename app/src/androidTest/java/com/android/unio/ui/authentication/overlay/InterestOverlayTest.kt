@@ -2,12 +2,12 @@ package com.android.unio.ui.authentication.overlay
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsOn
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import com.android.unio.model.user.Interest
-import junit.framework.TestCase.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -42,12 +42,13 @@ class InterestOverlayTest {
 
   @Test
   fun testWhenCheckBoxCheckedInterestStateChanges() {
-    interests.forEachIndexed() { index, pair ->
+    interests.forEachIndexed { index, pair ->
       composeTestRule
           .onNodeWithTag("InterestOverlayClickableRow: $index")
           .performScrollTo()
           .performClick()
-      assertEquals(true, pair.second.value)
+      composeTestRule
+        .onNodeWithTag("InterestOverlayCheckbox: ${pair.first.name}").assertIsOn()
     }
   }
 }
