@@ -34,15 +34,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.compose.rememberNavController
 import com.android.unio.model.association.Association
 import com.android.unio.model.firestore.emptyFirestoreReferenceList
 import com.android.unio.model.user.Interest
 import com.android.unio.model.user.User
-import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserSocial
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.authentication.overlay.InterestOverlay
