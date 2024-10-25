@@ -47,8 +47,7 @@ class InterestOverlayTest {
           .onNodeWithTag("InterestOverlayClickableRow: $index")
           .performScrollTo()
           .performClick()
-      composeTestRule
-        .onNodeWithTag("InterestOverlayCheckbox: ${pair.first.name}").assertIsOn()
+      composeTestRule.onNodeWithTag("InterestOverlayCheckbox: ${pair.first.name}").assertIsOn()
     }
   }
 }

@@ -31,7 +31,6 @@ import androidx.compose.ui.window.DialogProperties
 import com.android.unio.model.user.Interest
 import com.android.unio.ui.theme.AppTypography
 
-
 @Composable
 fun InterestOverlay(
     onDismiss: () -> Unit,
@@ -39,25 +38,21 @@ fun InterestOverlay(
     interests: List<Pair<Interest, MutableState<Boolean>>>
 ) {
   val scrollState = rememberScrollState()
-    val copiedInterests = interests.toList().map { it.first to mutableStateOf(it.second.value) }
+  val copiedInterests = interests.toList().map { it.first to mutableStateOf(it.second.value) }
 
-    Dialog(
+  Dialog(
       onDismissRequest = onDismiss,
       properties = DialogProperties(usePlatformDefaultWidth = false)) {
         Card(
             elevation = CardDefaults.cardElevation(8.dp),
             shape = RoundedCornerShape(16.dp),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(20.dp)
-                .testTag("InterestOverlayCard")) {
+            modifier = Modifier.fillMaxWidth().padding(20.dp).testTag("InterestOverlayCard")) {
               Column(
                   modifier =
-                  Modifier
-                      .fillMaxWidth()
-                      .padding(15.dp)
-                      .sizeIn(maxHeight = 400.dp)
-                      .testTag("InterestOverlayColumn"),
+                      Modifier.fillMaxWidth()
+                          .padding(15.dp)
+                          .sizeIn(maxHeight = 400.dp)
+                          .testTag("InterestOverlayColumn"),
                   verticalArrangement = Arrangement.SpaceBetween) {
                     Text(
                         text = "Your interests",
@@ -67,29 +62,25 @@ fun InterestOverlay(
                         text = "Choose as many interests as you feel apply to you",
                         style = AppTypography.bodyMedium,
                         modifier =
-                        Modifier
-                            .padding(bottom = 5.dp)
-                            .testTag("InterestOverlaySubtitle"))
+                            Modifier.padding(bottom = 5.dp).testTag("InterestOverlaySubtitle"))
                     Surface(
                         modifier = Modifier.sizeIn(maxHeight = 250.dp), color = Color.Transparent) {
                           Column(modifier = Modifier.verticalScroll(scrollState)) {
-                            copiedInterests.forEachIndexed{ index, pair ->
+                            copiedInterests.forEachIndexed { index, pair ->
                               Row(
                                   horizontalArrangement = Arrangement.SpaceBetween,
                                   verticalAlignment = Alignment.CenterVertically,
                                   modifier =
-                                  Modifier
-                                      .padding(5.dp)
-                                      .fillMaxWidth()
-                                      .testTag("InterestOverlayClickableRow: $index")
-                                      .clickable { pair.second.value = !pair.second.value }) {
+                                      Modifier.padding(5.dp)
+                                          .fillMaxWidth()
+                                          .testTag("InterestOverlayClickableRow: $index")
+                                          .clickable { pair.second.value = !pair.second.value }) {
                                     Text(
                                         text = pair.first.name,
                                         style = AppTypography.bodyMedium,
                                         modifier =
-                                        Modifier
-                                            .padding(start = 5.dp)
-                                            .testTag("InterestOverlayText: ${pair.first.name}"))
+                                            Modifier.padding(start = 5.dp)
+                                                .testTag("InterestOverlayText: ${pair.first.name}"))
                                     Checkbox(
                                         checked = pair.second.value,
                                         onCheckedChange = { pair.second.value = it },
@@ -105,30 +96,21 @@ fun InterestOverlay(
                           }
                         }
                     Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(8.dp),
+                        modifier = Modifier.fillMaxWidth().padding(8.dp),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.Absolute.Right) {
-                        OutlinedButton(
-                            shape = RoundedCornerShape(16.dp),
-                            onClick = onDismiss,
-                            modifier =
-                            Modifier
-                                .padding(5.dp)
-                                .testTag("InterestOverlayCancelButton"))
-                        {
-                            Text(text = "Cancel")
-                        }
+                          OutlinedButton(
+                              shape = RoundedCornerShape(16.dp),
+                              onClick = onDismiss,
+                              modifier =
+                                  Modifier.padding(5.dp).testTag("InterestOverlayCancelButton")) {
+                                Text(text = "Cancel")
+                              }
 
                           Button(
-                              onClick = {
-                                onSave(copiedInterests)
-                              },
+                              onClick = { onSave(copiedInterests) },
                               modifier =
-                              Modifier
-                                  .padding(5.dp)
-                                  .testTag("InterestOverlaySaveButton")) {
+                                  Modifier.padding(5.dp).testTag("InterestOverlaySaveButton")) {
                                 Text(text = "Save")
                               }
                         }
