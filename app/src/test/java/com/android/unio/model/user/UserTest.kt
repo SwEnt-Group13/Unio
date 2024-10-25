@@ -58,38 +58,36 @@ class UserTest {
     assertEquals("https://www.example.com/image", user.profilePicture)
   }
 
-    @Test
-    fun testCheckSocialContent(){
-        var userSocialEmptyContent = UserSocial(Social.INSTAGRAM, "")
-        assertEquals(1, checkSocialContent(userSocialEmptyContent))
+  @Test
+  fun testCheckSocialContent() {
+    var userSocialEmptyContent = UserSocial(Social.INSTAGRAM, "")
+    assertEquals(UserSocialError.EMPTY_FIELD, checkSocialContent(userSocialEmptyContent))
 
-        val userSocialBlankContent = UserSocial(Social.X, "    ")
-        assertEquals(1, checkSocialContent(userSocialBlankContent))
+    val userSocialBlankContent = UserSocial(Social.X, "    ")
+    assertEquals(UserSocialError.EMPTY_FIELD, checkSocialContent(userSocialBlankContent))
 
-        val userSocialWrongNumber = UserSocial(Social.WHATSAPP, "123456789")
-        assertEquals(2, checkSocialContent(userSocialWrongNumber))
+    val userSocialWrongNumber = UserSocial(Social.WHATSAPP, "123456789")
+    assertEquals(UserSocialError.INVALID_PHONE_NUMBER, checkSocialContent(userSocialWrongNumber))
 
-        val listWrongUserSocialWebsiteURL =
-            listOf( UserSocial(Social.WEBSITE, "http://example.com"),
-                UserSocial(Social.WEBSITE, "example.com"),
-                UserSocial(Social.WEBSITE, "www.example.com"))
-        listWrongUserSocialWebsiteURL.forEach{
-            assertEquals(3, checkSocialContent(it))
-        }
-
-        val userSocialCorrectUsername = UserSocial(Social.INSTAGRAM, "username")
-        assertEquals(0, checkSocialContent(userSocialCorrectUsername))
-
-        val userSocialCorrectNumbers = listOf(
-            UserSocial(Social.WHATSAPP, "41000000000"),
-            UserSocial(Social.WHATSAPP, "33000000000")
-        )
-
-        userSocialCorrectNumbers.forEach{
-            assertEquals(0, checkSocialContent(it))
-        }
-
-        val userSocialCorrectWebsite = UserSocial(Social.WEBSITE, "https://example.com")
-        assertEquals(0, checkSocialContent(userSocialCorrectWebsite))
+    val listWrongUserSocialWebsiteURL =
+        listOf(
+            UserSocial(Social.WEBSITE, "http://example.com"),
+            UserSocial(Social.WEBSITE, "example.com"),
+            UserSocial(Social.WEBSITE, "www.example.com"))
+    listWrongUserSocialWebsiteURL.forEach {
+      assertEquals(UserSocialError.INVALID_WEBSITE, checkSocialContent(it))
     }
+
+    val userSocialCorrectUsername = UserSocial(Social.INSTAGRAM, "username")
+    assertEquals(UserSocialError.NONE, checkSocialContent(userSocialCorrectUsername))
+
+    val userSocialCorrectNumbers =
+        listOf(
+            UserSocial(Social.WHATSAPP, "41000000000"), UserSocial(Social.WHATSAPP, "33000000000"))
+
+    userSocialCorrectNumbers.forEach { assertEquals(UserSocialError.NONE, checkSocialContent(it)) }
+
+    val userSocialCorrectWebsite = UserSocial(Social.WEBSITE, "https://example.com")
+    assertEquals(UserSocialError.NONE, checkSocialContent(userSocialCorrectWebsite))
+  }
 }
