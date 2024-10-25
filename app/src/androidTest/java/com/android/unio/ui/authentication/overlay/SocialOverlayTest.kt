@@ -12,62 +12,66 @@ import org.junit.Rule
 import org.junit.Test
 
 class SocialOverlayTest {
-    val userSocials = emptyList<UserSocial>().toMutableList()
+  val userSocials = emptyList<UserSocial>().toMutableList()
 
-    @get:Rule val composeTestRule = createComposeRule()
+  @get:Rule val composeTestRule = createComposeRule()
 
-    @Before
-    fun setUp(){
-        composeTestRule.setContent { SocialOverlay({}, {}, userSocials) }
-    }
+  @Before
+  fun setUp() {
+    composeTestRule.setContent { SocialOverlay({}, {}, userSocials) }
+  }
 
-    @Test
-    fun everythingIsDisplayedWhenBlank(){
-        composeTestRule.onNodeWithTag("SocialOverlayTitle").assertIsDisplayed()
-        composeTestRule.onNodeWithTag("SocialOverlaySubtitle").assertIsDisplayed()
-        composeTestRule.onNodeWithTag("SocialOverlayAddButton").assertIsDisplayed()
-        composeTestRule.onNodeWithTag("SocialOverlaySaveButton").assertIsDisplayed()
-    }
+  @Test
+  fun everythingIsDisplayedWhenBlank() {
+    composeTestRule.onNodeWithTag("SocialOverlayTitle").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("SocialOverlaySubtitle").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("SocialOverlayAddButton").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("SocialOverlaySaveButton").assertIsDisplayed()
+  }
 
-    @Test
-    fun testSocialPromptAppearsWhenAddButtonClicked(){
-        composeTestRule.onNodeWithTag("SocialOverlayAddButton").performScrollTo().performClick()
-        composeTestRule.onNodeWithTag("SocialPromptCard").assertIsDisplayed()
-    }
+  @Test
+  fun testSocialPromptAppearsWhenAddButtonClicked() {
+    composeTestRule.onNodeWithTag("SocialOverlayAddButton").performScrollTo().performClick()
+    composeTestRule.onNodeWithTag("SocialPromptCard").assertIsDisplayed()
+  }
 
-    @Test
-    fun testCorrectlyAddsNewUserSocial(){
-        addNewUserSocial("facebook_username", "Facebook")
-        composeTestRule.onNodeWithTag("SocialOverlayClickableRow: Facebook").assertIsDisplayed()
-    }
+  @Test
+  fun testCorrectlyAddsNewUserSocial() {
+    addNewUserSocial("facebook_username", "Facebook")
+    composeTestRule.onNodeWithTag("SocialOverlayClickableRow: Facebook").assertIsDisplayed()
+  }
 
-    @Test
-    fun testCorrectlyDeletesUserSocial(){
-        addNewUserSocial("facebook_username", "Facebook")
-        composeTestRule.onNodeWithTag("SocialOverlayCloseIcon: Facebook", useUnmergedTree = true).performScrollTo().performClick()
-        composeTestRule.onNodeWithTag("SocialOverlayClickableRow: Facebook").assertDoesNotExist()
-    }
+  @Test
+  fun testCorrectlyDeletesUserSocial() {
+    addNewUserSocial("facebook_username", "Facebook")
+    composeTestRule
+        .onNodeWithTag("SocialOverlayCloseIcon: Facebook", useUnmergedTree = true)
+        .performScrollTo()
+        .performClick()
+    composeTestRule.onNodeWithTag("SocialOverlayClickableRow: Facebook").assertDoesNotExist()
+  }
 
-    @Test
-    fun testCancelButtonExistsSocialPrompt(){
-        composeTestRule.onNodeWithTag("SocialOverlayAddButton").performScrollTo().performClick()
-        composeTestRule.onNodeWithTag("SocialPromptCancelButton").performClick()
-        composeTestRule.onNodeWithTag("SocialPromptCard").assertDoesNotExist()
-    }
+  @Test
+  fun testCancelButtonExistsSocialPrompt() {
+    composeTestRule.onNodeWithTag("SocialOverlayAddButton").performScrollTo().performClick()
+    composeTestRule.onNodeWithTag("SocialPromptCancelButton").performClick()
+    composeTestRule.onNodeWithTag("SocialPromptCard").assertDoesNotExist()
+  }
 
-    @Test
-    fun testDisplayErrorWithIncorrectInput(){
-        addNewUserSocial("", "Facebook")
-        composeTestRule.onNodeWithTag("SocialPromptErrorText", useUnmergedTree = true).assertIsDisplayed()
+  @Test
+  fun testDisplayErrorWithIncorrectInput() {
+    addNewUserSocial("", "Facebook")
+    composeTestRule
+        .onNodeWithTag("SocialPromptErrorText", useUnmergedTree = true)
+        .assertIsDisplayed()
+  }
 
-    }
-
-    //Helper function to add a new UserSocial
-    private fun addNewUserSocial(username: String, platform: String){
-        composeTestRule.onNodeWithTag("SocialOverlayAddButton").performScrollTo().performClick()
-        composeTestRule.onNodeWithTag("SocialPromptTextField").performTextInput(username)
-        composeTestRule.onNodeWithTag("SocialPromptDropdownMenuBox").performClick()
-        composeTestRule.onNodeWithTag("SocialPromptDropdownMenuItem: $platform").performClick()
-        composeTestRule.onNodeWithTag("SocialPromptSaveButton").performClick()
-    }
+  // Helper function to add a new UserSocial
+  private fun addNewUserSocial(username: String, platform: String) {
+    composeTestRule.onNodeWithTag("SocialOverlayAddButton").performScrollTo().performClick()
+    composeTestRule.onNodeWithTag("SocialPromptTextField").performTextInput(username)
+    composeTestRule.onNodeWithTag("SocialPromptDropdownMenuBox").performClick()
+    composeTestRule.onNodeWithTag("SocialPromptDropdownMenuItem: $platform").performClick()
+    composeTestRule.onNodeWithTag("SocialPromptSaveButton").performClick()
+  }
 }

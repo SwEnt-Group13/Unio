@@ -9,6 +9,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextInput
+import androidx.test.espresso.Espresso
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.accountCreation.AccountDetails
 import com.android.unio.ui.navigation.NavigationAction
@@ -53,6 +54,11 @@ class AccountDetailsTest {
 
     // Mocking the UserRepositoryFirestore object
     userViewModel = mockk(relaxed = true)
+    every { userViewModel.addUser(any(), any()) } answers
+        {
+          val onSuccess = it.invocation.args[1] as () -> Unit
+          onSuccess()
+        }
 
     // Mocking the navigationAction object
     navigationAction = mock(NavigationAction::class.java)
@@ -111,20 +117,41 @@ class AccountDetailsTest {
     composeTestRule.onNodeWithTag("AccountDetailsInterestsButton").performClick()
     composeTestRule.onNodeWithTag("InterestOverlayClickableRow: 0").performClick()
     composeTestRule.onNodeWithTag("InterestOverlayClickableRow: 1").performClick()
+    composeTestRule.onNodeWithTag("InterestOverlaySaveButton").performClick()
 
     composeTestRule.onNodeWithTag("AccountDetailsInterestChip: 0").assertExists()
     composeTestRule.onNodeWithTag("AccountDetailsInterestChip: 1").assertExists()
   }
 
   @Test
-  fun testCorrectlyExitsTheOverlayScreen() {
+  fun testCorrectlyExitsInterestOverlayScreen() {
     composeTestRule.onNodeWithTag("AccountDetailsInterestsButton").performClick()
     composeTestRule.onNodeWithTag("InterestOverlaySaveButton").performClick()
     composeTestRule.onNodeWithTag("InterestOverlayTitle").assertIsNotDisplayed()
   }
 
   @Test
+  fun testCorrectlyExistsSocialsOverlayScreen() {
+    composeTestRule.onNodeWithTag("AccountDetailsSocialsButton").performClick()
+    Espresso.pressBack()
+    composeTestRule.onNodeWithTag("SocialOverlayTitle").assertIsNotDisplayed()
+  }
+
+  @Test
+  fun testCorrectlyDisplaysErrorWhenFirstNameIsEmpty() {
+    composeTestRule.onNodeWithTag("AccountDetailsContinueButton").performScrollTo().performClick()
+    composeTestRule
+        .onNodeWithTag("AccountDetailsFirstNameErrorText", useUnmergedTree = true)
+        .assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag("AccountDetailsLastNameErrorText", useUnmergedTree = true)
+        .assertIsDisplayed()
+  }
+
+  @Test
   fun testContinueButtonCorrectlyNavigatesToHome() {
+    composeTestRule.onNodeWithTag("AccountDetailsFirstNameTextField").performTextInput("John")
+    composeTestRule.onNodeWithTag("AccountDetailsLastNameTextField").performTextInput("Doe")
     composeTestRule.onNodeWithTag("AccountDetailsContinueButton").performScrollTo().performClick()
     verify(navigationAction).navigateTo(screen = Screen.HOME)
   }
