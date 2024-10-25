@@ -131,9 +131,9 @@ class AccountDetailsTest {
   }
 
   @Test
-  fun testCorrectlyExistsSocialsOverlayScreen() {
+  fun testCorrectlyExitsSocialsOverlayScreen() {
     composeTestRule.onNodeWithTag("AccountDetailsSocialsButton").performClick()
-    Espresso.pressBack()
+    Espresso.pressBackUnconditionally()
     composeTestRule.onNodeWithTag("SocialOverlayTitle").assertIsNotDisplayed()
   }
 
