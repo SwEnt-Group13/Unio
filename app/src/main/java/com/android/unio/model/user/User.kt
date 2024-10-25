@@ -17,19 +17,15 @@ enum class Interest(val title: String) {
   FESTIVALS("Festivals")
 }
 
-enum class Social(val title: String, val icon: Int, val URL: String, val URLshort : String) {
-    FACEBOOK("Facebook",R.drawable.facebook_icon , "https://www.facebook.com/", "facebook.com/"),
-    X("X",R.drawable.x_icon ,"https://x.com/", "x.com/"),
+enum class Social(val title: String, val icon: Int, val URL: String, val URLshort: String) {
+  FACEBOOK("Facebook", R.drawable.facebook_icon, "https://www.facebook.com/", "facebook.com/"),
+  X("X", R.drawable.x_icon, "https://x.com/", "x.com/"),
   INSTAGRAM("Instagram", R.drawable.instagram_icon, "https://www.instagram.com/", "instagram.com/"),
-  SNAPCHAT("Snapchat", R.drawable.snapchat_icon, "https://www.snapchat.com/add/", "snapchat.com/add/"),
+  SNAPCHAT(
+      "Snapchat", R.drawable.snapchat_icon, "https://www.snapchat.com/add/", "snapchat.com/add/"),
   TELEGRAM("Telegram", R.drawable.telegram_icon, "https://t.me/", "t.me/"),
   WHATSAPP("WhatsApp", R.drawable.whatsapp_icon, "https://wa.me/", "wa.me/"),
   WEBSITE("Website", R.drawable.website_icon, "", "")
-}
-
-enum class PhoneNumberRegex(val number: Regex){
-    SWISS(Regex("^41[0-9]{9}$")),
-    FRENCH(Regex("^33[0-9]{9}$"))
 }
 
 data class UserSocial(val social: Social, val content: String)
@@ -63,44 +59,54 @@ data class User(
   companion object
 }
 
-//Helper methods
+enum class UserSocialError(val errorMessage: String) {
+  EMPTY_FIELD("The input is empty or blank"),
+  INVALID_PHONE_NUMBER("The phone number has wrong format"),
+  INVALID_WEBSITE("The website is not encoded with https"),
+  NONE("")
+}
+// Helper methods
 /**
- * @return 0: no problem is found
- * @return 1: the input is empty or blank
- * @return 2: the phone number has wrong format
- * @return 3: the website is not encoded with https
+ * @return NONE: no problem is found
+ * @return EMPTY_FIELD: the website is not encoded with https
+ * @return INVALID_PHONE_NUMBER: the input is empty or blank
+ * @return INVALID_WEBSITE: the phone number has wrong format
  */
-fun checkSocialContent(userSocial: UserSocial): Int{
+fun checkSocialContent(userSocial: UserSocial): UserSocialError {
 
-    if(userSocial.content.isEmpty() || userSocial.content.isBlank()){
-        return 1
-    }
+  if (userSocial.content.isEmpty() || userSocial.content.isBlank()) {
+    return UserSocialError.EMPTY_FIELD
+  }
 
-    when(userSocial.social){
-        Social.WHATSAPP -> {
-            val listOfAcceptedContries = PhoneNumberRegex.entries.map { it.number}.toMutableList()
-            if(checkCorrectPhoneNumber(userSocial.content ,listOfAcceptedContries)){
-                return 0
-            }
-            return 2
-        }
-        Social.WEBSITE -> {
-            val regex = Regex("https://")
-            if(regex.find(userSocial.content, 0) == null){
-                return 3
-            }
-            return 0
-        }
-        else -> {
-            return 0
-        }
+  when (userSocial.social) {
+    Social.WHATSAPP -> {
+      val numberRegex = Regex("^[0-9]{10,12}")
+      if (numberRegex.matches(userSocial.content)) {
+        return UserSocialError.NONE
+      }
+      return UserSocialError.INVALID_PHONE_NUMBER
     }
+    Social.WEBSITE -> {
+      val regex = Regex("^https://.*$")
+      if (regex.matches(userSocial.content)) {
+        return UserSocialError.NONE
+      }
+      return UserSocialError.INVALID_WEBSITE
+    }
+    else -> {
+      return UserSocialError.NONE
+    }
+  }
 }
 
-private fun checkCorrectPhoneNumber(content: String , regexList: MutableList<Regex>) : Boolean{
-    return if(regexList.isEmpty()){
-        false
-    }else{
-        regexList.get(0).matches(content) || checkCorrectPhoneNumber(content, regexList.drop(1).toMutableList())
-    }
+fun getPlaceHolderText(social: Social): String {
+  return when (social) {
+    Social.FACEBOOK,
+    Social.X,
+    Social.INSTAGRAM,
+    Social.SNAPCHAT,
+    Social.TELEGRAM -> "username"
+    Social.WHATSAPP -> "41XXXXXXXXX"
+    Social.WEBSITE -> "https://www.mywebsite.com"
+  }
 }
