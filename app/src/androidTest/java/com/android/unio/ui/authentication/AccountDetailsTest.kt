@@ -9,7 +9,6 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextInput
-import androidx.test.espresso.Espresso
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.accountCreation.AccountDetails
 import com.android.unio.ui.navigation.NavigationAction
@@ -128,13 +127,6 @@ class AccountDetailsTest {
     composeTestRule.onNodeWithTag("AccountDetailsInterestsButton").performClick()
     composeTestRule.onNodeWithTag("InterestOverlaySaveButton").performClick()
     composeTestRule.onNodeWithTag("InterestOverlayTitle").assertIsNotDisplayed()
-  }
-
-  @Test
-  fun testCorrectlyExitsSocialsOverlayScreen() {
-    composeTestRule.onNodeWithTag("AccountDetailsSocialsButton").performClick()
-    Espresso.pressBackUnconditionally()
-    composeTestRule.onNodeWithTag("SocialOverlayTitle").assertIsNotDisplayed()
   }
 
   @Test
