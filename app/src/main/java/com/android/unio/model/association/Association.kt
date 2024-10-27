@@ -49,7 +49,7 @@ enum class AssociationCategory(val displayName: String) {
 
 @Document
 data class AssociationDocument(
-    @Namespace val namespace: String = "",
+    @Namespace val namespace: String = "unio",
     @Id val uid: String,
     @StringProperty(indexingType = StringPropertyConfig.INDEXING_TYPE_PREFIXES)
     val url: String = "",
