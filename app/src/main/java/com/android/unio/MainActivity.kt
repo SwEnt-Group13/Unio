@@ -104,7 +104,7 @@ fun UnioApp() {
             onAddEvent = {},
             onEventClick = {})
       }
-      composable(Screen.MAP) { MapScreen(navigationActions) }
+      composable(Screen.MAP) { MapScreen(navigationActions, eventListViewModel) }
     }
     navigation(startDestination = Screen.EXPLORE, route = Route.EXPLORE) {
       composable(Screen.EXPLORE) { ExploreScreen(navigationActions, associationViewModel) }
