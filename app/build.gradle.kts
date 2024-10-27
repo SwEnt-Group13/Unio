@@ -10,6 +10,7 @@ plugins {
     alias(libs.plugins.gms)
     alias(libs.plugins.sonar)
     id("jacoco")
+    kotlin("kapt")
 }
 
 android {
@@ -263,7 +264,9 @@ dependencies {
     // AppSearch
     implementation(libs.androidx.appsearch)
     implementation(libs.androidx.appsearch.local.storage)
-    implementation(libs.guava)}
+    kapt(libs.androidx.appsearch.compiler)
+    implementation(libs.guava)
+}
 
 
 tasks.withType<Test> {
