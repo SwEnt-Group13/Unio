@@ -26,15 +26,13 @@ enum class Social(val title: String, val icon: Int, val url: String) {
   TELEGRAM("Telegram", R.drawable.telegram_icon, "t.me/"),
   WHATSAPP("WhatsApp", R.drawable.whatsapp_icon, "wa.me/"),
   WEBSITE("Website", R.drawable.website_icon, "");
-
-  companion object {
-    fun formattedUrl(content: String): String {
-      return "https://$content"
-    }
-  }
 }
 
-data class UserSocial(val social: Social, val content: String)
+data class UserSocial(val social: Social, val content: String){
+  fun getFullUrl(): String {
+    return "https://" + social.url + content
+  }
+}
 
 /**
  * @param uid The unique identifier of the user.

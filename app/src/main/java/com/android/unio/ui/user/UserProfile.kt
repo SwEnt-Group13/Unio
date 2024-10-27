@@ -173,7 +173,7 @@ fun UserProfileScreenContent(navigationAction: NavigationAction, user: User) {
           FlowRow(horizontalArrangement = Arrangement.Center) {
             user.socials.forEach { userSocial ->
               IconButton(
-                  onClick = { uriHandler.openUri(Social.formattedUrl(userSocial.content)) },
+                  onClick = { uriHandler.openUri( userSocial.getFullUrl()) },
                   modifier = Modifier.testTag("UserProfileSocialButton")) {
                     Image(
                         modifier = Modifier.size(32.dp).wrapContentSize(),

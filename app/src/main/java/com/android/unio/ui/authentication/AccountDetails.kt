@@ -222,7 +222,7 @@ fun AccountDetails(
                       followedAssociations = Association.emptyFirestoreReferenceList(),
                       joinedAssociations = Association.emptyFirestoreReferenceList(),
                       interests = interests.filter { it.second.value }.map { it.first },
-                      socials = socials.map { UserSocial(it.social, it.social.url + it.content) },
+                      socials = socials,
                       profilePicture = "",
                       hasProvidedAccountDetails = true)
               isErrors = checkNewUser(user)
