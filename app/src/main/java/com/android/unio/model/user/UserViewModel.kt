@@ -32,6 +32,10 @@ class UserViewModel(val repository: UserRepository, initializeWithAuthenticatedU
   }
 
   fun getUserByUid(uid: String, fetchReferences: Boolean = false) {
+    if (uid.isEmpty()) {
+      return
+    }
+
     _refreshState.value = true
     _user.value = null
     repository.getUserWithId(
@@ -64,6 +68,21 @@ class UserViewModel(val repository: UserRepository, initializeWithAuthenticatedU
 
   fun refreshUser() {
     _user.value?.let { getUserByUid(it.uid, true) }
+  }
+
+  fun updateUser(user: User) {
+    repository.updateUser(
+        user,
+        onSuccess = { getUserByUid(user.uid) },
+        onFailure = { Log.e("UserViewModel", "Failed to update user", it) })
+  }
+
+  fun addUser(user: User, onSuccess: () -> Unit) {
+    repository.updateUser(
+        user,
+        onSuccess = onSuccess,
+        onFailure = { Log.e("UserViewModel", "Failed to add user", it) })
+    _user.value = user
   }
 
   companion object {

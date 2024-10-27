@@ -9,7 +9,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextInput
-import com.android.unio.model.user.UserRepositoryFirestore
+import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.accountCreation.AccountDetails
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
@@ -33,7 +33,7 @@ class AccountDetailsTest {
 
   @MockK private lateinit var firebaseAuth: FirebaseAuth
   private lateinit var navigationAction: NavigationAction
-  @MockK private lateinit var userRepositoryFirestore: UserRepositoryFirestore
+  @MockK private lateinit var userViewModel: UserViewModel
 
   // This is the implementation of the abstract method getUid() from FirebaseUser.
   // Because it is impossible to mock abstract method, this is the only way to mock it.
@@ -52,13 +52,18 @@ class AccountDetailsTest {
     every { mockFirebaseUser.uid } returns "mocked-uid"
 
     // Mocking the UserRepositoryFirestore object
-    userRepositoryFirestore = mockk(relaxed = true)
+    userViewModel = mockk(relaxed = true)
+    every { userViewModel.addUser(any(), any()) } answers
+        {
+          val onSuccess = it.invocation.args[1] as () -> Unit
+          onSuccess()
+        }
 
     // Mocking the navigationAction object
     navigationAction = mock(NavigationAction::class.java)
     `when`(navigationAction.getCurrentRoute()).thenReturn(Screen.ACCOUNT_DETAILS)
 
-    composeTestRule.setContent { AccountDetails(navigationAction, userRepositoryFirestore) }
+    composeTestRule.setContent { AccountDetails(navigationAction, userViewModel) }
   }
 
   @Test
@@ -111,20 +116,34 @@ class AccountDetailsTest {
     composeTestRule.onNodeWithTag("AccountDetailsInterestsButton").performClick()
     composeTestRule.onNodeWithTag("InterestOverlayClickableRow: 0").performClick()
     composeTestRule.onNodeWithTag("InterestOverlayClickableRow: 1").performClick()
+    composeTestRule.onNodeWithTag("InterestOverlaySaveButton").performClick()
 
     composeTestRule.onNodeWithTag("AccountDetailsInterestChip: 0").assertExists()
     composeTestRule.onNodeWithTag("AccountDetailsInterestChip: 1").assertExists()
   }
 
   @Test
-  fun testCorrectlyExitsTheOverlayScreen() {
+  fun testCorrectlyExitsInterestOverlayScreen() {
     composeTestRule.onNodeWithTag("AccountDetailsInterestsButton").performClick()
     composeTestRule.onNodeWithTag("InterestOverlaySaveButton").performClick()
     composeTestRule.onNodeWithTag("InterestOverlayTitle").assertIsNotDisplayed()
   }
 
   @Test
+  fun testCorrectlyDisplaysErrorWhenFirstNameIsEmpty() {
+    composeTestRule.onNodeWithTag("AccountDetailsContinueButton").performScrollTo().performClick()
+    composeTestRule
+        .onNodeWithTag("AccountDetailsFirstNameErrorText", useUnmergedTree = true)
+        .assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag("AccountDetailsLastNameErrorText", useUnmergedTree = true)
+        .assertIsDisplayed()
+  }
+
+  @Test
   fun testContinueButtonCorrectlyNavigatesToHome() {
+    composeTestRule.onNodeWithTag("AccountDetailsFirstNameTextField").performTextInput("John")
+    composeTestRule.onNodeWithTag("AccountDetailsLastNameTextField").performTextInput("Doe")
     composeTestRule.onNodeWithTag("AccountDetailsContinueButton").performScrollTo().performClick()
     verify(navigationAction).navigateTo(screen = Screen.HOME)
   }
