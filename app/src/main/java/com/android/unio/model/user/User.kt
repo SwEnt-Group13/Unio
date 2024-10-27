@@ -25,10 +25,10 @@ enum class Social(val title: String, val icon: Int, val url: String) {
   SNAPCHAT("Snapchat", R.drawable.snapchat_icon, "snapchat.com/add/"),
   TELEGRAM("Telegram", R.drawable.telegram_icon, "t.me/"),
   WHATSAPP("WhatsApp", R.drawable.whatsapp_icon, "wa.me/"),
-  WEBSITE("Website", R.drawable.website_icon, "");
+  WEBSITE("Website", R.drawable.website_icon, "")
 }
 
-data class UserSocial(val social: Social, val content: String){
+data class UserSocial(val social: Social, val content: String) {
   fun getFullUrl(): String {
     return "https://" + social.url + content
   }
