@@ -38,10 +38,12 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.android.unio.model.association.Association
 import com.android.unio.model.firestore.emptyFirestoreReferenceList
+import com.android.unio.model.user.AccountDetailsError
 import com.android.unio.model.user.Interest
 import com.android.unio.model.user.User
 import com.android.unio.model.user.UserSocial
 import com.android.unio.model.user.UserViewModel
+import com.android.unio.model.user.checkNewUser
 import com.android.unio.ui.authentication.overlay.InterestOverlay
 import com.android.unio.ui.authentication.overlay.SocialOverlay
 import com.android.unio.ui.navigation.NavigationAction
@@ -62,9 +64,7 @@ fun AccountDetails(
   var lastName: String by remember { mutableStateOf("") }
   var bio: String by remember { mutableStateOf("") }
 
-  var isError by remember { mutableStateOf(false) }
-
-  var errorMessage by remember { mutableStateOf("") }
+  var isErrors by remember { mutableStateOf(mutableSetOf<AccountDetailsError>()) }
 
   val interestsFlow = remember {
     MutableStateFlow(Interest.entries.map { it to mutableStateOf(false) }.toList())
@@ -96,30 +96,36 @@ fun AccountDetails(
             style = AppTypography.headlineSmall,
             modifier = Modifier.testTag("AccountDetailsTitleText"))
 
+        val isFirstNameError = isErrors.contains(AccountDetailsError.EMPTY_FIRST_NAME)
         OutlinedTextField(
             modifier =
                 Modifier.padding(4.dp).fillMaxWidth().testTag("AccountDetailsFirstNameTextField"),
             label = {
               Text("First name", modifier = Modifier.testTag("AccountDetailsFirstNameText"))
             },
-            isError = isError,
+            isError = (isFirstNameError),
             supportingText = {
-              if (isError) {
-                Text(errorMessage, modifier = Modifier.testTag("AccountDetailsFirstNameErrorText"))
+              if (isFirstNameError) {
+                Text(
+                    AccountDetailsError.EMPTY_FIRST_NAME.errorMessage,
+                    modifier = Modifier.testTag("AccountDetailsFirstNameErrorText"))
               }
             },
             onValueChange = { firstName = it },
             value = firstName)
+        val isLastNameError = isErrors.contains(AccountDetailsError.EMPTY_LAST_NAME)
         OutlinedTextField(
             modifier =
                 Modifier.padding(4.dp).fillMaxWidth().testTag("AccountDetailsLastNameTextField"),
             label = {
               Text("Last name", modifier = Modifier.testTag("AccountDetailsLastNameText"))
             },
-            isError = isError,
+            isError = (isLastNameError),
             supportingText = {
-              if (isError) {
-                Text(errorMessage, modifier = Modifier.testTag("AccountDetailsLastNameErrorText"))
+              if (isLastNameError) {
+                Text(
+                    AccountDetailsError.EMPTY_LAST_NAME.errorMessage,
+                    modifier = Modifier.testTag("AccountDetailsLastNameErrorText"))
               }
             },
             onValueChange = { lastName = it },
@@ -206,26 +212,21 @@ fun AccountDetails(
         Button(
             modifier = Modifier.testTag("AccountDetailsContinueButton"),
             onClick = {
-              if (firstName.isEmpty() ||
-                  firstName.isBlank() ||
-                  lastName.isEmpty() ||
-                  lastName.isBlank()) {
-                isError = true
-                errorMessage = "Please fill in your name"
-              } else {
-                val user =
-                    User(
-                        uid = Firebase.auth.currentUser?.uid!!,
-                        email = Firebase.auth.currentUser?.email!!,
-                        firstName = firstName,
-                        lastName = lastName,
-                        biography = bio,
-                        followedAssociations = Association.emptyFirestoreReferenceList(),
-                        joinedAssociations = Association.emptyFirestoreReferenceList(),
-                        interests = interests.filter { it.second.value }.map { it.first },
-                        socials = socials.map { UserSocial(it.social, it.social.URL + it.content) },
-                        profilePicture = "",
-                        hasProvidedAccountDetails = true)
+              val user =
+                  User(
+                      uid = Firebase.auth.currentUser?.uid!!,
+                      email = Firebase.auth.currentUser?.email!!,
+                      firstName = firstName,
+                      lastName = lastName,
+                      biography = bio,
+                      followedAssociations = Association.emptyFirestoreReferenceList(),
+                      joinedAssociations = Association.emptyFirestoreReferenceList(),
+                      interests = interests.filter { it.second.value }.map { it.first },
+                      socials = socials.map { UserSocial(it.social, it.social.url + it.content) },
+                      profilePicture = "",
+                      hasProvidedAccountDetails = true)
+              isErrors = checkNewUser(user)
+              if (isErrors.isEmpty()) {
                 userViewModel.addUser(
                     user,
                     onSuccess = {

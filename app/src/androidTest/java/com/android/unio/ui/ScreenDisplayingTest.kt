@@ -50,7 +50,7 @@ class ScreenDisplayingTest {
     MockKAnnotations.init(this, relaxed = true)
 
     navigationAction = mock { NavHostController::class.java }
-    userViewModel = mockk() // { UserRepositoryFirestore::class.java }
+    userViewModel = mockk()
 
     // Mocking the Firebase.auth object and it's behaviour
     mockkStatic(FirebaseAuth::class)

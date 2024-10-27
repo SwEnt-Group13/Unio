@@ -23,7 +23,7 @@ class UserViewModel(val repository: UserRepository, initializeWithAuthenticatedU
     if (initializeWithAuthenticatedUser) {
       Firebase.auth.addAuthStateListener { auth ->
         if (auth.currentUser != null) {
-          repository.init { getUserByUid(auth.currentUser!!.uid, false) }
+          repository.init { getUserByUid(auth.currentUser!!.uid, true) }
         }
       }
     } else {

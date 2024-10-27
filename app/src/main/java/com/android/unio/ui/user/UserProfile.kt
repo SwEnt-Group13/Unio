@@ -59,6 +59,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
+import com.android.unio.model.user.Social
 import com.android.unio.model.user.User
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.association.AssociationSmall
@@ -172,7 +173,7 @@ fun UserProfileScreenContent(navigationAction: NavigationAction, user: User) {
           FlowRow(horizontalArrangement = Arrangement.Center) {
             user.socials.forEach { userSocial ->
               IconButton(
-                  onClick = { uriHandler.openUri(userSocial.content) },
+                  onClick = { uriHandler.openUri(Social.formattedUrl(userSocial.content)) },
                   modifier = Modifier.testTag("UserProfileSocialButton")) {
                     Image(
                         modifier = Modifier.size(32.dp).wrapContentSize(),

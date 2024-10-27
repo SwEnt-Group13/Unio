@@ -3,6 +3,7 @@ package com.android.unio.model.user
 import com.android.unio.R
 import com.android.unio.model.association.Association
 import com.android.unio.model.firestore.ReferenceList
+import kotlinx.serialization.json.JsonNull.content
 
 enum class Interest(val title: String) {
   SPORTS("Sports"),
@@ -17,15 +18,20 @@ enum class Interest(val title: String) {
   FESTIVALS("Festivals")
 }
 
-enum class Social(val title: String, val icon: Int, val URL: String, val URLshort: String) {
-  FACEBOOK("Facebook", R.drawable.facebook_icon, "https://www.facebook.com/", "facebook.com/"),
-  X("X", R.drawable.x_icon, "https://x.com/", "x.com/"),
-  INSTAGRAM("Instagram", R.drawable.instagram_icon, "https://www.instagram.com/", "instagram.com/"),
-  SNAPCHAT(
-      "Snapchat", R.drawable.snapchat_icon, "https://www.snapchat.com/add/", "snapchat.com/add/"),
-  TELEGRAM("Telegram", R.drawable.telegram_icon, "https://t.me/", "t.me/"),
-  WHATSAPP("WhatsApp", R.drawable.whatsapp_icon, "https://wa.me/", "wa.me/"),
-  WEBSITE("Website", R.drawable.website_icon, "", "")
+enum class Social(val title: String, val icon: Int, val url: String) {
+  FACEBOOK("Facebook", R.drawable.facebook_icon, "facebook.com/"),
+  X("X", R.drawable.x_icon, "x.com/"),
+  INSTAGRAM("Instagram", R.drawable.instagram_icon, "instagram.com/"),
+  SNAPCHAT("Snapchat", R.drawable.snapchat_icon, "snapchat.com/add/"),
+  TELEGRAM("Telegram", R.drawable.telegram_icon, "t.me/"),
+  WHATSAPP("WhatsApp", R.drawable.whatsapp_icon, "wa.me/"),
+  WEBSITE("Website", R.drawable.website_icon, "");
+
+  companion object {
+    fun formattedUrl(content: String): String {
+      return "https://$content"
+    }
+  }
 }
 
 data class UserSocial(val social: Social, val content: String)
@@ -65,6 +71,12 @@ enum class UserSocialError(val errorMessage: String) {
   INVALID_WEBSITE("The website is not encoded with https"),
   NONE("")
 }
+
+enum class AccountDetailsError(val errorMessage: String) {
+  EMPTY_FIRST_NAME("Please fill in your first name"),
+  EMPTY_LAST_NAME("Please fill in your last name"),
+  NONE("")
+}
 // Helper methods
 /**
  * @return NONE: no problem is found
@@ -72,6 +84,18 @@ enum class UserSocialError(val errorMessage: String) {
  * @return INVALID_PHONE_NUMBER: the input is empty or blank
  * @return INVALID_WEBSITE: the phone number has wrong format
  */
+fun checkNewUser(user: User): MutableSet<AccountDetailsError> {
+  val errors = mutableSetOf<AccountDetailsError>()
+
+  if (user.firstName.isEmpty() || user.firstName.isBlank()) {
+    errors.add(AccountDetailsError.EMPTY_FIRST_NAME)
+  }
+  if (user.lastName.isEmpty() || user.lastName.isBlank()) {
+    errors.add(AccountDetailsError.EMPTY_LAST_NAME)
+  }
+  return errors
+}
+
 fun checkSocialContent(userSocial: UserSocial): UserSocialError {
 
   if (userSocial.content.isEmpty() || userSocial.content.isBlank()) {
@@ -80,7 +104,7 @@ fun checkSocialContent(userSocial: UserSocial): UserSocialError {
 
   when (userSocial.social) {
     Social.WHATSAPP -> {
-      val numberRegex = Regex("^[0-9]{10,12}")
+      val numberRegex = Regex("^[0-9]{10,12}$")
       if (numberRegex.matches(userSocial.content)) {
         return UserSocialError.NONE
       }

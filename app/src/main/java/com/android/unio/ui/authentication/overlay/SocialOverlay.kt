@@ -231,7 +231,7 @@ fun SocialPrompt(
                         Text(getPlaceHolderText(selectedSocial))
                       }
                     },
-                    prefix = { Text(selectedSocial.URLshort) },
+                    prefix = { Text(selectedSocial.url) },
                     isError = (isError != UserSocialError.NONE),
                     keyboardOptions =
                         KeyboardOptions.Default.copy(
