@@ -97,11 +97,10 @@ fun HomeScreen(
   Scaffold(
       floatingActionButton = {
         FloatingActionButton(
-            onClick = { navigationAction.navigateTo(Screen.MAP)},
-            modifier = Modifier.testTag("event_MapButton")
-        ) {
-          Icon(imageVector = Icons.Filled.Add, contentDescription = "Add Event")
-        }
+            onClick = { navigationAction.navigateTo(Screen.MAP) },
+            modifier = Modifier.testTag("event_MapButton")) {
+              Icon(imageVector = Icons.Filled.Add, contentDescription = "Add Event")
+            }
       },
       bottomBar = {
         BottomNavigationMenu(

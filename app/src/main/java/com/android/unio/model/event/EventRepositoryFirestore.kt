@@ -10,13 +10,13 @@ import com.google.firebase.firestore.FirebaseFirestore
 
 class EventRepositoryFirestore(private val db: FirebaseFirestore) : EventRepository {
 
-    override fun init(onSuccess: () -> Unit) {
-        Firebase.auth.addAuthStateListener {
-            if (it.currentUser != null) {
-                onSuccess()
-            }
-        }
+  override fun init(onSuccess: () -> Unit) {
+    Firebase.auth.addAuthStateListener {
+      if (it.currentUser != null) {
+        onSuccess()
+      }
     }
+  }
 
   override fun getEventsOfAssociation(
       association: String,
