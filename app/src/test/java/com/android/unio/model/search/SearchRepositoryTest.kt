@@ -27,7 +27,6 @@ import com.google.common.util.concurrent.Futures.immediateFuture
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
-import io.mockk.justRun
 import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.slot
@@ -72,7 +71,8 @@ class SearchRepositoryTest {
           fullName = "Association for Computing Machinery",
           category = AssociationCategory.SCIENCE_TECH,
           description = "ACM is the world's largest educational and scientific computing society.",
-          members = User.firestoreReferenceListWith(listOf("1", "2")))
+          members = User.firestoreReferenceListWith(listOf("1", "2")),
+          image = "https://www.example.com/image.jpg")
 
   val association2 =
       Association(
@@ -83,7 +83,8 @@ class SearchRepositoryTest {
           category = AssociationCategory.SCIENCE_TECH,
           description =
               "IEEE is the world's largest technical professional organization dedicated to advancing technology for the benefit of humanity.",
-          members = User.firestoreReferenceListWith(listOf("3", "4")))
+          members = User.firestoreReferenceListWith(listOf("3", "4")),
+          image = "https://www.example.com/image.jpg")
 
   @Before
   fun setUp() {
@@ -158,8 +159,9 @@ class SearchRepositoryTest {
         }
       }
 
-    @Test
-    fun `test searchAssociations returns correct associations`() = testScope.runTest {
+  @Test
+  fun `test searchAssociations returns correct associations`() =
+      testScope.runTest {
         // Arrange
         val query = "ACM"
 
@@ -170,34 +172,33 @@ class SearchRepositoryTest {
         // Mock the SearchResults.nextPageAsync.get() to return lists of SearchResult
         val mockSearchResult: SearchResult = mockk()
         val associationDocument = association1.toAssociationDocument()
-        every { mockSearchResult.getDocument(AssociationDocument::class.java) } returns associationDocument
+        every { mockSearchResult.getDocument(AssociationDocument::class.java) } returns
+            associationDocument
 
         // Simulate two pages: first with results, second empty
-        every { mockSearchResults.nextPageAsync.get() } returnsMany listOf(
-            listOf(mockSearchResult),
-            emptyList()
-        )
+        every { mockSearchResults.nextPageAsync.get() } returnsMany
+            listOf(listOf(mockSearchResult), emptyList())
 
         // Mock associationRepository.getAssociationWithId
-        every { mockAssociationRepository.getAssociationWithId(any(), any(), any()) } answers {
-            val id = firstArg<String>()
-            val onSuccess = secondArg<(Association) -> Unit>()
-            onSuccess(association1)
-        }
+        every { mockAssociationRepository.getAssociationWithId(any(), any(), any()) } answers
+            {
+              val id = firstArg<String>()
+              val onSuccess = secondArg<(Association) -> Unit>()
+              onSuccess(association1)
+            }
 
         // Act
         val resultAssociations = searchRepository.searchAssociations(query)
 
         // Assert
         assertEquals(listOf(association1), resultAssociations)
-    }
+      }
 
-
-
-    @Test
-    fun `test closeSession closes the session and sets it to null`() = testScope.runTest {
+  @Test
+  fun `test closeSession closes the session and sets it to null`() =
+      testScope.runTest {
         // Mock session.close()
-        justRun { mockSession.close() }
+        every { mockSession.close() } returns Unit
 
         // Act
         searchRepository.closeSession()
@@ -205,6 +206,5 @@ class SearchRepositoryTest {
         // Assert
         verify { mockSession.close() }
         assertNull(searchRepository.session)
-    }
-
+      }
 }
