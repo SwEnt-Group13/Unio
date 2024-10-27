@@ -184,6 +184,12 @@ fun AssociationItem(association: Association, navigationAction: NavigationAction
             contentDescription = "image description",
             modifier = Modifier.size(124.dp))
 
+        /**
+         * AsyncImage( model = association.image.toUri(), contentDescription = "Translated
+         * description of what the image contains", modifier =
+         * Modifier.size(124.dp).testTag("associationImage"), contentScale = ContentScale.Crop //
+         * crop the image to fit )
+         */
         Spacer(modifier = Modifier.height(8.dp))
 
         Text(

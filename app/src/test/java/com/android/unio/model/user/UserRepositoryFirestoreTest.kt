@@ -63,13 +63,15 @@ class UserRepositoryFirestoreTest {
             firstName = "Example 1",
             lastName = "Last name 1",
             biography = "An example user",
-            followingAssociations = Association.emptyFirestoreReferenceList(),
+            followedAssociations = Association.emptyFirestoreReferenceList(),
+            joinedAssociations = Association.emptyFirestoreReferenceList(),
             interests = listOf(Interest.SPORTS, Interest.MUSIC),
             socials =
                 listOf(
                     UserSocial(Social.INSTAGRAM, "Insta"),
                     UserSocial(Social.WEBSITE, "example.com")),
-            profilePicture = "https://www.example.com/image")
+            profilePicture = "https://www.example.com/image",
+            hasProvidedAccountDetails = true)
 
     user2 =
         User(
@@ -78,13 +80,15 @@ class UserRepositoryFirestoreTest {
             firstName = "Example 2",
             lastName = "Last name 2",
             biography = "An example user 2",
-            followingAssociations = Association.emptyFirestoreReferenceList(),
+            followedAssociations = Association.emptyFirestoreReferenceList(),
+            joinedAssociations = Association.emptyFirestoreReferenceList(),
             interests = listOf(Interest.FESTIVALS, Interest.GAMING),
             socials =
                 listOf(
                     UserSocial(Social.SNAPCHAT, "Snap"),
                     UserSocial(Social.WEBSITE, "example2.com")),
-            profilePicture = "https://www.example.com/image2")
+            profilePicture = "https://www.example.com/image2",
+            hasProvidedAccountDetails = true)
 
     `when`(userCollectionReference.get()).thenReturn(querySnapshotTask)
     `when`(userCollectionReference.document(eq(user1.uid))).thenReturn(documentReference)
@@ -118,12 +122,15 @@ class UserRepositoryFirestoreTest {
     `when`(map1.get("lastName")).thenReturn(user1.lastName)
     `when`(map1.get("biography")).thenReturn(user1.biography)
     `when`(map1.get("followingAssociations"))
-        .thenReturn(user1.followingAssociations.list.value.map { it.uid })
+        .thenReturn(user1.followedAssociations.list.value.map { it.uid })
+    `when`(map1.get("joinedAssociations"))
+        .thenReturn(user1.joinedAssociations.list.value.map { it.uid })
     `when`(map1.get("interests")).thenReturn(user1.interests.map { it.name })
     `when`(map1.get("socials"))
         .thenReturn(
             user1.socials.map { mapOf("social" to it.social.name, "content" to it.content) })
     `when`(map1.get("profilePicture")).thenReturn(user1.profilePicture)
+    `when`(map1.get("hasProvidedAccountDetails")).thenReturn(user1.hasProvidedAccountDetails)
 
     // Only set the uid field for user2
     `when`(map2.get("uid")).thenReturn(user2.uid)
@@ -138,12 +145,15 @@ class UserRepositoryFirestoreTest {
     `when`(map2.get("lastName")).thenReturn(user2.lastName)
     `when`(map2.get("biography")).thenReturn(user2.biography)
     `when`(map2.get("followingAssociations"))
-        .thenReturn(user2.followingAssociations.list.value.map { it.uid })
+        .thenReturn(user2.followedAssociations.list.value.map { it.uid })
+    `when`(map2.get("joinedAssociations"))
+        .thenReturn(user2.joinedAssociations.list.value.map { it.uid })
     `when`(map2.get("interests")).thenReturn(user2.interests.map { it.name })
     `when`(map2.get("socials"))
         .thenReturn(
             user2.socials.map { mapOf("social" to it.social.name, "content" to it.content) })
     `when`(map2.get("profilePicture")).thenReturn(user2.profilePicture)
+    `when`(map2.get("hasProvidedAccountDetails")).thenReturn(user2.hasProvidedAccountDetails)
 
     repository.getUsers(
         onSuccess = { users ->
@@ -155,13 +165,17 @@ class UserRepositoryFirestoreTest {
           assertEquals(user1.lastName, users[0].lastName)
           assertEquals(user1.biography, users[0].biography)
           assertEquals(
-              user1.followingAssociations.list.value.map { it.uid },
-              users[0].followingAssociations.list.value.map { it.uid })
+              user1.followedAssociations.list.value.map { it.uid },
+              users[0].followedAssociations.list.value.map { it.uid })
+          assertEquals(
+              user1.joinedAssociations.list.value.map { it.uid },
+              users[0].joinedAssociations.list.value.map { it.uid })
           assertEquals(user1.interests.map { it.name }, users[0].interests.map { it.name })
           assertEquals(
               user1.socials.map { mapOf("social" to it.social.name, "content" to it.content) },
               users[0].socials.map { mapOf("social" to it.social.name, "content" to it.content) })
           assertEquals(user1.profilePicture, users[0].profilePicture)
+          assertEquals(user1.hasProvidedAccountDetails, users[0].hasProvidedAccountDetails)
 
           assertEquals(user2.uid, users[1].uid)
           assertEquals(user2.email, users[1].email)
@@ -169,13 +183,17 @@ class UserRepositoryFirestoreTest {
           assertEquals(user2.lastName, users[1].lastName)
           assertEquals(user2.biography, users[1].biography)
           assertEquals(
-              user2.followingAssociations.list.value.map { it.uid },
-              users[1].followingAssociations.list.value.map { it.uid })
+              user2.followedAssociations.list.value.map { it.uid },
+              users[1].followedAssociations.list.value.map { it.uid })
+          assertEquals(
+              user2.joinedAssociations.list.value.map { it.uid },
+              users[1].joinedAssociations.list.value.map { it.uid })
           assertEquals(user2.interests.map { it.name }, users[1].interests.map { it.name })
           assertEquals(
               user2.socials.map { mapOf("social" to it.social.name, "content" to it.content) },
               users[1].socials.map { mapOf("social" to it.social.name, "content" to it.content) })
           assertEquals(user2.profilePicture, users[1].profilePicture)
+          assertEquals(user2.hasProvidedAccountDetails, users[1].hasProvidedAccountDetails)
         },
         onFailure = { exception -> assert(false) })
   }
@@ -193,10 +211,12 @@ class UserRepositoryFirestoreTest {
                   firstName = "",
                   lastName = "",
                   biography = "",
-                  followingAssociations = Association.emptyFirestoreReferenceList(),
+                  followedAssociations = Association.emptyFirestoreReferenceList(),
+                  joinedAssociations = Association.emptyFirestoreReferenceList(),
                   interests = emptyList(),
                   socials = emptyList(),
-                  profilePicture = "")
+                  profilePicture = "",
+                  hasProvidedAccountDetails = false)
           assertEquals(2, users.size)
 
           assertEquals(user1.uid, users[0].uid)
@@ -205,13 +225,17 @@ class UserRepositoryFirestoreTest {
           assertEquals(user1.lastName, users[0].lastName)
           assertEquals(user1.biography, users[0].biography)
           assertEquals(
-              user1.followingAssociations.list.value.map { it.uid },
-              users[0].followingAssociations.list.value.map { it.uid })
+              user1.followedAssociations.list.value.map { it.uid },
+              users[0].followedAssociations.list.value.map { it.uid })
+          assertEquals(
+              user1.joinedAssociations.list.value.map { it.uid },
+              users[0].joinedAssociations.list.value.map { it.uid })
           assertEquals(user1.interests.map { it.name }, users[0].interests.map { it.name })
           assertEquals(
               user1.socials.map { mapOf("social" to it.social.name, "content" to it.content) },
               users[0].socials.map { mapOf("social" to it.social.name, "content" to it.content) })
           assertEquals(user1.profilePicture, users[0].profilePicture)
+          assertEquals(user1.hasProvidedAccountDetails, users[0].hasProvidedAccountDetails)
 
           assertEquals(emptyUser.uid, users[1].uid)
           assertEquals("", users[1].email)
@@ -219,13 +243,17 @@ class UserRepositoryFirestoreTest {
           assertEquals("", users[1].lastName)
           assertEquals("", users[1].biography)
           assertEquals(
-              emptyUser.followingAssociations.list.value.map { it.uid },
-              users[1].followingAssociations.list.value.map { it.uid })
+              emptyUser.followedAssociations.list.value.map { it.uid },
+              users[1].followedAssociations.list.value.map { it.uid })
+          assertEquals(
+              emptyUser.joinedAssociations.list.value.map { it.uid },
+              users[1].joinedAssociations.list.value.map { it.uid })
           assertEquals(emptyUser.interests.map { it.name }, users[1].interests.map { it.name })
           assertEquals(
               emptyUser.socials.map { mapOf("social" to it.social.name, "content" to it.content) },
               users[1].socials.map { mapOf("social" to it.social.name, "content" to it.content) })
           assertEquals(emptyUser.profilePicture, users[1].profilePicture)
+          assertEquals(emptyUser.hasProvidedAccountDetails, users[1].hasProvidedAccountDetails)
         },
         onFailure = { exception -> assert(false) })
   }
@@ -241,13 +269,17 @@ class UserRepositoryFirestoreTest {
           assertEquals(user1.lastName, user.lastName)
           assertEquals(user1.biography, user.biography)
           assertEquals(
-              user1.followingAssociations.list.value.map { it.uid },
-              user.followingAssociations.list.value.map { it.uid })
+              user1.followedAssociations.list.value.map { it.uid },
+              user.followedAssociations.list.value.map { it.uid })
+          assertEquals(
+              user1.joinedAssociations.list.value.map { it.uid },
+              user.joinedAssociations.list.value.map { it.uid })
           assertEquals(user1.interests.map { it.name }, user.interests.map { it.name })
           assertEquals(
               user1.socials.map { mapOf("social" to it.social.name, "content" to it.content) },
               user.socials.map { mapOf("social" to it.social.name, "content" to it.content) })
           assertEquals(user1.profilePicture, user.profilePicture)
+          assertEquals(user1.hasProvidedAccountDetails, user.hasProvidedAccountDetails)
         },
         onFailure = { exception -> assert(false) })
   }

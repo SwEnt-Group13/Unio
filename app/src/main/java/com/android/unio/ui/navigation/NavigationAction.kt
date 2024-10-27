@@ -44,7 +44,7 @@ open class NavigationAction(private val navController: NavHostController) {
   }
 
   /** Navigate back to the previous screen. */
-  fun goBack() {
+  open fun goBack() {
     navController.popBackStack()
   }
 
@@ -53,7 +53,7 @@ open class NavigationAction(private val navController: NavHostController) {
    *
    * @return The current route
    */
-  fun getCurrentRoute(): String {
+  open fun getCurrentRoute(): String {
     return navController.currentDestination?.route ?: ""
   }
 }

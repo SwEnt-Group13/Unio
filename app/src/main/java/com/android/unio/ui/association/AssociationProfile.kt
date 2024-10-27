@@ -3,7 +3,6 @@ package com.android.unio.ui.association
 import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Log
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -32,9 +31,16 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -52,6 +58,15 @@ import com.android.unio.resources.ResourceManager.getString
 import com.android.unio.resources.ResourceManager.init
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.theme.AppTypography
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
+
+// These variable are only here for testing purpose. They should be deleted when the screen is
+// linked to the backend
+private val DEBUG_MESSAGE = "<DEBUG> Not implemented yet"
+
+private var testSnackbar: SnackbarHostState? = null
+private var scope: CoroutineScope? = null
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -93,7 +108,7 @@ fun AssociationProfileScreen(
  * @param navigationAction The navigation action to use when the back button is clicked.
  * @param content The content of the screen.
  */
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "RememberReturnType")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AssociationProfileScaffold(
@@ -102,8 +117,24 @@ fun AssociationProfileScaffold(
     content: @Composable (padding: PaddingValues) -> Unit
 ) {
   val context = LocalContext.current
+  testSnackbar = remember { SnackbarHostState() }
+  scope = rememberCoroutineScope()
   init(context)
   Scaffold(
+      snackbarHost = {
+        SnackbarHost(
+            hostState = testSnackbar!!,
+            modifier = Modifier.testTag("associationSnackbarHost"),
+            snackbar = { data ->
+              Snackbar {
+                TextButton(
+                    onClick = { testSnackbar!!.currentSnackbarData?.dismiss() },
+                    modifier = Modifier.testTag("snackbarActionButton")) {
+                      Text(text = DEBUG_MESSAGE)
+                    }
+              }
+            })
+      },
       topBar = {
         TopAppBar(
             title = { Text(title, modifier = Modifier.testTag("AssociationProfileTitle")) },
@@ -118,9 +149,12 @@ fun AssociationProfileScaffold(
             },
             actions = {
               IconButton(
+                  modifier = Modifier.testTag("associationShareButton"),
                   onClick = {
-                    Toast.makeText(context, "<DEBUG> Not implemented yet", Toast.LENGTH_SHORT)
-                        .show()
+                    scope!!.launch {
+                      testSnackbar!!.showSnackbar(
+                          message = DEBUG_MESSAGE, duration = SnackbarDuration.Short)
+                    }
                   }) {
                     Icon(Icons.Outlined.Share, contentDescription = "Icon for sharing association")
                   }
@@ -164,8 +198,11 @@ fun AssociationRecruitment(context: Context) {
   Spacer(modifier = Modifier.size(18.dp))
   Row(modifier = Modifier.padding(horizontal = 24.dp).testTag("AssociationRecruitmentRoles")) {
     OutlinedButton(
+        modifier = Modifier.testTag("AssociationDesignerRoles"),
         onClick = {
-          Toast.makeText(context, "<DEBUG> Not implemented yet", Toast.LENGTH_SHORT).show()
+          scope!!.launch {
+            testSnackbar!!.showSnackbar(message = DEBUG_MESSAGE, duration = SnackbarDuration.Short)
+          }
         },
         enabled = true) {
           Icon(Icons.Filled.Add, contentDescription = "Add icon")
@@ -174,8 +211,11 @@ fun AssociationRecruitment(context: Context) {
         }
     Spacer(modifier = Modifier.width(10.dp))
     OutlinedButton(
+        modifier = Modifier.testTag("AssociationTreasurerRoles"),
         onClick = {
-          Toast.makeText(context, "<DEBUG> Not implemented yet", Toast.LENGTH_SHORT).show()
+          scope!!.launch {
+            testSnackbar!!.showSnackbar(message = DEBUG_MESSAGE, duration = SnackbarDuration.Short)
+          }
         },
         enabled = true) {
           Icon(Icons.Filled.Add, contentDescription = "Add icon")
@@ -201,7 +241,10 @@ fun UserCard(context: Context) {
               .background(Color.LightGray, RoundedCornerShape(12.dp))
               .padding(vertical = 2.dp, horizontal = 3.dp)
               .clickable {
-                Toast.makeText(context, "<DEBUG> Not implemented yet", Toast.LENGTH_SHORT).show()
+                scope!!.launch {
+                  testSnackbar!!.showSnackbar(
+                      message = DEBUG_MESSAGE, duration = SnackbarDuration.Short)
+                }
               },
   ) {
     Row(
@@ -229,7 +272,10 @@ fun AssociationProfileEvents(context: Context) {
         Spacer(modifier = Modifier.size(11.dp))
         OutlinedButton(
             onClick = {
-              Toast.makeText(context, "<DEBUG> Not implemented yet", Toast.LENGTH_SHORT).show()
+              scope!!.launch {
+                testSnackbar!!.showSnackbar(
+                    message = DEBUG_MESSAGE, duration = SnackbarDuration.Short)
+              }
             },
             modifier = Modifier.padding(horizontal = 28.dp).testTag("AssociationSeeMoreButton")) {
               Icon(Icons.AutoMirrored.Filled.ArrowForward, contentDescription = "See more")
@@ -275,7 +321,10 @@ fun AssociationHeader(context: Context) {
           modifier = Modifier.padding(bottom = 14.dp).testTag("AssociationHeaderMembers"))
       Button(
           onClick = {
-            Toast.makeText(context, "<DEBUG> Not implemented yet", Toast.LENGTH_SHORT).show()
+            scope!!.launch {
+              testSnackbar!!.showSnackbar(
+                  message = DEBUG_MESSAGE, duration = SnackbarDuration.Short)
+            }
           },
           modifier = Modifier.testTag("AssociationFollowButton")) {
             Icon(Icons.Filled.Add, contentDescription = "Follow icon")
