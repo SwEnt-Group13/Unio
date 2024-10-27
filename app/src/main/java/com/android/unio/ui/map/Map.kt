@@ -28,7 +28,10 @@ import com.google.maps.android.compose.rememberCameraPositionState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MapScreen(navigationAction: NavigationAction) {
+fun MapScreen(
+    navigationAction: NavigationAction,
+    eventListViewModel: EventListViewModel = viewModel(factory = EventListViewModel.Factory)
+) {
   Scaffold(
       modifier = Modifier.testTag("MapScreen"),
       topBar = {
@@ -44,14 +47,14 @@ fun MapScreen(navigationAction: NavigationAction) {
                   }
             })
       }) { pd ->
-        EventMap(pd)
+        EventMap(pd, eventListViewModel)
       }
 }
 
 @Composable
 fun EventMap(
     pd: PaddingValues,
-    eventListViewModel: EventListViewModel = viewModel(factory = EventListViewModel.Factory)
+    eventListViewModel: EventListViewModel
 ) {
   val cameraPositionState = rememberCameraPositionState {
     position = CameraPosition.fromLatLngZoom(LatLng(46.518831258, 6.559331096), 10f)

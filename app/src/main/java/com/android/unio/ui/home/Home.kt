@@ -55,6 +55,7 @@ import com.android.unio.ui.navigation.BottomNavigationMenu
 import com.android.unio.ui.navigation.LIST_TOP_LEVEL_DESTINATION
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Route
+import com.android.unio.ui.navigation.Screen
 import kotlinx.coroutines.launch
 
 @Preview(showBackground = true)
@@ -95,7 +96,10 @@ fun HomeScreen(
 
   Scaffold(
       floatingActionButton = {
-        FloatingActionButton(onClick = onAddEvent, modifier = Modifier.testTag("event_MapButton")) {
+        FloatingActionButton(
+            onClick = { navigationAction.navigateTo(Screen.MAP)},
+            modifier = Modifier.testTag("event_MapButton")
+        ) {
           Icon(imageVector = Icons.Filled.Add, contentDescription = "Add Event")
         }
       },

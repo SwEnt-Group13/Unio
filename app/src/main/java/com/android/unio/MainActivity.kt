@@ -26,6 +26,7 @@ import com.android.unio.ui.authentication.EmailVerificationScreen
 import com.android.unio.ui.authentication.WelcomeScreen
 import com.android.unio.ui.explore.ExploreScreen
 import com.android.unio.ui.home.HomeScreen
+import com.android.unio.ui.map.MapScreen
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Route
 import com.android.unio.ui.navigation.Screen
@@ -55,6 +56,9 @@ fun UnioApp() {
 
   val userRepositoryFirestore = UserRepositoryFirestore(Firebase.firestore)
   val userViewModel = UserViewModel(userRepositoryFirestore, true)
+
+  val eventRepositoryFirestore = EventRepositoryFirestore(Firebase.firestore)
+  val eventListViewModel = EventListViewModel(eventRepositoryFirestore)
 
   val context = LocalContext.current
 
@@ -100,6 +104,7 @@ fun UnioApp() {
             onAddEvent = {},
             onEventClick = {})
       }
+      composable(Screen.MAP) { MapScreen(navigationActions) }
     }
     navigation(startDestination = Screen.EXPLORE, route = Route.EXPLORE) {
       composable(Screen.EXPLORE) { ExploreScreen(navigationActions, associationViewModel) }
