@@ -15,11 +15,11 @@ import com.android.unio.model.association.toAssociationDocument
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventDocument
 import com.android.unio.model.event.toEventDocument
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 /** Repository for searching associations and events */
 class SearchRepository(
@@ -43,7 +43,6 @@ class SearchRepository(
           SetSchemaRequest.Builder()
               .addDocumentClasses(AssociationDocument::class.java, EventDocument::class.java)
               .build()
-
       session = sessionFutures.get()
       session?.setSchemaAsync(setSchemaRequest)
 
@@ -57,9 +56,9 @@ class SearchRepository(
    * search database.
    */
   private fun listenForAssociationUpdates() {
-      associationRepository.getAssociations(
-          onSuccess = { associations -> addAssociations(associations) },
-          onFailure = { exception -> Log.e("SearchRepository", "failed to fetch associations") })
+    associationRepository.getAssociations(
+        onSuccess = { associations -> addAssociations(associations) },
+        onFailure = { exception -> Log.e("SearchRepository", "failed to fetch associations") })
   }
 
   /**
@@ -71,12 +70,7 @@ class SearchRepository(
   // Should be private, but I need it public for tests
   fun addAssociations(associations: List<Association>) {
     val associationDocuments = associations.map { it.toAssociationDocument() }
-//    return
-      session
-          ?.putAsync(PutDocumentsRequest.Builder().addDocuments(associationDocuments).build())
-//          ?.get()
-//          ?.isSuccess == true
-//    }
+    session?.putAsync(PutDocumentsRequest.Builder().addDocuments(associationDocuments).build())
   }
 
   /**
@@ -86,14 +80,13 @@ class SearchRepository(
    * @return true if the association was removed successfully, false otherwise
    */
   private fun removeAssociation(uid: String) {
-//    return withContext(Dispatchers.IO) {
-      session
-          ?.removeAsync(
-              // TODO check if this means I have to create a namespace
-              RemoveByDocumentIdRequest.Builder("").addIds(uid).build())
-//          ?.get()
-//          ?.isSuccess == true
-//    }
+    //    return withContext(Dispatchers.IO) {
+    session?.removeAsync(
+        // TODO check if this means I have to create a namespace
+        RemoveByDocumentIdRequest.Builder("").addIds(uid).build())
+    //          ?.get()
+    //          ?.isSuccess == true
+    //    }
   }
 
   /** TODO Adds the given events to the search database. */
