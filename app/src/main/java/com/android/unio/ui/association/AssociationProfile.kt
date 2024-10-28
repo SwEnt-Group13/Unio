@@ -69,7 +69,6 @@ private val DEBUG_MESSAGE = "<DEBUG> Not implemented yet"
 private var testSnackbar: SnackbarHostState? = null
 private var scope: CoroutineScope? = null
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AssociationProfileScreen(
     navigationAction: NavigationAction,
@@ -105,7 +104,6 @@ fun AssociationProfileScreen(
  *
  * @param association (Association) : The association to display
  * @param navigationAction (NavigationAction) : The navigation actions of the screen
- * @param associationViewModel (AssociationViewModel) : The associations view model
  * @param content (Composable) : The content of the screen
  */
 @OptIn(ExperimentalMaterial3Api::class)
