@@ -69,6 +69,7 @@ class FirestoreReferenceList<T>(
       onSuccess()
       return
     }
+
     _list.value = emptyList()
     Firebase.firestore
         .collection(collectionPath)

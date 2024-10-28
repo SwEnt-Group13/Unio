@@ -1,4 +1,4 @@
-package com.android.unio.ui.authentication
+package com.android.unio.ui.authentication.overlay
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.OutlinedButton
 import androidx.compose.material.Surface
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -19,8 +20,7 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -30,23 +30,22 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.android.unio.model.user.Interest
 import com.android.unio.ui.theme.AppTypography
-import kotlinx.coroutines.flow.MutableStateFlow
 
 @Composable
 fun InterestOverlay(
     onDismiss: () -> Unit,
-    onSave: () -> Unit,
-    interests: MutableStateFlow<MutableList<Pair<Interest, MutableState<Boolean>>>>
+    onSave: (List<Pair<Interest, MutableState<Boolean>>>) -> Unit,
+    interests: List<Pair<Interest, MutableState<Boolean>>>
 ) {
   val scrollState = rememberScrollState()
-  val interestsState by interests.collectAsState()
+  val copiedInterests = interests.toList().map { it.first to mutableStateOf(it.second.value) }
 
   Dialog(
       onDismissRequest = onDismiss,
       properties = DialogProperties(usePlatformDefaultWidth = false)) {
         Card(
             elevation = CardDefaults.cardElevation(8.dp),
-            shape = RoundedCornerShape(15.dp),
+            shape = RoundedCornerShape(16.dp),
             modifier = Modifier.fillMaxWidth().padding(20.dp).testTag("InterestOverlayCard")) {
               Column(
                   modifier =
@@ -67,7 +66,7 @@ fun InterestOverlay(
                     Surface(
                         modifier = Modifier.sizeIn(maxHeight = 250.dp), color = Color.Transparent) {
                           Column(modifier = Modifier.verticalScroll(scrollState)) {
-                            interestsState.forEachIndexed { index, pair ->
+                            copiedInterests.forEachIndexed { index, pair ->
                               Row(
                                   horizontalArrangement = Arrangement.SpaceBetween,
                                   verticalAlignment = Alignment.CenterVertically,
@@ -89,7 +88,7 @@ fun InterestOverlay(
                                             Modifier.testTag(
                                                 "InterestOverlayCheckbox: ${pair.first.name}"))
                                   }
-                              if (index != interestsState.size - 1) {
+                              if (index != copiedInterests.size - 1) {
                                 Divider(
                                     modifier = Modifier.testTag("InterestOverlayDivider: $index"))
                               }
@@ -100,8 +99,16 @@ fun InterestOverlay(
                         modifier = Modifier.fillMaxWidth().padding(8.dp),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.Absolute.Right) {
+                          OutlinedButton(
+                              shape = RoundedCornerShape(16.dp),
+                              onClick = onDismiss,
+                              modifier =
+                                  Modifier.padding(5.dp).testTag("InterestOverlayCancelButton")) {
+                                Text(text = "Cancel")
+                              }
+
                           Button(
-                              onClick = onSave,
+                              onClick = { onSave(copiedInterests) },
                               modifier =
                                   Modifier.padding(5.dp).testTag("InterestOverlaySaveButton")) {
                                 Text(text = "Save")
