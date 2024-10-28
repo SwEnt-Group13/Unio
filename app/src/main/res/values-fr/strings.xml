@@ -62,6 +62,8 @@
     <string name="association_follow">S\'abonner</string>
     <string name="association_join">Rejoindre</string>
 
+    <string name="association_not_found">Erreur : Association introuvable</string>
+
 
 </resources>
 
