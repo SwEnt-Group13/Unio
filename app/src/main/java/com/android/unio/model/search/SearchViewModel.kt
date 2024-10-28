@@ -1,31 +1,30 @@
 package com.android.unio.model.search
 
 import android.content.Context
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationRepository
 import com.android.unio.model.event.Event
+import com.android.unio.model.event.EventRepository
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 /**
  * ViewModel for searching associations and events. It uses a [SearchRepository] to create the
- * AppSearch database and exposes the results through a [LiveData] containing a list of respectively
+ * AppSearch database and exposes the results through a [StateFlow] containing a list of respectively
  * [Association] and [Event]
  */
 class SearchViewModel(private val repository: SearchRepository) : ViewModel() {
-  private val _associations = MutableLiveData<List<Association>>()
-  val associations: LiveData<List<Association>>
-    get() = _associations
+  private val _associations = MutableStateFlow<List<Association>>(emptyList())
+  val associations: StateFlow<List<Association>> = _associations
 
-  private val _events = MutableLiveData<List<Event>>()
-  val events: LiveData<List<Event>>
-    get() = _events
+  private val _events = MutableStateFlow<List<Event>>(emptyList())
+  val events: StateFlow<List<Event>> = _events
 
   /** Initializes the ViewModel by creating the search database and connecting it to the session. */
   init {
@@ -38,26 +37,30 @@ class SearchViewModel(private val repository: SearchRepository) : ViewModel() {
 
   /**
    * Searches the associations in the search database using the given query and updates the internal
-   * [MutableLiveData].
+   * [MutableStateFlow].
    *
    * @param query The query to search for.
    */
   fun searchAssociations(query: String) {
     viewModelScope.launch {
       val results = repository.searchAssociations(query)
-      _associations.postValue(results)
+      _associations.value = results
     }
   }
 
-  // TODO make events functional
-  //  fun searchEvents(query: String) {
-  //    viewModelScope.launch {
-  //      val results = repository.searchEvents(query)
-  //      _events.postValue(results)
-  //    }
-  //  }
+  /**
+   * Searches the events in the search database using the given query and updates the internal
+   * [MutableStateFlow].
+   *
+   * @param query The query to search for.
+   */
+    fun searchEvents(query: String) {
+      viewModelScope.launch {
+        val results = repository.searchEvents(query)
+        _events.value = results
+      }
+    }
 
-  // TODO check if this is needed
   override fun onCleared() {
     super.onCleared()
     repository.closeSession()
@@ -69,14 +72,15 @@ class SearchViewModel(private val repository: SearchRepository) : ViewModel() {
   companion object {
     fun provideFactory(
         context: Context,
-        associationRepository: AssociationRepository
+        associationRepository: AssociationRepository,
+        eventRepository: EventRepository
     ): ViewModelProvider.Factory {
       val appContext = context.applicationContext
       return object : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
           if (modelClass.isAssignableFrom(SearchViewModel::class.java)) {
-            val repository = SearchRepository(appContext, associationRepository)
+            val repository = SearchRepository(appContext, associationRepository, eventRepository)
             return SearchViewModel(repository) as T
           }
           throw IllegalArgumentException("Unknown ViewModel class")
@@ -84,9 +88,4 @@ class SearchViewModel(private val repository: SearchRepository) : ViewModel() {
       }
     }
   }
-
-  // Result is to be used as such
-  //    searchViewModel.associations.observe(viewLifecycleOwner, Observer { associations ->
-  //        // Update UI with associations
-  //    })
 }
