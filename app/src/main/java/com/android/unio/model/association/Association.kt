@@ -21,6 +21,7 @@ data class Association(
     val fullName: String,
     val category: AssociationCategory,
     val description: String,
+    val followersCount: Int,
     val members: ReferenceList<User>,
     var image: String
 ) {
