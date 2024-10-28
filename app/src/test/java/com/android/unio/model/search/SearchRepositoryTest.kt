@@ -1,12 +1,5 @@
 package com.android.unio.model.search
 
-/**
- * Need to have a context, and mock classes in order to make it work Init should work, Need to test
- * individually add and remove association Need to mock the associationRepository and see if the
- * listener works Need to see if search works on mock data
- */
-// File: SearchRepositoryTest.kt
-
 import androidx.appsearch.app.AppSearchBatchResult
 import androidx.appsearch.app.AppSearchSession
 import androidx.appsearch.app.PutDocumentsRequest
@@ -20,6 +13,7 @@ import com.android.unio.model.association.AssociationCategory
 import com.android.unio.model.association.AssociationDocument
 import com.android.unio.model.association.AssociationRepository
 import com.android.unio.model.association.toAssociationDocument
+import com.android.unio.model.event.EventRepository
 import com.android.unio.model.firestore.firestoreReferenceListWith
 import com.android.unio.model.user.User
 import com.google.common.util.concurrent.Futures
@@ -54,14 +48,16 @@ import org.robolectric.RobolectricTestRunner
 @OptIn(ExperimentalCoroutinesApi::class)
 class SearchRepositoryTest {
 
-  @MockK private lateinit var mockAssociationRepository: AssociationRepository
-  @MockK private lateinit var mockSession: AppSearchSession
-
-  private lateinit var searchRepository: SearchRepository
-
   // Do I need to replace the main test dispatcher with an unconfined test dispatcher?
   private val testDispatcher = UnconfinedTestDispatcher()
   private val testScope = TestScope(testDispatcher)
+
+  @MockK private lateinit var mockSession: AppSearchSession
+
+  @MockK private lateinit var mockAssociationRepository: AssociationRepository
+  @MockK private lateinit var mockEventRepository: EventRepository
+
+  private lateinit var searchRepository: SearchRepository
 
   val association1 =
       Association(
@@ -95,7 +91,10 @@ class SearchRepositoryTest {
     every { LocalStorage.createSearchSessionAsync(any()) } returns immediateFuture(mockSession)
 
     searchRepository =
-        SearchRepository(ApplicationProvider.getApplicationContext(), mockAssociationRepository)
+        SearchRepository(
+            ApplicationProvider.getApplicationContext(),
+            mockAssociationRepository,
+            mockEventRepository)
 
     searchRepository.session = mockSession
   }
