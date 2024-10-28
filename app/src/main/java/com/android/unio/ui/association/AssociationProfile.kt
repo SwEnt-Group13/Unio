@@ -54,7 +54,6 @@ import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventCard
-import com.android.unio.model.firestore.MockReferenceList
 import com.android.unio.resources.ResourceManager.getString
 import com.android.unio.resources.ResourceManager.init
 import com.android.unio.ui.navigation.NavigationAction
@@ -81,8 +80,10 @@ fun AssociationProfileScreen(
         val error = getString(R.string.association_not_found)
         Log.e("AssociationProfileScreen", error)
         AssociationProfileScaffold(
-            association = null, navigationAction = navigationAction
-        ) { padding ->
+            association = null,
+            navigationAction = navigationAction,
+            associationViewModel = associationViewModel
+        ) { padding, _ ->
             Column(modifier = Modifier.padding(padding)) {
                 Text(
                     text = error,
@@ -93,9 +94,16 @@ fun AssociationProfileScreen(
         }
     } else {
         AssociationProfileScaffold(
-            association = association, navigationAction = navigationAction
-        ) { padding ->
-            AssociationProfileContent(padding, LocalContext.current, association)
+            association = association,
+            navigationAction = navigationAction,
+            associationViewModel = associationViewModel
+        ) { padding, associationViewModel ->
+            AssociationProfileContent(
+                padding,
+                LocalContext.current,
+                association,
+                associationViewModel
+            )
         }
     }
 }
@@ -112,7 +120,8 @@ fun AssociationProfileScreen(
 fun AssociationProfileScaffold(
     association: Association?,
     navigationAction: NavigationAction,
-    content: @Composable (padding: PaddingValues) -> Unit
+    associationViewModel: AssociationViewModel,
+    content: @Composable (padding: PaddingValues, AssociationViewModel) -> Unit
 ) {
     val context = LocalContext.current
     testSnackbar = remember { SnackbarHostState() }
@@ -177,12 +186,17 @@ fun AssociationProfileScaffold(
                 })
         },
         content = { padding ->
-            content(padding)
+            content(padding, associationViewModel)
         })
 }
 
 @Composable
-fun AssociationProfileContent(padding: PaddingValues, context: Context, association: Association) {
+fun AssociationProfileContent(
+    padding: PaddingValues,
+    context: Context,
+    association: Association,
+    associationViewModel: AssociationViewModel
+) {
     Column(
         modifier =
         Modifier
@@ -196,7 +210,7 @@ fun AssociationProfileContent(padding: PaddingValues, context: Context, associat
         Spacer(modifier = Modifier.size(15.dp))
         AssociationEventTitle()
         Spacer(modifier = Modifier.size(11.dp))
-        AssociationProfileEvents(context)
+        AssociationProfileEvents(association, associationViewModel)
         Spacer(modifier = Modifier.size(11.dp))
         UserCard(context)
         Spacer(modifier = Modifier.size(61.dp))
@@ -305,20 +319,27 @@ fun UserCard(context: Context) {
 }
 
 @Composable
-fun AssociationProfileEvents(context: Context) {
+fun AssociationProfileEvents(association: Association, associationViewModel: AssociationViewModel) {
+    var events = emptyList<Event>()
+    associationViewModel.getEventsForAssociation(association) { fetchedEvents ->
+        events = fetchedEvents
+    }
     Column(
         modifier = Modifier.padding(horizontal = 28.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Box(modifier = Modifier.testTag("AssociationEventCard")) {
-            EventCard(
-                event =
-                Event(
-                    organisers = MockReferenceList(),
-                    taggedAssociations = MockReferenceList()
-                )
-            ) {}
+        events.forEach { event ->
+            Box(modifier = Modifier.testTag("AssociationEventCard${event.uid}")) {
+                EventCard(
+                    event =
+                    Event(
+                        organisers = event.organisers,
+                        taggedAssociations = event.taggedAssociations
+                    )
+                ) {}
+            }
         }
+
         Spacer(modifier = Modifier.size(11.dp))
         OutlinedButton(
             onClick = {
