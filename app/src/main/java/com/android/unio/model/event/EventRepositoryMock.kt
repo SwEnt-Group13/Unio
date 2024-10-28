@@ -122,13 +122,13 @@ open class EventRepositoryMock : EventRepository {
     }
   }
 
-    override fun getEventWithId(
-        id: String,
-        onSuccess: (Event) -> Unit,
-        onFailure: (Exception) -> Unit
-    ) {
-        TODO("Not yet implemented")
-    }
+  override fun getEventWithId(
+      id: String,
+      onSuccess: (Event) -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+    TODO("Not yet implemented")
+  }
 
   // Mock implementation for getting events by association
   override fun getEventsOfAssociation(

@@ -95,7 +95,7 @@ fun ExploreScreenContent(
               query = searchQuery.value,
               onQueryChange = { searchQuery.value = it },
               onSearch = {
-//                searchViewModel.searchAssociations(searchQuery.value)
+                //                searchViewModel.searchAssociations(searchQuery.value)
               },
               expanded = false,
               onExpandedChange = { /* Handle expanded state change here */},

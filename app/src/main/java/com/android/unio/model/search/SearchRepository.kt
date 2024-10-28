@@ -59,21 +59,23 @@ class SearchRepository(
   }
 
   /**
-   * Calls the [AssociationRepository] to fetch all associations and adds them to the search database.
-   * If the call fails, logs the exception.
-   * TODO Should be refactored to use a single call to fetch the data alongside the AssociationViewModel
+   * Calls the [AssociationRepository] to fetch all associations and adds them to the search
+   * database. If the call fails, logs the exception. TODO Should be refactored to use a single call
+   * to fetch the data alongside the AssociationViewModel
    */
   fun fetchAssociations() {
     associationRepository.getAssociations(
         onSuccess = { associations -> addAssociations(associations) },
-        onFailure = { exception -> Log.e("SearchRepository", "failed to fetch associations", exception) })
+        onFailure = { exception ->
+          Log.e("SearchRepository", "failed to fetch associations", exception)
+        })
   }
 
-    /**
-     * Calls the [EventRepository] to fetch all events and adds them to the search database.
-     * If the call fails, logs the exception.
-     * TODO Should be refactored to use a single call to fetch the data alongside the EventViewModel
-     */
+  /**
+   * Calls the [EventRepository] to fetch all events and adds them to the search database. If the
+   * call fails, logs the exception. TODO Should be refactored to use a single call to fetch the
+   * data alongside the EventViewModel
+   */
   fun fetchEvents() {
     eventRepository.getEvents(
         onSuccess = { events -> addEvents(events) },
@@ -101,7 +103,7 @@ class SearchRepository(
    *
    * @param events the list of [Event] to add
    */
-    // Should be private, but I need it public for tests
+  // Should be private, but I need it public for tests
   fun addEvents(events: List<Event>) {
     Log.d("SearchRepository", "Adding events to search database")
     val eventDocuments = events.map { it.toEventDocument() }

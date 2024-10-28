@@ -16,8 +16,8 @@ import kotlinx.coroutines.launch
 
 /**
  * ViewModel for searching associations and events. It uses a [SearchRepository] to create the
- * AppSearch database and exposes the results through a [StateFlow] containing a list of respectively
- * [Association] and [Event]
+ * AppSearch database and exposes the results through a [StateFlow] containing a list of
+ * respectively [Association] and [Event]
  */
 class SearchViewModel(private val repository: SearchRepository) : ViewModel() {
   private val _associations = MutableStateFlow<List<Association>>(emptyList())
@@ -54,12 +54,12 @@ class SearchViewModel(private val repository: SearchRepository) : ViewModel() {
    *
    * @param query The query to search for.
    */
-    fun searchEvents(query: String) {
-      viewModelScope.launch {
-        val results = repository.searchEvents(query)
-        _events.value = results
-      }
+  fun searchEvents(query: String) {
+    viewModelScope.launch {
+      val results = repository.searchEvents(query)
+      _events.value = results
     }
+  }
 
   override fun onCleared() {
     super.onCleared()
