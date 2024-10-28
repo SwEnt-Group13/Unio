@@ -24,6 +24,7 @@ import com.android.unio.ui.accountCreation.AccountDetails
 import com.android.unio.ui.association.AssociationProfileScreen
 import com.android.unio.ui.authentication.EmailVerificationScreen
 import com.android.unio.ui.authentication.WelcomeScreen
+import com.android.unio.ui.event.EventScreen
 import com.android.unio.ui.explore.ExploreScreen
 import com.android.unio.ui.home.HomeScreen
 import com.android.unio.ui.navigation.NavigationAction
@@ -96,7 +97,10 @@ fun UnioApp() {
             navigationActions,
             EventListViewModel(EventRepositoryFirestore(db)),
             onAddEvent = {},
-            onEventClick = {})
+          onEventClick = { navigationActions.navigateTo(Screen.EVENT_DETAILS) })
+      }
+      composable(Screen.EVENT_DETAILS) {
+        EventScreen()
       }
     }
     navigation(startDestination = Screen.EXPLORE, route = Route.EXPLORE) {
