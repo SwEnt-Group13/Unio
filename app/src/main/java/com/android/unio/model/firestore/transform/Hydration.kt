@@ -30,6 +30,7 @@ fun AssociationRepositoryFirestore.Companion.hydrate(data: Map<String, Any>?): A
           else AssociationCategory.UNKNOWN,
       description = data?.get("description") as? String ?: "",
       members = members,
+      followersCount = data?.get("followersCount") as? Int ?: 0,
       image = data?.get("image") as? String ?: "")
 }
 
