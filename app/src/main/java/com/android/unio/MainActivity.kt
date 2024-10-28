@@ -18,6 +18,7 @@ import com.android.unio.model.association.AssociationRepositoryFirestore
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.event.EventListViewModel
 import com.android.unio.model.event.EventRepositoryFirestore
+import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.accountCreation.AccountDetails
@@ -56,6 +57,10 @@ fun UnioApp() {
   val userRepositoryFirestore = UserRepositoryFirestore(Firebase.firestore)
   val userViewModel = UserViewModel(userRepositoryFirestore, true)
 
+  val eventRepositoryFirestore = EventRepositoryFirestore(Firebase.firestore)
+  val eventListViewModel = EventListViewModel(eventRepositoryFirestore)
+
+
   val context = LocalContext.current
 
   // Redirect user based on authentication state
@@ -92,7 +97,7 @@ fun UnioApp() {
     }
     navigation(startDestination = Screen.HOME, route = Route.HOME) {
       composable(Screen.HOME) {
-        HomeScreen(navigationActions, EventListViewModel(EventRepositoryFirestore(db)))
+        HomeScreen(navigationActions, eventListViewModel)
       }
     }
     navigation(startDestination = Screen.EXPLORE, route = Route.EXPLORE) {
