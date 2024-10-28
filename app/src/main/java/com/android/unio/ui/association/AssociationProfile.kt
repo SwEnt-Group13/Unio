@@ -115,7 +115,7 @@ fun AssociationProfileScreen(
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AssociationProfileScaffold(
+private fun AssociationProfileScaffold(
     association: Association?,
     navigationAction: NavigationAction,
     content: @Composable (padding: PaddingValues) -> Unit
@@ -192,7 +192,7 @@ fun AssociationProfileScaffold(
  * @param associationViewModel (AssociationViewModel) : The associations view model
  */
 @Composable
-fun AssociationProfileContent(
+private fun AssociationProfileContent(
     padding: PaddingValues,
     association: Association,
     associationViewModel: AssociationViewModel
@@ -229,7 +229,7 @@ fun AssociationProfileContent(
  * @param association (Association) : The association currently displayed
  */
 @Composable
-fun AssociationRecruitment(association: Association) {
+private fun AssociationRecruitment(association: Association) {
     Text(
         text = getString(R.string.association_join) + " ${association.fullName} ?",
         style = AppTypography.headlineMedium,
@@ -294,7 +294,7 @@ fun AssociationRecruitment(association: Association) {
  * @param userList (List<User>) : The list of users in the association that can be contacted
  */
 @Composable
-fun UsersCard(userList: List<User>) {
+private fun UsersCard(userList: List<User>) {
     Text(
         getString(R.string.association_contact_members),
         style = AppTypography.headlineMedium,
@@ -346,7 +346,7 @@ fun UsersCard(userList: List<User>) {
  * @param associationViewModel (AssociationViewModel) : The associations view model
  */
 @Composable
-fun AssociationProfileEvents(association: Association, associationViewModel: AssociationViewModel) {
+private fun AssociationProfileEvents(association: Association, associationViewModel: AssociationViewModel) {
     var isSeeMoreClicked by remember { mutableStateOf(false) }
     var events = emptyList<Event>()
     associationViewModel.getEventsForAssociation(association) { fetchedEvents ->
@@ -396,7 +396,7 @@ fun AssociationProfileEvents(association: Association, associationViewModel: Ass
  * Component that display only one event in a card format, like in the home screen.
  */
 @Composable
-fun AssociationEventCard(event: Event) {
+private fun AssociationEventCard(event: Event) {
     Box(modifier = Modifier.testTag("AssociationEventCard${event.uid}")) {
         EventCard(
             event =
@@ -410,7 +410,7 @@ fun AssociationEventCard(event: Event) {
 
 /** Component that introduce the upcoming events of the association. */
 @Composable
-fun AssociationEventTitle() {
+private fun AssociationEventTitle() {
     Text(
         getString(R.string.association_upcoming_events),
         modifier = Modifier
@@ -426,7 +426,7 @@ fun AssociationEventTitle() {
  * @param association (Association) : The association currently displayed
  */
 @Composable
-fun AssociationDescription(association: Association) {
+private fun AssociationDescription(association: Association) {
     Text(
         association.description,
         style = AppTypography.bodyMedium,
@@ -444,7 +444,7 @@ fun AssociationDescription(association: Association) {
  * @param association (Association) : The association currently displayed
  */
 @Composable
-fun AssociationHeader(association: Association) {
+private fun AssociationHeader(association: Association) {
     Row {
         Box(
             modifier = Modifier
