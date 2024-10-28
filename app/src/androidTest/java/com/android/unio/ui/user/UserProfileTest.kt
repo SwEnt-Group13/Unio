@@ -38,6 +38,7 @@ class UserProfileTest {
           category = AssociationCategory.EPFL_BODIES,
           description = "EPFL is a research institute and university in Lausanne, Switzerland.",
           members = User.firestoreReferenceListWith(listOf("1234")),
+          followersCount = 0,
           image = "https://www.epfl.ch/profile.jpg")
 
   private val user =
