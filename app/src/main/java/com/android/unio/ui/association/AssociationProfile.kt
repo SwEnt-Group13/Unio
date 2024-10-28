@@ -2,7 +2,6 @@ package com.android.unio.ui.association
 
 import android.content.Context
 import android.util.Log
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -38,6 +37,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -45,7 +45,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -385,7 +384,7 @@ fun AssociationHeader(context: Context, association: Association) {
                     .testTag("AssociationHeaderFollowers")
             )
             Text(
-                "yyy " + getString(R.string.association_member),
+                "${association.members.list.collectAsState().value.size} " + getString(R.string.association_member),
                 style = AppTypography.headlineSmall,
                 modifier = Modifier
                     .padding(bottom = 14.dp)
