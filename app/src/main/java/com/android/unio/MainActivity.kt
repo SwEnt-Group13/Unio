@@ -56,6 +56,9 @@ fun UnioApp() {
   val userRepositoryFirestore = UserRepositoryFirestore(Firebase.firestore)
   val userViewModel = UserViewModel(userRepositoryFirestore, true)
 
+  val eventListRepository = EventRepositoryFirestore(db)
+  val eventListViewModel = EventListViewModel(eventListRepository)
+
   val context = LocalContext.current
 
   // Redirect user based on authentication state
@@ -94,11 +97,7 @@ fun UnioApp() {
     }
     navigation(startDestination = Screen.HOME, route = Route.HOME) {
       composable(Screen.HOME) {
-        HomeScreen(
-            navigationActions,
-            EventListViewModel(EventRepositoryFirestore(db)),
-            onAddEvent = {},
-            onEventClick = {})
+        HomeScreen(navigationActions, eventListViewModel, onAddEvent = {}, onEventClick = {})
       }
     }
     navigation(startDestination = Screen.EXPLORE, route = Route.EXPLORE) {
