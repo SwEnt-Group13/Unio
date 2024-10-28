@@ -139,7 +139,7 @@ fun AssociationProfileScaffold(
                 title = {
                     val title: String
                     if (association != null) {
-                        title = association.name
+                        title = association.fullName
                     } else {
                         title = getString(R.string.association_not_found)
                     }
@@ -192,7 +192,7 @@ fun AssociationProfileContent(padding: PaddingValues, context: Context, associat
     ) {
         AssociationHeader(context, association)
         Spacer(modifier = Modifier.size(22.dp))
-        AssociationDescription()
+        AssociationDescription(association)
         Spacer(modifier = Modifier.size(15.dp))
         AssociationEventTitle()
         Spacer(modifier = Modifier.size(11.dp))
@@ -351,9 +351,9 @@ fun AssociationEventTitle() {
 }
 
 @Composable
-fun AssociationDescription() {
+fun AssociationDescription(association: Association) {
     Text(
-        getString(R.string.debug_lorem_ipsum),
+        association.description,
         style = AppTypography.bodyMedium,
         modifier = Modifier
             .padding(horizontal = 24.dp)
