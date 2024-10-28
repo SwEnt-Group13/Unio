@@ -83,7 +83,7 @@ fun AssociationProfileScreen(
     AssociationProfileScaffold(
         association = null,
         navigationAction = navigationAction,
-        associationViewModel = associationViewModel) { padding, _ ->
+        associationViewModel = associationViewModel) { padding ->
           Column(modifier = Modifier.padding(padding)) {
             Text(
                 text = error, modifier = Modifier.testTag("associationNotFound"), color = Color.Red)
@@ -93,19 +93,22 @@ fun AssociationProfileScreen(
     AssociationProfileScaffold(
         association = association,
         navigationAction = navigationAction,
-        associationViewModel = associationViewModel) { padding, associationViewModel ->
+        associationViewModel = associationViewModel) { padding ->
           AssociationProfileContent(
-              padding, LocalContext.current, association, associationViewModel)
+              padding, association, associationViewModel)
         }
   }
 }
 
 /**
- * The scaffold for the Association Profile screen.
+ * Composable element that contain the scaffold of the given association profile screen.
+ * Precisely, it contains the top bar, the content given in parameter and the snackbar host used
+ * on unimplemented features.
  *
- * @param title The title of the screen.
- * @param navigationAction The navigation action to use when the back button is clicked.
- * @param content The content of the screen.
+ * @param association (Association) : The association to display
+ * @param navigationAction (NavigationAction) : The navigation actions of the screen
+ * @param associationViewModel (AssociationViewModel) : The associations view model
+ * @param content (Composable) : The content of the screen
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -113,7 +116,7 @@ fun AssociationProfileScaffold(
     association: Association?,
     navigationAction: NavigationAction,
     associationViewModel: AssociationViewModel,
-    content: @Composable (padding: PaddingValues, AssociationViewModel) -> Unit
+    content: @Composable (padding: PaddingValues) -> Unit
 ) {
   val context = LocalContext.current
   testSnackbar = remember { SnackbarHostState() }
@@ -167,13 +170,19 @@ fun AssociationProfileScaffold(
                   }
             })
       },
-      content = { padding -> content(padding, associationViewModel) })
+      content = { padding -> content(padding) })
 }
 
+/**
+ * Composable element that contain the content of the given association profile screen. It call all elements
+ * that should be displayed on the screen, such as the header, the description, the events, (...)
+ * separated by spacers.
+ *
+ * @param padding (PaddingValues) : The padding of the screen
+ */
 @Composable
 fun AssociationProfileContent(
     padding: PaddingValues,
-    context: Context,
     association: Association,
     associationViewModel: AssociationViewModel
 ) {
@@ -182,7 +191,7 @@ fun AssociationProfileContent(
           Modifier.padding(padding)
               .testTag("AssociationScreen")
               .verticalScroll(rememberScrollState())) {
-        AssociationHeader(context, association)
+        AssociationHeader(association)
         Spacer(modifier = Modifier.size(22.dp))
         AssociationDescription(association)
         Spacer(modifier = Modifier.size(15.dp))
@@ -192,12 +201,12 @@ fun AssociationProfileContent(
         Spacer(modifier = Modifier.size(11.dp))
         UsersCard(association.members.list.collectAsState().value)
         Spacer(modifier = Modifier.size(61.dp))
-        AssociationRecruitment(context, association)
+        AssociationRecruitment(association)
       }
 }
 
 @Composable
-fun AssociationRecruitment(context: Context, association: Association) {
+fun AssociationRecruitment(association: Association) {
   Text(
       text = getString(R.string.association_join) + " ${association.fullName} ?",
       style = AppTypography.headlineMedium,
@@ -326,7 +335,7 @@ fun AssociationDescription(association: Association) {
 }
 
 @Composable
-fun AssociationHeader(context: Context, association: Association) {
+fun AssociationHeader(association: Association) {
   Row {
     Box(modifier = Modifier.padding(horizontal = 24.dp).testTag("AssociationImageHeader")) {
       AsyncImage(
