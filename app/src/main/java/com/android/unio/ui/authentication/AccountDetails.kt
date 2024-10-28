@@ -1,7 +1,5 @@
 package com.android.unio.ui.accountCreation
 
-import android.content.Context
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -37,13 +35,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.android.unio.model.association.Association
 import com.android.unio.model.event.Event
 import com.android.unio.model.firestore.emptyFirestoreReferenceList
+import com.android.unio.model.user.AccountDetailsError
 import com.android.unio.model.user.Interest
 import com.android.unio.model.user.User
-import com.android.unio.model.user.UserRepositoryFirestore
-import com.android.unio.ui.authentication.InterestOverlay
+import com.android.unio.model.user.UserSocial
+import com.android.unio.model.user.UserViewModel
+import com.android.unio.model.user.checkNewUser
+import com.android.unio.ui.authentication.overlay.InterestOverlay
+import com.android.unio.ui.authentication.overlay.SocialOverlay
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
 import com.android.unio.ui.theme.AppTypography
@@ -56,20 +59,26 @@ import kotlinx.coroutines.flow.MutableStateFlow
 @Composable
 fun AccountDetails(
     navigationAction: NavigationAction,
-    userRepositoryFirestore: UserRepositoryFirestore
+    userViewModel: UserViewModel = viewModel(factory = UserViewModel.Factory)
 ) {
   var firstName: String by remember { mutableStateOf("") }
   var lastName: String by remember { mutableStateOf("") }
   var bio: String by remember { mutableStateOf("") }
 
+  var isErrors by remember { mutableStateOf(mutableSetOf<AccountDetailsError>()) }
+
   val interestsFlow = remember {
-    MutableStateFlow(Interest.entries.map { it to mutableStateOf(false) }.toMutableList())
+    MutableStateFlow(Interest.entries.map { it to mutableStateOf(false) }.toList())
   }
 
+  val userSocialsFlow = remember { MutableStateFlow(emptyList<UserSocial>().toMutableList()) }
+
   val interests by interestsFlow.collectAsState()
+  val socials by userSocialsFlow.collectAsState()
 
   val context = LocalContext.current
   var showInterestsOverlay by remember { mutableStateOf(false) }
+  var showSocialsOverlay by remember { mutableStateOf(false) }
   val scrollState = rememberScrollState()
 
   if (Firebase.auth.currentUser == null) {
@@ -88,19 +97,37 @@ fun AccountDetails(
             style = AppTypography.headlineSmall,
             modifier = Modifier.testTag("AccountDetailsTitleText"))
 
+        val isFirstNameError = isErrors.contains(AccountDetailsError.EMPTY_FIRST_NAME)
         OutlinedTextField(
             modifier =
                 Modifier.padding(4.dp).fillMaxWidth().testTag("AccountDetailsFirstNameTextField"),
             label = {
               Text("First name", modifier = Modifier.testTag("AccountDetailsFirstNameText"))
             },
+            isError = (isFirstNameError),
+            supportingText = {
+              if (isFirstNameError) {
+                Text(
+                    AccountDetailsError.EMPTY_FIRST_NAME.errorMessage,
+                    modifier = Modifier.testTag("AccountDetailsFirstNameErrorText"))
+              }
+            },
             onValueChange = { firstName = it },
             value = firstName)
+        val isLastNameError = isErrors.contains(AccountDetailsError.EMPTY_LAST_NAME)
         OutlinedTextField(
             modifier =
                 Modifier.padding(4.dp).fillMaxWidth().testTag("AccountDetailsLastNameTextField"),
             label = {
               Text("Last name", modifier = Modifier.testTag("AccountDetailsLastNameText"))
+            },
+            isError = (isLastNameError),
+            supportingText = {
+              if (isLastNameError) {
+                Text(
+                    AccountDetailsError.EMPTY_LAST_NAME.errorMessage,
+                    modifier = Modifier.testTag("AccountDetailsLastNameErrorText"))
+              }
             },
             onValueChange = { lastName = it },
             value = lastName)
@@ -141,8 +168,8 @@ fun AccountDetails(
               Icon(Icons.Default.Add, contentDescription = "Add")
               Text("Add centers of interest")
             }
-        FlowRow() {
-          interests.forEachIndexed() { index, pair ->
+        FlowRow {
+          interests.forEachIndexed { index, pair ->
             if (pair.second.value) {
               InputChip(
                   label = { Text(pair.first.name) },
@@ -160,14 +187,28 @@ fun AccountDetails(
         }
         OutlinedButton(
             modifier = Modifier.fillMaxWidth().testTag("AccountDetailsSocialsButton"),
-            onClick = {
-              Toast.makeText(context, "Not yet implemented", Toast.LENGTH_SHORT).show()
-            }) {
+            onClick = { showSocialsOverlay = true }) {
               Icon(Icons.Default.Add, contentDescription = "Add")
               Text("Add links to other social media")
             }
-        FlowRow() {
-          /* TODO row containing dynamic list of social media links */
+        FlowRow(modifier = Modifier.fillMaxWidth()) {
+          socials.forEachIndexed { index, userSocial ->
+            InputChip(
+                label = { Text(userSocial.social.name) },
+                onClick = {},
+                selected = true,
+                modifier = Modifier.padding(3.dp).testTag("AccountDetailsSocialChip: $index"),
+                avatar = {
+                  Icon(
+                      Icons.Default.Close,
+                      contentDescription = "Add",
+                      modifier =
+                          Modifier.clickable {
+                            userSocialsFlow.value =
+                                userSocialsFlow.value.toMutableList().apply { removeAt(index) }
+                          })
+                })
+          }
         }
         Button(
             modifier = Modifier.testTag("AccountDetailsContinueButton"),
@@ -183,11 +224,19 @@ fun AccountDetails(
                       joinedAssociations = Association.emptyFirestoreReferenceList(),
                       savedEvents = Event.emptyFirestoreReferenceList(),
                       interests = interests.filter { it.second.value }.map { it.first },
-                      socials = emptyList(),
+                      socials = socials,
                       profilePicture = "",
                       hasProvidedAccountDetails = true)
-              uploadUser(user, userRepositoryFirestore, navigationAction, context)
-              navigationAction.navigateTo(Screen.HOME)
+              isErrors = checkNewUser(user)
+              if (isErrors.isEmpty()) {
+                userViewModel.addUser(
+                    user,
+                    onSuccess = {
+                      Toast.makeText(context, "Account Created Successfully", Toast.LENGTH_SHORT)
+                          .show()
+                      navigationAction.navigateTo(Screen.HOME)
+                    })
+              }
             }) {
               Text("Continue")
             }
@@ -196,25 +245,20 @@ fun AccountDetails(
   if (showInterestsOverlay) {
     InterestOverlay(
         onDismiss = { showInterestsOverlay = false },
-        onSave = { showInterestsOverlay = false },
-        interests = interestsFlow)
+        onSave = { newInterests ->
+          interestsFlow.value = newInterests
+          showInterestsOverlay = false
+        },
+        interests = interests)
   }
-}
 
-fun uploadUser(
-    user: User,
-    userRepositoryFirestore: UserRepositoryFirestore,
-    navigationAction: NavigationAction,
-    context: Context
-) {
-  userRepositoryFirestore.updateUser(
-      user,
-      onSuccess = {
-        Toast.makeText(context, "Account Created Successfully", Toast.LENGTH_SHORT).show()
-        navigationAction.navigateTo(Screen.HOME)
-      },
-      onFailure = {
-        Toast.makeText(context, "Failed to create Account", Toast.LENGTH_SHORT).show()
-        Log.e("AccountDetails", "Failed to upload user", it)
-      })
+  if (showSocialsOverlay) {
+    SocialOverlay(
+        onDismiss = { showSocialsOverlay = false },
+        onSave = { newUserSocials ->
+          userSocialsFlow.value = newUserSocials
+          showSocialsOverlay = false
+        },
+        userSocials = socials)
+  }
 }

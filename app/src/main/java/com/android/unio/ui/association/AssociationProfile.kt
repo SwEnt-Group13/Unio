@@ -170,9 +170,9 @@ fun AssociationProfileContent(padding: PaddingValues, context: Context) {
               .verticalScroll(rememberScrollState())) {
         AssociationHeader(context)
         Spacer(modifier = Modifier.size(22.dp))
-        AssociationDescription()
+        AssociationDescription(context)
         Spacer(modifier = Modifier.size(15.dp))
-        AssociationEventTitle()
+        AssociationEventTitle(context)
         Spacer(modifier = Modifier.size(11.dp))
         AssociationProfileEvents(context)
         Spacer(modifier = Modifier.size(11.dp))
@@ -285,8 +285,8 @@ fun AssociationProfileEvents(context: Context) {
 }
 
 @Composable
-fun AssociationEventTitle() {
-    val context = LocalContext.current
+fun AssociationEventTitle(context: Context) {
+
   Text(
       context.getString(R.string.association_upcoming_events),
       modifier = Modifier.padding(horizontal = 20.dp).testTag("AssociationEventTitle"),
@@ -294,8 +294,7 @@ fun AssociationEventTitle() {
 }
 
 @Composable
-fun AssociationDescription() {
-    val context = LocalContext.current
+fun AssociationDescription(context: Context) {
   Text(
       context.getString(R.string.debug_lorem_ipsum),
       style = AppTypography.bodyMedium,
