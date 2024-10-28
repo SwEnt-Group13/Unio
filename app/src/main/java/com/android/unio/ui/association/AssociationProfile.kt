@@ -54,6 +54,7 @@ import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventCard
+import com.android.unio.model.user.User
 import com.android.unio.resources.ResourceManager.getString
 import com.android.unio.resources.ResourceManager.init
 import com.android.unio.ui.navigation.NavigationAction
@@ -212,7 +213,7 @@ fun AssociationProfileContent(
         Spacer(modifier = Modifier.size(11.dp))
         AssociationProfileEvents(association, associationViewModel)
         Spacer(modifier = Modifier.size(11.dp))
-        UserCard(context)
+        UsersCard(association.members.list.collectAsState().value)
         Spacer(modifier = Modifier.size(61.dp))
         AssociationRecruitment(context, association)
     }
@@ -278,7 +279,7 @@ fun AssociationRecruitment(context: Context, association: Association) {
 }
 
 @Composable
-fun UserCard(context: Context) {
+fun UsersCard(userList: List<User>) {
     Text(
         getString(R.string.association_contact_members),
         style = AppTypography.headlineMedium,
@@ -287,35 +288,40 @@ fun UserCard(context: Context) {
             .testTag("AssociationContactMembersTitle")
     )
     Spacer(modifier = Modifier.size(4.dp))
-    Box(
-        modifier =
-        Modifier
-            .testTag("AssociationContactMembersCard")
-            .padding(horizontal = 23.dp)
-            .width(366.dp)
-            .height(40.dp)
-            .background(Color.LightGray, RoundedCornerShape(12.dp))
-            .padding(vertical = 2.dp, horizontal = 3.dp)
-            .clickable {
-                scope!!.launch {
-                    testSnackbar!!.showSnackbar(
-                        message = DEBUG_MESSAGE, duration = SnackbarDuration.Short
-                    )
-                }
-            },
-    ) {
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(115.dp, Alignment.Start),
-            verticalAlignment = Alignment.CenterVertically,
+    userList.forEach { user ->
+        Box(
+            modifier =
+            Modifier
+                .testTag("AssociationContactMembersCard")
+                .padding(horizontal = 23.dp)
+                .width(366.dp)
+                .height(40.dp)
+                .background(Color.LightGray, RoundedCornerShape(12.dp))
+                .padding(vertical = 2.dp, horizontal = 3.dp)
+                .clickable {
+                    scope!!.launch {
+                        testSnackbar!!.showSnackbar(
+                            message = DEBUG_MESSAGE, duration = SnackbarDuration.Short
+                        )
+                    }
+                },
         ) {
-            Icon(
-                Icons.Filled.Person,
-                contentDescription = "user's profile picture",
-                Modifier.size(36.dp)
-            )
-            Text(text = "<Casey Rue>", style = AppTypography.headlineSmall)
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(115.dp, Alignment.Start),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Icon(
+                    Icons.Filled.Person,
+                    contentDescription = "user's profile picture",
+                    Modifier.size(36.dp)
+                )
+                Text(
+                    text = user.firstName + " " + user.lastName, style = AppTypography.headlineSmall
+                )
+            }
         }
     }
+
 }
 
 @Composable
