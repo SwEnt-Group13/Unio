@@ -14,17 +14,20 @@ import com.android.unio.model.association.AssociationRepository
 import com.android.unio.model.association.toAssociationDocument
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventDocument
+import com.android.unio.model.event.EventRepository
 import com.android.unio.model.event.toEventDocument
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.guava.await
 import kotlinx.coroutines.withContext
 
 /** Repository for searching associations and events */
 class SearchRepository(
     private val appContext: Context,
-    private val associationRepository: AssociationRepository
+    private val associationRepository: AssociationRepository,
+    private val eventRepository: EventRepository
 ) {
   // Should be private, but I need it public for tests
   var session: AppSearchSession? = null
@@ -36,67 +39,89 @@ class SearchRepository(
    */
   suspend fun init() {
     withContext(Dispatchers.IO) {
-      val sessionFutures =
-          LocalStorage.createSearchSessionAsync(
-              LocalStorage.SearchContext.Builder(appContext, "unio").build())
-      val setSchemaRequest =
-          SetSchemaRequest.Builder()
-              .addDocumentClasses(AssociationDocument::class.java, EventDocument::class.java)
-              .build()
-      session = sessionFutures.get()
-      session?.setSchemaAsync(setSchemaRequest)
+      try {
+        val sessionFutures =
+            LocalStorage.createSearchSessionAsync(
+                LocalStorage.SearchContext.Builder(appContext, "unio").build())
+        val setSchemaRequest =
+            SetSchemaRequest.Builder()
+                .addDocumentClasses(AssociationDocument::class.java, EventDocument::class.java)
+                .build()
+        session = sessionFutures.get()
+        session?.setSchemaAsync(setSchemaRequest)
 
-      listenForAssociationUpdates()
-      // TODO listen for event updates
+        fetchAssociations()
+        fetchEvents()
+      } catch (e: Exception) {
+        Log.e("SearchRepository", "failed to initialize search database", e)
+      }
     }
   }
 
   /**
-   * Listens for updates in the associations collection in the Firestore and reflects them to the
-   * search database.
+   * Calls the [AssociationRepository] to fetch all associations and adds them to the search database.
+   * If the call fails, logs the exception.
+   * TODO Should be refactored to use a single call to fetch the data alongside the AssociationViewModel
    */
-  private fun listenForAssociationUpdates() {
+  fun fetchAssociations() {
     associationRepository.getAssociations(
         onSuccess = { associations -> addAssociations(associations) },
-        onFailure = { exception -> Log.e("SearchRepository", "failed to fetch associations") })
+        onFailure = { exception -> Log.e("SearchRepository", "failed to fetch associations", exception) })
+  }
+
+    /**
+     * Calls the [EventRepository] to fetch all events and adds them to the search database.
+     * If the call fails, logs the exception.
+     * TODO Should be refactored to use a single call to fetch the data alongside the EventViewModel
+     */
+  fun fetchEvents() {
+    eventRepository.getEvents(
+        onSuccess = { events -> addEvents(events) },
+        onFailure = { exception -> Log.e("SearchRepository", "failed to fetch events", exception) })
   }
 
   /**
    * Adds the given associations to the search database.
    *
    * @param associations the list of [Association] to add
-   * @return true if the associations were added successfully, false otherwise
    */
   // Should be private, but I need it public for tests
   fun addAssociations(associations: List<Association>) {
+    Log.d("SearchRepository", "Adding associations to search database")
     val associationDocuments = associations.map { it.toAssociationDocument() }
-    session?.putAsync(PutDocumentsRequest.Builder().addDocuments(associationDocuments).build())
+    try {
+      session?.putAsync(PutDocumentsRequest.Builder().addDocuments(associationDocuments).build())
+    } catch (e: Exception) {
+      Log.e("SearchRepository", "failed to add associations to search database", e)
+    }
   }
 
   /**
-   * Removes the association with the given uid from the search database.
+   * Adds the given events to the search database.
    *
-   * @param uid the uid of the association to remove
-   * @return true if the association was removed successfully, false otherwise
+   * @param events the list of [Event] to add
    */
-  private fun removeAssociation(uid: String) {
-    //    return withContext(Dispatchers.IO) {
-    session?.removeAsync(
-        // TODO check if this means I have to create a namespace
-        RemoveByDocumentIdRequest.Builder("").addIds(uid).build())
-    //          ?.get()
-    //          ?.isSuccess == true
-    //    }
+    // Should be private, but I need it public for tests
+  fun addEvents(events: List<Event>) {
+    Log.d("SearchRepository", "Adding events to search database")
+    val eventDocuments = events.map { it.toEventDocument() }
+    try {
+      session?.putAsync(PutDocumentsRequest.Builder().addDocuments(eventDocuments).build())
+    } catch (e: Exception) {
+      Log.e("SearchRepository", "failed to add event to search database", e)
+    }
   }
 
-  /** TODO Adds the given events to the search database. */
-  private suspend fun addEvents(events: List<Event>): Boolean {
-    val eventDocuments = events.map { it.toEventDocument() }
-    return withContext(Dispatchers.IO) {
-      session
-          ?.putAsync(PutDocumentsRequest.Builder().addDocuments(events).build())
-          ?.get()
-          ?.isSuccess == true
+  /**
+   * Removes the association or event with the given uid from the search database.
+   *
+   * @param uid the uid of the association or event to remove
+   */
+  private fun remove(uid: String) {
+    try {
+      session?.removeAsync(RemoveByDocumentIdRequest.Builder("unio").addIds(uid).build())
+    } catch (e: Exception) {
+      Log.e("SearchRepository", "failed to remove association from search database", e)
     }
   }
 
@@ -117,21 +142,23 @@ class SearchRepository(
       val result = session?.search(query, searchSpec) ?: return@withContext emptyList()
 
       val associations = mutableListOf<Association>()
-      var page = result.nextPageAsync.get()
+      val page = result.nextPageAsync.await()
 
-      while (page.isNotEmpty()) {
-        page.forEach {
-          val doc = it.getDocument(AssociationDocument::class.java)
-          associations.add(associationDocumentToAssociation(doc))
-        }
-        page = result.nextPageAsync.get()
+      page.forEach {
+        val doc = it.getDocument(AssociationDocument::class.java)
+        associations.add(associationDocumentToAssociation(doc))
       }
-      associations.toList()
+      return@withContext associations.toList()
     }
   }
 
-  /** TODO Searches the search database for events with the given query. */
-  suspend fun searchEvents(query: String): List<EventDocument> {
+  /**
+   * Searches the search database for events with the given query.
+   *
+   * @param query the query to search for
+   * @return a list of [Event] that match the query
+   */
+  suspend fun searchEvents(query: String): List<Event> {
     return withContext(Dispatchers.IO) {
       val searchSpec =
           SearchSpec.Builder()
@@ -141,13 +168,14 @@ class SearchRepository(
               .build()
       val result = session?.search(query, searchSpec) ?: return@withContext emptyList()
 
-      val page = result.nextPageAsync.get()
+      val events = mutableListOf<Event>()
+      val page = result.nextPageAsync.await()
 
-      page.mapNotNull {
-        if (it.genericDocument.schemaType == EventDocument::class.java.simpleName) {
-          it.getDocument(EventDocument::class.java)
-        } else null
+      page.forEach {
+        val doc = it.getDocument(EventDocument::class.java)
+        events.add(eventDocumentToEvent(doc))
       }
+      return@withContext events.toList()
     }
   }
 
@@ -158,6 +186,16 @@ class SearchRepository(
     return suspendCoroutine { continuation ->
       associationRepository.getAssociationWithId(
           id = associationDocument.uid,
+          onSuccess = { association -> continuation.resume(association) },
+          onFailure = { exception -> continuation.resumeWithException(exception) })
+    }
+  }
+
+  /** Converts the given [EventDocument] to an [Event]. */
+  private suspend fun eventDocumentToEvent(eventDocument: EventDocument): Event {
+    return suspendCoroutine { continuation ->
+      eventRepository.getEventWithId(
+          id = eventDocument.uid,
           onSuccess = { association -> continuation.resume(association) },
           onFailure = { exception -> continuation.resumeWithException(exception) })
     }
