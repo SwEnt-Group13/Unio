@@ -84,6 +84,7 @@
     <string name="association_member" translatable="true">members</string>
     <string name="association_follow" translatable="true">follow</string>
     <string name="association_join" translatable="true">Join</string>
+    <string name="association_no_event" translatable="true">No event planned yet</string>
 
     <string name="association_not_found" translatable="true">ERROR : Association not found</string>
 

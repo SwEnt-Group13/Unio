@@ -47,6 +47,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -351,18 +352,29 @@ fun AssociationProfileEvents(association: Association, associationViewModel: Ass
     associationViewModel.getEventsForAssociation(association) { fetchedEvents ->
         events = fetchedEvents
     }
-    events.sortedBy { it.date }
-    val first = events.first()
-    Column(
-        modifier = Modifier.padding(horizontal = 28.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        if (isSeeMoreClicked) {
-            events.forEach { event ->
-                AssociationEventCard(event)
+    if (events.isEmpty()) {
+        Text(
+            text = getString(R.string.association_no_event),
+            style = AppTypography.bodySmall,
+            fontStyle = FontStyle.Italic,
+            modifier = Modifier
+                .padding(horizontal = 20.dp)
+                .testTag("AssociationNoEvent")
+        )
+    } else {
+        events.sortedBy { it.date }
+        val first = events.first()
+        Column(
+            modifier = Modifier.padding(horizontal = 28.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            if (isSeeMoreClicked) {
+                events.forEach { event ->
+                    AssociationEventCard(event)
+                }
+            } else {
+                AssociationEventCard(first)
             }
-        } else {
-            AssociationEventCard(first)
         }
         Spacer(modifier = Modifier.size(11.dp))
         OutlinedButton(
