@@ -29,8 +29,7 @@ class AssociationViewModel(
       _associationsByCategory
 
   init {
-    associationRepository.init {
-        getAssociations() }
+    associationRepository.init { getAssociations() }
   }
 
   companion object {
@@ -48,7 +47,7 @@ class AssociationViewModel(
 
   fun getEventsForAssociation(association: Association, onSuccess: (List<Event>) -> Unit) {
     viewModelScope.launch {
-        Log.d("ExploreViewModel", "Getting events for association ${association.fullName} !!!")
+      Log.d("ExploreViewModel", "Getting events for association ${association.fullName} !!!")
       eventRepository.getEventsOfAssociation(
           association.uid,
           onSuccess = onSuccess,
