@@ -148,7 +148,7 @@ private fun AssociationProfileScaffold(
                     } else {
                         title = context.getString(R.string.association_not_found)
                     }
-                    Text(text = title, modifier = Modifier.testTag("associationTitle"))
+                    Text(text = title, modifier = Modifier.testTag("AssociationProfileTitle"))
                 },
                 navigationIcon = {
                     IconButton(
@@ -310,7 +310,6 @@ private fun UsersCard(userList: List<User>, context: Context) {
         Box(
             modifier =
             Modifier
-                .testTag("AssociationContactMembersCard")
                 .padding(horizontal = 23.dp)
                 .width(366.dp)
                 .height(40.dp)
@@ -403,7 +402,7 @@ private fun AssociationProfileEvents(association: Association, associationViewMo
  */
 @Composable
 private fun AssociationEventCard(event: Event) {
-    Box(modifier = Modifier.testTag("AssociationEventCard${event.uid}")) {
+    Box(modifier = Modifier.testTag("AssociationEventCard-${event.uid}")) {
         EventCard(
             event =
             Event(

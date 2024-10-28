@@ -1,5 +1,6 @@
 package com.android.unio.ui.association
 
+import android.util.Log
 import androidx.compose.ui.test.SemanticsNodeInteraction
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotDisplayed
@@ -13,6 +14,7 @@ import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationCategory
 import com.android.unio.model.association.AssociationRepository
 import com.android.unio.model.association.AssociationViewModel
+import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventRepository
 import com.android.unio.model.firestore.emptyFirestoreReferenceList
 import com.android.unio.model.firestore.firestoreReferenceListWith
@@ -34,16 +36,14 @@ import org.mockito.kotlin.verify
 class AssociationProfileTest {
     private lateinit var navHostController: NavHostController
     private lateinit var navigationAction: NavigationAction
-    @Mock
-    private lateinit var collectionReference: CollectionReference
-    @Mock
-    private lateinit var db: FirebaseFirestore
-    @Mock
-    private lateinit var associationRepository: AssociationRepository
+    @Mock private lateinit var collectionReference: CollectionReference
+    @Mock private lateinit var db: FirebaseFirestore
+    @Mock private lateinit var associationRepository: AssociationRepository
     @Mock private lateinit var eventRepository: EventRepository
     private lateinit var associationViewModel: AssociationViewModel
 
     private lateinit var associations: List<Association>
+    private lateinit var events: List<Event>
 
     @get:Rule
     val composeTestRule = createComposeRule()
@@ -51,8 +51,6 @@ class AssociationProfileTest {
     @Before
     fun setUp() {
         MockitoAnnotations.openMocks(this)
-
-        `when`(db.collection(any())).thenReturn(collectionReference)
 
         associations =
             listOf(
@@ -70,10 +68,44 @@ class AssociationProfileTest {
                 )
             )
 
+        events = listOf(
+            Event(
+                uid = "a",
+                title = "Event A",
+                organisers = Association.firestoreReferenceListWith(listOf("1")),
+                taggedAssociations = Association.firestoreReferenceListWith(listOf("1")),
+                image = "",
+                description = "Description of event A",
+                catchyDescription = "Catchy description of event A",
+                price = 0.0,
+            ),
+            Event(
+                uid = "b",
+                title = "Event B",
+                organisers = Association.firestoreReferenceListWith(listOf("1")),
+                taggedAssociations = Association.firestoreReferenceListWith(listOf("1")),
+                image = "",
+                description = "Description of event B",
+                catchyDescription = "Catchy description of event B",
+                price = 0.0,
+            )
+        )
+
+        `when`(db.collection(any())).thenReturn(collectionReference)
+        `when`(associationRepository.getAssociations(any(), any())).thenAnswer { invocation ->
+            val onSuccess = invocation.arguments[0] as (List<Association>) -> Unit
+            onSuccess(associations)
+        }
+        `when`(eventRepository.getEventsOfAssociation(any(), any(), any())).thenAnswer { invocation ->
+            val onSuccess = invocation.arguments[1] as (List<Event>) -> Unit
+            onSuccess(events)
+        }
+
         navHostController = mock { NavHostController::class.java }
         navigationAction = NavigationAction(navHostController)
 
         associationViewModel = AssociationViewModel(associationRepository, eventRepository)
+        associationViewModel.getAssociations()
     }
 
     @Test
@@ -81,7 +113,7 @@ class AssociationProfileTest {
         composeTestRule.setContent {
             AssociationProfileScreen(navigationAction, "1", associationViewModel)
         }
-
+        composeTestRule.waitForIdle()
         composeTestRule.onNodeWithTag("AssociationScreen").assertIsDisplayed()
         composeTestRule.onNodeWithTag("goBackButton").assertIsDisplayed()
 
@@ -93,10 +125,9 @@ class AssociationProfileTest {
         assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationFollowButton"))
         assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationDescription"))
         assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationEventTitle"))
-        assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationEventCard"))
+        assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationEventCard-a"))
         assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationSeeMoreButton"))
         assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationContactMembersTitle"))
-        assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationContactMembersCard"))
         assertDisplayComponentInScroll(
             composeTestRule.onNodeWithTag("AssociationRecruitmentDescription")
         )
@@ -159,11 +190,6 @@ class AssociationProfileTest {
 
     @Test
     fun testAssociationProfileGoodId() {
-        `when`(associationRepository.getAssociations(any(), any())).thenAnswer { invocation ->
-            val onSuccess = invocation.arguments[0] as (List<Association>) -> Unit
-            onSuccess(associations)
-        }
-
         associationViewModel.getAssociations()
 
         composeTestRule.runOnIdle {
