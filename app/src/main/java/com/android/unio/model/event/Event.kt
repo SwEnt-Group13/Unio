@@ -55,7 +55,7 @@ data class EventDocument(
     val catchyDescription: String = "",
     @StringProperty(indexingType = StringPropertyConfig.INDEXING_TYPE_PREFIXES)
     val locationName: String = ""
-    //TODO Need to add organisers and taggedAssociations
+    // TODO Need to add organisers and taggedAssociations
 )
 
 fun Event.toEventDocument(): EventDocument {

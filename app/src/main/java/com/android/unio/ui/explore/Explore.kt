@@ -1,7 +1,5 @@
 package com.android.unio.ui.explore
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -46,7 +44,6 @@ import com.android.unio.ui.navigation.Route
 import com.android.unio.ui.navigation.Screen
 import com.android.unio.ui.theme.AppTypography
 
-@RequiresApi(Build.VERSION_CODES.S)
 @Composable
 fun ExploreScreen(
     navigationAction: NavigationAction,
@@ -71,7 +68,6 @@ fun ExploreScreen(
  * @param padding The padding values to apply to the content.
  * @param navigationAction The navigation action to use when an association is clicked.
  */
-@RequiresApi(Build.VERSION_CODES.S)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ExploreScreenContent(
@@ -98,7 +94,9 @@ fun ExploreScreenContent(
               modifier = Modifier.testTag("searchBarInput"),
               query = searchQuery.value,
               onQueryChange = { searchQuery.value = it },
-              onSearch = { searchViewModel.searchAssociations(searchQuery.value) },
+              onSearch = {
+//                searchViewModel.searchAssociations(searchQuery.value)
+              },
               expanded = false,
               onExpandedChange = { /* Handle expanded state change here */},
               placeholder = {
