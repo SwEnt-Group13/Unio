@@ -54,8 +54,6 @@ import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.firestore.MockReferenceList
-import com.android.unio.resources.ResourceManager.getString
-import com.android.unio.resources.ResourceManager.init
 import com.android.unio.ui.event.EventCard
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.theme.AppTypography
