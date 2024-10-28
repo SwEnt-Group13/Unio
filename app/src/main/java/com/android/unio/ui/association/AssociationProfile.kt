@@ -82,8 +82,7 @@ fun AssociationProfileScreen(
     Log.e("AssociationProfileScreen", error)
     AssociationProfileScaffold(
         association = null,
-        navigationAction = navigationAction,
-        associationViewModel = associationViewModel) { padding ->
+        navigationAction = navigationAction) { padding ->
           Column(modifier = Modifier.padding(padding)) {
             Text(
                 text = error, modifier = Modifier.testTag("associationNotFound"), color = Color.Red)
@@ -92,8 +91,7 @@ fun AssociationProfileScreen(
   } else {
     AssociationProfileScaffold(
         association = association,
-        navigationAction = navigationAction,
-        associationViewModel = associationViewModel) { padding ->
+        navigationAction = navigationAction) { padding ->
           AssociationProfileContent(
               padding, association, associationViewModel)
         }
@@ -115,7 +113,6 @@ fun AssociationProfileScreen(
 fun AssociationProfileScaffold(
     association: Association?,
     navigationAction: NavigationAction,
-    associationViewModel: AssociationViewModel,
     content: @Composable (padding: PaddingValues) -> Unit
 ) {
   val context = LocalContext.current
