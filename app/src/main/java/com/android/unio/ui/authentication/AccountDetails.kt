@@ -223,8 +223,7 @@ fun AccountDetails(
                       joinedAssociations = Association.emptyFirestoreReferenceList(),
                       interests = interests.filter { it.second.value }.map { it.first },
                       socials = socials,
-                      profilePicture = "",
-                      hasProvidedAccountDetails = true)
+                      profilePicture = "")
               isErrors = checkNewUser(user)
               if (isErrors.isEmpty()) {
                 userViewModel.addUser(
