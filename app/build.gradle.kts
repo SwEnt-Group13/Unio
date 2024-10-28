@@ -269,6 +269,7 @@ dependencies {
     implementation(libs.androidx.appsearch.local.storage)
     kapt(libs.androidx.appsearch.compiler)
     implementation(libs.guava)
+    implementation(libs.kotlinx.coroutines.guava)
 }
 
 
