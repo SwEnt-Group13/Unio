@@ -4,6 +4,7 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.navigation.NavHostController
+import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.accountCreation.AccountDetails
 import com.android.unio.ui.association.AssociationProfileScreen
@@ -37,6 +38,8 @@ class ScreenDisplayingTest {
 
   private lateinit var navigationAction: NavigationAction
   private lateinit var userViewModel: UserViewModel
+
+  @MockK private lateinit var searchViewModel: SearchViewModel
 
   @MockK private lateinit var firebaseAuth: FirebaseAuth
   // This is the implementation of the abstract method getUid() from FirebaseUser.
@@ -84,7 +87,7 @@ class ScreenDisplayingTest {
 
   @Test
   fun testExploreDisplayed() {
-    composeTestRule.setContent { ExploreScreen(navigationAction) }
+    composeTestRule.setContent { ExploreScreen(navigationAction, searchViewModel = searchViewModel) }
     composeTestRule.onNodeWithTag("exploreScreen").assertIsDisplayed()
     composeTestRule.onNodeWithTag("searchBar").assertIsDisplayed()
   }
