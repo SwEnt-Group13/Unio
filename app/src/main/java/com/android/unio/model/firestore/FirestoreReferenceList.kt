@@ -69,7 +69,7 @@ class FirestoreReferenceList<T>(
       onSuccess()
       return
     }
-    
+
     Firebase.firestore
         .collection(collectionPath)
         .whereIn(FieldPath.documentId(), _uids.filter { it.isNotEmpty() })
