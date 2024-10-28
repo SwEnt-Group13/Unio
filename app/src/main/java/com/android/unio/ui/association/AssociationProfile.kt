@@ -189,6 +189,7 @@ private fun AssociationProfileScaffold(
  * @param padding (PaddingValues) : The padding of the screen
  * @param association (Association) : The association to display
  * @param associationViewModel (AssociationViewModel) : The associations view model
+ * @param context (Context) : The context of the screen
  */
 @Composable
 private fun AssociationProfileContent(
@@ -227,6 +228,7 @@ private fun AssociationProfileContent(
  * implemented !!!
  *
  * @param association (Association) : The association currently displayed
+ * @param context (Context) : The context of the screen
  */
 @Composable
 private fun AssociationRecruitment(association: Association, context: Context) {
@@ -292,6 +294,7 @@ private fun AssociationRecruitment(association: Association, context: Context) {
  * the title of the section and then display the different users in the association.
  *
  * @param userList (List<User>) : The list of users in the association that can be contacted
+ * @param context (Context) : The context of the screen
  */
 @Composable
 private fun UsersCard(userList: List<User>, context: Context) {
@@ -344,6 +347,7 @@ private fun UsersCard(userList: List<User>, context: Context) {
  *
  * @param association (Association) : The association currently displayed
  * @param associationViewModel (AssociationViewModel) : The associations view model
+ * @param context (Context) : The context of the screen
  */
 @Composable
 private fun AssociationProfileEvents(association: Association, associationViewModel: AssociationViewModel, context: Context) {
@@ -394,6 +398,8 @@ private fun AssociationProfileEvents(association: Association, associationViewMo
 
 /**
  * Component that display only one event in a card format, like in the home screen.
+ *
+ * @param event (Event) : The event to display
  */
 @Composable
 private fun AssociationEventCard(event: Event) {
@@ -408,7 +414,10 @@ private fun AssociationEventCard(event: Event) {
     }
 }
 
-/** Component that introduce the upcoming events of the association. */
+/** Component that introduce the upcoming events of the association.
+ *
+ * @param context (Context) : The context of the screen
+ */
 @Composable
 private fun AssociationEventTitle(context: Context) {
     Text(
@@ -444,6 +453,7 @@ private fun AssociationDescription(association: Association) {
  * !!! The follow button do not have any action and should be implemented when follow feature is implemented !!!
  *
  * @param association (Association) : The association currently displayed
+ * @param context (Context) : The context of the screen
  */
 @Composable
 private fun AssociationHeader(association: Association, context: Context) {
