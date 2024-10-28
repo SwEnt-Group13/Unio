@@ -441,6 +441,8 @@ private fun AssociationDescription(association: Association) {
  * association, the number of followers and the number of members. It also display a button to
  * follow the association.
  *
+ * !!! The follow button do not have any action and should be implemented when follow feature is implemented !!!
+ *
  * @param association (Association) : The association currently displayed
  */
 @Composable
