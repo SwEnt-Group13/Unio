@@ -1,5 +1,6 @@
 package com.android.unio.ui.association
 
+import android.content.Context
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -57,13 +58,7 @@ import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventCard
-<<<<<<< HEAD
-import com.android.unio.model.firestore.MockReferenceList
-=======
 import com.android.unio.model.user.User
-import com.android.unio.resources.ResourceManager.getString
-import com.android.unio.resources.ResourceManager.init
->>>>>>> f838f6920a3a3b397c5f08b48b704e6e6e1fb1b5
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.theme.AppTypography
 import kotlinx.coroutines.CoroutineScope
@@ -82,9 +77,10 @@ fun AssociationProfileScreen(
     associationId: String,
     associationViewModel: AssociationViewModel = viewModel(factory = AssociationViewModel.Factory)
 ) {
+    val context = LocalContext.current
     val association = associationViewModel.findAssociationById(associationId)
     if (association == null) {
-        val error = getString(R.string.association_not_found)
+        val error = context.getString(R.string.association_not_found)
         Log.e("AssociationProfileScreen", error)
         AssociationProfileScaffold(
             association = null,
@@ -103,7 +99,7 @@ fun AssociationProfileScreen(
             association = association,
             navigationAction = navigationAction
         ) { padding ->
-            AssociationProfileContent(padding, association, associationViewModel)
+            AssociationProfileContent(padding, association, associationViewModel, context)
         }
     }
 }
@@ -124,49 +120,9 @@ private fun AssociationProfileScaffold(
     navigationAction: NavigationAction,
     content: @Composable (padding: PaddingValues) -> Unit
 ) {
-<<<<<<< HEAD
-  val context = LocalContext.current
-  testSnackbar = remember { SnackbarHostState() }
-  scope = rememberCoroutineScope()
-  Scaffold(
-      snackbarHost = {
-        SnackbarHost(
-            hostState = testSnackbar!!,
-            modifier = Modifier.testTag("associationSnackbarHost"),
-            snackbar = { data ->
-              Snackbar {
-                TextButton(
-                    onClick = { testSnackbar!!.currentSnackbarData?.dismiss() },
-                    modifier = Modifier.testTag("snackbarActionButton")) {
-                      Text(text = DEBUG_MESSAGE)
-                    }
-              }
-            })
-      },
-      topBar = {
-        TopAppBar(
-            title = { Text(title, modifier = Modifier.testTag("AssociationProfileTitle")) },
-            navigationIcon = {
-              IconButton(
-                  onClick = { navigationAction.goBack() },
-                  modifier = Modifier.testTag("goBackButton")) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
-                        contentDescription = context.getString(R.string.association_go_back))
-                  }
-            },
-            actions = {
-              IconButton(
-                  modifier = Modifier.testTag("associationShareButton"),
-                  onClick = {
-                    scope!!.launch {
-                      testSnackbar!!.showSnackbar(
-                          message = DEBUG_MESSAGE, duration = SnackbarDuration.Short)
-=======
     val context = LocalContext.current
     testSnackbar = remember { SnackbarHostState() }
     scope = rememberCoroutineScope()
-    init(context)
     Scaffold(
         snackbarHost = {
             SnackbarHost(
@@ -190,8 +146,7 @@ private fun AssociationProfileScaffold(
                     if (association != null) {
                         title = association.fullName
                     } else {
-                        title = getString(R.string.association_not_found)
->>>>>>> f838f6920a3a3b397c5f08b48b704e6e6e1fb1b5
+                        title = context.getString(R.string.association_not_found)
                     }
                     Text(text = title, modifier = Modifier.testTag("associationTitle"))
                 },
@@ -202,7 +157,7 @@ private fun AssociationProfileScaffold(
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
-                            contentDescription = getString(R.string.association_go_back)
+                            contentDescription = context.getString(R.string.association_go_back)
                         )
                     }
                 },
@@ -239,7 +194,8 @@ private fun AssociationProfileScaffold(
 private fun AssociationProfileContent(
     padding: PaddingValues,
     association: Association,
-    associationViewModel: AssociationViewModel
+    associationViewModel: AssociationViewModel,
+    context: Context
 ) {
     Column(
         modifier =
@@ -248,97 +204,17 @@ private fun AssociationProfileContent(
             .testTag("AssociationScreen")
             .verticalScroll(rememberScrollState())
     ) {
-        AssociationHeader(association)
+        AssociationHeader(association, context)
         Spacer(modifier = Modifier.size(22.dp))
-<<<<<<< HEAD
-        AssociationDescription(context)
-=======
         AssociationDescription(association)
->>>>>>> f838f6920a3a3b397c5f08b48b704e6e6e1fb1b5
         Spacer(modifier = Modifier.size(15.dp))
         AssociationEventTitle(context)
         Spacer(modifier = Modifier.size(11.dp))
-        AssociationProfileEvents(association, associationViewModel)
+        AssociationProfileEvents(association, associationViewModel, context)
         Spacer(modifier = Modifier.size(11.dp))
-        UsersCard(association.members.list.collectAsState().value)
+        UsersCard(association.members.list.collectAsState().value, context)
         Spacer(modifier = Modifier.size(61.dp))
-<<<<<<< HEAD
-        AssociationRecruitment(context)
-      }
-}
-
-@Composable
-fun AssociationRecruitment(context: Context) {
-  Text(
-      text = context.getString(R.string.association_join) + " <Association> ?",
-      style = AppTypography.headlineMedium,
-      modifier = Modifier.padding(horizontal = 20.dp).testTag("AssociationRecruitmentTitle"))
-  Spacer(modifier = Modifier.size(13.dp))
-  Text(
-      text = context.getString(R.string.association_help_us),
-      style = AppTypography.bodySmall,
-      modifier = Modifier.padding(horizontal = 23.dp).testTag("AssociationRecruitmentDescription"))
-  Spacer(modifier = Modifier.size(18.dp))
-  Row(modifier = Modifier.padding(horizontal = 24.dp).testTag("AssociationRecruitmentRoles")) {
-    OutlinedButton(
-        modifier = Modifier.testTag("AssociationDesignerRoles"),
-        onClick = {
-          scope!!.launch {
-            testSnackbar!!.showSnackbar(message = DEBUG_MESSAGE, duration = SnackbarDuration.Short)
-          }
-        },
-        enabled = true) {
-          Icon(Icons.Filled.Add, contentDescription = "Add icon")
-          Spacer(Modifier.width(2.dp))
-          Text("<Graphic Designer>")
-        }
-    Spacer(modifier = Modifier.width(10.dp))
-    OutlinedButton(
-        modifier = Modifier.testTag("AssociationTreasurerRoles"),
-        onClick = {
-          scope!!.launch {
-            testSnackbar!!.showSnackbar(message = DEBUG_MESSAGE, duration = SnackbarDuration.Short)
-          }
-        },
-        enabled = true) {
-          Icon(Icons.Filled.Add, contentDescription = "Add icon")
-          Spacer(Modifier.width(2.dp))
-          Text("<Treasurer>")
-        }
-  }
-}
-
-@Composable
-fun UserCard(context: Context) {
-  Text(
-      context.getString(R.string.association_contact_members),
-      style = AppTypography.headlineMedium,
-      modifier = Modifier.padding(horizontal = 20.dp).testTag("AssociationContactMembersTitle"))
-  Spacer(modifier = Modifier.size(4.dp))
-  Box(
-      modifier =
-          Modifier.testTag("AssociationContactMembersCard")
-              .padding(horizontal = 23.dp)
-              .width(366.dp)
-              .height(40.dp)
-              .background(Color.LightGray, RoundedCornerShape(12.dp))
-              .padding(vertical = 2.dp, horizontal = 3.dp)
-              .clickable {
-                scope!!.launch {
-                  testSnackbar!!.showSnackbar(
-                      message = DEBUG_MESSAGE, duration = SnackbarDuration.Short)
-                }
-              },
-  ) {
-    Row(
-        horizontalArrangement = Arrangement.spacedBy(115.dp, Alignment.Start),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-      Icon(Icons.Filled.Person, contentDescription = "user's profile picture", Modifier.size(36.dp))
-      Text(text = "<Casey Rue>", style = AppTypography.headlineSmall)
-=======
-        AssociationRecruitment(association)
->>>>>>> f838f6920a3a3b397c5f08b48b704e6e6e1fb1b5
+        AssociationRecruitment(association, context)
     }
 }
 
@@ -353,9 +229,9 @@ fun UserCard(context: Context) {
  * @param association (Association) : The association currently displayed
  */
 @Composable
-private fun AssociationRecruitment(association: Association) {
+private fun AssociationRecruitment(association: Association, context: Context) {
     Text(
-        text = getString(R.string.association_join) + " ${association.fullName} ?",
+        text = context.getString(R.string.association_join) + " ${association.fullName} ?",
         style = AppTypography.headlineMedium,
         modifier = Modifier
             .padding(horizontal = 20.dp)
@@ -363,7 +239,7 @@ private fun AssociationRecruitment(association: Association) {
     )
     Spacer(modifier = Modifier.size(13.dp))
     Text(
-        text = getString(R.string.association_help_us),
+        text = context.getString(R.string.association_help_us),
         style = AppTypography.bodySmall,
         modifier = Modifier
             .padding(horizontal = 23.dp)
@@ -418,9 +294,9 @@ private fun AssociationRecruitment(association: Association) {
  * @param userList (List<User>) : The list of users in the association that can be contacted
  */
 @Composable
-private fun UsersCard(userList: List<User>) {
+private fun UsersCard(userList: List<User>, context: Context) {
     Text(
-        getString(R.string.association_contact_members),
+        context.getString(R.string.association_contact_members),
         style = AppTypography.headlineMedium,
         modifier = Modifier
             .padding(horizontal = 20.dp)
@@ -470,7 +346,7 @@ private fun UsersCard(userList: List<User>) {
  * @param associationViewModel (AssociationViewModel) : The associations view model
  */
 @Composable
-private fun AssociationProfileEvents(association: Association, associationViewModel: AssociationViewModel) {
+private fun AssociationProfileEvents(association: Association, associationViewModel: AssociationViewModel, context: Context) {
     var isSeeMoreClicked by remember { mutableStateOf(false) }
     var events = emptyList<Event>()
     associationViewModel.getEventsForAssociation(association) { fetchedEvents ->
@@ -478,7 +354,7 @@ private fun AssociationProfileEvents(association: Association, associationViewMo
     }
     if (events.isEmpty()) {
         Text(
-            text = getString(R.string.association_no_event),
+            text = context.getString(R.string.association_no_event),
             style = AppTypography.bodySmall,
             fontStyle = FontStyle.Italic,
             modifier = Modifier
@@ -505,70 +381,13 @@ private fun AssociationProfileEvents(association: Association, associationViewMo
             onClick = {
                 isSeeMoreClicked = true
             },
-<<<<<<< HEAD
-            modifier = Modifier.padding(horizontal = 28.dp).testTag("AssociationSeeMoreButton")) {
-              Icon(Icons.AutoMirrored.Filled.ArrowForward, contentDescription = "See more")
-              Spacer(Modifier.width(2.dp))
-              Text(context.getString(R.string.association_see_more))
-            }
-      }
-}
-
-@Composable
-fun AssociationEventTitle(context: Context) {
-
-  Text(
-      context.getString(R.string.association_upcoming_events),
-      modifier = Modifier.padding(horizontal = 20.dp).testTag("AssociationEventTitle"),
-      style = AppTypography.headlineMedium)
-}
-
-@Composable
-fun AssociationDescription(context: Context) {
-  Text(
-      context.getString(R.string.debug_lorem_ipsum),
-      style = AppTypography.bodyMedium,
-      modifier = Modifier.padding(horizontal = 24.dp).testTag("AssociationDescription"))
-}
-
-@Composable
-fun AssociationHeader(context: Context) {
-  Row {
-    Box(modifier = Modifier.padding(horizontal = 24.dp).testTag("AssociationImageHeader")) {
-      Image(
-          painter = painterResource(id = R.drawable.adec),
-          contentDescription = "placeholder",
-          modifier = Modifier.size(124.dp))
-    }
-    Column {
-      Text(
-          "xxx " + context.getString(R.string.association_follower),
-          style = AppTypography.headlineSmall,
-          modifier = Modifier.padding(bottom = 5.dp).testTag("AssociationHeaderFollowers"))
-      Text(
-          "yyy " + context.getString(R.string.association_member),
-          style = AppTypography.headlineSmall,
-          modifier = Modifier.padding(bottom = 14.dp).testTag("AssociationHeaderMembers"))
-      Button(
-          onClick = {
-            scope!!.launch {
-              testSnackbar!!.showSnackbar(
-                  message = DEBUG_MESSAGE, duration = SnackbarDuration.Short)
-            }
-          },
-          modifier = Modifier.testTag("AssociationFollowButton")) {
-            Icon(Icons.Filled.Add, contentDescription = "Follow icon")
-            Spacer(Modifier.width(2.dp))
-            Text(context.getString(R.string.association_follow))
-          }
-=======
             modifier = Modifier
                 .padding(horizontal = 28.dp)
                 .testTag("AssociationSeeMoreButton")
         ) {
             Icon(Icons.AutoMirrored.Filled.ArrowForward, contentDescription = "See more")
             Spacer(Modifier.width(2.dp))
-            Text(getString(R.string.association_see_more))
+            Text(context.getString(R.string.association_see_more))
         }
     }
 }
@@ -591,9 +410,9 @@ private fun AssociationEventCard(event: Event) {
 
 /** Component that introduce the upcoming events of the association. */
 @Composable
-private fun AssociationEventTitle() {
+private fun AssociationEventTitle(context: Context) {
     Text(
-        getString(R.string.association_upcoming_events),
+        context.getString(R.string.association_upcoming_events),
         modifier = Modifier
             .padding(horizontal = 20.dp)
             .testTag("AssociationEventTitle"),
@@ -627,7 +446,7 @@ private fun AssociationDescription(association: Association) {
  * @param association (Association) : The association currently displayed
  */
 @Composable
-private fun AssociationHeader(association: Association) {
+private fun AssociationHeader(association: Association, context: Context) {
     Row {
         Box(
             modifier = Modifier
@@ -642,7 +461,7 @@ private fun AssociationHeader(association: Association) {
         }
         Column {
             Text(
-                "${association.followersCount} " + getString(R.string.association_follower),
+                "${association.followersCount} " + context.getString(R.string.association_follower),
                 style = AppTypography.headlineSmall,
                 modifier = Modifier
                     .padding(bottom = 5.dp)
@@ -650,7 +469,7 @@ private fun AssociationHeader(association: Association) {
             )
             Text(
                 "${association.members.list.collectAsState().value.size} " +
-                        getString(R.string.association_member),
+                        context.getString(R.string.association_member),
                 style = AppTypography.headlineSmall,
                 modifier = Modifier
                     .padding(bottom = 14.dp)
@@ -668,9 +487,8 @@ private fun AssociationHeader(association: Association) {
             ) {
                 Icon(Icons.Filled.Add, contentDescription = "Follow icon")
                 Spacer(Modifier.width(2.dp))
-                Text(getString(R.string.association_follow))
+                Text(context.getString(R.string.association_follow))
             }
         }
->>>>>>> f838f6920a3a3b397c5f08b48b704e6e6e1fb1b5
     }
 }
