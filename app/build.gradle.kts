@@ -174,7 +174,6 @@ dependencies {
     implementation(libs.firebase.storage.ktx)
     implementation(libs.androidx.ui.text.google.fonts)
 
-    implementation(libs.volley)
   implementation(libs.androidx.compose.material)
 
   testImplementation(libs.test.core.ktx)
