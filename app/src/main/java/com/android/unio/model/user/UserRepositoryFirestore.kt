@@ -14,7 +14,7 @@ class UserRepositoryFirestore(private val db: FirebaseFirestore) : UserRepositor
 
   override fun init(
       onSuccess: () -> Unit
-  ) { // repository is only considered "initialized" when a user is authenticated
+  ) {
     Firebase.auth.addAuthStateListener {
       if (it.currentUser != null) {
         onSuccess()
