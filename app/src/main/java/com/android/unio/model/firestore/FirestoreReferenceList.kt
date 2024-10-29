@@ -66,6 +66,7 @@ class FirestoreReferenceList<T>(
   override fun requestAll(onSuccess: () -> Unit) {
     if (_uids.isEmpty()) {
       _list.value = emptyList()
+      onSuccess()
       return
     }
 
