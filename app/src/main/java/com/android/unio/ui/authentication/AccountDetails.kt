@@ -1,6 +1,11 @@
 package com.android.unio.ui.accountCreation
 
+import android.net.Uri
+import android.util.Log
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -34,13 +39,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.compose.rememberNavController
 import com.android.unio.model.association.Association
 import com.android.unio.model.firestore.emptyFirestoreReferenceList
 import com.android.unio.model.user.AccountDetailsError
 import com.android.unio.model.user.Interest
 import com.android.unio.model.user.User
+import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserSocial
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.model.user.checkNewUser
@@ -52,7 +60,22 @@ import com.android.unio.ui.theme.AppTypography
 import com.android.unio.ui.theme.primaryLight
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
+import com.google.firebase.firestore.firestore
 import kotlinx.coroutines.flow.MutableStateFlow
+
+
+@Preview(showBackground = true)
+@Composable
+fun AccountDetailsPreview() {
+    val navController = rememberNavController()
+    val navigationActions = NavigationAction(navController)
+    val userRepositoryFirestore = UserRepositoryFirestore(Firebase.firestore)
+    val userViewModel = UserViewModel(userRepositoryFirestore, false)
+    AccountDetails(
+        navigationAction = navigationActions,
+        userViewModel = userViewModel
+    )
+}
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -74,6 +97,17 @@ fun AccountDetails(
 
   val interests by interestsFlow.collectAsState()
   val socials by userSocialsFlow.collectAsState()
+
+    val profilePictureUri = remember { mutableStateOf<Uri>(Uri.EMPTY) }
+
+    val pickMedia = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+        if (uri != null) {
+            Log.d("PhotoPicker", "Selected URI: $uri")
+            profilePictureUri.value = uri
+        } else {
+            Log.d("PhotoPicker", "No media selected")
+        }
+    }
 
   val context = LocalContext.current
   var showInterestsOverlay by remember { mutableStateOf(false) }
@@ -155,9 +189,8 @@ fun AccountDetails(
                   tint = primaryLight,
                   modifier =
                       Modifier.clickable {
-                            Toast.makeText(context, "Not yet implemented", Toast.LENGTH_SHORT)
-                                .show()
-                          }
+                          pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+                      }
                           .size(100.dp)
                           .testTag("AccountDetailsProfilePictureIcon"))
             }
