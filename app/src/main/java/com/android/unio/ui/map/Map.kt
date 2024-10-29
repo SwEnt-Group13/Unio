@@ -136,6 +136,7 @@ fun DisplayEventMarker(event: Event, customIconResId: Int?) {
         }
 
     Marker(
+        contentDescription = "Event: ${event.title}",
         state = MarkerState(position = LatLng(location.latitude, location.longitude)),
         title = event.title,
         snippet = "$timer - ${event.description}",
