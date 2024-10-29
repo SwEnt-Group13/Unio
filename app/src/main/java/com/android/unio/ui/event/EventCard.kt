@@ -56,6 +56,7 @@ import com.android.unio.model.firestore.MockReferenceList
 import com.android.unio.model.map.Location
 import com.android.unio.model.user.MockUserRepository
 import com.android.unio.model.user.UserViewModel
+import com.android.unio.ui.theme.AppTypography
 import com.android.unio.ui.theme.primaryContainerLight
 import com.android.unio.ui.theme.secondaryDark
 import com.android.unio.utils.EventUtils.addAlphaToColor
@@ -214,7 +215,7 @@ fun EventCard(event: Event, userViewModel: UserViewModel) {
                           .wrapContentWidth(), // Make sure the text only takes as much space as
                   // needed
                   text = event.location.name,
-                  style = MaterialTheme.typography.bodySmall,
+                  style = AppTypography.bodySmall,
                   color = Color.Black)
             }
 
