@@ -1,6 +1,5 @@
 package com.android.unio.model.firestore
 
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
 interface ReferenceList<T> {

@@ -34,53 +34,41 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
-import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.android.unio.R
-import com.android.unio.model.association.Association
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventType
-import com.android.unio.model.event.EventViewModel
-import com.android.unio.model.event.MockEventRepository
-import com.android.unio.model.map.Location
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.theme.AppTypography
 import com.android.unio.ui.theme.primaryContainerLight
 import com.android.unio.ui.theme.primaryDark
-import com.android.unio.ui.theme.primaryLight
 import com.android.unio.ui.theme.secondaryDark
 import com.android.unio.utils.EventUtils.addAlphaToColor
 import com.android.unio.utils.EventUtils.formatTimestamp
-import com.google.firebase.Timestamp
 import java.text.SimpleDateFormat
-import java.util.Date
 import java.util.Locale
 
 @Composable
 fun EventCard(event: Event, userViewModel: UserViewModel) {
 
   var isSaved by remember { mutableStateOf(false) }
-    val user by userViewModel.user.collectAsState()
+  val user by userViewModel.user.collectAsState()
 
-  LaunchedEffect(event.uid) {
-    isSaved = userViewModel.isEventSavedForCurrentUser(event.uid)
-  }
+  LaunchedEffect(event.uid) { isSaved = userViewModel.isEventSavedForCurrentUser(event.uid) }
 
   Column(
       modifier =
           Modifier.fillMaxWidth()
               .padding(vertical = 8.dp)
-              //implement clickable feature
+              // implement clickable feature
               .testTag("event_EventListItem")
               .clip(RoundedCornerShape(10.dp))
               .background(secondaryDark)) {
@@ -88,21 +76,20 @@ fun EventCard(event: Event, userViewModel: UserViewModel) {
           // fallback to a local placeholder image in case of an invalid URI
           val imageUrl = event.image.takeIf { it.isNotEmpty() }?.toUri()
 
-            AsyncImage(
-                model =
-                    ImageRequest.Builder(LocalContext.current)
-                        .data(imageUrl)
-                        .error(R.drawable.no_picture_found) // placeholder in case of loading error
-                        .build(),
-                contentDescription = "Image of the event",
-                modifier =
-                    Modifier.fillMaxWidth()
-                        .height(100.dp)
-                        .clip(RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp))
-                        .testTag("event_EventImage"),
-                contentScale = ContentScale.Crop // crop the image to fit
-                )
-
+          AsyncImage(
+              model =
+                  ImageRequest.Builder(LocalContext.current)
+                      .data(imageUrl)
+                      .error(R.drawable.no_picture_found) // placeholder in case of loading error
+                      .build(),
+              contentDescription = "Image of the event",
+              modifier =
+                  Modifier.fillMaxWidth()
+                      .height(100.dp)
+                      .clip(RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp))
+                      .testTag("event_EventImage"),
+              contentScale = ContentScale.Crop // crop the image to fit
+              )
 
           Box(
               modifier =

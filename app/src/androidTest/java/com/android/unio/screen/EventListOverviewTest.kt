@@ -42,8 +42,6 @@ class EventListOverviewTest {
     navigationAction = NavigationAction(navHostController)
   }
 
-
-
   /**
    * Tests the UI when the event list is empty. Asserts that the appropriate message is displayed
    * when there are no events available.

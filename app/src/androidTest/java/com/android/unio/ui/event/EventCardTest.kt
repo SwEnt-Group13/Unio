@@ -5,7 +5,6 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import com.android.unio.model.association.Association
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventType
-import com.android.unio.model.event.MockEventRepository
 import com.android.unio.model.firestore.emptyFirestoreReferenceList
 import com.android.unio.model.firestore.firestoreReferenceListWith
 import com.android.unio.model.map.Location
@@ -90,64 +89,63 @@ class EventCardTest {
 }
 
 class MockUserRepository : UserRepository {
-    private val mockUsers =
-        listOf(
-            User(
-                uid = "1",
-                email = "john.doe@example.com",
-                firstName = "John",
-                lastName = "Doe",
-                biography = "Just a regular guy.",
-                followedAssociations = Association.emptyFirestoreReferenceList(),
-                joinedAssociations = Association.emptyFirestoreReferenceList(),
-                savedEvents = Event.emptyFirestoreReferenceList(),
-                interests = listOf(Interest.SPORTS, Interest.MUSIC),
-                socials =
-                listOf(
-                    UserSocial(Social.INSTAGRAM, "john_doe"),
-                    UserSocial(Social.WHATSAPP, "john.doe.whatsapp")),
-                profilePicture = "https://example.com/profile_picture1.jpg",
-                hasProvidedAccountDetails = false),
-            User(
-                uid = "2",
-                email = "jane.smith@example.com",
-                firstName = "Jane",
-                lastName = "Smith",
-                biography = "Lover of arts and technology.",
-                followedAssociations = Association.emptyFirestoreReferenceList(),
-                joinedAssociations = Association.emptyFirestoreReferenceList(),
-                savedEvents = Event.emptyFirestoreReferenceList(),
-                interests = listOf(Interest.ART, Interest.TECHNOLOGY),
-                socials =
-                listOf(
-                    UserSocial(Social.TELEGRAM, "jane_smith"),
-                    UserSocial(Social.TELEGRAM, "jane.smith.telegram")),
-                profilePicture = "https://example.com/profile_picture2.jpg",
-                hasProvidedAccountDetails = false))
+  private val mockUsers =
+      listOf(
+          User(
+              uid = "1",
+              email = "john.doe@example.com",
+              firstName = "John",
+              lastName = "Doe",
+              biography = "Just a regular guy.",
+              followedAssociations = Association.emptyFirestoreReferenceList(),
+              joinedAssociations = Association.emptyFirestoreReferenceList(),
+              savedEvents = Event.emptyFirestoreReferenceList(),
+              interests = listOf(Interest.SPORTS, Interest.MUSIC),
+              socials =
+                  listOf(
+                      UserSocial(Social.INSTAGRAM, "john_doe"),
+                      UserSocial(Social.WHATSAPP, "john.doe.whatsapp")),
+              profilePicture = "https://example.com/profile_picture1.jpg",
+              hasProvidedAccountDetails = false),
+          User(
+              uid = "2",
+              email = "jane.smith@example.com",
+              firstName = "Jane",
+              lastName = "Smith",
+              biography = "Lover of arts and technology.",
+              followedAssociations = Association.emptyFirestoreReferenceList(),
+              joinedAssociations = Association.emptyFirestoreReferenceList(),
+              savedEvents = Event.emptyFirestoreReferenceList(),
+              interests = listOf(Interest.ART, Interest.TECHNOLOGY),
+              socials =
+                  listOf(
+                      UserSocial(Social.TELEGRAM, "jane_smith"),
+                      UserSocial(Social.TELEGRAM, "jane.smith.telegram")),
+              profilePicture = "https://example.com/profile_picture2.jpg",
+              hasProvidedAccountDetails = false))
 
-    override fun init(onSuccess: () -> Unit) {
-        onSuccess()
+  override fun init(onSuccess: () -> Unit) {
+    onSuccess()
+  }
+
+  override fun getUsers(onSuccess: (List<User>) -> Unit, onFailure: (Exception) -> Unit) {
+    onSuccess(mockUsers)
+  }
+
+  override fun getUserWithId(
+      id: String,
+      onSuccess: (User) -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+    val user = mockUsers.find { it.uid == id }
+    if (user != null) {
+      onSuccess(user)
+    } else {
+      onFailure(Exception("User not found"))
     }
+  }
 
-    override fun getUsers(onSuccess: (List<User>) -> Unit, onFailure: (Exception) -> Unit) {
-        onSuccess(mockUsers)
-    }
-
-    override fun getUserWithId(
-        id: String,
-        onSuccess: (User) -> Unit,
-        onFailure: (Exception) -> Unit
-    ) {
-        val user = mockUsers.find { it.uid == id }
-        if (user != null) {
-            onSuccess(user)
-        } else {
-            onFailure(Exception("User not found"))
-        }
-    }
-
-
-    override fun updateUser(user: User, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
-        TODO("Not yet implemented")
-    }
+  override fun updateUser(user: User, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+    TODO("Not yet implemented")
+  }
 }

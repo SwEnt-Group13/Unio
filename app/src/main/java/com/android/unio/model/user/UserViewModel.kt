@@ -5,9 +5,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.android.unio.model.event.Event
 import com.google.firebase.Firebase
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.firestore
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -98,9 +96,9 @@ class UserViewModel(val repository: UserRepository, initializeWithAuthenticatedU
   }
 
   fun saveEventForCurrentUser(
-    eventUid: String,
-    onSuccess: () -> Unit,
-    onFailure: (Exception) -> Unit
+      eventUid: String,
+      onSuccess: () -> Unit,
+      onFailure: (Exception) -> Unit
   ) {
     val currentUser = _user.value
     if (currentUser == null) {
@@ -114,9 +112,9 @@ class UserViewModel(val repository: UserRepository, initializeWithAuthenticatedU
   }
 
   fun unSaveEventForCurrentUser(
-    eventUid: String,
-    onSuccess: () -> Unit,
-    onFailure: (Exception) -> Unit
+      eventUid: String,
+      onSuccess: () -> Unit,
+      onFailure: (Exception) -> Unit
   ) {
     val currentUser = _user.value
     if (currentUser == null) {
@@ -133,6 +131,7 @@ class UserViewModel(val repository: UserRepository, initializeWithAuthenticatedU
       onFailure(Exception("Event not found in savedEvents"))
     }
   }
+
   fun isEventSavedForCurrentUser(eventUid: String): Boolean {
     val currentUser = _user.value
     if (currentUser == null) {
@@ -143,9 +142,3 @@ class UserViewModel(val repository: UserRepository, initializeWithAuthenticatedU
     return currentUser.savedEvents.contains(eventUid)
   }
 }
-
-
-
-
-
-

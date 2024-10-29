@@ -1,20 +1,15 @@
 package com.android.unio.model.user
 
-import android.util.Log
 import com.android.unio.model.firestore.FirestorePaths.USER_PATH
 import com.android.unio.model.firestore.transform.hydrate
 import com.android.unio.model.firestore.transform.serialize
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
-import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.firestore
 
 class UserRepositoryFirestore(private val db: FirebaseFirestore) : UserRepository {
 
-  override fun init(
-      onSuccess: () -> Unit
-  ) {
+  override fun init(onSuccess: () -> Unit) {
     Firebase.auth.addAuthStateListener {
       if (it.currentUser != null) {
         onSuccess()
