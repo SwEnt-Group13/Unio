@@ -100,7 +100,7 @@ class AssociationProfileTest {
     `when`(db.collection(any())).thenReturn(collectionReference)
     `when`(associationRepository.getAssociations(any(), any())).thenAnswer { invocation ->
       val onSuccess = invocation.arguments[0] as (List<Association>) -> Unit
-      onSuccess(this.associations)
+      onSuccess(associations)
     }
     `when`(eventRepository.getEventsOfAssociation(any(), any(), any())).thenAnswer { invocation ->
       val onSuccess = invocation.arguments[1] as (List<Event>) -> Unit
