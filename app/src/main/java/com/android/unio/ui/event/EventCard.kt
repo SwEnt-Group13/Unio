@@ -23,6 +23,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -51,10 +52,10 @@ import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventType
 import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.event.MockEventRepository
-import com.android.unio.model.event.PreviewEventViewModel
 import com.android.unio.model.firestore.MockReferenceList
 import com.android.unio.model.map.Location
 import com.android.unio.model.user.MockUserRepository
+import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.theme.primaryContainerLight
 import com.android.unio.ui.theme.secondaryDark
 import com.android.unio.utils.EventUtils.addAlphaToColor
@@ -78,17 +79,17 @@ fun EventCardPreview() {
           catchyDescription = "This is a catchy description.",
           types = listOf(EventType.TRIP))
 
-  val previewViewModel = PreviewEventViewModel(MockEventRepository(), MockUserRepository())
-  EventCard(event = sampleEvent, viewModel = previewViewModel)
+  EventCard(event = sampleEvent, userViewModel = viewModel(factory = UserViewModel.Factory))
 }
 
 @Composable
-fun EventCard(event: Event, viewModel: EventViewModel) {
+fun EventCard(event: Event, userViewModel: UserViewModel) {
 
   var isSaved by remember { mutableStateOf(false) }
+    val user by userViewModel.user.collectAsState()
 
   LaunchedEffect(event.uid) {
-    viewModel.isEventSavedForCurrentUser(event.uid) { saved -> isSaved = saved }
+    isSaved = userViewModel.isEventSavedForCurrentUser(event.uid)
   }
 
   Column(
@@ -139,12 +140,12 @@ fun EventCard(event: Event, viewModel: EventViewModel) {
                       .align(Alignment.TopEnd)
                       .clickable {
                         if (isSaved) {
-                          viewModel.unsaveEventForCurrentUser(
+                          userViewModel.unSaveEventForCurrentUser(
                               event.uid,
                               onSuccess = { isSaved = false },
                               onFailure = { e -> Log.e("EventCard", "Failed to unsave event ", e) })
                         } else {
-                          viewModel.saveEventForCurrentUser(
+                          userViewModel.saveEventForCurrentUser(
                               event.uid,
                               onSuccess = { isSaved = true },
                               onFailure = { e -> Log.e("EventCard", "Failed to save event ", e) })

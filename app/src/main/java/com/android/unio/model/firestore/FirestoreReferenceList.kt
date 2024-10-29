@@ -62,7 +62,11 @@ class FirestoreReferenceList<T>(
     _uids.addAll(uids)
   }
 
-  /** Requests all documents from Firestore and updates the list. */
+    override fun remove(uid: String) {
+        _uids.remove(uid)
+    }
+
+    /** Requests all documents from Firestore and updates the list. */
   override fun requestAll(onSuccess: () -> Unit) {
     if (_uids.isEmpty()) {
       _list.value = emptyList()
@@ -85,7 +89,11 @@ class FirestoreReferenceList<T>(
         }
   }
 
-  companion object {
+    override fun contains(uid: String): Boolean {
+        return _uids.contains(uid)
+    }
+
+    companion object {
     /** Creates a [FirestoreReferenceList] from a list of UIDs. */
     fun <T> fromList(
         list: List<String>,

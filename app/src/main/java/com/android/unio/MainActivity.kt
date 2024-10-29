@@ -97,7 +97,7 @@ fun UnioApp() {
     }
     navigation(startDestination = Screen.HOME, route = Route.HOME) {
       composable(Screen.HOME) {
-        HomeScreen(navigationActions, eventListViewModel)
+        HomeScreen(navigationActions, eventListViewModel = eventListViewModel, userViewModel = userViewModel)
       }
     }
     navigation(startDestination = Screen.EXPLORE, route = Route.EXPLORE) {

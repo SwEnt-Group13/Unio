@@ -5,7 +5,9 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.android.unio.model.event.Event
 import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.firestore
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -94,4 +96,56 @@ class UserViewModel(val repository: UserRepository, initializeWithAuthenticatedU
           }
         }
   }
+
+  fun saveEventForCurrentUser(
+    eventUid: String,
+    onSuccess: () -> Unit,
+    onFailure: (Exception) -> Unit
+  ) {
+    val currentUser = _user.value
+    if (currentUser == null) {
+      Log.w("Firestore", "No user available in _user, unable to save event")
+      onFailure(Exception("No user available"))
+      return
+    }
+
+    currentUser.savedEvents.add(eventUid)
+    onSuccess()
+  }
+
+  fun unSaveEventForCurrentUser(
+    eventUid: String,
+    onSuccess: () -> Unit,
+    onFailure: (Exception) -> Unit
+  ) {
+    val currentUser = _user.value
+    if (currentUser == null) {
+      Log.w("Firestore", "No user available in _user, unable to unsave event")
+      onFailure(Exception("No user available"))
+      return
+    }
+
+    if (isEventSavedForCurrentUser(eventUid)) {
+      currentUser.savedEvents.remove(eventUid)
+      onSuccess()
+    } else {
+      Log.w("UserViewModel", "Event not found in savedEvents")
+      onFailure(Exception("Event not found in savedEvents"))
+    }
+  }
+  fun isEventSavedForCurrentUser(eventUid: String): Boolean {
+    val currentUser = _user.value
+    if (currentUser == null) {
+      Log.w("UserViewModel", "No user available in _user, unable to check if event is saved")
+      return false
+    }
+
+    return currentUser.savedEvents.contains(eventUid)
+  }
 }
+
+
+
+
+
+

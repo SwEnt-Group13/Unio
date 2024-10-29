@@ -51,8 +51,8 @@ import com.android.unio.model.event.EventRepository
 import com.android.unio.model.event.EventRepositoryMock
 import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.event.MockEventRepository
-import com.android.unio.model.event.PreviewEventViewModel
 import com.android.unio.model.user.MockUserRepository
+import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.event.EventCard
 import com.android.unio.ui.navigation.BottomNavigationMenu
 import com.android.unio.ui.navigation.LIST_TOP_LEVEL_DESTINATION
@@ -70,15 +70,14 @@ fun EventListOverviewPreview() {
 
   HomeScreen(
       NavigationAction(NavHostController(LocalContext.current)),
-      eventListViewModel = eventListViewModel,
-      eventViewModel = PreviewEventViewModel(MockEventRepository(), MockUserRepository()))
+      eventListViewModel = eventListViewModel)
 }
 
 @Composable
 fun HomeScreen(
     navigationAction: NavigationAction,
     eventListViewModel: EventListViewModel = viewModel(factory = EventListViewModel.Factory),
-    eventViewModel: EventViewModel = viewModel(factory = EventViewModel.Factory)
+    userViewModel: UserViewModel = viewModel(factory = UserViewModel.Factory)
 ) {
   val events by eventListViewModel.events.collectAsState()
   var selectedTab by remember { mutableStateOf("All") }
@@ -197,7 +196,7 @@ fun HomeScreen(
             LazyColumn(
                 contentPadding = PaddingValues(vertical = 8.dp),
                 modifier = Modifier.fillMaxSize().padding(horizontal = 32.dp)) {
-                  items(events) { event -> EventCard(event = event, viewModel = eventViewModel) }
+                  items(events) { event -> EventCard(event = event, userViewModel = userViewModel) }
                 }
           } else {
             Box(

@@ -11,24 +11,6 @@ interface UserRepository {
 
   fun getUserWithId(id: String, onSuccess: (User) -> Unit, onFailure: (Exception) -> Unit)
 
-  fun listenToSavedEvents(userUid: String, onSavedEventsChanged: (List<String>) -> Unit)
-
-  fun saveEvent(
-      userUid: String,
-      eventUid: String,
-      onSuccess: () -> Unit,
-      onFailure: (Exception) -> Unit
-  )
-
-  fun unsaveEvent(
-      userUid: String,
-      eventUid: String,
-      onSuccess: () -> Unit,
-      onFailure: (Exception) -> Unit
-  )
-
-  fun isEventSaved(userUid: String, eventUid: String, onResult: (Boolean) -> Unit)
-
   fun updateUser(user: User, onSuccess: () -> Unit, onFailure: (Exception) -> Unit)
 }
 
@@ -63,7 +45,7 @@ class MockUserRepository : UserRepository {
               interests = listOf(Interest.ART, Interest.TECHNOLOGY),
               socials =
                   listOf(
-                      UserSocial(Social.DISCORD, "jane_smith"),
+                      UserSocial(Social.TELEGRAM, "jane_smith"),
                       UserSocial(Social.TELEGRAM, "jane.smith.telegram")),
               profilePicture = "https://example.com/profile_picture2.jpg",
               hasProvidedAccountDetails = false))
@@ -89,31 +71,6 @@ class MockUserRepository : UserRepository {
     }
   }
 
-  override fun listenToSavedEvents(userUid: String, onSavedEventsChanged: (List<String>) -> Unit) {
-    onSavedEventsChanged(listOf("1", "2"))
-  }
-
-  override fun saveEvent(
-      userUid: String,
-      eventUid: String,
-      onSuccess: () -> Unit,
-      onFailure: (Exception) -> Unit
-  ) {
-    onSuccess()
-  }
-
-  override fun unsaveEvent(
-      userUid: String,
-      eventUid: String,
-      onSuccess: () -> Unit,
-      onFailure: (Exception) -> Unit
-  ) {
-    onSuccess()
-  }
-
-  override fun isEventSaved(userUid: String, eventUid: String, onResult: (Boolean) -> Unit) {
-    onResult(false)
-  }
 
   override fun updateUser(user: User, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
     TODO("Not yet implemented")
