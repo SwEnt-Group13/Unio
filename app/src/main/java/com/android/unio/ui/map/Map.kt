@@ -24,7 +24,7 @@ import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventListViewModel
 import com.android.unio.model.firestore.emptyFirestoreReferenceList
 import com.android.unio.model.map.Location
-import com.android.unio.resources.ResourceManager.getString
+import com.android.unio.model.strings.MapStrings
 import com.android.unio.ui.navigation.NavigationAction
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
@@ -43,18 +43,23 @@ fun MapScreen(
     navigationAction: NavigationAction,
     eventListViewModel: EventListViewModel = viewModel(factory = EventListViewModel.Factory)
 ) {
+  val context = LocalContext.current
   Scaffold(
       modifier = Modifier.testTag("MapScreen"),
       topBar = {
         TopAppBar(
-            title = { Text("Event map", modifier = Modifier.testTag("MapTitle")) },
+            title = {
+              Text(
+                  context.getString(R.string.map_event_title),
+                  modifier = Modifier.testTag("MapTitle"))
+            },
             navigationIcon = {
               IconButton(
                   onClick = { navigationAction.goBack() },
                   modifier = Modifier.testTag("goBackButton")) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
-                        contentDescription = getString(R.string.association_go_back))
+                        contentDescription = context.getString(R.string.map_event_go_back_button))
                   }
             })
       }) { pd ->
@@ -148,7 +153,7 @@ fun timeUntilEvent(eventTimestamp: Timestamp): String {
   val currentTime = Timestamp.now()
   val timeDifference = eventTimestamp.seconds - currentTime.seconds
 
-  if (timeDifference < 0) return "Event has already occurred"
+  if (timeDifference < 0) return MapStrings.EVENT_ALREADY_OCCURED
 
   val days = TimeUnit.SECONDS.toDays(timeDifference)
   val hours = TimeUnit.SECONDS.toHours(timeDifference) % 24
