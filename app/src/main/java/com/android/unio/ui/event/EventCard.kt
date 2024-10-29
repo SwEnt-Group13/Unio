@@ -72,6 +72,9 @@ fun EventCard(event: Event, userViewModel: UserViewModel) {
               .testTag("event_EventListItem")
               .clip(RoundedCornerShape(10.dp))
               .background(secondaryDark)) {
+
+        // Event image section, displays the main event image or a placeholder if the URL is invalid
+
         Box(modifier = Modifier.fillMaxWidth().height(100.dp)) {
           // fallback to a local placeholder image in case of an invalid URI
           val imageUrl = event.image.takeIf { it.isNotEmpty() }?.toUri()
@@ -90,6 +93,9 @@ fun EventCard(event: Event, userViewModel: UserViewModel) {
                       .testTag("event_EventImage"),
               contentScale = ContentScale.Crop // crop the image to fit
               )
+
+          // Save button icon on the top right corner of the image, allows the user to save/unsave
+          // the event
 
           Box(
               modifier =
@@ -119,7 +125,12 @@ fun EventCard(event: Event, userViewModel: UserViewModel) {
               }
         }
 
+        // Event details section, including title, type, location, and time
+
         Column(modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp)) {
+
+          // Row containing event title and type label
+
           Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
             Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.weight(1f)) {
               Text(
@@ -134,6 +145,9 @@ fun EventCard(event: Event, userViewModel: UserViewModel) {
                   color = Color.Black)
 
               Spacer(modifier = Modifier.width(6.dp))
+
+              // Display event type (e.g., Music, Sports) with colored background
+
               val type: EventType =
                   if (event.types.isEmpty()) {
                     EventType.OTHER
@@ -154,6 +168,8 @@ fun EventCard(event: Event, userViewModel: UserViewModel) {
             }
             Spacer(modifier = Modifier.width(6.dp))
 
+            // Static association logo on the right of the title and type
+
             Image(
                 painter = painterResource(id = R.drawable.clic),
                 contentDescription = "Association logo",
@@ -163,6 +179,8 @@ fun EventCard(event: Event, userViewModel: UserViewModel) {
                         .clip(RoundedCornerShape(5.dp))
                         .testTag("event_ClicImage"))
           }
+
+          // Row displaying event location and formatted date/time details
 
           Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
             Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.weight(1f)) {
@@ -179,6 +197,8 @@ fun EventCard(event: Event, userViewModel: UserViewModel) {
 
             Spacer(modifier = Modifier.width(1.dp))
 
+            // Date display for the event
+
             Text(
                 modifier =
                     Modifier.padding(vertical = 1.dp, horizontal = 0.dp).testTag("event_EventDate"),
@@ -192,6 +212,8 @@ fun EventCard(event: Event, userViewModel: UserViewModel) {
 
             Spacer(modifier = Modifier.width(2.dp))
 
+            // Time display for the event
+
             Text(
                 modifier = Modifier.testTag("event_EventTime").wrapContentWidth(),
                 text = formatTimestamp(event.date, SimpleDateFormat("HH:mm", Locale.getDefault())),
@@ -199,11 +221,15 @@ fun EventCard(event: Event, userViewModel: UserViewModel) {
                 color = Color.Black)
           }
 
+          // Divider line below location and time row
+
           Row {
             Spacer(modifier = Modifier.width(4.dp))
             Spacer(
                 modifier = Modifier.fillMaxWidth().height(1.dp).background(primaryContainerLight))
           }
+
+          // Catchy description section with a brief highlight of the event
 
           Text(
               modifier =
