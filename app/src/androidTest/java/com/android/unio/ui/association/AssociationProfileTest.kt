@@ -200,7 +200,8 @@ class AssociationProfileTest {
     }
 
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationProfileTitle"))
-    assertDisplayComponentInScroll(composeTestRule.onNodeWithText(this.associations.first().fullName))
+    assertDisplayComponentInScroll(
+        composeTestRule.onNodeWithText(this.associations.first().fullName))
   }
 
   @Test
