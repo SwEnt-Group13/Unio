@@ -50,6 +50,7 @@ class EventRepositoryFirestore(private val db: FirebaseFirestore) : EventReposit
         .addOnFailureListener { exception -> onFailure(exception) }
   }
 
+    //TODO: test and comment
     override fun getEventById(
         id: String,
         onSuccess: (Event) -> Unit,

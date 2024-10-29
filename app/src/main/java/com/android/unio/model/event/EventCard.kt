@@ -31,30 +31,36 @@ import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
 import coil.compose.AsyncImage
 import com.android.unio.R
+import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.utils.EventUtils.addAlphaToColor
 import com.android.unio.utils.EventUtils.formatTimestamp
 import java.text.SimpleDateFormat
 import java.util.Locale
 
 @Composable
-fun EventCard(event: Event, onClick: () -> Unit) {
+fun EventCard(navigationAction: NavigationAction, event: Event, onClick: () -> Unit) {
 
   Column(
       modifier =
-          Modifier.fillMaxWidth()
-              .padding(vertical = 8.dp)
-              .clickable(onClick = onClick)
-              .testTag("event_EventListItem")
-              .clip(RoundedCornerShape(10.dp))
-              .background(Color(0xFFF0ECF4))) {
+      Modifier
+          .fillMaxWidth()
+          .padding(vertical = 8.dp)
+          .clickable(
+              onClick =
+              onClick
+          )
+          .testTag("event_EventListItem")
+          .clip(RoundedCornerShape(10.dp))
+          .background(Color(0xFFF0ECF4))) {
         AsyncImage(
             model = event.image.toUri(),
             contentDescription = "Image of the event",
             modifier =
-                Modifier.fillMaxWidth()
-                    .height(100.dp)
-                    .clip(RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp))
-                    .testTag("event_EventImage"),
+            Modifier
+                .fillMaxWidth()
+                .height(100.dp)
+                .clip(RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp))
+                .testTag("event_EventImage"),
             contentScale = ContentScale.Crop // crop the image to fit
             )
 
@@ -63,9 +69,10 @@ fun EventCard(event: Event, onClick: () -> Unit) {
             Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.weight(1f)) {
               Text(
                   modifier =
-                      Modifier.padding(vertical = 1.dp, horizontal = 4.dp)
-                          .testTag("event_EventTitle")
-                          .wrapContentWidth(), // Make sure the text only takes as much space as
+                  Modifier
+                      .padding(vertical = 1.dp, horizontal = 4.dp)
+                      .testTag("event_EventTitle")
+                      .wrapContentWidth(), // Make sure the text only takes as much space as
                   // needed
                   text = event.title,
                   style = MaterialTheme.typography.titleMedium,
@@ -79,14 +86,16 @@ fun EventCard(event: Event, onClick: () -> Unit) {
                   } else event.types[0]
               Box(
                   modifier =
-                      Modifier.clip(RoundedCornerShape(4.dp))
-                          .background(addAlphaToColor(type.color, 200))
-                          .wrapContentWidth()) {
+                  Modifier
+                      .clip(RoundedCornerShape(4.dp))
+                      .background(addAlphaToColor(type.color, 200))
+                      .wrapContentWidth()) {
                     Text(
                         text = type.text,
                         modifier =
-                            Modifier.padding(horizontal = 4.dp, vertical = 4.dp)
-                                .testTag("event_EventMainType"),
+                        Modifier
+                            .padding(horizontal = 4.dp, vertical = 4.dp)
+                            .testTag("event_EventMainType"),
                         color = Color.Black,
                         style = TextStyle(fontSize = 8.sp))
                   }
@@ -97,18 +106,20 @@ fun EventCard(event: Event, onClick: () -> Unit) {
                 painter = painterResource(id = R.drawable.clic),
                 contentDescription = null,
                 modifier =
-                    Modifier.size(24.dp)
-                        .align(Alignment.CenterVertically)
-                        .testTag("event_ClicImage"))
+                Modifier
+                    .size(24.dp)
+                    .align(Alignment.CenterVertically)
+                    .testTag("event_ClicImage"))
           }
 
           Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
             Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.weight(1f)) {
               Text(
                   modifier =
-                      Modifier.padding(vertical = 1.dp, horizontal = 4.dp)
-                          .testTag("event_EventLocation")
-                          .wrapContentWidth(), // Make sure the text only takes as much space as
+                  Modifier
+                      .padding(vertical = 1.dp, horizontal = 4.dp)
+                      .testTag("event_EventLocation")
+                      .wrapContentWidth(), // Make sure the text only takes as much space as
                   // needed
                   text = event.location.name,
                   style = MaterialTheme.typography.titleMedium,
@@ -119,9 +130,10 @@ fun EventCard(event: Event, onClick: () -> Unit) {
 
             Text(
                 modifier =
-                    Modifier.padding(vertical = 1.dp, horizontal = 4.dp)
-                        .testTag("event_EventDate")
-                        .wrapContentWidth(),
+                Modifier
+                    .padding(vertical = 1.dp, horizontal = 4.dp)
+                    .testTag("event_EventDate")
+                    .wrapContentWidth(),
                 text = formatTimestamp(event.date, SimpleDateFormat("dd/MM", Locale.getDefault())),
                 style = MaterialTheme.typography.titleMedium,
                 color = Color.Black)
@@ -129,14 +141,18 @@ fun EventCard(event: Event, onClick: () -> Unit) {
             Spacer(modifier = Modifier.width(1.dp))
 
             Text(
-                modifier = Modifier.testTag("event_EventTime").wrapContentWidth(),
+                modifier = Modifier
+                    .testTag("event_EventTime")
+                    .wrapContentWidth(),
                 text = formatTimestamp(event.date, SimpleDateFormat("HH:mm", Locale.getDefault())),
                 style = MaterialTheme.typography.titleMedium,
                 color = Color.Black)
           }
 
           Text(
-              modifier = Modifier.testTag("event_EventCatchyDescription").wrapContentWidth(),
+              modifier = Modifier
+                  .testTag("event_EventCatchyDescription")
+                  .wrapContentWidth(),
               text = event.catchyDescription,
               style = TextStyle(fontSize = 12.sp),
               color = Color.Black)

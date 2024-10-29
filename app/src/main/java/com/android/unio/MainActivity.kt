@@ -50,6 +50,8 @@ fun UnioApp() {
   val navController = rememberNavController()
   val navigationActions = NavigationAction(navController)
   val db = FirebaseFirestore.getInstance()
+  val eventRepository = EventRepositoryFirestore(db)
+  val eventListViewModel = EventListViewModel(eventRepository)
 
   val associationRepository = AssociationRepositoryFirestore(Firebase.firestore)
   val associationViewModel = AssociationViewModel(associationRepository)
@@ -95,12 +97,21 @@ fun UnioApp() {
       composable(Screen.HOME) {
         HomeScreen(
             navigationActions,
-            EventListViewModel(EventRepositoryFirestore(db)),
-            onAddEvent = {},
-          onEventClick = { navigationActions.navigateTo(Screen.EVENT_DETAILS) })
+          eventListViewModel,
+          onAddEvent = {})
       }
-      composable(Screen.EVENT_DETAILS) {
-        EventScreen()
+      composable(Screen.EVENT_DETAILS) { navBackStackEntry ->
+        // Get the event UID from the arguments
+        val uid = navBackStackEntry.arguments?.getString("uid")
+        // Create the Event screen with the event UID
+        uid?.let {
+          EventScreen(navigationAction = navigationActions, eventId = it)
+        }
+        uid?.let { EventScreen(navigationActions, it) }
+          ?: run {
+            Log.e("AssociationProfile", "Association UID is null")
+            Toast.makeText(context, "Association UID is null", Toast.LENGTH_SHORT).show()
+          }
       }
     }
     navigation(startDestination = Screen.EXPLORE, route = Route.EXPLORE) {

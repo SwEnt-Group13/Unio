@@ -2,8 +2,8 @@ package com.android.unio.model.user
 
 import com.android.unio.R
 import com.android.unio.model.association.Association
+import com.android.unio.model.event.Event
 import com.android.unio.model.firestore.ReferenceList
-import kotlinx.serialization.json.JsonNull.content
 
 enum class Interest(val title: String) {
   SPORTS("Sports"),
@@ -48,18 +48,20 @@ data class UserSocial(val social: Social, val content: String) {
  * @param hasProvidedAccountDetails Whether the user has provided account details.
  */
 data class User(
-    val uid: String,
-    val email: String,
-    val firstName: String,
-    val lastName: String,
-    val biography: String,
-    val followedAssociations: ReferenceList<Association>,
-    val joinedAssociations: ReferenceList<Association>,
-    val interests: List<Interest>,
-    val socials: List<UserSocial>,
-    val profilePicture: String,
-    val hasProvidedAccountDetails: Boolean
-) {
+  val uid: String,
+  val email: String,
+  val firstName: String,
+  val lastName: String,
+  val biography: String,
+  val followedAssociations: ReferenceList<Association>,
+  val joinedAssociations: ReferenceList<Association>,
+  val interests: List<Interest>,
+  val socials: List<UserSocial>,
+  val profilePicture: String,
+  val hasProvidedAccountDetails: Boolean,
+  val savedEvents: ReferenceList<Event>,
+
+  ) {
   companion object
 }
 

@@ -55,7 +55,9 @@ class UserProfileTest {
                   UserSocial(Social.INSTAGRAM, "Instagram"),
                   UserSocial(Social.WEBSITE, "example.com")),
           profilePicture = "https://www.example.com/image",
-          hasProvidedAccountDetails = true)
+          hasProvidedAccountDetails = true,
+          savedEvents = null
+      )
 
   @Before
   fun setUp() {

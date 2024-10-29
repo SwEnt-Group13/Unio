@@ -71,7 +71,9 @@ class UserRepositoryFirestoreTest {
                     UserSocial(Social.INSTAGRAM, "Insta"),
                     UserSocial(Social.WEBSITE, "example.com")),
             profilePicture = "https://www.example.com/image",
-            hasProvidedAccountDetails = true)
+            hasProvidedAccountDetails = true,
+            savedEvents = null
+        )
 
     user2 =
         User(
@@ -88,7 +90,9 @@ class UserRepositoryFirestoreTest {
                     UserSocial(Social.SNAPCHAT, "Snap"),
                     UserSocial(Social.WEBSITE, "example2.com")),
             profilePicture = "https://www.example.com/image2",
-            hasProvidedAccountDetails = true)
+            hasProvidedAccountDetails = true,
+            savedEvents = null
+        )
 
     `when`(userCollectionReference.get()).thenReturn(querySnapshotTask)
     `when`(userCollectionReference.document(eq(user1.uid))).thenReturn(documentReference)
@@ -216,7 +220,9 @@ class UserRepositoryFirestoreTest {
                   interests = emptyList(),
                   socials = emptyList(),
                   profilePicture = "",
-                  hasProvidedAccountDetails = false)
+                  hasProvidedAccountDetails = false,
+                  savedEvents = null
+              )
           assertEquals(2, users.size)
 
           assertEquals(user1.uid, users[0].uid)

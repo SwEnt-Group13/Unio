@@ -55,7 +55,9 @@ fun UserRepositoryFirestore.Companion.hydrate(data: Map<String, Any>?): User {
             UserSocial(Social.valueOf(it["social"] ?: ""), it["content"] ?: "")
           },
       profilePicture = data?.get("profilePicture") as? String ?: "",
-      hasProvidedAccountDetails = data?.get("hasProvidedAccountDetails") as? Boolean ?: false)
+      hasProvidedAccountDetails = data?.get("hasProvidedAccountDetails") as? Boolean ?: false,
+      savedEvents = null
+  )
 }
 
 fun EventRepositoryFirestore.Companion.hydrate(data: Map<String, Any>?): Event {

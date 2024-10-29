@@ -56,8 +56,13 @@ class EventListViewModel(private val repository: EventRepository) : ViewModel() 
     }
   }
 
-    fun getEventById(id: String, onSuccess: (Event) -> Unit, onFailure: (Exception) -> Unit) {
-        repository.getEventById(id, onSuccess, onFailure)
+    //TODO: test and comment
+    fun findEventById(id: String): Event? {
+        _events.value
+            .find { it.uid == id }
+            ?.let {
+                return it
+            } ?: return null
     }
 
   fun addEvent(

@@ -54,7 +54,9 @@ class HydrationAndSerializationTest {
                     UserSocial(Social.INSTAGRAM, "Insta"),
                     UserSocial(Social.WEBSITE, "example.com")),
             profilePicture = "https://www.example.com/image",
-            hasProvidedAccountDetails = true)
+            hasProvidedAccountDetails = true,
+            savedEvents = null
+        )
 
     association =
         Association(
