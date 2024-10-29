@@ -10,4 +10,10 @@ interface ImageRepository {
       onSuccess: (String) -> Unit,
       onFailure: (Exception) -> Unit
   )
+
+  fun getImageUrl(
+      firebasePath: String,
+      onSuccess: (String) -> Unit,
+      onFailure: (Exception) -> Unit
+  )
 }
