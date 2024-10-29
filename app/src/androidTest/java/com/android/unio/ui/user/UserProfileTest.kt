@@ -9,7 +9,9 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.test.espresso.Espresso
 import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationCategory
+import com.android.unio.model.event.Event
 import com.android.unio.model.firestore.MockReferenceList
+import com.android.unio.model.firestore.emptyFirestoreReferenceList
 import com.android.unio.model.firestore.firestoreReferenceListWith
 import com.android.unio.model.user.Interest
 import com.android.unio.model.user.Social
@@ -56,7 +58,7 @@ class UserProfileTest {
                   UserSocial(Social.WEBSITE, "example.com")),
           profilePicture = "https://www.example.com/image",
           hasProvidedAccountDetails = true,
-          savedEvents = null
+          savedEvents = Event.emptyFirestoreReferenceList()
       )
 
   @Before

@@ -55,7 +55,7 @@ class HydrationAndSerializationTest {
                     UserSocial(Social.WEBSITE, "example.com")),
             profilePicture = "https://www.example.com/image",
             hasProvidedAccountDetails = true,
-            savedEvents = null
+            savedEvents = Event.emptyFirestoreReferenceList()
         )
 
     association =

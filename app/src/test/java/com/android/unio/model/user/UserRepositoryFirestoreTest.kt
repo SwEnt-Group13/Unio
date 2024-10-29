@@ -1,6 +1,7 @@
 package com.android.unio.model.user
 
 import com.android.unio.model.association.Association
+import com.android.unio.model.event.Event
 import com.android.unio.model.firestore.FirestorePaths.ASSOCIATION_PATH
 import com.android.unio.model.firestore.FirestorePaths.USER_PATH
 import com.android.unio.model.firestore.emptyFirestoreReferenceList
@@ -72,7 +73,7 @@ class UserRepositoryFirestoreTest {
                     UserSocial(Social.WEBSITE, "example.com")),
             profilePicture = "https://www.example.com/image",
             hasProvidedAccountDetails = true,
-            savedEvents = null
+            savedEvents = Event.emptyFirestoreReferenceList()
         )
 
     user2 =
@@ -91,7 +92,7 @@ class UserRepositoryFirestoreTest {
                     UserSocial(Social.WEBSITE, "example2.com")),
             profilePicture = "https://www.example.com/image2",
             hasProvidedAccountDetails = true,
-            savedEvents = null
+            savedEvents = Event.emptyFirestoreReferenceList()
         )
 
     `when`(userCollectionReference.get()).thenReturn(querySnapshotTask)
@@ -221,7 +222,7 @@ class UserRepositoryFirestoreTest {
                   socials = emptyList(),
                   profilePicture = "",
                   hasProvidedAccountDetails = false,
-                  savedEvents = null
+                  savedEvents = Event.emptyFirestoreReferenceList()
               )
           assertEquals(2, users.size)
 

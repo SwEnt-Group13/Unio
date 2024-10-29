@@ -37,6 +37,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.android.unio.model.association.Association
+import com.android.unio.model.event.Event
 import com.android.unio.model.firestore.emptyFirestoreReferenceList
 import com.android.unio.model.user.AccountDetailsError
 import com.android.unio.model.user.Interest
@@ -247,7 +248,7 @@ fun AccountDetails(
                       socials = socials,
                       profilePicture = "",
                       hasProvidedAccountDetails = true,
-                      savedEvents = null
+                      savedEvents = Event.emptyFirestoreReferenceList()
                   )
               isErrors = checkNewUser(user)
               if (isErrors.isEmpty()) {

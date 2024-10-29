@@ -26,7 +26,7 @@ class UserViewModelTest {
                   UserSocial(Social.WEBSITE, "example.com")),
           profilePicture = "https://www.example.com/image",
           hasProvidedAccountDetails = true,
-          savedEvents = null
+          savedEvents = MockReferenceList(listOf())
       )
 
   @MockK private lateinit var repository: UserRepository
