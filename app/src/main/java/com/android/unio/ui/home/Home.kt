@@ -60,19 +60,6 @@ import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Route
 import kotlinx.coroutines.launch
 
-@Preview(showBackground = true)
-@Composable
-fun EventListOverviewPreview() {
-
-  val mockEventRepository = EventRepositoryMock()
-
-  val eventListViewModel = EventListViewModel(mockEventRepository as EventRepository)
-
-  HomeScreen(
-      NavigationAction(NavHostController(LocalContext.current)),
-      eventListViewModel = eventListViewModel)
-}
-
 @Composable
 fun HomeScreen(
     navigationAction: NavigationAction,

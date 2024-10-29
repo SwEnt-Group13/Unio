@@ -32,19 +32,6 @@ open class EventViewModel(val repository: EventRepository, val userRepository: U
             }
     }
 
-    // Image repository - avoid initializing in preview mode
-    private val imageRepository by lazy {
-        if (!isPreviewMode()) ImageRepositoryFirebaseStorage() else null
-    }
-
-    /** Helper function to determine if the app is running in preview mode. */
-    private fun isPreviewMode(): Boolean {
-        // Check if the current environment is a preview (used in Compose Previews)
-        return android.os.Build.FINGERPRINT.contains("generic") ||
-                android.os.Build.FINGERPRINT.contains("emulator") ||
-                android.os.Build.MODEL.contains("sdk_gphone")
-    }
-
     /** Add a new event to the repository. It uploads the event image first, then adds the event. */
     fun addEvent(
         inputStream: InputStream,
@@ -52,7 +39,7 @@ open class EventViewModel(val repository: EventRepository, val userRepository: U
         onSuccess: () -> Unit,
         onFailure: (Exception) -> Unit
     ) {
-        imageRepository?.uploadImage(
+        ImageRepositoryFirebaseStorage().uploadImage(
             inputStream,
             "images/events/${event.uid}",
             { uri ->
@@ -62,15 +49,5 @@ open class EventViewModel(val repository: EventRepository, val userRepository: U
             },
             { e -> Log.e("ImageRepository", "Failed to store image: $e") })
             ?: Log.e("EventListViewModel", "ImageRepository is not available in preview mode.")
-    }
-
-    class PreviewEventViewModel(repository: EventRepository, userRepository: UserRepository) :
-        EventViewModel(repository, userRepository) {
-
-        var events: List<Event> = mutableListOf()
-
-        init {
-            repository.getEvents(onSuccess = { events = it }, onFailure = {})
-        }
     }
 }

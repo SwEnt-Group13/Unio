@@ -68,23 +68,6 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-@Preview(showBackground = true)
-@Composable
-fun EventCardPreview() {
-  val sampleEvent =
-      Event(
-          title = "Sample Event",
-          image = "", // Empty string to test the placeholder
-          organisers = MockReferenceList<Association>(),
-          taggedAssociations = MockReferenceList<Association>(),
-          location = Location(0.0, 0.0, "aaaa"),
-          date = Timestamp(Date(2024 - 1900, 6, 20)),
-          catchyDescription = "This is a catchy description.",
-          types = listOf(EventType.TRIP))
-
-  EventCard(event = sampleEvent, userViewModel = viewModel(factory = UserViewModel.Factory))
-}
-
 @Composable
 fun EventCard(event: Event, userViewModel: UserViewModel) {
 
@@ -104,26 +87,14 @@ fun EventCard(event: Event, userViewModel: UserViewModel) {
               .clip(RoundedCornerShape(10.dp))
               .background(secondaryDark)) {
         Box(modifier = Modifier.fillMaxWidth().height(100.dp)) {
-          // Fallback to a local placeholder image in case of an invalid URI
+          // fallback to a local placeholder image in case of an invalid URI
           val imageUrl = event.image.takeIf { it.isNotEmpty() }?.toUri()
 
-          if (LocalInspectionMode.current) { // preview mode
-            Image(
-                painter = painterResource(id = R.drawable.preview_mode), // Fallback image
-                contentDescription = "Fallback image of the event",
-                modifier =
-                    Modifier.fillMaxWidth()
-                        .height(100.dp)
-                        .clip(RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp))
-                        .testTag("event_EventImage"),
-                contentScale = ContentScale.Crop // Crop the image to fit
-                )
-          } else {
-            AsyncImage( // running mode
+            AsyncImage(
                 model =
                     ImageRequest.Builder(LocalContext.current)
                         .data(imageUrl)
-                        .error(R.drawable.no_picture_found) // Placeholder in case of loading error
+                        .error(R.drawable.no_picture_found) // placeholder in case of loading error
                         .build(),
                 contentDescription = "Image of the event",
                 modifier =
@@ -131,9 +102,9 @@ fun EventCard(event: Event, userViewModel: UserViewModel) {
                         .height(100.dp)
                         .clip(RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp))
                         .testTag("event_EventImage"),
-                contentScale = ContentScale.Crop // Crop the image to fit
+                contentScale = ContentScale.Crop // crop the image to fit
                 )
-          }
+
 
           Box(
               modifier =
