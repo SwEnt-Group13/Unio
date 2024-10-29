@@ -95,17 +95,23 @@ class UserViewModel(val repository: UserRepository, initializeWithAuthenticatedU
         }
   }
 
+  private fun getCurrentUserOrError(onFailure: (Exception) -> Unit): User? {
+    val currentUser = _user.value
+    return if (currentUser == null) {
+      Log.w("UserViewModel", "No user available in _user")
+      onFailure(Exception("No user available"))
+      null
+    } else {
+      currentUser
+    }
+  }
+
   fun saveEventForCurrentUser(
       eventUid: String,
       onSuccess: () -> Unit,
       onFailure: (Exception) -> Unit
   ) {
-    val currentUser = _user.value
-    if (currentUser == null) {
-      Log.w("Firestore", "No user available in _user, unable to save event")
-      onFailure(Exception("No user available"))
-      return
-    }
+    val currentUser = getCurrentUserOrError(onFailure) ?: return
 
     currentUser.savedEvents.add(eventUid)
     onSuccess()
@@ -116,12 +122,7 @@ class UserViewModel(val repository: UserRepository, initializeWithAuthenticatedU
       onSuccess: () -> Unit,
       onFailure: (Exception) -> Unit
   ) {
-    val currentUser = _user.value
-    if (currentUser == null) {
-      Log.w("Firestore", "No user available in _user, unable to unsave event")
-      onFailure(Exception("No user available"))
-      return
-    }
+    val currentUser = getCurrentUserOrError(onFailure) ?: return
 
     if (isEventSavedForCurrentUser(eventUid)) {
       currentUser.savedEvents.remove(eventUid)
