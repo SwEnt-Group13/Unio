@@ -134,7 +134,7 @@ private fun AssociationProfileScaffold(
             title = {
               val title: String
               if (association != null) {
-                title = association.fullName
+                title = association.name
               } else {
                 title = context.getString(R.string.association_not_found)
               }
@@ -215,7 +215,7 @@ private fun AssociationProfileContent(
 @Composable
 private fun AssociationRecruitment(association: Association, context: Context) {
   Text(
-      text = context.getString(R.string.association_join) + " ${association.fullName} ?",
+      text = context.getString(R.string.association_join) + " ${association.name} ?",
       style = AppTypography.headlineMedium,
       modifier = Modifier.padding(horizontal = 20.dp).testTag("AssociationRecruitmentTitle"))
   Spacer(modifier = Modifier.size(13.dp))
@@ -287,7 +287,7 @@ private fun UsersCard(userList: List<User>, context: Context) {
           verticalAlignment = Alignment.CenterVertically,
       ) {
         Icon(
-            Icons.Filled.Person,
+            user.profilePicture.toUri(),
             contentDescription = "user's profile picture",
             Modifier.size(36.dp))
         Text(text = user.firstName + " " + user.lastName, style = AppTypography.headlineSmall)
