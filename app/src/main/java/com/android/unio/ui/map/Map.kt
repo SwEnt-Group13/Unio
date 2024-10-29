@@ -35,6 +35,7 @@ import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
 import java.util.Calendar
+import java.util.concurrent.TimeUnit
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -94,29 +95,53 @@ fun EventMap(pd: PaddingValues, eventListViewModel: EventListViewModel) {
       cameraPositionState = cameraPositionState) {
         // Display saved events
         arbitrarySavedEvents.forEach { event ->
-          event.location.let {
-            val bitmap =
-                BitmapFactory.decodeResource(LocalContext.current.resources, R.drawable.favorite_pinpoint)
-            val scaledBitmap = Bitmap.createScaledBitmap(bitmap, 64, 64, false)
-            val customIcon = BitmapDescriptorFactory.fromBitmap(scaledBitmap)
-            Marker(
-                state = MarkerState(position = LatLng(it.latitude, it.longitude)),
-                title = event.title,
-                snippet = event.description,
-                icon = customIcon)
+          if (event.date.toDate() > Calendar.getInstance().time) {
+            val timer = timeUntilEvent(event.date)
+            event.location.let {
+              val bitmap =
+                  BitmapFactory.decodeResource(
+                      LocalContext.current.resources, R.drawable.favorite_pinpoint)
+              val scaledBitmap = Bitmap.createScaledBitmap(bitmap, 64, 64, false)
+              val customIcon = BitmapDescriptorFactory.fromBitmap(scaledBitmap)
+              Marker(
+                  state = MarkerState(position = LatLng(it.latitude, it.longitude)),
+                  title = event.title,
+                  snippet = "$timer - ${event.description}",
+                  icon = customIcon)
+            }
           }
         }
 
         // Display all events (should refactor to the ones that are soon to happen when more events
         // are added)
         events.value.forEach { event ->
-          event.location.let {
-            Marker(
-                state = MarkerState(position = LatLng(it.latitude, it.longitude)),
-                title = event.title,
-                snippet = event.description,
-                icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
+          if (event.date.toDate() > Calendar.getInstance().time) {
+            val timer = timeUntilEvent(event.date)
+            event.location.let {
+              Marker(
+                  state = MarkerState(position = LatLng(it.latitude, it.longitude)),
+                  title = event.title,
+                  snippet = "$timer - ${event.description}",
+                  icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
+            }
           }
         }
       }
+}
+
+/**
+ * Calculate the time until an event occurs.
+ *
+ * @param eventTimestamp the timestamp of the event
+ * @return a string giving information about the time until the event occurs
+ */
+fun timeUntilEvent(eventTimestamp: Timestamp): String {
+  val currentTime = Timestamp.now()
+  val timeDifference = eventTimestamp.seconds - currentTime.seconds
+
+  if (timeDifference < 0) return "Event has already occurred"
+
+  val days = TimeUnit.SECONDS.toDays(timeDifference)
+  val hours = TimeUnit.SECONDS.toHours(timeDifference) % 24
+  return if (days > 0) "In $days days, $hours hours" else "In $hours hours"
 }
