@@ -21,7 +21,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -286,7 +285,7 @@ private fun UsersCard(userList: List<User>, context: Context) {
           horizontalArrangement = Arrangement.spacedBy(115.dp, Alignment.Start),
           verticalAlignment = Alignment.CenterVertically,
       ) {
-        Icon(
+        AsyncImage(
             user.profilePicture.toUri(),
             contentDescription = "user's profile picture",
             Modifier.size(36.dp))
