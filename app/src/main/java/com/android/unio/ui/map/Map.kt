@@ -96,19 +96,7 @@ fun EventMap(pd: PaddingValues, eventListViewModel: EventListViewModel) {
         // Display saved events
         arbitrarySavedEvents.forEach { event ->
           if (event.date.toDate() > Calendar.getInstance().time) {
-            val timer = timeUntilEvent(event.date)
-            event.location.let {
-              val bitmap =
-                  BitmapFactory.decodeResource(
-                      LocalContext.current.resources, R.drawable.favorite_pinpoint)
-              val scaledBitmap = Bitmap.createScaledBitmap(bitmap, 64, 64, false)
-              val customIcon = BitmapDescriptorFactory.fromBitmap(scaledBitmap)
-              Marker(
-                  state = MarkerState(position = LatLng(it.latitude, it.longitude)),
-                  title = event.title,
-                  snippet = "$timer - ${event.description}",
-                  icon = customIcon)
-            }
+            DisplayEventMarker(event, R.drawable.favorite_pinpoint)
           }
         }
 
@@ -116,17 +104,38 @@ fun EventMap(pd: PaddingValues, eventListViewModel: EventListViewModel) {
         // are added)
         events.value.forEach { event ->
           if (event.date.toDate() > Calendar.getInstance().time) {
-            val timer = timeUntilEvent(event.date)
-            event.location.let {
-              Marker(
-                  state = MarkerState(position = LatLng(it.latitude, it.longitude)),
-                  title = event.title,
-                  snippet = "$timer - ${event.description}",
-                  icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
-            }
+            DisplayEventMarker(event, null)
           }
         }
       }
+}
+
+/**
+ * Display an event marker on the map.
+ *
+ * @param event the event to display
+ * @param customIconResId the resource id of the custom icon to use for the marker
+ * @return a marker for the event
+ */
+@Composable
+fun DisplayEventMarker(event: Event, customIconResId: Int?) {
+  val timer = timeUntilEvent(event.date)
+  event.location.let { location ->
+    val pinPointIcon =
+        if (customIconResId != null) {
+          val bitmap = BitmapFactory.decodeResource(LocalContext.current.resources, customIconResId)
+          val scaledBitmap = Bitmap.createScaledBitmap(bitmap, 64, 64, false)
+          BitmapDescriptorFactory.fromBitmap(scaledBitmap)
+        } else {
+          BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)
+        }
+
+    Marker(
+        state = MarkerState(position = LatLng(location.latitude, location.longitude)),
+        title = event.title,
+        snippet = "$timer - ${event.description}",
+        icon = pinPointIcon)
+  }
 }
 
 /**
