@@ -99,7 +99,7 @@ fun EventCard(event: Event, userViewModel: UserViewModel) {
       modifier =
           Modifier.fillMaxWidth()
               .padding(vertical = 8.dp)
-              .clickable(onClick = {})
+              //implement clickable feature
               .testTag("event_EventListItem")
               .clip(RoundedCornerShape(10.dp))
               .background(secondaryDark)) {
