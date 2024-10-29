@@ -105,19 +105,19 @@ fun HomeScreen(
       },
       modifier = Modifier.testTag("HomeScreen"),
       content = { paddingValues ->
-        Column(modifier = Modifier.fillMaxSize().padding(paddingValues).background(Color.Black)) {
+        Column(modifier = Modifier.fillMaxSize().padding(paddingValues).background(Color.White)) {
           // Sticky Header
           Box(
               modifier =
                   Modifier.fillMaxWidth()
-                      .background(Color.Black)
+                      .background(Color.White)
                       .padding(vertical = 16.dp, horizontal = horizontalHeaderPadding)
                       .testTag("event_Header")) {
                 Column {
                   Text(
                       text = "Upcoming Events",
                       fontWeight = FontWeight.Bold,
-                      color = Color.White,
+                      color = Color.Black,
                       style = TextStyle(fontSize = 24.sp))
                   Spacer(modifier = Modifier.height(8.dp))
 
@@ -126,7 +126,7 @@ fun HomeScreen(
                       horizontalArrangement = Arrangement.SpaceBetween) {
                         Text(
                             text = "All",
-                            color = if (selectedTab == "All") Color.White else Color.Gray,
+                            color = if (selectedTab == "All") Color.Black else Color.Gray,
                             modifier =
                                 Modifier.clickable {
                                       selectedTab = "All"
@@ -148,7 +148,7 @@ fun HomeScreen(
                         // Clickable text for "Following"
                         Text(
                             text = "Following",
-                            color = if (selectedTab == "Following") Color.White else Color.Gray,
+                            color = if (selectedTab == "Following") Color.Black else Color.Gray,
                             modifier =
                                 Modifier.clickable {
                                       selectedTab = "Following"
