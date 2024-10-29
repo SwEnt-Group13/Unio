@@ -2,6 +2,7 @@ package com.android.unio.ui.events
 
 import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -117,8 +118,13 @@ class EventListOverviewTest {
           onEventClick = {})
     }
 
-    composeTestRule.onNodeWithTag("event_MapButton").performClick()
+    composeTestRule.onNodeWithTag("event_MapButton").assertExists()
+    composeTestRule.onNodeWithTag("event_MapButton").assertHasClickAction()
 
+    composeTestRule.onNodeWithContentDescription("Add Event").assertExists()
+    composeTestRule.onNodeWithContentDescription("Add Event").assertHasClickAction()
+
+    composeTestRule.onNodeWithTag("event_MapButton").performClick()
     verify(navigationAction).navigateTo(Screen.MAP)
   }
 
