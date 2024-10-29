@@ -2,7 +2,7 @@ package com.android.unio.model.event
 
 import androidx.lifecycle.ViewModel
 import androidx.test.core.app.ApplicationProvider
-import com.android.unio.model.firestore.MockReferenceList
+import com.android.unio.model.firestore.ReferenceList
 import com.android.unio.model.map.Location
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.google.firebase.FirebaseApp
@@ -12,6 +12,8 @@ import com.google.firebase.firestore.FirebaseFirestore
 import java.io.InputStream
 import java.util.GregorianCalendar
 import junit.framework.Assert.assertTrue
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -94,4 +96,19 @@ class EventViewModelTest {
   }
 
   class UnsupportedViewModel : ViewModel()
+}
+
+class MockReferenceList<T>(elements: List<T> = emptyList()) : ReferenceList<T> {
+    private val _list = MutableStateFlow(elements)
+    override val list: StateFlow<List<T>> = _list
+
+    override fun add(uid: String) {}
+
+    override fun addAll(uids: List<String>) {}
+
+    override fun remove(uid: String) {}
+
+    override fun requestAll(onSuccess: () -> Unit) {}
+
+    override fun contains(uid: String): Boolean {return false}
 }

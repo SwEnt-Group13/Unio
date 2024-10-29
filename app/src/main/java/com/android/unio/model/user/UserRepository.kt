@@ -2,7 +2,6 @@ package com.android.unio.model.user
 
 import com.android.unio.model.association.Association
 import com.android.unio.model.event.Event
-import com.android.unio.model.firestore.MockReferenceList
 
 interface UserRepository {
   fun init(onSuccess: () -> Unit)
@@ -14,65 +13,3 @@ interface UserRepository {
   fun updateUser(user: User, onSuccess: () -> Unit, onFailure: (Exception) -> Unit)
 }
 
-class MockUserRepository : UserRepository {
-  private val mockUsers =
-      listOf(
-          User(
-              uid = "1",
-              email = "john.doe@example.com",
-              firstName = "John",
-              lastName = "Doe",
-              biography = "Just a regular guy.",
-              followedAssociations = MockReferenceList<Association>(),
-              joinedAssociations = MockReferenceList<Association>(),
-              savedEvents = MockReferenceList<Event>(),
-              interests = listOf(Interest.SPORTS, Interest.MUSIC),
-              socials =
-                  listOf(
-                      UserSocial(Social.INSTAGRAM, "john_doe"),
-                      UserSocial(Social.WHATSAPP, "john.doe.whatsapp")),
-              profilePicture = "https://example.com/profile_picture1.jpg",
-              hasProvidedAccountDetails = false),
-          User(
-              uid = "2",
-              email = "jane.smith@example.com",
-              firstName = "Jane",
-              lastName = "Smith",
-              biography = "Lover of arts and technology.",
-              followedAssociations = MockReferenceList<Association>(),
-              joinedAssociations = MockReferenceList<Association>(),
-              savedEvents = MockReferenceList<Event>(),
-              interests = listOf(Interest.ART, Interest.TECHNOLOGY),
-              socials =
-                  listOf(
-                      UserSocial(Social.TELEGRAM, "jane_smith"),
-                      UserSocial(Social.TELEGRAM, "jane.smith.telegram")),
-              profilePicture = "https://example.com/profile_picture2.jpg",
-              hasProvidedAccountDetails = false))
-
-  override fun init(onSuccess: () -> Unit) {
-    onSuccess()
-  }
-
-  override fun getUsers(onSuccess: (List<User>) -> Unit, onFailure: (Exception) -> Unit) {
-    onSuccess(mockUsers)
-  }
-
-  override fun getUserWithId(
-      id: String,
-      onSuccess: (User) -> Unit,
-      onFailure: (Exception) -> Unit
-  ) {
-    val user = mockUsers.find { it.uid == id }
-    if (user != null) {
-      onSuccess(user)
-    } else {
-      onFailure(Exception("User not found"))
-    }
-  }
-
-
-  override fun updateUser(user: User, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
-    TODO("Not yet implemented")
-  }
-}

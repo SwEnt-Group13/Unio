@@ -51,7 +51,6 @@ import com.android.unio.model.event.EventRepository
 import com.android.unio.model.event.EventRepositoryMock
 import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.event.MockEventRepository
-import com.android.unio.model.user.MockUserRepository
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.event.EventCard
 import com.android.unio.ui.navigation.BottomNavigationMenu

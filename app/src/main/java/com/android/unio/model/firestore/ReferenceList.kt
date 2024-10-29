@@ -16,18 +16,3 @@ interface ReferenceList<T> {
 
   fun contains(uid: String): Boolean
 }
-
-class MockReferenceList<T>(elements: List<T> = emptyList()) : ReferenceList<T> {
-  private val _list = MutableStateFlow(elements)
-  override val list: StateFlow<List<T>> = _list
-
-  override fun add(uid: String) {}
-
-  override fun addAll(uids: List<String>) {}
-
-  override fun remove(uid: String) {}
-
-  override fun requestAll(onSuccess: () -> Unit) {}
-
-  override fun contains(uid: String): Boolean {return false}
-}

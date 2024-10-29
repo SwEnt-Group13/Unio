@@ -52,9 +52,7 @@ import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventType
 import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.event.MockEventRepository
-import com.android.unio.model.firestore.MockReferenceList
 import com.android.unio.model.map.Location
-import com.android.unio.model.user.MockUserRepository
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.theme.AppTypography
 import com.android.unio.ui.theme.primaryContainerLight

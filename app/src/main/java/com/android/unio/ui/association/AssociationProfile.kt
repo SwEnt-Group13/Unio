@@ -50,10 +50,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.android.unio.R
+import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventViewModel
-import com.android.unio.model.firestore.MockReferenceList
+import com.android.unio.model.firestore.ReferenceList
+import com.android.unio.model.firestore.emptyFirestoreReferenceList
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.event.EventCard
 import com.android.unio.ui.navigation.NavigationAction
@@ -266,7 +268,7 @@ fun AssociationProfileEvents(context: Context) {
         Box(modifier = Modifier.testTag("AssociationEventCard")) {
           EventCard(
               event =
-                  Event(organisers = MockReferenceList(), taggedAssociations = MockReferenceList()),
+                  Event(organisers = Association.emptyFirestoreReferenceList(), taggedAssociations = Association.emptyFirestoreReferenceList()),
               userViewModel = userViewModel)
         }
         Spacer(modifier = Modifier.size(11.dp))

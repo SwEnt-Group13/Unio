@@ -1,7 +1,7 @@
 package com.android.unio.model.event
 
 import com.android.unio.model.association.Association
-import com.android.unio.model.firestore.MockReferenceList
+import com.android.unio.model.firestore.emptyFirestoreReferenceList
 import com.android.unio.model.map.Location
 import com.google.firebase.Timestamp
 import java.util.Date
@@ -35,8 +35,8 @@ class MockEventRepository : EventRepository {
           Event(
               uid = "1",
               title = "Sample Event 1",
-              organisers = MockReferenceList<Association>(),
-              taggedAssociations = MockReferenceList<Association>(),
+              organisers = Association.emptyFirestoreReferenceList(),
+              taggedAssociations = Association.emptyFirestoreReferenceList(),
               image = "https://example.com/image1.jpg",
               description = "A fun sample event for everyone!",
               catchyDescription = "Don't miss out on this exciting event!",
@@ -47,8 +47,8 @@ class MockEventRepository : EventRepository {
           Event(
               uid = "2",
               title = "Sample Event 2",
-              organisers = MockReferenceList<Association>(),
-              taggedAssociations = MockReferenceList<Association>(),
+              organisers = Association.emptyFirestoreReferenceList(),
+              taggedAssociations = Association.emptyFirestoreReferenceList(),
               image = "https://example.com/image2.jpg",
               description = "Join us for an unforgettable experience!",
               catchyDescription = "An event you cannot afford to miss!",
