@@ -58,6 +58,8 @@ import com.android.unio.model.user.MockUserRepository
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.theme.AppTypography
 import com.android.unio.ui.theme.primaryContainerLight
+import com.android.unio.ui.theme.primaryDark
+import com.android.unio.ui.theme.primaryLight
 import com.android.unio.ui.theme.secondaryDark
 import com.android.unio.utils.EventUtils.addAlphaToColor
 import com.android.unio.utils.EventUtils.formatTimestamp
@@ -137,7 +139,7 @@ fun EventCard(event: Event, userViewModel: UserViewModel) {
               modifier =
                   Modifier.size(28.dp)
                       .clip(RoundedCornerShape(14.dp))
-                      .background(Color(0xFF6200EE))
+                      .background(primaryDark)
                       .align(Alignment.TopEnd)
                       .clickable {
                         if (isSaved) {
