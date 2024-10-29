@@ -198,7 +198,7 @@ fun EventCard(event: Event, userViewModel: UserViewModel) {
 
             Image(
                 painter = painterResource(id = R.drawable.clic),
-                contentDescription = null,
+                contentDescription = "Association logo",
                 modifier =
                     Modifier.size(24.dp)
                         .align(Alignment.CenterVertically)
