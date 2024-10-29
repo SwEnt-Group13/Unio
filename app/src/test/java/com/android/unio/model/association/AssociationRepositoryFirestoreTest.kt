@@ -31,265 +31,253 @@ import org.mockito.kotlin.eq
 import org.mockito.kotlin.verify
 
 class AssociationRepositoryFirestoreTest {
-    private lateinit var db: FirebaseFirestore
-    @Mock
-    private lateinit var associationCollectionReference: CollectionReference
-    @Mock
-    private lateinit var userCollectionReference: CollectionReference
-    @Mock
-    private lateinit var querySnapshot: QuerySnapshot
-    @Mock
-    private lateinit var queryDocumentSnapshot1: QueryDocumentSnapshot
-    @Mock
-    private lateinit var queryDocumentSnapshot2: QueryDocumentSnapshot
-    @Mock
-    private lateinit var documentReference: DocumentReference
-    @Mock
-    private lateinit var querySnapshotTask: Task<QuerySnapshot>
-    @Mock
-    private lateinit var documentSnapshotTask: Task<DocumentSnapshot>
-    @Mock
-    private lateinit var query: Query
+  private lateinit var db: FirebaseFirestore
+  @Mock private lateinit var associationCollectionReference: CollectionReference
+  @Mock private lateinit var userCollectionReference: CollectionReference
+  @Mock private lateinit var querySnapshot: QuerySnapshot
+  @Mock private lateinit var queryDocumentSnapshot1: QueryDocumentSnapshot
+  @Mock private lateinit var queryDocumentSnapshot2: QueryDocumentSnapshot
+  @Mock private lateinit var documentReference: DocumentReference
+  @Mock private lateinit var querySnapshotTask: Task<QuerySnapshot>
+  @Mock private lateinit var documentSnapshotTask: Task<DocumentSnapshot>
+  @Mock private lateinit var query: Query
 
-    private lateinit var repository: AssociationRepositoryFirestore
+  private lateinit var repository: AssociationRepositoryFirestore
 
-    private lateinit var association1: Association
-    private lateinit var map1: Map<String, Any>
+  private lateinit var association1: Association
+  private lateinit var map1: Map<String, Any>
 
-    private lateinit var association2: Association
-    private lateinit var map2: Map<String, Any>
+  private lateinit var association2: Association
+  private lateinit var map2: Map<String, Any>
 
-    @Before
-    fun setUp() {
-        MockitoAnnotations.openMocks(this)
+  @Before
+  fun setUp() {
+    MockitoAnnotations.openMocks(this)
 
-        db = mockk()
-        mockkStatic(FirebaseFirestore::class)
-        every { Firebase.firestore } returns db
-        every { db.collection(ASSOCIATION_PATH) } returns associationCollectionReference
-        every { db.collection(USER_PATH) } returns userCollectionReference
+    db = mockk()
+    mockkStatic(FirebaseFirestore::class)
+    every { Firebase.firestore } returns db
+    every { db.collection(ASSOCIATION_PATH) } returns associationCollectionReference
+    every { db.collection(USER_PATH) } returns userCollectionReference
 
-        association1 =
-            Association(
-                uid = "1",
-                url = "https://www.acm.org/",
-                name = "ACM",
-                fullName = "Association for Computing Machinery",
-                category = AssociationCategory.SCIENCE_TECH,
-                description =
+    association1 =
+        Association(
+            uid = "1",
+            url = "https://www.acm.org/",
+            name = "ACM",
+            fullName = "Association for Computing Machinery",
+            category = AssociationCategory.SCIENCE_TECH,
+            description =
                 "ACM is the world's largest educational and scientific computing society.",
-                members = User.firestoreReferenceListWith(listOf("1", "2")),
-                followersCount = 0,
-                image = "https://www.example.com/image.jpg"
-            )
+            members = User.firestoreReferenceListWith(listOf("1", "2")),
+            followersCount = 0,
+            image = "https://www.example.com/image.jpg")
 
-        association2 =
-            Association(
-                uid = "2",
-                url = "https://www.ieee.org/",
-                name = "IEEE",
-                fullName = "Institute of Electrical and Electronics Engineers",
-                category = AssociationCategory.SCIENCE_TECH,
-                description =
+    association2 =
+        Association(
+            uid = "2",
+            url = "https://www.ieee.org/",
+            name = "IEEE",
+            fullName = "Institute of Electrical and Electronics Engineers",
+            category = AssociationCategory.SCIENCE_TECH,
+            description =
                 "IEEE is the world's largest technical professional organization dedicated to advancing technology for the benefit of humanity.",
-                members = User.firestoreReferenceListWith(listOf("3", "4")),
-                followersCount = 1,
-                image = "https://www.example.com/image.jpg"
-            )
+            members = User.firestoreReferenceListWith(listOf("3", "4")),
+            followersCount = 1,
+            image = "https://www.example.com/image.jpg")
 
-        // When getting the collection, return the task
-        `when`(associationCollectionReference.get()).thenReturn(querySnapshotTask)
-        `when`(associationCollectionReference.document(eq(association1.uid)))
-            .thenReturn(documentReference)
-        `when`(documentReference.get()).thenReturn(documentSnapshotTask)
+    // When getting the collection, return the task
+    `when`(associationCollectionReference.get()).thenReturn(querySnapshotTask)
+    `when`(associationCollectionReference.document(eq(association1.uid)))
+        .thenReturn(documentReference)
+    `when`(documentReference.get()).thenReturn(documentSnapshotTask)
 
-        // When the query snapshot is iterated, return the two query document snapshots
-        `when`(querySnapshot.iterator())
-            .thenReturn(mutableListOf(queryDocumentSnapshot1, queryDocumentSnapshot2).iterator())
+    // When the query snapshot is iterated, return the two query document snapshots
+    `when`(querySnapshot.iterator())
+        .thenReturn(mutableListOf(queryDocumentSnapshot1, queryDocumentSnapshot2).iterator())
 
-        // When the task is successful, return the query snapshot
-        `when`(querySnapshotTask.addOnSuccessListener(any())).thenAnswer { invocation ->
-            val callback = invocation.arguments[0] as OnSuccessListener<QuerySnapshot>
-            callback.onSuccess(querySnapshot)
-            querySnapshotTask
-        }
-
-        `when`(documentSnapshotTask.addOnSuccessListener(any())).thenAnswer { invocation ->
-            val callback = invocation.arguments[0] as OnSuccessListener<DocumentSnapshot>
-            callback.onSuccess(queryDocumentSnapshot1)
-            documentSnapshotTask
-        }
-
-        // When the query document snapshots are queried for specific fields, return the fields
-        map1 =
-            mapOf(
-                "uid" to association1.uid,
-                "url" to association1.url,
-                "name" to association1.name,
-                "fullName" to association1.fullName,
-                "category" to association1.category.name,
-                "description" to association1.description,
-                "members" to association1.members.list.value.map { it.uid })
-
-        map2 =
-            mapOf(
-                "uid" to association2.uid,
-                "url" to association2.url,
-                "name" to association2.name,
-                "fullName" to association2.fullName,
-                "category" to association2.category.name,
-                "description" to association2.description,
-                "members" to association2.members.list.value.map { it.uid })
-
-        `when`(queryDocumentSnapshot1.data).thenReturn(map1)
-        `when`(queryDocumentSnapshot2.data).thenReturn(map2)
-
-        repository = AssociationRepositoryFirestore(db)
+    // When the task is successful, return the query snapshot
+    `when`(querySnapshotTask.addOnSuccessListener(any())).thenAnswer { invocation ->
+      val callback = invocation.arguments[0] as OnSuccessListener<QuerySnapshot>
+      callback.onSuccess(querySnapshot)
+      querySnapshotTask
     }
 
-    @Test
-    fun testGetAssociations() {
-
-        repository.getAssociations(
-            onSuccess = { associations ->
-                assertEquals(2, associations.size)
-                assertEquals(association1.uid, associations[0].uid)
-                assertEquals(association1.name, associations[0].name)
-                assertEquals(association1.fullName, associations[0].fullName)
-                assertEquals(association1.description, associations[0].description)
-                assertEquals(association1.members.list.value, associations[0].members.list.value)
-
-                assertEquals(association2.uid, associations[1].uid)
-                assertEquals(association2.name, associations[1].name)
-                assertEquals(association2.fullName, associations[1].fullName)
-                assertEquals(association2.description, associations[1].description)
-                assertEquals(association2.members.list.value, associations[1].members.list.value)
-            },
-            onFailure = { exception -> assert(false) })
+    `when`(documentSnapshotTask.addOnSuccessListener(any())).thenAnswer { invocation ->
+      val callback = invocation.arguments[0] as OnSuccessListener<DocumentSnapshot>
+      callback.onSuccess(queryDocumentSnapshot1)
+      documentSnapshotTask
     }
 
-    @Test
-    fun testGetAssociationsWithMissingFields() {
-        // Only set the ID for the second association, leaving the other fields as null
-        `when`(queryDocumentSnapshot2.id).thenReturn(association2.uid)
+    // When the query document snapshots are queried for specific fields, return the fields
+    map1 =
+        mapOf(
+            "uid" to association1.uid,
+            "url" to association1.url,
+            "name" to association1.name,
+            "fullName" to association1.fullName,
+            "category" to association1.category.name,
+            "description" to association1.description,
+            "members" to association1.members.list.value.map { it.uid })
 
-        repository.getAssociations(
-            onSuccess = { associations ->
-                val emptyAssociation =
-                    Association(
-                        uid = association2.uid,
-                        url = "",
-                        name = "",
-                        fullName = "",
-                        category = AssociationCategory.ARTS,
-                        description = "",
-                        members = User.emptyFirestoreReferenceList(),
-                        followersCount = 0,
-                        image = ""
-                    )
+    map2 =
+        mapOf(
+            "uid" to association2.uid,
+            "url" to association2.url,
+            "name" to association2.name,
+            "fullName" to association2.fullName,
+            "category" to association2.category.name,
+            "description" to association2.description,
+            "members" to association2.members.list.value.map { it.uid })
 
-                assertEquals(2, associations.size)
+    `when`(queryDocumentSnapshot1.data).thenReturn(map1)
+    `when`(queryDocumentSnapshot2.data).thenReturn(map2)
 
-                assertEquals(association1.uid, associations[0].uid)
-                assertEquals(association1.name, associations[0].name)
-                assertEquals(association1.fullName, associations[0].fullName)
-                assertEquals(association1.description, associations[0].description)
-                assertEquals(association1.members.list.value, associations[0].members.list.value)
+    repository = AssociationRepositoryFirestore(db)
+  }
 
-                assertEquals(emptyAssociation.uid, associations[1].uid)
-                assertEquals("", associations[1].name)
-                assertEquals("", associations[1].fullName)
-                assertEquals("", associations[1].description)
-                assertEquals(emptyList<String>(), associations[1].members.list.value)
-            },
-            onFailure = { exception -> assert(false) })
-    }
+  @Test
+  fun testGetAssociations() {
 
-    @Test
-    fun testGetAssociationWithId() {
-        repository.getAssociationWithId(
-            association1.uid,
-            onSuccess = { association ->
-                assertEquals(association1.uid, association.uid)
-                assertEquals(association1.name, association.name)
-                assertEquals(association1.fullName, association.fullName)
-                assertEquals(association1.description, association.description)
-                assertEquals(association1.members.list.value, association.members.list.value)
-            },
-            onFailure = { exception -> assert(false) })
-    }
+    repository.getAssociations(
+        onSuccess = { associations ->
+          assertEquals(2, associations.size)
+          assertEquals(association1.uid, associations[0].uid)
+          assertEquals(association1.name, associations[0].name)
+          assertEquals(association1.fullName, associations[0].fullName)
+          assertEquals(association1.description, associations[0].description)
+          assertEquals(association1.members.list.value, associations[0].members.list.value)
 
-    @Test
-    fun testGetAssociationsByCategory() {
-        `when`(associationCollectionReference.whereEqualTo(eq("category"), any()))
-            .thenReturn(associationCollectionReference)
-        repository.getAssociationsByCategory(
-            AssociationCategory.SCIENCE_TECH,
-            onSuccess = { associations ->
-                for (asso in associations) {
-                    assertEquals(asso.category, AssociationCategory.SCIENCE_TECH)
-                }
-            },
-            onFailure = { exception -> assert(false) })
-    }
+          assertEquals(association2.uid, associations[1].uid)
+          assertEquals(association2.name, associations[1].name)
+          assertEquals(association2.fullName, associations[1].fullName)
+          assertEquals(association2.description, associations[1].description)
+          assertEquals(association2.members.list.value, associations[1].members.list.value)
+        },
+        onFailure = { exception -> assert(false) })
+  }
 
-    @Test
-    fun testAddAssociationSuccess() {
-        `when`(documentReference.set(map1)).thenReturn(Tasks.forResult(null))
+  @Test
+  fun testGetAssociationsWithMissingFields() {
+    // Only set the ID for the second association, leaving the other fields as null
+    `when`(queryDocumentSnapshot2.id).thenReturn(association2.uid)
 
-        repository.addAssociation(
-            association1, onSuccess = { assert(true) }, onFailure = { assert(false) })
+    repository.getAssociations(
+        onSuccess = { associations ->
+          val emptyAssociation =
+              Association(
+                  uid = association2.uid,
+                  url = "",
+                  name = "",
+                  fullName = "",
+                  category = AssociationCategory.ARTS,
+                  description = "",
+                  members = User.emptyFirestoreReferenceList(),
+                  followersCount = 0,
+                  image = "")
 
-        verify(documentReference).set(map1)
-    }
+          assertEquals(2, associations.size)
 
-    @Test
-    fun testAddAssociationFailure() {
-        `when`(documentReference.set(any())).thenReturn(Tasks.forException(Exception()))
+          assertEquals(association1.uid, associations[0].uid)
+          assertEquals(association1.name, associations[0].name)
+          assertEquals(association1.fullName, associations[0].fullName)
+          assertEquals(association1.description, associations[0].description)
+          assertEquals(association1.members.list.value, associations[0].members.list.value)
 
-        repository.addAssociation(
-            association1, onSuccess = { assert(false) }, onFailure = { assert(true) })
+          assertEquals(emptyAssociation.uid, associations[1].uid)
+          assertEquals("", associations[1].name)
+          assertEquals("", associations[1].fullName)
+          assertEquals("", associations[1].description)
+          assertEquals(emptyList<String>(), associations[1].members.list.value)
+        },
+        onFailure = { exception -> assert(false) })
+  }
 
-        verify(documentReference).set(map1)
-    }
+  @Test
+  fun testGetAssociationWithId() {
+    repository.getAssociationWithId(
+        association1.uid,
+        onSuccess = { association ->
+          assertEquals(association1.uid, association.uid)
+          assertEquals(association1.name, association.name)
+          assertEquals(association1.fullName, association.fullName)
+          assertEquals(association1.description, association.description)
+          assertEquals(association1.members.list.value, association.members.list.value)
+        },
+        onFailure = { exception -> assert(false) })
+  }
 
-    @Test
-    fun testUpdateAssociationSuccess() {
-        `when`(documentReference.set(any())).thenReturn(Tasks.forResult(null))
+  @Test
+  fun testGetAssociationsByCategory() {
+    `when`(associationCollectionReference.whereEqualTo(eq("category"), any()))
+        .thenReturn(associationCollectionReference)
+    repository.getAssociationsByCategory(
+        AssociationCategory.SCIENCE_TECH,
+        onSuccess = { associations ->
+          for (asso in associations) {
+            assertEquals(asso.category, AssociationCategory.SCIENCE_TECH)
+          }
+        },
+        onFailure = { exception -> assert(false) })
+  }
 
-        repository.updateAssociation(
-            association1, onSuccess = { assert(true) }, onFailure = { assert(false) })
+  @Test
+  fun testAddAssociationSuccess() {
+    `when`(documentReference.set(map1)).thenReturn(Tasks.forResult(null))
 
-        verify(documentReference).set(map1)
-    }
+    repository.addAssociation(
+        association1, onSuccess = { assert(true) }, onFailure = { assert(false) })
 
-    @Test
-    fun testUpdateAssociationFailure() {
-        `when`(documentReference.set(any())).thenReturn(Tasks.forException(Exception()))
+    verify(documentReference).set(map1)
+  }
 
-        repository.updateAssociation(
-            association1, onSuccess = { assert(false) }, onFailure = { assert(true) })
+  @Test
+  fun testAddAssociationFailure() {
+    `when`(documentReference.set(any())).thenReturn(Tasks.forException(Exception()))
 
-        verify(documentReference).set(map1)
-    }
+    repository.addAssociation(
+        association1, onSuccess = { assert(false) }, onFailure = { assert(true) })
 
-    @Test
-    fun testDeleteAssociationByIdSuccess() {
-        `when`(documentReference.delete()).thenReturn(Tasks.forResult(null))
+    verify(documentReference).set(map1)
+  }
 
-        repository.deleteAssociationById(
-            association1.uid, onSuccess = { assert(true) }, onFailure = { assert(false) })
+  @Test
+  fun testUpdateAssociationSuccess() {
+    `when`(documentReference.set(any())).thenReturn(Tasks.forResult(null))
 
-        verify(documentReference).delete()
-    }
+    repository.updateAssociation(
+        association1, onSuccess = { assert(true) }, onFailure = { assert(false) })
 
-    @Test
-    fun testDeleteAssociationByIdFailure() {
-        `when`(documentReference.delete()).thenReturn(Tasks.forException(Exception()))
+    verify(documentReference).set(map1)
+  }
 
-        repository.deleteAssociationById(
-            association1.uid, onSuccess = { assert(false) }, onFailure = { assert(true) })
+  @Test
+  fun testUpdateAssociationFailure() {
+    `when`(documentReference.set(any())).thenReturn(Tasks.forException(Exception()))
 
-        verify(documentReference).delete()
-    }
+    repository.updateAssociation(
+        association1, onSuccess = { assert(false) }, onFailure = { assert(true) })
+
+    verify(documentReference).set(map1)
+  }
+
+  @Test
+  fun testDeleteAssociationByIdSuccess() {
+    `when`(documentReference.delete()).thenReturn(Tasks.forResult(null))
+
+    repository.deleteAssociationById(
+        association1.uid, onSuccess = { assert(true) }, onFailure = { assert(false) })
+
+    verify(documentReference).delete()
+  }
+
+  @Test
+  fun testDeleteAssociationByIdFailure() {
+    `when`(documentReference.delete()).thenReturn(Tasks.forException(Exception()))
+
+    repository.deleteAssociationById(
+        association1.uid, onSuccess = { assert(false) }, onFailure = { assert(true) })
+
+    verify(documentReference).delete()
+  }
 }
