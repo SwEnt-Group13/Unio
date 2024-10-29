@@ -24,7 +24,6 @@ import org.mockito.kotlin.mock
  * behavior of the Event List UI.
  */
 @ExperimentalUnitApi
-// @RunWith(RobolectricTestRunner::class)
 class EventListOverviewTest {
 
   @get:Rule val composeTestRule = createComposeRule()
@@ -43,30 +42,7 @@ class EventListOverviewTest {
     navigationAction = NavigationAction(navHostController)
   }
 
-  /**
-   * Tests the functionality of switching between tabs and verifying animations. Ensures that the
-   * 'All' tab exists and can be clicked, and verifies the underlying bar's presence when switching
-   * tabs.
-   */
-  /*@Test
-  fun testTabSwitchingAndAnimation() {
-    //composeTestRule.waitForIdle()
-    composeTestRule.setContent {
-      val eventListViewModel = EventListViewModel(mockEventRepository)
-      HomeScreen(navigationAction, eventListViewModel = eventListViewModel)
-    }
-    //composeTestRule.waitForIdle()
 
-    composeTestRule.onNodeWithTag("event_tabAll").assertExists()
-    composeTestRule.onNodeWithTag("event_tabAll").assertHasClickAction()
-
-    composeTestRule.onNodeWithTag("event_UnderlyingBar").assertExists()
-
-    composeTestRule.onNodeWithTag("event_tabFollowing").performClick()
-
-    composeTestRule.onNodeWithTag("event_tabFollowing").assertExists()
-    composeTestRule.onNodeWithTag("event_UnderlyingBar").assertExists()
-  }*/
 
   /**
    * Tests the UI when the event list is empty. Asserts that the appropriate message is displayed
