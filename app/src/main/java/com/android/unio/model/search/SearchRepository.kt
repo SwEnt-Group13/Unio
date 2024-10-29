@@ -119,7 +119,7 @@ class SearchRepository(
    *
    * @param uid the uid of the association or event to remove
    */
-  private fun remove(uid: String) {
+  fun remove(uid: String) {
     try {
       session?.removeAsync(RemoveByDocumentIdRequest.Builder("unio").addIds(uid).build())
     } catch (e: Exception) {

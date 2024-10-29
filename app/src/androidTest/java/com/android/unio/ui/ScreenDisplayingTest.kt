@@ -87,7 +87,9 @@ class ScreenDisplayingTest {
 
   @Test
   fun testExploreDisplayed() {
-    composeTestRule.setContent { ExploreScreen(navigationAction, searchViewModel = searchViewModel) }
+    composeTestRule.setContent {
+      ExploreScreen(navigationAction, searchViewModel = searchViewModel)
+    }
     composeTestRule.onNodeWithTag("exploreScreen").assertIsDisplayed()
     composeTestRule.onNodeWithTag("searchBar").assertIsDisplayed()
   }

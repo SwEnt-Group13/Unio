@@ -61,7 +61,7 @@ class SearchViewModel(private val repository: SearchRepository) : ViewModel() {
     }
   }
 
-  override fun onCleared() {
+  public override fun onCleared() {
     super.onCleared()
     repository.closeSession()
   }
