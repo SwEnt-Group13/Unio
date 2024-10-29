@@ -120,8 +120,9 @@ class AssociationProfileTest {
       AssociationProfileScreen(navigationAction, "1", associationViewModel)
     }
     composeTestRule.waitForIdle()
-    composeTestRule.onNodeWithTag("AssociationScreen").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("goBackButton").assertIsDisplayed()
+
+    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationScreen"))
+    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("goBackButton"))
 
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationImageHeader"))
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationProfileTitle"))
@@ -198,8 +199,8 @@ class AssociationProfileTest {
       AssociationProfileScreen(navigationAction, "1", associationViewModel)
     }
 
-    composeTestRule.onNodeWithTag("AssociationProfileTitle").assertIsDisplayed()
-    composeTestRule.onNodeWithText(this.associations.first().fullName).assertIsDisplayed()
+    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationProfileTitle"))
+    assertDisplayComponentInScroll(composeTestRule.onNodeWithText(this.associations.first().fullName))
   }
 
   @Test
@@ -208,6 +209,6 @@ class AssociationProfileTest {
       AssociationProfileScreen(navigationAction, "IDONOTEXIST", associationViewModel)
     }
 
-    composeTestRule.onNodeWithTag("associationNotFound").assertIsDisplayed()
+    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("associationNotFound"))
   }
 }
