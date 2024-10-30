@@ -17,6 +17,7 @@ import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
+import io.mockk.mockk
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
@@ -33,7 +34,7 @@ class ExploreScreenTest {
   @Mock private lateinit var db: FirebaseFirestore
   @Mock private lateinit var collectionReference: CollectionReference
   @Mock private lateinit var associationRepository: AssociationRepository
-  @Mock private lateinit var searchViewModel: SearchViewModel
+  private lateinit var searchViewModel: SearchViewModel
   private lateinit var associationViewModel: AssociationViewModel
 
   @get:Rule val composeTestRule = createComposeRule()
@@ -45,6 +46,7 @@ class ExploreScreenTest {
   @Before
   fun setUp() {
     MockitoAnnotations.openMocks(this)
+    searchViewModel = mockk()
     navigationAction = mock(NavigationAction::class.java)
 
     // Mock the navigation action to do nothing
