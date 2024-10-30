@@ -44,8 +44,7 @@ class UserTest {
             listOf(Interest.SPORTS, Interest.MUSIC),
             listOf(
                 UserSocial(Social.INSTAGRAM, "Insta"), UserSocial(Social.WEBSITE, "example.com")),
-            "https://www.example.com/image",
-            true)
+            "https://www.example.com/image")
     assertEquals("1", user.uid)
     assertEquals("john@example.com", user.email)
     assertEquals("John", user.firstName)
@@ -71,8 +70,7 @@ class UserTest {
             Association.emptyFirestoreReferenceList(),
             listOf(Interest.SPORTS),
             listOf(UserSocial(Social.INSTAGRAM, "username")),
-            "https://example.com/image",
-            false)
+            "https://example.com/image")
 
     val userEmptyLastName =
         User(
@@ -85,8 +83,7 @@ class UserTest {
             Association.emptyFirestoreReferenceList(),
             listOf(Interest.SPORTS),
             listOf(UserSocial(Social.INSTAGRAM, "username")),
-            "https://example.com/image",
-            false)
+            "https://example.com/image")
 
     val userEmptyNameAndLastName =
         User(
@@ -99,8 +96,7 @@ class UserTest {
             Association.emptyFirestoreReferenceList(),
             listOf(Interest.SPORTS),
             listOf(UserSocial(Social.INSTAGRAM, "username")),
-            "https://example.com/image",
-            false)
+            "https://example.com/image")
     val expectedErrors1 = mutableSetOf(AccountDetailsError.EMPTY_FIRST_NAME)
     val expectedErrors2 = mutableSetOf(AccountDetailsError.EMPTY_LAST_NAME)
     val expectedErrors3 =

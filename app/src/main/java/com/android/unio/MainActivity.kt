@@ -53,7 +53,8 @@ fun UnioApp() {
   val db = FirebaseFirestore.getInstance()
 
   val associationRepository = AssociationRepositoryFirestore(Firebase.firestore)
-  val associationViewModel = AssociationViewModel(associationRepository)
+  val eventRepository = EventRepositoryFirestore(Firebase.firestore)
+  val associationViewModel = AssociationViewModel(associationRepository, eventRepository)
 
   val userRepositoryFirestore = UserRepositoryFirestore(Firebase.firestore)
   val userViewModel = UserViewModel(userRepositoryFirestore, true)
@@ -70,7 +71,7 @@ fun UnioApp() {
         userRepositoryFirestore.getUserWithId(
             user.uid,
             {
-              if (it.hasProvidedAccountDetails) {
+              if (it.firstName.isNotEmpty()) {
                 navigationActions.navigateTo(Screen.HOME)
               } else {
                 navigationActions.navigateTo(Screen.ACCOUNT_DETAILS)

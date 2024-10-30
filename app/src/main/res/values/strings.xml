@@ -84,8 +84,11 @@
     <string name="association_member" translatable="true">members</string>
     <string name="association_follow" translatable="true">follow</string>
     <string name="association_join" translatable="true">Join</string>
+    <string name="association_no_event" translatable="true">No event planned yet</string>
 
-    <!-- Debug Strings -->
+    <string name="association_not_found" translatable="true">ERROR : Association not found</string>
+
+    <!-- Debug/Temporary Strings -->
     <string name="debug_lorem_ipsum" translatable="false">Lorem ipsum dolor sit amet, consectetur
         adipiscing elit. Nam nec fermentum orci. Praesent tortor purus, porta at ligula id, vehicula sodales
         sem. Morbi id leo nisi. Cras pretium orci vitae sapien aliquet aliquam. Phasellus vestibulum

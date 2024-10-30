@@ -53,8 +53,7 @@ class HydrationAndSerializationTest {
                 listOf(
                     UserSocial(Social.INSTAGRAM, "Insta"),
                     UserSocial(Social.WEBSITE, "example.com")),
-            profilePicture = "https://www.example.com/image",
-            hasProvidedAccountDetails = true)
+            profilePicture = "https://www.example.com/image")
 
     association =
         Association(
@@ -65,6 +64,7 @@ class HydrationAndSerializationTest {
             category = AssociationCategory.ARTS,
             description = "An example association",
             members = User.firestoreReferenceListWith(listOf("1", "2")),
+            followersCount = 0,
             image = "https://www.example.com/image.jpg")
 
     event =
@@ -98,7 +98,6 @@ class HydrationAndSerializationTest {
         user.socials.map { mapOf("social" to it.social.name, "content" to it.content) },
         serialized["socials"])
     assertEquals(user.profilePicture, serialized["profilePicture"])
-    assertEquals(user.hasProvidedAccountDetails, serialized["hasProvidedAccountDetails"])
 
     val hydrated = UserRepositoryFirestore.hydrate(serialized)
 
@@ -112,7 +111,6 @@ class HydrationAndSerializationTest {
     assertEquals(user.interests, hydrated.interests)
     assertEquals(user.socials, hydrated.socials)
     assertEquals(user.profilePicture, hydrated.profilePicture)
-    assertEquals(user.hasProvidedAccountDetails, hydrated.hasProvidedAccountDetails)
   }
 
   @Test
@@ -185,7 +183,6 @@ class HydrationAndSerializationTest {
     assertEquals(emptyList<Interest>(), hydrated.interests)
     assertEquals(emptyList<UserSocial>(), hydrated.socials)
     assertEquals("", hydrated.profilePicture)
-    assertEquals(false, hydrated.hasProvidedAccountDetails)
   }
 
   @Test
