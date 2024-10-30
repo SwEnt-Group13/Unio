@@ -35,7 +35,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.android.unio.model.association.Association
 import com.android.unio.model.firestore.emptyFirestoreReferenceList
 import com.android.unio.model.user.AccountDetailsError
@@ -56,10 +55,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun AccountDetails(
-    navigationAction: NavigationAction,
-    userViewModel: UserViewModel
-) {
+fun AccountDetails(navigationAction: NavigationAction, userViewModel: UserViewModel) {
   var firstName: String by remember { mutableStateOf("") }
   var lastName: String by remember { mutableStateOf("") }
   var bio: String by remember { mutableStateOf("") }

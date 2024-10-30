@@ -19,36 +19,33 @@ import dagger.hilt.components.SingletonComponent
 @InstallIn(SingletonComponent::class)
 abstract class EventModule() {
 
-    @Binds
-    abstract fun bindEventRepository(
-        eventRepositoryFirestore: EventRepositoryFirestore
-    ): EventRepository
+  @Binds
+  abstract fun bindEventRepository(
+      eventRepositoryFirestore: EventRepositoryFirestore
+  ): EventRepository
 }
 
 @Module
 @InstallIn(SingletonComponent::class)
 object FirebaseModule {
 
-    @Provides
-    fun provideFirebaseFirestore(): FirebaseFirestore = Firebase.firestore
+  @Provides fun provideFirebaseFirestore(): FirebaseFirestore = Firebase.firestore
 }
 
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class AssociationModule {
 
-    @Binds
-    abstract fun bindAssociationRepository(
-        associationRepositoryFirestore: AssociationRepositoryFirestore
-    ): AssociationRepository
+  @Binds
+  abstract fun bindAssociationRepository(
+      associationRepositoryFirestore: AssociationRepositoryFirestore
+  ): AssociationRepository
 }
 
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class UserModule {
 
-    @Binds
-    abstract fun bindUserRepository(
-        UserRepositoryFirestore: UserRepositoryFirestore
-    ): UserRepository
+  @Binds
+  abstract fun bindUserRepository(UserRepositoryFirestore: UserRepositoryFirestore): UserRepository
 }

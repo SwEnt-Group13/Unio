@@ -2,15 +2,14 @@ package com.android.unio.model.event
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.io.InputStream
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 /**
  * ViewModel class that manages the event list data and provides it to the UI. It uses an
@@ -20,7 +19,8 @@ import javax.inject.Inject
  * @property repository The [EventRepository] that provides the events.
  */
 @HiltViewModel
-class EventListViewModel @Inject constructor(private val repository: EventRepository) : ViewModel() {
+class EventListViewModel @Inject constructor(private val repository: EventRepository) :
+    ViewModel() {
 
   /**
    * A private mutable state flow that holds the list of events. It is internal to the ViewModel and
@@ -75,5 +75,4 @@ class EventListViewModel @Inject constructor(private val repository: EventReposi
         },
         { e -> Log.e("ImageRepository", "Failed to store image : $e") })
   }
-
 }

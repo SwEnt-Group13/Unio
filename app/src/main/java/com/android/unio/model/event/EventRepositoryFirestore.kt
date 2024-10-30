@@ -5,10 +5,6 @@ import com.android.unio.model.firestore.transform.hydrate
 import com.android.unio.model.firestore.transform.serialize
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
-import dagger.Binds
-import dagger.Module
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
 import javax.inject.Inject
 
 class EventRepositoryFirestore @Inject constructor(private val db: FirebaseFirestore) :

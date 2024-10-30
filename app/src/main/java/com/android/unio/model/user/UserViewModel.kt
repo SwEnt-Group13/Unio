@@ -4,18 +4,15 @@ import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
-import com.google.firebase.firestore.firestore
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import javax.inject.Inject
 
 @HiltViewModel
-class UserViewModel @Inject constructor(val repository: UserRepository) :
-    ViewModel() {
+class UserViewModel @Inject constructor(val repository: UserRepository) : ViewModel() {
   private val _user = MutableStateFlow<User?>(null)
   val user: StateFlow<User?> = _user
 
@@ -23,11 +20,11 @@ class UserViewModel @Inject constructor(val repository: UserRepository) :
   val refreshState: State<Boolean> = _refreshState
 
   init {
-      Firebase.auth.addAuthStateListener { auth ->
-        if (auth.currentUser != null) {
-          repository.init { getUserByUid(auth.currentUser!!.uid, true) }
-        }
+    Firebase.auth.addAuthStateListener { auth ->
+      if (auth.currentUser != null) {
+        repository.init { getUserByUid(auth.currentUser!!.uid, true) }
       }
+    }
   }
 
   fun getUsersByUid(uid: String, onSuccess: (User) -> Unit, onFailure: (Exception) -> Unit) {
@@ -87,5 +84,4 @@ class UserViewModel @Inject constructor(val repository: UserRepository) :
         onFailure = { Log.e("UserViewModel", "Failed to add user", it) })
     _user.value = user
   }
-
 }

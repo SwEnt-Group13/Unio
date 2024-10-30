@@ -57,7 +57,6 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.android.unio.model.user.User
 import com.android.unio.model.user.UserViewModel
@@ -75,10 +74,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun UserProfileScreen(
-    navigationAction: NavigationAction,
-    userViewModel: UserViewModel
-) {
+fun UserProfileScreen(navigationAction: NavigationAction, userViewModel: UserViewModel) {
 
   val user by userViewModel.user.collectAsState()
 
