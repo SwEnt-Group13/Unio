@@ -260,9 +260,15 @@ dependencies {
     testImplementation(libs.mockk.v193)
 
     implementation(libs.androidx.material.icons.extended)
-    //for AsyncImage
+    // For AsyncImage
     implementation(libs.coil.compose)
 
+    implementation(kotlin("reflect"))
+
+    // Preferences
+    implementation(libs.androidx.preference.ktx)
+
+    implementation(libs.library)
 }
 
 
