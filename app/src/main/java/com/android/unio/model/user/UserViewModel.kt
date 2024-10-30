@@ -8,10 +8,13 @@ import androidx.lifecycle.ViewModelProvider
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.firestore
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import javax.inject.Inject
 
-class UserViewModel(val repository: UserRepository, initializeWithAuthenticatedUser: Boolean) :
+@HiltViewModel
+class UserViewModel @Inject constructor(val repository: UserRepository) :
     ViewModel() {
   private val _user = MutableStateFlow<User?>(null)
   val user: StateFlow<User?> = _user
@@ -20,15 +23,15 @@ class UserViewModel(val repository: UserRepository, initializeWithAuthenticatedU
   val refreshState: State<Boolean> = _refreshState
 
   init {
-    if (initializeWithAuthenticatedUser) {
       Firebase.auth.addAuthStateListener { auth ->
         if (auth.currentUser != null) {
           repository.init { getUserByUid(auth.currentUser!!.uid, true) }
         }
       }
-    } else {
-      repository.init {}
-    }
+  }
+
+  fun getUsersByUid(uid: String, onSuccess: (User) -> Unit, onFailure: (Exception) -> Unit) {
+    repository.getUserWithId(uid, onSuccess, onFailure)
   }
 
   fun getUserByUid(uid: String, fetchReferences: Boolean = false) {
@@ -85,13 +88,4 @@ class UserViewModel(val repository: UserRepository, initializeWithAuthenticatedU
     _user.value = user
   }
 
-  companion object {
-    val Factory: ViewModelProvider.Factory =
-        object : ViewModelProvider.Factory {
-          @Suppress("UNCHECKED_CAST")
-          override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return UserViewModel(UserRepositoryFirestore(Firebase.firestore), false) as T
-          }
-        }
-  }
 }

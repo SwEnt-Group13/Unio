@@ -4,6 +4,8 @@ import com.android.unio.model.association.AssociationRepository
 import com.android.unio.model.association.AssociationRepositoryFirestore
 import com.android.unio.model.event.EventRepository
 import com.android.unio.model.event.EventRepositoryFirestore
+import com.android.unio.model.user.UserRepository
+import com.android.unio.model.user.UserRepositoryFirestore
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
@@ -39,4 +41,14 @@ abstract class AssociationModule {
     abstract fun bindAssociationRepository(
         associationRepositoryFirestore: AssociationRepositoryFirestore
     ): AssociationRepository
+}
+
+@Module
+@InstallIn(SingletonComponent::class)
+abstract class UserModule {
+
+    @Binds
+    abstract fun bindUserRepository(
+        UserRepositoryFirestore: UserRepositoryFirestore
+    ): UserRepository
 }

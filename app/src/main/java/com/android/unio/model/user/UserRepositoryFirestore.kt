@@ -6,8 +6,9 @@ import com.android.unio.model.firestore.transform.serialize
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FirebaseFirestore
+import javax.inject.Inject
 
-class UserRepositoryFirestore(private val db: FirebaseFirestore) : UserRepository {
+class UserRepositoryFirestore @Inject constructor(private val db: FirebaseFirestore) : UserRepository {
 
   override fun init(onSuccess: () -> Unit) {
     Firebase.auth.addAuthStateListener {

@@ -58,7 +58,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 @Composable
 fun AccountDetails(
     navigationAction: NavigationAction,
-    userViewModel: UserViewModel = viewModel(factory = UserViewModel.Factory)
+    userViewModel: UserViewModel
 ) {
   var firstName: String by remember { mutableStateOf("") }
   var lastName: String by remember { mutableStateOf("") }

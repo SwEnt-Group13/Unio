@@ -77,7 +77,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun UserProfileScreen(
     navigationAction: NavigationAction,
-    userViewModel: UserViewModel = viewModel(factory = UserViewModel.Factory)
+    userViewModel: UserViewModel
 ) {
 
   val user by userViewModel.user.collectAsState()

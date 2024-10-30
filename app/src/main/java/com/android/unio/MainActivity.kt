@@ -18,8 +18,6 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.event.EventListViewModel
-import com.android.unio.model.event.EventRepositoryFirestore
-import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.accountCreation.AccountDetails
 import com.android.unio.ui.association.AssociationProfileScreen
@@ -35,8 +33,6 @@ import com.android.unio.ui.theme.AppTheme
 import com.android.unio.ui.user.UserProfileScreen
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.firestore
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.HiltAndroidApp
 
@@ -58,9 +54,7 @@ fun UnioApp() {
 
   val associationViewModel = hiltViewModel<AssociationViewModel>()
   val eventListViewModel = hiltViewModel<EventListViewModel>()
-
-  val userRepositoryFirestore = UserRepositoryFirestore(Firebase.firestore)
-  val userViewModel = UserViewModel(userRepositoryFirestore, true)
+  val userViewModel = hiltViewModel<UserViewModel>()
 
   val context = LocalContext.current
 
@@ -69,7 +63,7 @@ fun UnioApp() {
     val user = auth.currentUser
     if (user != null) {
       if (user.isEmailVerified) {
-        userRepositoryFirestore.getUserWithId(
+        userViewModel.getUsersByUid(
             user.uid,
             {
               if (it.firstName.isNotEmpty()) {
