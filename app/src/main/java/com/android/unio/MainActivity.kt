@@ -10,14 +10,13 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
-import com.android.unio.model.association.AssociationRepositoryFirestore
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.event.EventListViewModel
-import com.android.unio.model.event.EventRepositoryFirestore
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.accountCreation.AccountDetails
@@ -34,7 +33,6 @@ import com.android.unio.ui.theme.AppTheme
 import com.android.unio.ui.user.UserProfileScreen
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
-import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
 
 class MainActivity : ComponentActivity() {
@@ -48,10 +46,10 @@ class MainActivity : ComponentActivity() {
 fun UnioApp() {
   val navController = rememberNavController()
   val navigationActions = NavigationAction(navController)
-  val db = FirebaseFirestore.getInstance()
 
-  val associationRepository = AssociationRepositoryFirestore(Firebase.firestore)
-  val associationViewModel = AssociationViewModel(associationRepository)
+  val associationViewModel: AssociationViewModel = viewModel(factory = AssociationViewModel.Factory)
+
+  val eventViewModel: EventListViewModel = viewModel(factory = EventListViewModel.Factory)
 
   val userRepositoryFirestore = UserRepositoryFirestore(Firebase.firestore)
   val userViewModel = UserViewModel(userRepositoryFirestore, true)
@@ -94,7 +92,7 @@ fun UnioApp() {
       composable(Screen.HOME) {
         HomeScreen(
             navigationActions,
-            EventListViewModel(EventRepositoryFirestore(db)),
+            eventViewModel,
             onAddEvent = {},
             onEventClick = {})
       }
@@ -106,9 +104,6 @@ fun UnioApp() {
         val uid = navBackStackEntry.arguments?.getString("uid")
 
         // Create the AssociationProfile screen with the association UID
-        uid?.let {
-          AssociationProfileScreen(navigationAction = navigationActions, associationId = it)
-        }
         uid?.let { AssociationProfileScreen(navigationActions, it, associationViewModel) }
             ?: run {
               Log.e("AssociationProfile", "Association UID is null")
