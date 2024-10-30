@@ -32,8 +32,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.InputChip
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -75,20 +73,18 @@ import com.google.firebase.firestore.firestore
 import com.google.firebase.storage.storage
 import kotlinx.coroutines.flow.MutableStateFlow
 
-
 @Preview(showBackground = true)
 @Composable
 fun AccountDetailsPreview() {
-    val navController = rememberNavController()
-    val navigationActions = NavigationAction(navController)
-    val userRepositoryFirestore = UserRepositoryFirestore(Firebase.firestore)
-    val userViewModel = UserViewModel(userRepositoryFirestore, false)
-    val imageRepositoryFirebaseStorage = ImageRepositoryFirebaseStorage(Firebase.storage)
-    AccountDetails(
-        navigationAction = navigationActions,
-        userViewModel = userViewModel,
-        imageRepository = imageRepositoryFirebaseStorage
-    )
+  val navController = rememberNavController()
+  val navigationActions = NavigationAction(navController)
+  val userRepositoryFirestore = UserRepositoryFirestore(Firebase.firestore)
+  val userViewModel = UserViewModel(userRepositoryFirestore, false)
+  val imageRepositoryFirebaseStorage = ImageRepositoryFirebaseStorage(Firebase.storage)
+  AccountDetails(
+      navigationAction = navigationActions,
+      userViewModel = userViewModel,
+      imageRepository = imageRepositoryFirebaseStorage)
 }
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -113,16 +109,17 @@ fun AccountDetails(
   val interests by interestsFlow.collectAsState()
   val socials by userSocialsFlow.collectAsState()
 
-    val profilePictureUri = remember { mutableStateOf<Uri>(Uri.EMPTY) }
+  val profilePictureUri = remember { mutableStateOf<Uri>(Uri.EMPTY) }
 
-    val pickMedia = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+  val pickMedia =
+      rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
         if (uri != null) {
-            Log.d("PhotoPicker", "Selected URI: $uri")
-            profilePictureUri.value = uri
+          Log.d("PhotoPicker", "Selected URI: $uri")
+          profilePictureUri.value = uri
         } else {
-            Log.d("PhotoPicker", "No media selected")
+          Log.d("PhotoPicker", "No media selected")
         }
-    }
+      }
 
   val context = LocalContext.current
 
@@ -137,39 +134,36 @@ fun AccountDetails(
   val userId = Firebase.auth.currentUser?.uid
 
   val createUser = { uri: String ->
-      var newUser = User(
-          uid = userId!!,
-          email = Firebase.auth.currentUser?.email!!,
-          firstName = firstName,
-          lastName = lastName,
-          biography = bio,
-          followedAssociations = Association.emptyFirestoreReferenceList(),
-          joinedAssociations = Association.emptyFirestoreReferenceList(),
-          interests = interests.filter { it.second.value }.map { it.first },
-          socials = socials,
-          profilePicture = uri,
-          hasProvidedAccountDetails = true)
+    var newUser =
+        User(
+            uid = userId!!,
+            email = Firebase.auth.currentUser?.email!!,
+            firstName = firstName,
+            lastName = lastName,
+            biography = bio,
+            followedAssociations = Association.emptyFirestoreReferenceList(),
+            joinedAssociations = Association.emptyFirestoreReferenceList(),
+            interests = interests.filter { it.second.value }.map { it.first },
+            socials = socials,
+            profilePicture = uri,
+            hasProvidedAccountDetails = true)
 
-
-      isErrors = checkNewUser(newUser)
-      if (isErrors.isEmpty()) {
-          userViewModel.addUser(
-              newUser,
-              onSuccess = {
-                  Toast.makeText(context, "Account Created Successfully", Toast.LENGTH_SHORT)
-                      .show()
-                  navigationAction.navigateTo(Screen.HOME)
-              })
-      }
-
+    isErrors = checkNewUser(newUser)
+    if (isErrors.isEmpty()) {
+      userViewModel.addUser(
+          newUser,
+          onSuccess = {
+            Toast.makeText(context, "Account Created Successfully", Toast.LENGTH_SHORT).show()
+            navigationAction.navigateTo(Screen.HOME)
+          })
+    }
   }
 
   Column(
       modifier =
-      Modifier
-          .padding(vertical = 20.dp, horizontal = 40.dp)
-          .verticalScroll(scrollState)
-          .testTag("AccountDetails"),
+          Modifier.padding(vertical = 20.dp, horizontal = 40.dp)
+              .verticalScroll(scrollState)
+              .testTag("AccountDetails"),
       verticalArrangement = Arrangement.SpaceBetween,
       horizontalAlignment = Alignment.CenterHorizontally) {
         Text(
@@ -180,10 +174,7 @@ fun AccountDetails(
         val isFirstNameError = isErrors.contains(AccountDetailsError.EMPTY_FIRST_NAME)
         OutlinedTextField(
             modifier =
-            Modifier
-                .padding(4.dp)
-                .fillMaxWidth()
-                .testTag("AccountDetailsFirstNameTextField"),
+                Modifier.padding(4.dp).fillMaxWidth().testTag("AccountDetailsFirstNameTextField"),
             label = {
               Text("First name", modifier = Modifier.testTag("AccountDetailsFirstNameText"))
             },
@@ -200,10 +191,7 @@ fun AccountDetails(
         val isLastNameError = isErrors.contains(AccountDetailsError.EMPTY_LAST_NAME)
         OutlinedTextField(
             modifier =
-            Modifier
-                .padding(4.dp)
-                .fillMaxWidth()
-                .testTag("AccountDetailsLastNameTextField"),
+                Modifier.padding(4.dp).fillMaxWidth().testTag("AccountDetailsLastNameTextField"),
             label = {
               Text("Last name", modifier = Modifier.testTag("AccountDetailsLastNameText"))
             },
@@ -219,52 +207,45 @@ fun AccountDetails(
             value = lastName)
         OutlinedTextField(
             modifier =
-            Modifier
-                .padding(4.dp)
-                .fillMaxWidth()
-                .height(200.dp)
-                .testTag("AccountDetailsBioTextField"),
+                Modifier.padding(4.dp)
+                    .fillMaxWidth()
+                    .height(200.dp)
+                    .testTag("AccountDetailsBioTextField"),
             label = { Text("Bio", modifier = Modifier.testTag("AccountDetailsBioText")) },
             onValueChange = { bio = it },
             value = bio)
 
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp),
+            modifier = Modifier.fillMaxWidth().padding(8.dp),
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically) {
               Text(
                   text = "Maybe add a profile picture?",
                   modifier =
-                  Modifier
-                      .widthIn(max = 140.dp)
-                      .testTag("AccountDetailsProfilePictureText"),
+                      Modifier.widthIn(max = 140.dp).testTag("AccountDetailsProfilePictureText"),
                   style = AppTypography.bodyLarge)
 
-            if(profilePictureUri.value == Uri.EMPTY){
+              if (profilePictureUri.value == Uri.EMPTY) {
                 Icon(
                     imageVector = Icons.Rounded.AccountCircle,
                     contentDescription = "Add",
                     tint = primaryLight,
                     modifier =
-                    Modifier
-                        .clickable {
-                            pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
-                        }
-                        .size(100.dp)
-                        .testTag("AccountDetailsProfilePictureIcon"))
-            }else {
+                        Modifier.clickable {
+                              pickMedia.launch(
+                                  PickVisualMediaRequest(
+                                      ActivityResultContracts.PickVisualMedia.ImageOnly))
+                            }
+                            .size(100.dp)
+                            .testTag("AccountDetailsProfilePictureIcon"))
+              } else {
                 ProfilePictureWithRemoveIcon(
                     profilePictureUri = profilePictureUri.value,
-                    onRemove = {profilePictureUri.value = Uri.EMPTY}
-                )
+                    onRemove = { profilePictureUri.value = Uri.EMPTY })
+              }
             }
-        }
         OutlinedButton(
-            modifier = Modifier
-                .fillMaxWidth()
-                .testTag("AccountDetailsInterestsButton"),
+            modifier = Modifier.fillMaxWidth().testTag("AccountDetailsInterestsButton"),
             onClick = { showInterestsOverlay = true }) {
               Icon(Icons.Default.Add, contentDescription = "Add")
               Text("Add centers of interest")
@@ -276,9 +257,7 @@ fun AccountDetails(
                   label = { Text(pair.first.name) },
                   onClick = {},
                   selected = pair.second.value,
-                  modifier = Modifier
-                      .padding(3.dp)
-                      .testTag("AccountDetailsInterestChip: $index"),
+                  modifier = Modifier.padding(3.dp).testTag("AccountDetailsInterestChip: $index"),
                   avatar = {
                     Icon(
                         Icons.Default.Close,
@@ -289,9 +268,7 @@ fun AccountDetails(
           }
         }
         OutlinedButton(
-            modifier = Modifier
-                .fillMaxWidth()
-                .testTag("AccountDetailsSocialsButton"),
+            modifier = Modifier.fillMaxWidth().testTag("AccountDetailsSocialsButton"),
             onClick = { showSocialsOverlay = true }) {
               Icon(Icons.Default.Add, contentDescription = "Add")
               Text("Add links to other social media")
@@ -302,9 +279,7 @@ fun AccountDetails(
                 label = { Text(userSocial.social.name) },
                 onClick = {},
                 selected = true,
-                modifier = Modifier
-                    .padding(3.dp)
-                    .testTag("AccountDetailsSocialChip: $index"),
+                modifier = Modifier.padding(3.dp).testTag("AccountDetailsSocialChip: $index"),
                 avatar = {
                   Icon(
                       Icons.Default.Close,
@@ -320,21 +295,20 @@ fun AccountDetails(
         Button(
             modifier = Modifier.testTag("AccountDetailsContinueButton"),
             onClick = {
-                if(profilePictureUri.value == Uri.EMPTY){
-                    createUser("")
-                }else{
-                    val inputStream = context.contentResolver.openInputStream(profilePictureUri.value)
+              if (profilePictureUri.value == Uri.EMPTY) {
+                createUser("")
+              } else {
+                val inputStream = context.contentResolver.openInputStream(profilePictureUri.value)
 
-                        imageRepository.uploadImage(
-                            inputStream!!,
-                            "images/users/${userId}",
-                            onSuccess =  createUser,
-                            onFailure = { exception ->
-                                Log.e("AccountDetails", "Error uploading image: $exception")
-                                Toast.makeText(context, "Error uploading image", Toast.LENGTH_SHORT).show()
-                            }
-                        )
-                    }
+                imageRepository.uploadImage(
+                    inputStream!!,
+                    "images/users/${userId}",
+                    onSuccess = createUser,
+                    onFailure = { exception ->
+                      Log.e("AccountDetails", "Error uploading image: $exception")
+                      Toast.makeText(context, "Error uploading image", Toast.LENGTH_SHORT).show()
+                    })
+              }
             }) {
               Text("Continue")
             }
@@ -366,25 +340,16 @@ private fun ProfilePictureWithRemoveIcon(
     profilePictureUri: Uri,
     onRemove: () -> Unit,
 ) {
-    Box(
-        modifier = Modifier.size(100.dp)
-    ) {
-        Image(
-            painter = rememberAsyncImagePainter(profilePictureUri),
-            contentDescription = "Profile Picture",
-            contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .aspectRatio(1f)
-                .clip(CircleShape)
-        )
-        Icon(
-            imageVector = Icons.Default.Close,
-            contentDescription = "Remove Profile Picture",
-            modifier = Modifier
-                .size(24.dp)
-                .align(Alignment.TopEnd)
-                .clickable { onRemove() }
-                .padding(4.dp)
-        )
-    }
+  Box(modifier = Modifier.size(100.dp)) {
+    Image(
+        painter = rememberAsyncImagePainter(profilePictureUri),
+        contentDescription = "Profile Picture",
+        contentScale = ContentScale.Crop,
+        modifier = Modifier.aspectRatio(1f).clip(CircleShape))
+    Icon(
+        imageVector = Icons.Default.Close,
+        contentDescription = "Remove Profile Picture",
+        modifier =
+            Modifier.size(24.dp).align(Alignment.TopEnd).clickable { onRemove() }.padding(4.dp))
+  }
 }

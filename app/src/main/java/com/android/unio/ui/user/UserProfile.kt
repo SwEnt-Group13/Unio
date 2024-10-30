@@ -148,19 +148,17 @@ fun UserProfileScreenContent(navigationAction: NavigationAction, user: User) {
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxWidth(0.7f).padding(24.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        Box(
-            modifier = Modifier.size(100.dp)
-        ){
+          Box(modifier = Modifier.size(100.dp)) {
             AsyncImage(
                 model = user.profilePicture,
                 contentDescription = "Profile Picture",
                 contentScale = ContentScale.Crop,
                 modifier =
-                Modifier.size(100.dp)
-                    .clip(CircleShape)
-                    .background(Color.Gray)
-                    .testTag("UserProfilePicture"))
-        }
+                    Modifier.size(100.dp)
+                        .clip(CircleShape)
+                        .background(Color.Gray)
+                        .testTag("UserProfilePicture"))
+          }
 
           // Display the user's name and biography.
           Text(

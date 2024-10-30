@@ -92,7 +92,9 @@ fun UnioApp() {
     navigation(startDestination = Screen.WELCOME, route = Route.AUTH) {
       composable(Screen.WELCOME) { WelcomeScreen(navigationActions) }
       composable(Screen.EMAIL_VERIFICATION) { EmailVerificationScreen(navigationActions) }
-      composable(Screen.ACCOUNT_DETAILS) { AccountDetails(navigationActions, userViewModel, imageRepository) }
+      composable(Screen.ACCOUNT_DETAILS) {
+        AccountDetails(navigationActions, userViewModel, imageRepository)
+      }
     }
     navigation(startDestination = Screen.HOME, route = Route.HOME) {
       composable(Screen.HOME) {
