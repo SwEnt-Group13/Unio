@@ -46,9 +46,9 @@ fun UnioApp() {
   val navController = rememberNavController()
   val navigationActions = NavigationAction(navController)
 
-  val associationViewModel: AssociationViewModel = viewModel(factory = AssociationViewModel.Factory)
-
-  val eventViewModel: EventListViewModel = viewModel(factory = EventListViewModel.Factory)
+  val associationRepository = AssociationRepositoryFirestore(Firebase.firestore)
+  val eventRepository = EventRepositoryFirestore(Firebase.firestore)
+  val associationViewModel = AssociationViewModel(associationRepository, eventRepository)
 
   val userRepositoryFirestore = UserRepositoryFirestore(Firebase.firestore)
   val userViewModel = UserViewModel(userRepositoryFirestore, true)
