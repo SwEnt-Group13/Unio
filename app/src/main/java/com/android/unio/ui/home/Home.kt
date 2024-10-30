@@ -75,7 +75,7 @@ fun EventListOverviewPreview() {
 @Composable
 fun HomeScreen(
     navigationAction: NavigationAction,
-    eventListViewModel: EventListViewModel = viewModel(factory = EventListViewModel.Factory),
+    eventListViewModel: EventListViewModel,
     onAddEvent: () -> Unit,
     onEventClick: (Event) -> Unit
 ) {

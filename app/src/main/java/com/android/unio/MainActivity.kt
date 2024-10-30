@@ -55,9 +55,9 @@ class MainActivity : ComponentActivity() {
 fun UnioApp() {
   val navController = rememberNavController()
   val navigationActions = NavigationAction(navController)
-  val db = FirebaseFirestore.getInstance()
 
   val associationViewModel = hiltViewModel<AssociationViewModel>()
+  val eventListViewModel = hiltViewModel<EventListViewModel>()
 
   val userRepositoryFirestore = UserRepositoryFirestore(Firebase.firestore)
   val userViewModel = UserViewModel(userRepositoryFirestore, true)
@@ -100,7 +100,7 @@ fun UnioApp() {
       composable(Screen.HOME) {
         HomeScreen(
             navigationActions,
-            EventListViewModel(EventRepositoryFirestore(db)),
+            eventListViewModel,
             onAddEvent = {},
             onEventClick = {})
       }
