@@ -121,7 +121,7 @@ class ScreenDisplayingTest {
 
   @Test
   fun testSettingsDisplayed() {
-    composeTestRule.setContent { SettingsScreen() }
+    composeTestRule.setContent { SettingsScreen(navigationAction) }
     composeTestRule.onNodeWithTag("SettingsScreen").assertIsDisplayed()
   }
 
