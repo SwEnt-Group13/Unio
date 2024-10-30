@@ -7,7 +7,10 @@ import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performTextInput
+import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.ui.navigation.NavigationAction
+import io.mockk.MockKAnnotations
+import io.mockk.impl.annotations.MockK
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -16,13 +19,15 @@ import org.mockito.kotlin.mock
 class WelcomeTest {
 
   private lateinit var navigationAction: NavigationAction
+  @MockK private lateinit var userRepositoryFirestore: UserRepositoryFirestore
 
   @get:Rule val composeTestRule = createComposeRule()
 
   @Before
   fun setUp() {
+    MockKAnnotations.init(this, relaxed = true)
     navigationAction = mock { NavigationAction::class.java }
-    composeTestRule.setContent { WelcomeScreen(navigationAction) }
+    composeTestRule.setContent { WelcomeScreen(navigationAction, userRepositoryFirestore) }
   }
 
   @Test

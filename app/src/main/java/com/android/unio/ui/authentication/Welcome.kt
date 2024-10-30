@@ -25,6 +25,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -44,22 +45,57 @@ import androidx.compose.ui.text.style.TextAlign.Companion.Center
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat.getSystemService
 import com.android.unio.model.user.SignInState
+import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.isValidEmail
 import com.android.unio.model.user.isValidPassword
 import com.android.unio.model.user.signInOrCreateAccount
 import com.android.unio.ui.navigation.NavigationAction
+import com.android.unio.ui.navigation.Route
+import com.android.unio.ui.navigation.Screen
 import com.android.unio.ui.theme.AppTypography
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 
 @Composable
-fun WelcomeScreen(navigationAction: NavigationAction) {
+fun WelcomeScreen(
+    navigationActions: NavigationAction,
+    userRepositoryFirestore: UserRepositoryFirestore
+) {
+  val context = LocalContext.current
+
+  LaunchedEffect(Unit) {
+    // Redirect user based on authentication state
+    Firebase.auth.addAuthStateListener { auth ->
+      val user = auth.currentUser
+      if (user != null) {
+        if (user.isEmailVerified) {
+          userRepositoryFirestore.getUserWithId(
+              user.uid,
+              {
+                if (it.firstName.isNotEmpty()) {
+                  navigationActions.navigateTo(Screen.HOME)
+                } else {
+                  navigationActions.navigateTo(Screen.ACCOUNT_DETAILS)
+                }
+              },
+              {
+                Log.e("UnioApp", "Error fetching account details: $it")
+                Toast.makeText(context, "Error fetching account details.", Toast.LENGTH_SHORT)
+                    .show()
+              })
+        } else {
+          navigationActions.navigateTo(Screen.EMAIL_VERIFICATION)
+        }
+      } else {
+        navigationActions.navigateTo(Route.AUTH)
+      }
+    }
+  }
+
   var email by remember { mutableStateOf("") }
   var password by remember { mutableStateOf("") }
 
   var showPassword by remember { mutableStateOf(false) }
-
-  val context = LocalContext.current
 
   val validEmail = isValidEmail(email)
   val validPassword = isValidPassword(password)

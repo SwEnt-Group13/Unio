@@ -32,7 +32,6 @@ import com.android.unio.ui.saved.SavedScreen
 import com.android.unio.ui.theme.AppTheme
 import com.android.unio.ui.user.UserProfileScreen
 import com.google.firebase.Firebase
-import com.google.firebase.auth.auth
 import com.google.firebase.firestore.firestore
 
 class MainActivity : ComponentActivity() {
@@ -56,35 +55,9 @@ fun UnioApp() {
 
   val context = LocalContext.current
 
-  // Redirect user based on authentication state
-  Firebase.auth.addAuthStateListener { auth ->
-    val user = auth.currentUser
-    if (user != null) {
-      if (user.isEmailVerified) {
-        userRepositoryFirestore.getUserWithId(
-            user.uid,
-            {
-              if (it.firstName.isNotEmpty()) {
-                navigationActions.navigateTo(Screen.HOME)
-              } else {
-                navigationActions.navigateTo(Screen.ACCOUNT_DETAILS)
-              }
-            },
-            {
-              Log.e("UnioApp", "Error fetching account details: $it")
-              Toast.makeText(context, "Error fetching account details.", Toast.LENGTH_SHORT).show()
-            })
-      } else {
-        navigationActions.navigateTo(Screen.EMAIL_VERIFICATION)
-      }
-    } else {
-      navigationActions.navigateTo(Route.AUTH)
-    }
-  }
-
   NavHost(navController = navController, startDestination = Route.AUTH) {
     navigation(startDestination = Screen.WELCOME, route = Route.AUTH) {
-      composable(Screen.WELCOME) { WelcomeScreen(navigationActions) }
+      composable(Screen.WELCOME) { WelcomeScreen(navigationActions, userRepositoryFirestore) }
       composable(Screen.EMAIL_VERIFICATION) { EmailVerificationScreen(navigationActions) }
       composable(Screen.ACCOUNT_DETAILS) { AccountDetails(navigationActions, userViewModel) }
     }
