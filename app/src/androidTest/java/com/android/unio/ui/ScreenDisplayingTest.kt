@@ -8,6 +8,7 @@ import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationCategory
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.event.Event
+import com.android.unio.model.event.EventListViewModel
 import com.android.unio.model.firestore.firestoreReferenceListWith
 import com.android.unio.model.user.User
 import com.android.unio.model.user.UserViewModel
@@ -34,6 +35,7 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import io.mockk.mockkStatic
+import kotlinx.coroutines.flow.StateFlow
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -46,7 +48,11 @@ class ScreenDisplayingTest {
 
   @MockK private lateinit var associationViewModel: AssociationViewModel
 
+  @MockK private lateinit var eventListViewModel: EventListViewModel
+
   @MockK private lateinit var firebaseAuth: FirebaseAuth
+
+  @MockK private lateinit var user: StateFlow<User?>
 
   // This is the implementation of the abstract method getUid() from FirebaseUser.
   // Because it is impossible to mock abstract method, this is the only way to mock it.
@@ -109,13 +115,13 @@ class ScreenDisplayingTest {
 
   @Test
   fun testHomeDisplayed() {
-    composeTestRule.setContent { HomeScreen(navigationAction, onAddEvent = {}, onEventClick = {}) }
+    composeTestRule.setContent { HomeScreen(navigationAction, eventListViewModel, onAddEvent = {}, onEventClick = {}) }
     composeTestRule.onNodeWithTag("HomeScreen").assertIsDisplayed()
   }
 
   @Test
   fun testExploreDisplayed() {
-    composeTestRule.setContent { ExploreScreen(navigationAction) }
+    composeTestRule.setContent { ExploreScreen(navigationAction, associationViewModel) }
     composeTestRule.onNodeWithTag("exploreScreen").assertIsDisplayed()
     composeTestRule.onNodeWithTag("searchBar").assertIsDisplayed()
   }
@@ -160,7 +166,7 @@ class ScreenDisplayingTest {
 
   @Test
   fun testUserProfileDisplayed() {
-    composeTestRule.setContent { UserProfileScreen(navigationAction) }
+    composeTestRule.setContent { UserProfileScreen(navigationAction, userViewModel) }
     composeTestRule.onNodeWithTag("UserProfileScreen").assertIsDisplayed()
   }
 

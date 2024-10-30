@@ -20,11 +20,14 @@ class UserViewModel @Inject constructor(val repository: UserRepository) : ViewMo
   val refreshState: State<Boolean> = _refreshState
 
   init {
-    Firebase.auth.addAuthStateListener { auth ->
-      if (auth.currentUser != null) {
-        repository.init { getUserByUid(auth.currentUser!!.uid, true) }
-      }
-    }
+//    Firebase.auth.addAuthStateListener { auth ->
+//      if (auth.currentUser != null) {
+//        repository.init { getUserByUid(auth.currentUser!!.uid, true) }
+//      }else{
+//        repository.init { }
+//      }
+//    }
+    repository.init{uid, b -> getUserByUid(uid, b)}
   }
 
   fun getUsersByUid(uid: String, onSuccess: (User) -> Unit, onFailure: (Exception) -> Unit) {

@@ -11,10 +11,10 @@ import javax.inject.Inject
 class UserRepositoryFirestore @Inject constructor(private val db: FirebaseFirestore) :
     UserRepository {
 
-  override fun init(onSuccess: () -> Unit) {
+  override fun init(onSuccess: (String, Boolean) -> Unit) {
     Firebase.auth.addAuthStateListener {
       if (it.currentUser != null) {
-        onSuccess()
+        onSuccess(it.currentUser!!.uid, true)
       }
     }
   }

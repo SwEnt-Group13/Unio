@@ -35,7 +35,7 @@ class UserViewModelTest {
 
     every { repository.init(any()) } returns Unit
 
-    userViewModel = UserViewModel(repository, false)
+    userViewModel = UserViewModel(repository)
   }
 
   @Test

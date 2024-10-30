@@ -1,7 +1,7 @@
 package com.android.unio.model.user
 
 interface UserRepository {
-  fun init(onSuccess: () -> Unit)
+  fun init(onSuccess: (String, Boolean) -> Unit)
 
   fun getUsers(onSuccess: (List<User>) -> Unit, onFailure: (Exception) -> Unit)
 
