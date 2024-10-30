@@ -12,12 +12,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
-import com.android.unio.model.association.AssociationRepositoryFirestore
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.event.EventListViewModel
 import com.android.unio.model.event.EventRepositoryFirestore
@@ -51,7 +49,6 @@ class MainActivity : ComponentActivity() {
   }
 }
 
-
 @HiltAndroidApp class UnioApplication : Application() {}
 
 @Composable
@@ -60,8 +57,7 @@ fun UnioApp() {
   val navigationActions = NavigationAction(navController)
   val db = FirebaseFirestore.getInstance()
 
-  val associationRepository = AssociationRepositoryFirestore(Firebase.firestore)
-  val eventRepository = EventRepositoryFirestore(Firebase.firestore)
+  val associationViewModel = hiltViewModel<AssociationViewModel>()
 
   val userRepositoryFirestore = UserRepositoryFirestore(Firebase.firestore)
   val userViewModel = UserViewModel(userRepositoryFirestore, true)
@@ -110,20 +106,12 @@ fun UnioApp() {
       }
     }
     navigation(startDestination = Screen.EXPLORE, route = Route.EXPLORE) {
-      composable(Screen.EXPLORE) {
-        val associationViewModel = hiltViewModel<AssociationViewModel>()
-        ExploreScreen(navigationActions, associationViewModel)
-      }
+      composable(Screen.EXPLORE) { ExploreScreen(navigationActions, associationViewModel) }
       composable(Screen.ASSOCIATION_PROFILE) { navBackStackEntry ->
         // Get the association UID from the arguments
         val uid = navBackStackEntry.arguments?.getString("uid")
 
         // Create the AssociationProfile screen with the association UID
-        val associationViewModel = hiltViewModel<AssociationViewModel>()
-        uid?.let {
-          AssociationProfileScreen(
-              navigationAction = navigationActions, associationId = it, associationViewModel)
-        }
         uid?.let { AssociationProfileScreen(navigationActions, it, associationViewModel) }
             ?: run {
               Log.e("AssociationProfile", "Association UID is null")

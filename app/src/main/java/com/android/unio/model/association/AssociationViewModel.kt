@@ -33,20 +33,6 @@ constructor(
     associationRepository.init { getAssociations() }
   }
 
-  //    companion object {
-  //        val Factory: ViewModelProvider.Factory =
-  //            object : ViewModelProvider.Factory {
-  //                @Suppress("UNCHECKED_CAST")
-  //                override fun <T : ViewModel> create(modelClass: Class<T>): T {
-  //                    return AssociationViewModel(
-  //                        AssociationRepositoryFirestore(Firebase.firestore),
-  //                        EventRepositoryFirestore(Firebase.firestore)
-  //                    )
-  //                            as T
-  //                }
-  //            }
-  //    }
-
   fun getEventsForAssociation(association: Association, onSuccess: (List<Event>) -> Unit) {
     viewModelScope.launch {
       eventRepository.getEventsOfAssociation(
@@ -55,7 +41,7 @@ constructor(
           onFailure = { exception ->
             Log.e(
                 "ExploreViewModel",
-                "Failed to get events for association ${association.fullName}",
+                "Failed to get events for association ${association.name}",
                 exception)
           })
     }
