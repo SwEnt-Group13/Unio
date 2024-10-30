@@ -51,7 +51,8 @@ fun UnioApp() {
   val db = FirebaseFirestore.getInstance()
 
   val associationRepository = AssociationRepositoryFirestore(Firebase.firestore)
-  val associationViewModel = AssociationViewModel(associationRepository)
+  val eventRepository = EventRepositoryFirestore(Firebase.firestore)
+  val associationViewModel = AssociationViewModel(associationRepository, eventRepository)
 
   val userRepositoryFirestore = UserRepositoryFirestore(Firebase.firestore)
   val userViewModel = UserViewModel(userRepositoryFirestore, true)
