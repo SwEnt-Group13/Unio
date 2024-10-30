@@ -85,6 +85,7 @@ firebaseStorageKtx = "21.0.1"
 uiTextGoogleFonts = "1.7.3"
 volley = "1.2.1"
 composeMaterial = "1.4.0"
+places = "4.0.0"
 
 
 [libraries]
@@ -167,6 +168,7 @@ firebase-storage-ktx = { group = "com.google.firebase", name = "firebase-storage
 androidx-ui-text-google-fonts = { group = "androidx.compose.ui", name = "ui-text-google-fonts", version.ref = "uiTextGoogleFonts" }
 volley = { group = "com.android.volley", name = "volley", version.ref = "volley" }
 androidx-compose-material = { group = "androidx.wear.compose", name = "compose-material", version.ref = "composeMaterial" }
+places = { group = "com.google.android.libraries.places", name = "places", version.ref = "places" }
 
 
 

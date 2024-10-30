@@ -119,7 +119,7 @@ fun UnioApp() {
       }
     }
     navigation(startDestination = Screen.SAVED, route = Route.SAVED) {
-      composable(Screen.SAVED) { SavedScreen(navigationActions) }
+      composable(Screen.SAVED) { SavedScreen(navigationActions, eventListViewModel, userViewModel) }
     }
     navigation(startDestination = Screen.MY_PROFILE, route = Route.MY_PROFILE) {
       composable(Screen.MY_PROFILE) { UserProfileScreen(navigationActions, userViewModel) }
