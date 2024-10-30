@@ -31,7 +31,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.android.unio.R
 import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationCategory
@@ -44,10 +43,7 @@ import com.android.unio.ui.navigation.Screen
 import com.android.unio.ui.theme.AppTypography
 
 @Composable
-fun ExploreScreen(
-    navigationAction: NavigationAction,
-    associationViewModel: AssociationViewModel = viewModel(factory = AssociationViewModel.Factory)
-) {
+fun ExploreScreen(navigationAction: NavigationAction, associationViewModel: AssociationViewModel) {
 
   Scaffold(
       bottomBar = {

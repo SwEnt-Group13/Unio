@@ -50,7 +50,6 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
-import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.android.unio.R
 import com.android.unio.model.association.Association
@@ -74,7 +73,7 @@ private var scope: CoroutineScope? = null
 fun AssociationProfileScreen(
     navigationAction: NavigationAction,
     associationId: String,
-    associationViewModel: AssociationViewModel = viewModel(factory = AssociationViewModel.Factory)
+    associationViewModel: AssociationViewModel
 ) {
   val context = LocalContext.current
   val association = associationViewModel.findAssociationById(associationId)

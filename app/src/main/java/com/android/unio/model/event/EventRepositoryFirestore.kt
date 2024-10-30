@@ -5,8 +5,14 @@ import com.android.unio.model.firestore.transform.hydrate
 import com.android.unio.model.firestore.transform.serialize
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
+import dagger.Binds
+import dagger.Module
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
+import javax.inject.Inject
 
-class EventRepositoryFirestore(private val db: FirebaseFirestore) : EventRepository {
+class EventRepositoryFirestore @Inject constructor(private val db: FirebaseFirestore) :
+    EventRepository {
 
   override fun getEventsOfAssociation(
       association: String,
@@ -81,4 +87,14 @@ class EventRepositoryFirestore(private val db: FirebaseFirestore) : EventReposit
 
   // Note: the following line is needed to add external methods to the companion object
   companion object
+}
+
+@Module
+@InstallIn(SingletonComponent::class)
+abstract class EventModule() {
+
+  @Binds
+  abstract fun bindEventRepository(
+      eventRepositoryFirestore: EventRepositoryFirestore
+  ): EventRepository
 }

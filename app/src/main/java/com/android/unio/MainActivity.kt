@@ -1,5 +1,6 @@
 package com.android.unio
 
+import android.app.Application
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -10,6 +11,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -36,13 +39,19 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
+import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.HiltAndroidApp
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContent { Surface(modifier = Modifier.fillMaxSize()) { AppTheme { UnioApp() } } }
   }
 }
+
+@HiltAndroidApp class UnioApplication : Application() {}
 
 @Composable
 fun UnioApp() {
@@ -52,7 +61,6 @@ fun UnioApp() {
 
   val associationRepository = AssociationRepositoryFirestore(Firebase.firestore)
   val eventRepository = EventRepositoryFirestore(Firebase.firestore)
-  val associationViewModel = AssociationViewModel(associationRepository, eventRepository)
 
   val userRepositoryFirestore = UserRepositoryFirestore(Firebase.firestore)
   val userViewModel = UserViewModel(userRepositoryFirestore, true)
@@ -101,14 +109,19 @@ fun UnioApp() {
       }
     }
     navigation(startDestination = Screen.EXPLORE, route = Route.EXPLORE) {
-      composable(Screen.EXPLORE) { ExploreScreen(navigationActions, associationViewModel) }
+      composable(Screen.EXPLORE) {
+        val associationViewModel = hiltViewModel<AssociationViewModel>()
+        ExploreScreen(navigationActions, associationViewModel)
+      }
       composable(Screen.ASSOCIATION_PROFILE) { navBackStackEntry ->
         // Get the association UID from the arguments
         val uid = navBackStackEntry.arguments?.getString("uid")
 
         // Create the AssociationProfile screen with the association UID
+        val associationViewModel = hiltViewModel<AssociationViewModel>()
         uid?.let {
-          AssociationProfileScreen(navigationAction = navigationActions, associationId = it)
+          AssociationProfileScreen(
+              navigationAction = navigationActions, associationId = it, associationViewModel)
         }
         uid?.let { AssociationProfileScreen(navigationActions, it, associationViewModel) }
             ?: run {

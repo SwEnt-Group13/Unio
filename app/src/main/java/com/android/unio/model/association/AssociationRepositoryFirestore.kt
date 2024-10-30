@@ -8,8 +8,16 @@ import com.google.android.gms.tasks.Task
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.firestore
+import dagger.Binds
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
+import javax.inject.Inject
 
-class AssociationRepositoryFirestore(private val db: FirebaseFirestore) : AssociationRepository {
+class AssociationRepositoryFirestore @Inject constructor(private val db: FirebaseFirestore) :
+    AssociationRepository {
 
   override fun init(onSuccess: () -> Unit) {
     Firebase.auth.addAuthStateListener {
@@ -120,4 +128,21 @@ class AssociationRepositoryFirestore(private val db: FirebaseFirestore) : Associ
 
   // Note: the following line is needed to add external methods to the companion object
   companion object
+}
+
+@Module
+@InstallIn(SingletonComponent::class)
+object FirebaseModule {
+
+  @Provides fun provideFirebaseFirestore(): FirebaseFirestore = Firebase.firestore
+}
+
+@Module
+@InstallIn(SingletonComponent::class)
+abstract class AssociationModule {
+
+  @Binds
+  abstract fun bindAssociationRepository(
+      associationRepositoryFirestore: AssociationRepositoryFirestore
+  ): AssociationRepository
 }
