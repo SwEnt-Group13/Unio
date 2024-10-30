@@ -1,5 +1,6 @@
 package com.android.unio
 
+import android.app.Application
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -36,12 +37,19 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
+import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.HiltAndroidApp
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContent { Surface(modifier = Modifier.fillMaxSize()) { AppTheme { UnioApp() } } }
   }
+}
+
+@HiltAndroidApp
+class UnioApplication : Application(){
 }
 
 @Composable
