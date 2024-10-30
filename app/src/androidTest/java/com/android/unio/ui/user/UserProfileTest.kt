@@ -55,8 +55,7 @@ class UserProfileTest {
               listOf(
                   UserSocial(Social.INSTAGRAM, "Instagram"),
                   UserSocial(Social.WEBSITE, "example.com")),
-          profilePicture = "https://www.example.com/image",
-          hasProvidedAccountDetails = true)
+          profilePicture = "https://www.example.com/image")
 
   @Before
   fun setUp() {

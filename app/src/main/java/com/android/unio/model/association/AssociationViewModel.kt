@@ -61,6 +61,11 @@ constructor(
     }
   }
 
+  /**
+   * Fetches all associations from the repository and updates the [_associations] and
+   * [_associationsByCategory] state flows. If the fetch fails, the [_associations] state flow is
+   * set to an empty list.
+   */
   fun getAssociations() {
     viewModelScope.launch {
       associationRepository.getAssociations(

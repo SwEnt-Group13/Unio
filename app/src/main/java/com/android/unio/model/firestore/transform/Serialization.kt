@@ -29,8 +29,7 @@ fun UserRepositoryFirestore.Companion.serialize(user: User): Map<String, Any> {
       "joinedAssociations" to user.joinedAssociations.list.value.map { it.uid },
       "interests" to user.interests.map { it.name },
       "socials" to user.socials.map { mapOf("social" to it.social.name, "content" to it.content) },
-      "profilePicture" to user.profilePicture,
-      "hasProvidedAccountDetails" to user.hasProvidedAccountDetails)
+      "profilePicture" to user.profilePicture)
 }
 
 fun EventRepositoryFirestore.Companion.serialize(event: Event): Map<String, Any> {
