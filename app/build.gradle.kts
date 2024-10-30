@@ -10,6 +10,8 @@ plugins {
     alias(libs.plugins.gms)
     alias(libs.plugins.sonar)
     id("jacoco")
+    id("kotlin-kapt")
+    id("com.google.dagger.hilt.android")
 }
 
 android {
@@ -63,7 +65,7 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
+        kotlinCompilerExtensionVersion = "1.5.7"
     }
     packaging {
         resources {
@@ -173,9 +175,9 @@ dependencies {
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.firebase.storage.ktx)
     implementation(libs.androidx.ui.text.google.fonts)
-  implementation(libs.androidx.compose.material)
+    implementation(libs.androidx.compose.material)
 
-  testImplementation(libs.test.core.ktx)
+    testImplementation(libs.test.core.ktx)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
     implementation(libs.material)
@@ -263,6 +265,15 @@ dependencies {
     //for AsyncImage
     implementation(libs.coil.compose)
 
+    // Hilt : Dependency Injection
+    implementation(libs.hilt.android)
+    implementation(libs.androidx.hilt.navigation.compose)
+    kapt(libs.hilt.android.compiler)
+
+}
+
+kapt {
+    correctErrorTypes = true
 }
 
 

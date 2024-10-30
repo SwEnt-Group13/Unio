@@ -4,8 +4,11 @@ agp = "8.4.2"
 coilCompose = "2.2.2"
 firebaseBom = "33.3.0"
 googleServices = "4.4.2"
+hiltAndroid = "2.48"
+hiltAndroidCompiler = "2.48"
+hiltNavigationCompose = "1.0.0"
 json = "20240303"
-kotlin = "1.9.0"
+kotlin = "1.9.21"
 gms = "4.4.2"
 kotlinxCoroutinesAndroid = "1.7.3"
 kotlinxCoroutinesCore = "1.7.3"
@@ -85,6 +88,7 @@ composeMaterial = "1.4.0"
 
 
 [libraries]
+androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
 androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "materialIconsExtended" }
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilCompose" }
 compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
@@ -97,6 +101,8 @@ compose-activity = { group = "androidx.activity", name = "activity-compose", ver
 compose-viewmodel = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "composeViewModel" }
 compose-test-junit = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 compose-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
+hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hiltAndroid" }
+hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hiltAndroidCompiler" }
 kaspresso-compose = { group = "com.kaspersky.android-components", name = "kaspresso-compose-support", version.ref = "kaspresso" }
 
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activityCompose" }
