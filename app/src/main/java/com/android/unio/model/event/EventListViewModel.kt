@@ -5,10 +5,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
+import dagger.hilt.android.lifecycle.HiltViewModel
 import java.io.InputStream
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 /**
  * ViewModel class that manages the event list data and provides it to the UI. It uses an
@@ -17,7 +19,8 @@ import kotlinx.coroutines.launch
  *
  * @property repository The [EventRepository] that provides the events.
  */
-class EventListViewModel(private val repository: EventRepository) : ViewModel() {
+@HiltViewModel
+class EventListViewModel @Inject constructor(private val repository: EventRepository) : ViewModel() {
 
   /**
    * A private mutable state flow that holds the list of events. It is internal to the ViewModel and

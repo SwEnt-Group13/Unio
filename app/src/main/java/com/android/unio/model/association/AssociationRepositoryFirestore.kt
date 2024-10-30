@@ -129,20 +129,3 @@ class AssociationRepositoryFirestore @Inject constructor(private val db: Firebas
   // Note: the following line is needed to add external methods to the companion object
   companion object
 }
-
-@Module
-@InstallIn(SingletonComponent::class)
-object FirebaseModule {
-
-  @Provides fun provideFirebaseFirestore(): FirebaseFirestore = Firebase.firestore
-}
-
-@Module
-@InstallIn(SingletonComponent::class)
-abstract class AssociationModule {
-
-  @Binds
-  abstract fun bindAssociationRepository(
-      associationRepositoryFirestore: AssociationRepositoryFirestore
-  ): AssociationRepository
-}

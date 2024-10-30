@@ -88,13 +88,3 @@ class EventRepositoryFirestore @Inject constructor(private val db: FirebaseFires
   // Note: the following line is needed to add external methods to the companion object
   companion object
 }
-
-@Module
-@InstallIn(SingletonComponent::class)
-abstract class EventModule() {
-
-  @Binds
-  abstract fun bindEventRepository(
-      eventRepositoryFirestore: EventRepositoryFirestore
-  ): EventRepository
-}
