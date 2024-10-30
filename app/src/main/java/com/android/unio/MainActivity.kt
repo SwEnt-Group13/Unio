@@ -10,13 +10,14 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
+import com.android.unio.model.association.AssociationRepositoryFirestore
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.event.EventListViewModel
+import com.android.unio.model.event.EventRepositoryFirestore
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.accountCreation.AccountDetails
@@ -49,6 +50,7 @@ fun UnioApp() {
   val associationRepository = AssociationRepositoryFirestore(Firebase.firestore)
   val eventRepository = EventRepositoryFirestore(Firebase.firestore)
   val associationViewModel = AssociationViewModel(associationRepository, eventRepository)
+  val eventViewModel = EventListViewModel(eventRepository)
 
   val userRepositoryFirestore = UserRepositoryFirestore(Firebase.firestore)
   val userViewModel = UserViewModel(userRepositoryFirestore, true)
