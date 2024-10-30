@@ -98,7 +98,9 @@ class ExploreScreenTest {
 
   @Test
   fun allComponentsAreDisplayed() {
-    composeTestRule.setContent { ExploreScreen(navigationAction, associationViewModel, searchViewModel) }
+    composeTestRule.setContent {
+      ExploreScreen(navigationAction, associationViewModel, searchViewModel)
+    }
     composeTestRule.onNodeWithTag("exploreScreen").assertIsDisplayed()
     composeTestRule.onNodeWithTag("searchPlaceHolder", true).assertIsDisplayed()
     composeTestRule.onNodeWithTag("searchTrailingIcon", true).assertIsDisplayed()
@@ -109,7 +111,9 @@ class ExploreScreenTest {
 
   @Test
   fun canTypeInSearchBar() {
-    composeTestRule.setContent { ExploreScreen(navigationAction, associationViewModel, searchViewModel) }
+    composeTestRule.setContent {
+      ExploreScreen(navigationAction, associationViewModel, searchViewModel)
+    }
     composeTestRule.onNodeWithTag("searchBarInput").performTextInput("Music")
     composeTestRule.onNodeWithTag("searchBarInput").assertTextEquals("Music")
   }
@@ -146,7 +150,9 @@ class ExploreScreenTest {
     }
 
     associationViewModel.getAssociations()
-    composeTestRule.setContent { ExploreScreen(navigationAction, associationViewModel, searchViewModel) }
+    composeTestRule.setContent {
+      ExploreScreen(navigationAction, associationViewModel, searchViewModel)
+    }
 
     sortedByCategoryAssociations.forEach { (category, associations) ->
       composeTestRule.onNodeWithTag("category_${category.displayName}").assertIsDisplayed()
@@ -163,7 +169,9 @@ class ExploreScreenTest {
     }
 
     associationViewModel.getAssociations()
-    composeTestRule.setContent { ExploreScreen(navigationAction, associationViewModel, searchViewModel) }
+    composeTestRule.setContent {
+      ExploreScreen(navigationAction, associationViewModel, searchViewModel)
+    }
 
     sortedByCategoryAssociations.forEach { (_, associations) ->
       associations.forEach {
