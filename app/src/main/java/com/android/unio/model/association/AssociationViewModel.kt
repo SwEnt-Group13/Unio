@@ -47,7 +47,6 @@ class AssociationViewModel(
 
   fun getEventsForAssociation(association: Association, onSuccess: (List<Event>) -> Unit) {
     viewModelScope.launch {
-      Log.d("ExploreViewModel", "Getting events for association ${association.fullName} !!!")
       eventRepository.getEventsOfAssociation(
           association.uid,
           onSuccess = onSuccess,
@@ -60,6 +59,11 @@ class AssociationViewModel(
     }
   }
 
+  /**
+   * Fetches all associations from the repository and updates the [_associations] and
+   * [_associationsByCategory] state flows. If the fetch fails, the [_associations] state flow is
+   * set to an empty list.
+   */
   fun getAssociations() {
     viewModelScope.launch {
       associationRepository.getAssociations(
