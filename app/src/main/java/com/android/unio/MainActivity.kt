@@ -51,6 +51,7 @@ class MainActivity : ComponentActivity() {
   }
 }
 
+
 @HiltAndroidApp class UnioApplication : Application() {}
 
 @Composable
