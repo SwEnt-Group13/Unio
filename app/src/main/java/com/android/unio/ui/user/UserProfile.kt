@@ -129,7 +129,7 @@ fun UserProfileScreen(
         modifier = Modifier.align(Alignment.TopCenter))
   }
 
-  UserProfileBottomSheet(showSheet) { showSheet = false }
+  UserProfileBottomSheet(showSheet, navigationAction) { showSheet = false }
 }
 
 @OptIn(ExperimentalLayoutApi::class, ExperimentalMaterialApi::class)
@@ -238,7 +238,11 @@ fun UserProfileScreenContent(navigationAction: NavigationAction, user: User) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun UserProfileBottomSheet(showSheet: Boolean, onClose: () -> Unit) {
+fun UserProfileBottomSheet(
+    showSheet: Boolean,
+    navigationAction: NavigationAction,
+    onClose: () -> Unit
+) {
 
   val sheetState = rememberModalBottomSheetState()
   val scope = rememberCoroutineScope()
@@ -252,7 +256,7 @@ fun UserProfileBottomSheet(showSheet: Boolean, onClose: () -> Unit) {
         onDismissRequest = onClose,
         properties = ModalBottomSheetProperties(shouldDismissOnBackPress = true),
     ) {
-      Column(modifier = Modifier.padding(start = 16.dp)) {
+      Column(modifier = Modifier) {
         TextButton(
             modifier = Modifier.fillMaxWidth(),
             onClick = {
@@ -263,7 +267,11 @@ fun UserProfileBottomSheet(showSheet: Boolean, onClose: () -> Unit) {
         TextButton(
             modifier = Modifier.fillMaxWidth(),
             onClick = {
-              Toast.makeText(context, "Not yet implemented.", Toast.LENGTH_SHORT).show()
+              scope.launch {
+                sheetState.hide()
+                onClose()
+                navigationAction.navigateTo(Screen.SETTINGS)
+              }
             }) {
               Text("Settings")
             }
