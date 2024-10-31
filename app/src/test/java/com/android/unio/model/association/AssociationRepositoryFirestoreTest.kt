@@ -117,6 +117,7 @@ class AssociationRepositoryFirestoreTest {
             "category" to association1.category.name,
             "description" to association1.description,
             "members" to association1.members.list.value.map { it.uid },
+            "followersCount" to association1.followersCount,
             "image" to association1.image)
 
     map2 =
@@ -128,6 +129,7 @@ class AssociationRepositoryFirestoreTest {
             "category" to association2.category.name,
             "description" to association2.description,
             "members" to association2.members.list.value.map { it.uid },
+            "followersCount" to association2.followersCount,
             "image" to association2.image)
 
     `when`(queryDocumentSnapshot1.data).thenReturn(map1)

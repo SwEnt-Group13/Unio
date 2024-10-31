@@ -16,6 +16,7 @@ fun AssociationRepositoryFirestore.Companion.serialize(association: Association)
       "category" to association.category.name,
       "description" to association.description,
       "members" to association.members.list.value.map { it.uid },
+      "followersCount" to association.followersCount,
       "image" to association.image)
 }
 

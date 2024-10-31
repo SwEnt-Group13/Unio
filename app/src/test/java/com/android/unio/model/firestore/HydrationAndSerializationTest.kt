@@ -44,6 +44,7 @@ class HydrationAndSerializationTest {
           category = AssociationCategory.ARTS,
           description = "An example association",
           members = User.firestoreReferenceListWith(listOf("1", "2")),
+          followersCount = 0,
           image = "https://www.example.com/image.jpg")
 
   private val event =
