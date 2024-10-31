@@ -73,18 +73,6 @@ class EventRepositoryFirestore(private val db: FirebaseFirestore) : EventReposit
         .addOnFailureListener { exception -> onFailure(exception) }
   }
 
-    //TODO: test and comment
-    override fun getEventById(
-        id: String,
-        onSuccess: (Event) -> Unit,
-        onFailure: (Exception) -> Unit
-    ) {
-        db.collection(EVENT_PATH).document(id).get().addOnSuccessListener { result ->
-            val event = hydrate(result.data)
-            onSuccess(event)
-        }.addOnFailureListener { exception -> onFailure(exception) }
-    }
-
     override fun getNewUid(): String {
     return db.collection(EVENT_PATH).document().id
   }

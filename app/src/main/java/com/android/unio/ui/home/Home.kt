@@ -208,7 +208,8 @@ fun HomeScreen(
                     .fillMaxSize()
                     .padding(horizontal = 32.dp)) {
                   items(events) { event ->
-                      EventCard(navigationAction, event = event,
+                      EventCard(
+                          event = event,
                           onClick = {
                               navigationAction.navigateTo(
                                   Screen.withParams(
@@ -217,7 +218,6 @@ fun HomeScreen(
                                   )
                               )
                           })
-
                   }
                 }
           } else {

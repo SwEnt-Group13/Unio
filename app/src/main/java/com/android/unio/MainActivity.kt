@@ -111,6 +111,7 @@ fun UnioApp() {
       composable(Screen.EVENT_DETAILS) { navBackStackEntry ->
         // Get the event UID from the arguments
         val uid = navBackStackEntry.arguments?.getString("uid")
+        Log.e("MAINACTIVITY", uid!!)
         // Create the Event screen with the event UID
         uid?.let {
           EventScreen(
@@ -119,11 +120,11 @@ fun UnioApp() {
             userViewModel = userViewModel
           )
         }
-        uid?.let { EventScreen(navigationActions, it, userViewModel = userViewModel) }
+        /*uid?.let { EventScreen(navigationActions, it, userViewModel = userViewModel) }
           ?: run {
-            Log.e("AssociationProfile", "Association UID is null")
-            Toast.makeText(context, "Association UID is null", Toast.LENGTH_SHORT).show()
-          }
+            Log.e("EventDetails", "Event UID is null")
+            Toast.makeText(context, "Event UID is null", Toast.LENGTH_SHORT).show()
+          }*/
       }
       composable(Screen.MAP) { MapScreen(navigationActions, eventListViewModel) }
     }

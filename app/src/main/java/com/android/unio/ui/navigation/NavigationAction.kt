@@ -98,7 +98,7 @@ object Screen {
   const val SAVED = "Saved Screen"
   const val MY_PROFILE = "MyProfile Screen"
   const val ASSOCIATION_PROFILE = "Association Profile Screen/{uid}"
-  const val EVENT_DETAILS = "Event Details Screen"
+  const val EVENT_DETAILS = "Event Details Screen/{uid}"
 
   /**
    * Replace the placeholders in the screen with the provided parameters.

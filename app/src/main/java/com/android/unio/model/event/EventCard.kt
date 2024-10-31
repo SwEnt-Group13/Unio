@@ -31,14 +31,13 @@ import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
 import coil.compose.AsyncImage
 import com.android.unio.R
-import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.utils.EventUtils.addAlphaToColor
 import com.android.unio.utils.EventUtils.formatTimestamp
 import java.text.SimpleDateFormat
 import java.util.Locale
 
 @Composable
-fun EventCard(navigationAction: NavigationAction, event: Event, onClick: () -> Unit) {
+fun EventCard(event: Event, onClick: () -> Unit) {
 
   Column(
       modifier =
