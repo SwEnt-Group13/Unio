@@ -22,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -30,6 +31,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
 import coil.compose.AsyncImage
+import coil.request.CachePolicy
+import coil.request.ImageRequest
 import com.android.unio.R
 import com.android.unio.utils.EventUtils.addAlphaToColor
 import com.android.unio.utils.EventUtils.formatTimestamp
@@ -38,6 +41,20 @@ import java.util.Locale
 
 @Composable
 fun EventCard(event: Event, onClick: () -> Unit) {
+  val imgUrl = event.image.toUri()
+  val placeholderImg = R.drawable.adec
+  val imageRequest =
+      ImageRequest.Builder(LocalContext.current)
+          .data(imgUrl)
+          .memoryCacheKey(imgUrl.toString())
+          .diskCacheKey(imgUrl.toString())
+          .placeholder(placeholderImg)
+          .error(placeholderImg)
+          .fallback(placeholderImg)
+          .diskCachePolicy(CachePolicy.ENABLED)
+          .memoryCachePolicy(CachePolicy.ENABLED)
+          .crossfade(true)
+          .build()
 
   Column(
       modifier =
@@ -48,15 +65,16 @@ fun EventCard(event: Event, onClick: () -> Unit) {
               .clip(RoundedCornerShape(10.dp))
               .background(Color(0xFFF0ECF4))) {
         AsyncImage(
-            model = event.image.toUri(),
+            model = imageRequest,
             contentDescription = "Image of the event",
             modifier =
                 Modifier.fillMaxWidth()
                     .height(100.dp)
                     .clip(RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp))
                     .testTag("event_EventImage"),
-            contentScale = ContentScale.Crop // crop the image to fit
-            )
+            contentScale = ContentScale.Crop, // crop the image to fit
+            placeholder = painterResource(placeholderImg),
+        )
 
         Column(modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp)) {
           Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
