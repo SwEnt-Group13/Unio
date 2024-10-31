@@ -1,7 +1,5 @@
 package com.android.unio.model.association
 
-import com.google.firebase.firestore.QuerySnapshot
-
 interface AssociationRepository {
   fun init(onSuccess: () -> Unit)
 

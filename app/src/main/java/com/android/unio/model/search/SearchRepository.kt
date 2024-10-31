@@ -188,8 +188,12 @@ class SearchRepository(
           id = associationDocument.uid,
           onSuccess = { association -> continuation.resume(association) },
           onFailure = { exception ->
-              Log.e("SearchRepository", "failed to convert associationDocumentation to association ", exception)
-              continuation.resumeWithException(exception) })
+            Log.e(
+                "SearchRepository",
+                "failed to convert associationDocumentation to association ",
+                exception)
+            continuation.resumeWithException(exception)
+          })
     }
   }
 
@@ -200,8 +204,9 @@ class SearchRepository(
           id = eventDocument.uid,
           onSuccess = { association -> continuation.resume(association) },
           onFailure = { exception ->
-              Log.e("SearchRepository", "failed to convert eventDocumentation to event ", exception)
-              continuation.resumeWithException(exception) })
+            Log.e("SearchRepository", "failed to convert eventDocumentation to event ", exception)
+            continuation.resumeWithException(exception)
+          })
     }
   }
 

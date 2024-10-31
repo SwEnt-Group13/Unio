@@ -8,7 +8,6 @@ import com.google.android.gms.tasks.Task
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.QuerySnapshot
 
 class AssociationRepositoryFirestore(private val db: FirebaseFirestore) : AssociationRepository {
 
