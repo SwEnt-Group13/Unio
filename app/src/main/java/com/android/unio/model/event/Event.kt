@@ -1,6 +1,11 @@
 package com.android.unio.model.event
 
 import androidx.compose.ui.graphics.Color
+import androidx.appsearch.annotation.Document
+import androidx.appsearch.annotation.Document.Id
+import androidx.appsearch.annotation.Document.Namespace
+import androidx.appsearch.annotation.Document.StringProperty
+import androidx.appsearch.app.AppSearchSchema.StringPropertyConfig
 import com.android.unio.model.association.Association
 import com.android.unio.model.firestore.ReferenceList
 import com.android.unio.model.map.Location
@@ -47,6 +52,7 @@ data class Event(
   companion object
 }
 
+
 enum class EventType(val color: Color, val text: String) {
   FESTIVAL(eventTypeFestival, "festival"),
   APERITIF(eventTypeAperitif, "aperitif"),
@@ -57,4 +63,28 @@ enum class EventType(val color: Color, val text: String) {
   TRIP(eventTypeTrip, "trip"),
   OTHER(eventTypeOther, "other")
   // Default color
+
+@Document
+data class EventDocument(
+    @Namespace val namespace: String = "",
+    @Id val uid: String = "",
+    @StringProperty(indexingType = StringPropertyConfig.INDEXING_TYPE_PREFIXES)
+    val title: String = "",
+    @StringProperty(indexingType = StringPropertyConfig.INDEXING_TYPE_PREFIXES)
+    val description: String,
+    @StringProperty(indexingType = StringPropertyConfig.INDEXING_TYPE_PREFIXES)
+    val catchyDescription: String = "",
+    @StringProperty(indexingType = StringPropertyConfig.INDEXING_TYPE_PREFIXES)
+    val locationName: String = ""
+    // TODO Need to add organisers and taggedAssociations
+)
+
+fun Event.toEventDocument(): EventDocument {
+  return EventDocument(
+      uid = this.uid,
+      title = this.title,
+      description = this.description,
+      catchyDescription = this.catchyDescription,
+      locationName = this.location.name)
+
 }

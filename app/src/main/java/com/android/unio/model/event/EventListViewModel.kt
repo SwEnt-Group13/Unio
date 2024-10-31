@@ -31,7 +31,7 @@ class EventListViewModel(private val repository: EventRepository) : ViewModel() 
 
   /** Initializes the ViewModel by loading the events from the repository. */
   init {
-    loadEvents()
+    repository.init { loadEvents() }
   }
 
   /**

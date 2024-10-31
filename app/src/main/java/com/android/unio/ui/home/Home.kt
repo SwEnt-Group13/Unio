@@ -19,7 +19,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Place
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
@@ -50,6 +50,7 @@ import com.android.unio.ui.navigation.BottomNavigationMenu
 import com.android.unio.ui.navigation.LIST_TOP_LEVEL_DESTINATION
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Route
+import com.android.unio.ui.navigation.Screen
 import kotlinx.coroutines.launch
 
 @Composable
@@ -77,6 +78,11 @@ fun HomeScreen(
         FloatingActionButton(onClick = {}, modifier = Modifier.testTag("event_MapButton")) {
           Icon(imageVector = Icons.Filled.Add, contentDescription = "Add Event")
         }
+        FloatingActionButton(
+            onClick = { navigationAction.navigateTo(Screen.MAP) },
+            modifier = Modifier.testTag("event_MapButton")) {
+              Icon(imageVector = Icons.Filled.Place, contentDescription = "Map button")
+            }
       },
       bottomBar = {
         BottomNavigationMenu(

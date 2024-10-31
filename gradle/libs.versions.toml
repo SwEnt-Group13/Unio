@@ -1,14 +1,17 @@
 [versions]
 # Plugins
 agp = "8.4.2"
+appsearch = "1.1.0-alpha03" # Should be upgraded, but requires Android SDK 35
 coilCompose = "2.2.2"
 firebaseBom = "33.3.0"
 googleServices = "4.4.2"
+guava = "33.3.1-android"
 json = "20240303"
 kotlin = "1.9.0"
 gms = "4.4.2"
 kotlinxCoroutinesAndroid = "1.7.3"
 kotlinxCoroutinesCore = "1.7.3"
+kotlinxCoroutinesGuava = "1.7.3"
 kotlinxCoroutinesPlayServices = "1.7.3"
 ktfmt = "0.17.0"
 
@@ -17,8 +20,8 @@ lifecycleLivedataKtx = "2.8.6"
 materialIconsExtended = "1.7.3"
 mockitoAndroid = "5.13.0"
 mockkMockk = "1.9.3"
-mockkVersion = "1.13.0"
 robolectricVersion = "4.10.3"
+mockkVersion = "1.13.7"
 ui = "1.7.2"
 uiTestJunit4 = "1.7.2"
 uiTestManifest = "1.7.2"
@@ -88,6 +91,9 @@ composeMaterial = "1.4.0"
 
 
 [libraries]
+androidx-appsearch = { module = "androidx.appsearch:appsearch", version.ref = "appsearch" }
+androidx-appsearch-compiler = { module = "androidx.appsearch:appsearch-compiler", version.ref = "appsearch" }
+androidx-appsearch-local-storage = { module = "androidx.appsearch:appsearch-local-storage", version.ref = "appsearch" }
 androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "materialIconsExtended" }
 androidx-ui-test-manifest-v100 = { module = "androidx.compose.ui:ui-test-manifest", version.ref = "uiTestManifestVersion" }
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilCompose" }
@@ -101,6 +107,7 @@ compose-activity = { group = "androidx.activity", name = "activity-compose", ver
 compose-viewmodel = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "composeViewModel" }
 compose-test-junit = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 compose-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
+guava = { module = "com.google.guava:guava", version.ref = "guava" }
 kaspresso-compose = { group = "com.kaspersky.android-components", name = "kaspresso-compose-support", version.ref = "kaspresso" }
 
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activityCompose" }
@@ -142,6 +149,7 @@ kaspresso-allure-support = { module = "com.kaspersky.android-components:kaspress
 kaspresso-compose-support = { module = "com.kaspersky.android-components:kaspresso-compose-support", version.ref = "kaspressoComposeSupport" }
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinxCoroutinesAndroid" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutinesCore" }
+kotlinx-coroutines-guava = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-guava", version.ref = "kotlinxCoroutinesGuava" }
 kotlinx-coroutines-play-services = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-play-services", version.ref = "kotlinxCoroutinesPlayServices" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
