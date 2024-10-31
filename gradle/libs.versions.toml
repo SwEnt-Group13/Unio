@@ -6,6 +6,8 @@ firebaseBom = "33.3.0"
 googleServices = "4.4.2"
 hiltAndroid = "2.48"
 hiltAndroidCompiler = "2.48"
+hiltAndroidCompilerVersion = "2.51.1"
+hiltAndroidTesting = "2.51.1"
 hiltNavigationCompose = "1.0.0"
 json = "20240303"
 kotlin = "1.9.21"
@@ -20,7 +22,7 @@ lifecycleLivedataKtx = "2.8.6"
 materialIconsExtended = "1.7.3"
 mockitoAndroid = "5.13.0"
 mockkMockk = "1.9.3"
-mockkVersion = "1.13.7"
+mockkVersion = "1.13.8"
 ui = "1.7.2"
 uiTestJunit4 = "1.7.2"
 uiTestManifest = "1.7.2"
@@ -103,6 +105,8 @@ compose-test-junit = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 compose-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hiltAndroid" }
 hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hiltAndroidCompiler" }
+hilt-android-compiler-v2511 = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hiltAndroidCompilerVersion" }
+hilt-android-testing = { module = "com.google.dagger:hilt-android-testing", version.ref = "hiltAndroidTesting" }
 kaspresso-compose = { group = "com.kaspersky.android-components", name = "kaspresso-compose-support", version.ref = "kaspresso" }
 
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activityCompose" }
