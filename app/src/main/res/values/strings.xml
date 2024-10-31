@@ -55,6 +55,10 @@
     <!-- Explore Screen Strings -->
     <string name="explore_search_placeholder">Search</string>
 
+    <!-- Map Screen Strings -->
+    <string name="map_event_go_back_button">Go back</string>
+    <string name="map_event_title">Event map</string>
+
     <!-- Navigation Strings -->
     <string name="route_home" translatable="false">Home</string>
     <string name="route_map" translatable="false">Map</string>

@@ -49,6 +49,10 @@
     <!-- Explore Screen Strings -->
     <string name="explore_search_placeholder">Recherche</string>
 
+    <!-- Map Screen Strings -->
+    <string name="map_event_go_back_button">Retour</string>
+    <string name="map_event_title">Carte d\'évènements</string>
+
     <!-- Association Strings -->
     <string name="association_upcoming_events">Evenement à venir</string>
     <string name="association_go_back">Retour</string>
