@@ -3,7 +3,6 @@ package com.android.unio.model.association
 import com.android.unio.model.firestore.FirestorePaths.ASSOCIATION_PATH
 import com.android.unio.model.firestore.FirestorePaths.USER_PATH
 import com.android.unio.model.firestore.emptyFirestoreReferenceList
-import com.android.unio.model.firestore.firestoreReferenceListWith
 import com.android.unio.model.user.User
 import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.gms.tasks.Task
@@ -45,9 +44,8 @@ class AssociationRepositoryFirestoreTest {
   private lateinit var repository: AssociationRepositoryFirestore
 
   private lateinit var association1: Association
-  private lateinit var map1: Map<String, Any>
-
   private lateinit var association2: Association
+  private lateinit var map1: Map<String, Any>
   private lateinit var map2: Map<String, Any>
 
   @Before
@@ -61,28 +59,9 @@ class AssociationRepositoryFirestoreTest {
     every { db.collection(USER_PATH) } returns userCollectionReference
 
     association1 =
-        Association(
-            uid = "1",
-            url = "https://www.acm.org/",
-            name = "ACM",
-            fullName = "Association for Computing Machinery",
-            category = AssociationCategory.SCIENCE_TECH,
-            description =
-                "ACM is the world's largest educational and scientific computing society.",
-            members = User.firestoreReferenceListWith(listOf("1", "2")),
-            image = "https://www.example.com/image.jpg")
-
+        MockAssociation.createMockAssociation(category = AssociationCategory.SCIENCE_TECH)
     association2 =
-        Association(
-            uid = "2",
-            url = "https://www.ieee.org/",
-            name = "IEEE",
-            fullName = "Institute of Electrical and Electronics Engineers",
-            category = AssociationCategory.SCIENCE_TECH,
-            description =
-                "IEEE is the world's largest technical professional organization dedicated to advancing technology for the benefit of humanity.",
-            members = User.firestoreReferenceListWith(listOf("3", "4")),
-            image = "https://www.example.com/image.jpg")
+        MockAssociation.createMockAssociation(category = AssociationCategory.SCIENCE_TECH)
 
     // When getting the collection, return the task
     `when`(associationCollectionReference.get()).thenReturn(querySnapshotTask)
@@ -107,7 +86,7 @@ class AssociationRepositoryFirestoreTest {
       documentSnapshotTask
     }
 
-    // When the query document snapshots are queried for specific fields, return the fields
+    // Set up mock data maps
     map1 =
         mapOf(
             "uid" to association1.uid,
@@ -136,7 +115,6 @@ class AssociationRepositoryFirestoreTest {
 
   @Test
   fun testGetAssociations() {
-
     repository.getAssociations(
         onSuccess = { associations ->
           assertEquals(2, associations.size)
@@ -205,7 +183,7 @@ class AssociationRepositoryFirestoreTest {
   }
 
   @Test
-  fun testGetAssociationsByCategory() {
+  fun ttestGetAssociationsByCategory() {
     `when`(associationCollectionReference.whereEqualTo(eq("category"), any()))
         .thenReturn(associationCollectionReference)
     repository.getAssociationsByCategory(

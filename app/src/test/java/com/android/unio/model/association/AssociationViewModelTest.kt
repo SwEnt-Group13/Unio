@@ -1,8 +1,6 @@
 package com.android.unio.model.association
 
 import androidx.test.core.app.ApplicationProvider
-import com.android.unio.model.firestore.firestoreReferenceListWith
-import com.android.unio.model.user.User
 import com.google.firebase.Firebase
 import com.google.firebase.FirebaseApp
 import com.google.firebase.firestore.CollectionReference
@@ -59,25 +57,8 @@ class AssociationViewModelTest {
 
     testAssociations =
         listOf(
-            Association(
-                uid = "1",
-                url = "https://acm.org",
-                name = "ACM",
-                fullName = "Association for Computing Machinery",
-                category = AssociationCategory.SCIENCE_TECH,
-                description =
-                    "ACM is the world's largest educational and scientific computing society.",
-                members = User.firestoreReferenceListWith(listOf("1", "2")),
-                image = ""),
-            Association(
-                uid = "2",
-                url = "https://ieee.org",
-                name = "IEEE",
-                fullName = "Institute of Electrical and Electronics Engineers",
-                category = AssociationCategory.SCIENCE_TECH,
-                description = "IEEE is the world's largest technical professional organization.",
-                members = User.firestoreReferenceListWith(listOf("3", "4")),
-                image = ""))
+            MockAssociation.createMockAssociation(name = "ACM", uid = "1"),
+            MockAssociation.createMockAssociation(name = "IEEE", uid = "2"))
 
     viewModel = AssociationViewModel(repository)
   }

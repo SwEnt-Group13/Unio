@@ -1,8 +1,6 @@
 package com.android.unio.model.event
 
 import androidx.test.core.app.ApplicationProvider
-import com.android.unio.model.firestore.MockReferenceList
-import com.android.unio.model.map.Location
 import com.google.firebase.FirebaseApp
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.CollectionReference
@@ -30,27 +28,17 @@ class EventViewModelTest {
   private lateinit var viewModel: EventListViewModel
 
   private val event1 =
-      Event(
+      MockEvent.createMockEvent(
           uid = "1",
           title = "Balelec",
-          organisers = MockReferenceList(),
-          taggedAssociations = MockReferenceList(),
-          image = "https://imageurl.jpg",
-          description = "Plus grand festival du monde (non contractuel)",
           price = 40.5,
-          date = Timestamp(GregorianCalendar(2004, 7, 1).time),
-          location = Location(1.2345, 2.3455, "Somewhere"))
+          date = Timestamp(GregorianCalendar(2004, 7, 1).time))
   private val event3 =
-      Event(
+      MockEvent.createMockEvent(
           uid = "3",
           title = "Tremplin Sysmic",
-          organisers = MockReferenceList(),
-          taggedAssociations = MockReferenceList(),
-          image = "https://imageurl.jpg",
-          description = "Plus grand festival du monde (non contractuel)",
           price = 40.5,
-          date = Timestamp(GregorianCalendar(2008, 7, 1).time),
-          location = Location(1.2345, 2.3455, "Somewhere"))
+          date = Timestamp(GregorianCalendar(2008, 7, 1).time))
 
   @Before
   fun setUp() {
