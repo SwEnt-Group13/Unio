@@ -16,6 +16,8 @@ import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventDocument
 import com.android.unio.model.event.EventRepository
 import com.android.unio.model.event.toEventDocument
+import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
@@ -39,21 +41,25 @@ class SearchRepository(
    */
   suspend fun init() {
     withContext(Dispatchers.IO) {
-      try {
-        val sessionFutures =
-            LocalStorage.createSearchSessionAsync(
-                LocalStorage.SearchContext.Builder(appContext, "unio").build())
-        val setSchemaRequest =
-            SetSchemaRequest.Builder()
-                .addDocumentClasses(AssociationDocument::class.java, EventDocument::class.java)
-                .build()
-        session = sessionFutures.get()
-        session?.setSchemaAsync(setSchemaRequest)
+      Firebase.auth.addAuthStateListener {
+        if (it.currentUser != null) {
+          try {
+            val sessionFutures =
+                LocalStorage.createSearchSessionAsync(
+                    LocalStorage.SearchContext.Builder(appContext, "unio").build())
+            val setSchemaRequest =
+                SetSchemaRequest.Builder()
+                    .addDocumentClasses(AssociationDocument::class.java, EventDocument::class.java)
+                    .build()
+            session = sessionFutures.get()
+            session?.setSchemaAsync(setSchemaRequest)
 
-        fetchAssociations()
-        fetchEvents()
-      } catch (e: Exception) {
-        Log.e("SearchRepository", "failed to initialize search database", e)
+            fetchAssociations()
+            fetchEvents()
+          } catch (e: Exception) {
+            Log.e("SearchRepository", "failed to initialize search database", e)
+          }
+        }
       }
     }
   }

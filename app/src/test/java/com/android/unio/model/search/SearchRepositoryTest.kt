@@ -24,7 +24,11 @@ import com.android.unio.model.map.Location
 import com.android.unio.model.user.User
 import com.google.common.util.concurrent.Futures.immediateFuture
 import com.google.common.util.concurrent.ListenableFuture
+import com.google.firebase.Firebase
 import com.google.firebase.Timestamp
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.auth
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
@@ -57,6 +61,9 @@ class SearchRepositoryTest {
 
   private val testDispatcher = UnconfinedTestDispatcher()
   private val testScope = TestScope(testDispatcher)
+
+  @MockK private lateinit var firebaseAuth: FirebaseAuth
+  @MockK private lateinit var firebaseUser: FirebaseUser
 
   @MockK private lateinit var mockSession: AppSearchSession
 
@@ -117,6 +124,15 @@ class SearchRepositoryTest {
   fun setUp() {
     MockKAnnotations.init(this)
     Dispatchers.setMain(testDispatcher)
+
+    mockkStatic(FirebaseAuth::class)
+    every { Firebase.auth } returns firebaseAuth
+    every { firebaseAuth.addAuthStateListener(any()) } answers
+        {
+          val authStateChange = it.invocation.args[0] as FirebaseAuth.AuthStateListener
+          authStateChange.onAuthStateChanged(firebaseAuth)
+        }
+    every { firebaseAuth.currentUser } returns firebaseUser
 
     mockkStatic(LocalStorage::class)
     every { LocalStorage.createSearchSessionAsync(any()) } returns immediateFuture(mockSession)

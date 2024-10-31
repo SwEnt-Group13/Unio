@@ -64,7 +64,5 @@ fun Event.toEventDocument(): EventDocument {
       title = this.title,
       description = this.description,
       catchyDescription = this.catchyDescription,
-      locationName = this.location.name
-      // Include other fields as needed
-      )
+      locationName = this.location.name)
 }

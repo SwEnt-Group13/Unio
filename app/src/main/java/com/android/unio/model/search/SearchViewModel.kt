@@ -8,8 +8,6 @@ import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationRepository
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventRepository
-import com.google.firebase.Firebase
-import com.google.firebase.auth.auth
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -28,11 +26,7 @@ class SearchViewModel(private val repository: SearchRepository) : ViewModel() {
 
   /** Initializes the ViewModel by creating the search database and connecting it to the session. */
   init {
-    Firebase.auth.addAuthStateListener {
-      if (it.currentUser != null) {
-        viewModelScope.launch { repository.init() }
-      }
-    }
+    viewModelScope.launch { repository.init() }
   }
 
   /**
