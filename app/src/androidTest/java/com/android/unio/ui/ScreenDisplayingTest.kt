@@ -4,6 +4,12 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.navigation.NavHostController
+import com.android.unio.model.association.Association
+import com.android.unio.model.association.AssociationCategory
+import com.android.unio.model.association.AssociationViewModel
+import com.android.unio.model.event.Event
+import com.android.unio.model.firestore.firestoreReferenceListWith
+import com.android.unio.model.user.User
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.accountCreation.AccountDetails
 import com.android.unio.ui.association.AssociationProfileScreen
@@ -39,7 +45,10 @@ class ScreenDisplayingTest {
   private lateinit var navigationAction: NavigationAction
   private lateinit var userViewModel: UserViewModel
 
+  @MockK private lateinit var associationViewModel: AssociationViewModel
+
   @MockK private lateinit var firebaseAuth: FirebaseAuth
+
   // This is the implementation of the abstract method getUid() from FirebaseUser.
   // Because it is impossible to mock abstract method, this is the only way to mock it.
   @MockK private lateinit var mockFirebaseUser: zzac
@@ -52,6 +61,28 @@ class ScreenDisplayingTest {
 
     navigationAction = mock { NavHostController::class.java }
     userViewModel = mockk()
+    associationViewModel = mockk()
+
+    val associations =
+        listOf(
+            Association(
+                uid = "1",
+                url = "this is an url",
+                name = "ACM",
+                fullName = "Association for Computing Machinery",
+                category = AssociationCategory.SCIENCE_TECH,
+                description =
+                    "ACM is the world's largest educational and scientific computing society.",
+                members = User.firestoreReferenceListWith(listOf("1", "2", "3")),
+                followersCount = 321,
+                image = "https://www.example.com/image.jpg"))
+
+    every { associationViewModel.findAssociationById(any()) } returns associations.first()
+    every { associationViewModel.getEventsForAssociation(any(), any()) } answers
+        {
+          val onSuccess = args[1] as (List<Event>) -> Unit
+          onSuccess(emptyList())
+        }
 
     // Mocking the Firebase.auth object and it's behaviour
     mockkStatic(FirebaseAuth::class)
@@ -110,7 +141,9 @@ class ScreenDisplayingTest {
 
   @Test
   fun testAssociationProfileDisplayed() {
-    composeTestRule.setContent { AssociationProfileScreen(navigationAction, "") }
+    composeTestRule.setContent {
+      AssociationProfileScreen(navigationAction, "1", associationViewModel)
+    }
     composeTestRule.onNodeWithTag("AssociationScreen").assertIsDisplayed()
   }
 

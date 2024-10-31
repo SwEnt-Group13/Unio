@@ -75,7 +75,7 @@ fun UnioApp() {
         userRepositoryFirestore.getUserWithId(
             user.uid,
             {
-              if (it.hasProvidedAccountDetails) {
+              if (it.firstName.isNotEmpty()) {
                 navigationActions.navigateTo(Screen.HOME)
               } else {
                 navigationActions.navigateTo(Screen.ACCOUNT_DETAILS)

@@ -84,6 +84,8 @@
     <string name="association_member" translatable="true">members</string>
     <string name="association_follow" translatable="true">Follow</string>
     <string name="association_join" translatable="true">Join</string>
+    <string name="association_no_event" translatable="true">No event planned yet</string>
+    <string name="association_not_found" translatable="true">ERROR : Association not found</string>
 
     <!-- Settings Strings -->
     <string name="settings_title" translatable="true">Settings</string>
@@ -93,7 +95,7 @@
     <string name="settings_notifications_summary" translatable="true">Enable push notifications</string>
     <string name="settings_notifications_content_description" translatable="true">Notification Settings</string>
 
-    <!-- Debug Strings -->
+    <!-- Debug/Temporary Strings -->
     <string name="debug_lorem_ipsum" translatable="false">Lorem ipsum dolor sit amet, consectetur
         adipiscing elit. Nam nec fermentum orci. Praesent tortor purus, porta at ligula id, vehicula sodales
         sem. Morbi id leo nisi. Cras pretium orci vitae sapien aliquet aliquam. Phasellus vestibulum
