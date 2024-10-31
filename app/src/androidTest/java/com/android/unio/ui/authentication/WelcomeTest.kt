@@ -1,6 +1,5 @@
 package com.android.unio.ui.authentication
 
-import android.os.Looper
 import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsEnabled
@@ -49,9 +48,6 @@ class WelcomeTest {
   @Before
   fun setUp() {
     MockKAnnotations.init(this, relaxed = true)
-    if (Looper.myLooper() == null) {
-      Looper.prepare() // Prepare Looper for tests
-    }
 
     // Initialize Firebase if necessary
     if (FirebaseApp.getApps(ApplicationProvider.getApplicationContext()).isEmpty()) {
