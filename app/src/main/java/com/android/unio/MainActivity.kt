@@ -32,8 +32,7 @@ import com.android.unio.ui.navigation.Screen
 import com.android.unio.ui.saved.SavedScreen
 import com.android.unio.ui.theme.AppTheme
 import com.android.unio.ui.user.UserProfileScreen
-import com.google.firebase.Firebase
-import com.google.firebase.firestore.firestore
+import com.google.firebase.firestore.FirebaseFirestore
 
 class MainActivity : ComponentActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,13 +45,14 @@ class MainActivity : ComponentActivity() {
 fun UnioApp() {
   val navController = rememberNavController()
   val navigationActions = NavigationAction(navController)
+  val db = FirebaseFirestore.getInstance()
 
-  val associationRepository = AssociationRepositoryFirestore(Firebase.firestore)
-  val eventRepository = EventRepositoryFirestore(Firebase.firestore)
+  val associationRepository = AssociationRepositoryFirestore(db)
+  val eventRepository = EventRepositoryFirestore(db)
   val associationViewModel = AssociationViewModel(associationRepository, eventRepository)
   val eventViewModel = EventListViewModel(eventRepository)
 
-  val userRepositoryFirestore = UserRepositoryFirestore(Firebase.firestore)
+  val userRepositoryFirestore = UserRepositoryFirestore(db)
   val userViewModel = UserViewModel(userRepositoryFirestore, true)
 
   val context = LocalContext.current
