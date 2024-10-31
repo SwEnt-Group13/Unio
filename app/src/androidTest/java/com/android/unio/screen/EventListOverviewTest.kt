@@ -1,32 +1,25 @@
 package com.android.unio.ui.events
 
+import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
 import androidx.compose.ui.unit.ExperimentalUnitApi
-
-import androidx.navigation.NavHostController
-import androidx.test.core.app.ApplicationProvider
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventListViewModel
 import com.android.unio.model.event.EventRepositoryMock
 import com.android.unio.ui.home.HomeScreen
 import com.android.unio.ui.navigation.NavigationAction
-import com.google.firebase.FirebaseApp
-import org.junit.Before
-import org.junit.Rule
-import org.junit.Test
-import org.mockito.kotlin.mock
 import com.android.unio.ui.navigation.Screen
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.junit.runner.RunWith
 import org.mockito.Mockito.mock
+import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 
 // import org.robolectric.RobolectricTestRunner
@@ -74,7 +67,6 @@ class EventListOverviewTest {
     composeTestRule.onNodeWithText("No events available.").assertExists()
   }
 
-
   /**
    * Tests the functionality of the Map button. Verifies that clicking the button triggers the
    * expected action.
@@ -83,18 +75,14 @@ class EventListOverviewTest {
   fun testMapButton() {
     composeTestRule.setContent {
       val eventListViewModel = EventListViewModel(mockEventRepository)
-      HomeScreen(
-          navigationAction = navigationAction,
-          eventListViewModel = eventListViewModel,
-          onAddEvent = {},
-          onEventClick = {})
+      HomeScreen(navigationAction = navigationAction, eventListViewModel = eventListViewModel)
     }
 
     composeTestRule.onNodeWithTag("event_MapButton").assertExists()
     composeTestRule.onNodeWithTag("event_MapButton").assertHasClickAction()
 
-    composeTestRule.onNodeWithContentDescription("Add Event").assertExists()
-    composeTestRule.onNodeWithContentDescription("Add Event").assertHasClickAction()
+    composeTestRule.onNodeWithContentDescription("Map button").assertExists()
+    composeTestRule.onNodeWithContentDescription("Map button").assertHasClickAction()
 
     composeTestRule.onNodeWithTag("event_MapButton").performClick()
     verify(navigationAction).navigateTo(Screen.MAP)
@@ -109,11 +97,7 @@ class EventListOverviewTest {
   fun testClickFollowingAndAdd() = runBlockingTest {
     composeTestRule.setContent {
       val eventListViewModel = EventListViewModel(mockEventRepository)
-      HomeScreen(
-          navigationAction,
-          eventListViewModel = eventListViewModel,
-          onAddEvent = {},
-          onEventClick = {})
+      HomeScreen(navigationAction, eventListViewModel = eventListViewModel)
     }
 
     // Ensure the 'Following' tab exists and perform a click.

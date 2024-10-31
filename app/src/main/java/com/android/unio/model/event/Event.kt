@@ -1,11 +1,11 @@
 package com.android.unio.model.event
 
-import androidx.compose.ui.graphics.Color
 import androidx.appsearch.annotation.Document
 import androidx.appsearch.annotation.Document.Id
 import androidx.appsearch.annotation.Document.Namespace
 import androidx.appsearch.annotation.Document.StringProperty
 import androidx.appsearch.app.AppSearchSchema.StringPropertyConfig
+import androidx.compose.ui.graphics.Color
 import com.android.unio.model.association.Association
 import com.android.unio.model.firestore.ReferenceList
 import com.android.unio.model.map.Location
@@ -52,7 +52,6 @@ data class Event(
   companion object
 }
 
-
 enum class EventType(val color: Color, val text: String) {
   FESTIVAL(eventTypeFestival, "festival"),
   APERITIF(eventTypeAperitif, "aperitif"),
@@ -62,7 +61,8 @@ enum class EventType(val color: Color, val text: String) {
   SPORT(eventTypeSport, "sport"),
   TRIP(eventTypeTrip, "trip"),
   OTHER(eventTypeOther, "other")
-  // Default color
+}
+// Default color
 
 @Document
 data class EventDocument(
@@ -86,5 +86,4 @@ fun Event.toEventDocument(): EventDocument {
       description = this.description,
       catchyDescription = this.catchyDescription,
       locationName = this.location.name)
-
 }

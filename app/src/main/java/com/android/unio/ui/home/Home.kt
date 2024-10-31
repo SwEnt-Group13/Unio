@@ -75,9 +75,6 @@ fun HomeScreen(
 
   Scaffold(
       floatingActionButton = {
-        FloatingActionButton(onClick = {}, modifier = Modifier.testTag("event_MapButton")) {
-          Icon(imageVector = Icons.Filled.Add, contentDescription = "Add Event")
-        }
         FloatingActionButton(
             onClick = { navigationAction.navigateTo(Screen.MAP) },
             modifier = Modifier.testTag("event_MapButton")) {

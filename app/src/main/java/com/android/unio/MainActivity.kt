@@ -61,17 +61,14 @@ fun UnioApp() {
     SearchRepository(context, associationRepository, eventRepository)
   }
 
-
   val eventRepositoryFirestore = EventRepositoryFirestore(Firebase.firestore)
   val eventListViewModel = EventListViewModel(eventRepositoryFirestore)
 
-  val context = LocalContext.current
   val associationViewModel = remember {
     AssociationViewModel(associationRepository, eventRepository)
   }
   val userViewModel = remember { UserViewModel(userRepositoryFirestore, true) }
   val searchViewModel = remember { SearchViewModel(searchRepository) }
-
 
   // Redirect user based on authentication state
   Firebase.auth.addAuthStateListener { auth ->
@@ -124,9 +121,15 @@ fun UnioApp() {
 
         // Create the AssociationProfile screen with the association UID
         uid?.let {
-          AssociationProfileScreen(navigationAction = navigationActions, associationId = it)
+          AssociationProfileScreen(
+              navigationAction = navigationActions,
+              associationId = it,
+              userViewModel = userViewModel)
         }
-        uid?.let { AssociationProfileScreen(navigationActions, it, associationViewModel) }
+        uid?.let {
+          AssociationProfileScreen(
+              navigationActions, it, associationViewModel, userViewModel = userViewModel)
+        }
             ?: run {
               Log.e("AssociationProfile", "Association UID is null")
               Toast.makeText(context, "Association UID is null", Toast.LENGTH_SHORT).show()

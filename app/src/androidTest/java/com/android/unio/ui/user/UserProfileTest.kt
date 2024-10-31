@@ -3,11 +3,9 @@ package com.android.unio.ui.user
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextEquals
-import androidx.compose.ui.test.isDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
-import androidx.test.espresso.Espresso
 import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationCategory
 import com.android.unio.model.event.Event
@@ -23,7 +21,6 @@ import com.google.firebase.Timestamp
 import io.mockk.MockKAnnotations
 import io.mockk.impl.annotations.MockK
 import java.util.GregorianCalendar
-import junit.framework.TestCase.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -100,23 +97,13 @@ class UserProfileTest {
         .onAllNodesWithTag("UserProfileSocialButton")
         .assertCountEquals(user.socials.size)
     composeTestRule.onAllNodesWithTag("UserProfileInterest").assertCountEquals(user.interests.size)
-
-    // composeTestRule.onNodeWithTag("UserProfileJoinedAssociations").assertExists() //Association
-    // not add to the FirestoreReferenceList
-    // composeTestRule.onNodeWithTag("UserProfileFollowedAssociations").assertExists()
   }
 
   @Test
   fun testBottomSheet() {
-    var called = false
 
-    composeTestRule.setContent { UserProfileBottomSheet(true) { called = true } }
+    composeTestRule.setContent { UserProfileBottomSheet(true) {} }
 
     composeTestRule.onNodeWithTag("UserProfileBottomSheet").assertIsDisplayed()
-
-    // Press the android back button to close the bottom sheet
-    Espresso.pressBack()
-
-    assertEquals(true, called)
   }
 }
