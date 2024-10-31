@@ -3,7 +3,6 @@ package com.android.unio.model.user
 import com.android.unio.R
 import com.android.unio.model.association.Association
 import com.android.unio.model.firestore.ReferenceList
-import kotlinx.serialization.json.JsonNull.content
 
 enum class Interest(val title: String) {
   SPORTS("Sports"),
