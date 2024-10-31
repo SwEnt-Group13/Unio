@@ -18,8 +18,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.AnnotatedString
+import com.android.unio.R
 import com.android.unio.model.preferences.PreferenceKeys
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.theme.Theme
@@ -31,6 +33,8 @@ import me.zhanghai.compose.preference.switchPreference
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(navigationAction: NavigationAction) {
+  val context = LocalContext.current
+
   Scaffold(
       modifier = Modifier.testTag("SettingsScreen"),
       topBar = {
@@ -42,7 +46,7 @@ fun SettingsScreen(navigationAction: NavigationAction) {
                     contentDescription = "Go back")
               }
             },
-            title = { Text("Settings") })
+            title = { Text(context.getString(R.string.settings_title)) })
       }) { padding ->
         Column { Box(modifier = Modifier.padding(padding)) { SettingsContainer() } }
       }
@@ -50,11 +54,16 @@ fun SettingsScreen(navigationAction: NavigationAction) {
 
 @Composable
 fun SettingsContainer() {
+  val context = LocalContext.current
+
   ProvidePreferenceLocals(flow = LocalPreferenceFlow.current) {
-    LazyColumn {
+    LazyColumn(
+        modifier = Modifier.testTag("SettingsContainer"),
+    ) {
       listPreference(
+          modifier = Modifier.testTag(PreferenceKeys.THEME),
           key = PreferenceKeys.THEME,
-          title = { Text("Theme") },
+          title = { Text(context.getString(R.string.settings_theme_title)) },
           valueToText = { AnnotatedString(it) },
           summary = { Text(it) },
           values = listOf(Theme.LIGHT, Theme.DARK, Theme.SYSTEM),
@@ -67,16 +76,18 @@ fun SettingsContainer() {
                       Theme.LIGHT -> Icons.Default.WbSunny
                       else -> Icons.Default.Smartphone
                     },
-                contentDescription = "Theme settings")
+                contentDescription = context.getString(R.string.settings_theme_content_description))
           })
       switchPreference(
+          modifier = Modifier.testTag(PreferenceKeys.NOTIFICATIONS),
           key = PreferenceKeys.NOTIFICATIONS,
-          title = { Text("Notifications") },
-          summary = { Text("Enable push notifications") },
+          title = { Text(context.getString(R.string.settings_notifications_title)) },
+          summary = { Text(context.getString(R.string.settings_notifications_summary)) },
           icon = {
             Icon(
                 imageVector = Icons.Default.Notifications,
-                contentDescription = "Notifications settings")
+                contentDescription =
+                    context.getString(R.string.settings_notifications_content_description))
           },
           defaultValue = true)
     }
