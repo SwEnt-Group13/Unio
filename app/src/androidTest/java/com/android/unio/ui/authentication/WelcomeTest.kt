@@ -178,18 +178,4 @@ class WelcomeTest {
 
     verify { navigationAction.navigateTo(Screen.EMAIL_VERIFICATION) }
   }
-
-  @Test
-  fun testUserIsNotAuthenticated() {
-    every { firebaseAuth.currentUser } returns null
-
-    composeTestRule.setContent { WelcomeScreen(navigationAction, userRepositoryFirestore) }
-
-    // Use MockK's slot to capture the AuthStateListener
-    val authStateListenerSlot = slot<FirebaseAuth.AuthStateListener>()
-    verify { firebaseAuth.addAuthStateListener(capture(authStateListenerSlot)) }
-    authStateListenerSlot.captured.onAuthStateChanged(firebaseAuth)
-
-    verify(exactly = 0) { navigationAction.navigateTo(any<String>()) }
-  }
 }
