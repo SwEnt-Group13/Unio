@@ -37,11 +37,16 @@ import com.android.unio.ui.user.UserProfileScreen
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FirebaseFirestore
+import me.zhanghai.compose.preference.ProvidePreferenceLocals
 
 class MainActivity : ComponentActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    setContent { Surface(modifier = Modifier.fillMaxSize()) { AppTheme { UnioApp() } } }
+    setContent {
+      Surface(modifier = Modifier.fillMaxSize()) {
+        ProvidePreferenceLocals { AppTheme { UnioApp() } }
+      }
+    }
   }
 }
 
