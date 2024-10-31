@@ -15,6 +15,10 @@ import java.util.UUID
  * testing with specific data.
  */
 open class EventRepositoryMock : EventRepository {
+  override fun init(onSuccess: () -> Unit) {
+    // This is a mock, so we assume the repository is initialized successfully
+    onSuccess()
+  }
 
   /**
    * Retrieves a list of mock events.
