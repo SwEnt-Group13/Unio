@@ -4,6 +4,9 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.android.unio.model.event.Event
+import com.android.unio.model.event.EventRepository
+import com.android.unio.model.event.EventRepositoryFirestore
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
@@ -12,7 +15,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class AssociationViewModel(val repository: AssociationRepository) : ViewModel() {
+class AssociationViewModel(
+    private val associationRepository: AssociationRepository,
+    private val eventRepository: EventRepository
+) : ViewModel() {
   private val _associations = MutableStateFlow<List<Association>>(emptyList())
   val associations: StateFlow<List<Association>> = _associations
   private val imageRepository = ImageRepositoryFirebaseStorage()
@@ -23,7 +29,7 @@ class AssociationViewModel(val repository: AssociationRepository) : ViewModel() 
       _associationsByCategory
 
   init {
-    repository.init { getAssociations() }
+    associationRepository.init { getAssociations() }
   }
 
   companion object {
@@ -31,14 +37,36 @@ class AssociationViewModel(val repository: AssociationRepository) : ViewModel() 
         object : ViewModelProvider.Factory {
           @Suppress("UNCHECKED_CAST")
           override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return AssociationViewModel(AssociationRepositoryFirestore(Firebase.firestore)) as T
+            return AssociationViewModel(
+                AssociationRepositoryFirestore(Firebase.firestore),
+                EventRepositoryFirestore(Firebase.firestore))
+                as T
           }
         }
   }
 
+  fun getEventsForAssociation(association: Association, onSuccess: (List<Event>) -> Unit) {
+    viewModelScope.launch {
+      eventRepository.getEventsOfAssociation(
+          association.uid,
+          onSuccess = onSuccess,
+          onFailure = { exception ->
+            Log.e(
+                "ExploreViewModel",
+                "Failed to get events for association ${association.fullName}",
+                exception)
+          })
+    }
+  }
+
+  /**
+   * Fetches all associations from the repository and updates the [_associations] and
+   * [_associationsByCategory] state flows. If the fetch fails, the [_associations] state flow is
+   * set to an empty list.
+   */
   fun getAssociations() {
     viewModelScope.launch {
-      repository.getAssociations(
+      associationRepository.getAssociations(
           onSuccess = { fetchedAssociations ->
             _associations.value = fetchedAssociations
             _associationsByCategory.value = fetchedAssociations.groupBy { it.category }
@@ -62,7 +90,7 @@ class AssociationViewModel(val repository: AssociationRepository) : ViewModel() 
           "images/associations/${association.uid}",
           { uri ->
             association.image = uri
-            repository.addAssociation(association, onSuccess, onFailure)
+            associationRepository.addAssociation(association, onSuccess, onFailure)
           },
           { e -> Log.e("ImageRepository", "Failed to store image : $e") })
     }

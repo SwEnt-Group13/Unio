@@ -30,6 +30,7 @@ fun AssociationRepositoryFirestore.Companion.hydrate(data: Map<String, Any>?): A
           else AssociationCategory.UNKNOWN,
       description = data?.get("description") as? String ?: "",
       members = members,
+      followersCount = data?.get("followersCount") as? Int ?: 0,
       image = data?.get("image") as? String ?: "")
 }
 
@@ -57,8 +58,7 @@ fun UserRepositoryFirestore.Companion.hydrate(data: Map<String, Any>?): User {
           (data?.get("socials") as? List<Map<String, String>> ?: emptyList()).map {
             UserSocial(Social.valueOf(it["social"] ?: ""), it["content"] ?: "")
           },
-      profilePicture = data?.get("profilePicture") as? String ?: "",
-      hasProvidedAccountDetails = data?.get("hasProvidedAccountDetails") as? Boolean ?: false)
+      profilePicture = data?.get("profilePicture") as? String ?: "")
 }
 
 fun EventRepositoryFirestore.Companion.hydrate(data: Map<String, Any>?): Event {

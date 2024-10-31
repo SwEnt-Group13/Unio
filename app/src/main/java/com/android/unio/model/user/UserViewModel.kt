@@ -97,12 +97,12 @@ class UserViewModel(val repository: UserRepository, initializeWithAuthenticatedU
 
   private fun getCurrentUserOrError(onFailure: (Exception) -> Unit): User? {
     val currentUser = _user.value
-    return if (currentUser == null) {
+    if (currentUser == null) {
       Log.w("UserViewModel", "No user available in _user")
       onFailure(Exception("No user available"))
-      null
+      return null
     } else {
-      currentUser
+      return currentUser
     }
   }
 

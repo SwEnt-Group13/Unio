@@ -105,8 +105,7 @@ class MockUserRepository : UserRepository {
                   listOf(
                       UserSocial(Social.INSTAGRAM, "john_doe"),
                       UserSocial(Social.WHATSAPP, "john.doe.whatsapp")),
-              profilePicture = "https://example.com/profile_picture1.jpg",
-              hasProvidedAccountDetails = false),
+              profilePicture = "https://example.com/profile_picture1.jpg"),
           User(
               uid = "2",
               email = "jane.smith@example.com",
@@ -121,8 +120,7 @@ class MockUserRepository : UserRepository {
                   listOf(
                       UserSocial(Social.TELEGRAM, "jane_smith"),
                       UserSocial(Social.TELEGRAM, "jane.smith.telegram")),
-              profilePicture = "https://example.com/profile_picture2.jpg",
-              hasProvidedAccountDetails = false))
+              profilePicture = "https://example.com/profile_picture2.jpg"))
 
   override fun init(onSuccess: () -> Unit) {
     onSuccess()
@@ -145,7 +143,5 @@ class MockUserRepository : UserRepository {
     }
   }
 
-  override fun updateUser(user: User, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
-    TODO("Not yet implemented")
-  }
+  override fun updateUser(user: User, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {}
 }

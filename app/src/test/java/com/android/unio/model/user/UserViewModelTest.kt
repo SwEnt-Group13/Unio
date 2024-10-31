@@ -27,8 +27,7 @@ class UserViewModelTest {
               listOf(
                   UserSocial(Social.INSTAGRAM, "Instagram"),
                   UserSocial(Social.WEBSITE, "example.com")),
-          profilePicture = "https://www.example.com/image",
-          hasProvidedAccountDetails = true)
+          profilePicture = "https://www.example.com/image")
 
   @MockK private lateinit var repository: UserRepository
   private lateinit var userViewModel: UserViewModel

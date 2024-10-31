@@ -1,12 +1,24 @@
 package com.android.unio.model.event
 
+import android.util.Log
 import com.android.unio.model.firestore.FirestorePaths.EVENT_PATH
 import com.android.unio.model.firestore.transform.hydrate
 import com.android.unio.model.firestore.transform.serialize
+import com.google.android.gms.tasks.Task
+import com.google.firebase.Firebase
 import com.google.firebase.Timestamp
+import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FirebaseFirestore
 
 class EventRepositoryFirestore(private val db: FirebaseFirestore) : EventRepository {
+
+  override fun init(onSuccess: () -> Unit) {
+    Firebase.auth.addAuthStateListener {
+      if (it.currentUser != null) {
+        onSuccess()
+      }
+    }
+  }
 
   override fun getEventsOfAssociation(
       association: String,
@@ -21,6 +33,17 @@ class EventRepositoryFirestore(private val db: FirebaseFirestore) : EventReposit
           onSuccess(events)
         }
         .addOnFailureListener { exception -> onFailure(exception) }
+  }
+
+  override fun getEventWithId(
+      id: String,
+      onSuccess: (Event) -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+    performFirestoreOperation(
+        db.collection(EVENT_PATH).document(id).get(),
+        onSuccess = { document -> onSuccess(hydrate(document.data)) },
+        onFailure = { exception -> onFailure(exception) })
   }
 
   override fun getNextEventsFromDateToDate(
@@ -75,6 +98,23 @@ class EventRepositoryFirestore(private val db: FirebaseFirestore) : EventReposit
         onSuccess()
       } else {
         onFailure(task.exception ?: Exception("Failed to delete event"))
+      }
+    }
+  }
+
+  private fun <T> performFirestoreOperation(
+      task: Task<T>,
+      onSuccess: (T) -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+    task.addOnCompleteListener {
+      if (it.isSuccessful) {
+        it.result?.let { result -> onSuccess(result) }
+      } else {
+        it.exception?.let { e ->
+          Log.e("EventRepositoryFirestore", "Error performing Firestore operation", e)
+          onFailure(e)
+        }
       }
     }
   }

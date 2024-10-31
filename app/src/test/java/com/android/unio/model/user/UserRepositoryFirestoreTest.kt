@@ -73,8 +73,7 @@ class UserRepositoryFirestoreTest {
                 listOf(
                     UserSocial(Social.INSTAGRAM, "Insta"),
                     UserSocial(Social.WEBSITE, "example.com")),
-            profilePicture = "https://www.example.com/image",
-            hasProvidedAccountDetails = true)
+            profilePicture = "https://www.example.com/image")
 
     user2 =
         User(
@@ -91,8 +90,7 @@ class UserRepositoryFirestoreTest {
                 listOf(
                     UserSocial(Social.SNAPCHAT, "Snap"),
                     UserSocial(Social.WEBSITE, "example2.com")),
-            profilePicture = "https://www.example.com/image2",
-            hasProvidedAccountDetails = true)
+            profilePicture = "https://www.example.com/image2")
 
     `when`(userCollectionReference.get()).thenReturn(querySnapshotTask)
     `when`(userCollectionReference.document(eq(user1.uid))).thenReturn(documentReference)
@@ -134,7 +132,6 @@ class UserRepositoryFirestoreTest {
         .thenReturn(
             user1.socials.map { mapOf("social" to it.social.name, "content" to it.content) })
     `when`(map1.get("profilePicture")).thenReturn(user1.profilePicture)
-    `when`(map1.get("hasProvidedAccountDetails")).thenReturn(user1.hasProvidedAccountDetails)
 
     // Only set the uid field for user2
     `when`(map2.get("uid")).thenReturn(user2.uid)
@@ -157,7 +154,6 @@ class UserRepositoryFirestoreTest {
         .thenReturn(
             user2.socials.map { mapOf("social" to it.social.name, "content" to it.content) })
     `when`(map2.get("profilePicture")).thenReturn(user2.profilePicture)
-    `when`(map2.get("hasProvidedAccountDetails")).thenReturn(user2.hasProvidedAccountDetails)
 
     repository.getUsers(
         onSuccess = { users ->
@@ -179,7 +175,6 @@ class UserRepositoryFirestoreTest {
               user1.socials.map { mapOf("social" to it.social.name, "content" to it.content) },
               users[0].socials.map { mapOf("social" to it.social.name, "content" to it.content) })
           assertEquals(user1.profilePicture, users[0].profilePicture)
-          assertEquals(user1.hasProvidedAccountDetails, users[0].hasProvidedAccountDetails)
 
           assertEquals(user2.uid, users[1].uid)
           assertEquals(user2.email, users[1].email)
@@ -197,7 +192,6 @@ class UserRepositoryFirestoreTest {
               user2.socials.map { mapOf("social" to it.social.name, "content" to it.content) },
               users[1].socials.map { mapOf("social" to it.social.name, "content" to it.content) })
           assertEquals(user2.profilePicture, users[1].profilePicture)
-          assertEquals(user2.hasProvidedAccountDetails, users[1].hasProvidedAccountDetails)
         },
         onFailure = { exception -> assert(false) })
   }
@@ -220,8 +214,7 @@ class UserRepositoryFirestoreTest {
                   savedEvents = Event.emptyFirestoreReferenceList(),
                   interests = emptyList(),
                   socials = emptyList(),
-                  profilePicture = "",
-                  hasProvidedAccountDetails = false)
+                  profilePicture = "")
           assertEquals(2, users.size)
 
           assertEquals(user1.uid, users[0].uid)
@@ -240,7 +233,6 @@ class UserRepositoryFirestoreTest {
               user1.socials.map { mapOf("social" to it.social.name, "content" to it.content) },
               users[0].socials.map { mapOf("social" to it.social.name, "content" to it.content) })
           assertEquals(user1.profilePicture, users[0].profilePicture)
-          assertEquals(user1.hasProvidedAccountDetails, users[0].hasProvidedAccountDetails)
 
           assertEquals(emptyUser.uid, users[1].uid)
           assertEquals("", users[1].email)
@@ -258,7 +250,6 @@ class UserRepositoryFirestoreTest {
               emptyUser.socials.map { mapOf("social" to it.social.name, "content" to it.content) },
               users[1].socials.map { mapOf("social" to it.social.name, "content" to it.content) })
           assertEquals(emptyUser.profilePicture, users[1].profilePicture)
-          assertEquals(emptyUser.hasProvidedAccountDetails, users[1].hasProvidedAccountDetails)
         },
         onFailure = { exception -> assert(false) })
   }
@@ -284,7 +275,6 @@ class UserRepositoryFirestoreTest {
               user1.socials.map { mapOf("social" to it.social.name, "content" to it.content) },
               user.socials.map { mapOf("social" to it.social.name, "content" to it.content) })
           assertEquals(user1.profilePicture, user.profilePicture)
-          assertEquals(user1.hasProvidedAccountDetails, user.hasProvidedAccountDetails)
         },
         onFailure = { exception -> assert(false) })
   }

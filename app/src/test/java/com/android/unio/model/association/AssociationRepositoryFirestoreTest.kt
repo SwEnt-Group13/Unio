@@ -70,6 +70,7 @@ class AssociationRepositoryFirestoreTest {
             description =
                 "ACM is the world's largest educational and scientific computing society.",
             members = User.firestoreReferenceListWith(listOf("1", "2")),
+            followersCount = 0,
             image = "https://www.example.com/image.jpg")
 
     association2 =
@@ -82,6 +83,7 @@ class AssociationRepositoryFirestoreTest {
             description =
                 "IEEE is the world's largest technical professional organization dedicated to advancing technology for the benefit of humanity.",
             members = User.firestoreReferenceListWith(listOf("3", "4")),
+            followersCount = 1,
             image = "https://www.example.com/image.jpg")
 
     // When getting the collection, return the task
@@ -171,6 +173,7 @@ class AssociationRepositoryFirestoreTest {
                   category = AssociationCategory.ARTS,
                   description = "",
                   members = User.emptyFirestoreReferenceList(),
+                  followersCount = 0,
                   image = "")
 
           assertEquals(2, associations.size)
