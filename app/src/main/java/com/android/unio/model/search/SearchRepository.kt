@@ -89,7 +89,6 @@ class SearchRepository(
    */
   // Should be private, but I need it public for tests
   fun addAssociations(associations: List<Association>) {
-    Log.d("SearchRepository", "Adding associations to search database")
     val associationDocuments = associations.map { it.toAssociationDocument() }
     try {
       session?.putAsync(PutDocumentsRequest.Builder().addDocuments(associationDocuments).build())
@@ -105,7 +104,6 @@ class SearchRepository(
    */
   // Should be private, but I need it public for tests
   fun addEvents(events: List<Event>) {
-    Log.d("SearchRepository", "Adding events to search database")
     val eventDocuments = events.map { it.toEventDocument() }
     try {
       session?.putAsync(PutDocumentsRequest.Builder().addDocuments(eventDocuments).build())
@@ -189,7 +187,9 @@ class SearchRepository(
       associationRepository.getAssociationWithId(
           id = associationDocument.uid,
           onSuccess = { association -> continuation.resume(association) },
-          onFailure = { exception -> continuation.resumeWithException(exception) })
+          onFailure = { exception ->
+              Log.e("SearchRepository", "failed to convert associationDocumentation to association ", exception)
+              continuation.resumeWithException(exception) })
     }
   }
 
@@ -199,7 +199,9 @@ class SearchRepository(
       eventRepository.getEventWithId(
           id = eventDocument.uid,
           onSuccess = { association -> continuation.resume(association) },
-          onFailure = { exception -> continuation.resumeWithException(exception) })
+          onFailure = { exception ->
+              Log.e("SearchRepository", "failed to convert eventDocumentation to event ", exception)
+              continuation.resumeWithException(exception) })
     }
   }
 
