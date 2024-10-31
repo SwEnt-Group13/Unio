@@ -6,6 +6,7 @@ import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.isNotDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.navigation.NavHostController
@@ -13,12 +14,13 @@ import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationCategory
 import com.android.unio.model.association.AssociationRepository
 import com.android.unio.model.association.AssociationViewModel
-import com.android.unio.model.firestore.emptyFirestoreReferenceList
+import com.android.unio.model.event.Event
+import com.android.unio.model.event.EventRepository
+import com.android.unio.model.firestore.firestoreReferenceListWith
 import com.android.unio.model.user.User
 import com.android.unio.ui.navigation.NavigationAction
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
-import junit.framework.TestCase.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -35,9 +37,11 @@ class AssociationProfileTest {
   @Mock private lateinit var collectionReference: CollectionReference
   @Mock private lateinit var db: FirebaseFirestore
   @Mock private lateinit var associationRepository: AssociationRepository
+  @Mock private lateinit var eventRepository: EventRepository
   private lateinit var associationViewModel: AssociationViewModel
 
   private lateinit var associations: List<Association>
+  private lateinit var events: List<Event>
 
   @get:Rule val composeTestRule = createComposeRule()
 
@@ -45,35 +49,80 @@ class AssociationProfileTest {
   fun setUp() {
     MockitoAnnotations.openMocks(this)
 
-    `when`(db.collection(any())).thenReturn(collectionReference)
-
     associations =
         listOf(
             Association(
                 uid = "1",
-                url = "",
+                url = "this is an url",
                 name = "ACM",
                 fullName = "Association for Computing Machinery",
                 category = AssociationCategory.SCIENCE_TECH,
                 description =
                     "ACM is the world's largest educational and scientific computing society.",
-                members = User.emptyFirestoreReferenceList(),
+                members = User.firestoreReferenceListWith(listOf("1", "2", "3")),
+                followersCount = 321,
+                image = "https://www.example.com/image.jpg"),
+            Association(
+                uid = "2",
+                url = "this is an url",
+                name = "IEEE",
+                fullName = "Institute of Electrical and Electronics Engineers",
+                category = AssociationCategory.SCIENCE_TECH,
+                description =
+                    "IEEE is the world's largest technical professional organization dedicated to advancing technology for the benefit of humanity.",
+                members = User.firestoreReferenceListWith(listOf("4", "5", "6")),
+                followersCount = 654,
                 image = "https://www.example.com/image.jpg"))
+
+    events =
+        listOf(
+            Event(
+                uid = "a",
+                title = "Event A",
+                organisers = Association.firestoreReferenceListWith(listOf("1")),
+                taggedAssociations = Association.firestoreReferenceListWith(listOf("1")),
+                image = "",
+                description = "Description of event A",
+                catchyDescription = "Catchy description of event A",
+                price = 0.0,
+            ),
+            Event(
+                uid = "b",
+                title = "Event B",
+                organisers = Association.firestoreReferenceListWith(listOf("1")),
+                taggedAssociations = Association.firestoreReferenceListWith(listOf("1")),
+                image = "",
+                description = "Description of event B",
+                catchyDescription = "Catchy description of event B",
+                price = 0.0,
+            ))
+
+    `when`(db.collection(any())).thenReturn(collectionReference)
+    `when`(associationRepository.getAssociations(any(), any())).thenAnswer { invocation ->
+      val onSuccess = invocation.arguments[0] as (List<Association>) -> Unit
+      onSuccess(associations)
+    }
+    `when`(eventRepository.getEventsOfAssociation(any(), any(), any())).thenAnswer { invocation ->
+      val onSuccess = invocation.arguments[1] as (List<Event>) -> Unit
+      onSuccess(events)
+    }
 
     navHostController = mock { NavHostController::class.java }
     navigationAction = NavigationAction(navHostController)
 
-    associationViewModel = AssociationViewModel(associationRepository)
+    associationViewModel = AssociationViewModel(associationRepository, eventRepository)
+    associationViewModel.getAssociations()
   }
 
   @Test
   fun testAssociationProfileDisplayComponent() {
     composeTestRule.setContent {
-      AssociationProfileScreen(navigationAction, "", associationViewModel)
+      AssociationProfileScreen(navigationAction, "1", associationViewModel)
     }
+    composeTestRule.waitForIdle()
 
-    composeTestRule.onNodeWithTag("AssociationScreen").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("goBackButton").assertIsDisplayed()
+    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationScreen"))
+    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("goBackButton"))
 
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationImageHeader"))
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationProfileTitle"))
@@ -83,10 +132,9 @@ class AssociationProfileTest {
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationFollowButton"))
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationDescription"))
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationEventTitle"))
-    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationEventCard"))
+    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationEventCard-a"))
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationSeeMoreButton"))
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationContactMembersTitle"))
-    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationContactMembersCard"))
     assertDisplayComponentInScroll(
         composeTestRule.onNodeWithTag("AssociationRecruitmentDescription"))
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationRecruitmentRoles"))
@@ -102,28 +150,27 @@ class AssociationProfileTest {
   @Test
   fun testButtonBehavior() {
     composeTestRule.setContent {
-      AssociationProfileScreen(navigationAction, "", associationViewModel)
+      AssociationProfileScreen(navigationAction, "1", associationViewModel)
     }
+    // Share button
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("associationShareButton"))
     composeTestRule.onNodeWithTag("associationShareButton").performClick()
     assertSnackBarIsDisplayed()
 
+    // Follow button
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationFollowButton"))
     composeTestRule.onNodeWithTag("AssociationFollowButton").performClick()
     assertSnackBarIsDisplayed()
 
+    // See more button
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationSeeMoreButton"))
     composeTestRule.onNodeWithTag("AssociationSeeMoreButton").performClick()
-    assertSnackBarIsDisplayed()
+    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationEventCard-b"))
 
-    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationContactMembersCard"))
-    composeTestRule.onNodeWithTag("AssociationContactMembersCard").performClick()
-    assertSnackBarIsDisplayed()
-
+    // Roles buttons
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationTreasurerRoles"))
     composeTestRule.onNodeWithTag("AssociationTreasurerRoles").performClick()
     assertSnackBarIsDisplayed()
-
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationDesignerRoles"))
     composeTestRule.onNodeWithTag("AssociationDesignerRoles").performClick()
     assertSnackBarIsDisplayed()
@@ -148,28 +195,20 @@ class AssociationProfileTest {
 
   @Test
   fun testAssociationProfileGoodId() {
-    `when`(associationRepository.getAssociations(any(), any())).thenAnswer { invocation ->
-      val onSuccess = invocation.arguments[0] as (List<Association>) -> Unit
-      onSuccess(associations)
-    }
-
-    associationViewModel.getAssociations()
-
-    composeTestRule.runOnIdle {
-      assertEquals(associations, associationViewModel.associations.value)
-    }
-
     composeTestRule.setContent {
-      AssociationProfileScreen(navigationAction, associations.first().uid, associationViewModel)
+      AssociationProfileScreen(navigationAction, "1", associationViewModel)
     }
 
-    composeTestRule.onNodeWithTag("AssociationProfileTitle").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("goBackButton").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("AssociationScreen").assertIsDisplayed()
-    // TODO uncomment when implementing the association logic
-    //    composeTestRule.onNodeWithTag("associationAcronym").assertIsDisplayed()
-    //    composeTestRule
-    //        .onNodeWithText("Association acronym: ${associations.first().acronym}")
-    //        .assertIsDisplayed()
+    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationProfileTitle"))
+    assertDisplayComponentInScroll(composeTestRule.onNodeWithText(this.associations.first().name))
+  }
+
+  @Test
+  fun testAssociationProfileBadId() {
+    composeTestRule.setContent {
+      AssociationProfileScreen(navigationAction, "IDONOTEXIST", associationViewModel)
+    }
+
+    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("associationNotFound"))
   }
 }

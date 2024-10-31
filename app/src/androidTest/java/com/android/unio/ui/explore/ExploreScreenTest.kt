@@ -10,6 +10,7 @@ import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationCategory
 import com.android.unio.model.association.AssociationRepository
 import com.android.unio.model.association.AssociationViewModel
+import com.android.unio.model.event.EventRepository
 import com.android.unio.model.firestore.emptyFirestoreReferenceList
 import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.user.User
@@ -35,6 +36,7 @@ class ExploreScreenTest {
   @Mock private lateinit var collectionReference: CollectionReference
   @Mock private lateinit var associationRepository: AssociationRepository
   private lateinit var searchViewModel: SearchViewModel
+  @Mock private lateinit var eventRepository: EventRepository
   private lateinit var associationViewModel: AssociationViewModel
 
   @get:Rule val composeTestRule = createComposeRule()
@@ -64,6 +66,7 @@ class ExploreScreenTest {
                 description =
                     "ACM is the world's largest educational and scientific computing society.",
                 members = User.emptyFirestoreReferenceList(),
+                followersCount = 0,
                 image = ""),
             Association(
                 uid = "2",
@@ -73,6 +76,7 @@ class ExploreScreenTest {
                 category = AssociationCategory.ARTS,
                 description = "Musical is the world's largest music society.",
                 members = User.emptyFirestoreReferenceList(),
+                followersCount = 0,
                 image = ""),
             //            Association(
             //                uid = "3",
@@ -95,7 +99,7 @@ class ExploreScreenTest {
     sortedByCategoryAssociations =
         getSortedEntriesAssociationsByCategory(associations.groupBy { it.category })
 
-    associationViewModel = AssociationViewModel(associationRepository)
+    associationViewModel = AssociationViewModel(associationRepository, eventRepository)
   }
 
   @Test
