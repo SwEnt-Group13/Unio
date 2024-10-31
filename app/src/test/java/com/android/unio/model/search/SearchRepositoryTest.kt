@@ -73,6 +73,7 @@ class SearchRepositoryTest {
           fullName = "Association for Computing Machinery",
           category = AssociationCategory.SCIENCE_TECH,
           description = "ACM is the world's largest educational and scientific computing society.",
+          followersCount = 1,
           members = User.firestoreReferenceListWith(listOf("1", "2")),
           image = "https://www.example.com/image.jpg")
 
@@ -85,6 +86,7 @@ class SearchRepositoryTest {
           category = AssociationCategory.SCIENCE_TECH,
           description =
               "IEEE is the world's largest technical professional organization dedicated to advancing technology for the benefit of humanity.",
+          followersCount = 1,
           members = User.firestoreReferenceListWith(listOf("3", "4")),
           image = "https://www.example.com/image.jpg")
 

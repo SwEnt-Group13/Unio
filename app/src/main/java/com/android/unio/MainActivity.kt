@@ -51,19 +51,22 @@ fun UnioApp() {
   val navController = rememberNavController()
   val navigationActions = NavigationAction(navController)
   val db = Firebase.firestore
-
-  val associationRepository = remember {AssociationRepositoryFirestore(db)}
-  val eventRepository = remember {EventRepositoryFirestore(db)}
-  val associationViewModel = remember{ AssociationViewModel(associationRepository, eventRepository)}
-
-  val userRepositoryFirestore = remember { UserRepositoryFirestore(db) }
-  val userViewModel = remember { UserViewModel(userRepositoryFirestore, true) }
-
   val context = LocalContext.current
+
+  val associationRepository = remember { AssociationRepositoryFirestore(db) }
+  val eventRepository = remember { EventRepositoryFirestore(db) }
+  val userRepositoryFirestore = remember { UserRepositoryFirestore(db) }
   val searchRepository = remember {
     SearchRepository(context, associationRepository, eventRepository)
   }
+
+  val associationViewModel = remember {
+    AssociationViewModel(associationRepository, eventRepository)
+  }
+  val eventListViewModel = remember { EventListViewModel(eventRepository) }
+  val userViewModel = remember { UserViewModel(userRepositoryFirestore, true) }
   val searchViewModel = remember { SearchViewModel(searchRepository) }
+
   // Redirect user based on authentication state
   Firebase.auth.addAuthStateListener { auth ->
     val user = auth.currentUser
