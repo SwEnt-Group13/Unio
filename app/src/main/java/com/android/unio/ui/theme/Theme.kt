@@ -11,13 +11,15 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
-import androidx.preference.PreferenceManager
+import com.android.unio.model.preferences.PreferenceKeys
+import me.zhanghai.compose.preference.LocalPreferenceFlow
 
 private val lightScheme =
     lightColorScheme(
@@ -276,9 +278,9 @@ fun AppTheme(
     dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
-  val theme =
-      PreferenceManager.getDefaultSharedPreferences(LocalContext.current)
-          .getString("theme", Theme.SYSTEM) ?: Theme.SYSTEM
+  val preferences by LocalPreferenceFlow.current.collectAsState()
+
+  val theme = (preferences.asMap().getOrDefault(PreferenceKeys.THEME, Theme.SYSTEM))
 
   val colorScheme =
       when {
