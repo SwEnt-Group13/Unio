@@ -100,6 +100,7 @@ class AssociationRepositoryFirestore(private val db: FirebaseFirestore) : Associ
         onFailure)
   }
 
+  // TODO extract this to a util
   /** Performs a Firestore operation and calls the appropriate callback based on the result. */
   private fun <T> performFirestoreOperation(
       task: Task<T>,

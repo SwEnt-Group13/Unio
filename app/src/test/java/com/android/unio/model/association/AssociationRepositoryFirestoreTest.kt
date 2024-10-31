@@ -149,6 +149,7 @@ class AssociationRepositoryFirestoreTest {
                   category = AssociationCategory.ARTS,
                   description = "",
                   members = User.emptyFirestoreReferenceList(),
+                  followersCount = 0,
                   image = "")
 
           assertEquals(2, associations.size)
