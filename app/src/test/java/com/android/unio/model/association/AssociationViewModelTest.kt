@@ -2,9 +2,6 @@ package com.android.unio.model.association
 
 import androidx.test.core.app.ApplicationProvider
 import com.android.unio.model.event.EventRepository
-import com.android.unio.model.firestore.firestoreReferenceListWith
-import com.android.unio.model.user.User
-
 import com.google.firebase.Firebase
 import com.google.firebase.FirebaseApp
 import com.google.firebase.firestore.CollectionReference

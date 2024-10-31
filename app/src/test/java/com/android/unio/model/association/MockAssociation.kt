@@ -94,7 +94,8 @@ class MockAssociation {
           category = category,
           description = description,
           members = MockReferenceList(members),
-          image = image)
+          image = image,
+          followersCount = 2)
     }
 
     /** Creates a list of mock Associations with randomized properties for each. */
