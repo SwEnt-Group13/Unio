@@ -46,7 +46,6 @@ class UserTest {
             listOf(
                 UserSocial(Social.INSTAGRAM, "Insta"), UserSocial(Social.WEBSITE, "example.com")),
             "https://www.example.com/image",
-            true,
             Event.emptyFirestoreReferenceList()
         )
     assertEquals("1", user.uid)
@@ -75,7 +74,6 @@ class UserTest {
             listOf(Interest.SPORTS),
             listOf(UserSocial(Social.INSTAGRAM, "username")),
             "https://example.com/image",
-            false,
             Event.emptyFirestoreReferenceList()
         )
 
@@ -91,7 +89,6 @@ class UserTest {
             listOf(Interest.SPORTS),
             listOf(UserSocial(Social.INSTAGRAM, "username")),
             "https://example.com/image",
-            false,
             Event.emptyFirestoreReferenceList()
         )
 
@@ -107,7 +104,6 @@ class UserTest {
             listOf(Interest.SPORTS),
             listOf(UserSocial(Social.INSTAGRAM, "username")),
             "https://example.com/image",
-            false,
             Event.emptyFirestoreReferenceList()
         )
     val expectedErrors1 = mutableSetOf(AccountDetailsError.EMPTY_FIRST_NAME)

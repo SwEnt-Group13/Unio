@@ -58,7 +58,6 @@ data class User(
   val interests: List<Interest>,
   val socials: List<UserSocial>,
   val profilePicture: String,
-  val hasProvidedAccountDetails: Boolean,
   val savedEvents: ReferenceList<Event>,
 
   ) {

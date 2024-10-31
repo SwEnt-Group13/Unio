@@ -32,3 +32,7 @@ object FirestorePathsStrings {
   const val USER_PATH = "users"
   const val EVENT_PATH = "events"
 }
+
+object MapStrings {
+  const val EVENT_ALREADY_OCCURED = "Event has already occurred"
+}

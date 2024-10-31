@@ -247,7 +247,6 @@ fun AccountDetails(
                       interests = interests.filter { it.second.value }.map { it.first },
                       socials = socials,
                       profilePicture = "",
-                      hasProvidedAccountDetails = true,
                       savedEvents = Event.emptyFirestoreReferenceList()
                   )
               isErrors = checkNewUser(user)
