@@ -5,10 +5,20 @@ import com.android.unio.model.firestore.FirestorePaths.EVENT_PATH
 import com.android.unio.model.firestore.transform.hydrate
 import com.android.unio.model.firestore.transform.serialize
 import com.google.android.gms.tasks.Task
+import com.google.firebase.Firebase
 import com.google.firebase.Timestamp
+import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FirebaseFirestore
 
 class EventRepositoryFirestore(private val db: FirebaseFirestore) : EventRepository {
+
+  override fun init(onSuccess: () -> Unit) {
+    Firebase.auth.addAuthStateListener {
+      if (it.currentUser != null) {
+        onSuccess()
+      }
+    }
+  }
 
   override fun getEventsOfAssociation(
       association: String,

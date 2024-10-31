@@ -29,6 +29,7 @@ import com.android.unio.ui.authentication.EmailVerificationScreen
 import com.android.unio.ui.authentication.WelcomeScreen
 import com.android.unio.ui.explore.ExploreScreen
 import com.android.unio.ui.home.HomeScreen
+import com.android.unio.ui.map.MapScreen
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Route
 import com.android.unio.ui.navigation.Screen
@@ -103,6 +104,7 @@ fun UnioApp() {
       composable(Screen.HOME) {
         HomeScreen(navigationActions, eventListViewModel, onAddEvent = {}, onEventClick = {})
       }
+      composable(Screen.MAP) { MapScreen(navigationActions, eventListViewModel) }
     }
     navigation(startDestination = Screen.EXPLORE, route = Route.EXPLORE) {
       composable(Screen.EXPLORE) {

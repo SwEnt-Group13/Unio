@@ -127,7 +127,7 @@ class ScreenDisplayingTest {
 
   @Test
   fun testMapDisplayed() {
-    composeTestRule.setContent { MapScreen() }
+    composeTestRule.setContent { MapScreen(navigationAction) }
     composeTestRule.onNodeWithTag("MapScreen").assertIsDisplayed()
   }
 
