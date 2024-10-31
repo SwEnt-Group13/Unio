@@ -12,6 +12,7 @@ import com.google.firebase.firestore.firestore
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
+import java.io.InputStream
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -31,7 +32,6 @@ import org.mockito.MockitoAnnotations
 import org.mockito.kotlin.any
 import org.mockito.kotlin.eq
 import org.robolectric.RobolectricTestRunner
-import java.io.InputStream
 
 @RunWith(RobolectricTestRunner::class)
 class AssociationViewModelTest {

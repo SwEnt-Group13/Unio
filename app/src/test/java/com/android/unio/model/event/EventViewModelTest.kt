@@ -7,6 +7,8 @@ import com.google.firebase.FirebaseApp
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
+import java.io.InputStream
+import java.util.GregorianCalendar
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -17,8 +19,6 @@ import org.mockito.MockitoAnnotations
 import org.mockito.kotlin.any
 import org.mockito.kotlin.eq
 import org.robolectric.RobolectricTestRunner
-import java.io.InputStream
-import java.util.GregorianCalendar
 
 @RunWith(RobolectricTestRunner::class)
 class EventViewModelTest {

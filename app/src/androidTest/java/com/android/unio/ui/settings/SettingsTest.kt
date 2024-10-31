@@ -7,11 +7,11 @@ import com.android.unio.model.preferences.PreferenceKeys
 import com.android.unio.ui.navigation.NavigationAction
 import io.mockk.MockKAnnotations
 import io.mockk.impl.annotations.MockK
+import kotlin.reflect.full.memberProperties
 import me.zhanghai.compose.preference.ProvidePreferenceLocals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import kotlin.reflect.full.memberProperties
 
 class SettingsTest {
   @MockK private lateinit var navigationAction: NavigationAction
