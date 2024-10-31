@@ -60,7 +60,9 @@ fun UnioApp() {
   val eventRepository = remember { EventRepositoryFirestore(db) }
   val userRepositoryFirestore = remember { UserRepositoryFirestore(db) }
 
-  val associationViewModel = remember { AssociationViewModel(associationRepository, eventRepository) }
+  val associationViewModel = remember {
+    AssociationViewModel(associationRepository, eventRepository)
+  }
   val userViewModel = remember { UserViewModel(userRepositoryFirestore, true) }
   val eventListViewModel = remember { EventListViewModel(eventRepository) }
 
