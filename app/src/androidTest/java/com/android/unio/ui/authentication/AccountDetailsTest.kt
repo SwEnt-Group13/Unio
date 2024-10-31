@@ -9,9 +9,8 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextInput
-import com.android.unio.model.image.ImageRepository
+import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.user.UserViewModel
-import com.android.unio.ui.accountCreation.AccountDetails
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
 import com.google.firebase.Firebase
@@ -35,7 +34,7 @@ class AccountDetailsTest {
   @MockK private lateinit var firebaseAuth: FirebaseAuth
   private lateinit var navigationAction: NavigationAction
   @MockK private lateinit var userViewModel: UserViewModel
-  @MockK private lateinit var imageRepository: ImageRepository
+  @MockK private lateinit var imageRepository: ImageRepositoryFirebaseStorage
 
   // This is the implementation of the abstract method getUid() from FirebaseUser.
   // Because it is impossible to mock abstract method, this is the only way to mock it.
