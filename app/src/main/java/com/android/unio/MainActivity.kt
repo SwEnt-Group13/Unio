@@ -19,6 +19,8 @@ import com.android.unio.model.association.AssociationRepositoryFirestore
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.event.EventListViewModel
 import com.android.unio.model.event.EventRepositoryFirestore
+import com.android.unio.model.search.SearchRepository
+import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.accountCreation.AccountDetails
@@ -27,6 +29,7 @@ import com.android.unio.ui.authentication.EmailVerificationScreen
 import com.android.unio.ui.authentication.WelcomeScreen
 import com.android.unio.ui.explore.ExploreScreen
 import com.android.unio.ui.home.HomeScreen
+import com.android.unio.ui.map.MapScreen
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Route
 import com.android.unio.ui.navigation.Screen
@@ -38,6 +41,7 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import me.zhanghai.compose.preference.ProvidePreferenceLocals
+import com.google.firebase.firestore.firestore
 
 class MainActivity : ComponentActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -54,19 +58,22 @@ class MainActivity : ComponentActivity() {
 fun UnioApp() {
   val navController = rememberNavController()
   val navigationActions = NavigationAction(navController)
-  val db = FirebaseFirestore.getInstance()
+  val db = Firebase.firestore
+  val context = LocalContext.current
 
   val associationRepository = remember { AssociationRepositoryFirestore(db) }
   val eventRepository = remember { EventRepositoryFirestore(db) }
   val userRepositoryFirestore = remember { UserRepositoryFirestore(db) }
+  val searchRepository = remember {
+    SearchRepository(context, associationRepository, eventRepository)
+  }
 
   val associationViewModel = remember {
     AssociationViewModel(associationRepository, eventRepository)
   }
-  val userViewModel = remember { UserViewModel(userRepositoryFirestore, true) }
   val eventListViewModel = remember { EventListViewModel(eventRepository) }
-
-  val context = LocalContext.current
+  val userViewModel = remember { UserViewModel(userRepositoryFirestore, true) }
+  val searchViewModel = remember { SearchViewModel(searchRepository) }
 
   // Redirect user based on authentication state
   Firebase.auth.addAuthStateListener { auth ->
@@ -104,9 +111,12 @@ fun UnioApp() {
       composable(Screen.HOME) {
         HomeScreen(navigationActions, eventListViewModel, onAddEvent = {}, onEventClick = {})
       }
+      composable(Screen.MAP) { MapScreen(navigationActions, eventListViewModel) }
     }
     navigation(startDestination = Screen.EXPLORE, route = Route.EXPLORE) {
-      composable(Screen.EXPLORE) { ExploreScreen(navigationActions, associationViewModel) }
+      composable(Screen.EXPLORE) {
+        ExploreScreen(navigationActions, associationViewModel, searchViewModel)
+      }
       composable(Screen.ASSOCIATION_PROFILE) { navBackStackEntry ->
         // Get the association UID from the arguments
         val uid = navBackStackEntry.arguments?.getString("uid")

@@ -9,6 +9,7 @@ import com.android.unio.model.association.AssociationCategory
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.event.Event
 import com.android.unio.model.firestore.firestoreReferenceListWith
+import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.user.User
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.accountCreation.AccountDetails
@@ -44,6 +45,8 @@ class ScreenDisplayingTest {
 
   private lateinit var navigationAction: NavigationAction
   private lateinit var userViewModel: UserViewModel
+
+  @MockK private lateinit var searchViewModel: SearchViewModel
 
   @MockK private lateinit var associationViewModel: AssociationViewModel
 
@@ -116,14 +119,16 @@ class ScreenDisplayingTest {
 
   @Test
   fun testExploreDisplayed() {
-    composeTestRule.setContent { ExploreScreen(navigationAction) }
+    composeTestRule.setContent {
+      ExploreScreen(navigationAction, searchViewModel = searchViewModel)
+    }
     composeTestRule.onNodeWithTag("exploreScreen").assertIsDisplayed()
     composeTestRule.onNodeWithTag("searchBar").assertIsDisplayed()
   }
 
   @Test
   fun testMapDisplayed() {
-    composeTestRule.setContent { MapScreen() }
+    composeTestRule.setContent { MapScreen(navigationAction) }
     composeTestRule.onNodeWithTag("MapScreen").assertIsDisplayed()
   }
 
