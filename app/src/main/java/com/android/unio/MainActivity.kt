@@ -42,11 +42,6 @@ import com.google.firebase.firestore.firestore
 class MainActivity : ComponentActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-
-    //    val associationRepository = AssociationRepositoryFirestore(Firebase.firestore)
-    //    val searchRepository = SearchRepository(this, associationRepository)
-    //    val searchViewModel = SearchViewModel(searchRepository)
-
     setContent { Surface(modifier = Modifier.fillMaxSize()) { AppTheme { UnioApp() } } }
   }
 }

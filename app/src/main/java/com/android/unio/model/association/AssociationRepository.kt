@@ -19,8 +19,6 @@ interface AssociationRepository {
       onFailure: (Exception) -> Unit
   )
 
-  fun addAssociationsListener(onAssociationsChanged: (QuerySnapshot) -> Unit)
-
   fun addAssociation(
       association: Association,
       onSuccess: () -> Unit,

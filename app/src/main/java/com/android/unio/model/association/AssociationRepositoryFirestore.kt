@@ -20,19 +20,6 @@ class AssociationRepositoryFirestore(private val db: FirebaseFirestore) : Associ
     }
   }
 
-  override fun addAssociationsListener(onAssociationsChanged: (QuerySnapshot) -> Unit) {
-    db.collection(ASSOCIATION_PATH).addSnapshotListener { snapshots, e ->
-      if (e != null) {
-        // TODO Handle exception
-        return@addSnapshotListener
-      }
-
-      if (snapshots != null) {
-        onAssociationsChanged(snapshots)
-      }
-    }
-  }
-
   override fun getAssociations(
       onSuccess: (List<Association>) -> Unit,
       onFailure: (Exception) -> Unit
