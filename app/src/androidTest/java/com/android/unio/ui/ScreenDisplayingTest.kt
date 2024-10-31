@@ -28,6 +28,7 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import io.mockk.mockkStatic
+import me.zhanghai.compose.preference.ProvidePreferenceLocals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -121,7 +122,7 @@ class ScreenDisplayingTest {
 
   @Test
   fun testSettingsDisplayed() {
-    composeTestRule.setContent { SettingsScreen(navigationAction) }
+    composeTestRule.setContent { ProvidePreferenceLocals { SettingsScreen(navigationAction) } }
     composeTestRule.onNodeWithTag("SettingsScreen").assertIsDisplayed()
   }
 
