@@ -16,8 +16,8 @@ import com.android.unio.model.user.UserSocial
 import com.google.firebase.Timestamp
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertTrue
-import kotlin.reflect.full.memberProperties
 import org.junit.Test
+import kotlin.reflect.full.memberProperties
 
 class HydrationAndSerializationTest {
   private val user =

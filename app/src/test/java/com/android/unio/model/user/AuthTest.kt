@@ -7,7 +7,6 @@ import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseUser
-import java.security.cert.CertificateExpiredException
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertNotNull
 import junit.framework.TestCase.assertNull
@@ -17,6 +16,7 @@ import org.mockito.Mock
 import org.mockito.Mockito.`when`
 import org.mockito.MockitoAnnotations
 import org.mockito.kotlin.any
+import java.security.cert.CertificateExpiredException
 
 class AuthTest {
   @Mock private lateinit var auth: FirebaseAuth

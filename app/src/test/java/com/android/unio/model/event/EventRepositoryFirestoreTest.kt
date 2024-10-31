@@ -18,7 +18,6 @@ import com.google.firebase.firestore.firestore
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
-import java.util.GregorianCalendar
 import junit.framework.TestCase.assertEquals
 import org.junit.Assert.assertThrows
 import org.junit.Before
@@ -27,6 +26,7 @@ import org.mockito.Mock
 import org.mockito.Mockito.`when`
 import org.mockito.MockitoAnnotations
 import org.mockito.kotlin.any
+import java.util.GregorianCalendar
 
 class EventRepositoryFirestoreTest {
   private lateinit var db: FirebaseFirestore
