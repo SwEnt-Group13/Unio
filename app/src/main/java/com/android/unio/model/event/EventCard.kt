@@ -44,13 +44,11 @@ fun EventCard(event: Event, onClick: () -> Unit) {
       Modifier
           .fillMaxWidth()
           .padding(vertical = 8.dp)
-          .clickable(
-              onClick =
-              onClick
-          )
+          .clickable(onClick = onClick)
           .testTag("event_EventListItem")
           .clip(RoundedCornerShape(10.dp))
-          .background(Color(0xFFF0ECF4))) {
+          .background(Color(0xFFF0ECF4))
+  ) {
         AsyncImage(
             model = event.image.toUri(),
             contentDescription = "Image of the event",
@@ -88,7 +86,8 @@ fun EventCard(event: Event, onClick: () -> Unit) {
                   Modifier
                       .clip(RoundedCornerShape(4.dp))
                       .background(addAlphaToColor(type.color, 200))
-                      .wrapContentWidth()) {
+                      .wrapContentWidth()
+              ) {
                     Text(
                         text = type.text,
                         modifier =
@@ -108,7 +107,8 @@ fun EventCard(event: Event, onClick: () -> Unit) {
                 Modifier
                     .size(24.dp)
                     .align(Alignment.CenterVertically)
-                    .testTag("event_ClicImage"))
+                    .testTag("event_ClicImage")
+            )
           }
 
           Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {

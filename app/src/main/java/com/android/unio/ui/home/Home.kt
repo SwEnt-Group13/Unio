@@ -105,10 +105,10 @@ fun HomeScreen(
       },
       modifier = Modifier.testTag("HomeScreen"),
       content = { paddingValues ->
-        Column(modifier = Modifier
-            .fillMaxSize()
-            .padding(paddingValues)
-            .background(Color.Black)) {
+          Column(modifier = Modifier
+              .fillMaxSize()
+              .padding(paddingValues)
+              .background(Color.Black)) {
           // Sticky Header
           Box(
               modifier =
@@ -116,7 +116,8 @@ fun HomeScreen(
                   .fillMaxWidth()
                   .background(Color.Black)
                   .padding(vertical = 16.dp, horizontal = horizontalHeaderPadding)
-                  .testTag("event_Header")) {
+                  .testTag("event_Header")
+          ) {
                 Column {
                   Text(
                       text = "Upcoming Events",
@@ -179,7 +180,8 @@ fun HomeScreen(
                       modifier =
                       Modifier
                           .fillMaxWidth() // Makes sure the underline spans the entire width
-                          .padding(top = 4.dp)) {
+                          .padding(top = 4.dp)
+                  ) {
                         val selectedTabWidth =
                             if (selectedTab == "All") allTabWidth else followingTabWidth
                         Box(
@@ -195,7 +197,8 @@ fun HomeScreen(
                                 .width(selectedTabWidth) // Use the width of the selected tab
                                 .height(2.dp)
                                 .background(Color.Blue)
-                                .testTag("event_UnderlyingBar"))
+                                .testTag("event_UnderlyingBar")
+                        )
                       }
                 }
               }
@@ -206,16 +209,14 @@ fun HomeScreen(
                 contentPadding = PaddingValues(vertical = 8.dp),
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(horizontal = 32.dp)) {
+                    .padding(horizontal = 32.dp)
+            ) {
                   items(events) { event ->
                       EventCard(
                           event = event,
                           onClick = {
                               navigationAction.navigateTo(
-                                  Screen.withParams(
-                                      Screen.EVENT_DETAILS,
-                                      event.uid
-                                  )
+                                  Screen.withParams(Screen.EVENT_DETAILS, event.uid)
                               )
                           })
                   }

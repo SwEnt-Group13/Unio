@@ -56,7 +56,7 @@ class EventListViewModel(private val repository: EventRepository) : ViewModel() 
     }
   }
 
-    //TODO: test and comment
+    // TODO: test and comment
     fun findEventById(id: String): Event? {
         _events.value
             .find { it.uid == id }

@@ -51,11 +51,7 @@ class EventListOverviewTest {
   fun testTabSwitchingAndAnimation() {
     composeTestRule.setContent {
       val eventListViewModel = EventListViewModel(mockEventRepository)
-      HomeScreen(
-          navigationAction,
-          eventListViewModel = eventListViewModel,
-          onAddEvent = {},
-          onEventClick = {})
+      HomeScreen(navigationAction, eventListViewModel = eventListViewModel, onAddEvent = {})
     }
 
     // Assert that the 'All' tab exists and has a click action.
@@ -91,11 +87,7 @@ class EventListOverviewTest {
             }
           }
       val eventListViewModel = EventListViewModel(emptyEventRepository)
-      HomeScreen(
-          navigationAction,
-          eventListViewModel = eventListViewModel,
-          onAddEvent = {},
-          onEventClick = {})
+      HomeScreen(navigationAction, eventListViewModel = eventListViewModel, onAddEvent = {})
     }
 
     // Assert that the empty event prompt is displayed.
@@ -114,8 +106,7 @@ class EventListOverviewTest {
       HomeScreen(
           navigationAction = navigationAction,
           eventListViewModel = eventListViewModel,
-          onAddEvent = {},
-          onEventClick = {})
+        onAddEvent = {})
     }
 
     composeTestRule.onNodeWithTag("event_MapButton").assertExists()
@@ -137,11 +128,7 @@ class EventListOverviewTest {
   fun testClickFollowingAndAdd() = runBlockingTest {
     composeTestRule.setContent {
       val eventListViewModel = EventListViewModel(mockEventRepository)
-      HomeScreen(
-          navigationAction,
-          eventListViewModel = eventListViewModel,
-          onAddEvent = {},
-          onEventClick = {})
+      HomeScreen(navigationAction, eventListViewModel = eventListViewModel, onAddEvent = {})
     }
 
     // Ensure the 'Following' tab exists and perform a click.

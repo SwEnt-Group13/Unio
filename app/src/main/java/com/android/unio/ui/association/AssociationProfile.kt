@@ -183,9 +183,10 @@ private fun AssociationProfileContent(
 ) {
   Column(
       modifier =
-          Modifier.padding(padding)
-              .testTag("AssociationScreen")
-              .verticalScroll(rememberScrollState())) {
+      Modifier
+          .padding(padding)
+          .testTag("AssociationScreen")
+          .verticalScroll(rememberScrollState())) {
         AssociationHeader(association, context)
         Spacer(modifier = Modifier.size(22.dp))
         AssociationDescription(association)
@@ -218,18 +219,20 @@ private fun AssociationRecruitment(association: Association, context: Context) {
       style = AppTypography.headlineMedium,
       modifier = Modifier
           .padding(horizontal = 20.dp)
-          .testTag("AssociationRecruitmentTitle"))
+          .testTag("AssociationRecruitmentTitle")
+  )
   Spacer(modifier = Modifier.size(13.dp))
   Text(
       text = context.getString(R.string.association_help_us),
       style = AppTypography.bodySmall,
       modifier = Modifier
           .padding(horizontal = 23.dp)
-          .testTag("AssociationRecruitmentDescription"))
+          .testTag("AssociationRecruitmentDescription")
+  )
   Spacer(modifier = Modifier.size(18.dp))
-  Row(modifier = Modifier
-      .padding(horizontal = 24.dp)
-      .testTag("AssociationRecruitmentRoles")) {
+    Row(modifier = Modifier
+        .padding(horizontal = 24.dp)
+        .testTag("AssociationRecruitmentRoles")) {
     OutlinedButton(
         modifier = Modifier.testTag("AssociationDesignerRoles"),
         onClick = {
@@ -272,22 +275,25 @@ private fun UsersCard(userList: List<User>, context: Context) {
       style = AppTypography.headlineMedium,
       modifier = Modifier
           .padding(horizontal = 20.dp)
-          .testTag("AssociationContactMembersTitle"))
+          .testTag("AssociationContactMembersTitle")
+  )
   Spacer(modifier = Modifier.size(4.dp))
   userList.forEach { user ->
     Box(
         modifier =
-            Modifier.padding(horizontal = 23.dp)
-                .width(366.dp)
-                .height(40.dp)
-                .background(Color.LightGray, RoundedCornerShape(12.dp))
-                .padding(vertical = 2.dp, horizontal = 3.dp)
-                .clickable {
-                  scope!!.launch {
+        Modifier
+            .padding(horizontal = 23.dp)
+            .width(366.dp)
+            .height(40.dp)
+            .background(Color.LightGray, RoundedCornerShape(12.dp))
+            .padding(vertical = 2.dp, horizontal = 3.dp)
+            .clickable {
+                scope!!.launch {
                     testSnackbar!!.showSnackbar(
-                        message = DEBUG_MESSAGE, duration = SnackbarDuration.Short)
-                  }
-                },
+                        message = DEBUG_MESSAGE, duration = SnackbarDuration.Short
+                    )
+                }
+            },
     ) {
       Row(
           horizontalArrangement = Arrangement.spacedBy(115.dp, Alignment.Start),
@@ -327,7 +333,9 @@ private fun AssociationProfileEvents(
         text = context.getString(R.string.association_no_event),
         style = AppTypography.bodySmall,
         fontStyle = FontStyle.Italic,
-        modifier = Modifier.padding(horizontal = 20.dp).testTag("AssociationNoEvent"))
+        modifier = Modifier
+            .padding(horizontal = 20.dp)
+            .testTag("AssociationNoEvent"))
   } else {
     events.sortedBy { it.date }
     val first = events.first()
@@ -343,7 +351,9 @@ private fun AssociationProfileEvents(
     Spacer(modifier = Modifier.size(11.dp))
     OutlinedButton(
         onClick = { isSeeMoreClicked = true },
-        modifier = Modifier.padding(horizontal = 28.dp).testTag("AssociationSeeMoreButton")) {
+        modifier = Modifier
+            .padding(horizontal = 28.dp)
+            .testTag("AssociationSeeMoreButton")) {
           Icon(Icons.AutoMirrored.Filled.ArrowForward, contentDescription = "See more")
           Spacer(Modifier.width(2.dp))
           Text(context.getString(R.string.association_see_more))
@@ -392,7 +402,8 @@ private fun AssociationDescription(association: Association) {
       style = AppTypography.bodyMedium,
       modifier = Modifier
           .padding(horizontal = 24.dp)
-          .testTag("AssociationDescription"))
+          .testTag("AssociationDescription")
+  )
 }
 
 /**
@@ -409,7 +420,9 @@ private fun AssociationDescription(association: Association) {
 @Composable
 private fun AssociationHeader(association: Association, context: Context) {
   Row {
-    Box(modifier = Modifier.padding(horizontal = 24.dp).testTag("AssociationImageHeader")) {
+    Box(modifier = Modifier
+        .padding(horizontal = 24.dp)
+        .testTag("AssociationImageHeader")) {
       AsyncImage(
           model = association.image.toUri(),
           contentDescription = "Association image of " + association.name,
@@ -421,14 +434,16 @@ private fun AssociationHeader(association: Association, context: Context) {
           style = AppTypography.headlineSmall,
           modifier = Modifier
               .padding(bottom = 5.dp)
-              .testTag("AssociationHeaderFollowers"))
+              .testTag("AssociationHeaderFollowers")
+      )
       Text(
           "${association.members.list.collectAsState().value.size} " +
               context.getString(R.string.association_member),
           style = AppTypography.headlineSmall,
           modifier = Modifier
               .padding(bottom = 14.dp)
-              .testTag("AssociationHeaderMembers"))
+              .testTag("AssociationHeaderMembers")
+      )
       Button(
           onClick = {
             scope!!.launch {

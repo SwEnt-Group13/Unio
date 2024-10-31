@@ -112,7 +112,7 @@ class ScreenDisplayingTest {
 
   @Test
   fun testHomeDisplayed() {
-    composeTestRule.setContent { HomeScreen(navigationAction, onAddEvent = {}, onEventClick = {}) }
+    composeTestRule.setContent { HomeScreen(navigationAction, onAddEvent = {}) }
     composeTestRule.onNodeWithTag("HomeScreen").assertIsDisplayed()
   }
 
@@ -133,7 +133,9 @@ class ScreenDisplayingTest {
 
   @Test
   fun testEventDisplayed() {
-    composeTestRule.setContent { EventScreen() }
+    composeTestRule.setContent {
+      EventScreen(eventId = "", navigationAction = navigationAction, userViewModel = userViewModel)
+    }
     composeTestRule.onNodeWithTag("EventScreen").assertIsDisplayed()
   }
 

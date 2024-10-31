@@ -48,19 +48,18 @@ data class UserSocial(val social: Social, val content: String) {
  * @param hasProvidedAccountDetails Whether the user has provided account details.
  */
 data class User(
-  val uid: String,
-  val email: String,
-  val firstName: String,
-  val lastName: String,
-  val biography: String,
-  val followedAssociations: ReferenceList<Association>,
-  val joinedAssociations: ReferenceList<Association>,
-  val interests: List<Interest>,
-  val socials: List<UserSocial>,
-  val profilePicture: String,
-  val savedEvents: ReferenceList<Event>,
-
-  ) {
+    val uid: String,
+    val email: String,
+    val firstName: String,
+    val lastName: String,
+    val biography: String,
+    val followedAssociations: ReferenceList<Association>,
+    val joinedAssociations: ReferenceList<Association>,
+    val interests: List<Interest>,
+    val socials: List<UserSocial>,
+    val profilePicture: String,
+    val savedEvents: ReferenceList<Event>,
+) {
   companion object
 }
 

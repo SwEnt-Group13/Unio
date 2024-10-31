@@ -122,7 +122,7 @@ open class EventRepositoryMock : EventRepository {
     }
   }
 
-    //Mock implementation for getting an event with its id
+    // Mock implementation for getting an event with its id
     override fun getEventWithId(
         id: String,
         onSuccess: (Event) -> Unit,
@@ -146,8 +146,7 @@ open class EventRepositoryMock : EventRepository {
         )
     }
 
-    override fun init(onSuccess: () -> Unit) {
-    }
+    override fun init(onSuccess: () -> Unit) {}
 
     // Mock implementation for getting events by association
   override fun getEventsOfAssociation(

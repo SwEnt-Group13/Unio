@@ -17,12 +17,17 @@
     <string name="event_event_title">Event Title</string>
     <string name="event_catchy_description">Catchy Description</string>
 
+    <!-- Event Details Strings -->
+    <string name="event_sign_up" translatable="false">I\'m going</string>
+
     <!-- Accessibility and Content Descriptions -->
     <string name="event_map_button_description">Open Map to Add Event</string>
     <string name="event_image_description">Event Image</string>
     <string name="event_save_button_description">Icon for saving event</string>
     <string name="event_share_button_description">Icon for sharing event</string>
     <string name="event_association_icon_description" translatable="false">Icon of the event\'s organiser</string>
+    <string name="event_location_button_description" translatable="false">Icon for seeing event\'s location</string>
+    <string name="event_signup_button_description" translatable="false">Icon to sign up to the event</string>
 
     <!-- Event Types Strings from EventType.kt -->
     <string name="event_type_festival">Festival</string>
