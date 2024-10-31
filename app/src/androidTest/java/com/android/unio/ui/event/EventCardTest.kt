@@ -145,7 +145,5 @@ class MockUserRepository : UserRepository {
     }
   }
 
-  override fun updateUser(user: User, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
-    TODO("Not yet implemented")
-  }
+  override fun updateUser(user: User, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {}
 }

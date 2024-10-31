@@ -114,10 +114,6 @@ class UserProfileTest {
 
     composeTestRule.onNodeWithTag("UserProfileBottomSheet").assertIsDisplayed()
 
-    composeTestRule.waitUntil {
-      composeTestRule.onNodeWithTag("UserProfileBottomSheet").isDisplayed()
-    }
-
     // Press the android back button to close the bottom sheet
     Espresso.pressBack()
 
