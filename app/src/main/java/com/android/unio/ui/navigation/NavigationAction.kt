@@ -18,6 +18,9 @@ open class NavigationAction(private val navController: NavHostController) {
    * @param screen The screen to navigate to
    */
   open fun navigateTo(screen: String) {
+    if(navController.currentDestination?.route == screen){
+      return
+    }
     navController.navigate(screen)
   }
 
@@ -75,7 +78,6 @@ object TopLevelDestinations {
   val MY_PROFILE =
       TopLevelDestination(
           route = Route.MY_PROFILE, icon = Icons.Outlined.Person, textId = "My Profile")
-  val MAP = TopLevelDestination(route = Route.MAP, icon = Icons.Outlined.Place, textId = "Map")
 }
 
 object Route {
