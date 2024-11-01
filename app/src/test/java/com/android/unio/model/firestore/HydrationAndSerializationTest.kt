@@ -20,61 +20,47 @@ import kotlin.reflect.full.memberProperties
 import org.junit.Test
 
 class HydrationAndSerializationTest {
-  private lateinit var db: FirebaseFirestore
-  private lateinit var user: User
-  private lateinit var association: Association
-  private lateinit var event: Event
 
-  @Before
-  fun setUp() {
-    MockitoAnnotations.openMocks(this)
+  val user =
+      User(
+          uid = "1",
+          email = "1@gmail.com",
+          firstName = "userFirst",
+          lastName = "userLast",
+          biography = "An example user",
+          followedAssociations = Association.firestoreReferenceListWith(listOf("1", "2")),
+          joinedAssociations = Association.firestoreReferenceListWith(listOf("1", "2")),
+          interests = listOf(Interest.SPORTS, Interest.MUSIC),
+          socials =
+              listOf(
+                  UserSocial(Social.INSTAGRAM, "Insta"), UserSocial(Social.WEBSITE, "example.com")),
+          profilePicture = "https://www.example.com/image",
+          savedEvents = Event.emptyFirestoreReferenceList())
 
-    db = mockk()
-    mockkStatic(FirebaseFirestore::class)
-    every { Firebase.firestore } returns db
+  val association =
+      Association(
+          uid = "1",
+          url = "https://www.example.com",
+          name = "EX",
+          fullName = "Example Association",
+          category = AssociationCategory.ARTS,
+          description = "An example association",
+          members = User.firestoreReferenceListWith(listOf("1", "2")),
+          followersCount = 0,
+          image = "https://www.example.com/image.jpg")
 
-    user =
-        User(
-            uid = "1",
-            email = "1@gmail.com",
-            firstName = "userFirst",
-            lastName = "userLast",
-            biography = "An example user",
-            followedAssociations = Association.firestoreReferenceListWith(listOf("1", "2")),
-            joinedAssociations = Association.firestoreReferenceListWith(listOf("1", "2")),
-            interests = listOf(Interest.SPORTS, Interest.MUSIC),
-            socials =
-                listOf(
-                    UserSocial(Social.INSTAGRAM, "Insta"),
-                    UserSocial(Social.WEBSITE, "example.com")),
-            profilePicture = "https://www.example.com/image",
-            savedEvents = Event.emptyFirestoreReferenceList())
-
-    association =
-        Association(
-            uid = "1",
-            url = "https://www.example.com",
-            name = "EX",
-            fullName = "Example Association",
-            category = AssociationCategory.ARTS,
-            description = "An example association",
-            members = User.firestoreReferenceListWith(listOf("1", "2")),
-            followersCount = 0,
-            image = "https://www.example.com/image.jpg")
-
-    event =
-        Event(
-            uid = "1",
-            title = "Event 1",
-            image = "https://www.example.com/image.jpg",
-            description = "An example event",
-            catchyDescription = "An example event",
-            price = 0.0,
-            date = Timestamp.now(),
-            location = Location(latitude = 0.0, longitude = 0.0, name = "Example Location"),
-            organisers = Association.firestoreReferenceListWith(listOf("1", "2")),
-            taggedAssociations = Association.firestoreReferenceListWith(listOf("1", "2")))
-  }
+  val event =
+      Event(
+          uid = "1",
+          title = "Event 1",
+          image = "https://www.example.com/image.jpg",
+          description = "An example event",
+          catchyDescription = "An example event",
+          price = 0.0,
+          date = Timestamp.now(),
+          location = Location(latitude = 0.0, longitude = 0.0, name = "Example Location"),
+          organisers = Association.firestoreReferenceListWith(listOf("1", "2")),
+          taggedAssociations = Association.firestoreReferenceListWith(listOf("1", "2")))
 
   /** Round-trip tests for serialization and hydration of user, association, and event instances. */
   @Test
