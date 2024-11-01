@@ -49,6 +49,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberAsyncImagePainter
 import com.android.unio.model.association.Association
+import com.android.unio.model.event.Event
 import com.android.unio.model.firestore.emptyFirestoreReferenceList
 import com.android.unio.model.image.ImageRepository
 import com.android.unio.model.user.AccountDetailsError
@@ -108,6 +109,7 @@ fun AccountDetails(
     navigationAction.navigateTo(Screen.WELCOME)
     return
   }
+
   val userId = Firebase.auth.currentUser?.uid
 
   val createUser = { uri: String ->
@@ -120,6 +122,7 @@ fun AccountDetails(
             biography = bio,
             followedAssociations = Association.emptyFirestoreReferenceList(),
             joinedAssociations = Association.emptyFirestoreReferenceList(),
+            savedEvents = Event.emptyFirestoreReferenceList(),
             interests = interests.filter { it.second.value }.map { it.first },
             socials = socials,
             profilePicture = uri)

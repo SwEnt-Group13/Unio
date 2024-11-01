@@ -38,6 +38,10 @@ class FirestoreReferenceList<T>(
   // The internal list of UIDs.
   private val _uids = mutableListOf<String>()
 
+  // The public list of UIDs.
+  override val uids: List<String>
+    get() = _uids
+
   // The internal list of objects.
   private val _list = MutableStateFlow<List<T>>(emptyList())
 
@@ -62,6 +66,10 @@ class FirestoreReferenceList<T>(
     _uids.addAll(uids)
   }
 
+  override fun remove(uid: String) {
+    _uids.remove(uid)
+  }
+
   /** Requests all documents from Firestore and updates the list. */
   override fun requestAll(onSuccess: () -> Unit) {
     _list.value = emptyList()
@@ -82,6 +90,10 @@ class FirestoreReferenceList<T>(
         .addOnFailureListener { exception ->
           Log.e("FirestoreReferenceList", "Failed to get documents", exception)
         }
+  }
+
+  override fun contains(uid: String): Boolean {
+    return _uids.contains(uid)
   }
 
   companion object {

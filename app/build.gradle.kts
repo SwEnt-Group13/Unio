@@ -174,6 +174,7 @@ dependencies {
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.firebase.storage.ktx)
     implementation(libs.androidx.ui.text.google.fonts)
+
   implementation(libs.androidx.compose.material)
 
   testImplementation(libs.test.core.ktx)
@@ -212,6 +213,7 @@ dependencies {
     globalTestImplementation(libs.kaspresso.compose)
 
     // ----------       Robolectric     ------------
+
 
     // Navigation
     implementation(libs.androidx.navigation.compose)

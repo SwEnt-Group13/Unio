@@ -21,8 +21,8 @@ class UserRepositoryFirestore(private val db: FirebaseFirestore) : UserRepositor
     db.collection(USER_PATH)
         .get()
         .addOnSuccessListener { result ->
-          val user = result.map { hydrate(it.data) }
-          onSuccess(user)
+          val users = result.map { hydrate(it.data) }
+          onSuccess(users)
         }
         .addOnFailureListener { exception -> onFailure(exception) }
   }

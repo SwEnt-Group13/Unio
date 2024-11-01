@@ -1,6 +1,7 @@
 package com.android.unio.model.user
 
 import com.android.unio.model.association.Association
+import com.android.unio.model.event.Event
 import com.android.unio.model.firestore.emptyFirestoreReferenceList
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.CollectionReference
@@ -39,6 +40,7 @@ class UserTest {
             "John",
             "Doe",
             "An example user",
+            Event.emptyFirestoreReferenceList(),
             Association.emptyFirestoreReferenceList(),
             Association.emptyFirestoreReferenceList(),
             listOf(Interest.SPORTS, Interest.MUSIC),
@@ -66,8 +68,9 @@ class UserTest {
             "",
             "lastName",
             "biography",
-            Association.emptyFirestoreReferenceList(),
-            Association.emptyFirestoreReferenceList(),
+            savedEvents = Event.emptyFirestoreReferenceList(),
+            followedAssociations = Association.emptyFirestoreReferenceList(),
+            joinedAssociations = Association.emptyFirestoreReferenceList(),
             listOf(Interest.SPORTS),
             listOf(UserSocial(Social.INSTAGRAM, "username")),
             "https://example.com/image")
@@ -79,8 +82,9 @@ class UserTest {
             "firstName",
             "",
             "biography",
-            Association.emptyFirestoreReferenceList(),
-            Association.emptyFirestoreReferenceList(),
+            savedEvents = Event.emptyFirestoreReferenceList(),
+            followedAssociations = Association.emptyFirestoreReferenceList(),
+            joinedAssociations = Association.emptyFirestoreReferenceList(),
             listOf(Interest.SPORTS),
             listOf(UserSocial(Social.INSTAGRAM, "username")),
             "https://example.com/image")
@@ -92,8 +96,9 @@ class UserTest {
             "",
             "",
             "biography",
-            Association.emptyFirestoreReferenceList(),
-            Association.emptyFirestoreReferenceList(),
+            savedEvents = Event.emptyFirestoreReferenceList(),
+            followedAssociations = Association.emptyFirestoreReferenceList(),
+            joinedAssociations = Association.emptyFirestoreReferenceList(),
             listOf(Interest.SPORTS),
             listOf(UserSocial(Social.INSTAGRAM, "username")),
             "https://example.com/image")

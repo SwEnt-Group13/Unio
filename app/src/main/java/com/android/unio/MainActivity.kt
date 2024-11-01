@@ -62,20 +62,19 @@ fun UnioApp() {
   val db = Firebase.firestore
   val context = LocalContext.current
 
+  val userRepository = remember { UserRepositoryFirestore(db) }
   val associationRepository = remember { AssociationRepositoryFirestore(db) }
   val eventRepository = remember { EventRepositoryFirestore(db) }
-  val userRepositoryFirestore = remember { UserRepositoryFirestore(db) }
   val searchRepository = remember {
     SearchRepository(context, associationRepository, eventRepository)
   }
-
   val imageRepository = ImageRepositoryFirebaseStorage(Firebase.storage)
 
+  val userViewModel = remember { UserViewModel(userRepository, true) }
   val associationViewModel = remember {
     AssociationViewModel(associationRepository, eventRepository)
   }
   val eventListViewModel = remember { EventListViewModel(eventRepository) }
-  val userViewModel = remember { UserViewModel(userRepositoryFirestore, true) }
   val searchViewModel = remember { SearchViewModel(searchRepository) }
 
   // Redirect user based on authentication state
@@ -83,7 +82,7 @@ fun UnioApp() {
     val user = auth.currentUser
     if (user != null) {
       if (user.isEmailVerified) {
-        userRepositoryFirestore.getUserWithId(
+        userRepository.getUserWithId(
             user.uid,
             {
               if (it.firstName.isNotEmpty()) {
@@ -114,7 +113,10 @@ fun UnioApp() {
     }
     navigation(startDestination = Screen.HOME, route = Route.HOME) {
       composable(Screen.HOME) {
-        HomeScreen(navigationActions, eventListViewModel, onAddEvent = {}, onEventClick = {})
+        HomeScreen(
+            navigationActions,
+            eventListViewModel = eventListViewModel,
+            userViewModel = userViewModel)
       }
       composable(Screen.MAP) { MapScreen(navigationActions, eventListViewModel) }
     }
@@ -128,9 +130,9 @@ fun UnioApp() {
 
         // Create the AssociationProfile screen with the association UID
         uid?.let {
-          AssociationProfileScreen(navigationAction = navigationActions, associationId = it)
+          AssociationProfileScreen(
+              navigationActions, it, associationViewModel, userViewModel = userViewModel)
         }
-        uid?.let { AssociationProfileScreen(navigationActions, it, associationViewModel) }
             ?: run {
               Log.e("AssociationProfile", "Association UID is null")
               Toast.makeText(context, "Association UID is null", Toast.LENGTH_SHORT).show()

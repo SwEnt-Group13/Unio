@@ -3,6 +3,7 @@ package com.android.unio.ui
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationCategory
@@ -117,7 +118,7 @@ class ScreenDisplayingTest {
 
   @Test
   fun testHomeDisplayed() {
-    composeTestRule.setContent { HomeScreen(navigationAction, onAddEvent = {}, onEventClick = {}) }
+    composeTestRule.setContent { HomeScreen(navigationAction) }
     composeTestRule.onNodeWithTag("HomeScreen").assertIsDisplayed()
   }
 
@@ -151,7 +152,11 @@ class ScreenDisplayingTest {
   @Test
   fun testAssociationProfileDisplayed() {
     composeTestRule.setContent {
-      AssociationProfileScreen(navigationAction, "1", associationViewModel)
+      AssociationProfileScreen(
+          navigationAction,
+          "1",
+          associationViewModel,
+          userViewModel = viewModel(factory = UserViewModel.Factory))
     }
     composeTestRule.onNodeWithTag("AssociationScreen").assertIsDisplayed()
   }
