@@ -47,6 +47,5 @@ open class EventViewModel(val repository: EventRepository, val userRepository: U
               repository.addEvent(event, onSuccess, onFailure)
             },
             { e -> Log.e("ImageRepository", "Failed to store image: $e") })
-        ?: Log.e("EventListViewModel", "ImageRepository is not available in preview mode.")
   }
 }
