@@ -10,6 +10,7 @@ import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.event.Event
 import com.android.unio.model.firestore.firestoreReferenceListWith
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
+import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.user.User
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.association.AssociationProfileScreen
@@ -35,6 +36,7 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import io.mockk.mockkStatic
+import me.zhanghai.compose.preference.ProvidePreferenceLocals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -44,6 +46,8 @@ class ScreenDisplayingTest {
 
   private lateinit var navigationAction: NavigationAction
   private lateinit var userViewModel: UserViewModel
+
+  @MockK private lateinit var searchViewModel: SearchViewModel
 
   @MockK private lateinit var associationViewModel: AssociationViewModel
   @MockK private lateinit var imageRepositoryFirestore: ImageRepositoryFirebaseStorage
@@ -119,14 +123,16 @@ class ScreenDisplayingTest {
 
   @Test
   fun testExploreDisplayed() {
-    composeTestRule.setContent { ExploreScreen(navigationAction) }
+    composeTestRule.setContent {
+      ExploreScreen(navigationAction, searchViewModel = searchViewModel)
+    }
     composeTestRule.onNodeWithTag("exploreScreen").assertIsDisplayed()
     composeTestRule.onNodeWithTag("searchBar").assertIsDisplayed()
   }
 
   @Test
   fun testMapDisplayed() {
-    composeTestRule.setContent { MapScreen() }
+    composeTestRule.setContent { MapScreen(navigationAction) }
     composeTestRule.onNodeWithTag("MapScreen").assertIsDisplayed()
   }
 
@@ -158,7 +164,7 @@ class ScreenDisplayingTest {
 
   @Test
   fun testSettingsDisplayed() {
-    composeTestRule.setContent { SettingsScreen() }
+    composeTestRule.setContent { ProvidePreferenceLocals { SettingsScreen(navigationAction) } }
     composeTestRule.onNodeWithTag("SettingsScreen").assertIsDisplayed()
   }
 

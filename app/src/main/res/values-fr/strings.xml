@@ -49,6 +49,10 @@
     <!-- Explore Screen Strings -->
     <string name="explore_search_placeholder">Recherche</string>
 
+    <!-- Map Screen Strings -->
+    <string name="map_event_go_back_button">Retour</string>
+    <string name="map_event_title">Carte d\'évènements</string>
+
     <!-- Association Strings -->
     <string name="association_upcoming_events">Evenement à venir</string>
     <string name="association_go_back">Retour</string>
@@ -62,8 +66,14 @@
     <string name="association_follow">S\'abonner</string>
     <string name="association_join">Rejoindre</string>
     <string name="association_no_event">Pas d\'événement plannifié pour l\'instant</string>
-
     <string name="association_not_found">Erreur : Association introuvable</string>
+
+    <string name="settings_title">Réglages</string>
+    <string name="settings_theme_title">Thème</string>
+    <string name="settings_theme_content_description">Réglages de Thème</string>
+    <string name="settings_notifications_title">Notifications</string>
+    <string name="settings_notifications_summary">Activer les notifications</string>
+    <string name="settings_notifications_content_description">Réglages de Notifications</string>
 
 
 </resources>

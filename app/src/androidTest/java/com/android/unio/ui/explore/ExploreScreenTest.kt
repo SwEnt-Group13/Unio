@@ -12,11 +12,13 @@ import com.android.unio.model.association.AssociationRepository
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.event.EventRepository
 import com.android.unio.model.firestore.emptyFirestoreReferenceList
+import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.user.User
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
+import io.mockk.mockk
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
@@ -33,6 +35,7 @@ class ExploreScreenTest {
   @Mock private lateinit var db: FirebaseFirestore
   @Mock private lateinit var collectionReference: CollectionReference
   @Mock private lateinit var associationRepository: AssociationRepository
+  private lateinit var searchViewModel: SearchViewModel
   @Mock private lateinit var eventRepository: EventRepository
   private lateinit var associationViewModel: AssociationViewModel
 
@@ -45,6 +48,7 @@ class ExploreScreenTest {
   @Before
   fun setUp() {
     MockitoAnnotations.openMocks(this)
+    searchViewModel = mockk()
     navigationAction = mock(NavigationAction::class.java)
 
     // Mock the navigation action to do nothing
@@ -100,7 +104,9 @@ class ExploreScreenTest {
 
   @Test
   fun allComponentsAreDisplayed() {
-    composeTestRule.setContent { ExploreScreen(navigationAction, associationViewModel) }
+    composeTestRule.setContent {
+      ExploreScreen(navigationAction, associationViewModel, searchViewModel)
+    }
     composeTestRule.onNodeWithTag("exploreScreen").assertIsDisplayed()
     composeTestRule.onNodeWithTag("searchPlaceHolder", true).assertIsDisplayed()
     composeTestRule.onNodeWithTag("searchTrailingIcon", true).assertIsDisplayed()
@@ -111,7 +117,9 @@ class ExploreScreenTest {
 
   @Test
   fun canTypeInSearchBar() {
-    composeTestRule.setContent { ExploreScreen(navigationAction, associationViewModel) }
+    composeTestRule.setContent {
+      ExploreScreen(navigationAction, associationViewModel, searchViewModel)
+    }
     composeTestRule.onNodeWithTag("searchBarInput").performTextInput("Music")
     composeTestRule.onNodeWithTag("searchBarInput").assertTextEquals("Music")
   }
@@ -148,7 +156,9 @@ class ExploreScreenTest {
     }
 
     associationViewModel.getAssociations()
-    composeTestRule.setContent { ExploreScreen(navigationAction, associationViewModel) }
+    composeTestRule.setContent {
+      ExploreScreen(navigationAction, associationViewModel, searchViewModel)
+    }
 
     sortedByCategoryAssociations.forEach { (category, associations) ->
       composeTestRule.onNodeWithTag("category_${category.displayName}").assertIsDisplayed()
@@ -165,7 +175,9 @@ class ExploreScreenTest {
     }
 
     associationViewModel.getAssociations()
-    composeTestRule.setContent { ExploreScreen(navigationAction, associationViewModel) }
+    composeTestRule.setContent {
+      ExploreScreen(navigationAction, associationViewModel, searchViewModel)
+    }
 
     sortedByCategoryAssociations.forEach { (_, associations) ->
       associations.forEach {

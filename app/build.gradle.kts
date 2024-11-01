@@ -10,6 +10,7 @@ plugins {
     alias(libs.plugins.gms)
     alias(libs.plugins.sonar)
     id("jacoco")
+    kotlin("kapt")
 }
 
 android {
@@ -28,7 +29,7 @@ android {
 
     defaultConfig {
         applicationId = "com.android.unio"
-        minSdk = 29
+        minSdk = 31
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -260,9 +261,22 @@ dependencies {
     testImplementation(libs.mockk.v193)
 
     implementation(libs.androidx.material.icons.extended)
-    //for AsyncImage
+    // For AsyncImage
     implementation(libs.coil.compose)
 
+    // AppSearch
+    implementation(libs.androidx.appsearch)
+    implementation(libs.androidx.appsearch.local.storage)
+    kapt(libs.androidx.appsearch.compiler)
+    implementation(libs.guava)
+    implementation(libs.kotlinx.coroutines.guava)
+
+    // Kotlin Reflect
+    implementation(kotlin("reflect"))
+
+    // Preferences
+    implementation(libs.androidx.preference.ktx)
+    implementation(libs.library)
 }
 
 

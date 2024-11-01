@@ -36,6 +36,7 @@ import com.android.unio.R
 import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationCategory
 import com.android.unio.model.association.AssociationViewModel
+import com.android.unio.model.search.SearchViewModel
 import com.android.unio.ui.navigation.BottomNavigationMenu
 import com.android.unio.ui.navigation.LIST_TOP_LEVEL_DESTINATION
 import com.android.unio.ui.navigation.NavigationAction
@@ -46,7 +47,8 @@ import com.android.unio.ui.theme.AppTypography
 @Composable
 fun ExploreScreen(
     navigationAction: NavigationAction,
-    associationViewModel: AssociationViewModel = viewModel(factory = AssociationViewModel.Factory)
+    associationViewModel: AssociationViewModel = viewModel(factory = AssociationViewModel.Factory),
+    searchViewModel: SearchViewModel
 ) {
 
   Scaffold(
@@ -56,7 +58,7 @@ fun ExploreScreen(
       },
       modifier = Modifier.testTag("exploreScreen"),
       content = { padding ->
-        ExploreScreenContent(padding, navigationAction, associationViewModel)
+        ExploreScreenContent(padding, navigationAction, associationViewModel, searchViewModel)
       })
 }
 
@@ -72,6 +74,7 @@ fun ExploreScreenContent(
     padding: PaddingValues,
     navigationAction: NavigationAction,
     associationViewModel: AssociationViewModel,
+    searchViewModel: SearchViewModel
 ) {
   val associationsByCategory by associationViewModel.associationsByCategory.collectAsState()
   val searchQuery = remember { mutableStateOf("") }
@@ -91,7 +94,9 @@ fun ExploreScreenContent(
               modifier = Modifier.testTag("searchBarInput"),
               query = searchQuery.value,
               onQueryChange = { searchQuery.value = it },
-              onSearch = { /* Handle search here */},
+              onSearch = {
+                //                searchViewModel.searchAssociations(searchQuery.value)
+              },
               expanded = false,
               onExpandedChange = { /* Handle expanded state change here */},
               placeholder = {
