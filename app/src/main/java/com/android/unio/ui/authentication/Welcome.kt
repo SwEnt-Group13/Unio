@@ -25,7 +25,6 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -50,8 +49,6 @@ import com.android.unio.model.user.isValidEmail
 import com.android.unio.model.user.isValidPassword
 import com.android.unio.model.user.signInOrCreateAccount
 import com.android.unio.ui.navigation.NavigationAction
-import com.android.unio.ui.navigation.Route
-import com.android.unio.ui.navigation.Screen
 import com.android.unio.ui.theme.AppTypography
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth

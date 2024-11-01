@@ -4,7 +4,6 @@ import BookmarkIcon
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Person
-import androidx.compose.material.icons.outlined.Place
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -18,7 +17,7 @@ open class NavigationAction(private val navController: NavHostController) {
    * @param screen The screen to navigate to
    */
   open fun navigateTo(screen: String) {
-    if(navController.currentDestination?.route == screen){
+    if (navController.currentDestination?.route == screen) {
       return
     }
     navController.navigate(screen)

@@ -69,19 +69,19 @@ fun UnioApp() {
       if (user != null) {
         if (user.isEmailVerified) {
           userRepositoryFirestore.getUserWithId(
-            user.uid,
-            {
-              if (it.firstName.isNotEmpty()) {
-                navigationActions.navigateTo(Screen.HOME)
-              } else {
-                navigationActions.navigateTo(Screen.ACCOUNT_DETAILS)
-              }
-            },
-            {
-              Log.e("UnioApp", "Error fetching account details: $it")
-              Toast.makeText(context, "Error fetching account details.", Toast.LENGTH_SHORT)
-                .show()
-            })
+              user.uid,
+              {
+                if (it.firstName.isNotEmpty()) {
+                  navigationActions.navigateTo(Screen.HOME)
+                } else {
+                  navigationActions.navigateTo(Screen.ACCOUNT_DETAILS)
+                }
+              },
+              {
+                Log.e("UnioApp", "Error fetching account details: $it")
+                Toast.makeText(context, "Error fetching account details.", Toast.LENGTH_SHORT)
+                    .show()
+              })
         } else {
           navigationActions.navigateTo(Screen.EMAIL_VERIFICATION)
         }
