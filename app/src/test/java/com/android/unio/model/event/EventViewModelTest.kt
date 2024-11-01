@@ -101,6 +101,8 @@ class EventViewModelTest {
 class MockReferenceList<T>(elements: List<T> = emptyList()) : ReferenceList<T> {
   private val _list = MutableStateFlow(elements)
   override val list: StateFlow<List<T>> = _list
+  override val uids: List<String>
+    get() = emptyList()
 
   override fun add(uid: String) {}
 

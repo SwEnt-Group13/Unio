@@ -38,6 +38,10 @@ class FirestoreReferenceList<T>(
   // The internal list of UIDs.
   private val _uids = mutableListOf<String>()
 
+  // The public list of UIDs.
+  override val uids: List<String>
+    get() = _uids
+
   // The internal list of objects.
   private val _list = MutableStateFlow<List<T>>(emptyList())
 

@@ -4,6 +4,7 @@ import kotlinx.coroutines.flow.StateFlow
 
 interface ReferenceList<T> {
   val list: StateFlow<List<T>>
+  val uids: List<String>
 
   fun add(uid: String)
 
