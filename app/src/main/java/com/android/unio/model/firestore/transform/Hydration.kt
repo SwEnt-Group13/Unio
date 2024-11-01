@@ -41,8 +41,8 @@ fun UserRepositoryFirestore.Companion.hydrate(data: Map<String, Any>?): User {
   val joinedAssociationsUids = data?.get("joinedAssociations") as? List<String> ?: emptyList()
   val joinedAssociations = Association.firestoreReferenceListWith(joinedAssociationsUids)
 
-    val savedEventsUids = data?.get("savedEvents") as? List<String> ?: emptyList()
-    val savedEvents = Event.firestoreReferenceListWith(savedEventsUids)
+  val savedEventsUids = data?.get("savedEvents") as? List<String> ?: emptyList()
+  val savedEvents = Event.firestoreReferenceListWith(savedEventsUids)
 
   return User(
       uid = data?.get("uid") as? String ?: "",
@@ -59,8 +59,7 @@ fun UserRepositoryFirestore.Companion.hydrate(data: Map<String, Any>?): User {
             UserSocial(Social.valueOf(it["social"] ?: ""), it["content"] ?: "")
           },
       profilePicture = data?.get("profilePicture") as? String ?: "",
-      savedEvents = savedEvents
-  )
+      savedEvents = savedEvents)
 }
 
 fun EventRepositoryFirestore.Companion.hydrate(data: Map<String, Any>?): Event {

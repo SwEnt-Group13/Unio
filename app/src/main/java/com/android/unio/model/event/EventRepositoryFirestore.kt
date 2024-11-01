@@ -73,7 +73,7 @@ class EventRepositoryFirestore(private val db: FirebaseFirestore) : EventReposit
         .addOnFailureListener { exception -> onFailure(exception) }
   }
 
-    override fun getNewUid(): String {
+  override fun getNewUid(): String {
     return db.collection(EVENT_PATH).document().id
   }
 

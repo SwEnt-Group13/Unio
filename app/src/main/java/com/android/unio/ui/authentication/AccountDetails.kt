@@ -87,10 +87,9 @@ fun AccountDetails(
   }
   Column(
       modifier =
-      Modifier
-          .padding(vertical = 20.dp, horizontal = 40.dp)
-          .verticalScroll(scrollState)
-          .testTag("AccountDetails"),
+          Modifier.padding(vertical = 20.dp, horizontal = 40.dp)
+              .verticalScroll(scrollState)
+              .testTag("AccountDetails"),
       verticalArrangement = Arrangement.SpaceBetween,
       horizontalAlignment = Alignment.CenterHorizontally) {
         Text(
@@ -101,10 +100,7 @@ fun AccountDetails(
         val isFirstNameError = isErrors.contains(AccountDetailsError.EMPTY_FIRST_NAME)
         OutlinedTextField(
             modifier =
-            Modifier
-                .padding(4.dp)
-                .fillMaxWidth()
-                .testTag("AccountDetailsFirstNameTextField"),
+                Modifier.padding(4.dp).fillMaxWidth().testTag("AccountDetailsFirstNameTextField"),
             label = {
               Text("First name", modifier = Modifier.testTag("AccountDetailsFirstNameText"))
             },
@@ -121,10 +117,7 @@ fun AccountDetails(
         val isLastNameError = isErrors.contains(AccountDetailsError.EMPTY_LAST_NAME)
         OutlinedTextField(
             modifier =
-            Modifier
-                .padding(4.dp)
-                .fillMaxWidth()
-                .testTag("AccountDetailsLastNameTextField"),
+                Modifier.padding(4.dp).fillMaxWidth().testTag("AccountDetailsLastNameTextField"),
             label = {
               Text("Last name", modifier = Modifier.testTag("AccountDetailsLastNameText"))
             },
@@ -140,46 +133,37 @@ fun AccountDetails(
             value = lastName)
         OutlinedTextField(
             modifier =
-            Modifier
-                .padding(4.dp)
-                .fillMaxWidth()
-                .height(200.dp)
-                .testTag("AccountDetailsBioTextField"),
+                Modifier.padding(4.dp)
+                    .fillMaxWidth()
+                    .height(200.dp)
+                    .testTag("AccountDetailsBioTextField"),
             label = { Text("Bio", modifier = Modifier.testTag("AccountDetailsBioText")) },
             onValueChange = { bio = it },
             value = bio)
 
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp),
+            modifier = Modifier.fillMaxWidth().padding(8.dp),
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically) {
               Text(
                   text = "Maybe add a profile picture?",
                   modifier =
-                  Modifier
-                      .widthIn(max = 140.dp)
-                      .testTag("AccountDetailsProfilePictureText"),
+                      Modifier.widthIn(max = 140.dp).testTag("AccountDetailsProfilePictureText"),
                   style = AppTypography.bodyLarge)
               Icon(
                   Icons.Rounded.AccountCircle,
                   contentDescription = "Add",
                   tint = primaryLight,
                   modifier =
-                  Modifier
-                      .clickable {
-                          Toast
-                              .makeText(context, "Not yet implemented", Toast.LENGTH_SHORT)
-                              .show()
-                      }
-                      .size(100.dp)
-                      .testTag("AccountDetailsProfilePictureIcon"))
+                      Modifier.clickable {
+                            Toast.makeText(context, "Not yet implemented", Toast.LENGTH_SHORT)
+                                .show()
+                          }
+                          .size(100.dp)
+                          .testTag("AccountDetailsProfilePictureIcon"))
             }
         OutlinedButton(
-            modifier = Modifier
-                .fillMaxWidth()
-                .testTag("AccountDetailsInterestsButton"),
+            modifier = Modifier.fillMaxWidth().testTag("AccountDetailsInterestsButton"),
             onClick = { showInterestsOverlay = true }) {
               Icon(Icons.Default.Add, contentDescription = "Add")
               Text("Add centers of interest")
@@ -191,9 +175,7 @@ fun AccountDetails(
                   label = { Text(pair.first.name) },
                   onClick = {},
                   selected = pair.second.value,
-                  modifier = Modifier
-                      .padding(3.dp)
-                      .testTag("AccountDetailsInterestChip: $index"),
+                  modifier = Modifier.padding(3.dp).testTag("AccountDetailsInterestChip: $index"),
                   avatar = {
                     Icon(
                         Icons.Default.Close,
@@ -204,9 +186,7 @@ fun AccountDetails(
           }
         }
         OutlinedButton(
-            modifier = Modifier
-                .fillMaxWidth()
-                .testTag("AccountDetailsSocialsButton"),
+            modifier = Modifier.fillMaxWidth().testTag("AccountDetailsSocialsButton"),
             onClick = { showSocialsOverlay = true }) {
               Icon(Icons.Default.Add, contentDescription = "Add")
               Text("Add links to other social media")
@@ -217,9 +197,7 @@ fun AccountDetails(
                 label = { Text(userSocial.social.name) },
                 onClick = {},
                 selected = true,
-                modifier = Modifier
-                    .padding(3.dp)
-                    .testTag("AccountDetailsSocialChip: $index"),
+                modifier = Modifier.padding(3.dp).testTag("AccountDetailsSocialChip: $index"),
                 avatar = {
                   Icon(
                       Icons.Default.Close,
@@ -247,8 +225,7 @@ fun AccountDetails(
                       interests = interests.filter { it.second.value }.map { it.first },
                       socials = socials,
                       profilePicture = "",
-                      savedEvents = Event.emptyFirestoreReferenceList()
-                  )
+                      savedEvents = Event.emptyFirestoreReferenceList())
               isErrors = checkNewUser(user)
               if (isErrors.isEmpty()) {
                 userViewModel.addUser(

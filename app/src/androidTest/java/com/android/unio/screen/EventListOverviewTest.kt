@@ -106,7 +106,7 @@ class EventListOverviewTest {
       HomeScreen(
           navigationAction = navigationAction,
           eventListViewModel = eventListViewModel,
-        onAddEvent = {})
+          onAddEvent = {})
     }
 
     composeTestRule.onNodeWithTag("event_MapButton").assertExists()

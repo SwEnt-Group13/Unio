@@ -58,8 +58,7 @@ class UserProfileTest {
                   UserSocial(Social.INSTAGRAM, "Instagram"),
                   UserSocial(Social.WEBSITE, "example.com")),
           profilePicture = "https://www.example.com/image",
-          savedEvents = Event.emptyFirestoreReferenceList()
-      )
+          savedEvents = Event.emptyFirestoreReferenceList())
 
   @Before
   fun setUp() {

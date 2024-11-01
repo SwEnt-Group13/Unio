@@ -122,33 +122,31 @@ open class EventRepositoryMock : EventRepository {
     }
   }
 
-    // Mock implementation for getting an event with its id
-    override fun getEventWithId(
-        id: String,
-        onSuccess: (Event) -> Unit,
-        onFailure: (Exception) -> Unit
-    ) {
-        onSuccess(
-            Event(
-                uid = UUID.randomUUID().toString(),
-                title = "Concert",
-                organisers = MockReferenceList<Association>(),
-                taggedAssociations = MockReferenceList<Association>(),
-                image = "antoinoxlephar",
-                description =
+  // Mock implementation for getting an event with its id
+  override fun getEventWithId(
+      id: String,
+      onSuccess: (Event) -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+    onSuccess(
+        Event(
+            uid = UUID.randomUUID().toString(),
+            title = "Concert",
+            organisers = MockReferenceList<Association>(),
+            taggedAssociations = MockReferenceList<Association>(),
+            image = "antoinoxlephar",
+            description =
                 "A workshop dedicated to teaching strategies for successful social media marketing.",
-                catchyDescription = "Best concert everrrrr!",
-                price = 15.0,
-                date = Timestamp(Date(2024 - 1900, 7, 30)), // August 30, 2024
-                location = Location(5.0, 5.0, "USA"),
-                types = listOf(EventType.OTHER)
-            )
-        )
-    }
+            catchyDescription = "Best concert everrrrr!",
+            price = 15.0,
+            date = Timestamp(Date(2024 - 1900, 7, 30)), // August 30, 2024
+            location = Location(5.0, 5.0, "USA"),
+            types = listOf(EventType.OTHER)))
+  }
 
-    override fun init(onSuccess: () -> Unit) {}
+  override fun init(onSuccess: () -> Unit) {}
 
-    // Mock implementation for getting events by association
+  // Mock implementation for getting events by association
   override fun getEventsOfAssociation(
       association: String,
       onSuccess: (List<Event>) -> Unit,
@@ -175,7 +173,7 @@ open class EventRepositoryMock : EventRepository {
         onFailure)
   }
 
-    // Mock implementation to generate a new UID
+  // Mock implementation to generate a new UID
   override fun getNewUid(): String {
     return UUID.randomUUID().toString()
   }

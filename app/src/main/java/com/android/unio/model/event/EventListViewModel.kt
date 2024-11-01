@@ -5,10 +5,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
+import java.io.InputStream
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import java.io.InputStream
 
 /**
  * ViewModel class that manages the event list data and provides it to the UI. It uses an
@@ -41,7 +41,7 @@ class EventListViewModel(private val repository: EventRepository) : ViewModel() 
    * Loads the list of events from the repository asynchronously using coroutines and updates the
    * internal [MutableStateFlow].
    */
-  private fun loadEvents() {
+  fun loadEvents() {
     // Launch a coroutine in the ViewModel scope to load events asynchronously
     viewModelScope.launch {
       repository.getEvents(
@@ -56,14 +56,19 @@ class EventListViewModel(private val repository: EventRepository) : ViewModel() 
     }
   }
 
-    // TODO: test and comment
-    fun findEventById(id: String): Event? {
-        _events.value
-            .find { it.uid == id }
-            ?.let {
-                return it
-            } ?: return null
-    }
+  /**
+   * Finds an event in the event list by its ID.
+   *
+   * @param id The ID of the event to find.
+   * @return The event with the given ID, or null if no such event exists.
+   */
+  fun findEventById(id: String): Event? {
+    _events.value
+        .find { it.uid == id }
+        ?.let {
+          return it
+        } ?: return null
+  }
 
   fun addEvent(
       inputStream: InputStream,

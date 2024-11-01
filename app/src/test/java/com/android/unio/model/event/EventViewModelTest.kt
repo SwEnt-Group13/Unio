@@ -9,6 +9,9 @@ import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import java.io.InputStream
 import java.util.GregorianCalendar
+import junit.framework.TestCase.assertEquals
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -52,6 +55,8 @@ class EventViewModelTest {
           date = Timestamp(GregorianCalendar(2008, 7, 1).time),
           location = Location(1.2345, 2.3455, "Somewhere"))
 
+  private val testEvents = listOf(event1, event3)
+
   @Before
   fun setUp() {
     MockitoAnnotations.openMocks(this)
@@ -72,5 +77,28 @@ class EventViewModelTest {
     }
     viewModel.addEvent(
         inputStream, event1, { verify(repository).addEvent(eq(event1), any(), any()) }, {})
+  }
+
+  @Test
+  fun testFindAssociationById() {
+    `when`(repository.getEvents(any(), any())).thenAnswer { invocation ->
+      val onSuccess = invocation.arguments[0] as (List<Event>) -> Unit
+      onSuccess(testEvents)
+    }
+
+    viewModel.loadEvents()
+    assertEquals(testEvents, viewModel.events.value)
+
+    runBlocking {
+      val result = viewModel.events.first()
+
+      assertEquals(2, result.size)
+      assertEquals("Balelec", result[0].title)
+      assertEquals("Tremplin Sysmic", result[1].title)
+    }
+
+    assertEquals(testEvents[0], viewModel.findEventById("1"))
+    assertEquals(testEvents[1], viewModel.findEventById("3"))
+    assertEquals(null, viewModel.findEventById("2"))
   }
 }
