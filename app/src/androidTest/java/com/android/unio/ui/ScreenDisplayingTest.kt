@@ -8,6 +8,7 @@ import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationCategory
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.event.Event
+import com.android.unio.model.event.EventListViewModel
 import com.android.unio.model.firestore.firestoreReferenceListWith
 import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.user.User
@@ -45,6 +46,7 @@ class ScreenDisplayingTest {
 
   private lateinit var navigationAction: NavigationAction
   private lateinit var userViewModel: UserViewModel
+  private lateinit var eventViewModel: EventListViewModel
 
   @MockK private lateinit var searchViewModel: SearchViewModel
 
@@ -65,6 +67,7 @@ class ScreenDisplayingTest {
     navigationAction = mock { NavHostController::class.java }
     userViewModel = mockk()
     associationViewModel = mockk()
+    eventViewModel = mockk()
 
     val associations =
         listOf(
@@ -135,7 +138,11 @@ class ScreenDisplayingTest {
   @Test
   fun testEventDisplayed() {
     composeTestRule.setContent {
-      EventScreen(eventId = "", navigationAction = navigationAction, userViewModel = userViewModel)
+      EventScreen(
+          eventId = "",
+          navigationAction = navigationAction,
+          eventListViewModel = eventViewModel,
+          userViewModel = userViewModel)
     }
     composeTestRule.onNodeWithTag("EventScreen").assertIsDisplayed()
   }
