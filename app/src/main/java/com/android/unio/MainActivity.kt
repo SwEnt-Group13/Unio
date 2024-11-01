@@ -71,7 +71,6 @@ fun UnioApp() {
 
   val imageRepository = ImageRepositoryFirebaseStorage(Firebase.storage)
 
-  val context = LocalContext.current
   val associationViewModel = remember {
     AssociationViewModel(associationRepository, eventRepository)
   }
