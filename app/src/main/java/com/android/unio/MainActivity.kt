@@ -1,5 +1,7 @@
 package com.android.unio
 
+import android.annotation.SuppressLint
+import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -45,7 +47,9 @@ import com.google.firebase.storage.storage
 import me.zhanghai.compose.preference.ProvidePreferenceLocals
 
 class MainActivity : ComponentActivity() {
+  @SuppressLint("SourceLockedOrientationActivity")
   override fun onCreate(savedInstanceState: Bundle?) {
+    requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
     super.onCreate(savedInstanceState)
     setContent {
       Surface(modifier = Modifier.fillMaxSize()) {
