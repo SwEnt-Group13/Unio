@@ -9,11 +9,12 @@ import com.android.unio.model.association.AssociationCategory
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.event.Event
 import com.android.unio.model.firestore.firestoreReferenceListWith
+import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.user.User
 import com.android.unio.model.user.UserViewModel
-import com.android.unio.ui.accountCreation.AccountDetails
 import com.android.unio.ui.association.AssociationProfileScreen
+import com.android.unio.ui.authentication.AccountDetails
 import com.android.unio.ui.authentication.EmailVerificationScreen
 import com.android.unio.ui.authentication.WelcomeScreen
 import com.android.unio.ui.event.EventCreationScreen
@@ -49,6 +50,7 @@ class ScreenDisplayingTest {
   @MockK private lateinit var searchViewModel: SearchViewModel
 
   @MockK private lateinit var associationViewModel: AssociationViewModel
+  @MockK private lateinit var imageRepositoryFirestore: ImageRepositoryFirebaseStorage
 
   @MockK private lateinit var firebaseAuth: FirebaseAuth
 
@@ -107,7 +109,9 @@ class ScreenDisplayingTest {
 
   @Test
   fun testAccountDetailsDisplayed() {
-    composeTestRule.setContent { AccountDetails(navigationAction, userViewModel) }
+    composeTestRule.setContent {
+      AccountDetails(navigationAction, userViewModel, imageRepositoryFirestore)
+    }
     composeTestRule.onNodeWithTag("AccountDetails").assertIsDisplayed()
   }
 

@@ -19,12 +19,13 @@ import com.android.unio.model.association.AssociationRepositoryFirestore
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.event.EventListViewModel
 import com.android.unio.model.event.EventRepositoryFirestore
+import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.search.SearchRepository
 import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserViewModel
-import com.android.unio.ui.accountCreation.AccountDetails
 import com.android.unio.ui.association.AssociationProfileScreen
+import com.android.unio.ui.authentication.AccountDetails
 import com.android.unio.ui.authentication.EmailVerificationScreen
 import com.android.unio.ui.authentication.WelcomeScreen
 import com.android.unio.ui.explore.ExploreScreen
@@ -40,6 +41,7 @@ import com.android.unio.ui.user.UserProfileScreen
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.firestore
+import com.google.firebase.storage.storage
 import me.zhanghai.compose.preference.ProvidePreferenceLocals
 
 class MainActivity : ComponentActivity() {
@@ -66,6 +68,8 @@ fun UnioApp() {
   val searchRepository = remember {
     SearchRepository(context, associationRepository, eventRepository)
   }
+
+  val imageRepository = ImageRepositoryFirebaseStorage(Firebase.storage)
 
   val associationViewModel = remember {
     AssociationViewModel(associationRepository, eventRepository)
@@ -104,7 +108,9 @@ fun UnioApp() {
     navigation(startDestination = Screen.WELCOME, route = Route.AUTH) {
       composable(Screen.WELCOME) { WelcomeScreen(navigationActions) }
       composable(Screen.EMAIL_VERIFICATION) { EmailVerificationScreen(navigationActions) }
-      composable(Screen.ACCOUNT_DETAILS) { AccountDetails(navigationActions, userViewModel) }
+      composable(Screen.ACCOUNT_DETAILS) {
+        AccountDetails(navigationActions, userViewModel, imageRepository)
+      }
     }
     navigation(startDestination = Screen.HOME, route = Route.HOME) {
       composable(Screen.HOME) {
