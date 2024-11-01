@@ -1,6 +1,5 @@
 package com.android.unio.ui.event
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -23,7 +22,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -37,7 +35,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
@@ -48,9 +45,6 @@ import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventType
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.theme.AppTypography
-import com.android.unio.ui.theme.primaryContainerLight
-import com.android.unio.ui.theme.primaryDark
-import com.android.unio.ui.theme.secondaryDark
 import com.android.unio.utils.EventUtils.addAlphaToColor
 import com.android.unio.utils.EventUtils.formatTimestamp
 import java.text.SimpleDateFormat
@@ -58,20 +52,16 @@ import java.util.Locale
 
 @Composable
 fun EventCard(event: Event, userViewModel: UserViewModel) {
-
   var isSaved by remember { mutableStateOf(false) }
-  val user by userViewModel.user.collectAsState()
-
   LaunchedEffect(event.uid) { isSaved = userViewModel.isEventSavedForCurrentUser(event.uid) }
 
   Column(
       modifier =
           Modifier.fillMaxWidth()
               .padding(vertical = 8.dp)
-              // implement clickable feature
               .testTag("event_EventListItem")
               .clip(RoundedCornerShape(10.dp))
-              .background(secondaryDark)) {
+              .background(MaterialTheme.colorScheme.primaryContainer)) {
 
         // Event image section, displays the main event image or a placeholder if the URL is invalid
 
@@ -101,7 +91,7 @@ fun EventCard(event: Event, userViewModel: UserViewModel) {
               modifier =
                   Modifier.size(28.dp)
                       .clip(RoundedCornerShape(14.dp))
-                      .background(primaryDark)
+                      .background(MaterialTheme.colorScheme.inversePrimary)
                       .align(Alignment.TopEnd)
                       .clickable {
                         if (isSaved) {
@@ -140,9 +130,8 @@ fun EventCard(event: Event, userViewModel: UserViewModel) {
                           .wrapContentWidth(), // Make sure the text only takes as much space as
                   // needed
                   text = event.title,
-                  style = MaterialTheme.typography.labelLarge,
-                  fontWeight = FontWeight.Bold,
-                  color = Color.Black)
+                  style = AppTypography.labelLarge,
+                  color = MaterialTheme.colorScheme.onSurface)
 
               Spacer(modifier = Modifier.width(6.dp))
 
@@ -162,7 +151,7 @@ fun EventCard(event: Event, userViewModel: UserViewModel) {
                         modifier =
                             Modifier.padding(horizontal = 4.dp, vertical = 4.dp)
                                 .testTag("event_EventMainType"),
-                        color = Color.Black,
+                        color = MaterialTheme.colorScheme.scrim,
                         style = TextStyle(fontSize = 8.sp))
                   }
             }
@@ -192,7 +181,7 @@ fun EventCard(event: Event, userViewModel: UserViewModel) {
                   // needed
                   text = event.location.name,
                   style = AppTypography.bodySmall,
-                  color = Color.Black)
+                  color = MaterialTheme.colorScheme.onSurface)
             }
 
             Spacer(modifier = Modifier.width(1.dp))
@@ -204,11 +193,15 @@ fun EventCard(event: Event, userViewModel: UserViewModel) {
                     Modifier.padding(vertical = 1.dp, horizontal = 0.dp).testTag("event_EventDate"),
                 text = formatTimestamp(event.date, SimpleDateFormat("dd/MM", Locale.getDefault())),
                 style = MaterialTheme.typography.bodySmall,
-                color = Color.Black)
+                color = MaterialTheme.colorScheme.onSurface)
 
             Spacer(modifier = Modifier.width(2.dp))
 
-            Spacer(modifier = Modifier.height(10.dp).width(1.dp).background(primaryContainerLight))
+            Spacer(
+                modifier =
+                    Modifier.height(10.dp)
+                        .width(1.dp)
+                        .background(MaterialTheme.colorScheme.primary))
 
             Spacer(modifier = Modifier.width(2.dp))
 
@@ -218,7 +211,7 @@ fun EventCard(event: Event, userViewModel: UserViewModel) {
                 modifier = Modifier.testTag("event_EventTime").wrapContentWidth(),
                 text = formatTimestamp(event.date, SimpleDateFormat("HH:mm", Locale.getDefault())),
                 style = MaterialTheme.typography.bodySmall,
-                color = Color.Black)
+                color = MaterialTheme.colorScheme.onSurface)
           }
 
           // Divider line below location and time row
@@ -226,7 +219,10 @@ fun EventCard(event: Event, userViewModel: UserViewModel) {
           Row {
             Spacer(modifier = Modifier.width(4.dp))
             Spacer(
-                modifier = Modifier.fillMaxWidth().height(1.dp).background(primaryContainerLight))
+                modifier =
+                    Modifier.fillMaxWidth()
+                        .height(1.dp)
+                        .background(MaterialTheme.colorScheme.primary))
           }
 
           // Catchy description section with a brief highlight of the event
@@ -238,7 +234,7 @@ fun EventCard(event: Event, userViewModel: UserViewModel) {
                       .wrapContentWidth(),
               text = event.catchyDescription,
               style = MaterialTheme.typography.bodySmall,
-              color = Color.Black)
+              color = MaterialTheme.colorScheme.onSurface)
         }
       }
 }
