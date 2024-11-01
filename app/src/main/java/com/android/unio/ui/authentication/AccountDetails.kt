@@ -94,10 +94,7 @@ fun AccountDetails(
   val pickMedia =
       rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
         if (uri != null) {
-          Log.d("PhotoPicker", "Selected URI: $uri")
           profilePictureUri.value = uri
-        } else {
-          Log.d("PhotoPicker", "No media selected")
         }
       }
 
