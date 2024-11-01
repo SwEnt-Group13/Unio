@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
 import coil.compose.AsyncImage
+import coil.request.CachePolicy
 import coil.request.ImageRequest
 import com.android.unio.R
 import com.android.unio.model.event.Event
@@ -55,6 +56,21 @@ fun EventCard(event: Event, userViewModel: UserViewModel) {
   var isSaved by remember { mutableStateOf(false) }
   LaunchedEffect(event.uid) { isSaved = userViewModel.isEventSavedForCurrentUser(event.uid) }
 
+  val imgUrl = event.image.toUri()
+  val placeholderImg = R.drawable.adec
+  val imageRequest =
+      ImageRequest.Builder(LocalContext.current)
+          .data(imgUrl)
+          .memoryCacheKey(imgUrl.toString())
+          .diskCacheKey(imgUrl.toString())
+          .placeholder(placeholderImg)
+          .error(placeholderImg)
+          .fallback(placeholderImg)
+          .diskCachePolicy(CachePolicy.ENABLED)
+          .memoryCachePolicy(CachePolicy.ENABLED)
+          .crossfade(true)
+          .build()
+
   Column(
       modifier =
           Modifier.fillMaxWidth()
@@ -66,15 +82,8 @@ fun EventCard(event: Event, userViewModel: UserViewModel) {
         // Event image section, displays the main event image or a placeholder if the URL is invalid
 
         Box(modifier = Modifier.fillMaxWidth().height(100.dp)) {
-          // fallback to a local placeholder image in case of an invalid URI
-          val imageUrl = event.image.takeIf { it.isNotEmpty() }?.toUri()
-
           AsyncImage(
-              model =
-                  ImageRequest.Builder(LocalContext.current)
-                      .data(imageUrl)
-                      .error(R.drawable.no_picture_found) // placeholder in case of loading error
-                      .build(),
+              model = imageRequest,
               contentDescription = "Image of the event",
               modifier =
                   Modifier.fillMaxWidth()
