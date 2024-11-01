@@ -50,7 +50,7 @@ fun UserRepositoryFirestore.Companion.hydrate(data: Map<String, Any>?): User {
       firstName = data?.get("firstName") as? String ?: "",
       lastName = data?.get("lastName") as? String ?: "",
       biography = data?.get("biography") as? String ?: "",
-      followedAssociations = followedAssociationsAssociations,
+      followedAssociations = followedAssociations,
       savedEvents = savedEvents,
       joinedAssociations = joinedAssociations,
       interests =

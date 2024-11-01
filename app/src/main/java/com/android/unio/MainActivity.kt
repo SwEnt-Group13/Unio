@@ -74,18 +74,15 @@ fun UnioApp() {
   val associationViewModel = remember {
     AssociationViewModel(associationRepository, eventRepository)
   }
-  val eventListViewModel = remember { EventListViewModel(eventRepositoryFirestore) }
+  val eventListViewModel = remember { EventListViewModel(eventRepository) }
   val searchViewModel = remember { SearchViewModel(searchRepository) }
-
-
-
 
   // Redirect user based on authentication state
   Firebase.auth.addAuthStateListener { auth ->
     val user = auth.currentUser
     if (user != null) {
       if (user.isEmailVerified) {
-        userRepositoryFirestore.getUserWithId(
+        userRepository.getUserWithId(
             user.uid,
             {
               if (it.firstName.isNotEmpty()) {
