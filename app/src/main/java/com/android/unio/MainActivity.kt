@@ -8,6 +8,7 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -50,7 +51,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun UnioApp() {
   val navController = rememberNavController()
-  val navigationActions = NavigationAction(navController)
+  val navigationActions = remember { NavigationAction(navController) }
   val db = Firebase.firestore
   val context = LocalContext.current
 
@@ -59,6 +60,35 @@ fun UnioApp() {
   val userRepositoryFirestore = remember { UserRepositoryFirestore(db) }
   val searchRepository = remember {
     SearchRepository(context, associationRepository, eventRepository)
+  }
+
+  LaunchedEffect(true) {
+    // Redirect user based on authentication state
+    Firebase.auth.addAuthStateListener { auth ->
+      val user = auth.currentUser
+      if (user != null) {
+        if (user.isEmailVerified) {
+          userRepositoryFirestore.getUserWithId(
+            user.uid,
+            {
+              if (it.firstName.isNotEmpty()) {
+                navigationActions.navigateTo(Screen.HOME)
+              } else {
+                navigationActions.navigateTo(Screen.ACCOUNT_DETAILS)
+              }
+            },
+            {
+              Log.e("UnioApp", "Error fetching account details: $it")
+              Toast.makeText(context, "Error fetching account details.", Toast.LENGTH_SHORT)
+                .show()
+            })
+        } else {
+          navigationActions.navigateTo(Screen.EMAIL_VERIFICATION)
+        }
+      } else {
+        navigationActions.navigateTo(Route.AUTH)
+      }
+    }
   }
 
   val associationViewModel = remember {

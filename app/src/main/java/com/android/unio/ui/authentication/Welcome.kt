@@ -50,6 +50,7 @@ import com.android.unio.model.user.isValidEmail
 import com.android.unio.model.user.isValidPassword
 import com.android.unio.model.user.signInOrCreateAccount
 import com.android.unio.ui.navigation.NavigationAction
+import com.android.unio.ui.navigation.Route
 import com.android.unio.ui.navigation.Screen
 import com.android.unio.ui.theme.AppTypography
 import com.google.firebase.Firebase
@@ -61,35 +62,6 @@ fun WelcomeScreen(
     userRepositoryFirestore: UserRepositoryFirestore
 ) {
   val context = LocalContext.current
-
-  LaunchedEffect(Unit) {
-    // Redirect user based on authentication state
-    Firebase.auth.addAuthStateListener { auth ->
-      val user = auth.currentUser
-      if (user != null) {
-        if (user.isEmailVerified) {
-          userRepositoryFirestore.getUserWithId(
-              user.uid,
-              {
-                if (it.firstName.isNotEmpty()) {
-                  navigationActions.navigateTo(Screen.HOME)
-                } else {
-                  navigationActions.navigateTo(Screen.ACCOUNT_DETAILS)
-                }
-              },
-              {
-                Log.e("UnioApp", "Error fetching account details: $it")
-                Toast.makeText(context, "Error fetching account details.", Toast.LENGTH_SHORT)
-                    .show()
-              })
-        } else {
-          navigationActions.navigateTo(Screen.EMAIL_VERIFICATION)
-        }
-      } else {
-        navigationActions.navigateTo(Screen.WELCOME)
-      }
-    }
-  }
 
   var email by remember { mutableStateOf("") }
   var password by remember { mutableStateOf("") }
