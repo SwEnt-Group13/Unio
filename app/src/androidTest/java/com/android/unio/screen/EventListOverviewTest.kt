@@ -2,24 +2,26 @@ package com.android.unio.ui.events
 
 import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.unit.ExperimentalUnitApi
-import androidx.navigation.NavHostController
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventListViewModel
 import com.android.unio.model.event.EventRepositoryMock
 import com.android.unio.ui.home.HomeScreen
 import com.android.unio.ui.navigation.NavigationAction
+import com.android.unio.ui.navigation.Screen
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.kotlin.mock
+import org.mockito.Mockito.mock
+import org.mockito.kotlin.verify
 
 /**
  * Test class for the EventListOverview Composable. This class contains unit tests to validate the
@@ -33,13 +35,11 @@ class EventListOverviewTest {
 
   // Mock event repository to provide test data.
   private val mockEventRepository = EventRepositoryMock()
-  private lateinit var navHostController: NavHostController
   private lateinit var navigationAction: NavigationAction
 
   @Before
   fun setUp() {
-    navHostController = mock { NavHostController::class.java }
-    navigationAction = NavigationAction(navHostController)
+    navigationAction = mock(NavigationAction::class.java)
   }
 
   /**
@@ -109,20 +109,23 @@ class EventListOverviewTest {
    */
   @Test
   fun testMapButton() {
-    var mapClicked = false
-
     composeTestRule.setContent {
       val eventListViewModel = EventListViewModel(mockEventRepository)
       HomeScreen(
           navigationAction = navigationAction,
           eventListViewModel = eventListViewModel,
-          onAddEvent = { mapClicked = true },
+          onAddEvent = {},
           onEventClick = {})
     }
 
-    composeTestRule.onNodeWithTag("event_MapButton").performClick()
+    composeTestRule.onNodeWithTag("event_MapButton").assertExists()
+    composeTestRule.onNodeWithTag("event_MapButton").assertHasClickAction()
 
-    assert(mapClicked)
+    composeTestRule.onNodeWithContentDescription("Add Event").assertExists()
+    composeTestRule.onNodeWithContentDescription("Add Event").assertHasClickAction()
+
+    composeTestRule.onNodeWithTag("event_MapButton").performClick()
+    verify(navigationAction).navigateTo(Screen.MAP)
   }
 
   /**
@@ -132,14 +135,12 @@ class EventListOverviewTest {
   @OptIn(ExperimentalCoroutinesApi::class)
   @Test
   fun testClickFollowingAndAdd() = runBlockingTest {
-    var addClicked = false
-
     composeTestRule.setContent {
       val eventListViewModel = EventListViewModel(mockEventRepository)
       HomeScreen(
           navigationAction,
           eventListViewModel = eventListViewModel,
-          onAddEvent = { addClicked = true },
+          onAddEvent = {},
           onEventClick = {})
     }
 
@@ -151,10 +152,6 @@ class EventListOverviewTest {
     composeTestRule.onNodeWithTag("event_MapButton").assertExists()
     composeTestRule.onNodeWithTag("event_MapButton").performClick()
 
-    // Assert that the 'Add' button was clicked.
-    assert(addClicked)
-
-    // Optionally, verify that the animation related to the 'Add' button was triggered.
-    // This could involve checking the state changes or specific UI elements.
+    verify(navigationAction).navigateTo(Screen.MAP)
   }
 }

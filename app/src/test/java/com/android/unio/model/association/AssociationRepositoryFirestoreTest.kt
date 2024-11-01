@@ -13,7 +13,6 @@ import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QueryDocumentSnapshot
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.firestore
@@ -40,7 +39,6 @@ class AssociationRepositoryFirestoreTest {
   @Mock private lateinit var documentReference: DocumentReference
   @Mock private lateinit var querySnapshotTask: Task<QuerySnapshot>
   @Mock private lateinit var documentSnapshotTask: Task<DocumentSnapshot>
-  @Mock private lateinit var query: Query
 
   private lateinit var repository: AssociationRepositoryFirestore
 
@@ -70,6 +68,7 @@ class AssociationRepositoryFirestoreTest {
             description =
                 "ACM is the world's largest educational and scientific computing society.",
             members = User.firestoreReferenceListWith(listOf("1", "2")),
+            followersCount = 0,
             image = "https://www.example.com/image.jpg")
 
     association2 =
@@ -82,6 +81,7 @@ class AssociationRepositoryFirestoreTest {
             description =
                 "IEEE is the world's largest technical professional organization dedicated to advancing technology for the benefit of humanity.",
             members = User.firestoreReferenceListWith(listOf("3", "4")),
+            followersCount = 1,
             image = "https://www.example.com/image.jpg")
 
     // When getting the collection, return the task
@@ -116,7 +116,9 @@ class AssociationRepositoryFirestoreTest {
             "fullName" to association1.fullName,
             "category" to association1.category.name,
             "description" to association1.description,
-            "members" to association1.members.list.value.map { it.uid })
+            "members" to association1.members.list.value.map { it.uid },
+            "followersCount" to association1.followersCount,
+            "image" to association1.image)
 
     map2 =
         mapOf(
@@ -126,7 +128,9 @@ class AssociationRepositoryFirestoreTest {
             "fullName" to association2.fullName,
             "category" to association2.category.name,
             "description" to association2.description,
-            "members" to association2.members.list.value.map { it.uid })
+            "members" to association2.members.list.value.map { it.uid },
+            "followersCount" to association2.followersCount,
+            "image" to association2.image)
 
     `when`(queryDocumentSnapshot1.data).thenReturn(map1)
     `when`(queryDocumentSnapshot2.data).thenReturn(map2)
@@ -171,6 +175,7 @@ class AssociationRepositoryFirestoreTest {
                   category = AssociationCategory.ARTS,
                   description = "",
                   members = User.emptyFirestoreReferenceList(),
+                  followersCount = 0,
                   image = "")
 
           assertEquals(2, associations.size)
