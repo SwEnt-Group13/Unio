@@ -67,22 +67,6 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import kotlinx.coroutines.flow.MutableStateFlow
 
-//
-//
-// @Preview
-// @Composable
-// fun AccountDetailsPreview(){
-//    val navigationAction = NavigationAction(rememberNavController())
-//    val userRepositoryFirestore = UserRepositoryFirestore(Firebase.firestore)
-//    val userViewModel = UserViewModel(userRepositoryFirestore, true)
-//    val imageRepository = ImageRepositoryFirebaseStorage(Firebase.storage)
-//    AccountDetails(
-//        navigationAction,
-//        userViewModel,
-//        imageRepository
-//    )
-// }
-
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun AccountDetails(
