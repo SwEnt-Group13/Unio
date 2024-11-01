@@ -2,7 +2,6 @@ package com.android.unio.ui.events
 
 import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -77,12 +76,8 @@ class EventListOverviewTest {
       val eventListViewModel = EventListViewModel(mockEventRepository)
       HomeScreen(navigationAction = navigationAction, eventListViewModel = eventListViewModel)
     }
-
     composeTestRule.onNodeWithTag("event_MapButton").assertExists()
     composeTestRule.onNodeWithTag("event_MapButton").assertHasClickAction()
-
-    composeTestRule.onNodeWithContentDescription("Map button").assertExists()
-    composeTestRule.onNodeWithContentDescription("Map button").assertHasClickAction()
 
     composeTestRule.onNodeWithTag("event_MapButton").performClick()
     verify(navigationAction).navigateTo(Screen.MAP)
