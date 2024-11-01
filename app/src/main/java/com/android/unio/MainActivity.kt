@@ -61,8 +61,8 @@ fun UnioApp() {
     SearchRepository(context, associationRepository, eventRepository)
   }
 
-  val eventRepositoryFirestore = EventRepositoryFirestore(Firebase.firestore)
-  val eventListViewModel = EventListViewModel(eventRepositoryFirestore)
+  val eventRepositoryFirestore = remember { EventRepositoryFirestore(db) }
+  val eventListViewModel = remember { EventListViewModel(eventRepositoryFirestore) }
 
   val associationViewModel = remember {
     AssociationViewModel(associationRepository, eventRepository)
@@ -120,12 +120,6 @@ fun UnioApp() {
         val uid = navBackStackEntry.arguments?.getString("uid")
 
         // Create the AssociationProfile screen with the association UID
-        uid?.let {
-          AssociationProfileScreen(
-              navigationAction = navigationActions,
-              associationId = it,
-              userViewModel = userViewModel)
-        }
         uid?.let {
           AssociationProfileScreen(
               navigationActions, it, associationViewModel, userViewModel = userViewModel)
