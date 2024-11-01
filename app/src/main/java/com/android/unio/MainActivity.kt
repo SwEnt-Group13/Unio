@@ -35,16 +35,22 @@ import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Route
 import com.android.unio.ui.navigation.Screen
 import com.android.unio.ui.saved.SavedScreen
+import com.android.unio.ui.settings.SettingsScreen
 import com.android.unio.ui.theme.AppTheme
 import com.android.unio.ui.user.UserProfileScreen
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.firestore
+import me.zhanghai.compose.preference.ProvidePreferenceLocals
 
 class MainActivity : ComponentActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    setContent { Surface(modifier = Modifier.fillMaxSize()) { AppTheme { UnioApp() } } }
+    setContent {
+      Surface(modifier = Modifier.fillMaxSize()) {
+        ProvidePreferenceLocals { AppTheme { UnioApp() } }
+      }
+    }
   }
 }
 
@@ -146,6 +152,7 @@ fun UnioApp() {
     }
     navigation(startDestination = Screen.MY_PROFILE, route = Route.MY_PROFILE) {
       composable(Screen.MY_PROFILE) { UserProfileScreen(navigationActions, userViewModel) }
+      composable(Screen.SETTINGS) { SettingsScreen(navigationActions) }
     }
   }
 }

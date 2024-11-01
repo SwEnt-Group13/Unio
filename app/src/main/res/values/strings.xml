@@ -94,11 +94,18 @@
     </string>
     <string name="association_follower" translatable="true">followers</string>
     <string name="association_member" translatable="true">members</string>
-    <string name="association_follow" translatable="true">follow</string>
+    <string name="association_follow" translatable="true">Follow</string>
     <string name="association_join" translatable="true">Join</string>
     <string name="association_no_event" translatable="true">No event planned yet</string>
-
     <string name="association_not_found" translatable="true">ERROR : Association not found</string>
+
+    <!-- Settings Strings -->
+    <string name="settings_title" translatable="true">Settings</string>
+    <string name="settings_theme_title" translatable="true">Theme</string>
+    <string name="settings_theme_content_description" translatable="true">Theme Settings</string>
+    <string name="settings_notifications_title" translatable="true">Notifications</string>
+    <string name="settings_notifications_summary" translatable="true">Enable push notifications</string>
+    <string name="settings_notifications_content_description" translatable="true">Notification Settings</string>
 
     <!-- Debug/Temporary Strings -->
     <string name="debug_lorem_ipsum" translatable="false">Lorem ipsum dolor sit amet, consectetur

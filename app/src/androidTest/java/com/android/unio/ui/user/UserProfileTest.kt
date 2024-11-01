@@ -92,7 +92,7 @@ class UserProfileTest {
   fun testBottomSheet() {
     var called = false
 
-    composeTestRule.setContent { UserProfileBottomSheet(true) { called = true } }
+    composeTestRule.setContent { UserProfileBottomSheet(true, navigationAction) { called = true } }
 
     composeTestRule.onNodeWithTag("UserProfileBottomSheet").assertIsDisplayed()
 

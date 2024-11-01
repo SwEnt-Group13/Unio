@@ -13,17 +13,11 @@ import com.android.unio.model.user.Social
 import com.android.unio.model.user.User
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserSocial
-import com.google.firebase.Firebase
 import com.google.firebase.Timestamp
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.firestore
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.mockkStatic
 import junit.framework.TestCase.assertEquals
-import org.junit.Before
+import junit.framework.TestCase.assertTrue
+import kotlin.reflect.full.memberProperties
 import org.junit.Test
-import org.mockito.MockitoAnnotations
 
 class HydrationAndSerializationTest {
   private lateinit var db: FirebaseFirestore
@@ -92,7 +86,7 @@ class HydrationAndSerializationTest {
     assertEquals(user.firstName, serialized["firstName"])
     assertEquals(user.lastName, serialized["lastName"])
     assertEquals(user.biography, serialized["biography"])
-    assertEquals(user.followedAssociations.list.value, serialized["followingAssociations"])
+    assertEquals(user.followedAssociations.list.value, serialized["followedAssociations"])
     assertEquals(user.joinedAssociations.list.value, serialized["joinedAssociations"])
     assertEquals(user.interests.map { it.name }, serialized["interests"])
     assertEquals(
@@ -124,6 +118,7 @@ class HydrationAndSerializationTest {
     assertEquals(association.fullName, serialized["fullName"])
     assertEquals(association.description, serialized["description"])
     assertEquals(association.members.list.value, serialized["members"])
+    assertEquals(association.image, serialized["image"])
 
     val hydrated = AssociationRepositoryFirestore.hydrate(serialized)
 
@@ -133,6 +128,7 @@ class HydrationAndSerializationTest {
     assertEquals(association.fullName, hydrated.fullName)
     assertEquals(association.description, hydrated.description)
     assertEquals(association.members.list.value, hydrated.members.list.value)
+    assertEquals(association.image, hydrated.image)
   }
 
   @Test
@@ -198,6 +194,7 @@ class HydrationAndSerializationTest {
     assertEquals("", hydrated.fullName)
     assertEquals("", hydrated.description)
     assertEquals(emptyList<String>(), hydrated.members.list.value)
+    assertEquals("", hydrated.image)
   }
 
   @Test
@@ -216,5 +213,39 @@ class HydrationAndSerializationTest {
     assertEquals(Location(), hydrated.location)
     assertEquals(emptyList<String>(), hydrated.organisers.list.value)
     assertEquals(emptyList<String>(), hydrated.taggedAssociations.list.value)
+  }
+
+  /** Test that serialization includes all data class fields. */
+  @Test
+  fun testUserSerializationHasAllFields() {
+    val classMembers = User::class.memberProperties.map { it.name }
+
+    val serialized = UserRepositoryFirestore.serialize(user)
+
+    classMembers.forEach {
+      assertTrue("User serialization is missing field '$it'.", serialized.containsKey(it))
+    }
+  }
+
+  @Test
+  fun testAssociationSerializationHasAllFields() {
+    val classMembers = Association::class.memberProperties.map { it.name }
+
+    val serialized = AssociationRepositoryFirestore.serialize(association)
+
+    classMembers.forEach {
+      assertTrue("Association serialization is missing field '$it'.", serialized.containsKey(it))
+    }
+  }
+
+  @Test
+  fun testEventSerializationHasAllFields() {
+    val classMembers = Event::class.memberProperties.map { it.name }
+
+    val serialized = EventRepositoryFirestore.serialize(event)
+
+    classMembers.forEach {
+      assertTrue("Event serialization is missing field '$it'.", serialized.containsKey(it))
+    }
   }
 }
