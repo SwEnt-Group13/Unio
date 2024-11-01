@@ -102,7 +102,7 @@ class UserProfileTest {
   @Test
   fun testBottomSheet() {
 
-    composeTestRule.setContent { UserProfileBottomSheet(true) {} }
+    composeTestRule.setContent { UserProfileBottomSheet(true, navigationAction) { called = true } }
 
     composeTestRule.onNodeWithTag("UserProfileBottomSheet").assertIsDisplayed()
   }

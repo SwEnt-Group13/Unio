@@ -263,7 +263,7 @@ dependencies {
     testImplementation(libs.mockk.v193)
 
     implementation(libs.androidx.material.icons.extended)
-    //for AsyncImage
+    // For AsyncImage
     implementation(libs.coil.compose)
 
     // AppSearch
@@ -272,6 +272,13 @@ dependencies {
     kapt(libs.androidx.appsearch.compiler)
     implementation(libs.guava)
     implementation(libs.kotlinx.coroutines.guava)
+
+    // Kotlin Reflect
+    implementation(kotlin("reflect"))
+
+    // Preferences
+    implementation(libs.androidx.preference.ktx)
+    implementation(libs.library)
 }
 
 

@@ -39,8 +39,12 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.android.unio.model.event.Event
+import com.android.unio.model.event.EventCard
 import com.android.unio.model.event.EventListViewModel
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.event.EventCard

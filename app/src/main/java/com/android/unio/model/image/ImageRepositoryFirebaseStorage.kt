@@ -10,7 +10,7 @@ class ImageRepositoryFirebaseStorage(
   private val storageRef = storage.reference
 
   /** Helper function that gets the downloadUrl of an image. Is used after calling uploadImage. */
-  fun getImageUrl(
+  override fun getImageUrl(
       firebasePath: String,
       onSuccess: (String) -> Unit,
       onFailure: (Exception) -> Unit

@@ -1,18 +1,27 @@
-package com.android.unio.ui.accountCreation
+package com.android.unio.ui.authentication
 
+import android.net.Uri
+import android.util.Log
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -32,13 +41,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.rememberAsyncImagePainter
 import com.android.unio.model.association.Association
 import com.android.unio.model.event.Event
 import com.android.unio.model.firestore.emptyFirestoreReferenceList
+import com.android.unio.model.image.ImageRepository
 import com.android.unio.model.user.AccountDetailsError
 import com.android.unio.model.user.Interest
 import com.android.unio.model.user.User
@@ -59,7 +72,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 @Composable
 fun AccountDetails(
     navigationAction: NavigationAction,
-    userViewModel: UserViewModel = viewModel(factory = UserViewModel.Factory)
+    userViewModel: UserViewModel = viewModel(factory = UserViewModel.Factory),
+    imageRepository: ImageRepository
 ) {
   var firstName: String by remember { mutableStateOf("") }
   var lastName: String by remember { mutableStateOf("") }
@@ -76,7 +90,17 @@ fun AccountDetails(
   val interests by interestsFlow.collectAsState()
   val socials by userSocialsFlow.collectAsState()
 
+  val profilePictureUri = remember { mutableStateOf<Uri>(Uri.EMPTY) }
+
+  val pickMedia =
+      rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+        if (uri != null) {
+          profilePictureUri.value = uri
+        }
+      }
+
   val context = LocalContext.current
+
   var showInterestsOverlay by remember { mutableStateOf(false) }
   var showSocialsOverlay by remember { mutableStateOf(false) }
   val scrollState = rememberScrollState()
@@ -85,6 +109,35 @@ fun AccountDetails(
     navigationAction.navigateTo(Screen.WELCOME)
     return
   }
+
+  val userId = Firebase.auth.currentUser?.uid
+
+  val createUser = { uri: String ->
+    var newUser =
+        User(
+            uid = userId!!,
+            email = Firebase.auth.currentUser?.email!!,
+            firstName = firstName,
+            lastName = lastName,
+            biography = bio,
+            followedAssociations = Association.emptyFirestoreReferenceList(),
+            joinedAssociations = Association.emptyFirestoreReferenceList(),
+            savedEvents = Event.emptyFirestoreReferenceList(),
+            interests = interests.filter { it.second.value }.map { it.first },
+            socials = socials,
+            profilePicture = uri)
+
+    isErrors = checkNewUser(newUser)
+    if (isErrors.isEmpty()) {
+      userViewModel.addUser(
+          newUser,
+          onSuccess = {
+            Toast.makeText(context, "Account Created Successfully", Toast.LENGTH_SHORT).show()
+            navigationAction.navigateTo(Screen.HOME)
+          })
+    }
+  }
+
   Column(
       modifier =
           Modifier.padding(vertical = 20.dp, horizontal = 40.dp)
@@ -150,17 +203,25 @@ fun AccountDetails(
                   modifier =
                       Modifier.widthIn(max = 140.dp).testTag("AccountDetailsProfilePictureText"),
                   style = AppTypography.bodyLarge)
-              Icon(
-                  Icons.Rounded.AccountCircle,
-                  contentDescription = "Add",
-                  tint = primaryLight,
-                  modifier =
-                      Modifier.clickable {
-                            Toast.makeText(context, "Not yet implemented", Toast.LENGTH_SHORT)
-                                .show()
-                          }
-                          .size(100.dp)
-                          .testTag("AccountDetailsProfilePictureIcon"))
+
+              if (profilePictureUri.value == Uri.EMPTY) {
+                Icon(
+                    imageVector = Icons.Rounded.AccountCircle,
+                    contentDescription = "Add",
+                    tint = primaryLight,
+                    modifier =
+                        Modifier.clickable {
+                              pickMedia.launch(
+                                  PickVisualMediaRequest(
+                                      ActivityResultContracts.PickVisualMedia.ImageOnly))
+                            }
+                            .size(100.dp)
+                            .testTag("AccountDetailsProfilePictureIcon"))
+              } else {
+                ProfilePictureWithRemoveIcon(
+                    profilePictureUri = profilePictureUri.value,
+                    onRemove = { profilePictureUri.value = Uri.EMPTY })
+              }
             }
         OutlinedButton(
             modifier = Modifier.fillMaxWidth().testTag("AccountDetailsInterestsButton"),
@@ -197,7 +258,9 @@ fun AccountDetails(
                 label = { Text(userSocial.social.name) },
                 onClick = {},
                 selected = true,
-                modifier = Modifier.padding(3.dp).testTag("AccountDetailsSocialChip: $index"),
+                modifier =
+                    Modifier.padding(3.dp)
+                        .testTag("AccountDetailsSocialChip: ${userSocial.social.title}"),
                 avatar = {
                   Icon(
                       Icons.Default.Close,
@@ -213,27 +276,18 @@ fun AccountDetails(
         Button(
             modifier = Modifier.testTag("AccountDetailsContinueButton"),
             onClick = {
-              val user =
-                  User(
-                      uid = Firebase.auth.currentUser?.uid!!,
-                      email = Firebase.auth.currentUser?.email!!,
-                      firstName = firstName,
-                      lastName = lastName,
-                      biography = bio,
-                      followedAssociations = Association.emptyFirestoreReferenceList(),
-                      joinedAssociations = Association.emptyFirestoreReferenceList(),
-                      savedEvents = Event.emptyFirestoreReferenceList(),
-                      interests = interests.filter { it.second.value }.map { it.first },
-                      socials = socials,
-                      profilePicture = "")
-              isErrors = checkNewUser(user)
-              if (isErrors.isEmpty()) {
-                userViewModel.addUser(
-                    user,
-                    onSuccess = {
-                      Toast.makeText(context, "Account Created Successfully", Toast.LENGTH_SHORT)
-                          .show()
-                      navigationAction.navigateTo(Screen.HOME)
+              if (profilePictureUri.value == Uri.EMPTY) {
+                createUser("")
+              } else {
+                val inputStream = context.contentResolver.openInputStream(profilePictureUri.value)
+
+                imageRepository.uploadImage(
+                    inputStream!!,
+                    "images/users/${userId}",
+                    onSuccess = createUser,
+                    onFailure = { exception ->
+                      Log.e("AccountDetails", "Error uploading image: $exception")
+                      Toast.makeText(context, "Error uploading image", Toast.LENGTH_SHORT).show()
                     })
               }
             }) {
@@ -259,5 +313,24 @@ fun AccountDetails(
           showSocialsOverlay = false
         },
         userSocials = socials)
+  }
+}
+
+@Composable
+private fun ProfilePictureWithRemoveIcon(
+    profilePictureUri: Uri,
+    onRemove: () -> Unit,
+) {
+  Box(modifier = Modifier.size(100.dp)) {
+    Image(
+        painter = rememberAsyncImagePainter(profilePictureUri),
+        contentDescription = "Profile Picture",
+        contentScale = ContentScale.Crop,
+        modifier = Modifier.aspectRatio(1f).clip(CircleShape))
+    Icon(
+        imageVector = Icons.Default.Close,
+        contentDescription = "Remove Profile Picture",
+        modifier =
+            Modifier.size(24.dp).align(Alignment.TopEnd).clickable { onRemove() }.padding(4.dp))
   }
 }

@@ -5,7 +5,6 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
-import androidx.compose.ui.test.performTextInput
 import com.android.unio.model.user.UserSocial
 import org.junit.Before
 import org.junit.Rule
@@ -37,13 +36,13 @@ class SocialOverlayTest {
 
   @Test
   fun testCorrectlyAddsNewUserSocial() {
-    addNewUserSocial("facebook_username", "Facebook")
+    addNewUserSocial(composeTestRule, "facebook_username", "Facebook")
     composeTestRule.onNodeWithTag("SocialOverlayClickableRow: Facebook").assertIsDisplayed()
   }
 
   @Test
   fun testCorrectlyDeletesUserSocial() {
-    addNewUserSocial("facebook_username", "Facebook")
+    addNewUserSocial(composeTestRule, "facebook_username", "Facebook")
     composeTestRule
         .onNodeWithTag("SocialOverlayCloseIcon: Facebook", useUnmergedTree = true)
         .performScrollTo()
@@ -60,18 +59,9 @@ class SocialOverlayTest {
 
   @Test
   fun testDisplayErrorWithIncorrectInput() {
-    addNewUserSocial("", "Facebook")
+    addNewUserSocial(composeTestRule, "", "Facebook")
     composeTestRule
         .onNodeWithTag("SocialPromptErrorText", useUnmergedTree = true)
         .assertIsDisplayed()
-  }
-
-  // Helper function to add a new UserSocial
-  private fun addNewUserSocial(username: String, platform: String) {
-    composeTestRule.onNodeWithTag("SocialOverlayAddButton").performScrollTo().performClick()
-    composeTestRule.onNodeWithTag("SocialPromptTextField").performTextInput(username)
-    composeTestRule.onNodeWithTag("SocialPromptDropdownMenuBox").performClick()
-    composeTestRule.onNodeWithTag("SocialPromptDropdownMenuItem: $platform").performClick()
-    composeTestRule.onNodeWithTag("SocialPromptSaveButton").performClick()
   }
 }

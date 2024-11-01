@@ -9,8 +9,9 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextInput
+import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.user.UserViewModel
-import com.android.unio.ui.accountCreation.AccountDetails
+import com.android.unio.ui.authentication.overlay.addNewUserSocial
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
 import com.google.firebase.Firebase
@@ -34,6 +35,7 @@ class AccountDetailsTest {
   @MockK private lateinit var firebaseAuth: FirebaseAuth
   private lateinit var navigationAction: NavigationAction
   @MockK private lateinit var userViewModel: UserViewModel
+  @MockK private lateinit var imageRepository: ImageRepositoryFirebaseStorage
 
   // This is the implementation of the abstract method getUid() from FirebaseUser.
   // Because it is impossible to mock abstract method, this is the only way to mock it.
@@ -63,7 +65,7 @@ class AccountDetailsTest {
     navigationAction = mock(NavigationAction::class.java)
     `when`(navigationAction.getCurrentRoute()).thenReturn(Screen.ACCOUNT_DETAILS)
 
-    composeTestRule.setContent { AccountDetails(navigationAction, userViewModel) }
+    composeTestRule.setContent { AccountDetails(navigationAction, userViewModel, imageRepository) }
   }
 
   @Test
@@ -112,6 +114,12 @@ class AccountDetailsTest {
   }
 
   @Test
+  fun testSocialsButtonWorksCorrectly() {
+    composeTestRule.onNodeWithTag("AccountDetailsSocialsButton").performScrollTo().performClick()
+    composeTestRule.onNodeWithTag("SocialOverlayTitle").assertIsDisplayed()
+  }
+
+  @Test
   fun testAddingInterestsCorrectlyModifiesTheFlowRow() {
     composeTestRule.onNodeWithTag("AccountDetailsInterestsButton").performClick()
     composeTestRule.onNodeWithTag("InterestOverlayClickableRow: 0").performClick()
@@ -120,6 +128,22 @@ class AccountDetailsTest {
 
     composeTestRule.onNodeWithTag("AccountDetailsInterestChip: 0").assertExists()
     composeTestRule.onNodeWithTag("AccountDetailsInterestChip: 1").assertExists()
+  }
+
+  @Test
+  fun testAddingSocialsCorrectlyModifiesTheFlowRow() {
+    composeTestRule.onNodeWithTag("AccountDetailsSocialsButton").performScrollTo().performClick()
+    addNewUserSocial(composeTestRule, "facebook_username", "Facebook")
+    addNewUserSocial(composeTestRule, "instagram_username", "Instagram")
+    composeTestRule.onNodeWithTag("SocialOverlaySaveButton").performScrollTo().performClick()
+    composeTestRule
+        .onNodeWithTag("AccountDetailsSocialChip: Facebook")
+        .performScrollTo()
+        .assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag("AccountDetailsSocialChip: Instagram")
+        .performScrollTo()
+        .assertIsDisplayed()
   }
 
   @Test

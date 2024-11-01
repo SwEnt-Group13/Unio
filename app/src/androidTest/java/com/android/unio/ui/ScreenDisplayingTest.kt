@@ -10,11 +10,12 @@ import com.android.unio.model.association.AssociationCategory
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.event.Event
 import com.android.unio.model.firestore.firestoreReferenceListWith
+import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.user.User
 import com.android.unio.model.user.UserViewModel
-import com.android.unio.ui.accountCreation.AccountDetails
 import com.android.unio.ui.association.AssociationProfileScreen
+import com.android.unio.ui.authentication.AccountDetails
 import com.android.unio.ui.authentication.EmailVerificationScreen
 import com.android.unio.ui.authentication.WelcomeScreen
 import com.android.unio.ui.event.EventCreationScreen
@@ -36,6 +37,7 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import io.mockk.mockkStatic
+import me.zhanghai.compose.preference.ProvidePreferenceLocals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -49,6 +51,7 @@ class ScreenDisplayingTest {
   @MockK private lateinit var searchViewModel: SearchViewModel
 
   @MockK private lateinit var associationViewModel: AssociationViewModel
+  @MockK private lateinit var imageRepositoryFirestore: ImageRepositoryFirebaseStorage
 
   @MockK private lateinit var firebaseAuth: FirebaseAuth
 
@@ -107,7 +110,9 @@ class ScreenDisplayingTest {
 
   @Test
   fun testAccountDetailsDisplayed() {
-    composeTestRule.setContent { AccountDetails(navigationAction, userViewModel) }
+    composeTestRule.setContent {
+      AccountDetails(navigationAction, userViewModel, imageRepositoryFirestore)
+    }
     composeTestRule.onNodeWithTag("AccountDetails").assertIsDisplayed()
   }
 
@@ -164,7 +169,7 @@ class ScreenDisplayingTest {
 
   @Test
   fun testSettingsDisplayed() {
-    composeTestRule.setContent { SettingsScreen() }
+    composeTestRule.setContent { ProvidePreferenceLocals { SettingsScreen(navigationAction) } }
     composeTestRule.onNodeWithTag("SettingsScreen").assertIsDisplayed()
   }
 

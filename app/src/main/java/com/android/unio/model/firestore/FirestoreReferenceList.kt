@@ -72,13 +72,12 @@ class FirestoreReferenceList<T>(
 
   /** Requests all documents from Firestore and updates the list. */
   override fun requestAll(onSuccess: () -> Unit) {
+    _list.value = emptyList()
     if (_uids.isEmpty()) {
-      _list.value = emptyList()
       onSuccess()
       return
     }
 
-    _list.value = emptyList()
     Firebase.firestore
         .collection(collectionPath)
         .whereIn(FieldPath.documentId(), _uids.filter { it.isNotEmpty() })

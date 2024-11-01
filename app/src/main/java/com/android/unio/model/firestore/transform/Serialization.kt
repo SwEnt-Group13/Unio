@@ -27,7 +27,7 @@ fun UserRepositoryFirestore.Companion.serialize(user: User): Map<String, Any> {
       "firstName" to user.firstName,
       "lastName" to user.lastName,
       "biography" to user.biography,
-      "followingAssociations" to user.followedAssociations.uids,
+      "followedAssociations" to user.followedAssociations.uids,
       "savedEvents" to user.savedEvents.uids,
       "joinedAssociations" to user.joinedAssociations.uids,
       "interests" to user.interests.map { it.name },
