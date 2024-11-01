@@ -67,6 +67,22 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import kotlinx.coroutines.flow.MutableStateFlow
 
+//
+//
+// @Preview
+// @Composable
+// fun AccountDetailsPreview(){
+//    val navigationAction = NavigationAction(rememberNavController())
+//    val userRepositoryFirestore = UserRepositoryFirestore(Firebase.firestore)
+//    val userViewModel = UserViewModel(userRepositoryFirestore, true)
+//    val imageRepository = ImageRepositoryFirebaseStorage(Firebase.storage)
+//    AccountDetails(
+//        navigationAction,
+//        userViewModel,
+//        imageRepository
+//    )
+// }
+
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun AccountDetails(
@@ -258,7 +274,9 @@ fun AccountDetails(
                 label = { Text(userSocial.social.name) },
                 onClick = {},
                 selected = true,
-                modifier = Modifier.padding(3.dp).testTag("AccountDetailsSocialChip: $index"),
+                modifier =
+                    Modifier.padding(3.dp)
+                        .testTag("AccountDetailsSocialChip: ${userSocial.social.title}"),
                 avatar = {
                   Icon(
                       Icons.Default.Close,

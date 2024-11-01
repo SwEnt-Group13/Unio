@@ -11,6 +11,7 @@ import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextInput
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.user.UserViewModel
+import com.android.unio.ui.authentication.overlay.addNewUserSocial
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
 import com.google.firebase.Firebase
@@ -113,6 +114,12 @@ class AccountDetailsTest {
   }
 
   @Test
+  fun testSocialsButtonWorksCorrectly() {
+    composeTestRule.onNodeWithTag("AccountDetailsSocialsButton").performScrollTo().performClick()
+    composeTestRule.onNodeWithTag("SocialOverlayTitle").assertIsDisplayed()
+  }
+
+  @Test
   fun testAddingInterestsCorrectlyModifiesTheFlowRow() {
     composeTestRule.onNodeWithTag("AccountDetailsInterestsButton").performClick()
     composeTestRule.onNodeWithTag("InterestOverlayClickableRow: 0").performClick()
@@ -121,6 +128,22 @@ class AccountDetailsTest {
 
     composeTestRule.onNodeWithTag("AccountDetailsInterestChip: 0").assertExists()
     composeTestRule.onNodeWithTag("AccountDetailsInterestChip: 1").assertExists()
+  }
+
+  @Test
+  fun testAddingSocialsCorrectlyModifiesTheFlowRow() {
+    composeTestRule.onNodeWithTag("AccountDetailsSocialsButton").performScrollTo().performClick()
+    addNewUserSocial(composeTestRule, "facebook_username", "Facebook")
+    addNewUserSocial(composeTestRule, "instagram_username", "Instagram")
+    composeTestRule.onNodeWithTag("SocialOverlaySaveButton").performScrollTo().performClick()
+    composeTestRule
+        .onNodeWithTag("AccountDetailsSocialChip: Facebook")
+        .performScrollTo()
+        .assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag("AccountDetailsSocialChip: Instagram")
+        .performScrollTo()
+        .assertIsDisplayed()
   }
 
   @Test
