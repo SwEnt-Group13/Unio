@@ -85,6 +85,39 @@ class UserViewModel(val repository: UserRepository, initializeWithAuthenticatedU
     _user.value = user
   }
 
+  private fun getCurrentUserOrError(): User? {
+    val currentUser = _user.value
+    if (currentUser == null) {
+      Log.w("UserViewModel", "No user available in _user")
+      return null
+    } else {
+      return currentUser
+    }
+  }
+
+  fun saveEventForCurrentUser(eventUid: String, onSuccess: () -> Unit) {
+    val currentUser = getCurrentUserOrError() ?: return
+
+    currentUser.savedEvents.add(eventUid)
+    onSuccess()
+  }
+
+  fun unSaveEventForCurrentUser(eventUid: String, onSuccess: () -> Unit) {
+    val currentUser = getCurrentUserOrError() ?: return
+
+    if (isEventSavedForCurrentUser(eventUid)) {
+      currentUser.savedEvents.remove(eventUid)
+      onSuccess()
+    } else {
+      Log.w("UserViewModel", "Event not found in savedEvents")
+    }
+  }
+
+  fun isEventSavedForCurrentUser(eventUid: String): Boolean {
+    val currentUser = getCurrentUserOrError() ?: return false
+    return currentUser.savedEvents.contains(eventUid)
+  }
+
   companion object {
     val Factory: ViewModelProvider.Factory =
         object : ViewModelProvider.Factory {
@@ -93,53 +126,5 @@ class UserViewModel(val repository: UserRepository, initializeWithAuthenticatedU
             return UserViewModel(UserRepositoryFirestore(Firebase.firestore), false) as T
           }
         }
-  }
-
-  private fun getCurrentUserOrError(onFailure: (Exception) -> Unit): User? {
-    val currentUser = _user.value
-    if (currentUser == null) {
-      Log.w("UserViewModel", "No user available in _user")
-      onFailure(Exception("No user available"))
-      return null
-    } else {
-      return currentUser
-    }
-  }
-
-  fun saveEventForCurrentUser(
-      eventUid: String,
-      onSuccess: () -> Unit,
-      onFailure: (Exception) -> Unit
-  ) {
-    val currentUser = getCurrentUserOrError(onFailure) ?: return
-
-    currentUser.savedEvents.add(eventUid)
-    onSuccess()
-  }
-
-  fun unSaveEventForCurrentUser(
-      eventUid: String,
-      onSuccess: () -> Unit,
-      onFailure: (Exception) -> Unit
-  ) {
-    val currentUser = getCurrentUserOrError(onFailure) ?: return
-
-    if (isEventSavedForCurrentUser(eventUid)) {
-      currentUser.savedEvents.remove(eventUid)
-      onSuccess()
-    } else {
-      Log.w("UserViewModel", "Event not found in savedEvents")
-      onFailure(Exception("Event not found in savedEvents"))
-    }
-  }
-
-  fun isEventSavedForCurrentUser(eventUid: String): Boolean {
-    val currentUser = _user.value
-    if (currentUser == null) {
-      Log.w("UserViewModel", "No user available in _user, unable to check if event is saved")
-      return false
-    }
-
-    return currentUser.savedEvents.contains(eventUid)
   }
 }

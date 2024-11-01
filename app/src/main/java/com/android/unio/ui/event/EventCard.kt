@@ -96,14 +96,10 @@ fun EventCard(event: Event, userViewModel: UserViewModel) {
                       .clickable {
                         if (isSaved) {
                           userViewModel.unSaveEventForCurrentUser(
-                              event.uid,
-                              onSuccess = { isSaved = false },
-                              onFailure = { e -> Log.e("EventCard", "Failed to unsave event ", e) })
+                              event.uid, onSuccess = { isSaved = false })
                         } else {
                           userViewModel.saveEventForCurrentUser(
-                              event.uid,
-                              onSuccess = { isSaved = true },
-                              onFailure = { e -> Log.e("EventCard", "Failed to save event ", e) })
+                              event.uid, onSuccess = { isSaved = true })
                         }
                       }
                       .padding(4.dp)) {
