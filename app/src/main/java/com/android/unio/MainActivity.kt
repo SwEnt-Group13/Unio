@@ -111,11 +111,10 @@ fun UnioApp() {
       composable(Screen.EVENT_DETAILS) { navBackStackEntry ->
         // Get the event UID from the arguments
         val uid = navBackStackEntry.arguments?.getString("uid")
-        Log.e("MAINACTIVITY", uid!!)
         // Create the Event screen with the event UID
         uid?.let {
           EventScreen(
-              navigationAction = navigationActions, eventId = it, userViewModel = userViewModel
+              navigationAction = navigationActions, eventId = it,eventListViewModel, userViewModel = userViewModel
           )
         }
         /*uid?.let { EventScreen(navigationActions, it, userViewModel = userViewModel) }

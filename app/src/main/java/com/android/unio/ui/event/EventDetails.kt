@@ -13,7 +13,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.DirectionsWalk
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
@@ -44,7 +46,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.android.unio.R
 import com.android.unio.model.association.Association
@@ -82,11 +83,12 @@ private var scope: CoroutineScope? = null
 fun EventScreen(
     navigationAction: NavigationAction,
     eventId: String,
-    eventListViewModel: EventListViewModel = viewModel(factory = EventListViewModel.Factory),
-    userViewModel: UserViewModel
+    eventListViewModel: EventListViewModel,
+    userViewModel: UserViewModel // will be used later to show whether the event is saved
 ) {
 
-    val event = eventListViewModel.findEventById(eventId)
+
+    // mock associations before linking to backend
     val associations =
         listOf(
             Association(
@@ -138,7 +140,6 @@ fun EventScreen(
         topBar = {
             TopAppBar(
                 title = {},
-                // title = { Text("<Event Name>", modifier = Modifier.testTag("EventDetailsTitle")) },
                 navigationIcon = {
                     IconButton(
                         onClick = { navigationAction.goBack() },
@@ -173,10 +174,13 @@ fun EventScreen(
         },
         content = { padding ->
             // Mock image before linking to backend
-            Column(modifier = Modifier.testTag("eventDetailsPage")) {
+            Column(modifier = Modifier.testTag("eventDetailsPage").verticalScroll(
+                rememberScrollState()
+            )) {
                 AsyncImage(
                     PLACEHOLDER_IMAGE_URL,
                     "Event image",
+                    placeholder = painterResource(R.drawable.weskic),
                     modifier = Modifier
                         .fillMaxWidth()
                         .testTag("eventDetailsImage")
@@ -185,7 +189,7 @@ fun EventScreen(
                 Column(
                     modifier =
                     Modifier
-                        .testTag("EventDetailsInformationCard")
+                        .testTag("eventDetailsInformationCard")
                         .background(primaryLight)
                         .align(Alignment.CenterHorizontally)
                         .padding(12.dp)
@@ -201,11 +205,11 @@ fun EventScreen(
                     )
 
                     Row(modifier = Modifier.align(Alignment.Start)) {
-                        for (association in associations) {
+                        for (i in associations.indices) {
                             Row(
                                 modifier =
                                 Modifier
-                                    .testTag("eventOrganisingAssociation")
+                                    .testTag("eventOrganisingAssociation$i")
                                     .padding(end = 6.dp),
                                 horizontalArrangement = Arrangement.Center
                             ) {
@@ -223,12 +227,12 @@ fun EventScreen(
                                         .size(ASSOCIATION_ICON_SIZE)
                                         .clip(CircleShape)
                                         .align(Alignment.CenterVertically)
-                                        .testTag("associationLogo")
+                                        .testTag("associationLogo$i")
                                 )
                                 Text(
                                     "<Association name>",
                                     modifier = Modifier
-                                        .testTag("associationName")
+                                        .testTag("associationName$i")
                                         .padding(start = 3.dp),
                                     style = AppTypography.bodySmall,
                                     color = onPrimaryLight
