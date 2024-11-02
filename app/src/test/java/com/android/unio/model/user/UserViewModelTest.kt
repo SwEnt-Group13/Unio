@@ -1,5 +1,6 @@
 package com.android.unio.model.user
 
+import com.android.unio.mocks.user.MockUser
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK

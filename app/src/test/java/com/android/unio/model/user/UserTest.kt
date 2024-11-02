@@ -1,5 +1,6 @@
 package com.android.unio.model.user
 
+import com.android.unio.mocks.user.MockUser
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore

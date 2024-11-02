@@ -1,6 +1,7 @@
 package com.android.unio.model.event
 
 import androidx.test.core.app.ApplicationProvider
+import com.android.unio.mocks.event.MockEvent
 import com.google.firebase.FirebaseApp
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.CollectionReference

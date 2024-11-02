@@ -1,5 +1,6 @@
 package com.android.unio.model.event
 
+import com.android.unio.mocks.event.MockEvent
 import com.android.unio.model.firestore.FirestorePaths.EVENT_PATH
 import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.gms.tasks.Task

@@ -1,5 +1,6 @@
 package com.android.unio.model.association
 
+import com.android.unio.mocks.association.MockAssociation
 import com.android.unio.model.firestore.FirestorePaths.ASSOCIATION_PATH
 import com.android.unio.model.firestore.FirestorePaths.USER_PATH
 import com.android.unio.model.firestore.emptyFirestoreReferenceList
@@ -184,7 +185,7 @@ class AssociationRepositoryFirestoreTest {
   }
 
   @Test
-  fun ttestGetAssociationsByCategory() {
+  fun testGetAssociationsByCategory() {
     `when`(associationCollectionReference.whereEqualTo(eq("category"), any()))
         .thenReturn(associationCollectionReference)
     repository.getAssociationsByCategory(
