@@ -1,10 +1,12 @@
-package com.android.unio.model.event
+package com.android.unio.mocks.event
 
+import com.android.unio.mocks.association.MockAssociation
+import com.android.unio.mocks.map.MockLocation
 import com.android.unio.model.association.Association
-import com.android.unio.model.association.MockAssociation
+import com.android.unio.model.event.Event
+import com.android.unio.model.event.EventType
 import com.android.unio.model.firestore.MockReferenceList
 import com.android.unio.model.map.Location
-import com.android.unio.model.map.MockLocation
 import com.google.firebase.Timestamp
 import java.util.Date
 import kotlin.random.Random

@@ -1,8 +1,9 @@
-package com.android.unio.model.association
+package com.android.unio.mocks.association
 
+import com.android.unio.mocks.user.MockUser
+import com.android.unio.model.association.Association
+import com.android.unio.model.association.AssociationCategory
 import com.android.unio.model.firestore.MockReferenceList
-import com.android.unio.model.user.MockUser
-import com.android.unio.model.user.MockUser.Companion.createAllMockUsers
 import com.android.unio.model.user.User
 import kotlin.random.Random
 
@@ -82,7 +83,7 @@ class MockAssociation {
             if (userDependency) {
               emptyList()
             } else {
-              MockUser.createAllMockUsers(associationDependency = false)
+              MockUser.createAllMockUsers(associationDependency = true)
             }, // avoid circular dependency
         image: String = getRandomImage()
     ): Association {

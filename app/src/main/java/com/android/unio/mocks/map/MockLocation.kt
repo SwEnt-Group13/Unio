@@ -1,5 +1,6 @@
-package com.android.unio.model.map
+package com.android.unio.mocks.map
 
+import com.android.unio.model.map.Location
 import kotlin.random.Random
 
 /** MockLocation class provides sample instances of the Location data class for testing purposes. */

@@ -1,8 +1,12 @@
-package com.android.unio.model.user
+package com.android.unio.mocks.user
 
+import com.android.unio.mocks.association.MockAssociation
+import com.android.unio.mocks.firestore.MockReferenceList
 import com.android.unio.model.association.Association
-import com.android.unio.model.association.MockAssociation
-import com.android.unio.model.firestore.MockReferenceList
+import com.android.unio.model.user.Interest
+import com.android.unio.model.user.Social
+import com.android.unio.model.user.User
+import com.android.unio.model.user.UserSocial
 import kotlin.random.Random
 
 /** MockUser class provides sample instances of the User data class for testing purposes. */
