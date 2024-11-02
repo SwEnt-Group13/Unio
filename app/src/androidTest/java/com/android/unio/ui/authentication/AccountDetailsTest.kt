@@ -85,24 +85,42 @@ class AccountDetailsTest {
 
   @Test
   fun testOutLinedTextFieldsWorkCorrectly() {
-    composeTestRule.onNodeWithTag(AccountDetailsTestTags.FIRST_NAME_TEXT_FIELD).performTextInput("John")
-    composeTestRule.onNodeWithTag(AccountDetailsTestTags.LAST_NAME_TEXT_FIELD).performTextInput("Doe")
-    composeTestRule.onNodeWithTag(AccountDetailsTestTags.BIOGRAPHY_TEXT_FIELD).performTextInput("I am a student")
+    composeTestRule
+        .onNodeWithTag(AccountDetailsTestTags.FIRST_NAME_TEXT_FIELD)
+        .performTextInput("John")
+    composeTestRule
+        .onNodeWithTag(AccountDetailsTestTags.LAST_NAME_TEXT_FIELD)
+        .performTextInput("Doe")
+    composeTestRule
+        .onNodeWithTag(AccountDetailsTestTags.BIOGRAPHY_TEXT_FIELD)
+        .performTextInput("I am a student")
 
-    composeTestRule.onNodeWithTag(AccountDetailsTestTags.FIRST_NAME_TEXT_FIELD).assertTextContains("John")
-    composeTestRule.onNodeWithTag(AccountDetailsTestTags.LAST_NAME_TEXT_FIELD).assertTextContains("Doe")
-    composeTestRule.onNodeWithTag(AccountDetailsTestTags.BIOGRAPHY_TEXT_FIELD).assertTextContains("I am a student")
+    composeTestRule
+        .onNodeWithTag(AccountDetailsTestTags.FIRST_NAME_TEXT_FIELD)
+        .assertTextContains("John")
+    composeTestRule
+        .onNodeWithTag(AccountDetailsTestTags.LAST_NAME_TEXT_FIELD)
+        .assertTextContains("Doe")
+    composeTestRule
+        .onNodeWithTag(AccountDetailsTestTags.BIOGRAPHY_TEXT_FIELD)
+        .assertTextContains("I am a student")
   }
 
   @Test
   fun testInterestsButtonWorksCorrectly() {
-    composeTestRule.onNodeWithTag(AccountDetailsTestTags.INTERESTS_BUTTON).performScrollTo().performClick()
+    composeTestRule
+        .onNodeWithTag(AccountDetailsTestTags.INTERESTS_BUTTON)
+        .performScrollTo()
+        .performClick()
     composeTestRule.onNodeWithTag(InterestsOverlayTestTags.TITLE_TEXT).assertIsDisplayed()
   }
 
   @Test
   fun testSocialsButtonWorksCorrectly() {
-    composeTestRule.onNodeWithTag(AccountDetailsTestTags.SOCIALS_BUTTON).performScrollTo().performClick()
+    composeTestRule
+        .onNodeWithTag(AccountDetailsTestTags.SOCIALS_BUTTON)
+        .performScrollTo()
+        .performClick()
     composeTestRule.onNodeWithTag(SocialsOverlayTestTags.TITLE_TEXT).assertIsDisplayed()
   }
 
@@ -119,10 +137,16 @@ class AccountDetailsTest {
 
   @Test
   fun testAddingSocialsCorrectlyModifiesTheFlowRow() {
-    composeTestRule.onNodeWithTag(AccountDetailsTestTags.SOCIALS_BUTTON).performScrollTo().performClick()
+    composeTestRule
+        .onNodeWithTag(AccountDetailsTestTags.SOCIALS_BUTTON)
+        .performScrollTo()
+        .performClick()
     addNewUserSocial(composeTestRule, "facebook_username", "Facebook")
     addNewUserSocial(composeTestRule, "instagram_username", "Instagram")
-    composeTestRule.onNodeWithTag(SocialsOverlayTestTags.SAVE_BUTTON).performScrollTo().performClick()
+    composeTestRule
+        .onNodeWithTag(SocialsOverlayTestTags.SAVE_BUTTON)
+        .performScrollTo()
+        .performClick()
     composeTestRule
         .onNodeWithTag(AccountDetailsTestTags.SOCIALS_CHIP + "Facebook")
         .performScrollTo()
@@ -142,7 +166,10 @@ class AccountDetailsTest {
 
   @Test
   fun testCorrectlyDisplaysErrorWhenFirstNameIsEmpty() {
-    composeTestRule.onNodeWithTag(AccountDetailsTestTags.CONTINUE_BUTTON).performScrollTo().performClick()
+    composeTestRule
+        .onNodeWithTag(AccountDetailsTestTags.CONTINUE_BUTTON)
+        .performScrollTo()
+        .performClick()
     composeTestRule
         .onNodeWithTag(AccountDetailsTestTags.FIRST_NAME_ERROR_TEXT, useUnmergedTree = true)
         .assertIsDisplayed()
@@ -153,9 +180,16 @@ class AccountDetailsTest {
 
   @Test
   fun testContinueButtonCorrectlyNavigatesToHome() {
-    composeTestRule.onNodeWithTag(AccountDetailsTestTags.FIRST_NAME_TEXT_FIELD).performTextInput("John")
-    composeTestRule.onNodeWithTag(AccountDetailsTestTags.LAST_NAME_TEXT_FIELD).performTextInput("Doe")
-    composeTestRule.onNodeWithTag(AccountDetailsTestTags.CONTINUE_BUTTON).performScrollTo().performClick()
+    composeTestRule
+        .onNodeWithTag(AccountDetailsTestTags.FIRST_NAME_TEXT_FIELD)
+        .performTextInput("John")
+    composeTestRule
+        .onNodeWithTag(AccountDetailsTestTags.LAST_NAME_TEXT_FIELD)
+        .performTextInput("Doe")
+    composeTestRule
+        .onNodeWithTag(AccountDetailsTestTags.CONTINUE_BUTTON)
+        .performScrollTo()
+        .performClick()
     verify(navigationAction).navigateTo(screen = Screen.HOME)
   }
 }

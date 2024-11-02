@@ -33,7 +33,9 @@ class InterestOverlayTest {
       composeTestRule
           .onNodeWithTag(InterestsOverlayTestTags.TEXT + pair.first.name, useUnmergedTree = true)
           .assertExists()
-      composeTestRule.onNodeWithTag(InterestsOverlayTestTags.CHECKBOX + pair.first.name).assertExists()
+      composeTestRule
+          .onNodeWithTag(InterestsOverlayTestTags.CHECKBOX + pair.first.name)
+          .assertExists()
 
       if (index != interests.size - 1) {
         composeTestRule.onNodeWithTag(InterestsOverlayTestTags.DIVIDER + "$index").assertExists()
@@ -48,7 +50,9 @@ class InterestOverlayTest {
           .onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW + "$index")
           .performScrollTo()
           .performClick()
-      composeTestRule.onNodeWithTag(InterestsOverlayTestTags.CHECKBOX + pair.first.name).assertIsOn()
+      composeTestRule
+          .onNodeWithTag(InterestsOverlayTestTags.CHECKBOX + pair.first.name)
+          .assertIsOn()
     }
   }
 }

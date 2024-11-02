@@ -31,14 +31,19 @@ class SocialOverlayTest {
 
   @Test
   fun testSocialPromptAppearsWhenAddButtonClicked() {
-    composeTestRule.onNodeWithTag(SocialsOverlayTestTags.ADD_BUTTON).performScrollTo().performClick()
+    composeTestRule
+        .onNodeWithTag(SocialsOverlayTestTags.ADD_BUTTON)
+        .performScrollTo()
+        .performClick()
     composeTestRule.onNodeWithTag(SocialsOverlayTestTags.PROMPT_CARD).assertIsDisplayed()
   }
 
   @Test
   fun testCorrectlyAddsNewUserSocial() {
     addNewUserSocial(composeTestRule, "facebook_username", "Facebook")
-    composeTestRule.onNodeWithTag(SocialsOverlayTestTags.CLICKABLE_ROW + "Facebook").assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag(SocialsOverlayTestTags.CLICKABLE_ROW + "Facebook")
+        .assertIsDisplayed()
   }
 
   @Test
@@ -48,12 +53,17 @@ class SocialOverlayTest {
         .onNodeWithTag(SocialsOverlayTestTags.ICON + "Facebook", useUnmergedTree = true)
         .performScrollTo()
         .performClick()
-    composeTestRule.onNodeWithTag(SocialsOverlayTestTags.CLICKABLE_ROW + "Facebook").assertDoesNotExist()
+    composeTestRule
+        .onNodeWithTag(SocialsOverlayTestTags.CLICKABLE_ROW + "Facebook")
+        .assertDoesNotExist()
   }
 
   @Test
   fun testCancelButtonExistsSocialPrompt() {
-    composeTestRule.onNodeWithTag(SocialsOverlayTestTags.ADD_BUTTON).performScrollTo().performClick()
+    composeTestRule
+        .onNodeWithTag(SocialsOverlayTestTags.ADD_BUTTON)
+        .performScrollTo()
+        .performClick()
     composeTestRule.onNodeWithTag(SocialsOverlayTestTags.PROMPT_CANCEL_BUTTON).performClick()
     composeTestRule.onNodeWithTag(SocialsOverlayTestTags.PROMPT_CARD).assertDoesNotExist()
   }

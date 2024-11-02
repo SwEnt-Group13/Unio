@@ -45,16 +45,22 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberAsyncImagePainter
+import com.android.unio.R
 import com.android.unio.model.association.Association
 import com.android.unio.model.event.Event
 import com.android.unio.model.firestore.emptyFirestoreReferenceList
 import com.android.unio.model.image.ImageRepository
+import com.android.unio.model.image.ImageRepositoryFirebaseStorage
+import com.android.unio.model.strings.test_tags.AccountDetailsTestTags
 import com.android.unio.model.user.AccountDetailsError
 import com.android.unio.model.user.Interest
 import com.android.unio.model.user.User
+import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserSocial
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.model.user.checkNewUser
@@ -66,7 +72,25 @@ import com.android.unio.ui.theme.AppTypography
 import com.android.unio.ui.theme.primaryLight
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
+import com.google.firebase.firestore.firestore
+import com.google.firebase.storage.storage
 import kotlinx.coroutines.flow.MutableStateFlow
+
+@Composable
+@Preview
+fun AccountDetailsPreview() {
+  val navController = rememberNavController()
+  val navigationActions = NavigationAction(navController)
+  val db = Firebase.firestore
+  val userRepository = UserRepositoryFirestore(db)
+  val userViewModel = UserViewModel(userRepository, true)
+  val imageRepository = ImageRepositoryFirebaseStorage(Firebase.storage)
+
+  AccountDetails(
+      navigationAction = navigationActions,
+      userViewModel = userViewModel,
+      imageRepository = imageRepository)
+}
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -142,27 +166,31 @@ fun AccountDetails(
       modifier =
           Modifier.padding(vertical = 20.dp, horizontal = 40.dp)
               .verticalScroll(scrollState)
-              .testTag("AccountDetails"),
+              .testTag(AccountDetailsTestTags.ACCOUNT_DETAILS),
       verticalArrangement = Arrangement.SpaceBetween,
       horizontalAlignment = Alignment.CenterHorizontally) {
         Text(
-            text = "Tell us about yourself",
+            text = context.getString(R.string.account_details_title),
             style = AppTypography.headlineSmall,
-            modifier = Modifier.testTag("AccountDetailsTitleText"))
+            modifier = Modifier.testTag(AccountDetailsTestTags.TITLE_TEXT))
 
         val isFirstNameError = isErrors.contains(AccountDetailsError.EMPTY_FIRST_NAME)
         OutlinedTextField(
             modifier =
-                Modifier.padding(4.dp).fillMaxWidth().testTag("AccountDetailsFirstNameTextField"),
+                Modifier.padding(4.dp)
+                    .fillMaxWidth()
+                    .testTag(AccountDetailsTestTags.FIRST_NAME_TEXT_FIELD),
             label = {
-              Text("First name", modifier = Modifier.testTag("AccountDetailsFirstNameText"))
+              Text(
+                  context.getString(R.string.account_details_first_name),
+                  modifier = Modifier.testTag(AccountDetailsTestTags.FIRST_NAME_TEXT))
             },
             isError = (isFirstNameError),
             supportingText = {
               if (isFirstNameError) {
                 Text(
-                    AccountDetailsError.EMPTY_FIRST_NAME.errorMessage,
-                    modifier = Modifier.testTag("AccountDetailsFirstNameErrorText"))
+                    context.getString(AccountDetailsError.EMPTY_FIRST_NAME.errorMessage),
+                    modifier = Modifier.testTag(AccountDetailsTestTags.FIRST_NAME_ERROR_TEXT))
               }
             },
             onValueChange = { firstName = it },
@@ -170,16 +198,20 @@ fun AccountDetails(
         val isLastNameError = isErrors.contains(AccountDetailsError.EMPTY_LAST_NAME)
         OutlinedTextField(
             modifier =
-                Modifier.padding(4.dp).fillMaxWidth().testTag("AccountDetailsLastNameTextField"),
+                Modifier.padding(4.dp)
+                    .fillMaxWidth()
+                    .testTag(AccountDetailsTestTags.LAST_NAME_TEXT_FIELD),
             label = {
-              Text("Last name", modifier = Modifier.testTag("AccountDetailsLastNameText"))
+              Text(
+                  context.getString(R.string.account_details_last_name),
+                  modifier = Modifier.testTag(AccountDetailsTestTags.LAST_NAME_TEXT))
             },
             isError = (isLastNameError),
             supportingText = {
               if (isLastNameError) {
                 Text(
-                    AccountDetailsError.EMPTY_LAST_NAME.errorMessage,
-                    modifier = Modifier.testTag("AccountDetailsLastNameErrorText"))
+                    context.getString(AccountDetailsError.EMPTY_LAST_NAME.errorMessage),
+                    modifier = Modifier.testTag(AccountDetailsTestTags.LAST_NAME_ERROR_TEXT))
               }
             },
             onValueChange = { lastName = it },
@@ -189,8 +221,12 @@ fun AccountDetails(
                 Modifier.padding(4.dp)
                     .fillMaxWidth()
                     .height(200.dp)
-                    .testTag("AccountDetailsBioTextField"),
-            label = { Text("Bio", modifier = Modifier.testTag("AccountDetailsBioText")) },
+                    .testTag(AccountDetailsTestTags.BIOGRAPHY_TEXT_FIELD),
+            label = {
+              Text(
+                  context.getString(R.string.account_details_bio),
+                  modifier = Modifier.testTag(AccountDetailsTestTags.BIOGRAPHY_TEXT))
+            },
             onValueChange = { bio = it },
             value = bio)
 
@@ -199,9 +235,10 @@ fun AccountDetails(
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically) {
               Text(
-                  text = "Maybe add a profile picture?",
+                  text = context.getString(R.string.account_details_add_profile_picture),
                   modifier =
-                      Modifier.widthIn(max = 140.dp).testTag("AccountDetailsProfilePictureText"),
+                      Modifier.widthIn(max = 140.dp)
+                          .testTag(AccountDetailsTestTags.PROFILE_PICTURE_TEXT),
                   style = AppTypography.bodyLarge)
 
               if (profilePictureUri.value == Uri.EMPTY) {
@@ -216,7 +253,7 @@ fun AccountDetails(
                                       ActivityResultContracts.PickVisualMedia.ImageOnly))
                             }
                             .size(100.dp)
-                            .testTag("AccountDetailsProfilePictureIcon"))
+                            .testTag(AccountDetailsTestTags.PROFILE_PICTURE_ICON))
               } else {
                 ProfilePictureWithRemoveIcon(
                     profilePictureUri = profilePictureUri.value,
@@ -224,10 +261,10 @@ fun AccountDetails(
               }
             }
         OutlinedButton(
-            modifier = Modifier.fillMaxWidth().testTag("AccountDetailsInterestsButton"),
+            modifier = Modifier.fillMaxWidth().testTag(AccountDetailsTestTags.INTERESTS_BUTTON),
             onClick = { showInterestsOverlay = true }) {
               Icon(Icons.Default.Add, contentDescription = "Add")
-              Text("Add centers of interest")
+              Text(context.getString(R.string.account_details_add_interests))
             }
         FlowRow {
           interests.forEachIndexed { index, pair ->
@@ -236,7 +273,9 @@ fun AccountDetails(
                   label = { Text(pair.first.name) },
                   onClick = {},
                   selected = pair.second.value,
-                  modifier = Modifier.padding(3.dp).testTag("AccountDetailsInterestChip: $index"),
+                  modifier =
+                      Modifier.padding(3.dp)
+                          .testTag(AccountDetailsTestTags.INTERESTS_CHIP + "$index"),
                   avatar = {
                     Icon(
                         Icons.Default.Close,
@@ -247,10 +286,10 @@ fun AccountDetails(
           }
         }
         OutlinedButton(
-            modifier = Modifier.fillMaxWidth().testTag("AccountDetailsSocialsButton"),
+            modifier = Modifier.fillMaxWidth().testTag(AccountDetailsTestTags.SOCIALS_BUTTON),
             onClick = { showSocialsOverlay = true }) {
               Icon(Icons.Default.Add, contentDescription = "Add")
-              Text("Add links to other social media")
+              Text(context.getString(R.string.account_details_add_socials))
             }
         FlowRow(modifier = Modifier.fillMaxWidth()) {
           socials.forEachIndexed { index, userSocial ->
@@ -260,7 +299,7 @@ fun AccountDetails(
                 selected = true,
                 modifier =
                     Modifier.padding(3.dp)
-                        .testTag("AccountDetailsSocialChip: ${userSocial.social.title}"),
+                        .testTag(AccountDetailsTestTags.SOCIALS_CHIP + userSocial.social.title),
                 avatar = {
                   Icon(
                       Icons.Default.Close,
@@ -274,7 +313,7 @@ fun AccountDetails(
           }
         }
         Button(
-            modifier = Modifier.testTag("AccountDetailsContinueButton"),
+            modifier = Modifier.testTag(AccountDetailsTestTags.CONTINUE_BUTTON),
             onClick = {
               if (profilePictureUri.value == Uri.EMPTY) {
                 createUser("")
@@ -291,7 +330,7 @@ fun AccountDetails(
                     })
               }
             }) {
-              Text("Continue")
+              Text(context.getString(R.string.account_details_continue))
             }
       }
 
