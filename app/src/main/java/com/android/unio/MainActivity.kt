@@ -19,12 +19,13 @@ import com.android.unio.model.association.AssociationRepositoryFirestore
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.event.EventListViewModel
 import com.android.unio.model.event.EventRepositoryFirestore
+import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.search.SearchRepository
 import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserViewModel
-import com.android.unio.ui.accountCreation.AccountDetails
 import com.android.unio.ui.association.AssociationProfileScreen
+import com.android.unio.ui.authentication.AccountDetails
 import com.android.unio.ui.authentication.EmailVerificationScreen
 import com.android.unio.ui.authentication.WelcomeScreen
 import com.android.unio.ui.explore.ExploreScreen
@@ -34,16 +35,23 @@ import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Route
 import com.android.unio.ui.navigation.Screen
 import com.android.unio.ui.saved.SavedScreen
+import com.android.unio.ui.settings.SettingsScreen
 import com.android.unio.ui.theme.AppTheme
 import com.android.unio.ui.user.UserProfileScreen
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.firestore
+import com.google.firebase.storage.storage
+import me.zhanghai.compose.preference.ProvidePreferenceLocals
 
 class MainActivity : ComponentActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    setContent { Surface(modifier = Modifier.fillMaxSize()) { AppTheme { UnioApp() } } }
+    setContent {
+      Surface(modifier = Modifier.fillMaxSize()) {
+        ProvidePreferenceLocals { AppTheme { UnioApp() } }
+      }
+    }
   }
 }
 
@@ -54,18 +62,19 @@ fun UnioApp() {
   val db = Firebase.firestore
   val context = LocalContext.current
 
+  val userRepository = remember { UserRepositoryFirestore(db) }
   val associationRepository = remember { AssociationRepositoryFirestore(db) }
   val eventRepository = remember { EventRepositoryFirestore(db) }
-  val userRepositoryFirestore = remember { UserRepositoryFirestore(db) }
   val searchRepository = remember {
     SearchRepository(context, associationRepository, eventRepository)
   }
+  val imageRepository = ImageRepositoryFirebaseStorage(Firebase.storage)
 
+  val userViewModel = remember { UserViewModel(userRepository, true) }
   val associationViewModel = remember {
     AssociationViewModel(associationRepository, eventRepository)
   }
   val eventListViewModel = remember { EventListViewModel(eventRepository) }
-  val userViewModel = remember { UserViewModel(userRepositoryFirestore, true) }
   val searchViewModel = remember { SearchViewModel(searchRepository) }
 
   // Redirect user based on authentication state
@@ -73,7 +82,7 @@ fun UnioApp() {
     val user = auth.currentUser
     if (user != null) {
       if (user.isEmailVerified) {
-        userRepositoryFirestore.getUserWithId(
+        userRepository.getUserWithId(
             user.uid,
             {
               if (it.firstName.isNotEmpty()) {
@@ -98,11 +107,16 @@ fun UnioApp() {
     navigation(startDestination = Screen.WELCOME, route = Route.AUTH) {
       composable(Screen.WELCOME) { WelcomeScreen(navigationActions) }
       composable(Screen.EMAIL_VERIFICATION) { EmailVerificationScreen(navigationActions) }
-      composable(Screen.ACCOUNT_DETAILS) { AccountDetails(navigationActions, userViewModel) }
+      composable(Screen.ACCOUNT_DETAILS) {
+        AccountDetails(navigationActions, userViewModel, imageRepository)
+      }
     }
     navigation(startDestination = Screen.HOME, route = Route.HOME) {
       composable(Screen.HOME) {
-        HomeScreen(navigationActions, eventListViewModel, onAddEvent = {}, onEventClick = {})
+        HomeScreen(
+            navigationActions,
+            eventListViewModel = eventListViewModel,
+            userViewModel = userViewModel)
       }
       composable(Screen.MAP) { MapScreen(navigationActions, eventListViewModel) }
     }
@@ -116,9 +130,9 @@ fun UnioApp() {
 
         // Create the AssociationProfile screen with the association UID
         uid?.let {
-          AssociationProfileScreen(navigationAction = navigationActions, associationId = it)
+          AssociationProfileScreen(
+              navigationActions, it, associationViewModel, userViewModel = userViewModel)
         }
-        uid?.let { AssociationProfileScreen(navigationActions, it, associationViewModel) }
             ?: run {
               Log.e("AssociationProfile", "Association UID is null")
               Toast.makeText(context, "Association UID is null", Toast.LENGTH_SHORT).show()
@@ -130,6 +144,7 @@ fun UnioApp() {
     }
     navigation(startDestination = Screen.MY_PROFILE, route = Route.MY_PROFILE) {
       composable(Screen.MY_PROFILE) { UserProfileScreen(navigationActions, userViewModel) }
+      composable(Screen.SETTINGS) { SettingsScreen(navigationActions) }
     }
   }
 }

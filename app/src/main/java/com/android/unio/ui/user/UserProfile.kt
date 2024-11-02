@@ -129,7 +129,7 @@ fun UserProfileScreen(
         modifier = Modifier.align(Alignment.TopCenter))
   }
 
-  UserProfileBottomSheet(showSheet) { showSheet = false }
+  UserProfileBottomSheet(showSheet, navigationAction) { showSheet = false }
 }
 
 @OptIn(ExperimentalLayoutApi::class, ExperimentalMaterialApi::class)
@@ -148,14 +148,17 @@ fun UserProfileScreenContent(navigationAction: NavigationAction, user: User) {
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxWidth(0.7f).padding(24.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)) {
-          AsyncImage(
-              model = user.profilePicture,
-              contentDescription = "Profile Picture",
-              modifier =
-                  Modifier.size(100.dp)
-                      .clip(CircleShape)
-                      .background(Color.Gray)
-                      .testTag("UserProfilePicture"))
+          Box(modifier = Modifier.size(100.dp)) {
+            AsyncImage(
+                model = user.profilePicture,
+                contentDescription = "Profile Picture",
+                contentScale = ContentScale.Crop,
+                modifier =
+                    Modifier.size(100.dp)
+                        .clip(CircleShape)
+                        .background(Color.Gray)
+                        .testTag("UserProfilePicture"))
+          }
 
           // Display the user's name and biography.
           Text(
@@ -238,7 +241,11 @@ fun UserProfileScreenContent(navigationAction: NavigationAction, user: User) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun UserProfileBottomSheet(showSheet: Boolean, onClose: () -> Unit) {
+fun UserProfileBottomSheet(
+    showSheet: Boolean,
+    navigationAction: NavigationAction,
+    onClose: () -> Unit
+) {
 
   val sheetState = rememberModalBottomSheetState()
   val scope = rememberCoroutineScope()
@@ -252,7 +259,7 @@ fun UserProfileBottomSheet(showSheet: Boolean, onClose: () -> Unit) {
         onDismissRequest = onClose,
         properties = ModalBottomSheetProperties(shouldDismissOnBackPress = true),
     ) {
-      Column(modifier = Modifier.padding(start = 16.dp)) {
+      Column(modifier = Modifier) {
         TextButton(
             modifier = Modifier.fillMaxWidth(),
             onClick = {
@@ -263,7 +270,11 @@ fun UserProfileBottomSheet(showSheet: Boolean, onClose: () -> Unit) {
         TextButton(
             modifier = Modifier.fillMaxWidth(),
             onClick = {
-              Toast.makeText(context, "Not yet implemented.", Toast.LENGTH_SHORT).show()
+              scope.launch {
+                sheetState.hide()
+                onClose()
+                navigationAction.navigateTo(Screen.SETTINGS)
+              }
             }) {
               Text("Settings")
             }

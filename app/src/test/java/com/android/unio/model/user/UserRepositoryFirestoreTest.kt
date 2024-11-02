@@ -1,6 +1,7 @@
 package com.android.unio.model.user
 
 import com.android.unio.model.association.Association
+import com.android.unio.model.event.Event
 import com.android.unio.model.firestore.FirestorePaths.ASSOCIATION_PATH
 import com.android.unio.model.firestore.FirestorePaths.USER_PATH
 import com.android.unio.model.firestore.emptyFirestoreReferenceList
@@ -30,6 +31,7 @@ class UserRepositoryFirestoreTest {
   private lateinit var db: FirebaseFirestore
   @Mock private lateinit var userCollectionReference: CollectionReference
   @Mock private lateinit var associationCollectionReference: CollectionReference
+  @Mock private lateinit var eventCollectionReference: CollectionReference
   @Mock private lateinit var querySnapshot: QuerySnapshot
   @Mock private lateinit var queryDocumentSnapshot1: QueryDocumentSnapshot
   @Mock private lateinit var map1: Map<String, Any>
@@ -65,6 +67,7 @@ class UserRepositoryFirestoreTest {
             biography = "An example user",
             followedAssociations = Association.emptyFirestoreReferenceList(),
             joinedAssociations = Association.emptyFirestoreReferenceList(),
+            savedEvents = Event.emptyFirestoreReferenceList(),
             interests = listOf(Interest.SPORTS, Interest.MUSIC),
             socials =
                 listOf(
@@ -81,6 +84,7 @@ class UserRepositoryFirestoreTest {
             biography = "An example user 2",
             followedAssociations = Association.emptyFirestoreReferenceList(),
             joinedAssociations = Association.emptyFirestoreReferenceList(),
+            savedEvents = Event.emptyFirestoreReferenceList(),
             interests = listOf(Interest.FESTIVALS, Interest.GAMING),
             socials =
                 listOf(
@@ -119,7 +123,7 @@ class UserRepositoryFirestoreTest {
     `when`(map1.get("firstName")).thenReturn(user1.firstName)
     `when`(map1.get("lastName")).thenReturn(user1.lastName)
     `when`(map1.get("biography")).thenReturn(user1.biography)
-    `when`(map1.get("followingAssociations"))
+    `when`(map1.get("followedAssociations"))
         .thenReturn(user1.followedAssociations.list.value.map { it.uid })
     `when`(map1.get("joinedAssociations"))
         .thenReturn(user1.joinedAssociations.list.value.map { it.uid })
@@ -141,7 +145,7 @@ class UserRepositoryFirestoreTest {
     `when`(map2.get("firstName")).thenReturn(user2.firstName)
     `when`(map2.get("lastName")).thenReturn(user2.lastName)
     `when`(map2.get("biography")).thenReturn(user2.biography)
-    `when`(map2.get("followingAssociations"))
+    `when`(map2.get("followedAssociations"))
         .thenReturn(user2.followedAssociations.list.value.map { it.uid })
     `when`(map2.get("joinedAssociations"))
         .thenReturn(user2.joinedAssociations.list.value.map { it.uid })
@@ -207,6 +211,7 @@ class UserRepositoryFirestoreTest {
                   biography = "",
                   followedAssociations = Association.emptyFirestoreReferenceList(),
                   joinedAssociations = Association.emptyFirestoreReferenceList(),
+                  savedEvents = Event.emptyFirestoreReferenceList(),
                   interests = emptyList(),
                   socials = emptyList(),
                   profilePicture = "")

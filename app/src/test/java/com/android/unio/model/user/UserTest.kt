@@ -1,6 +1,9 @@
 package com.android.unio.model.user
 
 import com.android.unio.mocks.user.MockUser
+import com.android.unio.model.association.Association
+import com.android.unio.model.event.Event
+import com.android.unio.model.firestore.emptyFirestoreReferenceList
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
@@ -44,7 +47,6 @@ class UserTest {
                     UserSocial(Social.INSTAGRAM, "Insta"),
                     UserSocial(Social.WEBSITE, "example.com")),
             profilePicture = "https://www.example.com/image")
-
     assertEquals("1", user.uid)
     assertEquals("john@example.com", user.email)
     assertEquals("John", user.firstName)
