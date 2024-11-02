@@ -7,6 +7,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
+import com.android.unio.model.strings.test_tags.InterestsOverlayTestTags
 import com.android.unio.model.user.Interest
 import org.junit.Before
 import org.junit.Rule
@@ -24,18 +25,18 @@ class InterestOverlayTest {
 
   @Test
   fun testEverythingIsDisplayed() {
-    composeTestRule.onNodeWithTag("InterestOverlayTitle").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("InterestOverlaySubtitle").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("InterestOverlaySaveButton").assertIsDisplayed()
+    composeTestRule.onNodeWithTag(InterestsOverlayTestTags.TITLE_TEXT).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(InterestsOverlayTestTags.SUBTITLE_TEXT).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(InterestsOverlayTestTags.SAVE_BUTTON).assertIsDisplayed()
 
     interests.forEachIndexed { index, pair ->
       composeTestRule
-          .onNodeWithTag("InterestOverlayText: ${pair.first.name}", useUnmergedTree = true)
+          .onNodeWithTag(InterestsOverlayTestTags.TEXT + pair.first.name, useUnmergedTree = true)
           .assertExists()
-      composeTestRule.onNodeWithTag("InterestOverlayCheckbox: ${pair.first.name}").assertExists()
+      composeTestRule.onNodeWithTag(InterestsOverlayTestTags.CHECKBOX + pair.first.name).assertExists()
 
       if (index != interests.size - 1) {
-        composeTestRule.onNodeWithTag("InterestOverlayDivider: $index").assertExists()
+        composeTestRule.onNodeWithTag(InterestsOverlayTestTags.DIVIDER + "$index").assertExists()
       }
     }
   }
@@ -44,10 +45,10 @@ class InterestOverlayTest {
   fun testWhenCheckBoxCheckedInterestStateChanges() {
     interests.forEachIndexed { index, pair ->
       composeTestRule
-          .onNodeWithTag("InterestOverlayClickableRow: $index")
+          .onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW + "$index")
           .performScrollTo()
           .performClick()
-      composeTestRule.onNodeWithTag("InterestOverlayCheckbox: ${pair.first.name}").assertIsOn()
+      composeTestRule.onNodeWithTag(InterestsOverlayTestTags.CHECKBOX + pair.first.name).assertIsOn()
     }
   }
 }
