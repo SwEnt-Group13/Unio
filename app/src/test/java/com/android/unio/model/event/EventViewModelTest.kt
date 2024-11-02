@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.test.core.app.ApplicationProvider
 import com.android.unio.mocks.event.MockEvent
 import com.android.unio.model.firestore.ReferenceList
-import com.android.unio.model.map.Location
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.google.firebase.FirebaseApp
 import com.google.firebase.Timestamp

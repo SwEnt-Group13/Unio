@@ -1,9 +1,6 @@
 package com.android.unio.model.user
 
 import com.android.unio.mocks.user.MockUser
-import com.android.unio.model.association.Association
-import com.android.unio.model.event.Event
-import com.android.unio.model.firestore.emptyFirestoreReferenceList
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
