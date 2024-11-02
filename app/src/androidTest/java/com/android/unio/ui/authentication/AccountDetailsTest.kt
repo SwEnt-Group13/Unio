@@ -73,8 +73,12 @@ class AccountDetailsTest {
   @Test
   fun testEverythingIsDisplayed() {
     composeTestRule.onNodeWithTag(AccountDetailsTestTags.TITLE_TEXT).assertIsDisplayed()
-    composeTestRule.onNodeWithTag(AccountDetailsTestTags.FIRST_NAME_TEXT).assertIsDisplayed()
-    composeTestRule.onNodeWithTag(AccountDetailsTestTags.LAST_NAME_TEXT).assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag(AccountDetailsTestTags.FIRST_NAME_TEXT, useUnmergedTree = true)
+        .assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag(AccountDetailsTestTags.LAST_NAME_TEXT, useUnmergedTree = true)
+        .assertIsDisplayed()
     composeTestRule.onNodeWithTag(AccountDetailsTestTags.BIOGRAPHY_TEXT_FIELD).assertExists()
     composeTestRule.onNodeWithTag(AccountDetailsTestTags.PROFILE_PICTURE_TEXT).assertExists()
     composeTestRule.onNodeWithTag(AccountDetailsTestTags.PROFILE_PICTURE_ICON).assertExists()
