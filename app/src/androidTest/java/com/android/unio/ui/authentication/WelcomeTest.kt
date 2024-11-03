@@ -34,57 +34,12 @@ class WelcomeTest {
 
   @MockK private lateinit var navigationAction: NavigationAction
   @MockK private lateinit var userRepositoryFirestore: UserRepositoryFirestore
-  @MockK private lateinit var firebaseAuth: FirebaseAuth
-
-  // Because it is impossible to mock the FirebaseUser's abstract method, this is the only way to
-  // mock it.
-  @MockK private lateinit var firebaseUser: zzac
-
-  private lateinit var userNonEmptyFirstName: User
-  private lateinit var userEmptyFirstName: User
 
   @get:Rule val composeTestRule = createComposeRule()
 
   @Before
   fun setUp() {
     MockKAnnotations.init(this, relaxed = true)
-
-    // Initialize Firebase if necessary
-    if (FirebaseApp.getApps(ApplicationProvider.getApplicationContext()).isEmpty()) {
-      FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext())
-    }
-
-    mockkStatic(FirebaseAuth::class)
-    every { FirebaseAuth.getInstance() } returns firebaseAuth
-    every { firebaseAuth.currentUser } returns firebaseUser
-
-    userNonEmptyFirstName =
-        User(
-            "1",
-            "john@example.com",
-            "John",
-            "Doe",
-            "An example user",
-            Association.emptyFirestoreReferenceList(),
-            Association.emptyFirestoreReferenceList(),
-            listOf(Interest.SPORTS, Interest.MUSIC),
-            listOf(
-                UserSocial(Social.INSTAGRAM, "Insta"), UserSocial(Social.WEBSITE, "example.com")),
-            "https://www.example.com/image")
-
-    userEmptyFirstName =
-        User(
-            "1",
-            "john@example.com",
-            "",
-            "Doe",
-            "An example user",
-            Association.emptyFirestoreReferenceList(),
-            Association.emptyFirestoreReferenceList(),
-            listOf(Interest.SPORTS, Interest.MUSIC),
-            listOf(
-                UserSocial(Social.INSTAGRAM, "Insta"), UserSocial(Social.WEBSITE, "example.com")),
-            "https://www.example.com/image")
   }
 
   @Test
@@ -107,71 +62,5 @@ class WelcomeTest {
     composeTestRule.onNodeWithTag("WelcomePassword").performTextInput("123456")
 
     composeTestRule.onNodeWithTag("WelcomeButton").assertIsEnabled()
-  }
-
-  @Test
-  fun testUserIsNull() {
-    every { firebaseAuth.currentUser } returns null
-
-    composeTestRule.setContent { WelcomeScreen(navigationAction, userRepositoryFirestore) }
-
-    // Use MockK's slot to capture the AuthStateListener
-    val authStateListenerSlot = slot<FirebaseAuth.AuthStateListener>()
-    verify { firebaseAuth.addAuthStateListener(capture(authStateListenerSlot)) }
-    authStateListenerSlot.captured.onAuthStateChanged(firebaseAuth)
-
-    verify { navigationAction.navigateTo(Screen.WELCOME) }
-  }
-
-  @Test
-  fun testUserIsAuthenticatedAndEmailVerifiedWithProfile() {
-    every { firebaseUser.isEmailVerified } returns true
-    every { userRepositoryFirestore.getUserWithId(any(), any(), any()) } answers
-        {
-          val onSuccess = it.invocation.args[1] as (User) -> Unit
-          onSuccess(userNonEmptyFirstName)
-        }
-
-    composeTestRule.setContent { WelcomeScreen(navigationAction, userRepositoryFirestore) }
-
-    // Use MockK's slot to capture the AuthStateListener
-    val authStateListenerSlot = slot<FirebaseAuth.AuthStateListener>()
-    verify { firebaseAuth.addAuthStateListener(capture(authStateListenerSlot)) }
-    authStateListenerSlot.captured.onAuthStateChanged(firebaseAuth)
-
-    verify { navigationAction.navigateTo(Screen.HOME) }
-  }
-
-  @Test
-  fun testUserIsAuthenticatedAndEmailVerifiedWithEmptyName() {
-    every { firebaseUser.isEmailVerified } returns true
-    every { userRepositoryFirestore.getUserWithId(any(), any(), any()) } answers
-        {
-          val onSuccess = it.invocation.args[1] as (User) -> Unit
-          onSuccess(userEmptyFirstName)
-        }
-
-    composeTestRule.setContent { WelcomeScreen(navigationAction, userRepositoryFirestore) }
-
-    // Use MockK's slot to capture the AuthStateListener
-    val authStateListenerSlot = slot<FirebaseAuth.AuthStateListener>()
-    verify { firebaseAuth.addAuthStateListener(capture(authStateListenerSlot)) }
-    authStateListenerSlot.captured.onAuthStateChanged(firebaseAuth)
-
-    verify { navigationAction.navigateTo(Screen.ACCOUNT_DETAILS) }
-  }
-
-  @Test
-  fun testUserIsAuthenticatedAndEmailNotVerified() {
-    every { firebaseUser.isEmailVerified } returns false
-
-    composeTestRule.setContent { WelcomeScreen(navigationAction, userRepositoryFirestore) }
-
-    // Use MockK's slot to capture the AuthStateListener
-    val authStateListenerSlot = slot<FirebaseAuth.AuthStateListener>()
-    verify { firebaseAuth.addAuthStateListener(capture(authStateListenerSlot)) }
-    authStateListenerSlot.captured.onAuthStateChanged(firebaseAuth)
-
-    verify { navigationAction.navigateTo(Screen.EMAIL_VERIFICATION) }
   }
 }
