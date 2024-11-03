@@ -60,9 +60,8 @@ class AssociationViewModelTest {
 
     testAssociations =
         listOf(
-          MockAssociation.createMockAssociation(uid = "1", name = "ACM"),
+            MockAssociation.createMockAssociation(uid = "1", name = "ACM"),
             MockAssociation.createMockAssociation(uid = "2", name = "IEEE"))
-
 
     viewModel = AssociationViewModel(associationRepository, eventRepository)
   }

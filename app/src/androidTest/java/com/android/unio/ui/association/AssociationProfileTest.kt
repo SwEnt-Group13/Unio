@@ -14,13 +14,10 @@ import androidx.navigation.NavHostController
 import com.android.unio.mocks.association.MockAssociation
 import com.android.unio.mocks.event.MockEvent
 import com.android.unio.model.association.Association
-import com.android.unio.model.association.AssociationCategory
 import com.android.unio.model.association.AssociationRepository
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventRepository
-import com.android.unio.model.firestore.firestoreReferenceListWith
-import com.android.unio.model.user.User
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.navigation.NavigationAction
 import com.google.firebase.firestore.CollectionReference
@@ -53,11 +50,12 @@ class AssociationProfileTest {
   fun setUp() {
     MockitoAnnotations.openMocks(this)
 
-    associations = listOf(MockAssociation.createMockAssociation(uid = "1"),
-            MockAssociation.createMockAssociation(uid="2"))
+    associations =
+        listOf(
+            MockAssociation.createMockAssociation(uid = "1"),
+            MockAssociation.createMockAssociation(uid = "2"))
 
-    events = listOf(MockEvent.createMockEvent(uid = "a"),
-        MockEvent.createMockEvent(uid = "b"))
+    events = listOf(MockEvent.createMockEvent(uid = "a"), MockEvent.createMockEvent(uid = "b"))
 
     `when`(db.collection(any())).thenReturn(collectionReference)
     `when`(associationRepository.getAssociations(any(), any())).thenAnswer { invocation ->
@@ -87,7 +85,7 @@ class AssociationProfileTest {
     }
     composeTestRule.waitForIdle()
 
-      assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationScreen"))
+    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationScreen"))
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("goBackButton"))
 
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationImageHeader"))

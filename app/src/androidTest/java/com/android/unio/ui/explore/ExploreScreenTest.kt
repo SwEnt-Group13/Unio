@@ -12,9 +12,7 @@ import com.android.unio.model.association.AssociationCategory
 import com.android.unio.model.association.AssociationRepository
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.event.EventRepository
-import com.android.unio.model.firestore.emptyFirestoreReferenceList
 import com.android.unio.model.search.SearchViewModel
-import com.android.unio.model.user.User
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
 import com.google.firebase.firestore.CollectionReference
@@ -57,7 +55,11 @@ class ExploreScreenTest {
 
     `when`(db.collection(any())).thenReturn(collectionReference)
     associations =
-        listOf(MockAssociation.createMockAssociation(uid = "1", name="ACM", category = AssociationCategory.SCIENCE_TECH), MockAssociation.createMockAssociation(uid = "2", name="Musical", category = AssociationCategory.ARTS))
+        listOf(
+            MockAssociation.createMockAssociation(
+                uid = "1", name = "ACM", category = AssociationCategory.SCIENCE_TECH),
+            MockAssociation.createMockAssociation(
+                uid = "2", name = "Musical", category = AssociationCategory.ARTS))
 
     sortedByCategoryAssociations =
         getSortedEntriesAssociationsByCategory(associations.groupBy { it.category })
