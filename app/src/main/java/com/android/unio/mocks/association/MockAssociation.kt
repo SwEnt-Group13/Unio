@@ -11,6 +11,7 @@ import com.android.unio.model.user.User
  * purposes.
  */
 class MockAssociation {
+
   companion object {
 
     /** Enums for each edge-case category * */
@@ -32,7 +33,8 @@ class MockAssociation {
       EMPTY(""),
       SHORT("EPFL"),
       LONG_WITH_ACCENTS("LongAssociationNameWithSpecialChar-éñ"),
-      SINGLE_CHAR("N")
+      SINGLE_CHAR("N"),
+      TYPICAL("Mucial")
     }
 
     enum class EdgeCaseFullName(val value: String) {

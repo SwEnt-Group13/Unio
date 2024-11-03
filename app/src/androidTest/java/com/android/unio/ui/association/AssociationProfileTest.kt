@@ -191,4 +191,56 @@ class AssociationProfileTest {
 
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("associationNotFound"))
   }
+
+  @Test
+  fun testAssociationProfileEmptyUid() {
+    composeTestRule.setContent {
+      AssociationProfileScreen(
+          navigationAction,
+          "",
+          associationViewModel,
+          userViewModel = viewModel(factory = UserViewModel.Factory))
+    }
+
+    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("associationNotFound"))
+  }
+
+  @Test
+  fun testAssociationProfileSpecialCharacterUid() {
+    composeTestRule.setContent {
+      AssociationProfileScreen(
+          navigationAction,
+          MockAssociation.Companion.EdgeCaseUid.SPECIAL_CHARACTERS.value,
+          associationViewModel,
+          userViewModel = viewModel(factory = UserViewModel.Factory))
+    }
+
+    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationProfileTitle"))
+  }
+
+  @Test
+  fun testAssociationProfileLongUid() {
+    composeTestRule.setContent {
+      AssociationProfileScreen(
+          navigationAction,
+          MockAssociation.Companion.EdgeCaseUid.LONG.value,
+          associationViewModel,
+          userViewModel = viewModel(factory = UserViewModel.Factory))
+    }
+
+    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationProfileTitle"))
+  }
+
+  @Test
+  fun testAssociationProfileTypicalUid() {
+    composeTestRule.setContent {
+      AssociationProfileScreen(
+          navigationAction,
+          MockAssociation.Companion.EdgeCaseUid.TYPICAL.value,
+          associationViewModel,
+          userViewModel = viewModel(factory = UserViewModel.Factory))
+    }
+
+    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationProfileTitle"))
+  }
 }
