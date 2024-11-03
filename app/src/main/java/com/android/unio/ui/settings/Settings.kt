@@ -1,11 +1,15 @@
 package com.android.unio.ui.settings
 
+import android.Manifest
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
+import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Nightlight
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Smartphone
@@ -25,9 +29,12 @@ import com.android.unio.R
 import com.android.unio.model.preferences.PreferenceKeys
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.theme.Theme
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import me.zhanghai.compose.preference.LocalPreferenceFlow
 import me.zhanghai.compose.preference.ProvidePreferenceLocals
 import me.zhanghai.compose.preference.listPreference
+import me.zhanghai.compose.preference.preference
 import me.zhanghai.compose.preference.switchPreference
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -52,9 +59,23 @@ fun SettingsScreen(navigationAction: NavigationAction) {
       }
 }
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun SettingsContainer() {
   val context = LocalContext.current
+
+  // Location Permission
+  val locationPermissions =
+      rememberMultiplePermissionsState(
+          permissions =
+              listOf(
+                  Manifest.permission.ACCESS_FINE_LOCATION,
+                  Manifest.permission.ACCESS_COARSE_LOCATION))
+  val requestPermissionLauncher =
+      rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
+          permissions ->
+        locationPermissions.launchMultiplePermissionRequest()
+      }
 
   ProvidePreferenceLocals(flow = LocalPreferenceFlow.current) {
     LazyColumn(
@@ -90,6 +111,29 @@ fun SettingsContainer() {
                     context.getString(R.string.settings_notifications_content_description))
           },
           defaultValue = true)
+      preference(
+          modifier = Modifier.testTag(PreferenceKeys.LOCATION_PERMISSION),
+          key = PreferenceKeys.LOCATION_PERMISSION,
+          title = { Text("Enable Location Permissions") },
+          summary = {
+            if (locationPermissions.allPermissionsGranted) {
+              Text("All location permissions have been granted")
+            } else {
+              Text("There are missing location permissions")
+            }
+          },
+          icon = {
+            Icon(
+                imageVector = Icons.Default.LocationOn, contentDescription = "Location Permissions")
+          },
+          onClick = {
+            if (!locationPermissions.allPermissionsGranted) {
+              requestPermissionLauncher.launch(
+                  arrayOf(
+                      Manifest.permission.ACCESS_FINE_LOCATION,
+                      Manifest.permission.ACCESS_COARSE_LOCATION))
+            }
+          })
     }
   }
 }
