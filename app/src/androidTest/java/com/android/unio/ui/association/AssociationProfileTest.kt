@@ -11,6 +11,8 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import com.android.unio.mocks.association.MockAssociation
+import com.android.unio.mocks.event.MockEvent
 import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationCategory
 import com.android.unio.model.association.AssociationRepository
@@ -51,53 +53,11 @@ class AssociationProfileTest {
   fun setUp() {
     MockitoAnnotations.openMocks(this)
 
-    associations =
-        listOf(
-            Association(
-                uid = "1",
-                url = "this is an url",
-                name = "ACM",
-                fullName = "Association for Computing Machinery",
-                category = AssociationCategory.SCIENCE_TECH,
-                description =
-                    "ACM is the world's largest educational and scientific computing society.",
-                members = User.firestoreReferenceListWith(listOf("1", "2", "3")),
-                followersCount = 321,
-                image = "https://www.example.com/image.jpg"),
-            Association(
-                uid = "2",
-                url = "this is an url",
-                name = "IEEE",
-                fullName = "Institute of Electrical and Electronics Engineers",
-                category = AssociationCategory.SCIENCE_TECH,
-                description =
-                    "IEEE is the world's largest technical professional organization dedicated to advancing technology for the benefit of humanity.",
-                members = User.firestoreReferenceListWith(listOf("4", "5", "6")),
-                followersCount = 654,
-                image = "https://www.example.com/image.jpg"))
+    associations = listOf(MockAssociation.createMockAssociation(uid = "1"),
+            MockAssociation.createMockAssociation(uid="2"))
 
-    events =
-        listOf(
-            Event(
-                uid = "a",
-                title = "Event A",
-                organisers = Association.firestoreReferenceListWith(listOf("1")),
-                taggedAssociations = Association.firestoreReferenceListWith(listOf("1")),
-                image = "",
-                description = "Description of event A",
-                catchyDescription = "Catchy description of event A",
-                price = 0.0,
-            ),
-            Event(
-                uid = "b",
-                title = "Event B",
-                organisers = Association.firestoreReferenceListWith(listOf("1")),
-                taggedAssociations = Association.firestoreReferenceListWith(listOf("1")),
-                image = "",
-                description = "Description of event B",
-                catchyDescription = "Catchy description of event B",
-                price = 0.0,
-            ))
+    events = listOf(MockEvent.createMockEvent(uid = "a"),
+        MockEvent.createMockEvent(uid = "b"))
 
     `when`(db.collection(any())).thenReturn(collectionReference)
     `when`(associationRepository.getAssociations(any(), any())).thenAnswer { invocation ->
@@ -127,7 +87,7 @@ class AssociationProfileTest {
     }
     composeTestRule.waitForIdle()
 
-    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationScreen"))
+      assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationScreen"))
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("goBackButton"))
 
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationImageHeader"))

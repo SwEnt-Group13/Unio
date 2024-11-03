@@ -57,10 +57,8 @@ class AssociationRepositoryFirestoreTest {
     every { db.collection(ASSOCIATION_PATH) } returns associationCollectionReference
     every { db.collection(USER_PATH) } returns userCollectionReference
 
-    association1 =
-        MockAssociation.createMockAssociation(category = AssociationCategory.SCIENCE_TECH)
-    association2 =
-        MockAssociation.createMockAssociation(category = AssociationCategory.SCIENCE_TECH)
+    association1 = MockAssociation.createMockAssociation(category = AssociationCategory.SCIENCE_TECH)
+    association2 = MockAssociation.createMockAssociation(category = AssociationCategory.SCIENCE_TECH)
 
     // When getting the collection, return the task
     `when`(associationCollectionReference.get()).thenReturn(querySnapshotTask)
@@ -86,8 +84,7 @@ class AssociationRepositoryFirestoreTest {
     }
 
     // Set up mock data maps
-    map1 =
-        mapOf(
+    map1 = mapOf(
             "uid" to association1.uid,
             "url" to association1.url,
             "name" to association1.name,
@@ -98,8 +95,7 @@ class AssociationRepositoryFirestoreTest {
             "followersCount" to association1.followersCount,
             "image" to association1.image)
 
-    map2 =
-        mapOf(
+    map2 = mapOf(
             "uid" to association2.uid,
             "url" to association2.url,
             "name" to association2.name,
@@ -259,4 +255,6 @@ class AssociationRepositoryFirestoreTest {
 
     verify(documentReference).delete()
   }
+
+
 }

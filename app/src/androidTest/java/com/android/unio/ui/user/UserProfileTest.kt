@@ -6,6 +6,9 @@ import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
+import com.android.unio.mocks.association.MockAssociation
+import com.android.unio.mocks.event.MockEvent
+import com.android.unio.mocks.user.MockUser
 import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationCategory
 import com.android.unio.model.event.Event
@@ -31,48 +34,7 @@ class UserProfileTest {
 
   @get:Rule val composeTestRule = createComposeRule()
 
-  private val association =
-      Association(
-          uid = "1234",
-          url = "https://www.epfl.ch",
-          name = "EPFL",
-          fullName = "École Polytechnique Fédérale de Lausanne",
-          category = AssociationCategory.EPFL_BODIES,
-          description = "EPFL is a research institute and university in Lausanne, Switzerland.",
-          members = User.firestoreReferenceListWith(listOf("1234")),
-          followersCount = 0,
-          image = "https://www.epfl.ch/profile.jpg")
-
-  private val event =
-      Event(
-          uid = "1234",
-          title = "Best Event",
-          organisers = Association.firestoreReferenceListWith(listOf("1234")),
-          taggedAssociations = Association.firestoreReferenceListWith(listOf("1234")),
-          image = "1234",
-          description = "blablabla",
-          catchyDescription = "bla",
-          price = 0.1,
-          date = Timestamp(GregorianCalendar(2004, 7, 1).time),
-          location = Location(1.2345, 2.3455, "Somewhere"),
-          types = listOf(EventType.OTHER))
-
-  private val user =
-      User(
-          uid = "1",
-          email = "1@gmail.com",
-          firstName = "userFirst",
-          lastName = "userLast",
-          biography = "An example user",
-          followedAssociations = Association.firestoreReferenceListWith(listOf("1234", "1234")),
-          joinedAssociations = Association.firestoreReferenceListWith(listOf("1234", "1234")),
-          savedEvents = Event.firestoreReferenceListWith(listOf("event", "event")),
-          interests = listOf(Interest.SPORTS, Interest.MUSIC),
-          socials =
-              listOf(
-                  UserSocial(Social.INSTAGRAM, "Instagram"),
-                  UserSocial(Social.WEBSITE, "example.com")),
-          profilePicture = "https://www.example.com/image")
+  private val user = MockUser.createMockUser()
 
   @Before
   fun setUp() {

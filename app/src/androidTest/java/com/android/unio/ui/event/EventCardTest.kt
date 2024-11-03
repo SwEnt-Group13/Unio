@@ -2,6 +2,9 @@ package com.android.unio.ui.event
 
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
+import com.android.unio.mocks.event.MockEvent
+import com.android.unio.mocks.map.MockLocation
+import com.android.unio.mocks.user.MockUser
 import com.android.unio.model.association.Association
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventType
@@ -26,19 +29,7 @@ class EventCardTest {
 
   @get:Rule val composeTestRule = createComposeRule()
 
-  private val sampleEvent =
-      Event(
-          uid = "sample_event_123",
-          title = "Sample Event",
-          organisers = Association.firestoreReferenceListWith(listOf("1234")),
-          taggedAssociations = Association.firestoreReferenceListWith(listOf("1234")),
-          image = "", // No image to test fallback behavior
-          description = "This is a detailed description of the sample event.",
-          catchyDescription = "This is a catchy description.",
-          price = 20.0,
-          date = Timestamp(Date(2024 - 1900, 6, 20)),
-          location = Location(0.0, 0.0, "Sample Location"),
-          types = listOf(EventType.TRIP))
+  private val sampleEvent = MockEvent.createMockEvent(uid = "sample_event_123", location = MockLocation.createMockLocation(name="Sample Location"), date= Timestamp(Date(2024 - 1900, 6, 20)), catchyDescription = "This is a catchy description.")
 
   private val userViewModel = UserViewModel(UserRepositoryFirestore(Firebase.firestore), false)
 
@@ -89,8 +80,8 @@ class EventCardTest {
 }
 
 class MockUserRepository : UserRepository {
-  private val mockUsers =
-      listOf(
+  private val mockUsers = listOf(MockUser.createMockUser(uid="1"), MockUser.createMockUser(uid="2"))
+      /*listOf(
           User(
               uid = "1",
               email = "john.doe@example.com",
@@ -120,7 +111,7 @@ class MockUserRepository : UserRepository {
                   listOf(
                       UserSocial(Social.TELEGRAM, "jane_smith"),
                       UserSocial(Social.TELEGRAM, "jane.smith.telegram")),
-              profilePicture = "https://example.com/profile_picture2.jpg"))
+              profilePicture = "https://example.com/profile_picture2.jpg"))*/
 
   override fun init(onSuccess: () -> Unit) {
     onSuccess()
