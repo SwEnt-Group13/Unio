@@ -1,5 +1,6 @@
 [versions]
 # Plugins
+accompanistPermissions = "0.36.0"
 agp = "8.4.2"
 appsearch = "1.1.0-alpha03" # Should be upgraded, but requires Android SDK 35
 coilCompose = "2.2.2"
@@ -93,6 +94,7 @@ composeMaterial = "1.4.0"
 
 
 [libraries]
+accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanistPermissions" }
 androidx-appsearch = { module = "androidx.appsearch:appsearch", version.ref = "appsearch" }
 androidx-appsearch-compiler = { module = "androidx.appsearch:appsearch-compiler", version.ref = "appsearch" }
 androidx-appsearch-local-storage = { module = "androidx.appsearch:appsearch-local-storage", version.ref = "appsearch" }

@@ -279,6 +279,7 @@ dependencies {
     // Preferences
     implementation(libs.androidx.preference.ktx)
     implementation(libs.library)
+    implementation(libs.accompanist.permissions)
 }
 
 
