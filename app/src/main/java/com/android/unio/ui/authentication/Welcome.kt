@@ -44,20 +44,15 @@ import androidx.compose.ui.text.style.TextAlign.Companion.Center
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat.getSystemService
 import com.android.unio.model.user.SignInState
-import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.isValidEmail
 import com.android.unio.model.user.isValidPassword
 import com.android.unio.model.user.signInOrCreateAccount
-import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.theme.AppTypography
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 
 @Composable
-fun WelcomeScreen(
-    navigationActions: NavigationAction,
-    userRepositoryFirestore: UserRepositoryFirestore
-) {
+fun WelcomeScreen() {
   val context = LocalContext.current
 
   var email by remember { mutableStateOf("") }

@@ -100,7 +100,7 @@ class ScreenDisplayingTest {
 
   @Test
   fun testWelcomeDisplayed() {
-    composeTestRule.setContent { WelcomeScreen(navigationAction, userRepositoryFirestore) }
+    composeTestRule.setContent { WelcomeScreen() }
     composeTestRule.onNodeWithTag("WelcomeScreen").assertIsDisplayed()
   }
 

@@ -108,7 +108,7 @@ fun UnioApp(authViewModel: AuthViewModel) {
 
   NavHost(navController = navController, startDestination = Route.AUTH) {
     navigation(startDestination = Screen.WELCOME, route = Route.AUTH) {
-      composable(Screen.WELCOME) { WelcomeScreen(navigationActions, userRepository) }
+      composable(Screen.WELCOME) { WelcomeScreen() }
       composable(Screen.EMAIL_VERIFICATION) { EmailVerificationScreen(navigationActions) }
       composable(Screen.ACCOUNT_DETAILS) {
         AccountDetails(navigationActions, userViewModel, imageRepository)
