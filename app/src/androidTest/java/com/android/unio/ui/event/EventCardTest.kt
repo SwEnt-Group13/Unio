@@ -1,7 +1,8 @@
 package com.android.unio.ui.event
 
-import androidx.compose.ui.test.*
+import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithTag
 import com.android.unio.model.association.Association
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventType
@@ -18,7 +19,7 @@ import com.android.unio.model.user.UserViewModel
 import com.google.firebase.Firebase
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.firestore
-import java.util.*
+import java.util.Date
 import org.junit.Rule
 import org.junit.Test
 

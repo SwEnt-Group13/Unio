@@ -7,10 +7,17 @@ import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
@@ -19,6 +26,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
 import com.android.unio.model.association.AssociationRepositoryFirestore
 import com.android.unio.model.association.AssociationViewModel
+import com.android.unio.model.authentication.AuthViewModel
 import com.android.unio.model.event.EventListViewModel
 import com.android.unio.model.event.EventRepositoryFirestore
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
@@ -41,7 +49,6 @@ import com.android.unio.ui.settings.SettingsScreen
 import com.android.unio.ui.theme.AppTheme
 import com.android.unio.ui.user.UserProfileScreen
 import com.google.firebase.Firebase
-import com.google.firebase.auth.auth
 import com.google.firebase.firestore.firestore
 import com.google.firebase.storage.storage
 import me.zhanghai.compose.preference.ProvidePreferenceLocals
@@ -51,18 +58,21 @@ class MainActivity : ComponentActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
     super.onCreate(savedInstanceState)
+
+    val authViewModel: AuthViewModel by viewModels { AuthViewModel.Factory }
+
     setContent {
       Surface(modifier = Modifier.fillMaxSize()) {
-        ProvidePreferenceLocals { AppTheme { UnioApp() } }
+        ProvidePreferenceLocals { AppTheme { UnioApp(authViewModel = authViewModel) } }
       }
     }
   }
 }
 
 @Composable
-fun UnioApp() {
+fun UnioApp(authViewModel: AuthViewModel) {
   val navController = rememberNavController()
-  val navigationActions = NavigationAction(navController)
+  val navigationActions = remember { NavigationAction(navController) }
   val db = Firebase.firestore
   val context = LocalContext.current
 
@@ -81,35 +91,24 @@ fun UnioApp() {
   val eventListViewModel = remember { EventListViewModel(eventRepository) }
   val searchViewModel = remember { SearchViewModel(searchRepository) }
 
+  // Observe the authentication state
+  val authState by authViewModel.authState.collectAsState()
+  var previousAuthState by rememberSaveable { mutableStateOf<String?>(null) }
+
   // Redirect user based on authentication state
-  Firebase.auth.addAuthStateListener { auth ->
-    val user = auth.currentUser
-    if (user != null) {
-      if (user.isEmailVerified) {
-        userRepository.getUserWithId(
-            user.uid,
-            {
-              if (it.firstName.isNotEmpty()) {
-                navigationActions.navigateTo(Screen.HOME)
-              } else {
-                navigationActions.navigateTo(Screen.ACCOUNT_DETAILS)
-              }
-            },
-            {
-              Log.e("UnioApp", "Error fetching account details: $it")
-              Toast.makeText(context, "Error fetching account details.", Toast.LENGTH_SHORT).show()
-            })
-      } else {
-        navigationActions.navigateTo(Screen.EMAIL_VERIFICATION)
+  LaunchedEffect(authState) {
+    authState?.let { screen ->
+      // Only navigate if the screen has changed
+      if (screen != previousAuthState) {
+        navigationActions.navigateTo(screen)
+        previousAuthState = screen
       }
-    } else {
-      navigationActions.navigateTo(Route.AUTH)
     }
   }
 
   NavHost(navController = navController, startDestination = Route.AUTH) {
     navigation(startDestination = Screen.WELCOME, route = Route.AUTH) {
-      composable(Screen.WELCOME) { WelcomeScreen(navigationActions) }
+      composable(Screen.WELCOME) { WelcomeScreen() }
       composable(Screen.EMAIL_VERIFICATION) { EmailVerificationScreen(navigationActions) }
       composable(Screen.ACCOUNT_DETAILS) {
         AccountDetails(navigationActions, userViewModel, imageRepository)
