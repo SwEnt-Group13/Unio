@@ -17,7 +17,7 @@ open class NavigationAction(private val navController: NavHostController) {
    * @param screen The screen to navigate to
    */
   open fun navigateTo(screen: String) {
-    if (navController.currentDestination?.route == screen) {
+    if (getCurrentRoute() == screen) {
       return
     }
     navController.navigate(screen)
@@ -30,6 +30,10 @@ open class NavigationAction(private val navController: NavHostController) {
    *   one.
    */
   open fun navigateTo(tld: TopLevelDestination) {
+    if (getCurrentRoute() == tld.route) {
+      return
+    }
+
     navController.navigate(tld.route) {
       popUpTo(navController.graph.findStartDestination().id) {
         saveState = true
