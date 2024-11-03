@@ -30,10 +30,6 @@ open class NavigationAction(private val navController: NavHostController) {
    *   one.
    */
   open fun navigateTo(tld: TopLevelDestination) {
-    if (getCurrentRoute() == tld.route) {
-      return
-    }
-
     navController.navigate(tld.route) {
       popUpTo(navController.graph.findStartDestination().id) {
         saveState = true
