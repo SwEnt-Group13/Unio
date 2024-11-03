@@ -29,133 +29,139 @@ import org.robolectric.RobolectricTestRunner
 @RunWith(RobolectricTestRunner::class)
 class AuthViewModelTest {
 
-    @MockK private lateinit var firebaseAuth: FirebaseAuth
-    @MockK private lateinit var userRepository: UserRepository
+  @MockK private lateinit var firebaseAuth: FirebaseAuth
+  @MockK private lateinit var userRepository: UserRepository
 
-    // Because it is impossible to mock the FirebaseUser's abstract method, this is the only way to
-    // mock it.
-    @MockK
-    private lateinit var firebaseUser: zzac
+  // Because it is impossible to mock the FirebaseUser's abstract method, this is the only way to
+  // mock it.
+  @MockK private lateinit var firebaseUser: zzac
 
-    private lateinit var authViewModel: AuthViewModel
-    private lateinit var userNonEmptyFirstName: User
-    private lateinit var userEmptyFirstName: User
+  private lateinit var authViewModel: AuthViewModel
+  private lateinit var userNonEmptyFirstName: User
+  private lateinit var userEmptyFirstName: User
 
-    @Before
-    fun setUp() {
-        MockKAnnotations.init(this, relaxed = true)
+  @Before
+  fun setUp() {
+    MockKAnnotations.init(this, relaxed = true)
 
-        // Initialize Firebase if necessary
-        if (FirebaseApp.getApps(ApplicationProvider.getApplicationContext()).isEmpty()) {
-            FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext())
+    // Initialize Firebase if necessary
+    if (FirebaseApp.getApps(ApplicationProvider.getApplicationContext()).isEmpty()) {
+      FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext())
+    }
+
+    mockkStatic(FirebaseAuth::class)
+    every { FirebaseAuth.getInstance() } returns firebaseAuth
+    every { firebaseAuth.currentUser } returns firebaseUser
+
+    userNonEmptyFirstName =
+        User(
+            uid = "1",
+            email = "john@example.com",
+            firstName = "John",
+            lastName = "Doe",
+            biography = "An example user",
+            followedAssociations = Association.emptyFirestoreReferenceList(),
+            joinedAssociations = Association.emptyFirestoreReferenceList(),
+            savedEvents = Event.emptyFirestoreReferenceList(),
+            interests = listOf(Interest.SPORTS, Interest.MUSIC),
+            socials =
+                listOf(
+                    UserSocial(Social.INSTAGRAM, "Insta"),
+                    UserSocial(Social.WEBSITE, "example.com")),
+            profilePicture = "https://www.example.com/image")
+
+    userEmptyFirstName =
+        User(
+            uid = "1",
+            email = "john@example.com",
+            firstName = "",
+            lastName = "Doe",
+            biography = "An example user",
+            followedAssociations = Association.emptyFirestoreReferenceList(),
+            joinedAssociations = Association.emptyFirestoreReferenceList(),
+            savedEvents = Event.emptyFirestoreReferenceList(),
+            interests = listOf(Interest.SPORTS, Interest.MUSIC),
+            socials =
+                listOf(
+                    UserSocial(Social.INSTAGRAM, "Insta"),
+                    UserSocial(Social.WEBSITE, "example.com")),
+            profilePicture = "https://www.example.com/image")
+  }
+
+  // Use MockK's slot to capture the AuthStateListener and trigger it
+  private fun triggerAuthStateListener(firebaseAuth: FirebaseAuth) {
+    val authStateListenerSlot = slot<FirebaseAuth.AuthStateListener>()
+    verify { firebaseAuth.addAuthStateListener(capture(authStateListenerSlot)) }
+    authStateListenerSlot.captured.onAuthStateChanged(firebaseAuth)
+  }
+
+  @Test
+  fun testUserIsNull() {
+    every { firebaseAuth.currentUser } returns null
+
+    authViewModel = AuthViewModel(firebaseAuth, userRepository)
+
+    triggerAuthStateListener(firebaseAuth)
+
+    assertEquals(Route.AUTH, authViewModel.authState.value)
+  }
+
+  @Test
+  fun testUserIsAuthenticatedAndEmailVerifiedWithProfile() {
+    every { firebaseUser.isEmailVerified } returns true
+    every { userRepository.getUserWithId(any(), any(), any()) } answers
+        {
+          val onSuccess = it.invocation.args[1] as (User) -> Unit
+          onSuccess(userNonEmptyFirstName)
         }
 
-        mockkStatic(FirebaseAuth::class)
-        every { FirebaseAuth.getInstance() } returns firebaseAuth
-        every { firebaseAuth.currentUser } returns firebaseUser
+    authViewModel = AuthViewModel(firebaseAuth, userRepository)
 
-        userNonEmptyFirstName =
-            User(
-                uid = "1",
-                email = "john@example.com",
-                firstName = "John",
-                lastName = "Doe",
-                biography = "An example user",
-                followedAssociations =  Association.emptyFirestoreReferenceList(),
-                joinedAssociations =  Association.emptyFirestoreReferenceList(),
-                savedEvents =  Event.emptyFirestoreReferenceList(),
-                interests =  listOf(Interest.SPORTS, Interest.MUSIC),
-                socials =  listOf(
-                    UserSocial(Social.INSTAGRAM, "Insta"), UserSocial(Social.WEBSITE, "example.com")),
-                profilePicture =  "https://www.example.com/image")
+    triggerAuthStateListener(firebaseAuth)
 
-        userEmptyFirstName =
-            User(
-                uid = "1",
-                email = "john@example.com",
-                firstName = "",
-                lastName = "Doe",
-                biography = "An example user",
-                followedAssociations = Association.emptyFirestoreReferenceList(),
-                joinedAssociations = Association.emptyFirestoreReferenceList(),
-                savedEvents = Event.emptyFirestoreReferenceList(),
-                interests = listOf(Interest.SPORTS, Interest.MUSIC),
-                socials = listOf(
-                    UserSocial(Social.INSTAGRAM, "Insta"), UserSocial(Social.WEBSITE, "example.com")),
-                profilePicture = "https://www.example.com/image")
-    }
+    assertEquals(Screen.HOME, authViewModel.authState.value)
+  }
 
-    // Use MockK's slot to capture the AuthStateListener and trigger it
-    private fun triggerAuthStateListener(firebaseAuth: FirebaseAuth) {
-        val authStateListenerSlot = slot<FirebaseAuth.AuthStateListener>()
-        verify { firebaseAuth.addAuthStateListener(capture(authStateListenerSlot)) }
-        authStateListenerSlot.captured.onAuthStateChanged(firebaseAuth)
-    }
-
-    @Test
-    fun testUserIsNull() {
-        every { firebaseAuth.currentUser } returns null
-
-        authViewModel = AuthViewModel(firebaseAuth, userRepository)
-
-        triggerAuthStateListener(firebaseAuth)
-
-        assertEquals(Route.AUTH, authViewModel.authState.value)
-    }
-
-    @Test
-    fun testUserIsAuthenticatedAndEmailVerifiedWithProfile() {
-        every { firebaseUser.isEmailVerified } returns true
-        every { userRepository.getUserWithId(any(), any(), any()) } answers {
-            val onSuccess = it.invocation.args[1] as (User) -> Unit
-            onSuccess(userNonEmptyFirstName)
+  @Test
+  fun testUserIsAuthenticatedAndEmailVerifiedWithEmptyName() {
+    every { firebaseUser.isEmailVerified } returns true
+    every { userRepository.getUserWithId(any(), any(), any()) } answers
+        {
+          val onSuccess = it.invocation.args[1] as (User) -> Unit
+          onSuccess(userEmptyFirstName)
         }
 
-        authViewModel = AuthViewModel(firebaseAuth, userRepository)
+    authViewModel = AuthViewModel(firebaseAuth, userRepository)
 
-        triggerAuthStateListener(firebaseAuth)
+    triggerAuthStateListener(firebaseAuth)
 
-        assertEquals(Screen.HOME, authViewModel.authState.value)
-    }
+    assertEquals(Screen.ACCOUNT_DETAILS, authViewModel.authState.value)
+  }
 
-    @Test
-    fun testUserIsAuthenticatedAndEmailVerifiedWithEmptyName(){
-        every { firebaseUser.isEmailVerified } returns true
-        every { userRepository.getUserWithId(any(), any(), any()) } answers {
-            val onSuccess = it.invocation.args[1] as (User) -> Unit
-            onSuccess(userEmptyFirstName)
+  @Test
+  fun testUserIsAuthenticatedAndEmailNotVerified() {
+    every { firebaseUser.isEmailVerified } returns false
+
+    authViewModel = AuthViewModel(firebaseAuth, userRepository)
+
+    triggerAuthStateListener(firebaseAuth)
+
+    assertEquals(Screen.EMAIL_VERIFICATION, authViewModel.authState.value)
+  }
+
+  @Test
+  fun testErrorFetchingAccountDetails() {
+    every { firebaseUser.isEmailVerified } returns true
+    every { userRepository.getUserWithId(any(), any(), any()) } answers
+        {
+          val onFailure = it.invocation.args[2] as (Exception) -> Unit
+          onFailure(Exception("Test exception"))
         }
 
-        authViewModel = AuthViewModel(firebaseAuth, userRepository)
+    authViewModel = AuthViewModel(firebaseAuth, userRepository)
 
-        triggerAuthStateListener(firebaseAuth)
+    triggerAuthStateListener(firebaseAuth)
 
-        assertEquals(Screen.ACCOUNT_DETAILS, authViewModel.authState.value)
-    }
-
-    @Test
-    fun testUserIsAuthenticatedAndEmailNotVerified() {
-        every { firebaseUser.isEmailVerified } returns false
-
-        authViewModel = AuthViewModel(firebaseAuth, userRepository)
-
-        triggerAuthStateListener(firebaseAuth)
-
-        assertEquals(Screen.EMAIL_VERIFICATION, authViewModel.authState.value)
-    }
-
-    @Test
-    fun testErrorFetchingAccountDetails() {
-        every { firebaseUser.isEmailVerified } returns true
-        every { userRepository.getUserWithId(any(), any(), any()) } answers {
-            val onFailure = it.invocation.args[2] as (Exception) -> Unit
-            onFailure(Exception("Test exception"))
-        }
-
-        authViewModel = AuthViewModel(firebaseAuth, userRepository)
-
-        triggerAuthStateListener(firebaseAuth)
-
-        assertEquals(Screen.WELCOME, authViewModel.authState.value)
-    }
+    assertEquals(Screen.WELCOME, authViewModel.authState.value)
+  }
 }

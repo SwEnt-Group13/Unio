@@ -18,7 +18,6 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.mockito.Mockito.mock
-import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 
 // import org.robolectric.RobolectricTestRunner

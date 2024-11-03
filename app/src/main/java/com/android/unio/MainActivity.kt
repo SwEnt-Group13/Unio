@@ -20,7 +20,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -50,7 +49,6 @@ import com.android.unio.ui.settings.SettingsScreen
 import com.android.unio.ui.theme.AppTheme
 import com.android.unio.ui.user.UserProfileScreen
 import com.google.firebase.Firebase
-import com.google.firebase.auth.auth
 import com.google.firebase.firestore.firestore
 import com.google.firebase.storage.storage
 import me.zhanghai.compose.preference.ProvidePreferenceLocals
@@ -98,7 +96,7 @@ fun UnioApp(authViewModel: AuthViewModel) {
   var previousAuthState by rememberSaveable { mutableStateOf<String?>(null) }
 
   // Redirect user based on authentication state
-  LaunchedEffect(authState){
+  LaunchedEffect(authState) {
     authState?.let { screen ->
       // Only navigate if the screen has changed
       if (screen != previousAuthState) {
