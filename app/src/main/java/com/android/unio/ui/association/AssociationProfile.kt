@@ -56,8 +56,9 @@ import com.android.unio.R
 import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.event.Event
-import com.android.unio.model.event.EventCard
 import com.android.unio.model.user.User
+import com.android.unio.model.user.UserViewModel
+import com.android.unio.ui.event.EventCard
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.theme.AppTypography
 import kotlinx.coroutines.CoroutineScope
@@ -74,7 +75,8 @@ private var scope: CoroutineScope? = null
 fun AssociationProfileScreen(
     navigationAction: NavigationAction,
     associationId: String,
-    associationViewModel: AssociationViewModel = viewModel(factory = AssociationViewModel.Factory)
+    associationViewModel: AssociationViewModel = viewModel(factory = AssociationViewModel.Factory),
+    userViewModel: UserViewModel
 ) {
   val context = LocalContext.current
   val association = associationViewModel.findAssociationById(associationId)
@@ -89,7 +91,7 @@ fun AssociationProfileScreen(
   } else {
     AssociationProfileScaffold(association = association, navigationAction = navigationAction) {
         padding ->
-      AssociationProfileContent(padding, association, associationViewModel, context)
+      AssociationProfileContent(padding, association, associationViewModel, userViewModel, context)
     }
   }
 }
@@ -179,6 +181,7 @@ private fun AssociationProfileContent(
     padding: PaddingValues,
     association: Association,
     associationViewModel: AssociationViewModel,
+    userViewModel: UserViewModel,
     context: Context
 ) {
   Column(
@@ -192,7 +195,8 @@ private fun AssociationProfileContent(
         Spacer(modifier = Modifier.size(15.dp))
         AssociationEventTitle(context)
         Spacer(modifier = Modifier.size(11.dp))
-        AssociationProfileEvents(association, associationViewModel, context)
+        AssociationProfileEvents(
+            association, associationViewModel, userViewModel = userViewModel, context)
         Spacer(modifier = Modifier.size(11.dp))
         UsersCard(association.members.list.collectAsState().value, context)
         Spacer(modifier = Modifier.size(61.dp))
@@ -307,6 +311,7 @@ private fun UsersCard(userList: List<User>, context: Context) {
 private fun AssociationProfileEvents(
     association: Association,
     associationViewModel: AssociationViewModel,
+    userViewModel: UserViewModel,
     context: Context
 ) {
   var isSeeMoreClicked by remember { mutableStateOf(false) }
@@ -327,9 +332,9 @@ private fun AssociationProfileEvents(
         modifier = Modifier.padding(horizontal = 28.dp),
         horizontalAlignment = Alignment.CenterHorizontally) {
           if (isSeeMoreClicked) {
-            events.forEach { event -> AssociationEventCard(event) }
+            events.forEach { event -> AssociationEventCard(event, userViewModel) }
           } else {
-            AssociationEventCard(first)
+            AssociationEventCard(first, userViewModel)
           }
         }
     Spacer(modifier = Modifier.size(11.dp))
@@ -349,11 +354,11 @@ private fun AssociationProfileEvents(
  * @param event (Event) : The event to display
  */
 @Composable
-private fun AssociationEventCard(event: Event) {
+private fun AssociationEventCard(event: Event, userViewModel: UserViewModel) {
   Box(modifier = Modifier.testTag("AssociationEventCard-${event.uid}")) {
     EventCard(
-        event =
-            Event(organisers = event.organisers, taggedAssociations = event.taggedAssociations)) {}
+        event = Event(organisers = event.organisers, taggedAssociations = event.taggedAssociations),
+        userViewModel = userViewModel)
   }
 }
 

@@ -13,7 +13,6 @@ import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QueryDocumentSnapshot
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.firestore
@@ -40,7 +39,6 @@ class AssociationRepositoryFirestoreTest {
   @Mock private lateinit var documentReference: DocumentReference
   @Mock private lateinit var querySnapshotTask: Task<QuerySnapshot>
   @Mock private lateinit var documentSnapshotTask: Task<DocumentSnapshot>
-  @Mock private lateinit var query: Query
 
   private lateinit var repository: AssociationRepositoryFirestore
 
@@ -118,7 +116,9 @@ class AssociationRepositoryFirestoreTest {
             "fullName" to association1.fullName,
             "category" to association1.category.name,
             "description" to association1.description,
-            "members" to association1.members.list.value.map { it.uid })
+            "members" to association1.members.uids,
+            "followersCount" to association1.followersCount,
+            "image" to association1.image)
 
     map2 =
         mapOf(
@@ -128,7 +128,9 @@ class AssociationRepositoryFirestoreTest {
             "fullName" to association2.fullName,
             "category" to association2.category.name,
             "description" to association2.description,
-            "members" to association2.members.list.value.map { it.uid })
+            "members" to association2.members.uids,
+            "followersCount" to association2.followersCount,
+            "image" to association2.image)
 
     `when`(queryDocumentSnapshot1.data).thenReturn(map1)
     `when`(queryDocumentSnapshot2.data).thenReturn(map2)
@@ -146,13 +148,13 @@ class AssociationRepositoryFirestoreTest {
           assertEquals(association1.name, associations[0].name)
           assertEquals(association1.fullName, associations[0].fullName)
           assertEquals(association1.description, associations[0].description)
-          assertEquals(association1.members.list.value, associations[0].members.list.value)
+          assertEquals(association1.members.uids, associations[0].members.uids)
 
           assertEquals(association2.uid, associations[1].uid)
           assertEquals(association2.name, associations[1].name)
           assertEquals(association2.fullName, associations[1].fullName)
           assertEquals(association2.description, associations[1].description)
-          assertEquals(association2.members.list.value, associations[1].members.list.value)
+          assertEquals(association2.members.uids, associations[1].members.uids)
         },
         onFailure = { exception -> assert(false) })
   }
@@ -182,13 +184,13 @@ class AssociationRepositoryFirestoreTest {
           assertEquals(association1.name, associations[0].name)
           assertEquals(association1.fullName, associations[0].fullName)
           assertEquals(association1.description, associations[0].description)
-          assertEquals(association1.members.list.value, associations[0].members.list.value)
+          assertEquals(association1.members.uids, associations[0].members.uids)
 
           assertEquals(emptyAssociation.uid, associations[1].uid)
           assertEquals("", associations[1].name)
           assertEquals("", associations[1].fullName)
           assertEquals("", associations[1].description)
-          assertEquals(emptyList<String>(), associations[1].members.list.value)
+          assertEquals(emptyList<String>(), associations[1].members.uids)
         },
         onFailure = { exception -> assert(false) })
   }
@@ -202,7 +204,7 @@ class AssociationRepositoryFirestoreTest {
           assertEquals(association1.name, association.name)
           assertEquals(association1.fullName, association.fullName)
           assertEquals(association1.description, association.description)
-          assertEquals(association1.members.list.value, association.members.list.value)
+          assertEquals(association1.members.uids, association.members.uids)
         },
         onFailure = { exception -> assert(false) })
   }
