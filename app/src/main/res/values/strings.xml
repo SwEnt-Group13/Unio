@@ -98,6 +98,10 @@
     <string name="settings_notifications_title" translatable="true">Notifications</string>
     <string name="settings_notifications_summary" translatable="true">Enable push notifications</string>
     <string name="settings_notifications_content_description" translatable="true">Notification Settings</string>
+    <string name="settings_location_title" translatable="true">Enable Location Permissions</string>
+    <string name="settings_location_summary_granted" translatable="true">All location permissions have been granted</string>
+    <string name="settings_location_summary_denied" translatable="true">There are missing location permissions</string>
+    <string name="settings_location_content_description" translatable="true">Location Permissions</string>
 
     <!-- Debug/Temporary Strings -->
     <string name="debug_lorem_ipsum" translatable="false">Lorem ipsum dolor sit amet, consectetur
