@@ -23,14 +23,14 @@ class AuthViewModel(
     get() = _authState
 
   init {
-    verifyAuthState()
+    addAuthStateVerifier()
   }
 
   /**
    * Verifies the authentication state of the user. If the user should be redirected, the
    * [authState] is updated.
    */
-  private fun verifyAuthState() {
+  private fun addAuthStateVerifier() {
     firebaseAuth.addAuthStateListener { auth ->
       val user = auth.currentUser
       if (user != null) {
