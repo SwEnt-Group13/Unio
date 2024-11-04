@@ -35,7 +35,7 @@ android {
         versionCode = 1
         versionName = "1.0"
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "com.android.unio.HiltApplication"
         vectorDrawables {
             useSupportLibrary = true
         }
@@ -176,6 +176,7 @@ dependencies {
     implementation(libs.firebase.storage.ktx)
     implementation(libs.androidx.ui.text.google.fonts)
     implementation(libs.androidx.compose.material)
+    implementation(libs.core)
 
     testImplementation(libs.test.core.ktx)
     debugImplementation(libs.androidx.ui.tooling)
