@@ -45,22 +45,18 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberAsyncImagePainter
 import com.android.unio.R
 import com.android.unio.model.association.Association
 import com.android.unio.model.event.Event
 import com.android.unio.model.firestore.emptyFirestoreReferenceList
 import com.android.unio.model.image.ImageRepository
-import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.strings.test_tags.AccountDetailsTestTags
 import com.android.unio.model.user.AccountDetailsError
 import com.android.unio.model.user.Interest
 import com.android.unio.model.user.User
-import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserSocial
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.model.user.checkNewUser
@@ -72,25 +68,7 @@ import com.android.unio.ui.theme.AppTypography
 import com.android.unio.ui.theme.primaryLight
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
-import com.google.firebase.firestore.firestore
-import com.google.firebase.storage.storage
 import kotlinx.coroutines.flow.MutableStateFlow
-
-@Composable
-@Preview
-fun AccountDetailsPreview() {
-  val navController = rememberNavController()
-  val navigationActions = NavigationAction(navController)
-  val db = Firebase.firestore
-  val userRepository = UserRepositoryFirestore(db)
-  val userViewModel = UserViewModel(userRepository, true)
-  val imageRepository = ImageRepositoryFirebaseStorage(Firebase.storage)
-
-  AccountDetails(
-      navigationAction = navigationActions,
-      userViewModel = userViewModel,
-      imageRepository = imageRepository)
-}
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
