@@ -9,8 +9,10 @@ import androidx.compose.material.icons.outlined.Search
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
+import javax.inject.Inject
 
-open class NavigationAction(private val navController: NavHostController) {
+
+open class NavigationAction @Inject constructor(private val navController: NavHostController) {
 
   /**
    * Navigate to the specified screen.
