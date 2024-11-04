@@ -28,6 +28,7 @@ class HydrationAndSerializationTest {
           lastName = "userLast",
           biography = "An example user",
           followedAssociations = Association.firestoreReferenceListWith(listOf("1", "2")),
+          savedEvents = Event.firestoreReferenceListWith(listOf("1", "2")),
           joinedAssociations = Association.firestoreReferenceListWith(listOf("1", "2")),
           interests = listOf(Interest.SPORTS, Interest.MUSIC),
           socials =
@@ -70,8 +71,8 @@ class HydrationAndSerializationTest {
     assertEquals(user.firstName, serialized["firstName"])
     assertEquals(user.lastName, serialized["lastName"])
     assertEquals(user.biography, serialized["biography"])
-    assertEquals(user.followedAssociations.list.value, serialized["followedAssociations"])
-    assertEquals(user.joinedAssociations.list.value, serialized["joinedAssociations"])
+    assertEquals(user.followedAssociations.uids, serialized["followedAssociations"])
+    assertEquals(user.joinedAssociations.uids, serialized["joinedAssociations"])
     assertEquals(user.interests.map { it.name }, serialized["interests"])
     assertEquals(
         user.socials.map { mapOf("social" to it.social.name, "content" to it.content) },
@@ -85,8 +86,8 @@ class HydrationAndSerializationTest {
     assertEquals(user.firstName, hydrated.firstName)
     assertEquals(user.lastName, hydrated.lastName)
     assertEquals(user.biography, hydrated.biography)
-    assertEquals(user.followedAssociations.list.value, hydrated.followedAssociations.list.value)
-    assertEquals(user.joinedAssociations.list.value, hydrated.joinedAssociations.list.value)
+    assertEquals(user.followedAssociations.uids, hydrated.followedAssociations.uids)
+    assertEquals(user.joinedAssociations.uids, hydrated.joinedAssociations.uids)
     assertEquals(user.interests, hydrated.interests)
     assertEquals(user.socials, hydrated.socials)
     assertEquals(user.profilePicture, hydrated.profilePicture)
@@ -101,7 +102,7 @@ class HydrationAndSerializationTest {
     assertEquals(association.name, serialized["name"])
     assertEquals(association.fullName, serialized["fullName"])
     assertEquals(association.description, serialized["description"])
-    assertEquals(association.members.list.value, serialized["members"])
+    assertEquals(association.members.uids, serialized["members"])
     assertEquals(association.image, serialized["image"])
 
     val hydrated = AssociationRepositoryFirestore.hydrate(serialized)
@@ -130,8 +131,8 @@ class HydrationAndSerializationTest {
     assertEquals(event.location.latitude, (serialized["location"] as Map<String, Any>)["latitude"])
     assertEquals(
         event.location.longitude, (serialized["location"] as Map<String, Any>)["longitude"])
-    assertEquals(event.organisers.list.value, serialized["organisers"])
-    assertEquals(event.taggedAssociations.list.value, serialized["taggedAssociations"])
+    assertEquals(event.organisers.uids, serialized["organisers"])
+    assertEquals(event.taggedAssociations.uids, serialized["taggedAssociations"])
 
     val hydrated = EventRepositoryFirestore.hydrate(serialized)
 
@@ -143,8 +144,8 @@ class HydrationAndSerializationTest {
     assertEquals(event.price, hydrated.price)
     assertEquals(event.date, hydrated.date)
     assertEquals(event.location, hydrated.location)
-    assertEquals(event.organisers.list.value, hydrated.organisers.list.value)
-    assertEquals(event.taggedAssociations.list.value, hydrated.taggedAssociations.list.value)
+    assertEquals(event.organisers.uids, hydrated.organisers.uids)
+    assertEquals(event.taggedAssociations.uids, hydrated.taggedAssociations.uids)
   }
 
   /** Test hydration when the map misses fields. */

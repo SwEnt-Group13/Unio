@@ -136,6 +136,8 @@ fun UserProfileScreen(
 @Composable
 fun UserProfileScreenContent(navigationAction: NavigationAction, user: User) {
 
+  val context = LocalContext.current
+
   val uriHandler = LocalUriHandler.current
 
   val followedAssociations by user.followedAssociations.list.collectAsState()
@@ -198,7 +200,9 @@ fun UserProfileScreenContent(navigationAction: NavigationAction, user: User) {
               SuggestionChip(
                   modifier = Modifier.testTag("UserProfileInterest"),
                   onClick = {},
-                  label = { Text(interest.title, style = AppTypography.bodySmall) })
+                  label = {
+                    Text(context.getString(interest.title), style = AppTypography.bodySmall)
+                  })
             }
           }
 

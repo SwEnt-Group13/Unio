@@ -17,8 +17,11 @@ import com.android.unio.model.user.User
  * @property url association url
  * @property name association acronym
  * @property fullName association full name
+ * @property category association category
  * @property description association description
+ * @property followersCount number of association followers
  * @property members list of association members
+ * @property image association image
  */
 data class Association(
     val uid: String,

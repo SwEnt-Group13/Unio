@@ -22,6 +22,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Place
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -38,27 +39,24 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.android.unio.model.event.Event
-import com.android.unio.model.event.EventCard
 import com.android.unio.model.event.EventListViewModel
+import com.android.unio.model.user.UserViewModel
+import com.android.unio.ui.event.EventCard
 import com.android.unio.ui.navigation.BottomNavigationMenu
 import com.android.unio.ui.navigation.LIST_TOP_LEVEL_DESTINATION
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Route
 import com.android.unio.ui.navigation.Screen
+import com.android.unio.ui.theme.AppTypography
 import kotlinx.coroutines.launch
 
 @Composable
 fun HomeScreen(
     navigationAction: NavigationAction,
     eventListViewModel: EventListViewModel = viewModel(factory = EventListViewModel.Factory),
-    onAddEvent: () -> Unit,
-    onEventClick: (Event) -> Unit
+    userViewModel: UserViewModel = viewModel(factory = UserViewModel.Factory)
 ) {
   val events by eventListViewModel.events.collectAsState()
   var selectedTab by remember { mutableStateOf("All") }
@@ -79,7 +77,7 @@ fun HomeScreen(
         FloatingActionButton(
             onClick = { navigationAction.navigateTo(Screen.MAP) },
             modifier = Modifier.testTag("event_MapButton")) {
-              Icon(imageVector = Icons.Filled.Place, contentDescription = "Add Event")
+              Icon(imageVector = Icons.Filled.Place, contentDescription = "Map button")
             }
       },
       bottomBar = {
@@ -88,20 +86,15 @@ fun HomeScreen(
       },
       modifier = Modifier.testTag("HomeScreen"),
       content = { paddingValues ->
-        Column(modifier = Modifier.fillMaxSize().padding(paddingValues).background(Color.Black)) {
+        Column(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
           // Sticky Header
           Box(
               modifier =
                   Modifier.fillMaxWidth()
-                      .background(Color.Black)
                       .padding(vertical = 16.dp, horizontal = horizontalHeaderPadding)
                       .testTag("event_Header")) {
                 Column {
-                  Text(
-                      text = "Upcoming Events",
-                      fontWeight = FontWeight.Bold,
-                      color = Color.White,
-                      style = TextStyle(fontSize = 24.sp))
+                  Text(text = "Upcoming Events", style = AppTypography.headlineMedium)
                   Spacer(modifier = Modifier.height(8.dp))
 
                   Row(
@@ -109,7 +102,9 @@ fun HomeScreen(
                       horizontalArrangement = Arrangement.SpaceBetween) {
                         Text(
                             text = "All",
-                            color = if (selectedTab == "All") Color.White else Color.Gray,
+                            color =
+                                if (selectedTab == "All") MaterialTheme.colorScheme.primary
+                                else MaterialTheme.colorScheme.inversePrimary,
                             modifier =
                                 Modifier.clickable {
                                       selectedTab = "All"
@@ -131,7 +126,9 @@ fun HomeScreen(
                         // Clickable text for "Following"
                         Text(
                             text = "Following",
-                            color = if (selectedTab == "Following") Color.White else Color.Gray,
+                            color =
+                                if (selectedTab == "Following") MaterialTheme.colorScheme.primary
+                                else MaterialTheme.colorScheme.inversePrimary,
                             modifier =
                                 Modifier.clickable {
                                       selectedTab = "Following"
@@ -179,9 +176,7 @@ fun HomeScreen(
             LazyColumn(
                 contentPadding = PaddingValues(vertical = 8.dp),
                 modifier = Modifier.fillMaxSize().padding(horizontal = 32.dp)) {
-                  items(events) { event ->
-                    EventCard(event = event, onClick = { onEventClick(event) })
-                  }
+                  items(events) { event -> EventCard(event = event, userViewModel = userViewModel) }
                 }
           } else {
             Box(
