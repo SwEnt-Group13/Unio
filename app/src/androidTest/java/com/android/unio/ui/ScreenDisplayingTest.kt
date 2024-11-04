@@ -7,9 +7,11 @@ import androidx.lifecycle.ViewModelProvider
 import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationCategory
 import com.android.unio.model.association.AssociationRepository
+import com.android.unio.model.association.AssociationRepositoryFirestore
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventListViewModel
+import com.android.unio.model.event.EventRepositoryFirestore
 import com.android.unio.model.firestore.firestoreReferenceListWith
 import com.android.unio.model.hilt.module.AssociationModule
 import com.android.unio.model.user.User
@@ -51,6 +53,7 @@ import io.mockk.spyk
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.mockito.Mockito.mock
 import javax.inject.Inject
 
 @HiltAndroidTest
@@ -60,17 +63,11 @@ class ScreenDisplayingTest {
     @MockK
     lateinit var navigationAction: NavigationAction
 
-    @BindValue
-    @MockK
-    lateinit var userViewModel: UserViewModel
+    private lateinit var userViewModel: UserViewModel
 
-    @BindValue
-    @MockK
-    lateinit var associationViewModel: AssociationViewModel
+    private lateinit var associationViewModel: AssociationViewModel
 
-    @BindValue
-    @MockK
-    lateinit var eventListViewModel: EventListViewModel
+    private lateinit var eventListViewModel: EventListViewModel
 
     @MockK
     private lateinit var firebaseAuth: FirebaseAuth
@@ -92,7 +89,9 @@ class ScreenDisplayingTest {
 
         hiltRule.inject()
 
-//        associationViewModel = spyk(AssociationViewModel(mockk(), mockk()))
+        associationViewModel = spyk(AssociationViewModel(mock(), mockk<EventRepositoryFirestore>()))
+        eventListViewModel = spyk(EventListViewModel(mock(), ))
+        userViewModel = spyk(UserViewModel(mock()))
 
         val associations =
             listOf(
@@ -109,6 +108,7 @@ class ScreenDisplayingTest {
                     image = "https://www.example.com/image.jpg"
                 )
             )
+
 
         every { associationViewModel.findAssociationById(any()) } returns associations.first()
         every { associationViewModel.getEventsForAssociation(any(), any()) } answers
