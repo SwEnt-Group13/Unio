@@ -20,6 +20,7 @@ constructor(
     private val associationRepository: AssociationRepository,
     private val eventRepository: EventRepository
 ) : ViewModel() {
+
   private val _associations = MutableStateFlow<List<Association>>(emptyList())
   val associations: StateFlow<List<Association>> = _associations
   private val imageRepository = ImageRepositoryFirebaseStorage()
