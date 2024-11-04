@@ -1,6 +1,7 @@
 package com.android.unio.model.search
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -24,6 +25,14 @@ class SearchViewModel(private val repository: SearchRepository) : ViewModel() {
   private val _events = MutableStateFlow<List<Event>>(emptyList())
   val events: StateFlow<List<Event>> = _events
 
+  val searchStatus = MutableStateFlow(SearchStatus.IDLE)
+
+  enum class SearchStatus {
+    LOADING,
+    SUCCESS,
+    ERROR,
+    IDLE
+  }
   /** Initializes the ViewModel by creating the search database and connecting it to the session. */
   init {
     viewModelScope.launch { repository.init() }
@@ -37,9 +46,18 @@ class SearchViewModel(private val repository: SearchRepository) : ViewModel() {
    */
   fun searchAssociations(query: String) {
     viewModelScope.launch {
+      searchStatus.value = SearchStatus.LOADING
       val results = repository.searchAssociations(query)
       _associations.value = results
+      searchStatus.value = SearchStatus.SUCCESS
+      Log.d("SearchViewModel", "searchAssociations: $results")
     }
+  }
+
+  /** Clears the list of associations and sets the search status to [SearchStatus.IDLE]. */
+  fun clearAssociations() {
+    _associations.value = emptyList()
+    searchStatus.value = SearchStatus.IDLE
   }
 
   /**

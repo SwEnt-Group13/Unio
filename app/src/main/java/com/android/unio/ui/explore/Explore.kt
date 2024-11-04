@@ -15,17 +15,22 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.DockedSearchBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.ListItem
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SearchBar
 import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
@@ -43,6 +48,9 @@ import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Route
 import com.android.unio.ui.navigation.Screen
 import com.android.unio.ui.theme.AppTypography
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun ExploreScreen(
@@ -78,27 +86,47 @@ fun ExploreScreenContent(
 ) {
   val associationsByCategory by associationViewModel.associationsByCategory.collectAsState()
   val searchQuery = remember { mutableStateOf("") }
+  var expanded by rememberSaveable { mutableStateOf(false) }
+  val assocationResults = searchViewModel.associations.collectAsState()
+  val searchState = searchViewModel.searchStatus.collectAsState()
+  val coroutineScope = rememberCoroutineScope() // Why?
+  var searchJob: Job? by remember { mutableStateOf(null) }
+
+  // Debounce the search query
+  // This logic should probably be moved to the ViewModel
+  LaunchedEffect(searchQuery.value) {
+    searchJob?.cancel()
+    val query = searchQuery.value
+    if (query.isNotEmpty()) {
+      searchJob =
+          coroutineScope.launch {
+            delay(500)
+            searchViewModel.searchAssociations(query)
+          }
+    } else {
+      searchViewModel.clearAssociations()
+    }
+  }
+
   Column(modifier = Modifier.padding(padding)) {
     Text(
         text = "Explore our Associations",
         /** Will go in the string.xml */
         style = AppTypography.headlineLarge,
         modifier =
-            Modifier.padding(vertical = 16.dp)
+            Modifier.padding(top = 16.dp, bottom = 8.dp)
                 .align(Alignment.CenterHorizontally)
                 .testTag("exploreTitle"))
 
-    SearchBar(
+    DockedSearchBar(
         inputField = {
           SearchBarDefaults.InputField(
               modifier = Modifier.testTag("searchBarInput"),
               query = searchQuery.value,
               onQueryChange = { searchQuery.value = it },
-              onSearch = {
-                //                searchViewModel.searchAssociations(searchQuery.value)
-              },
-              expanded = false,
-              onExpandedChange = { /* Handle expanded state change here */},
+              onSearch = {},
+              expanded = expanded,
+              onExpandedChange = { expanded = it },
               placeholder = {
                 Text(
                     text = "Search",
@@ -113,11 +141,35 @@ fun ExploreScreenContent(
               },
           )
         },
-        expanded = false,
-        onExpandedChange = { /* Also handle expanded state change here */},
-        modifier = Modifier.padding(horizontal = 26.dp, vertical = 8.dp).testTag("searchBar"),
-        content = {},
-    )
+        expanded = expanded,
+        onExpandedChange = { expanded = it },
+        modifier = Modifier.padding(horizontal = 16.dp).testTag("searchBar")) {
+          //          if (searchQuery.value.isNotEmpty()) {
+          if (searchState.value == SearchViewModel.SearchStatus.IDLE) {} else if (searchState
+              .value == SearchViewModel.SearchStatus.LOADING) {
+            ListItem(
+                headlineContent = { Text("Searching...") },
+            )
+          } else if (assocationResults.value.isEmpty() &&
+              searchState.value == SearchViewModel.SearchStatus.SUCCESS) {
+            ListItem(
+                headlineContent = { Text("No results found") },
+            )
+          } else {
+            assocationResults.value.forEach { association ->
+              ListItem(
+                  modifier =
+                      Modifier.clickable {
+                        expanded = false
+                        navigationAction.navigateTo(
+                            Screen.withParams(Screen.ASSOCIATION_PROFILE, association.uid))
+                      },
+                  headlineContent = { Text(association.name) },
+              )
+            }
+          }
+          //          }
+        }
 
     LazyColumn(
         modifier = Modifier.fillMaxSize().testTag("categoriesList"),
