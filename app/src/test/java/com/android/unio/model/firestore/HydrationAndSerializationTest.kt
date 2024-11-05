@@ -16,12 +16,12 @@ import com.android.unio.model.user.UserSocial
 import com.google.firebase.Timestamp
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertTrue
-import kotlin.reflect.full.memberProperties
 import org.junit.Test
+import kotlin.reflect.full.memberProperties
 
 class HydrationAndSerializationTest {
 
-  val user =
+  private val user =
       User(
           uid = "1",
           email = "1@gmail.com",
@@ -35,10 +35,9 @@ class HydrationAndSerializationTest {
           socials =
               listOf(
                   UserSocial(Social.INSTAGRAM, "Insta"), UserSocial(Social.WEBSITE, "example.com")),
-          profilePicture = "https://www.example.com/image",
-          savedEvents = Event.emptyFirestoreReferenceList())
+          profilePicture = "https://www.example.com/image")
 
-  val association =
+  private val association =
       Association(
           uid = "1",
           url = "https://www.example.com",
@@ -50,7 +49,7 @@ class HydrationAndSerializationTest {
           followersCount = 0,
           image = "https://www.example.com/image.jpg")
 
-  val event =
+  private val event =
       Event(
           uid = "1",
           title = "Event 1",
