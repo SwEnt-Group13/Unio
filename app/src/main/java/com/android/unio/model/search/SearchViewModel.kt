@@ -25,9 +25,9 @@ class SearchViewModel(private val repository: SearchRepository) : ViewModel() {
   private val _events = MutableStateFlow<List<Event>>(emptyList())
   val events: StateFlow<List<Event>> = _events
 
-  val searchStatus = MutableStateFlow(SearchStatus.IDLE)
+  val status = MutableStateFlow(Status.IDLE)
 
-  enum class SearchStatus {
+  enum class Status {
     LOADING,
     SUCCESS,
     ERROR,
@@ -46,18 +46,18 @@ class SearchViewModel(private val repository: SearchRepository) : ViewModel() {
    */
   fun searchAssociations(query: String) {
     viewModelScope.launch {
-      searchStatus.value = SearchStatus.LOADING
+      status.value = Status.LOADING
       val results = repository.searchAssociations(query)
       _associations.value = results
-      searchStatus.value = SearchStatus.SUCCESS
+      status.value = Status.SUCCESS
       Log.d("SearchViewModel", "searchAssociations: $results")
     }
   }
 
-  /** Clears the list of associations and sets the search status to [SearchStatus.IDLE]. */
+  /** Clears the list of associations and sets the search status to [Status.IDLE]. */
   fun clearAssociations() {
     _associations.value = emptyList()
-    searchStatus.value = SearchStatus.IDLE
+    status.value = Status.IDLE
   }
 
   /**

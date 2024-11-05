@@ -3,6 +3,7 @@ package com.android.unio.ui.explore
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -18,6 +19,7 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.DockedSearchBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SearchBarDefaults
@@ -87,8 +89,8 @@ fun ExploreScreenContent(
   val associationsByCategory by associationViewModel.associationsByCategory.collectAsState()
   val searchQuery = remember { mutableStateOf("") }
   var expanded by rememberSaveable { mutableStateOf(false) }
-  val assocationResults = searchViewModel.associations.collectAsState()
-  val searchState = searchViewModel.searchStatus.collectAsState()
+  val assocationResults by searchViewModel.associations.collectAsState()
+  val searchState by searchViewModel.status.collectAsState()
   val coroutineScope = rememberCoroutineScope() // Why?
   var searchJob: Job? by remember { mutableStateOf(null) }
 
@@ -108,7 +110,8 @@ fun ExploreScreenContent(
     }
   }
 
-  Column(modifier = Modifier.padding(padding)) {
+  Column(modifier = Modifier.padding(padding).fillMaxWidth(),
+      horizontalAlignment = Alignment.CenterHorizontally) {
     Text(
         text = "Explore our Associations",
         /** Will go in the string.xml */
@@ -144,19 +147,22 @@ fun ExploreScreenContent(
         expanded = expanded,
         onExpandedChange = { expanded = it },
         modifier = Modifier.padding(horizontal = 16.dp).testTag("searchBar")) {
-          //          if (searchQuery.value.isNotEmpty()) {
-          if (searchState.value == SearchViewModel.SearchStatus.IDLE) {} else if (searchState
-              .value == SearchViewModel.SearchStatus.LOADING) {
-            ListItem(
-                headlineContent = { Text("Searching...") },
-            )
-          } else if (assocationResults.value.isEmpty() &&
-              searchState.value == SearchViewModel.SearchStatus.SUCCESS) {
+          if (searchState == SearchViewModel.Status.LOADING) {
+            Box(
+                modifier = Modifier.fillMaxWidth().padding(16.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                LinearProgressIndicator()
+            }
+          } else if (assocationResults.isEmpty() &&
+              searchState == SearchViewModel.Status.SUCCESS) {
             ListItem(
                 headlineContent = { Text("No results found") },
             )
-          } else {
-            assocationResults.value.forEach { association ->
+          } else if (
+              searchState != SearchViewModel.Status.IDLE
+          ) {
+            assocationResults.forEach { association ->
               ListItem(
                   modifier =
                       Modifier.clickable {
@@ -168,7 +174,6 @@ fun ExploreScreenContent(
               )
             }
           }
-          //          }
         }
 
     LazyColumn(
