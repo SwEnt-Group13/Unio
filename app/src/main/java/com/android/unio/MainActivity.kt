@@ -29,6 +29,7 @@ import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.authentication.AuthViewModel
 import com.android.unio.model.event.EventListViewModel
 import com.android.unio.model.event.EventRepositoryFirestore
+import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.search.SearchRepository
 import com.android.unio.model.search.SearchViewModel
@@ -123,10 +124,10 @@ fun UnioApp(authViewModel: AuthViewModel) {
         // Create the Event screen with the event UID
         uid?.let {
           EventScreen(
-              navigationAction = navigationActions,
-              eventId = it,
-              eventListViewModel,
-              userViewModel = userViewModel)
+            navigationAction = navigationActions,
+            eventViewModel = EventViewModel(eventRepository, userRepository),
+            userViewModel = userViewModel
+          )
         }
         /*uid?.let { EventScreen(navigationActions, it, userViewModel = userViewModel) }
         ?: run {

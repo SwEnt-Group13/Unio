@@ -50,7 +50,7 @@ import coil.compose.AsyncImage
 import com.android.unio.R
 import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationCategory
-import com.android.unio.model.event.EventListViewModel
+import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.firestore.firestoreReferenceListWith
 import com.android.unio.model.user.User
 import com.android.unio.model.user.UserViewModel
@@ -82,9 +82,8 @@ private var scope: CoroutineScope? = null
 @Composable
 fun EventScreen(
     navigationAction: NavigationAction,
-    eventId: String,
-    eventListViewModel: EventListViewModel,
-    userViewModel: UserViewModel // will be used later to show whether the event is saved
+    eventViewModel: EventViewModel,
+    userViewModel: UserViewModel // will be used later to show whether the event is saved){}
 ) {
 
   // mock associations before linking to backend

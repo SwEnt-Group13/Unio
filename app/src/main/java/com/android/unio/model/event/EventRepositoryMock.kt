@@ -128,20 +128,6 @@ open class EventRepositoryMock : EventRepository {
       onSuccess: (Event) -> Unit,
       onFailure: (Exception) -> Unit
   ) {
-    onSuccess(
-        Event(
-            uid = UUID.randomUUID().toString(),
-            title = "Concert",
-            organisers = MockReferenceList<Association>(),
-            taggedAssociations = MockReferenceList<Association>(),
-            image = "antoinoxlephar",
-            description =
-                "A workshop dedicated to teaching strategies for successful social media marketing.",
-            catchyDescription = "Best concert everrrrr!",
-            price = 15.0,
-            date = Timestamp(Date(2024 - 1900, 7, 30)), // August 30, 2024
-            location = Location(5.0, 5.0, "USA"),
-            types = listOf(EventType.OTHER)))
   }
 
   override fun init(onSuccess: () -> Unit) {}
@@ -169,7 +155,7 @@ open class EventRepositoryMock : EventRepository {
   ) {
     // Filter mock events by date range
     getEvents(
-        { events -> onSuccess(events.filter { it.date >= startDate && it.date <= endDate }) },
+        { events -> onSuccess(events.filter { it.date in startDate..endDate }) },
         onFailure)
   }
 

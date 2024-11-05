@@ -67,23 +67,6 @@ class EventListViewModel(private val repository: EventRepository) : ViewModel() 
         } ?: return null
   }
 
-  fun addEvent(
-      inputStream: InputStream,
-      event: Event,
-      onSuccess: () -> Unit,
-      onFailure: (Exception) -> Unit
-  ) {
-    imageRepository.uploadImage(
-        inputStream,
-        "images/events/${event.uid}",
-        { uri ->
-          event.image = uri
-          event.uid = repository.getNewUid()
-          repository.addEvent(event, onSuccess, onFailure)
-        },
-        { e -> Log.e("ImageRepository", "Failed to store image : $e") })
-  }
-
   /**
    * Companion object that provides a factory for creating instances of [EventListViewModel]. This
    * factory is used to create the ViewModel with the [EventRepositoryMock] dependency.

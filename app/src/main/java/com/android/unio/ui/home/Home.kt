@@ -41,7 +41,6 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.android.unio.model.event.EventCard
 import com.android.unio.model.event.EventListViewModel
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.event.EventCard
@@ -180,11 +179,7 @@ fun HomeScreen(
                   items(events) { event ->
                     EventCard(
                         event = event,
-                        userViewModel = userViewModel,
-                        onClick = {
-                          navigationAction.navigateTo(
-                              Screen.withParams(Screen.EVENT_DETAILS, event.uid))
-                        })
+                        userViewModel = userViewModel)
                   }
                 }
           } else {

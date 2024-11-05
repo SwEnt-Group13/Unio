@@ -14,6 +14,7 @@ import com.android.unio.model.association.AssociationCategory
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventListViewModel
 import com.android.unio.model.event.EventRepository
+import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.firestore.firestoreReferenceListWith
 import com.android.unio.model.user.User
 import com.android.unio.model.user.UserRepository
@@ -21,6 +22,7 @@ import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.navigation.NavigationAction
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
+import io.mockk.impl.annotations.MockK
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -40,6 +42,7 @@ class EventDetailsTest {
   @Mock private lateinit var userRepository: UserRepository
   private lateinit var eventListViewModel: EventListViewModel
   private lateinit var userViewModel: UserViewModel
+  @MockK private lateinit var eventViewModel: EventViewModel
 
   private lateinit var associations: List<Association>
   private lateinit var events: List<Event>
@@ -109,7 +112,7 @@ class EventDetailsTest {
 
   private fun setEventScreen() {
     composeTestRule.setContent {
-      EventScreen(navigationAction, "1", eventListViewModel, userViewModel)
+      EventScreen(navigationAction, eventViewModel = eventViewModel, userViewModel)
     }
   }
 

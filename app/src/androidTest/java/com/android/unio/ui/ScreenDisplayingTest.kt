@@ -9,7 +9,7 @@ import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationCategory
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.event.Event
-import com.android.unio.model.event.EventListViewModel
+import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.firestore.firestoreReferenceListWith
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.search.SearchViewModel
@@ -53,6 +53,7 @@ class ScreenDisplayingTest {
 
   @MockK private lateinit var searchViewModel: SearchViewModel
 
+  @MockK private lateinit var eventViewModel: EventViewModel
   @MockK private lateinit var associationViewModel: AssociationViewModel
   @MockK private lateinit var imageRepositoryFirestore: ImageRepositoryFirebaseStorage
 
@@ -145,10 +146,10 @@ class ScreenDisplayingTest {
   fun testEventDisplayed() {
     composeTestRule.setContent {
       EventScreen(
-          eventId = "",
           navigationAction = navigationAction,
-          eventListViewModel = eventViewModel,
-          userViewModel = userViewModel)
+          eventViewModel = eventViewModel,
+          userViewModel = userViewModel
+      )
     }
     composeTestRule.onNodeWithTag("EventScreen").assertIsDisplayed()
   }
