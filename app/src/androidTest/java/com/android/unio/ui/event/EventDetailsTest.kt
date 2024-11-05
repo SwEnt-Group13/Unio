@@ -22,102 +22,98 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 
 class EventDetailsTest {
-    private lateinit var navHostController: NavHostController
-    private lateinit var navigationAction: NavigationAction
+  private lateinit var navHostController: NavHostController
+  private lateinit var navigationAction: NavigationAction
 
-    @MockK
-    private lateinit var userViewModel: UserViewModel
+  @MockK private lateinit var userViewModel: UserViewModel
 
-    @MockK
-    private lateinit var eventViewModel: EventViewModel
+  @MockK private lateinit var eventViewModel: EventViewModel
 
+  @get:Rule val composeTestRule = createComposeRule()
 
-    @get:Rule
-    val composeTestRule = createComposeRule()
+  @Before
+  fun setUp() {
+    MockitoAnnotations.openMocks(this)
 
-    @Before
-    fun setUp() {
-        MockitoAnnotations.openMocks(this)
+    navHostController = mock { NavHostController::class.java }
+    navigationAction = NavigationAction(navHostController)
 
-        navHostController = mock { NavHostController::class.java }
-        navigationAction = NavigationAction(navHostController)
+    eventViewModel = Mockito.mock(EventViewModel::class.java)
+  }
 
-        eventViewModel = Mockito.mock(EventViewModel::class.java)
+  private fun setEventScreen() {
+    composeTestRule.setContent {
+      EventScreen(navigationAction, eventViewModel = eventViewModel, userViewModel)
     }
+  }
 
-    private fun setEventScreen() {
-        composeTestRule.setContent {
-            EventScreen(navigationAction, eventViewModel = eventViewModel, userViewModel)
-        }
+  @Test
+  fun testEventDetailsDisplayComponent() {
+    setEventScreen()
+    composeTestRule.waitForIdle()
+
+    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("EventScreen"))
+    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("goBackButton"))
+
+    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("eventSaveButton"))
+    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("eventShareButton"))
+    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("eventDetailsPage"))
+    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("eventDetailsImage"))
+    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("eventDetailsInformationCard"))
+    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("eventTitle"))
+    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("eventOrganisingAssociation0"))
+    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("eventOrganisingAssociation1"))
+    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("associationLogo0"))
+    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("associationName0"))
+    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("associationLogo1"))
+    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("associationName1"))
+    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("eventStartHour"))
+    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("eventDate"))
+    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("eventDetailsBody"))
+    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("placesRemainingText"))
+    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("eventDescription"))
+    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("eventLocation"))
+    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("mapButton"))
+    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("signUpButton"))
+  }
+
+  private fun assertDisplayComponentInScroll(compose: SemanticsNodeInteraction) {
+    if (compose.isNotDisplayed()) {
+      compose.performScrollTo()
     }
+    compose.assertIsDisplayed()
+  }
 
-    @Test
-    fun testEventDetailsDisplayComponent() {
-        setEventScreen()
-        composeTestRule.waitForIdle()
+  @Test
+  fun testButtonBehavior() {
+    setEventScreen()
+    // Share button
+    composeTestRule.onNodeWithTag("eventShareButton").performClick()
+    assertSnackBarIsDisplayed()
 
-        assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("EventScreen"))
-        assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("goBackButton"))
+    // Save button
+    composeTestRule.onNodeWithTag("eventSaveButton").performClick()
+    assertSnackBarIsDisplayed()
 
-        assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("eventSaveButton"))
-        assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("eventShareButton"))
-        assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("eventDetailsPage"))
-        assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("eventDetailsImage"))
-        assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("eventDetailsInformationCard"))
-        assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("eventTitle"))
-        assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("eventOrganisingAssociation0"))
-        assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("eventOrganisingAssociation1"))
-        assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("associationLogo0"))
-        assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("associationName0"))
-        assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("associationLogo1"))
-        assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("associationName1"))
-        assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("eventStartHour"))
-        assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("eventDate"))
-        assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("eventDetailsBody"))
-        assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("placesRemainingText"))
-        assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("eventDescription"))
-        assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("eventLocation"))
-        assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("mapButton"))
-        assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("signUpButton"))
-    }
+    // Location button
+    composeTestRule.onNodeWithTag("mapButton").performClick()
+    assertSnackBarIsDisplayed()
 
-    private fun assertDisplayComponentInScroll(compose: SemanticsNodeInteraction) {
-        if (compose.isNotDisplayed()) {
-            compose.performScrollTo()
-        }
-        compose.assertIsDisplayed()
-    }
+    // Sign-up button
+    composeTestRule.onNodeWithTag("signUpButton").performClick()
+    assertSnackBarIsDisplayed()
+  }
 
-    @Test
-    fun testButtonBehavior() {
-        setEventScreen()
-        // Share button
-        composeTestRule.onNodeWithTag("eventShareButton").performClick()
-        assertSnackBarIsDisplayed()
+  private fun assertSnackBarIsDisplayed() {
+    composeTestRule.onNodeWithTag("eventSnackbarHost").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("snackbarActionButton").performClick()
+    composeTestRule.onNodeWithTag("eventSnackbarHost").assertIsNotDisplayed()
+  }
 
-        // Save button
-        composeTestRule.onNodeWithTag("eventSaveButton").performClick()
-        assertSnackBarIsDisplayed()
-
-        // Location button
-        composeTestRule.onNodeWithTag("mapButton").performClick()
-        assertSnackBarIsDisplayed()
-
-        // Sign-up button
-        composeTestRule.onNodeWithTag("signUpButton").performClick()
-        assertSnackBarIsDisplayed()
-    }
-
-    private fun assertSnackBarIsDisplayed() {
-        composeTestRule.onNodeWithTag("eventSnackbarHost").assertIsDisplayed()
-        composeTestRule.onNodeWithTag("snackbarActionButton").performClick()
-        composeTestRule.onNodeWithTag("eventSnackbarHost").assertIsNotDisplayed()
-    }
-
-    @Test
-    fun testGoBackButton() {
-        setEventScreen()
-        composeTestRule.onNodeWithTag("goBackButton").performClick()
-        verify(navHostController).popBackStack()
-    }
+  @Test
+  fun testGoBackButton() {
+    setEventScreen()
+    composeTestRule.onNodeWithTag("goBackButton").performClick()
+    verify(navHostController).popBackStack()
+  }
 }

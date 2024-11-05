@@ -148,8 +148,7 @@ class ScreenDisplayingTest {
       EventScreen(
           navigationAction = navigationAction,
           eventViewModel = eventViewModel,
-          userViewModel = userViewModel
-      )
+          userViewModel = userViewModel)
     }
     composeTestRule.onNodeWithTag("EventScreen").assertIsDisplayed()
   }

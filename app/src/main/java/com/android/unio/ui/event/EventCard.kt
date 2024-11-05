@@ -54,7 +54,7 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 
 @Composable
-fun EventCard(navigationAction: NavigationAction,event: Event, userViewModel: UserViewModel) {
+fun EventCard(navigationAction: NavigationAction, event: Event, userViewModel: UserViewModel) {
   var isSaved by remember { mutableStateOf(false) }
   LaunchedEffect(event.uid) { isSaved = userViewModel.isEventSavedForCurrentUser(event.uid) }
 
@@ -80,8 +80,9 @@ fun EventCard(navigationAction: NavigationAction,event: Event, userViewModel: Us
               .testTag("event_EventListItem")
               .clip(RoundedCornerShape(10.dp))
               .background(MaterialTheme.colorScheme.primaryContainer)
-              .clickable {navigationAction.navigateTo(
-                  Screen.withParams(Screen.EVENT_DETAILS, event.uid))}) {
+              .clickable {
+                navigationAction.navigateTo(Screen.withParams(Screen.EVENT_DETAILS, event.uid))
+              }) {
 
         // Event image section, displays the main event image or a placeholder if the URL is invalid
 

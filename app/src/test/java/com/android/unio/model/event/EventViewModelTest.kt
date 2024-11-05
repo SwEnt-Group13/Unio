@@ -9,11 +9,6 @@ import com.google.firebase.FirebaseApp
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
-import java.io.InputStream
-import java.util.GregorianCalendar
-import junit.framework.TestCase.assertEquals
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.runBlocking
 import junit.framework.Assert.assertTrue
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -27,6 +22,8 @@ import org.mockito.MockitoAnnotations
 import org.mockito.kotlin.any
 import org.mockito.kotlin.eq
 import org.robolectric.RobolectricTestRunner
+import java.io.InputStream
+import java.util.GregorianCalendar
 
 @RunWith(RobolectricTestRunner::class)
 class EventViewModelTest {
@@ -90,7 +87,7 @@ class EventViewModelTest {
     val viewModel = EventViewModel.Factory.create(EventViewModel::class.java)
     assertTrue(viewModel is EventViewModel)
 
-    val eventViewModel = viewModel as EventViewModel
+    val eventViewModel = viewModel
     assertTrue(eventViewModel.repository is EventRepositoryFirestore)
     assertTrue(eventViewModel.userRepository is UserRepositoryFirestore)
   }

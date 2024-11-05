@@ -30,7 +30,7 @@ import java.util.Date
 class EventCardTest {
 
   @get:Rule val composeTestRule = createComposeRule()
-    private lateinit var navigationAction: NavigationAction
+  private lateinit var navigationAction: NavigationAction
 
   private val sampleEvent =
       Event(
@@ -48,14 +48,18 @@ class EventCardTest {
 
   private val userViewModel = UserViewModel(UserRepositoryFirestore(Firebase.firestore), false)
 
-    @Before
-    fun setUp() {
-        MockitoAnnotations.openMocks(this)
-        navigationAction = mock(NavigationAction::class.java)
-    }
+  @Before
+  fun setUp() {
+    MockitoAnnotations.openMocks(this)
+    navigationAction = mock(NavigationAction::class.java)
+  }
+
   @Test
   fun testEventCardElementsExist() {
-    composeTestRule.setContent { EventCard(navigationAction=navigationAction,event = sampleEvent, userViewModel = userViewModel) }
+    composeTestRule.setContent {
+      EventCard(
+          navigationAction = navigationAction, event = sampleEvent, userViewModel = userViewModel)
+    }
 
     composeTestRule
         .onNodeWithTag("event_EventTitle", useUnmergedTree = true)
@@ -90,7 +94,10 @@ class EventCardTest {
 
   @Test
   fun testImageFallbackDisplayed() {
-    composeTestRule.setContent { EventCard(navigationAction=navigationAction, event = sampleEvent, userViewModel = userViewModel) }
+    composeTestRule.setContent {
+      EventCard(
+          navigationAction = navigationAction, event = sampleEvent, userViewModel = userViewModel)
+    }
 
     // Check if the fallback image is displayed when no image is provided
     composeTestRule

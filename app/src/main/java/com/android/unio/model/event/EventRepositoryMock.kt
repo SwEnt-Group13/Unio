@@ -127,8 +127,7 @@ open class EventRepositoryMock : EventRepository {
       id: String,
       onSuccess: (Event) -> Unit,
       onFailure: (Exception) -> Unit
-  ) {
-  }
+  ) {}
 
   override fun init(onSuccess: () -> Unit) {}
 
@@ -154,9 +153,7 @@ open class EventRepositoryMock : EventRepository {
       onFailure: (Exception) -> Unit
   ) {
     // Filter mock events by date range
-    getEvents(
-        { events -> onSuccess(events.filter { it.date in startDate..endDate }) },
-        onFailure)
+    getEvents({ events -> onSuccess(events.filter { it.date in startDate..endDate }) }, onFailure)
   }
 
   // Mock implementation to generate a new UID

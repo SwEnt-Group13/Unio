@@ -117,17 +117,18 @@ fun UnioApp(authViewModel: AuthViewModel) {
       }
     }
     navigation(startDestination = Screen.HOME, route = Route.HOME) {
-      composable(Screen.HOME) { HomeScreen(navigationActions, eventListViewModel, userViewModel= userViewModel) }
+      composable(Screen.HOME) {
+        HomeScreen(navigationActions, eventListViewModel, userViewModel = userViewModel)
+      }
       composable(Screen.EVENT_DETAILS) { navBackStackEntry ->
         // Get the event UID from the arguments
         val uid = navBackStackEntry.arguments?.getString("uid")
         // Create the Event screen with the event UID
         uid?.let {
           EventScreen(
-            navigationAction = navigationActions,
-            eventViewModel = EventViewModel(eventRepository, userRepository),
-            userViewModel = userViewModel
-          )
+              navigationAction = navigationActions,
+              eventViewModel = EventViewModel(eventRepository, userRepository),
+              userViewModel = userViewModel)
         }
       }
       composable(Screen.MAP) { MapScreen(navigationActions, eventListViewModel) }

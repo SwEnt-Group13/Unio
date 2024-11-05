@@ -67,7 +67,7 @@ val LIST_TOP_LEVEL_DESTINATION =
         TopLevelDestinations.EXPLORE,
         TopLevelDestinations.MY_PROFILE)
 
-data class TopLevelDestination(val route: String, val icon: ImageVector, val textId: String) {}
+data class TopLevelDestination(val route: String, val icon: ImageVector, val textId: String)
 
 object TopLevelDestinations {
   val HOME = TopLevelDestination(route = Route.HOME, icon = Icons.Outlined.Home, textId = "Home")

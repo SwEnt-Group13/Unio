@@ -91,7 +91,8 @@ fun AssociationProfileScreen(
   } else {
     AssociationProfileScaffold(association = association, navigationAction = navigationAction) {
         padding ->
-      AssociationProfileContent(navigationAction,padding, association, associationViewModel, userViewModel, context)
+      AssociationProfileContent(
+          navigationAction, padding, association, associationViewModel, userViewModel, context)
     }
   }
 }
@@ -197,7 +198,11 @@ private fun AssociationProfileContent(
         AssociationEventTitle(context)
         Spacer(modifier = Modifier.size(11.dp))
         AssociationProfileEvents(
-            navigationAction, association, associationViewModel, userViewModel = userViewModel, context)
+            navigationAction,
+            association,
+            associationViewModel,
+            userViewModel = userViewModel,
+            context)
         Spacer(modifier = Modifier.size(11.dp))
         UsersCard(association.members.list.collectAsState().value, context)
         Spacer(modifier = Modifier.size(61.dp))
@@ -356,7 +361,11 @@ private fun AssociationProfileEvents(
  * @param event (Event) : The event to display
  */
 @Composable
-private fun AssociationEventCard(navigationAction: NavigationAction, event: Event,userViewModel: UserViewModel) {
+private fun AssociationEventCard(
+    navigationAction: NavigationAction,
+    event: Event,
+    userViewModel: UserViewModel
+) {
   Box(modifier = Modifier.testTag("AssociationEventCard-${event.uid}")) {
     EventCard(
         navigationAction = navigationAction,
