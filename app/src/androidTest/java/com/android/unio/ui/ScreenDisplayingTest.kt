@@ -9,7 +9,6 @@ import com.android.unio.mocks.association.MockAssociation
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventViewModel
-import com.android.unio.model.firestore.firestoreReferenceListWith
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.user.UserRepositoryFirestore
