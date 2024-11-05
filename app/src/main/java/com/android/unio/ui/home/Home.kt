@@ -178,6 +178,7 @@ fun HomeScreen(
                 modifier = Modifier.fillMaxSize().padding(horizontal = 32.dp)) {
                   items(events) { event ->
                     EventCard(
+                        navigationAction,
                         event = event,
                         userViewModel = userViewModel)
                   }

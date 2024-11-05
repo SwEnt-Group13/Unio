@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -27,6 +28,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarDuration
@@ -56,10 +58,6 @@ import com.android.unio.model.user.User
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.theme.AppTypography
-import com.android.unio.ui.theme.inversePrimaryLight
-import com.android.unio.ui.theme.onPrimaryLight
-import com.android.unio.ui.theme.primaryLight
-import com.android.unio.ui.theme.secondaryLight
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -159,17 +157,17 @@ fun EventScreen(
       content = { padding ->
         // Mock image before linking to backend
         Column(
-            modifier = Modifier.testTag("eventDetailsPage").verticalScroll(rememberScrollState())) {
+            modifier = Modifier.testTag("eventDetailsPage").verticalScroll(rememberScrollState()).padding(padding)) {
               AsyncImage(
                   PLACEHOLDER_IMAGE_URL,
                   "Event image",
                   placeholder = painterResource(R.drawable.weskic),
-                  modifier = Modifier.fillMaxWidth().testTag("eventDetailsImage"))
+                  modifier = Modifier.fillMaxSize().testTag("eventDetailsImage"))
 
               Column(
                   modifier =
                       Modifier.testTag("eventDetailsInformationCard")
-                          .background(primaryLight)
+                          .background(MaterialTheme.colorScheme.primary)
                           .align(Alignment.CenterHorizontally)
                           .padding(12.dp)
                           .fillMaxWidth()) {
@@ -178,7 +176,7 @@ fun EventScreen(
                         modifier =
                             Modifier.testTag("eventTitle").align(Alignment.CenterHorizontally),
                         style = AppTypography.headlineLarge,
-                        color = onPrimaryLight)
+                        color = MaterialTheme.colorScheme.onPrimary)
 
                     Row(modifier = Modifier.align(Alignment.Start)) {
                       for (i in associations.indices) {
@@ -207,7 +205,7 @@ fun EventScreen(
                                   modifier =
                                       Modifier.testTag("associationName$i").padding(start = 3.dp),
                                   style = AppTypography.bodySmall,
-                                  color = onPrimaryLight)
+                                  color = MaterialTheme.colorScheme.onPrimary)
                             }
                       }
                     }
@@ -215,11 +213,11 @@ fun EventScreen(
                       Text(
                           "<Start Hour>",
                           modifier = Modifier.testTag("eventStartHour").weight(1f),
-                          color = onPrimaryLight)
+                          color = MaterialTheme.colorScheme.onPrimary)
                       Text(
                           "<Event Date>",
                           modifier = Modifier.testTag("eventDate"),
-                          color = onPrimaryLight)
+                          color = MaterialTheme.colorScheme.onPrimary)
                     }
                   }
               Column(modifier = Modifier.testTag("eventDetailsBody").padding(9.dp)) {
@@ -227,56 +225,58 @@ fun EventScreen(
                     "X places remaining",
                     modifier = Modifier.testTag("placesRemainingText"),
                     style = AppTypography.bodyLarge,
-                    color = secondaryLight)
+                    color = MaterialTheme.colorScheme.secondary)
                 Text(
                     "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
                     modifier = Modifier.testTag("eventDescription").padding(6.dp),
                     style = AppTypography.bodyMedium)
-                Spacer(modifier = Modifier.weight(1f))
 
-                Row(
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.align(Alignment.CenterHorizontally)) {
-                      Text(
-                          "<Event Location>",
-                          modifier = Modifier.testTag("eventLocation").padding(end = 5.dp))
-                      Button(
-                          onClick = DEBUG_LAMBDA,
-                          modifier = Modifier.testTag("mapButton").size(48.dp),
-                          shape = CircleShape,
-                          colors =
-                              ButtonDefaults.buttonColors(
-                                  containerColor = inversePrimaryLight,
-                                  contentColor = primaryLight),
-                          contentPadding = PaddingValues(0.dp)) {
+                Spacer(modifier = Modifier.height(10.dp))
+                Column(modifier=Modifier.fillMaxSize(), verticalArrangement = Arrangement.Bottom) {
+                    Row(
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.align(Alignment.CenterHorizontally)) {
+                        Text(
+                            "<Event Location>",
+                            modifier = Modifier.testTag("eventLocation").padding(end = 5.dp))
+                        Button(
+                            onClick = DEBUG_LAMBDA,
+                            modifier = Modifier.testTag("mapButton").size(48.dp),
+                            shape = CircleShape,
+                            colors =
+                            ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.colorScheme.inversePrimary,
+                                contentColor = MaterialTheme.colorScheme.primary),
+                            contentPadding = PaddingValues(0.dp)) {
                             Icon(
                                 Icons.Outlined.LocationOn,
                                 contentDescription =
-                                    context.getString(R.string.event_location_button_description),
+                                context.getString(R.string.event_location_button_description),
                             )
-                          }
+                        }
                     }
-                Spacer(modifier = Modifier.height(12.dp))
-                Button(
-                    onClick = DEBUG_LAMBDA,
-                    modifier =
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Button(
+                        onClick = DEBUG_LAMBDA,
+                        modifier =
                         Modifier.testTag("signUpButton")
                             .align(Alignment.CenterHorizontally)
                             .wrapContentWidth()
                             .height(56.dp),
-                    shape = CircleShape,
-                    colors =
+                        shape = CircleShape,
+                        colors =
                         ButtonDefaults.buttonColors(
-                            containerColor = inversePrimaryLight, contentColor = primaryLight)) {
-                      Icon(
-                          Icons.AutoMirrored.Filled.DirectionsWalk,
-                          contentDescription =
-                              context.getString(R.string.event_signup_button_description),
-                      )
-                      Text(context.getString(R.string.event_sign_up))
+                            containerColor = MaterialTheme.colorScheme.inversePrimary, contentColor = MaterialTheme.colorScheme.primary)) {
+                        Icon(
+                            Icons.AutoMirrored.Filled.DirectionsWalk,
+                            contentDescription =
+                            context.getString(R.string.event_signup_button_description),
+                        )
+                        Text(context.getString(R.string.event_sign_up))
                     }
-                Spacer(modifier = Modifier.height(16.dp))
+                }
+
               }
             }
       })

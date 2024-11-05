@@ -129,11 +129,6 @@ fun UnioApp(authViewModel: AuthViewModel) {
             userViewModel = userViewModel
           )
         }
-        /*uid?.let { EventScreen(navigationActions, it, userViewModel = userViewModel) }
-        ?: run {
-          Log.e("EventDetails", "Event UID is null")
-          Toast.makeText(context, "Event UID is null", Toast.LENGTH_SHORT).show()
-        }*/
       }
       composable(Screen.MAP) { MapScreen(navigationActions, eventListViewModel) }
     }
