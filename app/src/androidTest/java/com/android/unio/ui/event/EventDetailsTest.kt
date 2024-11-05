@@ -98,10 +98,12 @@ class EventDetailsTest {
     assertSnackBarIsDisplayed()
 
     // Location button
+    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("mapButton"))
     composeTestRule.onNodeWithTag("mapButton").performClick()
     assertSnackBarIsDisplayed()
 
     // Sign-up button
+    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("mapButton"))
     composeTestRule.onNodeWithTag("signUpButton").performClick()
     assertSnackBarIsDisplayed()
   }
