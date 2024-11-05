@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
+import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Nightlight
 import androidx.compose.material.icons.filled.Notifications
@@ -21,16 +22,19 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.tooling.preview.Preview
 import com.android.unio.R
-import com.android.unio.model.preferences.PreferenceKeys
+import com.android.unio.model.preferences.AppPreferences
 import com.android.unio.ui.navigation.NavigationAction
-import com.android.unio.ui.theme.Theme
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
+import java.util.Locale
 import me.zhanghai.compose.preference.LocalPreferenceFlow
 import me.zhanghai.compose.preference.ProvidePreferenceLocals
 import me.zhanghai.compose.preference.listPreference
@@ -63,8 +67,9 @@ fun SettingsScreen(navigationAction: NavigationAction) {
 @Composable
 fun SettingsContainer() {
   val context = LocalContext.current
+  val preferences by LocalPreferenceFlow.current.collectAsState()
 
-  // Location Permission
+  /** Location Permissions * */
   val locationPermissions =
       rememberMultiplePermissionsState(
           permissions =
@@ -82,26 +87,26 @@ fun SettingsContainer() {
         modifier = Modifier.testTag("SettingsContainer"),
     ) {
       listPreference(
-          modifier = Modifier.testTag(PreferenceKeys.THEME),
-          key = PreferenceKeys.THEME,
+          modifier = Modifier.testTag(AppPreferences.THEME),
+          key = AppPreferences.THEME,
           title = { Text(context.getString(R.string.settings_theme_title)) },
-          valueToText = { AnnotatedString(it) },
-          summary = { Text(it) },
-          values = listOf(Theme.LIGHT, Theme.DARK, Theme.SYSTEM),
-          defaultValue = Theme.SYSTEM,
+          summary = { Text(AppPreferences.Theme.toDisplayText(it)) },
+          valueToText = { AnnotatedString(AppPreferences.Theme.toDisplayText(it)) },
+          values = AppPreferences.Theme.asList,
+          defaultValue = AppPreferences.Theme.default,
           icon = {
             Icon(
                 imageVector =
                     when (it) {
-                      Theme.DARK -> Icons.Default.Nightlight
-                      Theme.LIGHT -> Icons.Default.WbSunny
+                      AppPreferences.Theme.DARK -> Icons.Default.Nightlight
+                      AppPreferences.Theme.LIGHT -> Icons.Default.WbSunny
                       else -> Icons.Default.Smartphone
                     },
                 contentDescription = context.getString(R.string.settings_theme_content_description))
           })
       switchPreference(
-          modifier = Modifier.testTag(PreferenceKeys.NOTIFICATIONS),
-          key = PreferenceKeys.NOTIFICATIONS,
+          modifier = Modifier.testTag(AppPreferences.NOTIFICATIONS),
+          key = AppPreferences.NOTIFICATIONS,
           title = { Text(context.getString(R.string.settings_notifications_title)) },
           summary = { Text(context.getString(R.string.settings_notifications_summary)) },
           icon = {
@@ -112,14 +117,14 @@ fun SettingsContainer() {
           },
           defaultValue = true)
       preference(
-          modifier = Modifier.testTag(PreferenceKeys.LOCATION_PERMISSION),
-          key = PreferenceKeys.LOCATION_PERMISSION,
-          title = { Text("Enable Location Permissions") },
+          modifier = Modifier.testTag(AppPreferences.LOCATION_PERMISSION),
+          key = AppPreferences.LOCATION_PERMISSION,
+          title = { Text(context.getString(R.string.settings_location_title)) },
           summary = {
             if (locationPermissions.allPermissionsGranted) {
-              Text("All location permissions have been granted")
+              Text(context.getString(R.string.settings_location_summary_granted))
             } else {
-              Text("There are missing location permissions")
+              Text(context.getString(R.string.settings_location_summary_denied))
             }
           },
           icon = {

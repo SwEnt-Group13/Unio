@@ -2,7 +2,7 @@ package com.android.unio.ui.theme
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.test.junit4.createComposeRule
-import com.android.unio.model.preferences.PreferenceKeys
+import com.android.unio.model.preferences.AppPreferences
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.flow.MutableStateFlow
 import me.zhanghai.compose.preference.MutablePreferences
@@ -18,7 +18,7 @@ class ThemeTest {
   @Test
   fun testTheme() {
     val preferencesFlow: MutableStateFlow<Preferences> =
-        MutableStateFlow(MapPreferences(mapOf(PreferenceKeys.THEME to Theme.LIGHT)))
+        MutableStateFlow(MapPreferences(mapOf(AppPreferences.THEME to AppPreferences.Theme.LIGHT)))
 
     composeTestRule.setContent {
       ProvidePreferenceLocals(flow = preferencesFlow) {
