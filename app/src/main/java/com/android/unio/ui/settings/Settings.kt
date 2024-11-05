@@ -82,6 +82,19 @@ fun SettingsContainer() {
         locationPermissions.launchMultiplePermissionRequest()
       }
 
+  /** Language * */
+  val language = preferences.get<String>(AppPreferences.LANGUAGE) ?: AppPreferences.Language.default
+  val locale = Locale(language)
+  Locale.setDefault(locale)
+
+  val configuration = context.resources.configuration
+  configuration.setLocale(Locale(language))
+  configuration.setLayoutDirection(locale)
+
+  context.createConfigurationContext(configuration)
+  context.resources.updateConfiguration(configuration, context.resources.displayMetrics)
+  println("Updated language to $locale")
+
   ProvidePreferenceLocals(flow = LocalPreferenceFlow.current) {
     LazyColumn(
         modifier = Modifier.testTag("SettingsContainer"),
@@ -103,6 +116,20 @@ fun SettingsContainer() {
                       else -> Icons.Default.Smartphone
                     },
                 contentDescription = context.getString(R.string.settings_theme_content_description))
+          })
+      listPreference(
+          modifier = Modifier.testTag(AppPreferences.LANGUAGE),
+          key = AppPreferences.LANGUAGE,
+          title = { Text(context.getString(R.string.settings_language_title)) },
+          summary = { Text(AppPreferences.Language.toDisplayText(it)) },
+          valueToText = { AnnotatedString(AppPreferences.Language.toDisplayText(it)) },
+          values = AppPreferences.Language.asList,
+          defaultValue = AppPreferences.Language.default,
+          icon = {
+            Icon(
+                imageVector = Icons.Default.Language,
+                contentDescription =
+                    context.getString(R.string.settings_language_content_description))
           })
       switchPreference(
           modifier = Modifier.testTag(AppPreferences.NOTIFICATIONS),
