@@ -55,8 +55,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun HomeScreen(
     navigationAction: NavigationAction,
-    eventListViewModel: EventListViewModel = viewModel(factory = EventListViewModel.Factory),
-    userViewModel: UserViewModel = viewModel(factory = UserViewModel.Factory)
+    eventListViewModel: EventListViewModel,
+    userViewModel: UserViewModel
 ) {
   val events by eventListViewModel.events.collectAsState()
   var selectedTab by remember { mutableStateOf("All") }

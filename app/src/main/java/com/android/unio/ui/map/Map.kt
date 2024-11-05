@@ -25,6 +25,7 @@ import com.android.unio.model.event.EventListViewModel
 import com.android.unio.model.firestore.emptyFirestoreReferenceList
 import com.android.unio.model.map.Location
 import com.android.unio.model.strings.MapStrings
+import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.navigation.NavigationAction
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
@@ -41,7 +42,7 @@ import java.util.concurrent.TimeUnit
 @Composable
 fun MapScreen(
     navigationAction: NavigationAction,
-    eventListViewModel: EventListViewModel = viewModel(factory = EventListViewModel.Factory)
+    eventListViewModel: EventListViewModel,
 ) {
   val context = LocalContext.current
   Scaffold(
