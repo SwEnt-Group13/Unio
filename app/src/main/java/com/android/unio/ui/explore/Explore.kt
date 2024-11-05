@@ -89,7 +89,7 @@ fun ExploreScreenContent(
   var expanded by rememberSaveable { mutableStateOf(false) }
   val assocationResults by searchViewModel.associations.collectAsState()
   val searchState by searchViewModel.status.collectAsState()
-    val context = LocalContext.current
+  val context = LocalContext.current
 
   Column(
       modifier = Modifier.padding(padding).fillMaxWidth(),
