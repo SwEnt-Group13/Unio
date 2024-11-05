@@ -90,10 +90,12 @@ class EventDetailsTest {
   fun testButtonBehavior() {
     setEventScreen()
     // Share button
+    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("eventShareButton"))
     composeTestRule.onNodeWithTag("eventShareButton").performClick()
     assertSnackBarIsDisplayed()
 
     // Save button
+    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("eventSaveButton"))
     composeTestRule.onNodeWithTag("eventSaveButton").performClick()
     assertSnackBarIsDisplayed()
 
@@ -103,7 +105,7 @@ class EventDetailsTest {
     assertSnackBarIsDisplayed()
 
     // Sign-up button
-    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("mapButton"))
+    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("signUpButton"))
     composeTestRule.onNodeWithTag("signUpButton").performClick()
     assertSnackBarIsDisplayed()
   }
