@@ -69,62 +69,6 @@ class MockUser {
           }
         }
 
-    /** Returns a list of edge-case users based on selected edge cases */
-    fun createEdgeCaseMockUsers(
-        selectedUids: List<EdgeCaseUid> = EdgeCaseUid.values().toList(),
-        selectedEmails: List<EdgeCaseEmail> = EdgeCaseEmail.values().toList(),
-        selectedFirstNames: List<EdgeCaseFirstName> = EdgeCaseFirstName.values().toList(),
-        selectedLastNames: List<EdgeCaseLastName> = EdgeCaseLastName.values().toList(),
-        selectedBiographies: List<EdgeCaseBiography> = EdgeCaseBiography.values().toList(),
-        selectedProfilePictures: List<EdgeCaseProfilePicture> =
-            EdgeCaseProfilePicture.values().toList(),
-        selectedInterests: List<Interest> = edgeCaseInterests,
-        selectedSocials: List<UserSocial> = edgeCaseSocials,
-        selectedFollowedAssociations: List<List<Association>> =
-            listOf(MockAssociation.createAllMockAssociations()),
-        selectedJoinedAssociations: List<List<Association>> =
-            listOf(MockAssociation.createAllMockAssociations()),
-        selectedSavedEvents: List<List<Event>> = listOf(MockEvent.createAllMockEvents())
-    ): List<User> {
-      val users = mutableListOf<User>()
-      for (uid in selectedUids) {
-        for (email in selectedEmails) {
-          for (firstName in selectedFirstNames) {
-            for (lastName in selectedLastNames) {
-              for (biography in selectedBiographies) {
-                for (profilePicture in selectedProfilePictures) {
-                  for (interests in listOf(selectedInterests)) {
-                    for (socials in listOf(selectedSocials)) {
-                      for (followedAssociations in selectedFollowedAssociations) {
-                        for (joinedAssociations in selectedJoinedAssociations) {
-                          for (savedEvents in selectedSavedEvents) {
-                            users.add(
-                                createMockUser(
-                                    uid = uid.value,
-                                    email = email.value,
-                                    firstName = firstName.value,
-                                    lastName = lastName.value,
-                                    biography = biography.value,
-                                    profilePicture = profilePicture.value,
-                                    interests = interests,
-                                    socials = socials,
-                                    followedAssociations = followedAssociations,
-                                    joinedAssociations = joinedAssociations,
-                                    savedEvents = savedEvents))
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-      return users
-    }
-
     /** Creates a mock User with specified properties for testing edge cases. */
     fun createMockUser(
         associationDependency: Boolean = false,

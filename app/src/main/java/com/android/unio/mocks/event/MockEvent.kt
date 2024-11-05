@@ -72,62 +72,6 @@ class MockEvent {
     /** Edge cases for EventType enums * */
     val edgeCaseEventTypes = EventType.values().toList()
 
-    /** Returns a list of edge-case events based on selected edge cases */
-    fun createEdgeCaseMockEvents(
-        selectedUids: List<EdgeCaseUid> = EdgeCaseUid.values().toList(),
-        selectedTitles: List<EdgeCaseTitle> = EdgeCaseTitle.values().toList(),
-        selectedImages: List<EdgeCaseImage> = EdgeCaseImage.values().toList(),
-        selectedDescriptions: List<EdgeCaseDescription> = EdgeCaseDescription.values().toList(),
-        selectedCatchyDescriptions: List<EdgeCaseCatchyDescription> =
-            EdgeCaseCatchyDescription.values().toList(),
-        selectedPrices: List<EdgeCasePrice> = EdgeCasePrice.values().toList(),
-        selectedDates: List<EdgeCaseDate> = EdgeCaseDate.values().toList(),
-        selectedEventTypes: List<EventType> = edgeCaseEventTypes,
-        selectedLocations: List<Location> = listOf(MockLocation.createMockLocation()),
-        selectedOrganisers: List<List<Association>> =
-            listOf(MockAssociation.createAllMockAssociations()),
-        selectedTaggedAssociations: List<List<Association>> =
-            listOf(MockAssociation.createAllMockAssociations())
-    ): List<Event> {
-      val events = mutableListOf<Event>()
-      for (uid in selectedUids) {
-        for (title in selectedTitles) {
-          for (image in selectedImages) {
-            for (description in selectedDescriptions) {
-              for (catchyDescription in selectedCatchyDescriptions) {
-                for (price in selectedPrices) {
-                  for (date in selectedDates) {
-                    for (eventType in selectedEventTypes) {
-                      for (location in selectedLocations) {
-                        for (organisers in selectedOrganisers) {
-                          for (taggedAssociations in selectedTaggedAssociations) {
-                            events.add(
-                                createMockEvent(
-                                    uid = uid.value,
-                                    title = title.value,
-                                    organisers = organisers,
-                                    taggedAssociations = taggedAssociations,
-                                    image = image.value,
-                                    description = description.value,
-                                    catchyDescription = catchyDescription.value,
-                                    price = price.value,
-                                    date = date.value,
-                                    location = location,
-                                    types = listOf(eventType)))
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-      return events
-    }
-
     /** Creates a mock Event with specified properties for testing edge cases. */
     fun createMockEvent(
         associationDependency: Boolean = false,

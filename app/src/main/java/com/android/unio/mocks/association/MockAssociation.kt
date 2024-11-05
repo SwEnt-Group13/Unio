@@ -65,44 +65,6 @@ class MockAssociation {
     /** Edge cases list for category enums * */
     val edgeCaseCategories = AssociationCategory.values().toList()
 
-    /** Returns a list of edge-case associations based on selected edge cases */
-    fun createEdgeCaseMockAssociations(
-        selectedUids: List<EdgeCaseUid> = EdgeCaseUid.values().toList(),
-        selectedUrls: List<EdgeCaseUrl> = EdgeCaseUrl.values().toList(),
-        selectedNames: List<EdgeCaseName> = EdgeCaseName.values().toList(),
-        selectedFullNames: List<EdgeCaseFullName> = EdgeCaseFullName.values().toList(),
-        selectedDescriptions: List<EdgeCaseDescription> = EdgeCaseDescription.values().toList(),
-        selectedCategories: List<AssociationCategory> = edgeCaseCategories,
-        selectedImages: List<EdgeCaseImage> = EdgeCaseImage.values().toList()
-    ): List<Association> {
-      val associations = mutableListOf<Association>()
-      for (uid in selectedUids) {
-        for (url in selectedUrls) {
-          for (name in selectedNames) {
-            for (fullName in selectedFullNames) {
-              for (description in selectedDescriptions) {
-                for (category in selectedCategories) {
-                  for (image in selectedImages) {
-                    associations.add(
-                        createMockAssociation(
-                            uid = uid.value,
-                            url = url.value,
-                            name = name.value,
-                            fullName = fullName.value,
-                            category = category,
-                            description = description.value,
-                            image = image.value,
-                            members = listOf()))
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-      return associations
-    }
-
     /** Creates a mock Association with specified properties for testing edge cases. */
     fun createMockAssociation(
         eventDependency: Boolean = false,
