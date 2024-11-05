@@ -102,6 +102,8 @@
     <string name="settings_location_summary_granted" translatable="true">All location permissions have been granted</string>
     <string name="settings_location_summary_denied" translatable="true">There are missing location permissions</string>
     <string name="settings_location_content_description" translatable="true">Location Permissions</string>
+    <string name="settings_language_title">Language</string>
+    <string name="settings_language_content_description">Language Settings</string>
 
     <!-- Debug/Temporary Strings -->
     <string name="debug_lorem_ipsum" translatable="false">Lorem ipsum dolor sit amet, consectetur
