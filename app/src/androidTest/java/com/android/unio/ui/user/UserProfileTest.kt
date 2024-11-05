@@ -9,8 +9,6 @@ import androidx.compose.ui.test.onNodeWithTag
 import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationCategory
 import com.android.unio.model.event.Event
-import com.android.unio.model.firestore.MockReferenceList
-import com.android.unio.model.firestore.emptyFirestoreReferenceList
 import com.android.unio.model.event.EventType
 import com.android.unio.model.firestore.firestoreReferenceListWith
 import com.android.unio.model.map.Location
@@ -22,10 +20,10 @@ import com.android.unio.ui.navigation.NavigationAction
 import com.google.firebase.Timestamp
 import io.mockk.MockKAnnotations
 import io.mockk.impl.annotations.MockK
-import java.util.GregorianCalendar
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import java.util.GregorianCalendar
 
 class UserProfileTest {
 
@@ -74,8 +72,7 @@ class UserProfileTest {
               listOf(
                   UserSocial(Social.INSTAGRAM, "Instagram"),
                   UserSocial(Social.WEBSITE, "example.com")),
-          profilePicture = "https://www.example.com/image",
-          savedEvents = Event.emptyFirestoreReferenceList())
+          profilePicture = "https://www.example.com/image")
 
   @Before
   fun setUp() {

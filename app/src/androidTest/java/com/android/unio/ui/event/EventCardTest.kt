@@ -16,16 +16,21 @@ import com.android.unio.model.user.UserRepository
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserSocial
 import com.android.unio.model.user.UserViewModel
+import com.android.unio.ui.navigation.NavigationAction
 import com.google.firebase.Firebase
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.firestore
-import java.util.Date
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.mockito.Mockito.mock
+import org.mockito.MockitoAnnotations
+import java.util.Date
 
 class EventCardTest {
 
   @get:Rule val composeTestRule = createComposeRule()
+    private lateinit var navigationAction: NavigationAction
 
   private val sampleEvent =
       Event(
@@ -43,9 +48,14 @@ class EventCardTest {
 
   private val userViewModel = UserViewModel(UserRepositoryFirestore(Firebase.firestore), false)
 
+    @Before
+    fun setUp() {
+        MockitoAnnotations.openMocks(this)
+        navigationAction = mock(NavigationAction::class.java)
+    }
   @Test
   fun testEventCardElementsExist() {
-    composeTestRule.setContent { EventCard(event = sampleEvent, userViewModel = userViewModel) }
+    composeTestRule.setContent { EventCard(navigationAction=navigationAction,event = sampleEvent, userViewModel = userViewModel) }
 
     composeTestRule
         .onNodeWithTag("event_EventTitle", useUnmergedTree = true)
@@ -80,7 +90,7 @@ class EventCardTest {
 
   @Test
   fun testImageFallbackDisplayed() {
-    composeTestRule.setContent { EventCard(event = sampleEvent, userViewModel = userViewModel) }
+    composeTestRule.setContent { EventCard(navigationAction=navigationAction, event = sampleEvent, userViewModel = userViewModel) }
 
     // Check if the fallback image is displayed when no image is provided
     composeTestRule
