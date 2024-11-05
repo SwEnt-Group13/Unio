@@ -1,8 +1,6 @@
 package com.android.unio.model.user
 
-import com.android.unio.model.association.Association
-import com.android.unio.model.event.Event
-import com.android.unio.model.firestore.emptyFirestoreReferenceList
+import com.android.unio.mocks.user.MockUser
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
@@ -34,19 +32,18 @@ class UserTest {
   @Test
   fun testUser() {
     val user =
-        User(
-            "1",
-            "john@example.com",
-            "John",
-            "Doe",
-            "An example user",
-            Event.emptyFirestoreReferenceList(),
-            Association.emptyFirestoreReferenceList(),
-            Association.emptyFirestoreReferenceList(),
-            listOf(Interest.SPORTS, Interest.MUSIC),
-            listOf(
-                UserSocial(Social.INSTAGRAM, "Insta"), UserSocial(Social.WEBSITE, "example.com")),
-            "https://www.example.com/image")
+        MockUser.createMockUser(
+            uid = "1",
+            email = "john@example.com",
+            firstName = "John",
+            lastName = "Doe",
+            biography = "An example user",
+            interests = listOf(Interest.SPORTS, Interest.MUSIC),
+            socials =
+                listOf(
+                    UserSocial(Social.INSTAGRAM, "Insta"),
+                    UserSocial(Social.WEBSITE, "example.com")),
+            profilePicture = "https://www.example.com/image")
     assertEquals("1", user.uid)
     assertEquals("john@example.com", user.email)
     assertEquals("John", user.firstName)
@@ -61,47 +58,11 @@ class UserTest {
 
   @Test
   fun testCheckNewUser() {
-    val userEmptyFirstName =
-        User(
-            "1",
-            "example@gmail.com",
-            "",
-            "lastName",
-            "biography",
-            savedEvents = Event.emptyFirestoreReferenceList(),
-            followedAssociations = Association.emptyFirestoreReferenceList(),
-            joinedAssociations = Association.emptyFirestoreReferenceList(),
-            listOf(Interest.SPORTS),
-            listOf(UserSocial(Social.INSTAGRAM, "username")),
-            "https://example.com/image")
+    val userEmptyFirstName = MockUser.createMockUser(firstName = "")
 
-    val userEmptyLastName =
-        User(
-            "1",
-            "example@gmail.com",
-            "firstName",
-            "",
-            "biography",
-            savedEvents = Event.emptyFirestoreReferenceList(),
-            followedAssociations = Association.emptyFirestoreReferenceList(),
-            joinedAssociations = Association.emptyFirestoreReferenceList(),
-            listOf(Interest.SPORTS),
-            listOf(UserSocial(Social.INSTAGRAM, "username")),
-            "https://example.com/image")
+    val userEmptyLastName = MockUser.createMockUser(lastName = "")
 
-    val userEmptyNameAndLastName =
-        User(
-            "1",
-            "example@gmail.com",
-            "",
-            "",
-            "biography",
-            savedEvents = Event.emptyFirestoreReferenceList(),
-            followedAssociations = Association.emptyFirestoreReferenceList(),
-            joinedAssociations = Association.emptyFirestoreReferenceList(),
-            listOf(Interest.SPORTS),
-            listOf(UserSocial(Social.INSTAGRAM, "username")),
-            "https://example.com/image")
+    val userEmptyNameAndLastName = MockUser.createMockUser(firstName = "", lastName = "")
     val expectedErrors1 = mutableSetOf(AccountDetailsError.EMPTY_FIRST_NAME)
     val expectedErrors2 = mutableSetOf(AccountDetailsError.EMPTY_LAST_NAME)
     val expectedErrors3 =
