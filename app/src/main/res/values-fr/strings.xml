@@ -48,6 +48,8 @@
 
     <!-- Explore Screen Strings -->
     <string name="explore_search_placeholder">Recherche</string>
+    <string name="explore_search_error_message">Une erreur s\'est produite lors de la recherche</string>
+    <string name="explore_search_no_results">Aucun résultat trouvé</string>
 
     <!-- Map Screen Strings -->
     <string name="map_event_go_back_button">Retour</string>

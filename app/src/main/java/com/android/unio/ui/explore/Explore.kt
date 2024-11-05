@@ -35,6 +35,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -88,6 +89,7 @@ fun ExploreScreenContent(
   var expanded by rememberSaveable { mutableStateOf(false) }
   val assocationResults by searchViewModel.associations.collectAsState()
   val searchState by searchViewModel.status.collectAsState()
+    val context = LocalContext.current
 
   Column(
       modifier = Modifier.padding(padding).fillMaxWidth(),
@@ -115,7 +117,7 @@ fun ExploreScreenContent(
                   onExpandedChange = { expanded = it },
                   placeholder = {
                     Text(
-                        text = "Search",
+                        text = context.getString(R.string.explore_search_placeholder),
                         style = AppTypography.bodyLarge,
                         modifier = Modifier.testTag("searchPlaceHolder"))
                   },
@@ -135,7 +137,7 @@ fun ExploreScreenContent(
                   Box(
                       modifier = Modifier.fillMaxWidth().padding(16.dp),
                       contentAlignment = Alignment.Center) {
-                        Text("An error occurred while searching")
+                        Text(context.getString(R.string.explore_search_error_message))
                       }
                 }
                 SearchViewModel.Status.LOADING -> {
@@ -151,7 +153,7 @@ fun ExploreScreenContent(
                     Box(
                         modifier = Modifier.fillMaxWidth().padding(16.dp),
                         contentAlignment = Alignment.Center) {
-                          Text("No results found")
+                          Text(context.getString(R.string.explore_search_no_results))
                         }
                   } else {
                     Column(modifier = Modifier.verticalScroll(rememberScrollState())) {

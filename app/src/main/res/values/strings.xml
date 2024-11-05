@@ -54,6 +54,8 @@
 
     <!-- Explore Screen Strings -->
     <string name="explore_search_placeholder">Search</string>
+    <string name="explore_search_error_message">An error occurred while searching</string>
+    <string name="explore_search_no_results">No results found</string>
 
     <!-- Map Screen Strings -->
     <string name="map_event_go_back_button">Go back</string>
@@ -139,7 +141,6 @@
     <string name="interest_food" translatable="true">Food</string>
     <string name="interest_gaming" translatable="true">Gaming</string>
     <string name="interest_festivals" translatable="true">Festivals</string>
-
 
     <!-- Debug/Temporary Strings -->
     <string name="debug_lorem_ipsum" translatable="false">Lorem ipsum dolor sit amet, consectetur
