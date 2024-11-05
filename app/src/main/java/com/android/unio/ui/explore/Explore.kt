@@ -14,6 +14,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.DockedSearchBar
@@ -25,12 +27,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -50,9 +50,6 @@ import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Route
 import com.android.unio.ui.navigation.Screen
 import com.android.unio.ui.theme.AppTypography
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 @Composable
 fun ExploreScreen(
@@ -91,127 +88,127 @@ fun ExploreScreenContent(
   var expanded by rememberSaveable { mutableStateOf(false) }
   val assocationResults by searchViewModel.associations.collectAsState()
   val searchState by searchViewModel.status.collectAsState()
-  val coroutineScope = rememberCoroutineScope() // Why?
-  var searchJob: Job? by remember { mutableStateOf(null) }
 
-  // Debounce the search query
-  // This logic should probably be moved to the ViewModel
-  LaunchedEffect(searchQuery.value) {
-    searchJob?.cancel()
-    val query = searchQuery.value
-    if (query.isNotEmpty()) {
-      searchJob =
-          coroutineScope.launch {
-            delay(500)
-            searchViewModel.searchAssociations(query)
-          }
-    } else {
-      searchViewModel.clearAssociations()
-    }
-  }
-
-  Column(modifier = Modifier.padding(padding).fillMaxWidth(),
+  Column(
+      modifier = Modifier.padding(padding).fillMaxWidth(),
       horizontalAlignment = Alignment.CenterHorizontally) {
-    Text(
-        text = "Explore our Associations",
-        /** Will go in the string.xml */
-        style = AppTypography.headlineLarge,
-        modifier =
-            Modifier.padding(top = 16.dp, bottom = 8.dp)
-                .align(Alignment.CenterHorizontally)
-                .testTag("exploreTitle"))
+        Text(
+            text = "Explore our Associations",
+            /** Will go in the string.xml */
+            style = AppTypography.headlineLarge,
+            modifier =
+                Modifier.padding(top = 16.dp, bottom = 8.dp)
+                    .align(Alignment.CenterHorizontally)
+                    .testTag("exploreTitle"))
 
-    DockedSearchBar(
-        inputField = {
-          SearchBarDefaults.InputField(
-              modifier = Modifier.testTag("searchBarInput"),
-              query = searchQuery.value,
-              onQueryChange = { searchQuery.value = it },
-              onSearch = {},
-              expanded = expanded,
-              onExpandedChange = { expanded = it },
-              placeholder = {
-                Text(
-                    text = "Search",
-                    style = AppTypography.bodyLarge,
-                    modifier = Modifier.testTag("searchPlaceHolder"))
-              },
-              trailingIcon = {
-                Icon(
-                    Icons.Default.Search,
-                    contentDescription = "Search icon",
-                    modifier = Modifier.testTag("searchTrailingIcon"))
-              },
-          )
-        },
-        expanded = expanded,
-        onExpandedChange = { expanded = it },
-        modifier = Modifier.padding(horizontal = 16.dp).testTag("searchBar")) {
-          if (searchState == SearchViewModel.Status.LOADING) {
-            Box(
-                modifier = Modifier.fillMaxWidth().padding(16.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                LinearProgressIndicator()
-            }
-          } else if (assocationResults.isEmpty() &&
-              searchState == SearchViewModel.Status.SUCCESS) {
-            ListItem(
-                headlineContent = { Text("No results found") },
-            )
-          } else if (
-              searchState != SearchViewModel.Status.IDLE
-          ) {
-            assocationResults.forEach { association ->
-              ListItem(
-                  modifier =
-                      Modifier.clickable {
-                        expanded = false
-                        navigationAction.navigateTo(
-                            Screen.withParams(Screen.ASSOCIATION_PROFILE, association.uid))
-                      },
-                  headlineContent = { Text(association.name) },
+        DockedSearchBar(
+            inputField = {
+              SearchBarDefaults.InputField(
+                  modifier = Modifier.testTag("searchBarInput"),
+                  query = searchQuery.value,
+                  onQueryChange = {
+                    searchQuery.value = it
+                    searchViewModel.debouncedSearch(it)
+                  },
+                  onSearch = {},
+                  expanded = expanded,
+                  onExpandedChange = { expanded = it },
+                  placeholder = {
+                    Text(
+                        text = "Search",
+                        style = AppTypography.bodyLarge,
+                        modifier = Modifier.testTag("searchPlaceHolder"))
+                  },
+                  trailingIcon = {
+                    Icon(
+                        Icons.Default.Search,
+                        contentDescription = "Search icon",
+                        modifier = Modifier.testTag("searchTrailingIcon"))
+                  },
               )
-            }
-          }
-        }
-
-    LazyColumn(
-        modifier = Modifier.fillMaxSize().testTag("categoriesList"),
-        contentPadding = PaddingValues(vertical = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-    ) {
-      getSortedEntriesAssociationsByCategory(associationsByCategory).forEach {
-          (category, associations) ->
-        val alphabeticalAssociations = getFilteredAssociationsByAlphabeticalOrder(associations)
-
-        if (alphabeticalAssociations.isNotEmpty()) {
-          item {
-            Text(
-                text = category.displayName,
-                style = AppTypography.headlineSmall,
-                modifier =
-                    Modifier.padding(horizontal = 16.dp)
-                        .testTag("category_${category.displayName}"))
-
-            // Horizontal scrollable list of associations
-            LazyRow(
-                modifier =
-                    Modifier.fillMaxSize()
-                        .padding(vertical = 16.dp)
-                        .testTag("associationRow_${category.displayName}"),
-                contentPadding = PaddingValues(horizontal = 16.dp),
-                horizontalArrangement = Arrangement.spacedBy(32.dp, Alignment.Start),
-                verticalAlignment = Alignment.CenterVertically) {
-                  items(alphabeticalAssociations.size) { index ->
-                    AssociationItem(alphabeticalAssociations[index], navigationAction)
+            },
+            expanded = expanded,
+            onExpandedChange = { expanded = it },
+            modifier = Modifier.padding(horizontal = 16.dp).testTag("searchBar")) {
+              when (searchState) {
+                SearchViewModel.Status.ERROR -> {
+                  Box(
+                      modifier = Modifier.fillMaxWidth().padding(16.dp),
+                      contentAlignment = Alignment.Center) {
+                        Text("An error occurred while searching")
+                      }
+                }
+                SearchViewModel.Status.LOADING -> {
+                  Box(
+                      modifier = Modifier.fillMaxWidth().padding(16.dp),
+                      contentAlignment = Alignment.Center) {
+                        LinearProgressIndicator()
+                      }
+                }
+                SearchViewModel.Status.IDLE -> {}
+                SearchViewModel.Status.SUCCESS -> {
+                  if (assocationResults.isEmpty()) {
+                    Box(
+                        modifier = Modifier.fillMaxWidth().padding(16.dp),
+                        contentAlignment = Alignment.Center) {
+                          Text("No results found")
+                        }
+                  } else {
+                    Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+                      assocationResults.forEach { association ->
+                        ListItem(
+                            modifier =
+                                Modifier.clickable {
+                                  expanded = false
+                                  navigationAction.navigateTo(
+                                      Screen.withParams(
+                                          Screen.ASSOCIATION_PROFILE, association.uid))
+                                },
+                            headlineContent = { Text(association.name) },
+                        )
+                      }
+                    }
                   }
                 }
+              }
+            }
+
+        LazyColumn(
+            modifier = Modifier.fillMaxSize().testTag("categoriesList"),
+            contentPadding = PaddingValues(vertical = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+        ) {
+          getSortedEntriesAssociationsByCategory(associationsByCategory).forEach {
+              (category, associations) ->
+            val alphabeticalAssociations = getFilteredAssociationsByAlphabeticalOrder(associations)
+
+            if (alphabeticalAssociations.isNotEmpty()) {
+              item {
+                Text(
+                    text = category.displayName,
+                    style = AppTypography.headlineSmall,
+                    modifier =
+                        Modifier.padding(horizontal = 16.dp)
+                            .testTag("category_${category.displayName}"))
+
+                // Horizontal scrollable list of associations
+                LazyRow(
+                    modifier =
+                        Modifier.fillMaxSize()
+                            .padding(vertical = 16.dp)
+                            .testTag("associationRow_${category.displayName}"),
+                    contentPadding = PaddingValues(horizontal = 16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(32.dp, Alignment.Start),
+                    verticalAlignment = Alignment.CenterVertically) {
+                      items(alphabeticalAssociations.size) { index ->
+                        AssociationItem(alphabeticalAssociations[index], navigationAction)
+                      }
+                    }
+              }
+            }
           }
         }
       }
-    }
-  }
 }
 
 /**
