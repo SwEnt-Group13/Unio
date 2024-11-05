@@ -20,10 +20,10 @@ import com.android.unio.ui.navigation.NavigationAction
 import com.google.firebase.Timestamp
 import io.mockk.MockKAnnotations
 import io.mockk.impl.annotations.MockK
+import java.util.GregorianCalendar
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import java.util.GregorianCalendar
 
 class UserProfileTest {
 

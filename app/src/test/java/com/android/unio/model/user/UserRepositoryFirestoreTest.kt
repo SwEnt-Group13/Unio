@@ -73,8 +73,7 @@ class UserRepositoryFirestoreTest {
                 listOf(
                     UserSocial(Social.INSTAGRAM, "Insta"),
                     UserSocial(Social.WEBSITE, "example.com")),
-            profilePicture = "https://www.example.com/image",
-            savedEvents = Event.emptyFirestoreReferenceList())
+            profilePicture = "https://www.example.com/image")
 
     user2 =
         User(
@@ -91,8 +90,7 @@ class UserRepositoryFirestoreTest {
                 listOf(
                     UserSocial(Social.SNAPCHAT, "Snap"),
                     UserSocial(Social.WEBSITE, "example2.com")),
-            profilePicture = "https://www.example.com/image2",
-            savedEvents = Event.emptyFirestoreReferenceList())
+            profilePicture = "https://www.example.com/image2")
 
     `when`(userCollectionReference.get()).thenReturn(querySnapshotTask)
     `when`(userCollectionReference.document(eq(user1.uid))).thenReturn(documentReference)
@@ -216,8 +214,7 @@ class UserRepositoryFirestoreTest {
                   savedEvents = Event.emptyFirestoreReferenceList(),
                   interests = emptyList(),
                   socials = emptyList(),
-                  profilePicture = "",
-                  savedEvents = Event.emptyFirestoreReferenceList())
+                  profilePicture = "")
           assertEquals(2, users.size)
 
           assertEquals(user1.uid, users[0].uid)

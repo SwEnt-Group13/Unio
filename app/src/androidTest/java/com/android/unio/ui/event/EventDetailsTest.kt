@@ -13,6 +13,7 @@ import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.navigation.NavigationAction
 import io.mockk.impl.annotations.MockK
+import io.mockk.mockk
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -37,6 +38,7 @@ class EventDetailsTest {
 
     navHostController = mock { NavHostController::class.java }
     navigationAction = NavigationAction(navHostController)
+    userViewModel = mockk { UserViewModel::class.java }
 
     eventViewModel = Mockito.mock(EventViewModel::class.java)
   }

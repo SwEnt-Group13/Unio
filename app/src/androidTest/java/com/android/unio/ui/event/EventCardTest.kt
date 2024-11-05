@@ -20,12 +20,12 @@ import com.android.unio.ui.navigation.NavigationAction
 import com.google.firebase.Firebase
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.firestore
+import java.util.Date
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.mockito.Mockito.mock
 import org.mockito.MockitoAnnotations
-import java.util.Date
 
 class EventCardTest {
 
