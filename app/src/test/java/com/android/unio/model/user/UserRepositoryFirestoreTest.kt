@@ -31,6 +31,7 @@ class UserRepositoryFirestoreTest {
   private lateinit var db: FirebaseFirestore
   @Mock private lateinit var userCollectionReference: CollectionReference
   @Mock private lateinit var associationCollectionReference: CollectionReference
+  @Mock private lateinit var eventCollectionReference: CollectionReference
   @Mock private lateinit var querySnapshot: QuerySnapshot
   @Mock private lateinit var queryDocumentSnapshot1: QueryDocumentSnapshot
   @Mock private lateinit var map1: Map<String, Any>
@@ -66,6 +67,7 @@ class UserRepositoryFirestoreTest {
             biography = "An example user",
             followedAssociations = Association.emptyFirestoreReferenceList(),
             joinedAssociations = Association.emptyFirestoreReferenceList(),
+            savedEvents = Event.emptyFirestoreReferenceList(),
             interests = listOf(Interest.SPORTS, Interest.MUSIC),
             socials =
                 listOf(
@@ -83,6 +85,7 @@ class UserRepositoryFirestoreTest {
             biography = "An example user 2",
             followedAssociations = Association.emptyFirestoreReferenceList(),
             joinedAssociations = Association.emptyFirestoreReferenceList(),
+            savedEvents = Event.emptyFirestoreReferenceList(),
             interests = listOf(Interest.FESTIVALS, Interest.GAMING),
             socials =
                 listOf(
@@ -210,6 +213,7 @@ class UserRepositoryFirestoreTest {
                   biography = "",
                   followedAssociations = Association.emptyFirestoreReferenceList(),
                   joinedAssociations = Association.emptyFirestoreReferenceList(),
+                  savedEvents = Event.emptyFirestoreReferenceList(),
                   interests = emptyList(),
                   socials = emptyList(),
                   profilePicture = "",

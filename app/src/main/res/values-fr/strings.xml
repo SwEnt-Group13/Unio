@@ -70,6 +70,7 @@
     <string name="association_no_event">Pas d\'événement plannifié pour l\'instant</string>
     <string name="association_not_found">Erreur : Association introuvable</string>
 
+    <!-- Settings Strings -->
     <string name="settings_title">Réglages</string>
     <string name="settings_theme_title">Thème</string>
     <string name="settings_theme_content_description">Réglages de Thème</string>
@@ -77,6 +78,47 @@
     <string name="settings_notifications_summary">Activer les notifications</string>
     <string name="settings_notifications_content_description">Réglages de Notifications</string>
 
+    <!-- Account Detail Strings -->
+    <string name="account_details_title" translatable="true">Ajoutez des informations supplémentaires</string>
+    <string name="account_details_first_name" translatable="true">Prénom</string>
+    <string name="account_details_last_name" translatable="true">Nom</string>
+    <string name="account_details_bio" translatable="true">Biographie</string>
+    <string name="account_details_add_profile_picture" translatable="true">Ajoutez peut-être une photo de profil?</string>
+    <string name="account_details_add_interests" translatable="true">Ajoutez des centres d\'intérêts</string>
+    <string name="account_details_add_socials" translatable="true">Ajoutez des liens à d\'autres réseaux sociaux</string>
+    <string name="account_details_continue" translatable="true">Continuer</string>
+    <string name="account_details_first_name_error">Veuillez remplir votre Prénom</string>
+    <string name="account_details_last_name_error">Veuillez remplir votre Nom</string>
+
+    <!-- Interests Overlay Strings -->
+    <string name="interest_overlay_title" translatable="true">Vos intérêts</string>
+    <string name="interest_overlay_description" translatable="true">Choisissez autant d\'intérêts qui semblent vous correspondre</string>
+    <string name="interest_overlay_cancel" translatable="true">Annuler</string>
+    <string name="interest_overlay_save" translatable="true">Sauvegarder</string>
+
+    <!-- Social Overlay Strings -->
+    <string name="social_overlay_title" translatable="true">Vos réseaux sociaux</string>
+    <string name="social_overlay_description" translatable="true">
+        Ceux-ci vont être visibles sur votre page personnelle pour que d\'autres étudiants puissent vous contacter</string>
+    <string name="social_overlay_add_social" translatable="true">Ajouter Réseau Social</string>
+    <string name="social_overlay_save" translatable="true">Sauvegarder</string>
+    <string name="social_overlay_cancel" translatable="true">Annuler</string>
+    <string name="social_overlay_save_changes" translatable="true">Sauvegarder les changements</string>
+    <string name="social_overlay_empty_field" translatable="true">L\'entrée est vide</string>
+    <string name="social_overlay_invalid_phone_number" translatable="true">Le numéro de téléphone a un format incorrect</string>
+    <string name="social_overlay_invalid_website" translatable="true">Le cite web n\'est pas encodé avec https</string>
+
+    <!-- Interest  Strings -->
+    <string name="interest_sports" translatable="true">Sport</string>
+    <string name="interest_music" translatable="true">Musique</string>
+    <string name="interest_art" translatable="true">Art</string>
+    <string name="interest_technology" translatable="true">Technologie</string>
+    <string name="interest_science" translatable="true">Science</string>
+    <string name="interest_literature" translatable="true">Littérature</string>
+    <string name="interest_travel" translatable="true">Voyage</string>
+    <string name="interest_food" translatable="true">Nourritue</string>
+    <string name="interest_gaming" translatable="true">Gaming</string>
+    <string name="interest_festivals" translatable="true">Festivals</string>
 
 </resources>
 

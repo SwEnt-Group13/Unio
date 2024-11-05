@@ -9,6 +9,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationCategory
@@ -18,6 +19,7 @@ import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventRepository
 import com.android.unio.model.firestore.firestoreReferenceListWith
 import com.android.unio.model.user.User
+import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.navigation.NavigationAction
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
@@ -117,7 +119,11 @@ class AssociationProfileTest {
   @Test
   fun testAssociationProfileDisplayComponent() {
     composeTestRule.setContent {
-      AssociationProfileScreen(navigationAction, "1", associationViewModel)
+      AssociationProfileScreen(
+          navigationAction,
+          "1",
+          associationViewModel,
+          userViewModel = viewModel(factory = UserViewModel.Factory))
     }
     composeTestRule.waitForIdle()
 
@@ -150,7 +156,11 @@ class AssociationProfileTest {
   @Test
   fun testButtonBehavior() {
     composeTestRule.setContent {
-      AssociationProfileScreen(navigationAction, "1", associationViewModel)
+      AssociationProfileScreen(
+          navigationAction,
+          "1",
+          associationViewModel,
+          userViewModel = viewModel(factory = UserViewModel.Factory))
     }
     // Share button
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("associationShareButton"))
@@ -185,7 +195,11 @@ class AssociationProfileTest {
   @Test
   fun testGoBackButton() {
     composeTestRule.setContent {
-      AssociationProfileScreen(navigationAction, "", associationViewModel)
+      AssociationProfileScreen(
+          navigationAction,
+          "",
+          associationViewModel,
+          userViewModel = viewModel(factory = UserViewModel.Factory))
     }
 
     composeTestRule.onNodeWithTag("goBackButton").performClick()
@@ -196,7 +210,11 @@ class AssociationProfileTest {
   @Test
   fun testAssociationProfileGoodId() {
     composeTestRule.setContent {
-      AssociationProfileScreen(navigationAction, "1", associationViewModel)
+      AssociationProfileScreen(
+          navigationAction,
+          "1",
+          associationViewModel,
+          userViewModel = viewModel(factory = UserViewModel.Factory))
     }
 
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationProfileTitle"))
@@ -206,7 +224,11 @@ class AssociationProfileTest {
   @Test
   fun testAssociationProfileBadId() {
     composeTestRule.setContent {
-      AssociationProfileScreen(navigationAction, "IDONOTEXIST", associationViewModel)
+      AssociationProfileScreen(
+          navigationAction,
+          "IDONOTEXIST",
+          associationViewModel,
+          userViewModel = viewModel(factory = UserViewModel.Factory))
     }
 
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("associationNotFound"))

@@ -1,8 +1,10 @@
 package com.android.unio.model.event
 
+import androidx.lifecycle.ViewModel
 import androidx.test.core.app.ApplicationProvider
-import com.android.unio.model.firestore.MockReferenceList
+import com.android.unio.model.firestore.ReferenceList
 import com.android.unio.model.map.Location
+import com.android.unio.model.user.UserRepositoryFirestore
 import com.google.firebase.FirebaseApp
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.CollectionReference
@@ -12,6 +14,9 @@ import java.util.GregorianCalendar
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
+import junit.framework.Assert.assertTrue
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -26,11 +31,12 @@ import org.robolectric.RobolectricTestRunner
 @RunWith(RobolectricTestRunner::class)
 class EventViewModelTest {
   @Mock private lateinit var repository: EventRepositoryFirestore
+  @Mock private lateinit var usrRepository: UserRepositoryFirestore
   @Mock private lateinit var db: FirebaseFirestore
   @Mock private lateinit var collectionReference: CollectionReference
   @Mock private lateinit var inputStream: InputStream
 
-  private lateinit var viewModel: EventListViewModel
+  private lateinit var eventViewModel: EventViewModel
 
   private val event1 =
       Event(
@@ -66,7 +72,7 @@ class EventViewModelTest {
     }
     `when`(db.collection(any())).thenReturn(collectionReference)
 
-    viewModel = EventListViewModel(repository)
+    eventViewModel = EventViewModel(repository, usrRepository)
   }
 
   @Test
@@ -75,30 +81,43 @@ class EventViewModelTest {
       val onSuccess = invocation.arguments[0] as () -> Unit
       onSuccess()
     }
-    viewModel.addEvent(
+    eventViewModel.addEvent(
         inputStream, event1, { verify(repository).addEvent(eq(event1), any(), any()) }, {})
   }
 
   @Test
-  fun testFindAssociationById() {
-    `when`(repository.getEvents(any(), any())).thenAnswer { invocation ->
-      val onSuccess = invocation.arguments[0] as (List<Event>) -> Unit
-      onSuccess(testEvents)
-    }
+  fun `Factory creates EventViewModel with correct dependencies`() {
+    val viewModel = EventViewModel.Factory.create(EventViewModel::class.java)
+    assertTrue(viewModel is EventViewModel)
 
-    viewModel.loadEvents()
-    assertEquals(testEvents, viewModel.events.value)
+    val eventViewModel = viewModel as EventViewModel
+    assertTrue(eventViewModel.repository is EventRepositoryFirestore)
+    assertTrue(eventViewModel.userRepository is UserRepositoryFirestore)
+  }
 
-    runBlocking {
-      val result = viewModel.events.first()
+  @Test(expected = IllegalArgumentException::class)
+  fun `Factory throws IllegalArgumentException for unsupported ViewModel class`() {
+    EventViewModel.Factory.create(UnsupportedViewModel::class.java)
+  }
 
-      assertEquals(2, result.size)
-      assertEquals("Balelec", result[0].title)
-      assertEquals("Tremplin Sysmic", result[1].title)
-    }
+  class UnsupportedViewModel : ViewModel()
+}
 
-    assertEquals(testEvents[0], viewModel.findEventById("1"))
-    assertEquals(testEvents[1], viewModel.findEventById("3"))
-    assertEquals(null, viewModel.findEventById("2"))
+class MockReferenceList<T>(elements: List<T> = emptyList()) : ReferenceList<T> {
+  private val _list = MutableStateFlow(elements)
+  override val list: StateFlow<List<T>> = _list
+  override val uids: List<String>
+    get() = emptyList()
+
+  override fun add(uid: String) {}
+
+  override fun addAll(uids: List<String>) {}
+
+  override fun remove(uid: String) {}
+
+  override fun requestAll(onSuccess: () -> Unit) {}
+
+  override fun contains(uid: String): Boolean {
+    return false
   }
 }

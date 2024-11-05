@@ -1,6 +1,8 @@
 package com.android.unio.model.user
 
-import com.android.unio.model.firestore.MockReferenceList
+import com.android.unio.model.association.Association
+import com.android.unio.model.event.Event
+import com.android.unio.model.firestore.emptyFirestoreReferenceList
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
@@ -17,8 +19,9 @@ class UserViewModelTest {
           firstName = "userFirst",
           lastName = "userLast",
           biography = "An example user",
-          followedAssociations = MockReferenceList(listOf()),
-          joinedAssociations = MockReferenceList(listOf()),
+          followedAssociations = Association.emptyFirestoreReferenceList(),
+          joinedAssociations = Association.emptyFirestoreReferenceList(),
+          savedEvents = Event.emptyFirestoreReferenceList(),
           interests = listOf(Interest.SPORTS, Interest.MUSIC),
           socials =
               listOf(

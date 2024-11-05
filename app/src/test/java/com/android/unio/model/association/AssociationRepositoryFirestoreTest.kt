@@ -116,7 +116,7 @@ class AssociationRepositoryFirestoreTest {
             "fullName" to association1.fullName,
             "category" to association1.category.name,
             "description" to association1.description,
-            "members" to association1.members.list.value.map { it.uid },
+            "members" to association1.members.uids,
             "followersCount" to association1.followersCount,
             "image" to association1.image)
 
@@ -128,7 +128,7 @@ class AssociationRepositoryFirestoreTest {
             "fullName" to association2.fullName,
             "category" to association2.category.name,
             "description" to association2.description,
-            "members" to association2.members.list.value.map { it.uid },
+            "members" to association2.members.uids,
             "followersCount" to association2.followersCount,
             "image" to association2.image)
 
@@ -148,13 +148,13 @@ class AssociationRepositoryFirestoreTest {
           assertEquals(association1.name, associations[0].name)
           assertEquals(association1.fullName, associations[0].fullName)
           assertEquals(association1.description, associations[0].description)
-          assertEquals(association1.members.list.value, associations[0].members.list.value)
+          assertEquals(association1.members.uids, associations[0].members.uids)
 
           assertEquals(association2.uid, associations[1].uid)
           assertEquals(association2.name, associations[1].name)
           assertEquals(association2.fullName, associations[1].fullName)
           assertEquals(association2.description, associations[1].description)
-          assertEquals(association2.members.list.value, associations[1].members.list.value)
+          assertEquals(association2.members.uids, associations[1].members.uids)
         },
         onFailure = { exception -> assert(false) })
   }
@@ -184,13 +184,13 @@ class AssociationRepositoryFirestoreTest {
           assertEquals(association1.name, associations[0].name)
           assertEquals(association1.fullName, associations[0].fullName)
           assertEquals(association1.description, associations[0].description)
-          assertEquals(association1.members.list.value, associations[0].members.list.value)
+          assertEquals(association1.members.uids, associations[0].members.uids)
 
           assertEquals(emptyAssociation.uid, associations[1].uid)
           assertEquals("", associations[1].name)
           assertEquals("", associations[1].fullName)
           assertEquals("", associations[1].description)
-          assertEquals(emptyList<String>(), associations[1].members.list.value)
+          assertEquals(emptyList<String>(), associations[1].members.uids)
         },
         onFailure = { exception -> assert(false) })
   }
@@ -204,7 +204,7 @@ class AssociationRepositoryFirestoreTest {
           assertEquals(association1.name, association.name)
           assertEquals(association1.fullName, association.fullName)
           assertEquals(association1.description, association.description)
-          assertEquals(association1.members.list.value, association.members.list.value)
+          assertEquals(association1.members.uids, association.members.uids)
         },
         onFailure = { exception -> assert(false) })
   }

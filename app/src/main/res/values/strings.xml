@@ -107,6 +107,48 @@
     <string name="settings_notifications_summary" translatable="true">Enable push notifications</string>
     <string name="settings_notifications_content_description" translatable="true">Notification Settings</string>
 
+    <!-- Account Details Strings -->
+    <string name="account_details_title" translatable="true">Tell us about yourself</string>
+    <string name="account_details_first_name" translatable="true">First name</string>
+    <string name="account_details_last_name" translatable="true">Last name</string>
+    <string name="account_details_bio" translatable="true">Bio</string>
+    <string name="account_details_add_profile_picture" translatable="true">Maybe add a profile picture?</string>
+    <string name="account_details_add_interests" translatable="true">Add centers of interest</string>
+    <string name="account_details_add_socials" translatable="true">Add links to other social media</string>
+    <string name="account_details_continue" translatable="true">Continue</string>
+    <string name="account_details_first_name_error">Please fill in your first name</string>
+    <string name="account_details_last_name_error">Please fill in your last name</string>
+
+    <!-- Interest Overlay Strings -->
+    <string name="interest_overlay_title" translatable="true">Your interests</string>
+    <string name="interest_overlay_description" translatable="true">Choose as many interests as you feel apply to you</string>
+    <string name="interest_overlay_cancel" translatable="true">Cancel</string>
+    <string name="interest_overlay_save" translatable="true">Save</string>
+
+    <!-- Social Overlay Strings -->
+    <string name="social_overlay_title" translatable="true">Your social media</string>
+    <string name="social_overlay_description" translatable="true">These will be displayed on your profile to allow other students to contact you</string>
+    <string name="social_overlay_add_social" translatable="true">Add social</string>
+    <string name="social_overlay_save" translatable="true">Save</string>
+    <string name="social_overlay_cancel" translatable="true">Cancel</string>
+    <string name="social_overlay_save_changes" translatable="true">Save changes</string>
+    <string name="social_overlay_empty_field" translatable="true">The input is empty or blank</string>
+    <string name="social_overlay_invalid_phone_number" translatable="true">The phone number has wrong format</string>
+    <string name="social_overlay_invalid_website" translatable="true">The website is not encoded with https</string>
+
+    <!-- Interest  Strings -->
+    <string name="interest_sports" translatable="true">Sports</string>
+    <string name="interest_music" translatable="true">Music</string>
+    <string name="interest_art" translatable="true">Art</string>
+    <string name="interest_technology" translatable="true">Technology</string>
+    <string name="interest_science" translatable="true">Science</string>
+    <string name="interest_literature" translatable="true">Literature</string>
+    <string name="interest_travel" translatable="true">Travel</string>
+    <string name="interest_food" translatable="true">Food</string>
+    <string name="interest_gaming" translatable="true">Gaming</string>
+    <string name="interest_festivals" translatable="true">Festivals</string>
+
+
     <!-- Debug/Temporary Strings -->
     <string name="debug_lorem_ipsum" translatable="false">Lorem ipsum dolor sit amet, consectetur
         adipiscing elit. Nam nec fermentum orci. Praesent tortor purus, porta at ligula id, vehicula sodales

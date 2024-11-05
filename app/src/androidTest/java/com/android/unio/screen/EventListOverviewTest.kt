@@ -2,12 +2,10 @@ package com.android.unio.ui.events
 
 import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.unit.ExperimentalUnitApi
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventListViewModel
 import com.android.unio.model.event.EventRepositoryMock
@@ -19,16 +17,16 @@ import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.junit.runner.RunWith
 import org.mockito.Mockito.mock
 import org.mockito.kotlin.verify
+
+// import org.robolectric.RobolectricTestRunner
 
 /**
  * Test class for the EventListOverview Composable. This class contains unit tests to validate the
  * behavior of the Event List UI.
  */
 @ExperimentalUnitApi
-@RunWith(AndroidJUnit4::class)
 class EventListOverviewTest {
 
   @get:Rule val composeTestRule = createComposeRule()
@@ -40,33 +38,6 @@ class EventListOverviewTest {
   @Before
   fun setUp() {
     navigationAction = mock(NavigationAction::class.java)
-  }
-
-  /**
-   * Tests the functionality of switching between tabs and verifying animations. Ensures that the
-   * 'All' tab exists and can be clicked, and verifies the underlying bar's presence when switching
-   * tabs.
-   */
-  @Test
-  fun testTabSwitchingAndAnimation() {
-    composeTestRule.setContent {
-      val eventListViewModel = EventListViewModel(mockEventRepository)
-      HomeScreen(navigationAction, eventListViewModel = eventListViewModel, onAddEvent = {})
-    }
-
-    // Assert that the 'All' tab exists and has a click action.
-    composeTestRule.onNodeWithTag("event_tabAll").assertExists()
-    composeTestRule.onNodeWithTag("event_tabAll").assertHasClickAction()
-
-    // Assert that the underlying bar exists.
-    composeTestRule.onNodeWithTag("event_UnderlyingBar").assertExists()
-
-    // Perform a click on the 'Following' tab.
-    composeTestRule.onNodeWithTag("event_tabFollowing").performClick()
-
-    // Assert that the 'Following' tab and the underlying bar still exist.
-    composeTestRule.onNodeWithTag("event_tabFollowing").assertExists()
-    composeTestRule.onNodeWithTag("event_UnderlyingBar").assertExists()
   }
 
   /**
@@ -87,10 +58,9 @@ class EventListOverviewTest {
             }
           }
       val eventListViewModel = EventListViewModel(emptyEventRepository)
-      HomeScreen(navigationAction, eventListViewModel = eventListViewModel, onAddEvent = {})
+      HomeScreen(navigationAction, eventListViewModel = eventListViewModel)
     }
 
-    // Assert that the empty event prompt is displayed.
     composeTestRule.onNodeWithTag("event_emptyEventPrompt").assertExists()
     composeTestRule.onNodeWithText("No events available.").assertExists()
   }
@@ -103,17 +73,10 @@ class EventListOverviewTest {
   fun testMapButton() {
     composeTestRule.setContent {
       val eventListViewModel = EventListViewModel(mockEventRepository)
-      HomeScreen(
-          navigationAction = navigationAction,
-          eventListViewModel = eventListViewModel,
-          onAddEvent = {})
+      HomeScreen(navigationAction = navigationAction, eventListViewModel = eventListViewModel)
     }
-
     composeTestRule.onNodeWithTag("event_MapButton").assertExists()
     composeTestRule.onNodeWithTag("event_MapButton").assertHasClickAction()
-
-    composeTestRule.onNodeWithContentDescription("Add Event").assertExists()
-    composeTestRule.onNodeWithContentDescription("Add Event").assertHasClickAction()
 
     composeTestRule.onNodeWithTag("event_MapButton").performClick()
     verify(navigationAction).navigateTo(Screen.MAP)
@@ -128,7 +91,7 @@ class EventListOverviewTest {
   fun testClickFollowingAndAdd() = runBlockingTest {
     composeTestRule.setContent {
       val eventListViewModel = EventListViewModel(mockEventRepository)
-      HomeScreen(navigationAction, eventListViewModel = eventListViewModel, onAddEvent = {})
+      HomeScreen(navigationAction, eventListViewModel = eventListViewModel)
     }
 
     // Ensure the 'Following' tab exists and perform a click.

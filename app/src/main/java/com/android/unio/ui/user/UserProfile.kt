@@ -136,6 +136,8 @@ fun UserProfileScreen(
 @Composable
 fun UserProfileScreenContent(navigationAction: NavigationAction, user: User) {
 
+  val context = LocalContext.current
+
   val uriHandler = LocalUriHandler.current
 
   val followedAssociations by user.followedAssociations.list.collectAsState()
@@ -148,14 +150,17 @@ fun UserProfileScreenContent(navigationAction: NavigationAction, user: User) {
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxWidth(0.7f).padding(24.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)) {
-          AsyncImage(
-              model = user.profilePicture,
-              contentDescription = "Profile Picture",
-              modifier =
-                  Modifier.size(100.dp)
-                      .clip(CircleShape)
-                      .background(Color.Gray)
-                      .testTag("UserProfilePicture"))
+          Box(modifier = Modifier.size(100.dp)) {
+            AsyncImage(
+                model = user.profilePicture,
+                contentDescription = "Profile Picture",
+                contentScale = ContentScale.Crop,
+                modifier =
+                    Modifier.size(100.dp)
+                        .clip(CircleShape)
+                        .background(Color.Gray)
+                        .testTag("UserProfilePicture"))
+          }
 
           // Display the user's name and biography.
           Text(
@@ -195,7 +200,9 @@ fun UserProfileScreenContent(navigationAction: NavigationAction, user: User) {
               SuggestionChip(
                   modifier = Modifier.testTag("UserProfileInterest"),
                   onClick = {},
-                  label = { Text(interest.title, style = AppTypography.bodySmall) })
+                  label = {
+                    Text(context.getString(interest.title), style = AppTypography.bodySmall)
+                  })
             }
           }
 

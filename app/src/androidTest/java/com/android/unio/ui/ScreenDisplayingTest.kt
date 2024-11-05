@@ -3,6 +3,7 @@ package com.android.unio.ui
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationCategory
@@ -10,11 +11,13 @@ import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventListViewModel
 import com.android.unio.model.firestore.firestoreReferenceListWith
+import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.user.User
+import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserViewModel
-import com.android.unio.ui.accountCreation.AccountDetails
 import com.android.unio.ui.association.AssociationProfileScreen
+import com.android.unio.ui.authentication.AccountDetails
 import com.android.unio.ui.authentication.EmailVerificationScreen
 import com.android.unio.ui.authentication.WelcomeScreen
 import com.android.unio.ui.event.EventCreationScreen
@@ -46,11 +49,12 @@ class ScreenDisplayingTest {
 
   private lateinit var navigationAction: NavigationAction
   private lateinit var userViewModel: UserViewModel
-  private lateinit var eventViewModel: EventListViewModel
+  @MockK private lateinit var userRepositoryFirestore: UserRepositoryFirestore
 
   @MockK private lateinit var searchViewModel: SearchViewModel
 
   @MockK private lateinit var associationViewModel: AssociationViewModel
+  @MockK private lateinit var imageRepositoryFirestore: ImageRepositoryFirebaseStorage
 
   @MockK private lateinit var firebaseAuth: FirebaseAuth
 
@@ -98,7 +102,7 @@ class ScreenDisplayingTest {
 
   @Test
   fun testWelcomeDisplayed() {
-    composeTestRule.setContent { WelcomeScreen(navigationAction) }
+    composeTestRule.setContent { WelcomeScreen() }
     composeTestRule.onNodeWithTag("WelcomeScreen").assertIsDisplayed()
   }
 
@@ -110,13 +114,15 @@ class ScreenDisplayingTest {
 
   @Test
   fun testAccountDetailsDisplayed() {
-    composeTestRule.setContent { AccountDetails(navigationAction, userViewModel) }
+    composeTestRule.setContent {
+      AccountDetails(navigationAction, userViewModel, imageRepositoryFirestore)
+    }
     composeTestRule.onNodeWithTag("AccountDetails").assertIsDisplayed()
   }
 
   @Test
   fun testHomeDisplayed() {
-    composeTestRule.setContent { HomeScreen(navigationAction, onAddEvent = {}) }
+    composeTestRule.setContent { HomeScreen(navigationAction) }
     composeTestRule.onNodeWithTag("HomeScreen").assertIsDisplayed()
   }
 
@@ -156,7 +162,11 @@ class ScreenDisplayingTest {
   @Test
   fun testAssociationProfileDisplayed() {
     composeTestRule.setContent {
-      AssociationProfileScreen(navigationAction, "1", associationViewModel)
+      AssociationProfileScreen(
+          navigationAction,
+          "1",
+          associationViewModel,
+          userViewModel = viewModel(factory = UserViewModel.Factory))
     }
     composeTestRule.onNodeWithTag("AssociationScreen").assertIsDisplayed()
   }

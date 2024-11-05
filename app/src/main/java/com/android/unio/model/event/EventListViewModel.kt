@@ -4,8 +4,6 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.android.unio.model.image.ImageRepositoryFirebaseStorage
-import java.io.InputStream
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -30,7 +28,6 @@ class EventListViewModel(private val repository: EventRepository) : ViewModel() 
    * observed and not modified.
    */
   val events: StateFlow<List<Event>> = _events
-  private val imageRepository = ImageRepositoryFirebaseStorage()
 
   /** Initializes the ViewModel by loading the events from the repository. */
   init {
@@ -50,7 +47,7 @@ class EventListViewModel(private val repository: EventRepository) : ViewModel() 
           },
           onFailure = { exception ->
             // Handle error (e.g., log it, show a message to the user)
-            Log.e("EventViewModel", "An error occured while loading events :$exception")
+            Log.e("EventViewModel", "An error occurred while loading events: $exception")
             _events.value = emptyList() // Clear events on failure or handle accordingly
           })
     }

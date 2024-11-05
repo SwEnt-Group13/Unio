@@ -15,7 +15,7 @@ fun AssociationRepositoryFirestore.Companion.serialize(association: Association)
       "fullName" to association.fullName,
       "category" to association.category.name,
       "description" to association.description,
-      "members" to association.members.list.value.map { it.uid },
+      "members" to association.members.uids,
       "followersCount" to association.followersCount,
       "image" to association.image)
 }
@@ -27,8 +27,9 @@ fun UserRepositoryFirestore.Companion.serialize(user: User): Map<String, Any> {
       "firstName" to user.firstName,
       "lastName" to user.lastName,
       "biography" to user.biography,
-      "followedAssociations" to user.followedAssociations.list.value.map { it.uid },
-      "joinedAssociations" to user.joinedAssociations.list.value.map { it.uid },
+      "followedAssociations" to user.followedAssociations.uids,
+      "savedEvents" to user.savedEvents.uids,
+      "joinedAssociations" to user.joinedAssociations.uids,
       "interests" to user.interests.map { it.name },
       "socials" to user.socials.map { mapOf("social" to it.social.name, "content" to it.content) },
       "profilePicture" to user.profilePicture,
@@ -39,8 +40,8 @@ fun EventRepositoryFirestore.Companion.serialize(event: Event): Map<String, Any>
   return mapOf(
       "uid" to event.uid,
       "title" to event.title,
-      "organisers" to event.organisers.list.value.map { it.uid },
-      "taggedAssociations" to event.taggedAssociations.list.value.map { it.uid },
+      "organisers" to event.organisers.uids,
+      "taggedAssociations" to event.taggedAssociations.uids,
       "image" to event.image,
       "description" to event.description,
       "catchyDescription" to event.catchyDescription,
