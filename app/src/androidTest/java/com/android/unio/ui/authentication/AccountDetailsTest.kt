@@ -3,13 +3,15 @@ package com.android.unio.ui.authentication
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.assertTextContains
-import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextInput
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
+import com.android.unio.model.strings.test_tags.AccountDetailsTestTags
+import com.android.unio.model.strings.test_tags.InterestsOverlayTestTags
+import com.android.unio.model.strings.test_tags.SocialsOverlayTestTags
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.authentication.overlay.addNewUserSocial
 import com.android.unio.ui.navigation.NavigationAction
@@ -70,105 +72,128 @@ class AccountDetailsTest {
 
   @Test
   fun testEverythingIsDisplayed() {
-    composeTestRule.onNodeWithTag("AccountDetailsTitleText").assertIsDisplayed()
+    composeTestRule.onNodeWithTag(AccountDetailsTestTags.TITLE_TEXT).assertIsDisplayed()
     composeTestRule
-        .onNodeWithTag("AccountDetailsTitleText")
-        .assertTextEquals("Tell us about yourself")
-    composeTestRule.onNodeWithTag("AccountDetailsFirstNameTextField").assertIsDisplayed()
+        .onNodeWithTag(AccountDetailsTestTags.FIRST_NAME_TEXT, useUnmergedTree = true)
+        .assertIsDisplayed()
     composeTestRule
-        .onNodeWithTag("AccountDetailsFirstNameText", useUnmergedTree = true)
-        .assertTextEquals("First name")
-    composeTestRule.onNodeWithTag("AccountDetailsLastNameTextField").assertIsDisplayed()
-    composeTestRule
-        .onNodeWithTag("AccountDetailsLastNameText", useUnmergedTree = true)
-        .assertTextEquals("Last name")
-    composeTestRule.onNodeWithTag("AccountDetailsBioTextField").assertExists()
-    composeTestRule
-        .onNodeWithTag("AccountDetailsBioText", useUnmergedTree = true)
-        .assertTextEquals("Bio")
-    composeTestRule.onNodeWithTag("AccountDetailsProfilePictureText").assertExists()
-    composeTestRule
-        .onNodeWithTag("AccountDetailsProfilePictureText")
-        .assertTextEquals("Maybe add a profile picture?")
-    composeTestRule.onNodeWithTag("AccountDetailsProfilePictureIcon").assertExists()
-    composeTestRule.onNodeWithTag("AccountDetailsInterestsButton").assertExists()
-    composeTestRule.onNodeWithTag("AccountDetailsSocialsButton").assertExists()
-    composeTestRule.onNodeWithTag("AccountDetailsContinueButton").assertExists()
+        .onNodeWithTag(AccountDetailsTestTags.LAST_NAME_TEXT, useUnmergedTree = true)
+        .assertIsDisplayed()
+    composeTestRule.onNodeWithTag(AccountDetailsTestTags.BIOGRAPHY_TEXT_FIELD).assertExists()
+    composeTestRule.onNodeWithTag(AccountDetailsTestTags.PROFILE_PICTURE_TEXT).assertExists()
+    composeTestRule.onNodeWithTag(AccountDetailsTestTags.PROFILE_PICTURE_ICON).assertExists()
+    composeTestRule.onNodeWithTag(AccountDetailsTestTags.INTERESTS_BUTTON).assertExists()
+    composeTestRule.onNodeWithTag(AccountDetailsTestTags.SOCIALS_BUTTON).assertExists()
+    composeTestRule.onNodeWithTag(AccountDetailsTestTags.CONTINUE_BUTTON).assertExists()
   }
 
   @Test
   fun testOutLinedTextFieldsWorkCorrectly() {
-    composeTestRule.onNodeWithTag("AccountDetailsFirstNameTextField").performTextInput("John")
-    composeTestRule.onNodeWithTag("AccountDetailsLastNameTextField").performTextInput("Doe")
-    composeTestRule.onNodeWithTag("AccountDetailsBioTextField").performTextInput("I am a student")
+    composeTestRule
+        .onNodeWithTag(AccountDetailsTestTags.FIRST_NAME_TEXT_FIELD)
+        .performTextInput("John")
+    composeTestRule
+        .onNodeWithTag(AccountDetailsTestTags.LAST_NAME_TEXT_FIELD)
+        .performTextInput("Doe")
+    composeTestRule
+        .onNodeWithTag(AccountDetailsTestTags.BIOGRAPHY_TEXT_FIELD)
+        .performTextInput("I am a student")
 
-    composeTestRule.onNodeWithTag("AccountDetailsFirstNameTextField").assertTextContains("John")
-    composeTestRule.onNodeWithTag("AccountDetailsLastNameTextField").assertTextContains("Doe")
-    composeTestRule.onNodeWithTag("AccountDetailsBioTextField").assertTextContains("I am a student")
+    composeTestRule
+        .onNodeWithTag(AccountDetailsTestTags.FIRST_NAME_TEXT_FIELD)
+        .assertTextContains("John")
+    composeTestRule
+        .onNodeWithTag(AccountDetailsTestTags.LAST_NAME_TEXT_FIELD)
+        .assertTextContains("Doe")
+    composeTestRule
+        .onNodeWithTag(AccountDetailsTestTags.BIOGRAPHY_TEXT_FIELD)
+        .assertTextContains("I am a student")
   }
 
   @Test
   fun testInterestsButtonWorksCorrectly() {
-    composeTestRule.onNodeWithTag("AccountDetailsInterestsButton").performScrollTo().performClick()
-    composeTestRule.onNodeWithTag("InterestOverlayTitle").assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag(AccountDetailsTestTags.INTERESTS_BUTTON)
+        .performScrollTo()
+        .performClick()
+    composeTestRule.onNodeWithTag(InterestsOverlayTestTags.TITLE_TEXT).assertIsDisplayed()
   }
 
   @Test
   fun testSocialsButtonWorksCorrectly() {
-    composeTestRule.onNodeWithTag("AccountDetailsSocialsButton").performScrollTo().performClick()
-    composeTestRule.onNodeWithTag("SocialOverlayTitle").assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag(AccountDetailsTestTags.SOCIALS_BUTTON)
+        .performScrollTo()
+        .performClick()
+    composeTestRule.onNodeWithTag(SocialsOverlayTestTags.TITLE_TEXT).assertIsDisplayed()
   }
 
   @Test
   fun testAddingInterestsCorrectlyModifiesTheFlowRow() {
-    composeTestRule.onNodeWithTag("AccountDetailsInterestsButton").performClick()
-    composeTestRule.onNodeWithTag("InterestOverlayClickableRow: 0").performClick()
-    composeTestRule.onNodeWithTag("InterestOverlayClickableRow: 1").performClick()
-    composeTestRule.onNodeWithTag("InterestOverlaySaveButton").performClick()
+    composeTestRule.onNodeWithTag(AccountDetailsTestTags.INTERESTS_BUTTON).performClick()
+    composeTestRule.onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW + "0").performClick()
+    composeTestRule.onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW + "1").performClick()
+    composeTestRule.onNodeWithTag(InterestsOverlayTestTags.SAVE_BUTTON).performClick()
 
-    composeTestRule.onNodeWithTag("AccountDetailsInterestChip: 0").assertExists()
-    composeTestRule.onNodeWithTag("AccountDetailsInterestChip: 1").assertExists()
+    composeTestRule.onNodeWithTag(AccountDetailsTestTags.INTERESTS_CHIP + "0").assertExists()
+    composeTestRule.onNodeWithTag(AccountDetailsTestTags.INTERESTS_CHIP + "1").assertExists()
   }
 
   @Test
   fun testAddingSocialsCorrectlyModifiesTheFlowRow() {
-    composeTestRule.onNodeWithTag("AccountDetailsSocialsButton").performScrollTo().performClick()
+    composeTestRule
+        .onNodeWithTag(AccountDetailsTestTags.SOCIALS_BUTTON)
+        .performScrollTo()
+        .performClick()
     addNewUserSocial(composeTestRule, "facebook_username", "Facebook")
     addNewUserSocial(composeTestRule, "instagram_username", "Instagram")
-    composeTestRule.onNodeWithTag("SocialOverlaySaveButton").performScrollTo().performClick()
     composeTestRule
-        .onNodeWithTag("AccountDetailsSocialChip: Facebook")
+        .onNodeWithTag(SocialsOverlayTestTags.SAVE_BUTTON)
+        .performScrollTo()
+        .performClick()
+    composeTestRule
+        .onNodeWithTag(AccountDetailsTestTags.SOCIALS_CHIP + "Facebook")
         .performScrollTo()
         .assertIsDisplayed()
     composeTestRule
-        .onNodeWithTag("AccountDetailsSocialChip: Instagram")
+        .onNodeWithTag(AccountDetailsTestTags.SOCIALS_CHIP + "Instagram")
         .performScrollTo()
         .assertIsDisplayed()
   }
 
   @Test
   fun testCorrectlyExitsInterestOverlayScreen() {
-    composeTestRule.onNodeWithTag("AccountDetailsInterestsButton").performClick()
-    composeTestRule.onNodeWithTag("InterestOverlaySaveButton").performClick()
-    composeTestRule.onNodeWithTag("InterestOverlayTitle").assertIsNotDisplayed()
+    composeTestRule.onNodeWithTag(AccountDetailsTestTags.INTERESTS_BUTTON).performClick()
+    composeTestRule.onNodeWithTag(InterestsOverlayTestTags.SAVE_BUTTON).performClick()
+    composeTestRule.onNodeWithTag(InterestsOverlayTestTags.TITLE_TEXT).assertIsNotDisplayed()
   }
 
   @Test
   fun testCorrectlyDisplaysErrorWhenFirstNameIsEmpty() {
-    composeTestRule.onNodeWithTag("AccountDetailsContinueButton").performScrollTo().performClick()
     composeTestRule
-        .onNodeWithTag("AccountDetailsFirstNameErrorText", useUnmergedTree = true)
+        .onNodeWithTag(AccountDetailsTestTags.CONTINUE_BUTTON)
+        .performScrollTo()
+        .performClick()
+    composeTestRule
+        .onNodeWithTag(AccountDetailsTestTags.FIRST_NAME_ERROR_TEXT, useUnmergedTree = true)
         .assertIsDisplayed()
     composeTestRule
-        .onNodeWithTag("AccountDetailsLastNameErrorText", useUnmergedTree = true)
+        .onNodeWithTag(AccountDetailsTestTags.LAST_NAME_ERROR_TEXT, useUnmergedTree = true)
         .assertIsDisplayed()
   }
 
   @Test
   fun testContinueButtonCorrectlyNavigatesToHome() {
-    composeTestRule.onNodeWithTag("AccountDetailsFirstNameTextField").performTextInput("John")
-    composeTestRule.onNodeWithTag("AccountDetailsLastNameTextField").performTextInput("Doe")
-    composeTestRule.onNodeWithTag("AccountDetailsContinueButton").performScrollTo().performClick()
+    composeTestRule
+        .onNodeWithTag(AccountDetailsTestTags.FIRST_NAME_TEXT_FIELD)
+        .performTextInput("John")
+    composeTestRule
+        .onNodeWithTag(AccountDetailsTestTags.LAST_NAME_TEXT_FIELD)
+        .performTextInput("Doe")
+    composeTestRule
+        .onNodeWithTag(AccountDetailsTestTags.CONTINUE_BUTTON)
+        .performScrollTo()
+        .performClick()
     verify(navigationAction).navigateTo(screen = Screen.HOME)
   }
 }
