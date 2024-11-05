@@ -7,26 +7,16 @@ import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performTextInput
-import com.android.unio.ui.navigation.NavigationAction
-import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.mockito.kotlin.mock
 
 class WelcomeTest {
 
-  private lateinit var navigationAction: NavigationAction
-
   @get:Rule val composeTestRule = createComposeRule()
-
-  @Before
-  fun setUp() {
-    navigationAction = mock { NavigationAction::class.java }
-    composeTestRule.setContent { WelcomeScreen(navigationAction) }
-  }
 
   @Test
   fun testWelcomeIsDisplayed() {
+    composeTestRule.setContent { WelcomeScreen() }
     composeTestRule.onNodeWithTag("WelcomeEmail").assertIsDisplayed()
     composeTestRule.onNodeWithTag("WelcomePassword").assertIsDisplayed()
     composeTestRule.onNodeWithTag("WelcomePassword").assertIsDisplayed()
@@ -37,6 +27,7 @@ class WelcomeTest {
 
   @Test
   fun testButtonEnables() {
+    composeTestRule.setContent { WelcomeScreen() }
     composeTestRule.onNodeWithTag("WelcomeButton").assertIsNotEnabled()
 
     composeTestRule.onNodeWithTag("WelcomeEmail").performTextInput("john.doe@epfl.ch")

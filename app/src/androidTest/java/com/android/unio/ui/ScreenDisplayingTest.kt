@@ -13,6 +13,7 @@ import com.android.unio.model.firestore.firestoreReferenceListWith
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.user.User
+import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.association.AssociationProfileScreen
 import com.android.unio.ui.authentication.AccountDetails
@@ -47,6 +48,7 @@ class ScreenDisplayingTest {
 
   private lateinit var navigationAction: NavigationAction
   private lateinit var userViewModel: UserViewModel
+  @MockK private lateinit var userRepositoryFirestore: UserRepositoryFirestore
 
   @MockK private lateinit var searchViewModel: SearchViewModel
 
@@ -98,7 +100,7 @@ class ScreenDisplayingTest {
 
   @Test
   fun testWelcomeDisplayed() {
-    composeTestRule.setContent { WelcomeScreen(navigationAction) }
+    composeTestRule.setContent { WelcomeScreen() }
     composeTestRule.onNodeWithTag("WelcomeScreen").assertIsDisplayed()
   }
 
