@@ -1,6 +1,5 @@
 package com.android.unio.model.event
 
-import androidx.lifecycle.ViewModel
 import androidx.test.core.app.ApplicationProvider
 import com.android.unio.mocks.event.MockEvent
 import com.android.unio.model.firestore.ReferenceList
@@ -12,7 +11,6 @@ import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import java.io.InputStream
 import java.util.GregorianCalendar
-import junit.framework.Assert.assertTrue
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import org.junit.Before
@@ -71,7 +69,6 @@ class EventViewModelTest {
     eventViewModel.addEvent(
         inputStream, event1, { verify(repository).addEvent(eq(event1), any(), any()) }, {})
   }
-
 }
 
 class MockReferenceList<T>(elements: List<T> = emptyList()) : ReferenceList<T> {

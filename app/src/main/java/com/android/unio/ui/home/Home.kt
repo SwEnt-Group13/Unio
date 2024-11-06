@@ -40,7 +40,6 @@ import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
-
 import com.android.unio.model.event.EventListViewModel
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.event.EventCard

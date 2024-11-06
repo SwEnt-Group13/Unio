@@ -66,7 +66,8 @@ class ExploreScreenTest {
     sortedByCategoryAssociations =
         getSortedEntriesAssociationsByCategory(associations.groupBy { it.category })
 
-    associationViewModel = AssociationViewModel(associationRepository, eventRepository, imageRepository)
+    associationViewModel =
+        AssociationViewModel(associationRepository, eventRepository, imageRepository)
   }
 
   @Test

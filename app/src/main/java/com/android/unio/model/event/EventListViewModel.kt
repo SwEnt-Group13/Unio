@@ -4,7 +4,6 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.unio.model.image.ImageRepository
-import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.io.InputStream
 import javax.inject.Inject
@@ -20,7 +19,9 @@ import kotlinx.coroutines.launch
  * @property repository The [EventRepository] that provides the events.
  */
 @HiltViewModel
-class EventListViewModel @Inject constructor(private val repository: EventRepository, private val imageRepository: ImageRepository) :
+class EventListViewModel
+@Inject
+constructor(private val repository: EventRepository, private val imageRepository: ImageRepository) :
     ViewModel() {
 
   /**

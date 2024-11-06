@@ -40,7 +40,6 @@ class EventListOverviewTest {
   private lateinit var userViewModel: UserViewModel
   private lateinit var eventListViewModel: EventListViewModel
 
-
   // Mock event repository to provide test data.
   private lateinit var mockEventRepository: EventRepository
   private lateinit var navigationAction: NavigationAction

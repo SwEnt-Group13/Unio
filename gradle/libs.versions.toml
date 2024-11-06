@@ -103,6 +103,7 @@ androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-com
 androidx-appsearch = { module = "androidx.appsearch:appsearch", version.ref = "appsearch" }
 androidx-appsearch-compiler = { module = "androidx.appsearch:appsearch-compiler", version.ref = "appsearch" }
 androidx-appsearch-local-storage = { module = "androidx.appsearch:appsearch-local-storage", version.ref = "appsearch" }
+androidx-hilt-navigation-fragment = { module = "androidx.hilt:hilt-navigation-fragment", version.ref = "hiltNavigationCompose" }
 androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "materialIconsExtended" }
 androidx-ui-test-manifest-v100 = { module = "androidx.compose.ui:ui-test-manifest", version.ref = "uiTestManifestVersion" }
 androidx-preference-ktx = { module = "androidx.preference:preference-ktx", version.ref = "preferenceKtx" }

@@ -4,9 +4,8 @@ import com.google.firebase.storage.FirebaseStorage
 import java.io.InputStream
 import javax.inject.Inject
 
-class ImageRepositoryFirebaseStorage @Inject constructor(
-    storage: FirebaseStorage
-) : ImageRepository {
+class ImageRepositoryFirebaseStorage @Inject constructor(storage: FirebaseStorage) :
+    ImageRepository {
 
   private val storageRef = storage.reference
 

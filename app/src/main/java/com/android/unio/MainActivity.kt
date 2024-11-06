@@ -1,15 +1,13 @@
 package com.android.unio
 
-
-import android.app.Application
 import android.annotation.SuppressLint
+import android.app.Application
 import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -17,7 +15,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -30,11 +27,8 @@ import androidx.navigation.navigation
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.authentication.AuthViewModel
 import com.android.unio.model.event.EventListViewModel
-import com.android.unio.model.event.EventRepositoryFirestore
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
-import com.android.unio.model.search.SearchRepository
 import com.android.unio.model.search.SearchViewModel
-import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.association.AssociationProfileScreen
 import com.android.unio.ui.authentication.AccountDetails
@@ -51,18 +45,13 @@ import com.android.unio.ui.settings.SettingsScreen
 import com.android.unio.ui.theme.AppTheme
 import com.android.unio.ui.user.UserProfileScreen
 import com.google.firebase.Firebase
-import com.google.firebase.auth.auth
+import com.google.firebase.storage.storage
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.HiltAndroidApp
-import javax.inject.Inject
-import com.google.firebase.firestore.firestore
-import com.google.firebase.storage.storage
 import me.zhanghai.compose.preference.ProvidePreferenceLocals
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-
-  @Inject lateinit var navigationActions: NavigationAction
 
   @SuppressLint("SourceLockedOrientationActivity")
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -70,7 +59,7 @@ class MainActivity : ComponentActivity() {
     super.onCreate(savedInstanceState)
     setContent {
       Surface(modifier = Modifier.fillMaxSize()) {
-        ProvidePreferenceLocals { AppTheme { UnioApp(navigationActions) } }
+        ProvidePreferenceLocals { AppTheme { UnioApp() } }
       }
     }
   }
@@ -79,29 +68,31 @@ class MainActivity : ComponentActivity() {
 @HiltAndroidApp class UnioApplication : Application() {}
 
 @Composable
-fun UnioApp(navigationActions: NavigationAction) {
+fun UnioApp() {
   val navController = rememberNavController()
+
+  val navigationActions = NavigationAction(navController)
 
   val associationViewModel = hiltViewModel<AssociationViewModel>()
   val eventListViewModel = hiltViewModel<EventListViewModel>()
   val userViewModel = hiltViewModel<UserViewModel>()
   val searchViewModel = hiltViewModel<SearchViewModel>()
-  val authViewModel: AuthViewModel = hiltViewModel<AuthViewModel>()
-
+  val authViewModel = hiltViewModel<AuthViewModel>()
 
   val context = LocalContext.current
 
   val imageRepository = ImageRepositoryFirebaseStorage(Firebase.storage)
 
-
-
   // Observe the authentication state
   val authState by authViewModel.authState.collectAsState()
   var previousAuthState by rememberSaveable { mutableStateOf<String?>(null) }
 
+  Log.d("UnioApp", "Auth state: $authState")
+
   LaunchedEffect(authState) {
     authState?.let { screen ->
       // Only navigate if the screen has changed
+      Log.d("UnioApp", "Navigating to $screen")
       if (screen != previousAuthState) {
         navigationActions.navigateTo(screen)
         previousAuthState = screen
@@ -118,12 +109,7 @@ fun UnioApp(navigationActions: NavigationAction) {
       }
     }
     navigation(startDestination = Screen.HOME, route = Route.HOME) {
-      composable(Screen.HOME) {
-        HomeScreen(
-            navigationActions,
-            eventListViewModel,
-            userViewModel)
-      }
+      composable(Screen.HOME) { HomeScreen(navigationActions, eventListViewModel, userViewModel) }
       composable(Screen.MAP) { MapScreen(navigationActions, eventListViewModel) }
     }
     navigation(startDestination = Screen.EXPLORE, route = Route.EXPLORE) {
@@ -136,8 +122,7 @@ fun UnioApp(navigationActions: NavigationAction) {
 
         // Create the AssociationProfile screen with the association UID
         uid?.let {
-          AssociationProfileScreen(
-              navigationActions, it, associationViewModel, userViewModel)
+          AssociationProfileScreen(navigationActions, it, associationViewModel, userViewModel)
         }
             ?: run {
               Log.e("AssociationProfile", "Association UID is null")

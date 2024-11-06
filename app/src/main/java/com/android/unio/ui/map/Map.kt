@@ -17,7 +17,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.android.unio.R
 import com.android.unio.model.association.Association
 import com.android.unio.model.event.Event
@@ -39,10 +38,7 @@ import java.util.concurrent.TimeUnit
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MapScreen(
-    navigationAction: NavigationAction,
-    eventListViewModel: EventListViewModel
-) {
+fun MapScreen(navigationAction: NavigationAction, eventListViewModel: EventListViewModel) {
   val context = LocalContext.current
   Scaffold(
       modifier = Modifier.testTag("MapScreen"),

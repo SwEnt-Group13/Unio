@@ -194,8 +194,7 @@ private fun AssociationProfileContent(
         Spacer(modifier = Modifier.size(15.dp))
         AssociationEventTitle(context)
         Spacer(modifier = Modifier.size(11.dp))
-        AssociationProfileEvents(
-            association, associationViewModel, userViewModel, context)
+        AssociationProfileEvents(association, associationViewModel, userViewModel, context)
         Spacer(modifier = Modifier.size(11.dp))
         UsersCard(association.members.list.collectAsState().value, context)
         Spacer(modifier = Modifier.size(61.dp))

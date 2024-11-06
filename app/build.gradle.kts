@@ -30,8 +30,9 @@ android {
 
 
     defaultConfig {
+        manifestPlaceholders += mapOf()
         applicationId = "com.android.unio"
-        minSdk = 31
+        minSdk = 30
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -267,10 +268,11 @@ dependencies {
     implementation(libs.androidx.material.icons.extended)
     // For AsyncImage
     implementation(libs.coil.compose)
-    
+
     // Hilt : Dependency Injection
     implementation(libs.hilt.android)
     implementation(libs.androidx.hilt.navigation.compose)
+    implementation(libs.androidx.hilt.navigation.fragment)
     kapt(libs.hilt.android.compiler)
 
     testImplementation(libs.hilt.android.testing)

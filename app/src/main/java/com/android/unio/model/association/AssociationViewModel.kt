@@ -6,7 +6,6 @@ import androidx.lifecycle.viewModelScope
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventRepository
 import com.android.unio.model.image.ImageRepository
-import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.io.InputStream
 import javax.inject.Inject

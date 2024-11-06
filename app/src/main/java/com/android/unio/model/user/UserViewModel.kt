@@ -21,7 +21,10 @@ class UserViewModel @Inject constructor(private val repository: UserRepository) 
 
   private var initializeWithAuthenticatedUser: Boolean = true
 
-  constructor(repository: UserRepository, initializeWithAuthenticatedUser: Boolean) : this(repository) {
+  constructor(
+      repository: UserRepository,
+      initializeWithAuthenticatedUser: Boolean
+  ) : this(repository) {
     this.initializeWithAuthenticatedUser = initializeWithAuthenticatedUser
   }
 
@@ -29,7 +32,7 @@ class UserViewModel @Inject constructor(private val repository: UserRepository) 
     if (initializeWithAuthenticatedUser) {
       Firebase.auth.addAuthStateListener { auth ->
         if (auth.currentUser != null) {
-          repository.init {getUserByUid(auth.currentUser!!.uid, initializeWithAuthenticatedUser) }
+          repository.init { getUserByUid(auth.currentUser!!.uid, initializeWithAuthenticatedUser) }
         }
       }
     } else {
@@ -127,5 +130,4 @@ class UserViewModel @Inject constructor(private val repository: UserRepository) 
     val currentUser = getCurrentUserOrError() ?: return false
     return currentUser.savedEvents.contains(eventUid)
   }
-
 }

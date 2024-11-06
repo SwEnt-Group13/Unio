@@ -3,7 +3,6 @@ package com.android.unio.ui
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.android.unio.mocks.association.MockAssociation
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.event.Event
@@ -11,7 +10,6 @@ import com.android.unio.model.event.EventListViewModel
 import com.android.unio.model.event.EventRepositoryFirestore
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.search.SearchViewModel
-import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.association.AssociationProfileScreen
 import com.android.unio.ui.authentication.AccountDetails
@@ -31,7 +29,6 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 import com.google.firebase.auth.internal.zzac
-import dagger.hilt.android.testing.BindValue
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import io.mockk.MockKAnnotations
@@ -49,10 +46,9 @@ import org.mockito.Mockito.mock
 @HiltAndroidTest
 class ScreenDisplayingTest {
 
-  @BindValue @MockK lateinit var navigationAction: NavigationAction
+  @MockK lateinit var navigationAction: NavigationAction
 
   private lateinit var userViewModel: UserViewModel
-  @MockK private lateinit var userRepositoryFirestore: UserRepositoryFirestore
 
   @MockK private lateinit var searchViewModel: SearchViewModel
 
@@ -77,7 +73,10 @@ class ScreenDisplayingTest {
 
     hiltRule.inject()
 
-    associationViewModel = spyk(AssociationViewModel(mock(), mockk<EventRepositoryFirestore>(), imageRepositoryFirestore))
+    associationViewModel =
+        spyk(
+            AssociationViewModel(
+                mock(), mockk<EventRepositoryFirestore>(), imageRepositoryFirestore))
     eventListViewModel = spyk(EventListViewModel(mock(), mock()))
     userViewModel = spyk(UserViewModel(mock()))
 
@@ -125,7 +124,9 @@ class ScreenDisplayingTest {
 
   @Test
   fun testExploreDisplayed() {
-    composeTestRule.setContent { ExploreScreen(navigationAction, associationViewModel, searchViewModel) }
+    composeTestRule.setContent {
+      ExploreScreen(navigationAction, associationViewModel, searchViewModel)
+    }
     composeTestRule.onNodeWithTag("exploreScreen").assertIsDisplayed()
     composeTestRule.onNodeWithTag("searchBar").assertIsDisplayed()
   }
@@ -151,8 +152,7 @@ class ScreenDisplayingTest {
   @Test
   fun testAssociationProfileDisplayed() {
     composeTestRule.setContent {
-      AssociationProfileScreen(
-          navigationAction,"1", associationViewModel, userViewModel)
+      AssociationProfileScreen(navigationAction, "1", associationViewModel, userViewModel)
     }
     composeTestRule.onNodeWithTag("AssociationScreen").assertIsDisplayed()
   }

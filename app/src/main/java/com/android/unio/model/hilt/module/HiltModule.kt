@@ -1,7 +1,5 @@
 package com.android.unio.model.hilt.module
 
-import android.content.Context
-import androidx.navigation.NavHostController
 import com.android.unio.model.association.AssociationRepository
 import com.android.unio.model.association.AssociationRepositoryFirestore
 import com.android.unio.model.event.EventRepository
@@ -19,7 +17,6 @@ import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 
 @Module
@@ -79,13 +76,4 @@ abstract class UserModule {
 object FirebaseStorageModule {
 
   @Provides fun provideFirebaseStorage(): FirebaseStorage = FirebaseStorage.getInstance()
-}
-
-@Module
-@InstallIn(SingletonComponent::class)
-object NavHostControllerModule {
-
-  @Provides
-  fun provideNavHostController(@ApplicationContext context: Context): NavHostController =
-      NavHostController(context)
 }
