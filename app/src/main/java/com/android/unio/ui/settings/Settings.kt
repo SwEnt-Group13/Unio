@@ -93,7 +93,6 @@ fun SettingsContainer() {
 
   context.createConfigurationContext(configuration)
   context.resources.updateConfiguration(configuration, context.resources.displayMetrics)
-  println("Updated language to $locale")
 
   ProvidePreferenceLocals(flow = LocalPreferenceFlow.current) {
     LazyColumn(
