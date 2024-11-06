@@ -29,7 +29,9 @@ class BottomNavigationTest {
 
   @Test
   fun testBottomNavigationMenuDisplayed() {
-    composeTestRule.setContent { HomeScreen(navigationAction,eventListViewModel, onAddEvent = {}, onEventClick = {}) }
+    composeTestRule.setContent {
+      HomeScreen(navigationAction, eventListViewModel, onAddEvent = {}, onEventClick = {})
+    }
     composeTestRule.onNodeWithTag("bottomNavigationMenu").assertIsDisplayed()
   }
 }
