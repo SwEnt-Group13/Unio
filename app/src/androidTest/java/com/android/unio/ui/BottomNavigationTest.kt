@@ -7,11 +7,14 @@ import androidx.navigation.NavHostController
 import com.android.unio.model.event.EventListViewModel
 import com.android.unio.model.event.EventRepository
 import com.android.unio.model.image.ImageRepository
+import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.user.UserRepository
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.home.HomeScreen
 import com.android.unio.ui.navigation.NavigationAction
+import io.mockk.MockKAnnotations
+import io.mockk.impl.annotations.MockK
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -21,12 +24,12 @@ class BottomNavigationTest {
 
   private lateinit var navHostController: NavHostController
   private lateinit var navigationAction: NavigationAction
-  private lateinit var eventListViewModel: EventListViewModel
 
   private lateinit var eventRepository: EventRepository
   private lateinit var eventViewModel: EventListViewModel
 
-  private lateinit var imageRepository: ImageRepository
+  @MockK
+  private lateinit var imageRepository: ImageRepositoryFirebaseStorage
 
   private lateinit var userRepository: UserRepository
   private lateinit var userViewModel: UserViewModel
@@ -35,6 +38,7 @@ class BottomNavigationTest {
 
   @Before
   fun setUp() {
+    MockKAnnotations.init(this)
     eventRepository = mock { EventRepository::class.java }
     eventViewModel = EventListViewModel(eventRepository, imageRepository)
 
@@ -43,7 +47,6 @@ class BottomNavigationTest {
 
     navHostController = mock { NavHostController::class.java }
     navigationAction = NavigationAction(navHostController)
-    eventListViewModel = mock { EventListViewModel::class.java }
   }
 
   @Test

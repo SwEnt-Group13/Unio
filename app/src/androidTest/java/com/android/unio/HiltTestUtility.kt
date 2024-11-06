@@ -3,7 +3,18 @@ package com.android.unio
 import android.app.Application
 import android.content.Context
 import androidx.test.runner.AndroidJUnitRunner
+import com.android.unio.model.association.AssociationRepository
+import com.android.unio.model.event.EventRepository
+import com.android.unio.model.event.EventRepositoryMock
+import com.android.unio.model.hilt.module.AssociationModule
+import com.android.unio.model.hilt.module.EventModule
+import dagger.Binds
+import dagger.Module
+import dagger.hilt.InstallIn
 import dagger.hilt.android.testing.HiltTestApplication
+import dagger.hilt.components.SingletonComponent
+import dagger.hilt.testing.TestInstallIn
+import org.junit.Test
 
 /**
  * Instead of using the default [AndroidJUnitRunner], we use a custom runner that extends from
@@ -11,9 +22,9 @@ import dagger.hilt.android.testing.HiltTestApplication
  * configure the test application for Hilt.
  */
 class HiltApplication : AndroidJUnitRunner() {
-  override fun newApplication(cl: ClassLoader?, name: String?, context: Context?): Application {
-    return super.newApplication(cl, HiltTestApplication::class.java.name, context)
-  }
+    override fun newApplication(cl: ClassLoader?, name: String?, context: Context?): Application {
+        return super.newApplication(cl, HiltTestApplication::class.java.name, context)
+    }
 }
 
 /**
@@ -22,4 +33,19 @@ class HiltApplication : AndroidJUnitRunner() {
  *
  * !!! The objects contained are applied for all tests in the androidTest source set !!!
  */
-object HiltModuleAndroidTest {}
+object HiltModuleAndroidTest {
+
+    @Module
+    @TestInstallIn(
+        components = [SingletonComponent::class],
+        replaces = [EventModule::class]
+    )
+    abstract class EventModuleTest() {
+
+        @Binds
+        abstract fun bindEventRepository(
+            eventRepositoryMock: EventRepositoryMock
+        ): EventRepository
+    }
+
+}

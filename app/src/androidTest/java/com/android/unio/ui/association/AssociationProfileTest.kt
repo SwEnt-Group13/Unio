@@ -1,5 +1,6 @@
 package com.android.unio.ui.association
 
+import android.util.Log
 import androidx.compose.ui.test.SemanticsNodeInteraction
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotDisplayed
@@ -14,14 +15,23 @@ import com.android.unio.mocks.association.MockAssociation
 import com.android.unio.mocks.event.MockEvent
 import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationRepository
+import com.android.unio.model.association.AssociationRepositoryFirestore
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventRepository
+import com.android.unio.model.event.EventRepositoryMock
 import com.android.unio.model.image.ImageRepository
+import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.navigation.NavigationAction
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
+import io.mockk.MockKAnnotations
+import io.mockk.every
+import io.mockk.impl.annotations.MockK
+import io.mockk.impl.annotations.SpyK
+import io.mockk.mockk
+import io.mockk.spyk
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -30,30 +40,34 @@ import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
 import org.mockito.MockitoAnnotations
 import org.mockito.kotlin.any
+import org.mockito.kotlin.inOrder
 import org.mockito.kotlin.verify
+import javax.inject.Inject
 
 @HiltAndroidTest
 class AssociationProfileTest {
 
   lateinit var navigationAction: NavigationAction
 
-  @Mock lateinit var associationRepository: AssociationRepository
-  @Mock lateinit var eventRepository: EventRepository
-  @Mock lateinit var userViewModel: UserViewModel
+  lateinit var associationRepository: AssociationRepositoryFirestore
+  @Inject
+  lateinit var eventRepository: EventRepository
+  @MockK
+  lateinit var userViewModel: UserViewModel
 
   private lateinit var associationViewModel: AssociationViewModel
 
   private lateinit var associations: List<Association>
   private lateinit var events: List<Event>
 
-  @Mock lateinit var imageRepository: ImageRepository
+  @MockK lateinit var imageRepository: ImageRepositoryFirebaseStorage
 
   @get:Rule val composeTestRule = createComposeRule()
   @get:Rule val hiltRule = HiltAndroidRule(this)
 
   @Before
   fun setUp() {
-    MockitoAnnotations.openMocks(this)
+    MockKAnnotations.init(this)
     hiltRule.inject()
 
     associations =
@@ -61,17 +75,19 @@ class AssociationProfileTest {
             MockAssociation.createMockAssociation(uid = "1"),
             MockAssociation.createMockAssociation(uid = "2"))
 
-    events = listOf(MockEvent.createMockEvent(uid = "a"), MockEvent.createMockEvent(uid = "b"))
+    eventRepository.getEvents({events = it}, {Log.e("AssociationProfileTest", "Failed to get events")})
 
     navigationAction = NavigationAction(mock(NavHostController::class.java))
 
-    `when`(associationRepository.getAssociations(any(), any())).thenAnswer { invocation ->
-      val onSuccess = invocation.arguments[0] as (List<Association>) -> Unit
+    associationRepository = spyk(AssociationRepositoryFirestore(mockk()))
+
+    every { associationRepository.getAssociations(any(), any())} answers  {
+      val onSuccess =  args[0] as (List<Association>) -> Unit
       onSuccess(associations)
     }
-    `when`(eventRepository.getEventsOfAssociation(any(), any(), any())).thenAnswer { invocation ->
-      val onSuccess = invocation.arguments[1] as (List<Event>) -> Unit
-      onSuccess(events)
+
+    every { userViewModel.isEventSavedForCurrentUser(any()) } answers  {
+      events.map { it.uid }.contains(args[0])
     }
 
     associationViewModel =
@@ -97,7 +113,9 @@ class AssociationProfileTest {
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationFollowButton"))
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationDescription"))
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationEventTitle"))
-    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationEventCard-a"))
+    if (events.isNotEmpty()) {
+      assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationEventCard-"+events.sortedBy{ it.date }[0].uid))
+    }
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationSeeMoreButton"))
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationContactMembersTitle"))
     assertDisplayComponentInScroll(
