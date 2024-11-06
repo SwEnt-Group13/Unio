@@ -3,17 +3,13 @@ package com.android.unio.ui
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
-import androidx.lifecycle.ViewModelProvider
 import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationCategory
-import com.android.unio.model.association.AssociationRepository
-import com.android.unio.model.association.AssociationRepositoryFirestore
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventListViewModel
 import com.android.unio.model.event.EventRepositoryFirestore
 import com.android.unio.model.firestore.firestoreReferenceListWith
-import com.android.unio.model.hilt.module.AssociationModule
 import com.android.unio.model.user.User
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.accountCreation.AccountDetails
@@ -34,19 +30,12 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 import com.google.firebase.auth.internal.zzac
-import dagger.Binds
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
 import dagger.hilt.android.testing.BindValue
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
-import dagger.hilt.android.testing.UninstallModules
-import dagger.hilt.components.SingletonComponent
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
-import io.mockk.impl.annotations.SpyK
 import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.spyk
@@ -54,161 +43,145 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.mockito.Mockito.mock
-import javax.inject.Inject
 
 @HiltAndroidTest
 class ScreenDisplayingTest {
 
-    @BindValue
-    @MockK
-    lateinit var navigationAction: NavigationAction
+  @BindValue @MockK lateinit var navigationAction: NavigationAction
 
-    private lateinit var userViewModel: UserViewModel
+  private lateinit var userViewModel: UserViewModel
 
-    private lateinit var associationViewModel: AssociationViewModel
+  private lateinit var associationViewModel: AssociationViewModel
 
-    private lateinit var eventListViewModel: EventListViewModel
+  private lateinit var eventListViewModel: EventListViewModel
 
-    @MockK
-    private lateinit var firebaseAuth: FirebaseAuth
+  @MockK private lateinit var firebaseAuth: FirebaseAuth
 
-    // This is the implementation of the abstract method getUid() from FirebaseUser.
-    // Because it is impossible to mock abstract method, this is the only way to mock it.
-    @MockK
-    private lateinit var mockFirebaseUser: zzac
+  // This is the implementation of the abstract method getUid() from FirebaseUser.
+  // Because it is impossible to mock abstract method, this is the only way to mock it.
+  @MockK private lateinit var mockFirebaseUser: zzac
 
-    @get:Rule
-    val composeTestRule = createComposeRule()
+  @get:Rule val composeTestRule = createComposeRule()
 
-    @get:Rule
-    val hiltRule = HiltAndroidRule(this)
+  @get:Rule val hiltRule = HiltAndroidRule(this)
 
-    @Before
-    fun setUp() {
-        MockKAnnotations.init(this, relaxed = true)
+  @Before
+  fun setUp() {
+    MockKAnnotations.init(this, relaxed = true)
 
-        hiltRule.inject()
+    hiltRule.inject()
 
-        associationViewModel = spyk(AssociationViewModel(mock(), mockk<EventRepositoryFirestore>()))
-        eventListViewModel = spyk(EventListViewModel(mock(), ))
-        userViewModel = spyk(UserViewModel(mock()))
+    associationViewModel = spyk(AssociationViewModel(mock(), mockk<EventRepositoryFirestore>()))
+    eventListViewModel = spyk(EventListViewModel(mock()))
+    userViewModel = spyk(UserViewModel(mock()))
 
-        val associations =
-            listOf(
-                Association(
-                    uid = "1",
-                    url = "this is an url",
-                    name = "ACM",
-                    fullName = "Association for Computing Machinery",
-                    category = AssociationCategory.SCIENCE_TECH,
-                    description =
+    val associations =
+        listOf(
+            Association(
+                uid = "1",
+                url = "this is an url",
+                name = "ACM",
+                fullName = "Association for Computing Machinery",
+                category = AssociationCategory.SCIENCE_TECH,
+                description =
                     "ACM is the world's largest educational and scientific computing society.",
-                    members = User.firestoreReferenceListWith(listOf("1", "2", "3")),
-                    followersCount = 321,
-                    image = "https://www.example.com/image.jpg"
-                )
-            )
+                members = User.firestoreReferenceListWith(listOf("1", "2", "3")),
+                followersCount = 321,
+                image = "https://www.example.com/image.jpg"))
 
-
-        every { associationViewModel.findAssociationById(any()) } returns associations.first()
-        every { associationViewModel.getEventsForAssociation(any(), any()) } answers
-                {
-                    val onSuccess = args[1] as (List<Event>) -> Unit
-                    onSuccess(emptyList())
-                }
-
-        // Mocking the Firebase.auth object and it's behaviour
-        mockkStatic(FirebaseAuth::class)
-        every { Firebase.auth } returns firebaseAuth
-        every { firebaseAuth.currentUser } returns mockFirebaseUser
-    }
-
-    @Test
-    fun testWelcomeDisplayed() {
-        composeTestRule.setContent { WelcomeScreen(navigationAction) }
-        composeTestRule.onNodeWithTag("WelcomeScreen").assertIsDisplayed()
-    }
-
-    @Test
-    fun testEmailVerificationDisplayed() {
-        composeTestRule.setContent { EmailVerificationScreen(navigationAction) }
-        composeTestRule.onNodeWithTag("EmailVerificationScreen").assertIsDisplayed()
-    }
-
-    @Test
-    fun testAccountDetailsDisplayed() {
-        composeTestRule.setContent { AccountDetails(navigationAction, userViewModel) }
-        composeTestRule.onNodeWithTag("AccountDetails").assertIsDisplayed()
-    }
-
-    @Test
-    fun testHomeDisplayed() {
-        composeTestRule.setContent {
-            HomeScreen(
-                navigationAction,
-                eventListViewModel,
-                onAddEvent = {},
-                onEventClick = {})
+    every { associationViewModel.findAssociationById(any()) } returns associations.first()
+    every { associationViewModel.getEventsForAssociation(any(), any()) } answers
+        {
+          val onSuccess = args[1] as (List<Event>) -> Unit
+          onSuccess(emptyList())
         }
-        composeTestRule.onNodeWithTag("HomeScreen").assertIsDisplayed()
-    }
 
-    @Test
-    fun testExploreDisplayed() {
-        composeTestRule.setContent { ExploreScreen(navigationAction, associationViewModel) }
-        composeTestRule.onNodeWithTag("exploreScreen").assertIsDisplayed()
-        composeTestRule.onNodeWithTag("searchBar").assertIsDisplayed()
-    }
+    // Mocking the Firebase.auth object and it's behaviour
+    mockkStatic(FirebaseAuth::class)
+    every { Firebase.auth } returns firebaseAuth
+    every { firebaseAuth.currentUser } returns mockFirebaseUser
+  }
 
-    @Test
-    fun testMapDisplayed() {
-        composeTestRule.setContent { MapScreen() }
-        composeTestRule.onNodeWithTag("MapScreen").assertIsDisplayed()
-    }
+  @Test
+  fun testWelcomeDisplayed() {
+    composeTestRule.setContent { WelcomeScreen(navigationAction) }
+    composeTestRule.onNodeWithTag("WelcomeScreen").assertIsDisplayed()
+  }
 
-    @Test
-    fun testEventDisplayed() {
-        composeTestRule.setContent { EventScreen() }
-        composeTestRule.onNodeWithTag("EventScreen").assertIsDisplayed()
-    }
+  @Test
+  fun testEmailVerificationDisplayed() {
+    composeTestRule.setContent { EmailVerificationScreen(navigationAction) }
+    composeTestRule.onNodeWithTag("EmailVerificationScreen").assertIsDisplayed()
+  }
 
-    @Test
-    fun testEventCreationDisplayed() {
-        composeTestRule.setContent { EventCreationScreen() }
-        composeTestRule.onNodeWithTag("EventCreationScreen").assertIsDisplayed()
-    }
+  @Test
+  fun testAccountDetailsDisplayed() {
+    composeTestRule.setContent { AccountDetails(navigationAction, userViewModel) }
+    composeTestRule.onNodeWithTag("AccountDetails").assertIsDisplayed()
+  }
 
-    @Test
-    fun testAssociationProfileDisplayed() {
-        composeTestRule.setContent {
-            AssociationProfileScreen(navigationAction, "1", associationViewModel)
-        }
-        composeTestRule.onNodeWithTag("AssociationScreen").assertIsDisplayed()
+  @Test
+  fun testHomeDisplayed() {
+    composeTestRule.setContent {
+      HomeScreen(navigationAction, eventListViewModel, onAddEvent = {}, onEventClick = {})
     }
+    composeTestRule.onNodeWithTag("HomeScreen").assertIsDisplayed()
+  }
 
-    @Test
-    fun testSavedDisplayed() {
-        composeTestRule.setContent { SavedScreen(navigationAction) }
-        composeTestRule.onNodeWithTag("SavedScreen").assertIsDisplayed()
+  @Test
+  fun testExploreDisplayed() {
+    composeTestRule.setContent { ExploreScreen(navigationAction, associationViewModel) }
+    composeTestRule.onNodeWithTag("exploreScreen").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("searchBar").assertIsDisplayed()
+  }
+
+  @Test
+  fun testMapDisplayed() {
+    composeTestRule.setContent { MapScreen() }
+    composeTestRule.onNodeWithTag("MapScreen").assertIsDisplayed()
+  }
+
+  @Test
+  fun testEventDisplayed() {
+    composeTestRule.setContent { EventScreen() }
+    composeTestRule.onNodeWithTag("EventScreen").assertIsDisplayed()
+  }
+
+  @Test
+  fun testEventCreationDisplayed() {
+    composeTestRule.setContent { EventCreationScreen() }
+    composeTestRule.onNodeWithTag("EventCreationScreen").assertIsDisplayed()
+  }
+
+  @Test
+  fun testAssociationProfileDisplayed() {
+    composeTestRule.setContent {
+      AssociationProfileScreen(navigationAction, "1", associationViewModel)
     }
+    composeTestRule.onNodeWithTag("AssociationScreen").assertIsDisplayed()
+  }
 
-    @Test
-    fun testSettingsDisplayed() {
-        composeTestRule.setContent { SettingsScreen() }
-        composeTestRule.onNodeWithTag("SettingsScreen").assertIsDisplayed()
-    }
+  @Test
+  fun testSavedDisplayed() {
+    composeTestRule.setContent { SavedScreen(navigationAction) }
+    composeTestRule.onNodeWithTag("SavedScreen").assertIsDisplayed()
+  }
 
-    @Test
-    fun testUserProfileDisplayed() {
-        composeTestRule.setContent { UserProfileScreen(navigationAction, userViewModel) }
-        composeTestRule.onNodeWithTag("UserProfileScreen").assertIsDisplayed()
-    }
+  @Test
+  fun testSettingsDisplayed() {
+    composeTestRule.setContent { SettingsScreen() }
+    composeTestRule.onNodeWithTag("SettingsScreen").assertIsDisplayed()
+  }
 
-    @Test
-    fun testSomeoneElseUserProfileDisplayed() {
-        composeTestRule.setContent { SomeoneElseUserProfileScreen() }
-        composeTestRule.onNodeWithTag("SomeoneElseUserProfileScreen").assertIsDisplayed()
-    }
+  @Test
+  fun testUserProfileDisplayed() {
+    composeTestRule.setContent { UserProfileScreen(navigationAction, userViewModel) }
+    composeTestRule.onNodeWithTag("UserProfileScreen").assertIsDisplayed()
+  }
 
+  @Test
+  fun testSomeoneElseUserProfileDisplayed() {
+    composeTestRule.setContent { SomeoneElseUserProfileScreen() }
+    composeTestRule.onNodeWithTag("SomeoneElseUserProfileScreen").assertIsDisplayed()
+  }
 }
-
