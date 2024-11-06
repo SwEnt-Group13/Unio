@@ -35,22 +35,26 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.HiltAndroidApp
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
+  @Inject lateinit var navigationActions: NavigationAction
+
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    setContent { Surface(modifier = Modifier.fillMaxSize()) { AppTheme { UnioApp() } } }
+    setContent {
+      Surface(modifier = Modifier.fillMaxSize()) { AppTheme { UnioApp(navigationActions) } }
+    }
   }
 }
 
 @HiltAndroidApp class UnioApplication : Application() {}
 
 @Composable
-fun UnioApp() {
+fun UnioApp(navigationActions: NavigationAction) {
   val navController = rememberNavController()
-  val navigationActions = NavigationAction(navController)
 
   val associationViewModel = hiltViewModel<AssociationViewModel>()
   val eventListViewModel = hiltViewModel<EventListViewModel>()
