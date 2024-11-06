@@ -1,6 +1,5 @@
 package com.android.unio.ui.association
 
-import android.util.Log
 import androidx.compose.ui.test.SemanticsNodeInteraction
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotDisplayed
@@ -14,13 +13,10 @@ import androidx.navigation.NavHostController
 import com.android.unio.mocks.association.MockAssociation
 import com.android.unio.mocks.event.MockEvent
 import com.android.unio.model.association.Association
-import com.android.unio.model.association.AssociationRepository
 import com.android.unio.model.association.AssociationRepositoryFirestore
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.event.Event
-import com.android.unio.model.event.EventRepository
-import com.android.unio.model.event.EventRepositoryMock
-import com.android.unio.model.image.ImageRepository
+import com.android.unio.model.event.EventRepositoryFirestore
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.navigation.NavigationAction
@@ -29,20 +25,14 @@ import dagger.hilt.android.testing.HiltAndroidTest
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
-import io.mockk.impl.annotations.SpyK
 import io.mockk.mockk
 import io.mockk.spyk
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.mockito.Mock
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
-import org.mockito.MockitoAnnotations
-import org.mockito.kotlin.any
-import org.mockito.kotlin.inOrder
 import org.mockito.kotlin.verify
-import javax.inject.Inject
 
 @HiltAndroidTest
 class AssociationProfileTest {
@@ -50,8 +40,9 @@ class AssociationProfileTest {
   lateinit var navigationAction: NavigationAction
 
   lateinit var associationRepository: AssociationRepositoryFirestore
-  @Inject
-  lateinit var eventRepository: EventRepository
+
+  @MockK
+  lateinit var eventRepository: EventRepositoryFirestore
   @MockK
   lateinit var userViewModel: UserViewModel
 
@@ -75,7 +66,7 @@ class AssociationProfileTest {
             MockAssociation.createMockAssociation(uid = "1"),
             MockAssociation.createMockAssociation(uid = "2"))
 
-    eventRepository.getEvents({events = it}, {Log.e("AssociationProfileTest", "Failed to get events")})
+    events = listOf(MockEvent.createMockEvent(uid = "a"), MockEvent.createMockEvent(uid = "b"))
 
     navigationAction = NavigationAction(mock(NavHostController::class.java))
 
@@ -84,6 +75,11 @@ class AssociationProfileTest {
     every { associationRepository.getAssociations(any(), any())} answers  {
       val onSuccess =  args[0] as (List<Association>) -> Unit
       onSuccess(associations)
+    }
+
+    every { eventRepository.getEventsOfAssociation(any(), any(), any()) } answers {
+      val onSuccess =  args[1] as (List<Event>) -> Unit
+      onSuccess(events)
     }
 
     every { userViewModel.isEventSavedForCurrentUser(any()) } answers  {
