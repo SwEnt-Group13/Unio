@@ -47,19 +47,18 @@ import com.android.unio.model.user.SignInState
 import com.android.unio.model.user.isValidEmail
 import com.android.unio.model.user.isValidPassword
 import com.android.unio.model.user.signInOrCreateAccount
-import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.theme.AppTypography
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 
 @Composable
-fun WelcomeScreen(navigationAction: NavigationAction) {
+fun WelcomeScreen() {
+  val context = LocalContext.current
+
   var email by remember { mutableStateOf("") }
   var password by remember { mutableStateOf("") }
 
   var showPassword by remember { mutableStateOf(false) }
-
-  val context = LocalContext.current
 
   val validEmail = isValidEmail(email)
   val validPassword = isValidPassword(password)

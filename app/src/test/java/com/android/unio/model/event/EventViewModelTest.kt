@@ -1,14 +1,20 @@
 package com.android.unio.model.event
 
+import androidx.lifecycle.ViewModel
 import androidx.test.core.app.ApplicationProvider
-import com.android.unio.model.firestore.MockReferenceList
-import com.android.unio.model.map.Location
+import com.android.unio.mocks.event.MockEvent
+import com.android.unio.model.firestore.ReferenceList
+import com.android.unio.model.image.ImageRepository
+import com.android.unio.model.user.UserRepositoryFirestore
 import com.google.firebase.FirebaseApp
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import java.io.InputStream
 import java.util.GregorianCalendar
+import junit.framework.Assert.assertTrue
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -23,34 +29,26 @@ import org.robolectric.RobolectricTestRunner
 @RunWith(RobolectricTestRunner::class)
 class EventViewModelTest {
   @Mock private lateinit var repository: EventRepositoryFirestore
+  @Mock private lateinit var usrRepository: UserRepositoryFirestore
   @Mock private lateinit var db: FirebaseFirestore
   @Mock private lateinit var collectionReference: CollectionReference
   @Mock private lateinit var inputStream: InputStream
+  @Mock private lateinit var imageRepository: ImageRepository
 
-  private lateinit var viewModel: EventListViewModel
+  private lateinit var eventViewModel: EventViewModel
 
   private val event1 =
-      Event(
+      MockEvent.createMockEvent(
           uid = "1",
           title = "Balelec",
-          organisers = MockReferenceList(),
-          taggedAssociations = MockReferenceList(),
-          image = "https://imageurl.jpg",
-          description = "Plus grand festival du monde (non contractuel)",
           price = 40.5,
-          date = Timestamp(GregorianCalendar(2004, 7, 1).time),
-          location = Location(1.2345, 2.3455, "Somewhere"))
+          date = Timestamp(GregorianCalendar(2004, 7, 1).time))
   private val event3 =
-      Event(
+      MockEvent.createMockEvent(
           uid = "3",
           title = "Tremplin Sysmic",
-          organisers = MockReferenceList(),
-          taggedAssociations = MockReferenceList(),
-          image = "https://imageurl.jpg",
-          description = "Plus grand festival du monde (non contractuel)",
           price = 40.5,
-          date = Timestamp(GregorianCalendar(2008, 7, 1).time),
-          location = Location(1.2345, 2.3455, "Somewhere"))
+          date = Timestamp(GregorianCalendar(2008, 7, 1).time))
 
   @Before
   fun setUp() {
@@ -61,7 +59,7 @@ class EventViewModelTest {
     }
     `when`(db.collection(any())).thenReturn(collectionReference)
 
-    viewModel = EventListViewModel(repository)
+    eventViewModel = EventViewModel(repository, usrRepository, imageRepository)
   }
 
   @Test
@@ -70,7 +68,27 @@ class EventViewModelTest {
       val onSuccess = invocation.arguments[0] as () -> Unit
       onSuccess()
     }
-    viewModel.addEvent(
+    eventViewModel.addEvent(
         inputStream, event1, { verify(repository).addEvent(eq(event1), any(), any()) }, {})
+  }
+
+}
+
+class MockReferenceList<T>(elements: List<T> = emptyList()) : ReferenceList<T> {
+  private val _list = MutableStateFlow(elements)
+  override val list: StateFlow<List<T>> = _list
+  override val uids: List<String>
+    get() = emptyList()
+
+  override fun add(uid: String) {}
+
+  override fun addAll(uids: List<String>) {}
+
+  override fun remove(uid: String) {}
+
+  override fun requestAll(onSuccess: () -> Unit) {}
+
+  override fun contains(uid: String): Boolean {
+    return false
   }
 }

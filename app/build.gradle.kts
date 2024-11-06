@@ -12,6 +12,7 @@ plugins {
     id("jacoco")
     id("kotlin-kapt")
     id("com.google.dagger.hilt.android")
+    kotlin("kapt")
 }
 
 android {
@@ -30,7 +31,7 @@ android {
 
     defaultConfig {
         applicationId = "com.android.unio"
-        minSdk = 29
+        minSdk = 31
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -215,6 +216,7 @@ dependencies {
 
     // ----------       Robolectric     ------------
 
+
     // Navigation
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.navigation.fragment.ktx)
@@ -263,9 +265,9 @@ dependencies {
     testImplementation(libs.mockk.v193)
 
     implementation(libs.androidx.material.icons.extended)
-    //for AsyncImage
+    // For AsyncImage
     implementation(libs.coil.compose)
-
+    
     // Hilt : Dependency Injection
     implementation(libs.hilt.android)
     implementation(libs.androidx.hilt.navigation.compose)
@@ -276,7 +278,20 @@ dependencies {
 
     androidTestImplementation(libs.hilt.android.testing)
     kaptAndroidTest(libs.hilt.android.compiler.v2511)
+    implementation(libs.androidx.appsearch)
+    implementation(libs.androidx.appsearch.local.storage)
+    kapt(libs.androidx.appsearch.compiler)
 
+    //App search
+    implementation(libs.guava)
+    implementation(libs.kotlinx.coroutines.guava)
+
+    // Kotlin Reflect
+    implementation(kotlin("reflect"))
+
+    // Preferences
+    implementation(libs.androidx.preference.ktx)
+    implementation(libs.library)
 }
 
 kapt {

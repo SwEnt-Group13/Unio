@@ -3,6 +3,7 @@ package com.android.unio.model.event
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.android.unio.model.image.ImageRepository
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.io.InputStream
@@ -19,7 +20,7 @@ import kotlinx.coroutines.launch
  * @property repository The [EventRepository] that provides the events.
  */
 @HiltViewModel
-class EventListViewModel @Inject constructor(private val repository: EventRepository) :
+class EventListViewModel @Inject constructor(private val repository: EventRepository, private val imageRepository: ImageRepository) :
     ViewModel() {
 
   /**
@@ -33,11 +34,10 @@ class EventListViewModel @Inject constructor(private val repository: EventReposi
    * observed and not modified.
    */
   val events: StateFlow<List<Event>> = _events
-  private val imageRepository = ImageRepositoryFirebaseStorage()
 
   /** Initializes the ViewModel by loading the events from the repository. */
   init {
-    loadEvents()
+    repository.init { loadEvents() }
   }
 
   /**
@@ -53,7 +53,7 @@ class EventListViewModel @Inject constructor(private val repository: EventReposi
           },
           onFailure = { exception ->
             // Handle error (e.g., log it, show a message to the user)
-            Log.e("EventViewModel", "An error occured while loading events :$exception")
+            Log.e("EventViewModel", "An error occurred while loading events: $exception")
             _events.value = emptyList() // Clear events on failure or handle accordingly
           })
     }

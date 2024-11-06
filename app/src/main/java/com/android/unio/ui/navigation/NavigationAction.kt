@@ -4,7 +4,6 @@ import BookmarkIcon
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Person
-import androidx.compose.material.icons.outlined.Place
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -19,6 +18,9 @@ open class NavigationAction @Inject constructor(private val navController: NavHo
    * @param screen The screen to navigate to
    */
   open fun navigateTo(screen: String) {
+    if (getCurrentRoute() == screen) {
+      return
+    }
     navController.navigate(screen)
   }
 
@@ -76,7 +78,6 @@ object TopLevelDestinations {
   val MY_PROFILE =
       TopLevelDestination(
           route = Route.MY_PROFILE, icon = Icons.Outlined.Person, textId = "My Profile")
-  val MAP = TopLevelDestination(route = Route.MAP, icon = Icons.Outlined.Place, textId = "Map")
 }
 
 object Route {
@@ -98,6 +99,7 @@ object Screen {
   const val EXPLORE = "Explore Screen"
   const val SAVED = "Saved Screen"
   const val MY_PROFILE = "MyProfile Screen"
+  const val SETTINGS = "Settings"
   const val ASSOCIATION_PROFILE = "Association Profile Screen/{uid}"
 
   /**

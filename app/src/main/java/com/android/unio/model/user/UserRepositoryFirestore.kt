@@ -11,10 +11,10 @@ import javax.inject.Inject
 class UserRepositoryFirestore @Inject constructor(private val db: FirebaseFirestore) :
     UserRepository {
 
-  override fun init(onSuccess: (String, Boolean) -> Unit) {
+  override fun init(onSuccess: () -> Unit) {
     Firebase.auth.addAuthStateListener {
       if (it.currentUser != null) {
-        onSuccess(it.currentUser!!.uid, true)
+        onSuccess()
       }
     }
   }
@@ -23,8 +23,8 @@ class UserRepositoryFirestore @Inject constructor(private val db: FirebaseFirest
     db.collection(USER_PATH)
         .get()
         .addOnSuccessListener { result ->
-          val user = result.map { hydrate(it.data) }
-          onSuccess(user)
+          val users = result.map { hydrate(it.data) }
+          onSuccess(users)
         }
         .addOnFailureListener { exception -> onFailure(exception) }
   }

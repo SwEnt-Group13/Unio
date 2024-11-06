@@ -1,6 +1,6 @@
 package com.android.unio.model.user
 
-import com.android.unio.model.firestore.MockReferenceList
+import com.android.unio.mocks.user.MockUser
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
@@ -10,21 +10,7 @@ import org.junit.Before
 import org.junit.Test
 
 class UserViewModelTest {
-  private val user =
-      User(
-          uid = "1",
-          email = "1@gmail.com",
-          firstName = "userFirst",
-          lastName = "userLast",
-          biography = "An example user",
-          followedAssociations = MockReferenceList(listOf()),
-          joinedAssociations = MockReferenceList(listOf()),
-          interests = listOf(Interest.SPORTS, Interest.MUSIC),
-          socials =
-              listOf(
-                  UserSocial(Social.INSTAGRAM, "Instagram"),
-                  UserSocial(Social.WEBSITE, "example.com")),
-          profilePicture = "https://www.example.com/image")
+  private val user = MockUser.createMockUser()
 
   @MockK private lateinit var repository: UserRepository
   private lateinit var userViewModel: UserViewModel

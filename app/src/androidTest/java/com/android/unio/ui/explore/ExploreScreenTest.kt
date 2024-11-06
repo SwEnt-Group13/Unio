@@ -6,17 +6,19 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
+import com.android.unio.mocks.association.MockAssociation
 import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationCategory
 import com.android.unio.model.association.AssociationRepository
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.event.EventRepository
-import com.android.unio.model.firestore.emptyFirestoreReferenceList
-import com.android.unio.model.user.User
+import com.android.unio.model.image.ImageRepository
+import com.android.unio.model.search.SearchViewModel
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
+import io.mockk.mockk
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
@@ -33,7 +35,9 @@ class ExploreScreenTest {
   @Mock private lateinit var db: FirebaseFirestore
   @Mock private lateinit var collectionReference: CollectionReference
   @Mock private lateinit var associationRepository: AssociationRepository
+  private lateinit var searchViewModel: SearchViewModel
   @Mock private lateinit var eventRepository: EventRepository
+  @Mock private lateinit var imageRepository: ImageRepository
   private lateinit var associationViewModel: AssociationViewModel
 
   @get:Rule val composeTestRule = createComposeRule()
@@ -45,6 +49,7 @@ class ExploreScreenTest {
   @Before
   fun setUp() {
     MockitoAnnotations.openMocks(this)
+    searchViewModel = mockk()
     navigationAction = mock(NavigationAction::class.java)
 
     // Mock the navigation action to do nothing
@@ -53,54 +58,22 @@ class ExploreScreenTest {
     `when`(db.collection(any())).thenReturn(collectionReference)
     associations =
         listOf(
-            Association(
-                uid = "1",
-                url = "",
-                name = "ACM",
-                fullName = "Association for Computing Machinery",
-                category = AssociationCategory.SCIENCE_TECH,
-                description =
-                    "ACM is the world's largest educational and scientific computing society.",
-                members = User.emptyFirestoreReferenceList(),
-                followersCount = 0,
-                image = ""),
-            Association(
-                uid = "2",
-                url = "",
-                name = "Musical",
-                fullName = "Music club",
-                category = AssociationCategory.ARTS,
-                description = "Musical is the world's largest music society.",
-                members = User.emptyFirestoreReferenceList(),
-                followersCount = 0,
-                image = ""),
-            //            Association(
-            //                uid = "3",
-            //                url = "",
-            //                name = "OChe",
-            //                fullName = "Orchestre de chambre des étudiant-e-s de Lausanne",
-            //                category = AssociationCategory.ARTS,
-            //                description = "Orchestre de chambre.",
-            //                members = User.emptyFirestoreReferenceList()),
-            //            Association(
-            //                uid = "4",
-            //                url = "",
-            //                name = "AGEPoly",
-            //                fullName = "Student’s general association of the EPFL",
-            //                category = AssociationCategory.EPFL_BODIES,
-            //                description = "Student’s general association.",
-            //                members = User.emptyFirestoreReferenceList())
-        )
+            MockAssociation.createMockAssociation(
+                uid = "1", name = "ACM", category = AssociationCategory.SCIENCE_TECH),
+            MockAssociation.createMockAssociation(
+                uid = "2", name = "Musical", category = AssociationCategory.ARTS))
 
     sortedByCategoryAssociations =
         getSortedEntriesAssociationsByCategory(associations.groupBy { it.category })
 
-    associationViewModel = AssociationViewModel(associationRepository, eventRepository)
+    associationViewModel = AssociationViewModel(associationRepository, eventRepository, imageRepository)
   }
 
   @Test
   fun allComponentsAreDisplayed() {
-    composeTestRule.setContent { ExploreScreen(navigationAction, associationViewModel) }
+    composeTestRule.setContent {
+      ExploreScreen(navigationAction, associationViewModel, searchViewModel)
+    }
     composeTestRule.onNodeWithTag("exploreScreen").assertIsDisplayed()
     composeTestRule.onNodeWithTag("searchPlaceHolder", true).assertIsDisplayed()
     composeTestRule.onNodeWithTag("searchTrailingIcon", true).assertIsDisplayed()
@@ -111,7 +84,9 @@ class ExploreScreenTest {
 
   @Test
   fun canTypeInSearchBar() {
-    composeTestRule.setContent { ExploreScreen(navigationAction, associationViewModel) }
+    composeTestRule.setContent {
+      ExploreScreen(navigationAction, associationViewModel, searchViewModel)
+    }
     composeTestRule.onNodeWithTag("searchBarInput").performTextInput("Music")
     composeTestRule.onNodeWithTag("searchBarInput").assertTextEquals("Music")
   }
@@ -148,7 +123,9 @@ class ExploreScreenTest {
     }
 
     associationViewModel.getAssociations()
-    composeTestRule.setContent { ExploreScreen(navigationAction, associationViewModel) }
+    composeTestRule.setContent {
+      ExploreScreen(navigationAction, associationViewModel, searchViewModel)
+    }
 
     sortedByCategoryAssociations.forEach { (category, associations) ->
       composeTestRule.onNodeWithTag("category_${category.displayName}").assertIsDisplayed()
@@ -165,7 +142,9 @@ class ExploreScreenTest {
     }
 
     associationViewModel.getAssociations()
-    composeTestRule.setContent { ExploreScreen(navigationAction, associationViewModel) }
+    composeTestRule.setContent {
+      ExploreScreen(navigationAction, associationViewModel, searchViewModel)
+    }
 
     sortedByCategoryAssociations.forEach { (_, associations) ->
       associations.forEach {

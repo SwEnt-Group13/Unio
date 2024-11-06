@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventRepository
+import com.android.unio.model.image.ImageRepository
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.io.InputStream
@@ -18,12 +19,12 @@ class AssociationViewModel
 @Inject
 constructor(
     private val associationRepository: AssociationRepository,
-    private val eventRepository: EventRepository
+    private val eventRepository: EventRepository,
+    private val imageRepository: ImageRepository
 ) : ViewModel() {
 
   private val _associations = MutableStateFlow<List<Association>>(emptyList())
   val associations: StateFlow<List<Association>> = _associations
-  private val imageRepository = ImageRepositoryFirebaseStorage()
 
   private val _associationsByCategory =
       MutableStateFlow<Map<AssociationCategory, List<Association>>>(emptyMap())

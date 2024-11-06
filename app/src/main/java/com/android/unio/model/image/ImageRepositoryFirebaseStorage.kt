@@ -2,15 +2,16 @@ package com.android.unio.model.image
 
 import com.google.firebase.storage.FirebaseStorage
 import java.io.InputStream
+import javax.inject.Inject
 
-class ImageRepositoryFirebaseStorage(
-    private val storage: FirebaseStorage = FirebaseStorage.getInstance()
+class ImageRepositoryFirebaseStorage @Inject constructor(
+    storage: FirebaseStorage
 ) : ImageRepository {
 
   private val storageRef = storage.reference
 
   /** Helper function that gets the downloadUrl of an image. Is used after calling uploadImage. */
-  fun getImageUrl(
+  override fun getImageUrl(
       firebasePath: String,
       onSuccess: (String) -> Unit,
       onFailure: (Exception) -> Unit

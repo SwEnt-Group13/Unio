@@ -12,22 +12,29 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
 @HiltViewModel
-class UserViewModel @Inject constructor(val repository: UserRepository) : ViewModel() {
+class UserViewModel @Inject constructor(private val repository: UserRepository) : ViewModel() {
   private val _user = MutableStateFlow<User?>(null)
   val user: StateFlow<User?> = _user
 
   private val _refreshState = mutableStateOf(false)
   val refreshState: State<Boolean> = _refreshState
 
+  private var initializeWithAuthenticatedUser: Boolean = true
+
+  constructor(repository: UserRepository, initializeWithAuthenticatedUser: Boolean) : this(repository) {
+    this.initializeWithAuthenticatedUser = initializeWithAuthenticatedUser
+  }
+
   init {
-//    Firebase.auth.addAuthStateListener { auth ->
-//      if (auth.currentUser != null) {
-//        repository.init { getUserByUid(auth.currentUser!!.uid, true) }
-//      }else{
-//        repository.init { }
-//      }
-//    }
-    repository.init{uid, b -> getUserByUid(uid, b)}
+    if (initializeWithAuthenticatedUser) {
+      Firebase.auth.addAuthStateListener { auth ->
+        if (auth.currentUser != null) {
+          repository.init {getUserByUid(auth.currentUser!!.uid, initializeWithAuthenticatedUser) }
+        }
+      }
+    } else {
+      repository.init {}
+    }
   }
 
   fun getUsersByUid(uid: String, onSuccess: (User) -> Unit, onFailure: (Exception) -> Unit) {
@@ -87,4 +94,38 @@ class UserViewModel @Inject constructor(val repository: UserRepository) : ViewMo
         onFailure = { Log.e("UserViewModel", "Failed to add user", it) })
     _user.value = user
   }
+
+  private fun getCurrentUserOrError(): User? {
+    val currentUser = _user.value
+    if (currentUser == null) {
+      Log.w("UserViewModel", "No user available in _user")
+      return null
+    } else {
+      return currentUser
+    }
+  }
+
+  fun saveEventForCurrentUser(eventUid: String, onSuccess: () -> Unit) {
+    val currentUser = getCurrentUserOrError() ?: return
+
+    currentUser.savedEvents.add(eventUid)
+    onSuccess()
+  }
+
+  fun unSaveEventForCurrentUser(eventUid: String, onSuccess: () -> Unit) {
+    val currentUser = getCurrentUserOrError() ?: return
+
+    if (isEventSavedForCurrentUser(eventUid)) {
+      currentUser.savedEvents.remove(eventUid)
+      onSuccess()
+    } else {
+      Log.w("UserViewModel", "Event not found in savedEvents")
+    }
+  }
+
+  fun isEventSavedForCurrentUser(eventUid: String): Boolean {
+    val currentUser = getCurrentUserOrError() ?: return false
+    return currentUser.savedEvents.contains(eventUid)
+  }
+
 }

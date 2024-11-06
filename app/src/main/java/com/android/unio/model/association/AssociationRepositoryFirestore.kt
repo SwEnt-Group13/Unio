@@ -102,6 +102,7 @@ class AssociationRepositoryFirestore @Inject constructor(private val db: Firebas
         onFailure)
   }
 
+  // TODO extract this to a util
   /** Performs a Firestore operation and calls the appropriate callback based on the result. */
   private fun <T> performFirestoreOperation(
       task: Task<T>,

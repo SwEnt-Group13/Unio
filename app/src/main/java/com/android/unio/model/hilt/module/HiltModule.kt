@@ -6,11 +6,15 @@ import com.android.unio.model.association.AssociationRepository
 import com.android.unio.model.association.AssociationRepositoryFirestore
 import com.android.unio.model.event.EventRepository
 import com.android.unio.model.event.EventRepositoryFirestore
+import com.android.unio.model.image.ImageRepository
+import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.user.UserRepository
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
+import com.google.firebase.storage.FirebaseStorage
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -37,6 +41,13 @@ object FirebaseModule {
 
 @Module
 @InstallIn(SingletonComponent::class)
+object FirebaseAuthModule {
+
+  @Provides fun provideFirebaseAuth(): FirebaseAuth = FirebaseAuth.getInstance()
+}
+
+@Module
+@InstallIn(SingletonComponent::class)
 abstract class AssociationModule {
 
   @Binds
@@ -47,10 +58,27 @@ abstract class AssociationModule {
 
 @Module
 @InstallIn(SingletonComponent::class)
+abstract class ImageModule {
+
+  @Binds
+  abstract fun bindImageRepository(
+      imageRepositoryFirestore: ImageRepositoryFirebaseStorage
+  ): ImageRepository
+}
+
+@Module
+@InstallIn(SingletonComponent::class)
 abstract class UserModule {
 
   @Binds
   abstract fun bindUserRepository(UserRepositoryFirestore: UserRepositoryFirestore): UserRepository
+}
+
+@Module
+@InstallIn(SingletonComponent::class)
+object FirebaseStorageModule {
+
+  @Provides fun provideFirebaseStorage(): FirebaseStorage = FirebaseStorage.getInstance()
 }
 
 @Module
