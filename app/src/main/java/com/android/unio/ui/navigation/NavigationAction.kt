@@ -11,7 +11,6 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import javax.inject.Inject
 
-
 open class NavigationAction @Inject constructor(private val navController: NavHostController) {
 
   /**
