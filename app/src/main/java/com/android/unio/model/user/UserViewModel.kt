@@ -5,11 +5,15 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.firestore
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 
 class UserViewModel(val repository: UserRepository, initializeWithAuthenticatedUser: Boolean) :
     ViewModel() {
@@ -18,6 +22,10 @@ class UserViewModel(val repository: UserRepository, initializeWithAuthenticatedU
 
   private val _refreshState = mutableStateOf(false)
   val refreshState: State<Boolean> = _refreshState
+
+  private val debounceInterval: Long = 500
+
+  private var updateJob: Job? = null
 
   init {
     if (initializeWithAuthenticatedUser) {
@@ -75,6 +83,15 @@ class UserViewModel(val repository: UserRepository, initializeWithAuthenticatedU
         user,
         onSuccess = { getUserByUid(user.uid) },
         onFailure = { Log.e("UserViewModel", "Failed to update user", it) })
+  }
+
+  fun updateUserDebounced(user: User) {
+    updateJob?.cancel()
+    updateJob =
+        viewModelScope.launch {
+          delay(debounceInterval)
+          updateUser(user)
+        }
   }
 
   fun addUser(user: User, onSuccess: () -> Unit) {
