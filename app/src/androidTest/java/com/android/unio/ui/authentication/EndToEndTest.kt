@@ -1,6 +1,7 @@
-package com.android.unio.e2e
+package com.android.unio.ui.authentication
 
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertTextContains
 import androidx.compose.ui.test.isDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
@@ -26,10 +27,15 @@ class EndToEndTest {
   fun setUp() {
     Firebase.firestore.useEmulator("10.0.2.2", 8080)
     Firebase.auth.useEmulator("10.0.2.2", 9099)
+
+    /*Test that the emulators are indeed running*/
+    verifyEmulatorsAreRunning()
   }
 
   @Test
   fun `Test account creation flow`() {
+    flushFirestoreDB()
+
     /** Create an account on the welcome screen */
     composeTestRule.onNodeWithTag("WelcomeScreen").assertIsDisplayed()
     composeTestRule.onNodeWithTag("WelcomeEmail").performTextInput(EMAIL)
@@ -38,6 +44,7 @@ class EndToEndTest {
     composeTestRule.onNodeWithTag("WelcomeButton").performClick()
 
     composeTestRule.waitForIdle()
+    Thread.sleep(1000)
 
     /** Verify the email */
     val emailVerificationUrl = getLatestEmailVerificationUrl()
@@ -80,8 +87,22 @@ class EndToEndTest {
     composeTestRule.waitForIdle()
 
     composeTestRule.onNodeWithTag("UserProfileScreen").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("UserProfileName").assertTextContains("$FIRST_NAME $LAST_NAME")
+    composeTestRule.onNodeWithTag("UserProfileBiography").assertTextContains(BIOGRAPHY)
+    composeTestRule.onNodeWithTag("UserProfileInterest").assertIsDisplayed()
 
     Thread.sleep(10000)
+  }
+
+  private fun verifyEmulatorsAreRunning(){
+    val client = OkHttpClient()
+    val request = Request.Builder()
+      .url(FIRESTORE_URL)
+      .build()
+
+    val response = client.newCall(request).execute()
+    val data = response.body?.string()
+    assert(data!!.contains("Ok"))
   }
 
   private fun getLatestEmailVerificationUrl(): String {
@@ -109,6 +130,16 @@ class EndToEndTest {
     client.newCall(request).execute()
   }
 
+  private fun flushFirestoreDB(){
+    val client = OkHttpClient()
+
+    val request = Request.Builder()
+      .url(FLUSH_FIRESTORE_URL)
+      .delete()
+      .build()
+
+  }
+
   companion object {
     const val EMAIL = "alexeithornber@gmail.com"
     const val PWD = "123456"
@@ -118,5 +149,7 @@ class EndToEndTest {
     const val BIOGRAPHY = "I am a software engineer"
 
     const val OOB_URL = "http://10.0.2.2:9099/emulator/v1/projects/unio-1b8ee/oobCodes"
+    const val FIRESTORE_URL = "http://10.0.2.2:8080"
+    const val FLUSH_FIRESTORE_URL = "http://localhost:8080/emulator/v1/projects/unio-1b8ee/databases/(default)/documents"
   }
 }
