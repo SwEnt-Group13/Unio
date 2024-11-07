@@ -13,7 +13,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
@@ -39,7 +41,11 @@ import java.util.concurrent.TimeUnit
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MapScreen(navigationAction: NavigationAction, eventViewModel: EventViewModel) {
+fun MapScreen(
+    navigationAction: NavigationAction,
+    eventViewModel: EventViewModel,
+    userViewModel: UserViewModel
+) {
   val context = LocalContext.current
   Scaffold(
       modifier = Modifier.testTag("MapScreen"),
@@ -60,17 +66,25 @@ fun MapScreen(navigationAction: NavigationAction, eventViewModel: EventViewModel
                   }
             })
       }) { pd ->
-        EventMap(pd, eventViewModel)
+        EventMap(pd, eventViewModel, userViewModel)
       }
 }
 
 @Composable
-fun EventMap(pd: PaddingValues, eventViewModel: EventViewModel) {
+fun EventMap(pd: PaddingValues, eventViewModel: EventViewModel, userViewModel: UserViewModel) {
   val cameraPositionState = rememberCameraPositionState {
     position = CameraPosition.fromLatLngZoom(LatLng(46.518831258, 6.559331096), 10f)
   }
 
   val events = eventViewModel.events.collectAsState()
+
+  val user by userViewModel.user.collectAsState()
+  val savedEvents by user!!.savedEvents.list.collectAsState()
+  LaunchedEffect(user) {
+    if (user != null) {
+      user!!.savedEvents.requestAll()
+    }
+  }
 
   /** Mock arbitrary saved event for all users. */
   val arbitrarySavedEvents: List<Event> =
@@ -96,7 +110,7 @@ fun EventMap(pd: PaddingValues, eventViewModel: EventViewModel) {
       modifier = Modifier.padding(pd).testTag("googleMaps"),
       cameraPositionState = cameraPositionState) {
         // Display saved events
-        arbitrarySavedEvents.forEach { event ->
+        savedEvents.forEach { event ->
           if (event.date.toDate() > Calendar.getInstance().time) {
             DisplayEventMarker(event, R.drawable.favorite_pinpoint)
           }
@@ -104,11 +118,13 @@ fun EventMap(pd: PaddingValues, eventViewModel: EventViewModel) {
 
         // Display all events (should refactor to the ones that are soon to happen when more events
         // are added)
-        events.value.forEach { event ->
-          if (event.date.toDate() > Calendar.getInstance().time) {
-            DisplayEventMarker(event, null)
-          }
-        }
+        events.value
+            .filterNot { savedEvents.contains(it) }
+            .forEach { event ->
+              if (event.date.toDate() > Calendar.getInstance().time) {
+                DisplayEventMarker(event, null)
+              }
+            }
       }
 }
 
