@@ -38,7 +38,7 @@ class EventListViewModel(private val repository: EventRepository) : ViewModel() 
    * Loads the list of events from the repository asynchronously using coroutines and updates the
    * internal [MutableStateFlow].
    */
-  private fun loadEvents() {
+  fun loadEvents() {
     // Launch a coroutine in the ViewModel scope to load events asynchronously
     viewModelScope.launch {
       repository.getEvents(
@@ -53,7 +53,24 @@ class EventListViewModel(private val repository: EventRepository) : ViewModel() 
     }
   }
 
-  /** Companion object that provides a factory for creating instances of [EventListViewModel]. */
+  /**
+   * Finds an event in the event list by its ID.
+   *
+   * @param id The ID of the event to find.
+   * @return The event with the given ID, or null if no such event exists.
+   */
+  fun findEventById(id: String): Event? {
+    _events.value
+        .find { it.uid == id }
+        ?.let {
+          return it
+        } ?: return null
+  }
+
+  /**
+   * Companion object that provides a factory for creating instances of [EventListViewModel]. This
+   * factory is used to create the ViewModel with the [EventRepositoryMock] dependency.
+   */
   companion object {
     /** A factory for creating [EventListViewModel] instances with the [EventRepositoryMock]. */
     val Factory: ViewModelProvider.Factory =

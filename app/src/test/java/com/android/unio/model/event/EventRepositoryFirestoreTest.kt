@@ -1,9 +1,7 @@
 package com.android.unio.model.event
 
-import com.android.unio.model.association.Association
+import com.android.unio.mocks.event.MockEvent
 import com.android.unio.model.firestore.FirestorePaths.EVENT_PATH
-import com.android.unio.model.firestore.emptyFirestoreReferenceList
-import com.android.unio.model.map.Location
 import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.gms.tasks.Task
 import com.google.firebase.Firebase
@@ -53,32 +51,17 @@ class EventRepositoryFirestoreTest {
   @Mock private lateinit var voidTask: Task<Void>
 
   private lateinit var repository: EventRepositoryFirestore
-  private val defaultEvent =
-      Event(
-          organisers = Association.emptyFirestoreReferenceList(),
-          taggedAssociations = Association.emptyFirestoreReferenceList())
   private val event1 =
-      Event(
-          uid = "1",
-          title = "Balelec",
-          organisers = Association.emptyFirestoreReferenceList(),
-          taggedAssociations = Association.emptyFirestoreReferenceList(),
-          image = "https://imageurl.jpg",
-          description = "Plus grand festival du monde (non contractuel)",
-          price = 40.5,
-          date = Timestamp(GregorianCalendar(2004, 7, 1).time),
-          location = Location(1.2345, 2.3455, "Somewhere"))
+      MockEvent.createMockEvent(
+          uid = "1", title = "Balelec", date = Timestamp(GregorianCalendar(2004, 7, 1).time))
+  private val defaultEvent =
+      MockEvent.createMockEvent(
+          uid = "", title = "Default Event") // This will simulate the default event
   private val event3 =
-      Event(
+      MockEvent.createMockEvent(
           uid = "3",
           title = "Tremplin Sysmic",
-          organisers = Association.emptyFirestoreReferenceList(),
-          taggedAssociations = Association.emptyFirestoreReferenceList(),
-          image = "https://imageurl.jpg",
-          description = "Plus grand festival du monde (non contractuel)",
-          price = 40.5,
-          date = Timestamp(GregorianCalendar(2008, 7, 1).time),
-          location = Location(1.2345, 2.3455, "Somewhere"))
+          date = Timestamp(GregorianCalendar(2008, 7, 1).time))
 
   @Before
   fun setUp() {

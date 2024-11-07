@@ -16,7 +16,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -99,7 +99,7 @@ fun InterestOverlay(
                                                     pair.first.name))
                                   }
                               if (index != copiedInterests.size - 1) {
-                                Divider(
+                                HorizontalDivider(
                                     modifier =
                                         Modifier.testTag(
                                             InterestsOverlayTestTags.DIVIDER + "$index"))
