@@ -56,7 +56,7 @@
     <string name="welcome_toast_enter_valid_email">Veuillez entrer une adresse email EPFL valide</string>
     <string name="welcome_toast_sign_in">Connexion réussie</string>
     <string name="welcome_toast_verification_sent">Email de vérification envoyé</string>
-    <string name="welcome_toast_verification_sent_failed">Échec de l\'envoi de l\'email de vérification</string>
+    <string name="welcome_toast_verification_sent_failed">Echec de l\'envoi de l\'email de vérification</string>
     <string name="welcome_toast_account_created">Compte créé avec succès</string>
 
     <!-- Explore Screen Strings -->
@@ -113,8 +113,8 @@
     <string name="account_details_image_upload_error">Erreur lors du téléchargement de l\'image</string>
 
     <!-- EmailVerification Strings -->
-    <string name="email_verification_refresh_failed">Échec de l\'actualisation</string>
-    <string name="email_verification_sent_failed">Échec de l\'envoi de l'e-mail</string>
+    <string name="email_verification_refresh_failed">Echec de l\'actualisation</string>
+    <string name="email_verification_sent_failed">Echec de l\'envoi de l\'email</string>
     <string name="email_verification_verified">Email vérifié!</string>
     <string name="email_verification_verified_continue">Continuer</string>
     <string name="email_verification_verify_request">Veuillez vérifier votre email</string>
