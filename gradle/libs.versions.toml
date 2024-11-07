@@ -100,11 +100,8 @@ core = "1.46.0"
 
 
 [libraries]
-<<<<<<< HEAD
 androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
-=======
 accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanistPermissions" }
->>>>>>> 65e8aabd8b2779a6a2578376bd711de2215384cf
 androidx-appsearch = { module = "androidx.appsearch:appsearch", version.ref = "appsearch" }
 androidx-appsearch-compiler = { module = "androidx.appsearch:appsearch-compiler", version.ref = "appsearch" }
 androidx-appsearch-local-storage = { module = "androidx.appsearch:appsearch-local-storage", version.ref = "appsearch" }

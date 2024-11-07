@@ -6,7 +6,6 @@ import androidx.compose.ui.test.onNodeWithTag
 import com.android.unio.mocks.association.MockAssociation
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.event.Event
-import com.android.unio.model.event.EventListViewModel
 import com.android.unio.model.event.EventRepositoryFirestore
 import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
@@ -57,9 +56,7 @@ class ScreenDisplayingTest {
 
   private lateinit var associationViewModel: AssociationViewModel
 
-  private lateinit var eventListViewModel: EventListViewModel
-
-  @MockK lateinit var eventViewModel: EventViewModel
+  private lateinit var eventViewModel: EventViewModel
 
   @MockK private lateinit var imageRepositoryFirestore: ImageRepositoryFirebaseStorage
 
@@ -83,7 +80,7 @@ class ScreenDisplayingTest {
         spyk(
             AssociationViewModel(
                 mock(), mockk<EventRepositoryFirestore>(), imageRepositoryFirestore))
-    eventListViewModel = spyk(EventListViewModel(mock(), mock()))
+    eventViewModel = spyk(EventViewModel(mock(), mock()))
     userViewModel = spyk(UserViewModel(mock()))
 
     val associations = MockAssociation.createAllMockAssociations(size = 2)

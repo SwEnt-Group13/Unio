@@ -7,7 +7,6 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.unit.ExperimentalUnitApi
 import com.android.unio.model.event.Event
-import com.android.unio.model.event.EventListViewModel
 import com.android.unio.model.event.EventRepository
 import com.android.unio.model.event.EventRepositoryMock
 import com.android.unio.model.event.EventViewModel
@@ -24,12 +23,12 @@ import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.verify
-import javax.inject.Inject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import javax.inject.Inject
 
 // import org.robolectric.RobolectricTestRunner
 
@@ -45,7 +44,6 @@ class EventListOverviewTest {
   @get:Rule val hiltRule = HiltAndroidRule(this)
 
   private lateinit var userViewModel: UserViewModel
-  private lateinit var eventListViewModel: EventListViewModel
 
   // Mock event repository to provide test data.
   @Inject lateinit var mockEventRepository: EventRepository
@@ -78,7 +76,7 @@ class EventListOverviewTest {
               onSuccess(emptyList())
             }
           }
-      val eventViewModel = EventViewModel(emptyEventRepository)
+      val eventViewModel = EventViewModel(emptyEventRepository, imageRepository)
       HomeScreen(navigationAction, eventViewModel, userViewModel)
     }
     composeTestRule.onNodeWithTag("event_emptyEventPrompt").assertExists()
@@ -92,7 +90,7 @@ class EventListOverviewTest {
   @Test
   fun testMapButton() {
     composeTestRule.setContent {
-      val eventViewModel = EventViewModel(mockEventRepository)
+      val eventViewModel = EventViewModel(mockEventRepository, imageRepository)
       HomeScreen(navigationAction, eventViewModel, userViewModel)
     }
     composeTestRule.onNodeWithTag("event_MapButton").assertExists()
@@ -110,7 +108,7 @@ class EventListOverviewTest {
   @Test
   fun testClickFollowingAndAdd() = runBlockingTest {
     composeTestRule.setContent {
-      val eventViewModel = EventViewModel(mockEventRepository)
+      val eventViewModel = EventViewModel(mockEventRepository, imageRepository)
       HomeScreen(navigationAction, eventViewModel, userViewModel)
     }
 

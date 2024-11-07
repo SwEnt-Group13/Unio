@@ -34,7 +34,7 @@ class MapScreenTest {
     MockitoAnnotations.openMocks(this)
 
     navigationAction = mock(NavigationAction::class.java)
-    eventViewModel = EventViewModel(eventRepository)
+    eventViewModel = EventViewModel(eventRepository, imageRepository)
   }
 
   @Test

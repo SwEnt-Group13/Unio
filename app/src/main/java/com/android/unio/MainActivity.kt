@@ -26,7 +26,6 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.authentication.AuthViewModel
-import com.android.unio.model.event.EventListViewModel
 import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.search.SearchViewModel
