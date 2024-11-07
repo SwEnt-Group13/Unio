@@ -5,17 +5,18 @@ import com.android.unio.model.association.Association
 import com.android.unio.model.event.Event
 import com.android.unio.model.firestore.ReferenceList
 
-enum class Interest(val title: String) {
-  SPORTS("Sports"),
-  MUSIC("Music"),
-  ART("Art"),
-  TECHNOLOGY("Technology"),
-  SCIENCE("Science"),
-  LITERATURE("Literature"),
-  TRAVEL("Travel"),
-  FOOD("Food"),
-  GAMING("Gaming"),
-  FESTIVALS("Festivals")
+/** @param title: The title is a pointer to the string resource. */
+enum class Interest(val title: Int) {
+  SPORTS(R.string.interest_sports),
+  MUSIC(R.string.interest_music),
+  ART(R.string.interest_art),
+  TECHNOLOGY(R.string.interest_technology),
+  SCIENCE(R.string.interest_science),
+  LITERATURE(R.string.interest_literature),
+  TRAVEL(R.string.interest_travel),
+  FOOD(R.string.interest_food),
+  GAMING(R.string.interest_gaming),
+  FESTIVALS(R.string.interest_festivals),
 }
 
 enum class Social(val title: String, val icon: Int, val url: String) {
@@ -58,22 +59,28 @@ data class User(
     val joinedAssociations: ReferenceList<Association>,
     val interests: List<Interest>,
     val socials: List<UserSocial>,
-    val profilePicture: String
+    val profilePicture: String,
 ) {
   companion object
 }
-
-enum class UserSocialError(val errorMessage: String) {
-  EMPTY_FIELD("The input is empty or blank"),
-  INVALID_PHONE_NUMBER("The phone number has wrong format"),
-  INVALID_WEBSITE("The website is not encoded with https"),
-  NONE("")
+/**
+ * @param errorMessage: The error message is a pointer to the string resource. This enables us to
+ *   have error messages in different languages.
+ */
+enum class UserSocialError(val errorMessage: Int) {
+  EMPTY_FIELD(R.string.social_overlay_empty_field),
+  INVALID_PHONE_NUMBER(R.string.social_overlay_invalid_phone_number),
+  INVALID_WEBSITE(R.string.social_overlay_invalid_website),
+  NONE(-1)
 }
 
-enum class AccountDetailsError(val errorMessage: String) {
-  EMPTY_FIRST_NAME("Please fill in your first name"),
-  EMPTY_LAST_NAME("Please fill in your last name"),
-  NONE("")
+/**
+ * @param errorMessage: The error message is a pointer to the string resource, just like for
+ *   UserSocialError.
+ */
+enum class AccountDetailsError(val errorMessage: Int) {
+  EMPTY_FIRST_NAME(R.string.account_details_first_name_error),
+  EMPTY_LAST_NAME(R.string.account_details_last_name_error)
 }
 // Helper methods
 /**

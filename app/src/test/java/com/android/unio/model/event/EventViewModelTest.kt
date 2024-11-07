@@ -2,8 +2,8 @@ package com.android.unio.model.event
 
 import androidx.lifecycle.ViewModel
 import androidx.test.core.app.ApplicationProvider
+import com.android.unio.mocks.event.MockEvent
 import com.android.unio.model.firestore.ReferenceList
-import com.android.unio.model.map.Location
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.google.firebase.FirebaseApp
 import com.google.firebase.Timestamp
@@ -36,27 +36,19 @@ class EventViewModelTest {
   private lateinit var eventViewModel: EventViewModel
 
   private val event1 =
-      Event(
+      MockEvent.createMockEvent(
           uid = "1",
           title = "Balelec",
-          organisers = MockReferenceList(),
-          taggedAssociations = MockReferenceList(),
-          image = "https://imageurl.jpg",
-          description = "Plus grand festival du monde (non contractuel)",
           price = 40.5,
-          date = Timestamp(GregorianCalendar(2004, 7, 1).time),
-          location = Location(1.2345, 2.3455, "Somewhere"))
+          date = Timestamp(GregorianCalendar(2004, 7, 1).time))
   private val event3 =
-      Event(
+      MockEvent.createMockEvent(
           uid = "3",
           title = "Tremplin Sysmic",
-          organisers = MockReferenceList(),
-          taggedAssociations = MockReferenceList(),
-          image = "https://imageurl.jpg",
-          description = "Plus grand festival du monde (non contractuel)",
           price = 40.5,
-          date = Timestamp(GregorianCalendar(2008, 7, 1).time),
-          location = Location(1.2345, 2.3455, "Somewhere"))
+          date = Timestamp(GregorianCalendar(2008, 7, 1).time))
+
+  private val testEvents = listOf(event1, event3)
 
   @Before
   fun setUp() {
@@ -85,7 +77,7 @@ class EventViewModelTest {
     val viewModel = EventViewModel.Factory.create(EventViewModel::class.java)
     assertTrue(viewModel is EventViewModel)
 
-    val eventViewModel = viewModel as EventViewModel
+    val eventViewModel = viewModel
     assertTrue(eventViewModel.repository is EventRepositoryFirestore)
     assertTrue(eventViewModel.userRepository is UserRepositoryFirestore)
   }
