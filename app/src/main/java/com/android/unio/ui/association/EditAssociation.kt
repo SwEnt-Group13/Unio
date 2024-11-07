@@ -60,11 +60,18 @@ fun EditAssociationScreen(
                 .padding(16.dp)
                 .verticalScroll(rememberScrollState())
         ) {
-            Text(text = "Edit Association", style = MaterialTheme.typography.headlineMedium)
+            Text(
+                text = context.getString(R.string.edit_association_title),
+                style = MaterialTheme.typography.headlineMedium
+            )
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            Text(text = "The name of the association. This is typically a short identifier or acronym.", style = MaterialTheme.typography.bodySmall)
+            // Explanation for "Name"
+            Text(
+                text = context.getString(R.string.name_explanation),
+                style = MaterialTheme.typography.bodySmall
+            )
 
             Spacer(modifier = Modifier.height(8.dp))
             OutlinedTextField(
@@ -76,7 +83,11 @@ fun EditAssociationScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            Text(text = "The full name of the association. This can be the official long-form name.", style = MaterialTheme.typography.bodySmall)
+            // Explanation for "Full Name"
+            Text(
+                text = context.getString(R.string.full_name_explanation),
+                style = MaterialTheme.typography.bodySmall
+            )
 
             Spacer(modifier = Modifier.height(8.dp))
             OutlinedTextField(
@@ -88,10 +99,15 @@ fun EditAssociationScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            Text(text = "Select the category that best fits the association's purpose. Choose an existing category.", style = MaterialTheme.typography.bodySmall)
+            // Explanation for "Category"
+            Text(
+                text = context.getString(R.string.category_explanation),
+                style = MaterialTheme.typography.bodySmall
+            )
 
             Spacer(modifier = Modifier.height(8.dp))
 
+            // Category Button
             Button(
                 onClick = { expanded = true },
                 modifier = Modifier.fillMaxWidth()
@@ -118,7 +134,11 @@ fun EditAssociationScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            Text(text = "Provide a brief description of the association, including its main activities and goals.", style = MaterialTheme.typography.bodySmall)
+            // Explanation for "Description"
+            Text(
+                text = context.getString(R.string.description_explanation),
+                style = MaterialTheme.typography.bodySmall
+            )
 
             Spacer(modifier = Modifier.height(8.dp))
             OutlinedTextField(
@@ -130,7 +150,11 @@ fun EditAssociationScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            Text(text = "Provide a URL for the association's image, which will be displayed on the profile page.", style = MaterialTheme.typography.bodySmall)
+            // Explanation for "Image URL"
+            Text(
+                text = context.getString(R.string.image_explanation),
+                style = MaterialTheme.typography.bodySmall
+            )
 
             Spacer(modifier = Modifier.height(8.dp))
             OutlinedTextField(
@@ -142,7 +166,11 @@ fun EditAssociationScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            Text(text = "Provide the URL of the association's webpage or online presence.", style = MaterialTheme.typography.bodySmall)
+            // Explanation for "URL"
+            Text(
+                text = context.getString(R.string.url_explanation),
+                style = MaterialTheme.typography.bodySmall
+            )
 
             Spacer(modifier = Modifier.height(8.dp))
             OutlinedTextField(
@@ -160,10 +188,11 @@ fun EditAssociationScreen(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 TextButton(onClick = { navigationAction.navigateTo(Screen.withParams(Screen.ASSOCIATION_PROFILE, association.uid)) }) {
-                    Text("Cancel")
+                    Text(context.getString(R.string.cancel_button_text))
                 }
 
                 Spacer(modifier = Modifier.width(8.dp))
+
                 Button(
                     onClick = {
                         scope.launch {
@@ -183,15 +212,14 @@ fun EditAssociationScreen(
                                 },
                                 onFailure = {
                                     Log.e("EditAssociationScreen", "Failed to save association.")
-                                    Toast.makeText(context, "Failed to save association", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(context, context.getString(R.string.save_failed_message), Toast.LENGTH_SHORT).show()
                                 }
                             )
                         }
                     }
                 ) {
-                    Text("Save")
+                    Text(context.getString(R.string.save_button_text))
                 }
-
             }
         }
     }
