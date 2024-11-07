@@ -208,7 +208,7 @@ fun EditAssociationScreen(
                                 null,
                                 onSuccess = {
                                     Log.d("EditAssociationScreen", "Association saved successfully.")
-                                    navigationAction.navigateTo(Screen.withParams(Screen.ASSOCIATION_PROFILE, association.uid))
+                                    navigationAction.navigateTo(Screen.withParams(Screen.ASSOCIATION_PROFILE, association.uid), Screen.EDIT_ASSOCIATION)
                                 },
                                 onFailure = {
                                     Log.e("EditAssociationScreen", "Failed to save association.")
