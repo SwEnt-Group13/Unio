@@ -45,15 +45,17 @@ class UserViewModelTest {
 
   @Test
   fun testUpdateUser() {
-    val user = MockUser.createMockUser(uid="1")
-    every {repository.updateUser(any(), any(), any())} answers {
-      val onSuccess = it.invocation.args[1] as () -> Unit
-      onSuccess()
-    }
-    every {repository.getUserWithId("1", any(), any())} answers {
-      val onSuccess = it.invocation.args[1] as (User) -> Unit
-      onSuccess(user)
-    }
+    val user = MockUser.createMockUser(uid = "1")
+    every { repository.updateUser(any(), any(), any()) } answers
+        {
+          val onSuccess = it.invocation.args[1] as () -> Unit
+          onSuccess()
+        }
+    every { repository.getUserWithId("1", any(), any()) } answers
+        {
+          val onSuccess = it.invocation.args[1] as (User) -> Unit
+          onSuccess(user)
+        }
     userViewModel.updateUser(user)
 
     verify { repository.updateUser(user, any(), any()) }

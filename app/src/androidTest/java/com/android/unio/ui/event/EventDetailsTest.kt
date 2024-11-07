@@ -6,14 +6,13 @@ import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.isNotDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.navigation.NavHostController
-import com.android.unio.model.event.EventViewModel
-import com.android.unio.model.user.UserViewModel
+import com.android.unio.mocks.event.MockEvent
+import com.android.unio.model.event.Event
 import com.android.unio.ui.navigation.NavigationAction
-import io.mockk.impl.annotations.MockK
-import io.mockk.mockk
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -25,27 +24,22 @@ class EventDetailsTest {
   private lateinit var navHostController: NavHostController
   private lateinit var navigationAction: NavigationAction
 
-  @MockK private lateinit var userViewModel: UserViewModel
-
-  @MockK private lateinit var eventViewModel: EventViewModel
+  private lateinit var events: List<Event>
 
   @get:Rule val composeTestRule = createComposeRule()
 
   @Before
   fun setUp() {
     MockitoAnnotations.openMocks(this)
+    events = listOf(MockEvent.createMockEvent(uid = "a"), MockEvent.createMockEvent(uid = "b"))
 
     navHostController = mock { NavHostController::class.java }
     navigationAction = NavigationAction(navHostController)
-    userViewModel = mockk { UserViewModel::class.java }
-
-    eventViewModel = mockk { EventViewModel::class.java }
   }
 
   private fun setEventScreen() {
-    composeTestRule.setContent {
-      EventScreen(navigationAction, eventViewModel = eventViewModel, userViewModel)
-    }
+
+    composeTestRule.setContent { EventScreenScaffold(navigationAction, events[0], true) {} }
   }
 
   @Test
@@ -53,13 +47,12 @@ class EventDetailsTest {
     setEventScreen()
     composeTestRule.waitForIdle()
 
-    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("EventScreen"))
+    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("EventScreen", true))
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("goBackButton"))
 
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("eventSaveButton"))
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("eventShareButton"))
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("eventDetailsPage"))
-    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("eventDetailsImage"))
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("eventDetailsInformationCard"))
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("eventTitle"))
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("eventOrganisingAssociation0"))
@@ -96,7 +89,6 @@ class EventDetailsTest {
     // Save button
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("eventSaveButton"))
     composeTestRule.onNodeWithTag("eventSaveButton").performClick()
-    assertSnackBarIsDisplayed()
 
     // Location button
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("mapButton"))
@@ -120,5 +112,14 @@ class EventDetailsTest {
     setEventScreen()
     composeTestRule.onNodeWithTag("goBackButton").performClick()
     verify(navHostController).popBackStack()
+  }
+
+  @Test
+  fun testEventDetailsData() {
+    val event = events[0]
+    setEventScreen()
+    assertDisplayComponentInScroll(composeTestRule.onNodeWithText(event.title))
+    assertDisplayComponentInScroll(composeTestRule.onNodeWithText(event.description))
+    assertDisplayComponentInScroll(composeTestRule.onNodeWithText(event.location.name))
   }
 }

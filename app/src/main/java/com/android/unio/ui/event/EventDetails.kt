@@ -82,13 +82,12 @@ private val ASSOCIATION_ICON_SIZE = 24.dp
 private var testSnackbar: SnackbarHostState? = null
 private var scope: CoroutineScope? = null
 
-@OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun EventScreen(
     navigationAction: NavigationAction,
     eventViewModel: EventViewModel,
-    userViewModel: UserViewModel // will be used later to show whether the event is saved){}
+    userViewModel: UserViewModel
 ) {
 
   val event by eventViewModel.selectedEvent.collectAsState()
@@ -99,7 +98,28 @@ fun EventScreen(
   }
   var isSaved by remember { mutableStateOf(false) }
   LaunchedEffect(event!!.uid) { isSaved = userViewModel.isEventSavedForCurrentUser(event!!.uid) }
+  val onClickSaveButton = {
+    if (user != null) {
+      if (isSaved) {
+        userViewModel.unSaveEventForCurrentUser(event!!.uid) { isSaved = false }
+      } else {
+        userViewModel.saveEventForCurrentUser(event!!.uid) { isSaved = true }
+      }
+      userViewModel.updateUserDebounced(user!!)
+    }
+  }
 
+  EventScreenScaffold(navigationAction, event!!, isSaved, onClickSaveButton)
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun EventScreenScaffold(
+    navigationAction: NavigationAction,
+    event: Event,
+    isSaved: Boolean,
+    onClickSaveButton: () -> Unit
+) {
   val context = LocalContext.current
   testSnackbar = remember { SnackbarHostState() }
   scope = rememberCoroutineScope()
@@ -133,16 +153,7 @@ fun EventScreen(
             },
             actions = {
               IconButton(
-                  modifier = Modifier.testTag("eventSaveButton"),
-                  onClick = {
-                    if (user == null) return@IconButton
-                    if (isSaved) {
-                      userViewModel.unSaveEventForCurrentUser(event!!.uid) { isSaved = false }
-                    } else {
-                      userViewModel.saveEventForCurrentUser(event!!.uid) { isSaved = true }
-                    }
-                    userViewModel.updateUserDebounced(user!!)
-                  }) {
+                  modifier = Modifier.testTag("eventSaveButton"), onClick = onClickSaveButton) {
                     Icon(
                         imageVector =
                             if (isSaved) Icons.Rounded.Favorite else Icons.Rounded.FavoriteBorder,
@@ -156,7 +167,7 @@ fun EventScreen(
               }
             })
       },
-      content = { padding -> EventScreenContent(event!!, padding) })
+      content = { padding -> EventScreenContent(event, padding) })
 }
 
 @OptIn(ExperimentalLayoutApi::class)

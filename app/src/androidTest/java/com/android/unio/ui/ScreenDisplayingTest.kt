@@ -6,6 +6,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.android.unio.mocks.association.MockAssociation
+import com.android.unio.mocks.event.MockEvent
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventRepositoryFirestore
@@ -19,7 +20,7 @@ import com.android.unio.ui.authentication.AccountDetails
 import com.android.unio.ui.authentication.EmailVerificationScreen
 import com.android.unio.ui.authentication.WelcomeScreen
 import com.android.unio.ui.event.EventCreationScreen
-import com.android.unio.ui.event.EventScreen
+import com.android.unio.ui.event.EventScreenScaffold
 import com.android.unio.ui.explore.ExploreScreen
 import com.android.unio.ui.home.HomeScreen
 import com.android.unio.ui.map.MapScreen
@@ -142,10 +143,8 @@ class ScreenDisplayingTest {
   @Test
   fun testEventDisplayed() {
     composeTestRule.setContent {
-      EventScreen(
-          navigationAction = navigationAction,
-          eventViewModel = eventViewModel,
-          userViewModel = userViewModel)
+      EventScreenScaffold(
+          navigationAction = navigationAction, event = MockEvent.createMockEvent(), true, {})
     }
     composeTestRule.onNodeWithTag("EventScreen").assertIsDisplayed()
   }
@@ -163,7 +162,8 @@ class ScreenDisplayingTest {
           navigationAction,
           "1",
           associationViewModel,
-          userViewModel = viewModel(factory = UserViewModel.Factory))
+          userViewModel = viewModel(factory = UserViewModel.Factory),
+          eventViewModel)
     }
     composeTestRule.onNodeWithTag("AssociationScreen").assertIsDisplayed()
   }
