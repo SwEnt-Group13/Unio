@@ -67,22 +67,12 @@ class AssociationRepositoryFirestore(private val db: FirebaseFirestore) : Associ
         onFailure = { exception -> onFailure(exception) })
   }
 
-  override fun addAssociation(
+  override fun saveAssociation(
       association: Association,
       onSuccess: () -> Unit,
       onFailure: (Exception) -> Unit
   ) {
-    performFirestoreOperation(
-        db.collection(ASSOCIATION_PATH).document(association.uid).set(serialize(association)),
-        onSuccess = { onSuccess() },
-        onFailure)
-  }
-
-  override fun updateAssociation(
-      association: Association,
-      onSuccess: () -> Unit,
-      onFailure: (Exception) -> Unit
-  ) {
+      Log.d("AssociationViewModel", "Association saved INSIDE repository")
     performFirestoreOperation(
         db.collection(ASSOCIATION_PATH).document(association.uid).set(serialize(association)),
         onSuccess = { onSuccess() },
@@ -107,18 +97,26 @@ class AssociationRepositoryFirestore(private val db: FirebaseFirestore) : Associ
       onSuccess: (T) -> Unit,
       onFailure: (Exception) -> Unit
   ) {
-    task.addOnCompleteListener {
-      if (it.isSuccessful) {
-        it.result?.let { result -> onSuccess(result) }
-      } else {
-        it.exception?.let { e ->
-          Log.e("AssociationRepositoryFirestore", "Error performing Firestore operation", e)
-          onFailure(e)
-        }
+      Log.d("AssociationRepositoryFirestore", "Attempting Firestore operation.")
+      task.addOnCompleteListener { taskResult ->
+          if (taskResult.isSuccessful) {
+              val result = taskResult.result
+              if (result != null) {
+                  Log.d("AssociationRepositoryFirestore", "Firestore operation succeeded with result.")
+                  onSuccess(result)
+              } else {
+                  Log.d("AssociationRepositoryFirestore", "Firestore operation succeeded but result is null.")
+                  onSuccess(result)
+              }
+          } else {
+              val exception = taskResult.exception
+              exception?.let {
+                  Log.e("AssociationRepositoryFirestore", "Error performing Firestore operation", it)
+                  onFailure(it)
+              }
+          }
       }
-    }
   }
 
-  // Note: the following line is needed to add external methods to the companion object
   companion object
 }
