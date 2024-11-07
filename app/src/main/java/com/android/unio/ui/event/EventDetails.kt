@@ -52,7 +52,9 @@ import coil.compose.AsyncImage
 import com.android.unio.R
 import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationCategory
+import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventViewModel
+import com.android.unio.model.firestore.emptyFirestoreReferenceList
 import com.android.unio.model.firestore.firestoreReferenceListWith
 import com.android.unio.model.user.User
 import com.android.unio.model.user.UserViewModel
@@ -97,7 +99,8 @@ fun EventScreen(
                   "ACM is the world's largest educational and scientific computing society.",
               members = User.firestoreReferenceListWith(listOf("1", "2")),
               image = "https://www.example.com/image.jpg",
-              followersCount = 0),
+              followersCount = 0,
+              events = Event.emptyFirestoreReferenceList()),
           Association(
               uid = "2",
               url = "https://www.ieee.org/",
@@ -108,7 +111,8 @@ fun EventScreen(
                   "IEEE is the world's largest technical professional organization dedicated to advancing technology for the benefit of humanity.",
               members = User.firestoreReferenceListWith(listOf("3", "4")),
               image = "https://www.example.com/image.jpg",
-              followersCount = 0))
+              followersCount = 0,
+              events = Event.emptyFirestoreReferenceList()))
 
   val context = LocalContext.current
   testSnackbar = remember { SnackbarHostState() }

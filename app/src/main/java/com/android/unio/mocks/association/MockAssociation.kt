@@ -1,9 +1,12 @@
 package com.android.unio.mocks.association
 
+import com.android.unio.mocks.event.MockEvent
 import com.android.unio.mocks.firestore.MockReferenceList
 import com.android.unio.mocks.user.MockUser
 import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationCategory
+import com.android.unio.model.event.Event
+import com.android.unio.model.firestore.ReferenceList
 import com.android.unio.model.user.User
 
 /**
@@ -76,7 +79,12 @@ class MockAssociation {
         category: AssociationCategory = AssociationCategory.ENTERTAINMENT,
         description: String = "This is the best description",
         image: String = "image1.png",
-        members: List<User> = emptyList()
+        members: List<User> = emptyList(),
+        events: ReferenceList<Event> =
+            MockReferenceList(
+                listOf(
+                    MockEvent.createMockEvent(
+                        associationDependency = true, userDependency = userDependency)))
     ): Association {
       val membersHelper =
           if (userDependency) {
@@ -94,7 +102,8 @@ class MockAssociation {
           description = description,
           members = MockReferenceList(membersHelper),
           image = image,
-          followersCount = 2)
+          followersCount = 2,
+          events = events)
     }
 
     fun createAllMockAssociations(
