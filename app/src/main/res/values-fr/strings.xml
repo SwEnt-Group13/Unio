@@ -44,9 +44,20 @@
     <string name="login_continue_button">Continuer</string>
 
     <!-- Welcome Screen Strings -->
-    <string name="welcome_message">La plus grande plateforme de vie universitaire au monde !</string>
-    <string name="welcome_login_button">Se connecter</string>
-    <string name="welcome_skip_home_button">Passer à l\'accueil</string>
+    <string name="welcome_message">La plus grande plateforme de vie universitaire au monde.</string>
+    <string name="welcome_login_signup">Inscrivez-vous ou connectez-vous pour commencer.</string>
+    <string name="welcome_email_enter">Entrez votre adresse email</string>
+    <string name="welcome_email_display">john.doe@epfl.ch</string>
+    <string name="welcome_password_enter">Entrez votre mot de passe</string>
+    <string name="welcome_password_error_correction">Min. 6 charactères and 1 chiffre</string>
+    <string name="welcome_malformed_email_password">Email ou mot de passe mal formé.</string>
+    <string name="welcome_button_continue">Continuer</string>
+    <string name="welcome_toast_invalid_creds">Identifiants invalides</string>
+    <string name="welcome_toast_enter_valid_email">Veuillez entrer une adresse email EPFL valide</string>
+    <string name="welcome_toast_sign_in">Connexion réussie</string>
+    <string name="welcome_toast_verification_sent">Email de vérification envoyé</string>
+    <string name="welcome_toast_verification_sent_failed">Échec de l\'envoi de l\'email de vérification</string>
+    <string name="welcome_toast_account_created">Compte créé avec succès</string>
 
     <!-- Explore Screen Strings -->
     <string name="explore_content_screen_title">Explorez nos Associations</string>
@@ -98,6 +109,19 @@
     <string name="account_details_continue" translatable="true">Continuer</string>
     <string name="account_details_first_name_error">Veuillez remplir votre Prénom</string>
     <string name="account_details_last_name_error">Veuillez remplir votre Nom</string>
+    <string name="account_details_created_successfully">Compte créé avec succès</string>
+    <string name="account_details_image_upload_error">Erreur lors du téléchargement de l\'image</string>
+
+    <!-- EmailVerification Strings -->
+    <string name="email_verification_refresh_failed">Échec de l\'actualisation</string>
+    <string name="email_verification_sent_failed">Échec de l\'envoi de l'e-mail</string>
+    <string name="email_verification_verified">Email vérifié!</string>
+    <string name="email_verification_verified_continue">Continuer</string>
+    <string name="email_verification_verify_request">Veuillez vérifier votre email</string>
+    <string name="email_verification_email_sent_to">Nous avons envoyé un email à </string>
+    <string name="email_verification_email_sent_to_verify">. Veuillez vérifier votre email pour continuer.</string>
+    <string name="email_verification_email_resend">Renvoyer l\'email</string>
+    <string name="email_verification_email_refresh">Rafraîchir</string>
 
     <!-- Interests Overlay Strings -->
     <string name="interest_overlay_title" translatable="true">Vos intérêts</string>

@@ -133,7 +133,11 @@ fun AccountDetails(
       userViewModel.addUser(
           newUser,
           onSuccess = {
-            Toast.makeText(context, "Account Created Successfully", Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                    context,
+                    context.getString(R.string.account_details_created_successfully),
+                    Toast.LENGTH_SHORT)
+                .show()
             navigationAction.navigateTo(Screen.HOME)
           })
     }
@@ -303,7 +307,11 @@ fun AccountDetails(
                     onSuccess = createUser,
                     onFailure = { exception ->
                       Log.e("AccountDetails", "Error uploading image: $exception")
-                      Toast.makeText(context, "Error uploading image", Toast.LENGTH_SHORT).show()
+                      Toast.makeText(
+                              context,
+                              context.getString(R.string.account_details_image_upload_error),
+                              Toast.LENGTH_SHORT)
+                          .show()
                     })
               }
             }) {

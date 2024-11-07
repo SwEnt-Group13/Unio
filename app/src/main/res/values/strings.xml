@@ -56,9 +56,20 @@
     <string name="login_continue_button">Continue</string>
 
     <!-- Welcome Screen Strings -->
-    <string name="welcome_message">The world’s largest campus life platform!</string>
-    <string name="welcome_login_button">Login</string>
-    <string name="welcome_skip_home_button">Skip to Home</string>
+    <string name="welcome_message">The world’s largest campus life platform.</string>
+    <string name="welcome_login_signup">Sign up or log in to get started.</string>
+    <string name="welcome_email_enter">Enter your email address</string>
+    <string name="welcome_email_display">john.doe@epfl.ch</string>
+    <string name="welcome_password_enter">Enter your password</string>
+    <string name="welcome_password_error_correction">Min. 6 characters and 1 digit</string>
+    <string name="welcome_malformed_email_password">Malformed email or password.</string>
+    <string name="welcome_button_continue">Continue</string>
+    <string name="welcome_toast_invalid_creds">Invalid credentials</string>
+    <string name="welcome_toast_enter_valid_email">Please enter a valid EPFL email address</string>
+    <string name="welcome_toast_sign_in">Signed in successfully</string>
+    <string name="welcome_toast_verification_sent">Verification email sent</string>
+    <string name="welcome_toast_verification_sent_failed">Failed to send verification email</string>
+    <string name="welcome_toast_account_created">Account created successfully</string>
 
     <!-- Explore Screen Strings -->
     <string name="explore_content_screen_title">Explore our Associations</string>
@@ -128,6 +139,19 @@
     <string name="account_details_continue" translatable="true">Continue</string>
     <string name="account_details_first_name_error">Please fill in your first name</string>
     <string name="account_details_last_name_error">Please fill in your last name</string>
+    <string name="account_details_created_successfully">Account Created Successfully</string>
+    <string name="account_details_image_upload_error">Error uploading image</string>
+
+    <!-- EmailVerification Strings -->
+    <string name="email_verification_refresh_failed">Failed to refresh</string>
+    <string name="email_verification_sent_failed">Failed to send email</string>
+    <string name="email_verification_verified">Email verified!</string>
+    <string name="email_verification_verified_continue">Continue</string>
+    <string name="email_verification_verify_request">Verify your email</string>
+    <string name="email_verification_email_sent_to">We sent an email to </string>
+    <string name="email_verification_email_sent_to_verify">. Please verify your email to continue.</string>
+    <string name="email_verification_email_resend">Resend email</string>
+    <string name="email_verification_email_refresh">Refresh</string>
 
     <!-- Interest Overlay Strings -->
     <string name="interest_overlay_title" translatable="true">Your interests</string>
