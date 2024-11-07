@@ -3,8 +3,6 @@ package com.android.unio.ui
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavHostController
 import com.android.unio.mocks.association.MockAssociation
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.event.Event
@@ -32,6 +30,8 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 import com.google.firebase.auth.internal.zzac
+import dagger.hilt.android.testing.HiltAndroidRule
+import dagger.hilt.android.testing.HiltAndroidTest
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
@@ -42,16 +42,20 @@ import me.zhanghai.compose.preference.ProvidePreferenceLocals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.mockito.kotlin.mock
+import org.mockito.Mockito.mock
 
+@HiltAndroidTest
 class ScreenDisplayingTest {
 
-  private lateinit var navigationAction: NavigationAction
+  @MockK lateinit var navigationAction: NavigationAction
+
   private lateinit var userViewModel: UserViewModel
+
+  private lateinit var associationViewModel: AssociationViewModel
 
   @MockK private lateinit var eventRepository: EventRepositoryFirestore
   private lateinit var eventViewModel: EventViewModel
-  @MockK private lateinit var associationViewModel: AssociationViewModel
+
   @MockK private lateinit var imageRepositoryFirestore: ImageRepositoryFirebaseStorage
 
   @MockK private lateinit var firebaseAuth: FirebaseAuth
@@ -62,6 +66,8 @@ class ScreenDisplayingTest {
 
   @get:Rule val composeTestRule = createComposeRule()
 
+  @get:Rule val hiltRule = HiltAndroidRule(this)
+
   private lateinit var searchViewModel: SearchViewModel
   @MockK(relaxed = true) private lateinit var searchRepository: SearchRepository
 
@@ -70,19 +76,14 @@ class ScreenDisplayingTest {
     MockKAnnotations.init(this, relaxed = true)
     searchViewModel = spyk(SearchViewModel(searchRepository))
 
-    navigationAction = mock { NavHostController::class.java }
-    userViewModel = mockk()
-    associationViewModel = mockk()
-    eventRepository = mockk()
+    hiltRule.inject()
 
-    every { eventRepository.init(any()) } answers {}
-    eventViewModel = EventViewModel(eventRepository)
-
-    every { eventRepository.getEvents(any(), any()) } answers
-        {
-          val onSuccess = args[1] as (List<Event>) -> Unit
-          onSuccess(emptyList())
-        }
+    associationViewModel =
+        spyk(
+            AssociationViewModel(
+                mock(), mockk<EventRepositoryFirestore>(), imageRepositoryFirestore))
+    eventViewModel = spyk(EventViewModel(mock(), mock()))
+    userViewModel = spyk(UserViewModel(mock()))
 
     val associations = MockAssociation.createAllMockAssociations(size = 2)
     searchViewModel = spyk(SearchViewModel(searchRepository))
@@ -133,7 +134,7 @@ class ScreenDisplayingTest {
   @Test
   fun testExploreDisplayed() {
     composeTestRule.setContent {
-      ExploreScreen(navigationAction, searchViewModel = searchViewModel)
+      ExploreScreen(navigationAction, associationViewModel, searchViewModel)
     }
     composeTestRule.onNodeWithTag("exploreScreen").assertIsDisplayed()
     composeTestRule.onNodeWithTag("searchBar").assertIsDisplayed()
@@ -165,11 +166,7 @@ class ScreenDisplayingTest {
   @Test
   fun testAssociationProfileDisplayed() {
     composeTestRule.setContent {
-      AssociationProfileScreen(
-          navigationAction,
-          "1",
-          associationViewModel,
-          userViewModel = viewModel(factory = UserViewModel.Factory))
+      AssociationProfileScreen(navigationAction, "1", associationViewModel, userViewModel)
     }
     composeTestRule.onNodeWithTag("AssociationScreen").assertIsDisplayed()
   }
@@ -188,7 +185,7 @@ class ScreenDisplayingTest {
 
   @Test
   fun testUserProfileDisplayed() {
-    composeTestRule.setContent { UserProfileScreen(navigationAction) }
+    composeTestRule.setContent { UserProfileScreen(navigationAction, userViewModel) }
     composeTestRule.onNodeWithTag("UserProfileScreen").assertIsDisplayed()
   }
 

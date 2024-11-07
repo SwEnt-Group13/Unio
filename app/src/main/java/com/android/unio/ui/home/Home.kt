@@ -45,7 +45,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.android.unio.R
 import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.search.SearchViewModel
@@ -63,7 +62,7 @@ import kotlinx.coroutines.launch
 fun HomeScreen(
     navigationAction: NavigationAction,
     eventViewModel: EventViewModel,
-    userViewModel: UserViewModel = viewModel(factory = UserViewModel.Factory),
+    userViewModel: UserViewModel,
     searchViewModel: SearchViewModel
 ) {
   val events by eventViewModel.events.collectAsState()

@@ -8,6 +8,7 @@ import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.unio.model.event.EventRepository
 import com.android.unio.model.event.EventViewModel
+import com.android.unio.model.image.ImageRepository
 import com.android.unio.ui.navigation.NavigationAction
 import org.junit.Before
 import org.junit.Rule
@@ -24,6 +25,7 @@ class MapScreenTest {
   @get:Rule val composeTestRule = createComposeRule()
 
   @Mock private lateinit var eventRepository: EventRepository
+  @Mock private lateinit var imageRepository: ImageRepository
   private lateinit var navigationAction: NavigationAction
   private lateinit var eventViewModel: EventViewModel
 
@@ -32,14 +34,12 @@ class MapScreenTest {
     MockitoAnnotations.openMocks(this)
 
     navigationAction = mock(NavigationAction::class.java)
-    eventViewModel = EventViewModel(eventRepository)
+    eventViewModel = EventViewModel(eventRepository, imageRepository)
   }
 
   @Test
   fun mapScreenComponentsAreDisplayed() {
-    composeTestRule.setContent {
-      MapScreen(navigationAction = navigationAction, eventViewModel = eventViewModel)
-    }
+    composeTestRule.setContent { MapScreen(navigationAction, eventViewModel) }
 
     composeTestRule.onNodeWithTag("MapScreen").assertIsDisplayed()
     composeTestRule.onNodeWithTag("MapTitle").assertIsDisplayed()
@@ -48,9 +48,7 @@ class MapScreenTest {
 
   @Test
   fun mapScreenBackButtonNavigatesBack() {
-    composeTestRule.setContent {
-      MapScreen(navigationAction = navigationAction, eventViewModel = eventViewModel)
-    }
+    composeTestRule.setContent { MapScreen(navigationAction, eventViewModel) }
 
     composeTestRule.onNodeWithTag("goBackButton").performClick()
     verify(navigationAction).goBack()

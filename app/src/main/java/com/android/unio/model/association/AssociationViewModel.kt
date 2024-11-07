@@ -2,26 +2,28 @@ package com.android.unio.model.association
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventRepository
-import com.android.unio.model.event.EventRepositoryFirestore
-import com.android.unio.model.image.ImageRepositoryFirebaseStorage
-import com.google.firebase.Firebase
-import com.google.firebase.firestore.firestore
+import com.android.unio.model.image.ImageRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import java.io.InputStream
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class AssociationViewModel(
+@HiltViewModel
+class AssociationViewModel
+@Inject
+constructor(
     private val associationRepository: AssociationRepository,
-    private val eventRepository: EventRepository
+    private val eventRepository: EventRepository,
+    private val imageRepository: ImageRepository
 ) : ViewModel() {
+
   private val _associations = MutableStateFlow<List<Association>>(emptyList())
   val associations: StateFlow<List<Association>> = _associations
-  private val imageRepository = ImageRepositoryFirebaseStorage()
 
   private val _associationsByCategory =
       MutableStateFlow<Map<AssociationCategory, List<Association>>>(emptyMap())
@@ -32,19 +34,6 @@ class AssociationViewModel(
     associationRepository.init { getAssociations() }
   }
 
-  companion object {
-    val Factory: ViewModelProvider.Factory =
-        object : ViewModelProvider.Factory {
-          @Suppress("UNCHECKED_CAST")
-          override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return AssociationViewModel(
-                AssociationRepositoryFirestore(Firebase.firestore),
-                EventRepositoryFirestore(Firebase.firestore))
-                as T
-          }
-        }
-  }
-
   fun getEventsForAssociation(association: Association, onSuccess: (List<Event>) -> Unit) {
     viewModelScope.launch {
       eventRepository.getEventsOfAssociation(
@@ -53,7 +42,7 @@ class AssociationViewModel(
           onFailure = { exception ->
             Log.e(
                 "ExploreViewModel",
-                "Failed to get events for association ${association.fullName}",
+                "Failed to get events for association ${association.name}",
                 exception)
           })
     }

@@ -9,6 +9,8 @@ import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationRepository
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,7 +22,8 @@ import kotlinx.coroutines.launch
  * AppSearch database and exposes the results through a [StateFlow] containing a list of
  * respectively [Association] and [Event]
  */
-class SearchViewModel(private val repository: SearchRepository) : ViewModel() {
+@HiltViewModel
+class SearchViewModel @Inject constructor(private val repository: SearchRepository) : ViewModel() {
   private val _associations = MutableStateFlow<List<Association>>(emptyList())
   val associations: StateFlow<List<Association>> = _associations
 

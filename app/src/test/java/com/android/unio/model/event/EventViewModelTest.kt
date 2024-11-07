@@ -2,10 +2,14 @@ package com.android.unio.model.event
 
 import androidx.test.core.app.ApplicationProvider
 import com.android.unio.mocks.event.MockEvent
+import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.google.firebase.FirebaseApp
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
+import io.mockk.MockKAnnotations
+import io.mockk.every
+import io.mockk.impl.annotations.MockK
 import java.io.InputStream
 import java.util.GregorianCalendar
 import junit.framework.TestCase.assertEquals
@@ -29,6 +33,8 @@ class EventViewModelTest {
   @Mock private lateinit var collectionReference: CollectionReference
   @Mock private lateinit var inputStream: InputStream
 
+  @MockK lateinit var imageRepository: ImageRepositoryFirebaseStorage
+
   private lateinit var eventViewModel: EventViewModel
 
   private val testEvents =
@@ -47,22 +53,30 @@ class EventViewModelTest {
   @Before
   fun setUp() {
     MockitoAnnotations.openMocks(this)
+    MockKAnnotations.init(this)
 
     if (FirebaseApp.getApps(ApplicationProvider.getApplicationContext()).isEmpty()) {
       FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext())
     }
     `when`(db.collection(any())).thenReturn(collectionReference)
 
-    eventViewModel = EventViewModel(repository)
+    every { imageRepository.uploadImage(any(), any(), any(), any()) } answers
+        {
+          val onSuccess = args[2] as (String) -> Unit
+          onSuccess("url")
+        }
+
+    eventViewModel = EventViewModel(repository, imageRepository)
   }
 
   @Test
   fun addEventTest() {
     val event = testEvents.get(0)
     `when`(repository.addEvent(eq(event), any(), any())).thenAnswer { invocation ->
-      val onSuccess = invocation.arguments[0] as () -> Unit
+      val onSuccess = invocation.arguments[1] as () -> Unit
       onSuccess()
     }
+    `when`(repository.getNewUid()).thenReturn("1")
     eventViewModel.addEvent(
         inputStream, event, { verify(repository).addEvent(eq(event), any(), any()) }, {})
   }
@@ -102,4 +116,13 @@ class EventViewModelTest {
     eventViewModel.selectEvent(testEvents[0].uid)
     assertEquals(testEvents[0], eventViewModel.selectedEvent.value)
   }
+
+  //  @Module
+  //    @InstallIn(SingletonComponent::class)
+  //  abstract class ImageModuleTest{
+  //    @Binds
+  //    abstract fun bindImageRepository(
+  //        imageRepositoryFirebaseStorage: ImageRepositoryFirebaseStorage
+  //    ): ImageRepository
+  //  }
 }

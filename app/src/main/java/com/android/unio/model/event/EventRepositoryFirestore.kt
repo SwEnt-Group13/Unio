@@ -9,8 +9,10 @@ import com.google.firebase.Firebase
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FirebaseFirestore
+import javax.inject.Inject
 
-class EventRepositoryFirestore(private val db: FirebaseFirestore) : EventRepository {
+class EventRepositoryFirestore @Inject constructor(private val db: FirebaseFirestore) :
+    EventRepository {
 
   override fun init(onSuccess: () -> Unit) {
     Firebase.auth.addAuthStateListener {
