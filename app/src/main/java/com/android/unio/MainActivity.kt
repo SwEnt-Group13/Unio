@@ -90,6 +90,7 @@ fun UnioApp(authViewModel: AuthViewModel) {
   val associationViewModel = remember {
     AssociationViewModel(associationRepository, eventRepository)
   }
+  val eventViewModel = remember { EventViewModel(eventRepository, userRepository) }
   val eventListViewModel = remember { EventListViewModel(eventRepository) }
   val searchViewModel = remember { SearchViewModel(searchRepository) }
 
@@ -127,7 +128,7 @@ fun UnioApp(authViewModel: AuthViewModel) {
         uid?.let {
           EventScreen(
               navigationAction = navigationActions,
-              eventViewModel = EventViewModel(eventRepository, userRepository),
+              eventViewModel = eventViewModel,
               userViewModel = userViewModel)
         }
       }
