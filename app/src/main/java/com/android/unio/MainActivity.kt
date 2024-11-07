@@ -27,8 +27,8 @@ import androidx.navigation.navigation
 import com.android.unio.model.association.AssociationRepositoryFirestore
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.authentication.AuthViewModel
-import com.android.unio.model.event.EventListViewModel
 import com.android.unio.model.event.EventRepositoryFirestore
+import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.search.SearchRepository
 import com.android.unio.model.search.SearchViewModel
@@ -39,6 +39,7 @@ import com.android.unio.ui.association.EditAssociationScreen
 import com.android.unio.ui.authentication.AccountDetails
 import com.android.unio.ui.authentication.EmailVerificationScreen
 import com.android.unio.ui.authentication.WelcomeScreen
+import com.android.unio.ui.event.EventScreen
 import com.android.unio.ui.explore.ExploreScreen
 import com.android.unio.ui.home.HomeScreen
 import com.android.unio.ui.map.MapScreen
@@ -89,7 +90,7 @@ fun UnioApp(authViewModel: AuthViewModel) {
   val associationViewModel = remember {
     AssociationViewModel(associationRepository, eventRepository)
   }
-  val eventListViewModel = remember { EventListViewModel(eventRepository) }
+  val eventViewModel = remember { EventViewModel(eventRepository) }
   val searchViewModel = remember { SearchViewModel(searchRepository) }
 
   // Observe the authentication state
@@ -117,12 +118,20 @@ fun UnioApp(authViewModel: AuthViewModel) {
     }
     navigation(startDestination = Screen.HOME, route = Route.HOME) {
       composable(Screen.HOME) {
-        HomeScreen(
-            navigationActions,
-            eventListViewModel = eventListViewModel,
-            userViewModel = userViewModel)
+        HomeScreen(navigationActions, eventViewModel, userViewModel = userViewModel)
       }
-      composable(Screen.MAP) { MapScreen(navigationActions, eventListViewModel) }
+      composable(Screen.EVENT_DETAILS) { navBackStackEntry ->
+        // Get the event UID from the arguments
+        val uid = navBackStackEntry.arguments?.getString("uid")
+        // Create the Event screen with the event UID
+        uid?.let {
+          EventScreen(
+              navigationAction = navigationActions,
+              eventViewModel = eventViewModel,
+              userViewModel = userViewModel)
+        }
+      }
+      composable(Screen.MAP) { MapScreen(navigationActions, eventViewModel) }
     }
     navigation(startDestination = Screen.EXPLORE, route = Route.EXPLORE) {
       composable(Screen.EXPLORE) {

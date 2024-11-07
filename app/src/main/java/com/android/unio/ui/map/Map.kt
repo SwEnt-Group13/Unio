@@ -17,11 +17,10 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.android.unio.R
 import com.android.unio.model.association.Association
 import com.android.unio.model.event.Event
-import com.android.unio.model.event.EventListViewModel
+import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.firestore.emptyFirestoreReferenceList
 import com.android.unio.model.map.Location
 import com.android.unio.model.strings.MapStrings
@@ -39,10 +38,7 @@ import java.util.concurrent.TimeUnit
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MapScreen(
-    navigationAction: NavigationAction,
-    eventListViewModel: EventListViewModel = viewModel(factory = EventListViewModel.Factory)
-) {
+fun MapScreen(navigationAction: NavigationAction, eventViewModel: EventViewModel) {
   val context = LocalContext.current
   Scaffold(
       modifier = Modifier.testTag("MapScreen"),
@@ -63,17 +59,17 @@ fun MapScreen(
                   }
             })
       }) { pd ->
-        EventMap(pd, eventListViewModel)
+        EventMap(pd, eventViewModel)
       }
 }
 
 @Composable
-fun EventMap(pd: PaddingValues, eventListViewModel: EventListViewModel) {
+fun EventMap(pd: PaddingValues, eventViewModel: EventViewModel) {
   val cameraPositionState = rememberCameraPositionState {
     position = CameraPosition.fromLatLngZoom(LatLng(46.518831258, 6.559331096), 10f)
   }
 
-  val events = eventListViewModel.events.collectAsState()
+  val events = eventViewModel.events.collectAsState()
 
   /** Mock arbitrary saved event for all users. */
   val arbitrarySavedEvents: List<Event> =

@@ -89,7 +89,7 @@ val LIST_TOP_LEVEL_DESTINATION =
         TopLevelDestinations.EXPLORE,
         TopLevelDestinations.MY_PROFILE)
 
-data class TopLevelDestination(val route: String, val icon: ImageVector, val textId: String) {}
+data class TopLevelDestination(val route: String, val icon: ImageVector, val textId: String)
 
 object TopLevelDestinations {
   val HOME = TopLevelDestination(route = Route.HOME, icon = Icons.Outlined.Home, textId = "Home")
@@ -123,6 +123,7 @@ object Screen {
   const val SETTINGS = "Settings"
   const val ASSOCIATION_PROFILE = "Association Profile Screen/{uid}"
   const val EDIT_ASSOCIATION = "Edit Assocation Screen/{associationId}"
+  const val EVENT_DETAILS = "Event Details Screen/{uid}"
 
   /**
    * Replace the placeholders in the screen with the provided parameters.

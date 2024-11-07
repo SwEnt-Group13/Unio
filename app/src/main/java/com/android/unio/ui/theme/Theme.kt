@@ -18,7 +18,7 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
-import com.android.unio.model.preferences.PreferenceKeys
+import com.android.unio.model.preferences.AppPreferences
 import me.zhanghai.compose.preference.LocalPreferenceFlow
 
 private val lightScheme =
@@ -266,12 +266,6 @@ data class ColorFamily(
 val unspecified_scheme =
     ColorFamily(Color.Unspecified, Color.Unspecified, Color.Unspecified, Color.Unspecified)
 
-object Theme {
-  const val LIGHT = "Light"
-  const val DARK = "Dark"
-  const val SYSTEM = "System Default"
-}
-
 @Composable
 fun AppTheme(
     // Dynamic color is available on Android 12+
@@ -280,17 +274,17 @@ fun AppTheme(
 ) {
   val preferences by LocalPreferenceFlow.current.collectAsState()
 
-  val theme = (preferences.asMap().getOrDefault(PreferenceKeys.THEME, Theme.SYSTEM))
+  val theme = (preferences.asMap().getOrDefault(AppPreferences.THEME, AppPreferences.Theme.SYSTEM))
 
   val colorScheme =
       when {
         dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
           val context = LocalContext.current
-          if (theme == Theme.DARK) dynamicDarkColorScheme(context)
+          if (theme == AppPreferences.Theme.DARK) dynamicDarkColorScheme(context)
           else dynamicLightColorScheme(context)
         }
-        theme == Theme.DARK -> darkScheme
-        theme == Theme.LIGHT -> lightScheme
+        theme == AppPreferences.Theme.DARK -> darkScheme
+        theme == AppPreferences.Theme.LIGHT -> lightScheme
         else -> if (isSystemInDarkTheme()) darkScheme else lightScheme
       }
   val view = LocalView.current
@@ -299,7 +293,7 @@ fun AppTheme(
       val window = (view.context as Activity).window
       window.statusBarColor = colorScheme.primary.toArgb()
       WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars =
-          theme == Theme.DARK
+          theme == AppPreferences.Theme.DARK
     }
   }
 

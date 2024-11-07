@@ -45,6 +45,8 @@ import com.android.unio.R
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventType
 import com.android.unio.model.user.UserViewModel
+import com.android.unio.ui.navigation.NavigationAction
+import com.android.unio.ui.navigation.Screen
 import com.android.unio.ui.theme.AppTypography
 import com.android.unio.utils.EventUtils.addAlphaToColor
 import com.android.unio.utils.EventUtils.formatTimestamp
@@ -52,7 +54,7 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 
 @Composable
-fun EventCard(event: Event, userViewModel: UserViewModel) {
+fun EventCard(navigationAction: NavigationAction, event: Event, userViewModel: UserViewModel) {
   var isSaved by remember { mutableStateOf(false) }
   LaunchedEffect(event.uid) { isSaved = userViewModel.isEventSavedForCurrentUser(event.uid) }
 
@@ -77,7 +79,10 @@ fun EventCard(event: Event, userViewModel: UserViewModel) {
               .padding(vertical = 8.dp)
               .testTag("event_EventListItem")
               .clip(RoundedCornerShape(10.dp))
-              .background(MaterialTheme.colorScheme.primaryContainer)) {
+              .background(MaterialTheme.colorScheme.primaryContainer)
+              .clickable {
+                navigationAction.navigateTo(Screen.withParams(Screen.EVENT_DETAILS, event.uid))
+              }) {
 
         // Event image section, displays the main event image or a placeholder if the URL is invalid
 

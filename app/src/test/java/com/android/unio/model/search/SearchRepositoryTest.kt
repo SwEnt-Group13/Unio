@@ -203,7 +203,6 @@ class SearchRepositoryTest {
 
           assertEquals(expectedDoc.namespace, matchingActualDoc!!.namespace)
           assertEquals(expectedDoc.uid, matchingActualDoc.id)
-          assertEquals(expectedDoc.url, matchingActualDoc.getPropertyString("url"))
           assertEquals(expectedDoc.name, matchingActualDoc.getPropertyString("name"))
           assertEquals(expectedDoc.fullName, matchingActualDoc.getPropertyString("fullName"))
           assertEquals(expectedDoc.description, matchingActualDoc.getPropertyString("description"))

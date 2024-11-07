@@ -17,9 +17,17 @@
     <string name="event_event_title">Event Title</string>
     <string name="event_catchy_description">Catchy Description</string>
 
+    <!-- Event Details Strings -->
+    <string name="event_sign_up" translatable="false">I\'m going</string>
+
     <!-- Accessibility and Content Descriptions -->
     <string name="event_map_button_description">Open Map to Add Event</string>
     <string name="event_image_description">Event Image</string>
+    <string name="event_save_button_description">Icon for saving event</string>
+    <string name="event_share_button_description">Icon for sharing event</string>
+    <string name="event_association_icon_description" translatable="false">Icon of the event\'s organiser</string>
+    <string name="event_location_button_description" translatable="false">Icon for seeing event\'s location</string>
+    <string name="event_signup_button_description" translatable="false">Icon to sign up to the event</string>
 
     <!-- Event Types Strings from EventType.kt -->
     <string name="event_type_festival">Festival</string>
@@ -67,6 +75,8 @@
 
     <!-- Explore Screen Strings -->
     <string name="explore_search_placeholder">Search</string>
+    <string name="explore_search_error_message">An error occurred while searching</string>
+    <string name="explore_search_no_results">No results found</string>
 
     <!-- Map Screen Strings -->
     <string name="map_event_go_back_button">Go back</string>
@@ -106,11 +116,18 @@
 
     <!-- Settings Strings -->
     <string name="settings_title" translatable="true">Settings</string>
+    <string name="settings_back_content_description" translatable="true">Go Back</string>
     <string name="settings_theme_title" translatable="true">Theme</string>
     <string name="settings_theme_content_description" translatable="true">Theme Settings</string>
     <string name="settings_notifications_title" translatable="true">Notifications</string>
     <string name="settings_notifications_summary" translatable="true">Enable push notifications</string>
     <string name="settings_notifications_content_description" translatable="true">Notification Settings</string>
+    <string name="settings_location_title" translatable="true">Enable Location Permissions</string>
+    <string name="settings_location_summary_granted" translatable="true">All location permissions have been granted</string>
+    <string name="settings_location_summary_denied" translatable="true">There are missing location permissions</string>
+    <string name="settings_location_content_description" translatable="true">Location Permissions</string>
+    <string name="settings_language_title">Language</string>
+    <string name="settings_language_content_description">Language Settings</string>
 
     <!-- Account Details Strings -->
     <string name="account_details_title" translatable="true">Tell us about yourself</string>
@@ -152,7 +169,6 @@
     <string name="interest_food" translatable="true">Food</string>
     <string name="interest_gaming" translatable="true">Gaming</string>
     <string name="interest_festivals" translatable="true">Festivals</string>
-
 
     <!-- Debug/Temporary Strings -->
     <string name="debug_lorem_ipsum" translatable="false">Lorem ipsum dolor sit amet, consectetur

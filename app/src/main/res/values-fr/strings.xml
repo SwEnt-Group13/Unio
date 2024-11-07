@@ -19,6 +19,8 @@
     <!-- Accessibility and Content Descriptions -->
     <string name="event_map_button_description">Ouvrir la carte pour ajouter un évènement</string>
     <string name="event_image_description">Image de l\'évènement</string>
+    <string name="event_save_button_description">Icone pour sauvegarder un évènement</string>
+    <string name="event_share_button_description">Icone pour partager un évènement</string>
 
     <!-- Event Types Strings from EventType.kt -->
     <string name="event_type_festival">Festival</string>
@@ -61,6 +63,8 @@
 
     <!-- Explore Screen Strings -->
     <string name="explore_search_placeholder">Recherche</string>
+    <string name="explore_search_error_message">Une erreur s\'est produite lors de la recherche</string>
+    <string name="explore_search_no_results">Aucun résultat trouvé</string>
 
     <!-- Map Screen Strings -->
     <string name="map_event_go_back_button">Retour</string>
@@ -88,6 +92,12 @@
     <string name="settings_notifications_title">Notifications</string>
     <string name="settings_notifications_summary">Activer les notifications</string>
     <string name="settings_notifications_content_description">Réglages de Notifications</string>
+    <string name="settings_location_title">Activer les permissions de localisation</string>
+    <string name="settings_location_summary_granted">Toutes les permissions de localisation ont été accordées</string>
+    <string name="settings_location_summary_denied">Il manque des permissions de localisation</string>
+    <string name="settings_location_content_description">Réglages de localisation</string>
+    <string name="settings_language_title">Language</string>
+    <string name="settings_language_content_description">Réglages de Langue</string>
 
     <!-- Account Detail Strings -->
     <string name="account_details_title" translatable="true">Ajoutez des informations supplémentaires</string>
@@ -130,6 +140,7 @@
     <string name="interest_food" translatable="true">Nourritue</string>
     <string name="interest_gaming" translatable="true">Gaming</string>
     <string name="interest_festivals" translatable="true">Festivals</string>
+    <string name="settings_back_content_description">Retour</string>
 
 </resources>
 
