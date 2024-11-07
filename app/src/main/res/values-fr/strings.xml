@@ -70,19 +70,15 @@
 
     <!-- Settings Strings -->
     <string name="settings_title">Réglages</string>
-
     <string name="settings_theme_title">Thème</string>
     <string name="settings_theme_content_description">Réglages de Thème</string>
-
     <string name="settings_notifications_title">Notifications</string>
     <string name="settings_notifications_summary">Activer les notifications</string>
     <string name="settings_notifications_content_description">Réglages de Notifications</string>
-
     <string name="settings_location_title">Activer les permissions de localisation</string>
     <string name="settings_location_summary_granted">Toutes les permissions de localisation ont été accordées</string>
     <string name="settings_location_summary_denied">Il manque des permissions de localisation</string>
     <string name="settings_location_content_description">Réglages de localisation</string>
-
     <string name="settings_language_title">Language</string>
     <string name="settings_language_content_description">Réglages de Langue</string>
 
