@@ -96,8 +96,7 @@ fun ExploreScreenContent(
       modifier = Modifier.padding(padding).fillMaxWidth(),
       horizontalAlignment = Alignment.CenterHorizontally) {
         Text(
-            text = "Explore our Associations",
-            /** Will go in the string.xml */
+            text = context.getString(R.string.explore_content_screen_title),
             style = AppTypography.headlineLarge,
             modifier =
                 Modifier.padding(top = 16.dp, bottom = 8.dp)

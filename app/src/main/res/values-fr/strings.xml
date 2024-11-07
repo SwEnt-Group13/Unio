@@ -49,6 +49,7 @@
     <string name="welcome_skip_home_button">Passer à l\'accueil</string>
 
     <!-- Explore Screen Strings -->
+    <string name="explore_content_screen_title">Explorez nos Associations</string>
     <string name="explore_search_placeholder">Recherche</string>
     <string name="explore_search_error_message">Une erreur s\'est produite lors de la recherche</string>
     <string name="explore_search_no_results">Aucun résultat trouvé</string>

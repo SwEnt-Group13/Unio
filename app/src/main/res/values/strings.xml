@@ -61,6 +61,7 @@
     <string name="welcome_skip_home_button">Skip to Home</string>
 
     <!-- Explore Screen Strings -->
+    <string name="explore_content_screen_title">Explore our Associations</string>
     <string name="explore_search_placeholder">Search</string>
     <string name="explore_search_error_message">An error occurred while searching</string>
     <string name="explore_search_no_results">No results found</string>
