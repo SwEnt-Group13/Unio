@@ -10,6 +10,8 @@ import com.google.firebase.firestore.FirebaseFirestore
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
+import java.io.InputStream
+import java.util.GregorianCalendar
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
@@ -23,8 +25,6 @@ import org.mockito.MockitoAnnotations
 import org.mockito.kotlin.any
 import org.mockito.kotlin.eq
 import org.robolectric.RobolectricTestRunner
-import java.io.InputStream
-import java.util.GregorianCalendar
 
 @RunWith(RobolectricTestRunner::class)
 class EventViewModelTest {
@@ -33,8 +33,7 @@ class EventViewModelTest {
   @Mock private lateinit var collectionReference: CollectionReference
   @Mock private lateinit var inputStream: InputStream
 
-  @MockK
-  lateinit var imageRepository: ImageRepositoryFirebaseStorage
+  @MockK lateinit var imageRepository: ImageRepositoryFirebaseStorage
 
   private lateinit var eventViewModel: EventViewModel
 
@@ -61,10 +60,11 @@ class EventViewModelTest {
     }
     `when`(db.collection(any())).thenReturn(collectionReference)
 
-    every { imageRepository.uploadImage(any(), any(), any(), any()) } answers {
-      val onSuccess = args[2] as (String) -> Unit
-      onSuccess("url")
-    }
+    every { imageRepository.uploadImage(any(), any(), any(), any()) } answers
+        {
+          val onSuccess = args[2] as (String) -> Unit
+          onSuccess("url")
+        }
 
     eventViewModel = EventViewModel(repository, imageRepository)
   }
@@ -117,12 +117,12 @@ class EventViewModelTest {
     assertEquals(testEvents[0], eventViewModel.selectedEvent.value)
   }
 
-//  @Module
-//    @InstallIn(SingletonComponent::class)
-//  abstract class ImageModuleTest{
-//    @Binds
-//    abstract fun bindImageRepository(
-//        imageRepositoryFirebaseStorage: ImageRepositoryFirebaseStorage
-//    ): ImageRepository
-//  }
+  //  @Module
+  //    @InstallIn(SingletonComponent::class)
+  //  abstract class ImageModuleTest{
+  //    @Binds
+  //    abstract fun bindImageRepository(
+  //        imageRepositoryFirebaseStorage: ImageRepositoryFirebaseStorage
+  //    ): ImageRepository
+  //  }
 }
