@@ -6,7 +6,6 @@ import com.android.unio.model.user.UserRepository
 import com.android.unio.ui.navigation.Route
 import com.android.unio.ui.navigation.Screen
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.auth
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow

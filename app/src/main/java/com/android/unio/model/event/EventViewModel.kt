@@ -2,7 +2,6 @@ package com.android.unio.model.event
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.android.unio.model.image.ImageRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.io.InputStream
@@ -10,7 +9,6 @@ import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.launch
 
 /**
  * ViewModel class that manages the event list data and provides it to the UI. It uses an
@@ -51,15 +49,15 @@ constructor(private val repository: EventRepository, private val imageRepository
    * internal [MutableStateFlow].
    */
   fun loadEvents() {
-      repository.getEvents(
-          onSuccess = { eventList ->
-              _events.value = eventList // Update the state flow with the loaded events
-          },
-          onFailure = { exception ->
-              // Handle error (e.g., log it, show a message to the user)
-              Log.e("EventViewModel", "An error occurred while loading events: $exception")
-              _events.value = emptyList() // Clear events on failure or handle accordingly
-          })
+    repository.getEvents(
+        onSuccess = { eventList ->
+          _events.value = eventList // Update the state flow with the loaded events
+        },
+        onFailure = { exception ->
+          // Handle error (e.g., log it, show a message to the user)
+          Log.e("EventViewModel", "An error occurred while loading events: $exception")
+          _events.value = emptyList() // Clear events on failure or handle accordingly
+        })
   }
 
   /**

@@ -10,11 +10,10 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.unio.mocks.user.MockUser
 import com.android.unio.model.event.EventRepositoryFirestore
 import com.android.unio.model.event.EventViewModel
+import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.user.User
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserViewModel
-import com.android.unio.model.image.ImageRepository
-import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.ui.navigation.NavigationAction
 import io.mockk.MockKAnnotations
 import io.mockk.every
@@ -61,9 +60,7 @@ class MapScreenTest {
   @Test
   fun mapScreenComponentsAreDisplayed() {
     composeTestRule.setContent {
-      MapScreen(
-          navigationAction = navigationAction,
-          eventViewModel = eventViewModel)
+      MapScreen(navigationAction = navigationAction, eventViewModel = eventViewModel)
     }
 
     composeTestRule.onNodeWithTag("MapScreen").assertIsDisplayed()
@@ -74,9 +71,7 @@ class MapScreenTest {
   @Test
   fun mapScreenBackButtonNavigatesBack() {
     composeTestRule.setContent {
-      MapScreen(
-          navigationAction = navigationAction,
-          eventViewModel = eventViewModel)
+      MapScreen(navigationAction = navigationAction, eventViewModel = eventViewModel)
     }
 
     composeTestRule.onNodeWithTag("goBackButton").performClick()

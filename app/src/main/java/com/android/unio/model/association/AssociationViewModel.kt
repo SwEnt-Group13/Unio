@@ -2,7 +2,6 @@ package com.android.unio.model.association
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventRepository
 import com.android.unio.model.image.ImageRepository
