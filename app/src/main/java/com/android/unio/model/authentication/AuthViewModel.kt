@@ -11,6 +11,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 @HiltViewModel
 class AuthViewModel
@@ -20,7 +21,7 @@ constructor(private val firebaseAuth: FirebaseAuth, private val userRepository: 
 
   private val _authState = MutableStateFlow<String?>(null)
   val authState: StateFlow<String?>
-    get() = _authState
+    get() = _authState.asStateFlow()
 
   init {
     addAuthStateVerifier()

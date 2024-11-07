@@ -11,6 +11,7 @@ import java.io.InputStream
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 @HiltViewModel
 class AssociationViewModel
@@ -22,12 +23,12 @@ constructor(
 ) : ViewModel() {
 
   private val _associations = MutableStateFlow<List<Association>>(emptyList())
-  val associations: StateFlow<List<Association>> = _associations
+  val associations: StateFlow<List<Association>> = _associations.asStateFlow()
 
   private val _associationsByCategory =
       MutableStateFlow<Map<AssociationCategory, List<Association>>>(emptyMap())
   val associationsByCategory: StateFlow<Map<AssociationCategory, List<Association>>> =
-      _associationsByCategory
+      _associationsByCategory.asStateFlow()
 
   init {
     associationRepository.init { getAssociations() }

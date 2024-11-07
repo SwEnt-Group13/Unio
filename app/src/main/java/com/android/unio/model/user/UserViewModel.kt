@@ -10,11 +10,12 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 @HiltViewModel
 class UserViewModel @Inject constructor(private val repository: UserRepository) : ViewModel() {
   private val _user = MutableStateFlow<User?>(null)
-  val user: StateFlow<User?> = _user
+  val user: StateFlow<User?> = _user.asStateFlow()
 
   private val _refreshState = mutableStateOf(false)
   val refreshState: State<Boolean> = _refreshState

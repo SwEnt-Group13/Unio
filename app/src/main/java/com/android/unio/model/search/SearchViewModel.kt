@@ -15,6 +15,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 /**
@@ -25,10 +26,10 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class SearchViewModel @Inject constructor(private val repository: SearchRepository) : ViewModel() {
   private val _associations = MutableStateFlow<List<Association>>(emptyList())
-  val associations: StateFlow<List<Association>> = _associations
+  val associations: StateFlow<List<Association>> = _associations.asStateFlow()
 
   private val _events = MutableStateFlow<List<Event>>(emptyList())
-  val events: StateFlow<List<Event>> = _events
+  val events: StateFlow<List<Event>> = _events.asStateFlow()
 
   val status = MutableStateFlow(Status.IDLE)
 
@@ -63,7 +64,6 @@ class SearchViewModel @Inject constructor(private val repository: SearchReposito
       val results = repository.searchAssociations(query)
       _associations.value = results
       status.value = Status.SUCCESS
-      Log.d("SearchViewModel", "searchAssociations: $results")
     }
   }
 
