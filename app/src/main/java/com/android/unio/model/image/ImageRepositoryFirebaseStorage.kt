@@ -2,10 +2,10 @@ package com.android.unio.model.image
 
 import com.google.firebase.storage.FirebaseStorage
 import java.io.InputStream
+import javax.inject.Inject
 
-class ImageRepositoryFirebaseStorage(
-    private val storage: FirebaseStorage = FirebaseStorage.getInstance()
-) : ImageRepository {
+class ImageRepositoryFirebaseStorage @Inject constructor(storage: FirebaseStorage) :
+    ImageRepository {
 
   private val storageRef = storage.reference
 
