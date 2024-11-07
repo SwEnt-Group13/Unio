@@ -81,8 +81,7 @@ fun SettingsContainer() {
                   Manifest.permission.ACCESS_FINE_LOCATION,
                   Manifest.permission.ACCESS_COARSE_LOCATION))
   val requestPermissionLauncher =
-      rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
-          permissions ->
+      rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { _ ->
         locationPermissions.launchMultiplePermissionRequest()
       }
 
@@ -92,9 +91,8 @@ fun SettingsContainer() {
   Locale.setDefault(locale)
 
   val configuration = context.resources.configuration
-  configuration.setLocale(Locale(language))
+  configuration.setLocale(locale)
   configuration.setLayoutDirection(locale)
-
   context.createConfigurationContext(configuration)
   context.resources.updateConfiguration(configuration, context.resources.displayMetrics)
 
