@@ -119,16 +119,11 @@ fun UnioApp(authViewModel: AuthViewModel) {
       composable(Screen.HOME) {
         HomeScreen(navigationActions, eventViewModel, userViewModel = userViewModel)
       }
-      composable(Screen.EVENT_DETAILS) { navBackStackEntry ->
-        // Get the event UID from the arguments
-        val uid = navBackStackEntry.arguments?.getString("uid")
-        // Create the Event screen with the event UID
-        uid?.let {
-          EventScreen(
-              navigationAction = navigationActions,
-              eventViewModel = eventViewModel,
-              userViewModel = userViewModel)
-        }
+      composable(Screen.EVENT_DETAILS) {
+        EventScreen(
+            navigationAction = navigationActions,
+            eventViewModel = eventViewModel,
+            userViewModel = userViewModel)
       }
       composable(Screen.MAP) { MapScreen(navigationActions, eventViewModel) }
     }
@@ -143,7 +138,11 @@ fun UnioApp(authViewModel: AuthViewModel) {
         // Create the AssociationProfile screen with the association UID
         uid?.let {
           AssociationProfileScreen(
-              navigationActions, it, associationViewModel, userViewModel = userViewModel)
+              navigationActions,
+              it,
+              associationViewModel,
+              userViewModel = userViewModel,
+              eventViewModel)
         }
             ?: run {
               Log.e("AssociationProfile", "Association UID is null")
