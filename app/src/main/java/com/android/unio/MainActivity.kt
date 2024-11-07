@@ -76,7 +76,6 @@ fun UnioApp(imageRepository: ImageRepositoryFirebaseStorage) {
   val navigationActions = NavigationAction(navController)
 
   val associationViewModel = hiltViewModel<AssociationViewModel>()
-  val eventListViewModel = hiltViewModel<EventListViewModel>()
   val userViewModel = hiltViewModel<UserViewModel>()
   val searchViewModel = hiltViewModel<SearchViewModel>()
   val authViewModel = hiltViewModel<AuthViewModel>()

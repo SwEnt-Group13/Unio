@@ -36,7 +36,7 @@ class BottomNavigationTest {
   fun setUp() {
     MockKAnnotations.init(this)
     eventRepository = mock { EventRepository::class.java }
-    eventViewModel = EventViewModel(eventRepository)
+    eventViewModel = EventViewModel(eventRepository, imageRepository)
 
     userRepository = mock { UserRepositoryFirestore::class.java }
     userViewModel = UserViewModel(userRepository, false)
