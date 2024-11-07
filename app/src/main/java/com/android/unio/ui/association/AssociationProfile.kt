@@ -191,13 +191,12 @@ private fun AssociationProfileContent(
   }
 
   Button(
-    onClick = {
-      navigationAction.navigateTo(
-        Screen.withParams(Screen.EDIT_ASSOCIATION, association.uid))
-    },
-    modifier = Modifier.padding(20.dp).testTag("EditAssociationButton")) {
-    Text(text = "edit button")
-  }
+      onClick = {
+        navigationAction.navigateTo(Screen.withParams(Screen.EDIT_ASSOCIATION, association.uid))
+      },
+      modifier = Modifier.padding(20.dp).testTag("EditAssociationButton")) {
+        Text(text = "edit button")
+      }
 }
 
 /**
