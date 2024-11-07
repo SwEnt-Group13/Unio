@@ -189,15 +189,14 @@ fun ExploreScreenContent(
                     text = category.displayName,
                     style = AppTypography.headlineSmall,
                     modifier =
-                        Modifier.padding(horizontal = 16.dp)
-                            .testTag("category_${category.displayName}"))
+                        Modifier.padding(horizontal = 16.dp).testTag("category_${category.name}"))
 
                 // Horizontal scrollable list of associations
                 LazyRow(
                     modifier =
                         Modifier.fillMaxSize()
                             .padding(vertical = 16.dp)
-                            .testTag("associationRow_${category.displayName}"),
+                            .testTag("associationRow_${category.name}"),
                     contentPadding = PaddingValues(horizontal = 16.dp),
                     horizontalArrangement = Arrangement.spacedBy(32.dp, Alignment.Start),
                     verticalAlignment = Alignment.CenterVertically) {
