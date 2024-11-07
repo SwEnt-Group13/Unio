@@ -12,6 +12,8 @@ import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.search.SearchRepository
 import com.android.unio.model.search.SearchViewModel
+import com.android.unio.model.user.User
+import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.association.AssociationProfileScaffold
 import com.android.unio.ui.authentication.AccountDetails
@@ -47,9 +49,11 @@ import org.mockito.Mockito.mock
 
 @HiltAndroidTest
 class ScreenDisplayingTest {
+  val user = MockUser.createMockUser(uid = "1")
 
   @MockK lateinit var navigationAction: NavigationAction
 
+  @MockK lateinit var userRepository: UserRepositoryFirestore
   private lateinit var userViewModel: UserViewModel
 
   private lateinit var associationViewModel: AssociationViewModel
@@ -84,7 +88,14 @@ class ScreenDisplayingTest {
             AssociationViewModel(
                 mock(), mockk<EventRepositoryFirestore>(), imageRepositoryFirestore))
     eventViewModel = spyk(EventViewModel(mock(), mock()))
-    userViewModel = spyk(UserViewModel(mock()))
+
+    every { userRepository.getUserWithId(any(), any(), any()) } answers
+        {
+          val onSuccess = args[1] as (User) -> Unit
+          onSuccess(user)
+        }
+    userViewModel = UserViewModel(userRepository)
+    userViewModel.getUserByUid("1", false)
 
     val associations = MockAssociation.createAllMockAssociations(size = 2)
     searchViewModel = spyk(SearchViewModel(searchRepository))
@@ -143,7 +154,7 @@ class ScreenDisplayingTest {
 
   @Test
   fun testMapDisplayed() {
-    composeTestRule.setContent { MapScreen(navigationAction, eventViewModel) }
+    composeTestRule.setContent { MapScreen(navigationAction, eventViewModel, userViewModel) }
     composeTestRule.onNodeWithTag("MapScreen").assertIsDisplayed()
   }
 

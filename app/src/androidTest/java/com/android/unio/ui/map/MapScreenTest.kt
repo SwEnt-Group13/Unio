@@ -10,6 +10,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.unio.mocks.user.MockUser
 import com.android.unio.model.event.EventRepositoryFirestore
 import com.android.unio.model.event.EventViewModel
+import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.user.User
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserViewModel
@@ -30,6 +31,7 @@ class MapScreenTest {
   @get:Rule val composeTestRule = createComposeRule()
 
   @MockK private lateinit var eventRepository: EventRepositoryFirestore
+  @MockK private lateinit var imageRepository: ImageRepositoryFirebaseStorage
   @MockK private lateinit var userRepository: UserRepositoryFirestore
   @MockK private lateinit var navHostController: NavHostController
   private lateinit var navigationAction: NavigationAction
@@ -43,7 +45,7 @@ class MapScreenTest {
     navigationAction = NavigationAction(navHostController)
 
     every { eventRepository.init(any()) } answers {}
-    eventViewModel = EventViewModel(eventRepository)
+    eventViewModel = EventViewModel(eventRepository, imageRepository)
 
     every { userRepository.init(any()) } returns Unit
     every { userRepository.getUserWithId("123", any(), any()) } answers
