@@ -228,9 +228,7 @@ fun UserProfileScreenContent(navigationAction: NavigationAction, user: User) {
                 verticalArrangement = Arrangement.spacedBy(4.dp),
             ) {
               joinedAssociations.map {
-                AssociationSmall(it) {
-                  navigationAction.navigateTo(Screen.withParams(Screen.ASSOCIATION_PROFILE, it.uid))
-                }
+                AssociationSmall(it) { navigationAction.navigateTo(Screen.ASSOCIATION_PROFILE) }
               }
             }
           }
@@ -245,9 +243,7 @@ fun UserProfileScreenContent(navigationAction: NavigationAction, user: User) {
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
               followedAssociations.map {
-                AssociationSmall(it) {
-                  navigationAction.navigateTo(Screen.withParams(Screen.ASSOCIATION_PROFILE, it.uid))
-                }
+                AssociationSmall(it) { navigationAction.navigateTo(Screen.ASSOCIATION_PROFILE) }
               }
             }
           }

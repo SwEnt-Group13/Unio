@@ -99,7 +99,7 @@ object Screen {
   const val SAVED = "Saved Screen"
   const val MY_PROFILE = "MyProfile Screen"
   const val SETTINGS = "Settings"
-  const val ASSOCIATION_PROFILE = "Association Profile Screen/{uid}"
+  const val ASSOCIATION_PROFILE = "Association Profile Screen"
   const val EVENT_DETAILS = "Event Details Screen/{uid}"
 
   /**
