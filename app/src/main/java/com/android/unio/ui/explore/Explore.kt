@@ -44,9 +44,9 @@ import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationCategory
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.search.SearchViewModel
-import com.android.unio.ui.navigation.BottomNavigationMenu
-import com.android.unio.model.strings.test_tags.ExploreTestTags
 import com.android.unio.model.strings.test_tags.ExploreContentTestTags
+import com.android.unio.model.strings.test_tags.ExploreTestTags
+import com.android.unio.ui.navigation.BottomNavigationMenu
 import com.android.unio.ui.navigation.LIST_TOP_LEVEL_DESTINATION
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Route
@@ -131,7 +131,8 @@ fun ExploreScreenContent(
             },
             expanded = expanded,
             onExpandedChange = { expanded = it },
-            modifier = Modifier.padding(horizontal = 16.dp).testTag(ExploreContentTestTags.SEARCH_BAR)) {
+            modifier =
+                Modifier.padding(horizontal = 16.dp).testTag(ExploreContentTestTags.SEARCH_BAR)) {
               when (searchState) {
                 SearchViewModel.Status.ERROR -> {
                   Box(
@@ -190,14 +191,15 @@ fun ExploreScreenContent(
                     text = category.displayName,
                     style = AppTypography.headlineSmall,
                     modifier =
-                        Modifier.padding(horizontal = 16.dp).testTag(ExploreContentTestTags.CATEGORY_NAME+category.name))
+                        Modifier.padding(horizontal = 16.dp)
+                            .testTag(ExploreContentTestTags.CATEGORY_NAME + category.name))
 
                 // Horizontal scrollable list of associations
                 LazyRow(
                     modifier =
                         Modifier.fillMaxSize()
                             .padding(vertical = 16.dp)
-                            .testTag(ExploreContentTestTags.ASSOCIATION_ROW+category.name),
+                            .testTag(ExploreContentTestTags.ASSOCIATION_ROW + category.name),
                     contentPadding = PaddingValues(horizontal = 16.dp),
                     horizontalArrangement = Arrangement.spacedBy(32.dp, Alignment.Start),
                     verticalAlignment = Alignment.CenterVertically) {
@@ -227,27 +229,26 @@ fun AssociationItem(association: Association, navigationAction: NavigationAction
                 navigationAction.navigateTo(
                     Screen.withParams(Screen.ASSOCIATION_PROFILE, association.uid))
               }
-              .testTag(ExploreContentTestTags.ASSOCIATION_ITEM+association.name)) {
+              .testTag(ExploreContentTestTags.ASSOCIATION_ITEM + association.name)) {
         /**
-         * AdEC image is used as the placeholder. Will need to remove it when all images
-         * are available on the Firestore database
+         * AdEC image is used as the placeholder. Will need to remove it when all images are
+         * available on the Firestore database
          */
         Image(
             painter = painterResource(id = R.drawable.adec),
             contentDescription = "image description",
             modifier = Modifier.size(124.dp))
 
-
         /**
-         * The following code is commented out because all images are not available in the Firestore database.
-         * Uncomment the code when all images are available, and remove the placeholder image.
+         * The following code is commented out because all images are not available in the Firestore
+         * database. Uncomment the code when all images are available, and remove the placeholder
+         * image.
          *
          * AsyncImage( model = association.image.toUri(), contentDescription = "Translated
          * description of what the image contains", modifier =
          * Modifier.size(124.dp).testTag("associationImage"), contentScale = ContentScale.Crop //
          * crop the image to fit )
          */
-      
         Spacer(modifier = Modifier.height(8.dp))
 
         Text(
@@ -256,7 +257,7 @@ fun AssociationItem(association: Association, navigationAction: NavigationAction
             modifier =
                 Modifier.fillMaxWidth()
                     .align(Alignment.CenterHorizontally)
-                    .testTag(ExploreContentTestTags.ASSOCIATION_NAME_TEXT+association.name))
+                    .testTag(ExploreContentTestTags.ASSOCIATION_NAME_TEXT + association.name))
       }
 }
 
