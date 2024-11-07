@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import android.app.Application
 import android.content.pm.ActivityInfo
 import android.os.Bundle
+import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
@@ -111,9 +113,8 @@ fun UnioApp(imageRepository: ImageRepositoryFirebaseStorage) {
             navigationActions, eventViewModel, userViewModel = userViewModel, searchViewModel)
       }
       composable(Screen.EVENT_DETAILS) { navBackStackEntry ->
-        // Get the event UID from the arguments
         val uid = navBackStackEntry.arguments?.getString("uid")
-        // Create the Event screen with the event UID
+
         uid?.let {
           EventScreen(
               navigationAction = navigationActions,
