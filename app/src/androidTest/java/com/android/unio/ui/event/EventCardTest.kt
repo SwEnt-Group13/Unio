@@ -7,23 +7,23 @@ import androidx.compose.ui.test.onNodeWithTag
 import com.android.unio.mocks.event.MockEvent
 import com.android.unio.mocks.map.MockLocation
 import com.android.unio.model.event.Event
+import com.android.unio.model.event.EventRepositoryFirestore
 import com.android.unio.model.event.EventType
 import com.android.unio.model.event.EventViewModel
+import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.navigation.NavigationAction
 import com.google.firebase.Timestamp
-import com.google.firebase.firestore.firestore
-import io.mockk.mockk
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
-import java.util.Date
-import javax.inject.Inject
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.mockito.Mockito.mock
 import org.mockito.MockitoAnnotations
+import java.util.Date
+import javax.inject.Inject
 
 @HiltAndroidTest
 class EventCardTest {
@@ -39,7 +39,10 @@ class EventCardTest {
           date = Timestamp(Date(2024 - 1900, 6, 20)),
           catchyDescription = "This is a catchy description.")
   @Inject lateinit var userRepositoryFirestore: UserRepositoryFirestore
-  lateinit var userViewModel: UserViewModel
+  private lateinit var userViewModel: UserViewModel
+    @Inject lateinit var eventRepositoryFirestore: EventRepositoryFirestore
+    private lateinit var eventViewModel: EventViewModel
+    @Inject lateinit var imageRepository: ImageRepositoryFirebaseStorage
 
   @Before
   fun setUp() {
@@ -48,6 +51,7 @@ class EventCardTest {
     navigationAction = mock(NavigationAction::class.java)
 
     userViewModel = UserViewModel(userRepositoryFirestore)
+      eventViewModel = EventViewModel(eventRepositoryFirestore, imageRepository)
   }
 
   private fun setEventScreen(event: Event) {

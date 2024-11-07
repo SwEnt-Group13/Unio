@@ -220,7 +220,7 @@ fun HomeScreen(
                   contentPadding = PaddingValues(vertical = 8.dp),
                   modifier = Modifier.fillMaxSize().padding(horizontal = 32.dp)) {
                     items(searchResults) { event ->
-                      EventCard(navigationAction, event = event, userViewModel = userViewModel)
+                      EventCard(navigationAction, event = event, userViewModel = userViewModel, eventViewModel)
                     }
                   }
             }
