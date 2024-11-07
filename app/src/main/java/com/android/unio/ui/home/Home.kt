@@ -181,7 +181,7 @@ fun HomeScreen(
           DockedSearchBar(
               inputField = {
                 SearchBarDefaults.InputField(
-                    //                        modifier = Modifier.testTag("searchBarInput"),
+                    modifier = Modifier.testTag("searchBarInput"),
                     query = searchQuery,
                     onQueryChange = {
                       searchQuery = it
@@ -192,19 +192,12 @@ fun HomeScreen(
                     onExpandedChange = {},
                     placeholder = {
                       Text(text = context.getString(R.string.explore_search_placeholder))
-                      //                                modifier =
-                      // Modifier.testTag("searchPlaceHolder"))
                     },
                     trailingIcon = {
                       if (searchState == SearchViewModel.Status.LOADING) {
                         CircularProgressIndicator()
                       } else {
-                        Icon(
-                            Icons.Default.Search,
-                            contentDescription = "Search icon",
-                            //                                    modifier =
-                            // Modifier.testTag("searchTrailingIcon")
-                        )
+                        Icon(Icons.Default.Search, contentDescription = "Search icon")
                       }
                     },
                 )
@@ -221,10 +214,7 @@ fun HomeScreen(
               Box(
                   modifier = Modifier.fillMaxSize().padding(paddingValues),
                   contentAlignment = Alignment.Center) {
-                    Text(
-                        //                           modifier =
-                        // Modifier.testTag("event_emptyEventPrompt"),
-                        text = "No events found.")
+                    Text(text = "No events found.")
                   }
             } else {
               LazyColumn(

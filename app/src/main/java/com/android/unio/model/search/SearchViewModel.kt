@@ -81,7 +81,6 @@ class SearchViewModel(private val repository: SearchRepository) : ViewModel() {
         SearchType.EVENT -> clearEvents()
         SearchType.ASSOCIATION -> clearAssociations()
       }
-
     } else {
       searchJob =
           viewModelScope.launch {

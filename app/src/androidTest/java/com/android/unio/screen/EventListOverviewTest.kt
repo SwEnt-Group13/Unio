@@ -26,8 +26,8 @@ import org.mockito.Mockito.mock
 import org.mockito.kotlin.verify
 
 /**
- * Test class for the HomeScreen Composable. This class contains unit tests to validate the
- * behavior of the Event List UI.
+ * Test class for the HomeScreen Composable. This class contains unit tests to validate the behavior
+ * of the Event List UI.
  */
 @ExperimentalUnitApi
 class EventListOverviewTest {
@@ -66,7 +66,8 @@ class EventListOverviewTest {
             }
           }
       val eventViewModel = EventViewModel(emptyEventRepository)
-      HomeScreen(navigationAction, eventViewModel = eventViewModel, searchViewModel = searchViewModel)
+      HomeScreen(
+          navigationAction, eventViewModel = eventViewModel, searchViewModel = searchViewModel)
     }
 
     composeTestRule.onNodeWithTag("event_emptyEventPrompt").assertExists()
@@ -81,7 +82,10 @@ class EventListOverviewTest {
   fun testMapButton() {
     composeTestRule.setContent {
       val eventViewModel = EventViewModel(mockEventRepository)
-      HomeScreen(navigationAction = navigationAction, eventViewModel = eventViewModel, searchViewModel = searchViewModel)
+      HomeScreen(
+          navigationAction = navigationAction,
+          eventViewModel = eventViewModel,
+          searchViewModel = searchViewModel)
     }
     composeTestRule.onNodeWithTag("event_MapButton").assertExists()
     composeTestRule.onNodeWithTag("event_MapButton").assertHasClickAction()
@@ -99,7 +103,8 @@ class EventListOverviewTest {
   fun testClickFollowingAndAdd() = runBlockingTest {
     composeTestRule.setContent {
       val eventViewModel = EventViewModel(mockEventRepository)
-      HomeScreen(navigationAction, eventViewModel = eventViewModel, searchViewModel = searchViewModel)
+      HomeScreen(
+          navigationAction, eventViewModel = eventViewModel, searchViewModel = searchViewModel)
     }
 
     // Ensure the 'Following' tab exists and perform a click.
