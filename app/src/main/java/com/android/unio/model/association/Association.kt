@@ -58,21 +58,14 @@ data class AssociationDocument(
     @Namespace val namespace: String = "unio",
     @Id val uid: String,
     @StringProperty(indexingType = StringPropertyConfig.INDEXING_TYPE_PREFIXES)
-    val url: String = "",
-    @StringProperty(indexingType = StringPropertyConfig.INDEXING_TYPE_PREFIXES)
     val name: String = "",
     @StringProperty(indexingType = StringPropertyConfig.INDEXING_TYPE_PREFIXES)
     val fullName: String = "",
     @StringProperty(indexingType = StringPropertyConfig.INDEXING_TYPE_PREFIXES)
     val description: String = ""
-    // TODO add members
 )
 
 fun Association.toAssociationDocument(): AssociationDocument {
   return AssociationDocument(
-      uid = this.uid,
-      url = this.url,
-      name = this.name,
-      fullName = this.fullName,
-      description = this.description)
+      uid = this.uid, name = this.name, fullName = this.fullName, description = this.description)
 }
