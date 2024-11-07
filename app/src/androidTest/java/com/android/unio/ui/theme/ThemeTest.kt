@@ -1,8 +1,9 @@
 package com.android.unio.ui.theme
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.test.junit4.createComposeRule
-import com.android.unio.model.preferences.PreferenceKeys
+import com.android.unio.model.preferences.AppPreferences
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.flow.MutableStateFlow
 import me.zhanghai.compose.preference.MutablePreferences
@@ -16,13 +17,43 @@ class ThemeTest {
   @get:Rule val composeTestRule = createComposeRule()
 
   @Test
-  fun testTheme() {
+  fun testLightTheme() {
     val preferencesFlow: MutableStateFlow<Preferences> =
-        MutableStateFlow(MapPreferences(mapOf(PreferenceKeys.THEME to Theme.LIGHT)))
+        MutableStateFlow(MapPreferences(mapOf(AppPreferences.THEME to AppPreferences.Theme.LIGHT)))
 
     composeTestRule.setContent {
       ProvidePreferenceLocals(flow = preferencesFlow) {
         AppTheme { assertEquals(primaryLight, MaterialTheme.colorScheme.primary) }
+      }
+    }
+  }
+
+  @Test
+  fun testDarkTheme() {
+    val preferencesFlow: MutableStateFlow<Preferences> =
+        MutableStateFlow(MapPreferences(mapOf(AppPreferences.THEME to AppPreferences.Theme.DARK)))
+
+    composeTestRule.setContent {
+      ProvidePreferenceLocals(flow = preferencesFlow) {
+        AppTheme { assertEquals(primaryDark, MaterialTheme.colorScheme.primary) }
+      }
+    }
+  }
+
+  @Test
+  fun testSystemTheme() {
+    val preferencesFlow: MutableStateFlow<Preferences> =
+        MutableStateFlow(MapPreferences(mapOf(AppPreferences.THEME to AppPreferences.Theme.SYSTEM)))
+
+    composeTestRule.setContent {
+      ProvidePreferenceLocals(flow = preferencesFlow) {
+        AppTheme {
+          if (isSystemInDarkTheme()) {
+            assertEquals(primaryDark, MaterialTheme.colorScheme.primary)
+          } else {
+            assertEquals(primaryLight, MaterialTheme.colorScheme.primary)
+          }
+        }
       }
     }
   }
