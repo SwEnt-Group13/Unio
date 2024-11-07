@@ -27,7 +27,6 @@ import androidx.navigation.navigation
 import com.android.unio.model.association.AssociationRepositoryFirestore
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.authentication.AuthViewModel
-import com.android.unio.model.event.EventListViewModel
 import com.android.unio.model.event.EventRepositoryFirestore
 import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
@@ -90,8 +89,7 @@ fun UnioApp(authViewModel: AuthViewModel) {
   val associationViewModel = remember {
     AssociationViewModel(associationRepository, eventRepository)
   }
-  val eventViewModel = remember { EventViewModel(eventRepository, userRepository) }
-  val eventListViewModel = remember { EventListViewModel(eventRepository) }
+  val eventViewModel = remember { EventViewModel(eventRepository) }
   val searchViewModel = remember { SearchViewModel(searchRepository) }
 
   // Observe the authentication state
@@ -119,7 +117,7 @@ fun UnioApp(authViewModel: AuthViewModel) {
     }
     navigation(startDestination = Screen.HOME, route = Route.HOME) {
       composable(Screen.HOME) {
-        HomeScreen(navigationActions, eventListViewModel, userViewModel = userViewModel)
+        HomeScreen(navigationActions, eventViewModel, userViewModel = userViewModel)
       }
       composable(Screen.EVENT_DETAILS) { navBackStackEntry ->
         // Get the event UID from the arguments
@@ -132,7 +130,7 @@ fun UnioApp(authViewModel: AuthViewModel) {
               userViewModel = userViewModel)
         }
       }
-      composable(Screen.MAP) { MapScreen(navigationActions, eventListViewModel) }
+      composable(Screen.MAP) { MapScreen(navigationActions, eventViewModel) }
     }
     navigation(startDestination = Screen.EXPLORE, route = Route.EXPLORE) {
       composable(Screen.EXPLORE) {

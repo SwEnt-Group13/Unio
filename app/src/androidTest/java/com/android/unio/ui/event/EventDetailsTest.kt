@@ -17,7 +17,6 @@ import io.mockk.mockk
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.mockito.Mockito
 import org.mockito.MockitoAnnotations
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
@@ -40,7 +39,7 @@ class EventDetailsTest {
     navigationAction = NavigationAction(navHostController)
     userViewModel = mockk { UserViewModel::class.java }
 
-    eventViewModel = Mockito.mock(EventViewModel::class.java)
+    eventViewModel = mockk { EventViewModel::class.java }
   }
 
   private fun setEventScreen() {

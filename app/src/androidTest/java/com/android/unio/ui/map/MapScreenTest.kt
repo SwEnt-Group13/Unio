@@ -6,8 +6,8 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.android.unio.model.event.EventListViewModel
 import com.android.unio.model.event.EventRepository
+import com.android.unio.model.event.EventViewModel
 import com.android.unio.ui.navigation.NavigationAction
 import org.junit.Before
 import org.junit.Rule
@@ -25,20 +25,20 @@ class MapScreenTest {
 
   @Mock private lateinit var eventRepository: EventRepository
   private lateinit var navigationAction: NavigationAction
-  private lateinit var eventListViewModel: EventListViewModel
+  private lateinit var eventViewModel: EventViewModel
 
   @Before
   fun setUp() {
     MockitoAnnotations.openMocks(this)
 
     navigationAction = mock(NavigationAction::class.java)
-    eventListViewModel = EventListViewModel(eventRepository)
+    eventViewModel = EventViewModel(eventRepository)
   }
 
   @Test
   fun mapScreenComponentsAreDisplayed() {
     composeTestRule.setContent {
-      MapScreen(navigationAction = navigationAction, eventListViewModel = eventListViewModel)
+      MapScreen(navigationAction = navigationAction, eventViewModel = eventViewModel)
     }
 
     composeTestRule.onNodeWithTag("MapScreen").assertIsDisplayed()
@@ -49,7 +49,7 @@ class MapScreenTest {
   @Test
   fun mapScreenBackButtonNavigatesBack() {
     composeTestRule.setContent {
-      MapScreen(navigationAction = navigationAction, eventListViewModel = eventListViewModel)
+      MapScreen(navigationAction = navigationAction, eventViewModel = eventViewModel)
     }
 
     composeTestRule.onNodeWithTag("goBackButton").performClick()

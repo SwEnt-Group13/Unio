@@ -7,8 +7,8 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.unit.ExperimentalUnitApi
 import com.android.unio.model.event.Event
-import com.android.unio.model.event.EventListViewModel
 import com.android.unio.model.event.EventRepositoryMock
+import com.android.unio.model.event.EventViewModel
 import com.android.unio.ui.home.HomeScreen
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
@@ -56,8 +56,8 @@ class EventListOverviewTest {
               onSuccess(emptyList())
             }
           }
-      val eventListViewModel = EventListViewModel(emptyEventRepository)
-      HomeScreen(navigationAction, eventListViewModel = eventListViewModel)
+      val eventViewModel = EventViewModel(emptyEventRepository)
+      HomeScreen(navigationAction, eventViewModel = eventViewModel)
     }
 
     composeTestRule.onNodeWithTag("event_emptyEventPrompt").assertExists()
@@ -71,8 +71,8 @@ class EventListOverviewTest {
   @Test
   fun testMapButton() {
     composeTestRule.setContent {
-      val eventListViewModel = EventListViewModel(mockEventRepository)
-      HomeScreen(navigationAction = navigationAction, eventListViewModel = eventListViewModel)
+      val eventViewModel = EventViewModel(mockEventRepository)
+      HomeScreen(navigationAction = navigationAction, eventViewModel = eventViewModel)
     }
     composeTestRule.onNodeWithTag("event_MapButton").assertExists()
     composeTestRule.onNodeWithTag("event_MapButton").assertHasClickAction()
@@ -89,8 +89,8 @@ class EventListOverviewTest {
   @Test
   fun testClickFollowingAndAdd() = runBlockingTest {
     composeTestRule.setContent {
-      val eventListViewModel = EventListViewModel(mockEventRepository)
-      HomeScreen(navigationAction, eventListViewModel = eventListViewModel)
+      val eventViewModel = EventViewModel(mockEventRepository)
+      HomeScreen(navigationAction, eventViewModel = eventViewModel)
     }
 
     // Ensure the 'Following' tab exists and perform a click.
