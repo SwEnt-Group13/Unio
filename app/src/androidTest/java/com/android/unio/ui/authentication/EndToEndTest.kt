@@ -9,6 +9,7 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import androidx.test.filters.LargeTest
 import com.android.unio.MainActivity
+import com.google.api.AnnotationsProto.http
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.firestore
@@ -33,8 +34,14 @@ class EndToEndTest {
   }
 
   @Test
+  fun testFlush(){
+    flushAuthenticationClients()
+  }
+
+  @Test
   fun `Test account creation flow`() {
-    flushFirestoreDB()
+    flushFirestoreDatabase()
+    flushAuthenticationClients()
 
     /** Create an account on the welcome screen */
     composeTestRule.onNodeWithTag("WelcomeScreen").assertIsDisplayed()
@@ -130,7 +137,18 @@ class EndToEndTest {
     client.newCall(request).execute()
   }
 
-  private fun flushFirestoreDB(){
+  private fun flushAuthenticationClients(){
+    val client = OkHttpClient()
+
+    val request = Request.Builder()
+      .url(FLUSH_AUTH_URL)
+      .delete()
+      .build()
+
+    client.newCall(request).execute()
+  }
+
+  private fun flushFirestoreDatabase(){
     val client = OkHttpClient()
 
     val request = Request.Builder()
@@ -138,6 +156,7 @@ class EndToEndTest {
       .delete()
       .build()
 
+    client.newCall(request).execute()
   }
 
   companion object {
@@ -150,6 +169,7 @@ class EndToEndTest {
 
     const val OOB_URL = "http://10.0.2.2:9099/emulator/v1/projects/unio-1b8ee/oobCodes"
     const val FIRESTORE_URL = "http://10.0.2.2:8080"
-    const val FLUSH_FIRESTORE_URL = "http://localhost:8080/emulator/v1/projects/unio-1b8ee/databases/(default)/documents"
+    const val FLUSH_FIRESTORE_URL = "http://10.0.2.2:8080/emulator/v1/projects/unio-1b8ee/databases/(default)/documents"
+    const val FLUSH_AUTH_URL = "http://10.0.2.2:9099/emulator/v1/projects/unio-1b8ee/accounts"
   }
 }
