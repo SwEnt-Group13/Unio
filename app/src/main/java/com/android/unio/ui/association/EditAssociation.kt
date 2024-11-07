@@ -54,7 +54,6 @@ fun EditAssociationScreen(
         var expanded by remember { mutableStateOf(false) }
         var category by remember { mutableStateOf(association.category) }
 
-
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -64,6 +63,10 @@ fun EditAssociationScreen(
             Text(text = "Edit Association", style = MaterialTheme.typography.headlineMedium)
 
             Spacer(modifier = Modifier.height(16.dp))
+
+            Text(text = "The name of the association. This is typically a short identifier or acronym.", style = MaterialTheme.typography.bodySmall)
+
+            Spacer(modifier = Modifier.height(8.dp))
             OutlinedTextField(
                 value = name,
                 onValueChange = { name = it },
@@ -72,6 +75,10 @@ fun EditAssociationScreen(
             )
 
             Spacer(modifier = Modifier.height(16.dp))
+
+            Text(text = "The full name of the association. This can be the official long-form name.", style = MaterialTheme.typography.bodySmall)
+
+            Spacer(modifier = Modifier.height(8.dp))
             OutlinedTextField(
                 value = fullName,
                 onValueChange = { fullName = it },
@@ -80,6 +87,11 @@ fun EditAssociationScreen(
             )
 
             Spacer(modifier = Modifier.height(16.dp))
+
+            Text(text = "Select the category that best fits the association's purpose. Choose an existing category.", style = MaterialTheme.typography.bodySmall)
+
+            Spacer(modifier = Modifier.height(8.dp))
+
             Button(
                 onClick = { expanded = true },
                 modifier = Modifier.fillMaxWidth()
@@ -89,7 +101,7 @@ fun EditAssociationScreen(
 
             DropdownMenu(
                 expanded = expanded,
-                onDismissRequest = { expanded = false } // Close menu if dismissed
+                onDismissRequest = { expanded = false }
             ) {
                 AssociationCategory.values().forEach { categoryOption ->
                     DropdownMenuItem(
@@ -98,14 +110,17 @@ fun EditAssociationScreen(
                         },
                         onClick = {
                             category = categoryOption
-                            expanded = false // Close dropdown on selection
+                            expanded = false
                         }
                     )
                 }
             }
 
-
             Spacer(modifier = Modifier.height(16.dp))
+
+            Text(text = "Provide a brief description of the association, including its main activities and goals.", style = MaterialTheme.typography.bodySmall)
+
+            Spacer(modifier = Modifier.height(8.dp))
             OutlinedTextField(
                 value = description,
                 onValueChange = { description = it },
@@ -114,6 +129,10 @@ fun EditAssociationScreen(
             )
 
             Spacer(modifier = Modifier.height(16.dp))
+
+            Text(text = "Provide a URL for the association's image, which will be displayed on the profile page.", style = MaterialTheme.typography.bodySmall)
+
+            Spacer(modifier = Modifier.height(8.dp))
             OutlinedTextField(
                 value = image,
                 onValueChange = { image = it },
@@ -122,6 +141,10 @@ fun EditAssociationScreen(
             )
 
             Spacer(modifier = Modifier.height(16.dp))
+
+            Text(text = "Provide the URL of the association's webpage or online presence.", style = MaterialTheme.typography.bodySmall)
+
+            Spacer(modifier = Modifier.height(8.dp))
             OutlinedTextField(
                 value = url,
                 onValueChange = { url = it },
@@ -130,6 +153,7 @@ fun EditAssociationScreen(
             )
 
             Spacer(modifier = Modifier.height(24.dp))
+
             Row(
                 horizontalArrangement = Arrangement.End,
                 verticalAlignment = Alignment.CenterVertically,
@@ -146,8 +170,11 @@ fun EditAssociationScreen(
                             associationViewModel.saveAssociation(
                                 association.copy(
                                     name = name.text,
+                                    fullName = fullName.text,
                                     description = description.text,
-                                    image = image.text
+                                    image = image.text,
+                                    category = category,
+                                    url = url.text
                                 ),
                                 null,
                                 onSuccess = {
