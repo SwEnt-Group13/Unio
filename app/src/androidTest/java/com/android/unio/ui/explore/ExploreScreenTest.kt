@@ -104,11 +104,8 @@ class ExploreScreenTest {
   @Test
   fun testGetFilteredAssociationsByAlphabeticalOrder() {
     val result = getFilteredAssociationsByAlphabeticalOrder(associations)
-    assertEquals(associations[0].name, result[0].name) // Still true if all 4 associations are used.
-    assertEquals(associations[1].name, result[1].name) // Not true if all 4 associations are used.
-    // assertEquals(associations[3].name, result[1].name)
-    // assertEquals(associations[1].name, result[2].name)
-    // assertEquals(associations[2].name, result[3].name)
+    assertEquals(associations[0].name, result[0].name)
+    assertEquals(associations[1].name, result[1].name)
   }
 
   @Test

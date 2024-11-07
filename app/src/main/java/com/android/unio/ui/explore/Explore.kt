@@ -45,6 +45,8 @@ import com.android.unio.model.association.AssociationCategory
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.search.SearchViewModel
 import com.android.unio.ui.navigation.BottomNavigationMenu
+import com.android.unio.model.strings.test_tags.ExploreTestTags
+import com.android.unio.model.strings.test_tags.ExploreContentTestTags
 import com.android.unio.ui.navigation.LIST_TOP_LEVEL_DESTINATION
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Route
@@ -63,7 +65,7 @@ fun ExploreScreen(
         BottomNavigationMenu(
             { navigationAction.navigateTo(it.route) }, LIST_TOP_LEVEL_DESTINATION, Route.EXPLORE)
       },
-      modifier = Modifier.testTag("exploreScreen"),
+      modifier = Modifier.testTag(ExploreTestTags.EXPLORE_SCAFFOLD_TITLE),
       content = { padding ->
         ExploreScreenContent(padding, navigationAction, associationViewModel, searchViewModel)
       })
@@ -100,12 +102,12 @@ fun ExploreScreenContent(
             modifier =
                 Modifier.padding(top = 16.dp, bottom = 8.dp)
                     .align(Alignment.CenterHorizontally)
-                    .testTag("exploreTitle"))
+                    .testTag(ExploreContentTestTags.TITLE_TEXT))
 
         DockedSearchBar(
             inputField = {
               SearchBarDefaults.InputField(
-                  modifier = Modifier.testTag("searchBarInput"),
+                  modifier = Modifier.testTag(ExploreContentTestTags.SEARCH_BAR_INPUT),
                   query = searchQuery.value,
                   onQueryChange = {
                     searchQuery.value = it
@@ -118,19 +120,19 @@ fun ExploreScreenContent(
                     Text(
                         text = context.getString(R.string.explore_search_placeholder),
                         style = AppTypography.bodyLarge,
-                        modifier = Modifier.testTag("searchPlaceHolder"))
+                        modifier = Modifier.testTag(ExploreContentTestTags.SEARCH_BAR_PLACEHOLDER))
                   },
                   trailingIcon = {
                     Icon(
                         Icons.Default.Search,
                         contentDescription = "Search icon",
-                        modifier = Modifier.testTag("searchTrailingIcon"))
+                        modifier = Modifier.testTag(ExploreContentTestTags.SEARCH_TRAILING_ICON))
                   },
               )
             },
             expanded = expanded,
             onExpandedChange = { expanded = it },
-            modifier = Modifier.padding(horizontal = 16.dp).testTag("searchBar")) {
+            modifier = Modifier.padding(horizontal = 16.dp).testTag(ExploreContentTestTags.SEARCH_BAR)) {
               when (searchState) {
                 SearchViewModel.Status.ERROR -> {
                   Box(
@@ -175,7 +177,7 @@ fun ExploreScreenContent(
             }
 
         LazyColumn(
-            modifier = Modifier.fillMaxSize().testTag("categoriesList"),
+            modifier = Modifier.fillMaxSize().testTag(ExploreContentTestTags.CATEGORIES_LIST),
             contentPadding = PaddingValues(vertical = 16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
@@ -189,14 +191,14 @@ fun ExploreScreenContent(
                     text = category.displayName,
                     style = AppTypography.headlineSmall,
                     modifier =
-                        Modifier.padding(horizontal = 16.dp).testTag("category_${category.name}"))
+                        Modifier.padding(horizontal = 16.dp).testTag(ExploreContentTestTags.CATEGORY_NAME+category.name))
 
                 // Horizontal scrollable list of associations
                 LazyRow(
                     modifier =
                         Modifier.fillMaxSize()
                             .padding(vertical = 16.dp)
-                            .testTag("associationRow_${category.name}"),
+                            .testTag(ExploreContentTestTags.ASSOCIATION_ROW+category.name),
                     contentPadding = PaddingValues(horizontal = 16.dp),
                     horizontalArrangement = Arrangement.spacedBy(32.dp, Alignment.Start),
                     verticalAlignment = Alignment.CenterVertically) {
@@ -226,7 +228,7 @@ fun AssociationItem(association: Association, navigationAction: NavigationAction
                 navigationAction.navigateTo(
                     Screen.withParams(Screen.ASSOCIATION_PROFILE, association.uid))
               }
-              .testTag("associationItem_${association.name}")) {
+              .testTag(ExploreContentTestTags.ASSOCIATION_ITEM+association.name)) {
         /**
          * AdEC image is used as the placeholder. Will need to add the actual image later, when the
          * actual view model is used.
@@ -250,7 +252,7 @@ fun AssociationItem(association: Association, navigationAction: NavigationAction
             modifier =
                 Modifier.fillMaxWidth()
                     .align(Alignment.CenterHorizontally)
-                    .testTag("associationName_${association.name}"))
+                    .testTag(ExploreContentTestTags.ASSOCIATION_NAME_TEXT+association.name))
       }
 }
 
