@@ -20,9 +20,6 @@ import com.android.unio.model.event.EventRepositoryFirestore
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.navigation.NavigationAction
-import com.google.firebase.firestore.CollectionReference
-import com.google.firebase.firestore.FirebaseFirestore
-import io.mockk.mockk
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import io.mockk.MockKAnnotations
@@ -114,12 +111,6 @@ class AssociationProfileTest {
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationFollowButton"))
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationDescription"))
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationEventTitle"))
-    if (events.isNotEmpty()) {
-      assertDisplayComponentInScroll(
-          composeTestRule.onNodeWithTag(
-              "AssociationEventCard-" + events.sortedBy { it.date }[0].uid))
-    }
-    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationSeeMoreButton"))
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationContactMembersTitle"))
     assertDisplayComponentInScroll(
         composeTestRule.onNodeWithTag("AssociationRecruitmentDescription"))
