@@ -85,7 +85,7 @@ fun ExploreScreenContent(
     searchViewModel: SearchViewModel
 ) {
   val associationsByCategory by associationViewModel.associationsByCategory.collectAsState()
-  val searchQuery = remember { mutableStateOf("") }
+  var searchQuery by remember { mutableStateOf("") }
   var expanded by rememberSaveable { mutableStateOf(false) }
   val assocationResults by searchViewModel.associations.collectAsState()
   val searchState by searchViewModel.status.collectAsState()
@@ -107,9 +107,9 @@ fun ExploreScreenContent(
             inputField = {
               SearchBarDefaults.InputField(
                   modifier = Modifier.testTag("searchBarInput"),
-                  query = searchQuery.value,
+                  query = searchQuery,
                   onQueryChange = {
-                    searchQuery.value = it
+                    searchQuery = it
                     searchViewModel.debouncedSearch(it)
                   },
                   onSearch = {},
