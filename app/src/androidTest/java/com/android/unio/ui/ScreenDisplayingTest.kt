@@ -10,6 +10,7 @@ import com.android.unio.model.event.EventListViewModel
 import com.android.unio.model.event.EventRepositoryFirestore
 import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
+import com.android.unio.model.search.SearchRepository
 import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.association.AssociationProfileScreen
@@ -51,7 +52,8 @@ class ScreenDisplayingTest {
 
   private lateinit var userViewModel: UserViewModel
 
-  @MockK private lateinit var searchViewModel: SearchViewModel
+  @MockK private lateinit var searchRepository: SearchRepository
+  private lateinit var searchViewModel: SearchViewModel
 
   private lateinit var associationViewModel: AssociationViewModel
 
@@ -85,6 +87,7 @@ class ScreenDisplayingTest {
     userViewModel = spyk(UserViewModel(mock()))
 
     val associations = MockAssociation.createAllMockAssociations(size = 2)
+    searchViewModel = spyk(SearchViewModel(searchRepository))
 
     every { associationViewModel.findAssociationById(any()) } returns associations.first()
     every { associationViewModel.getEventsForAssociation(any(), any()) } answers

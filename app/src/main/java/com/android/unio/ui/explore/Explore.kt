@@ -3,6 +3,7 @@ package com.android.unio.ui.explore
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -13,12 +14,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.DockedSearchBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.ListItem
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SearchBar
 import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -26,8 +31,11 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -77,83 +85,131 @@ fun ExploreScreenContent(
 ) {
   val associationsByCategory by associationViewModel.associationsByCategory.collectAsState()
   val searchQuery = remember { mutableStateOf("") }
-  Column(modifier = Modifier.padding(padding)) {
-    Text(
-        text = "Explore our Associations",
-        /** Will go in the string.xml */
-        style = AppTypography.headlineLarge,
-        modifier =
-            Modifier.padding(vertical = 16.dp)
-                .align(Alignment.CenterHorizontally)
-                .testTag("exploreTitle"))
+  var expanded by rememberSaveable { mutableStateOf(false) }
+  val assocationResults by searchViewModel.associations.collectAsState()
+  val searchState by searchViewModel.status.collectAsState()
+  val context = LocalContext.current
 
-    SearchBar(
-        inputField = {
-          SearchBarDefaults.InputField(
-              modifier = Modifier.testTag("searchBarInput"),
-              query = searchQuery.value,
-              onQueryChange = { searchQuery.value = it },
-              onSearch = {
-                //                searchViewModel.searchAssociations(searchQuery.value)
-              },
-              expanded = false,
-              onExpandedChange = { /* Handle expanded state change here */},
-              placeholder = {
-                Text(
-                    text = "Search",
-                    style = AppTypography.bodyLarge,
-                    modifier = Modifier.testTag("searchPlaceHolder"))
-              },
-              trailingIcon = {
-                Icon(
-                    Icons.Default.Search,
-                    contentDescription = "Search icon",
-                    modifier = Modifier.testTag("searchTrailingIcon"))
-              },
-          )
-        },
-        expanded = false,
-        onExpandedChange = { /* Also handle expanded state change here */},
-        modifier = Modifier.padding(horizontal = 26.dp, vertical = 8.dp).testTag("searchBar"),
-        content = {},
-    )
+  Column(
+      modifier = Modifier.padding(padding).fillMaxWidth(),
+      horizontalAlignment = Alignment.CenterHorizontally) {
+        Text(
+            text = "Explore our Associations",
+            /** Will go in the string.xml */
+            style = AppTypography.headlineLarge,
+            modifier =
+                Modifier.padding(top = 16.dp, bottom = 8.dp)
+                    .align(Alignment.CenterHorizontally)
+                    .testTag("exploreTitle"))
 
-    LazyColumn(
-        modifier = Modifier.fillMaxSize().testTag("categoriesList"),
-        contentPadding = PaddingValues(vertical = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-    ) {
-      getSortedEntriesAssociationsByCategory(associationsByCategory).forEach {
-          (category, associations) ->
-        val alphabeticalAssociations = getFilteredAssociationsByAlphabeticalOrder(associations)
-
-        if (alphabeticalAssociations.isNotEmpty()) {
-          item {
-            Text(
-                text = category.displayName,
-                style = AppTypography.headlineSmall,
-                modifier =
-                    Modifier.padding(horizontal = 16.dp)
-                        .testTag("category_${category.displayName}"))
-
-            // Horizontal scrollable list of associations
-            LazyRow(
-                modifier =
-                    Modifier.fillMaxSize()
-                        .padding(vertical = 16.dp)
-                        .testTag("associationRow_${category.displayName}"),
-                contentPadding = PaddingValues(horizontal = 16.dp),
-                horizontalArrangement = Arrangement.spacedBy(32.dp, Alignment.Start),
-                verticalAlignment = Alignment.CenterVertically) {
-                  items(alphabeticalAssociations.size) { index ->
-                    AssociationItem(alphabeticalAssociations[index], navigationAction)
+        DockedSearchBar(
+            inputField = {
+              SearchBarDefaults.InputField(
+                  modifier = Modifier.testTag("searchBarInput"),
+                  query = searchQuery.value,
+                  onQueryChange = {
+                    searchQuery.value = it
+                    searchViewModel.debouncedSearch(it)
+                  },
+                  onSearch = {},
+                  expanded = expanded,
+                  onExpandedChange = { expanded = it },
+                  placeholder = {
+                    Text(
+                        text = context.getString(R.string.explore_search_placeholder),
+                        style = AppTypography.bodyLarge,
+                        modifier = Modifier.testTag("searchPlaceHolder"))
+                  },
+                  trailingIcon = {
+                    Icon(
+                        Icons.Default.Search,
+                        contentDescription = "Search icon",
+                        modifier = Modifier.testTag("searchTrailingIcon"))
+                  },
+              )
+            },
+            expanded = expanded,
+            onExpandedChange = { expanded = it },
+            modifier = Modifier.padding(horizontal = 16.dp).testTag("searchBar")) {
+              when (searchState) {
+                SearchViewModel.Status.ERROR -> {
+                  Box(
+                      modifier = Modifier.fillMaxWidth().padding(16.dp),
+                      contentAlignment = Alignment.Center) {
+                        Text(context.getString(R.string.explore_search_error_message))
+                      }
+                }
+                SearchViewModel.Status.LOADING -> {
+                  Box(
+                      modifier = Modifier.fillMaxWidth().padding(16.dp),
+                      contentAlignment = Alignment.Center) {
+                        LinearProgressIndicator()
+                      }
+                }
+                SearchViewModel.Status.IDLE -> {}
+                SearchViewModel.Status.SUCCESS -> {
+                  if (assocationResults.isEmpty()) {
+                    Box(
+                        modifier = Modifier.fillMaxWidth().padding(16.dp),
+                        contentAlignment = Alignment.Center) {
+                          Text(context.getString(R.string.explore_search_no_results))
+                        }
+                  } else {
+                    Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+                      assocationResults.forEach { association ->
+                        ListItem(
+                            modifier =
+                                Modifier.clickable {
+                                  expanded = false
+                                  navigationAction.navigateTo(
+                                      Screen.withParams(
+                                          Screen.ASSOCIATION_PROFILE, association.uid))
+                                },
+                            headlineContent = { Text(association.name) },
+                        )
+                      }
+                    }
                   }
                 }
+              }
+            }
+
+        LazyColumn(
+            modifier = Modifier.fillMaxSize().testTag("categoriesList"),
+            contentPadding = PaddingValues(vertical = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+        ) {
+          getSortedEntriesAssociationsByCategory(associationsByCategory).forEach {
+              (category, associations) ->
+            val alphabeticalAssociations = getFilteredAssociationsByAlphabeticalOrder(associations)
+
+            if (alphabeticalAssociations.isNotEmpty()) {
+              item {
+                Text(
+                    text = category.displayName,
+                    style = AppTypography.headlineSmall,
+                    modifier =
+                        Modifier.padding(horizontal = 16.dp)
+                            .testTag("category_${category.displayName}"))
+
+                // Horizontal scrollable list of associations
+                LazyRow(
+                    modifier =
+                        Modifier.fillMaxSize()
+                            .padding(vertical = 16.dp)
+                            .testTag("associationRow_${category.displayName}"),
+                    contentPadding = PaddingValues(horizontal = 16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(32.dp, Alignment.Start),
+                    verticalAlignment = Alignment.CenterVertically) {
+                      items(alphabeticalAssociations.size) { index ->
+                        AssociationItem(alphabeticalAssociations[index], navigationAction)
+                      }
+                    }
+              }
+            }
           }
         }
       }
-    }
-  }
 }
 
 /**

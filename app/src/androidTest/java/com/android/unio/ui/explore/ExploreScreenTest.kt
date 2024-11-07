@@ -19,6 +19,15 @@ import com.android.unio.ui.navigation.Screen
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import io.mockk.mockk
+import com.android.unio.model.search.SearchRepository
+import com.android.unio.model.search.SearchViewModel
+import com.android.unio.ui.navigation.NavigationAction
+import com.android.unio.ui.navigation.Screen
+import com.google.firebase.firestore.CollectionReference
+import com.google.firebase.firestore.FirebaseFirestore
+import io.mockk.MockKAnnotations
+import io.mockk.impl.annotations.MockK
+import io.mockk.spyk
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
@@ -35,6 +44,7 @@ class ExploreScreenTest {
   private lateinit var navigationAction: NavigationAction
   @Mock private lateinit var associationRepository: AssociationRepository
   private lateinit var searchViewModel: SearchViewModel
+  @MockK(relaxed = true) private lateinit var searchRepository: SearchRepository
   @Mock private lateinit var eventRepository: EventRepository
   @Mock private lateinit var imageRepository: ImageRepository
   private lateinit var associationViewModel: AssociationViewModel
@@ -49,7 +59,8 @@ class ExploreScreenTest {
   @Before
   fun setUp() {
     MockitoAnnotations.openMocks(this)
-    searchViewModel = mockk()
+    MockKAnnotations.init(this)
+    searchViewModel = spyk(SearchViewModel(searchRepository))
     navigationAction = mock(NavigationAction::class.java)
 
     // Mock the navigation action to do nothing
