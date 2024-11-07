@@ -141,9 +141,7 @@ open class EventRepositoryMock @Inject constructor() : EventRepository {
   ) {
     // Filter mock events by tagged associations
     getEvents(
-        { events ->
-          onSuccess(events)
-        }, // Now filtering for empty tagged associations
+        { events -> onSuccess(events) }, // Now filtering for empty tagged associations
         onFailure)
   }
 

@@ -3,18 +3,18 @@ package com.android.unio
 import android.app.Application
 import android.content.Context
 import androidx.test.runner.AndroidJUnitRunner
-import com.android.unio.model.association.AssociationRepository
 import com.android.unio.model.event.EventRepository
 import com.android.unio.model.event.EventRepositoryMock
-import com.android.unio.model.hilt.module.AssociationModule
 import com.android.unio.model.hilt.module.EventModule
+import com.android.unio.model.hilt.module.FirebaseModule
+import com.google.firebase.firestore.FirebaseFirestore
 import dagger.Binds
 import dagger.Module
-import dagger.hilt.InstallIn
+import dagger.Provides
 import dagger.hilt.android.testing.HiltTestApplication
 import dagger.hilt.components.SingletonComponent
 import dagger.hilt.testing.TestInstallIn
-import org.junit.Test
+import io.mockk.mockk
 
 /**
  * Instead of using the default [AndroidJUnitRunner], we use a custom runner that extends from
@@ -22,9 +22,9 @@ import org.junit.Test
  * configure the test application for Hilt.
  */
 class HiltApplication : AndroidJUnitRunner() {
-    override fun newApplication(cl: ClassLoader?, name: String?, context: Context?): Application {
-        return super.newApplication(cl, HiltTestApplication::class.java.name, context)
-    }
+  override fun newApplication(cl: ClassLoader?, name: String?, context: Context?): Application {
+    return super.newApplication(cl, HiltTestApplication::class.java.name, context)
+  }
 }
 
 /**
@@ -35,17 +35,18 @@ class HiltApplication : AndroidJUnitRunner() {
  */
 object HiltModuleAndroidTest {
 
-    @Module
-    @TestInstallIn(
-        components = [SingletonComponent::class],
-        replaces = [EventModule::class]
-    )
-    abstract class EventModuleTest() {
+  @Module
+  @TestInstallIn(components = [SingletonComponent::class], replaces = [EventModule::class])
+  abstract class EventModuleTest() {
 
-        @Binds
-        abstract fun bindEventRepository(
-            eventRepositoryMock: EventRepositoryMock
-        ): EventRepository
-    }
+    @Binds
+    abstract fun bindEventRepository(eventRepositoryMock: EventRepositoryMock): EventRepository
+  }
 
+  @Module
+  @TestInstallIn(components = [SingletonComponent::class], replaces = [FirebaseModule::class])
+  object FirebaseModuleTest {
+
+    @Provides fun provideFirebaseFirestore(): FirebaseFirestore = mockk()
+  }
 }

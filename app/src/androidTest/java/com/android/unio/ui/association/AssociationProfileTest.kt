@@ -41,10 +41,8 @@ class AssociationProfileTest {
 
   lateinit var associationRepository: AssociationRepositoryFirestore
 
-  @MockK
-  lateinit var eventRepository: EventRepositoryFirestore
-  @MockK
-  lateinit var userViewModel: UserViewModel
+  @MockK lateinit var eventRepository: EventRepositoryFirestore
+  @MockK lateinit var userViewModel: UserViewModel
 
   private lateinit var associationViewModel: AssociationViewModel
 
@@ -72,19 +70,22 @@ class AssociationProfileTest {
 
     associationRepository = spyk(AssociationRepositoryFirestore(mockk()))
 
-    every { associationRepository.getAssociations(any(), any())} answers  {
-      val onSuccess =  args[0] as (List<Association>) -> Unit
-      onSuccess(associations)
-    }
+    every { associationRepository.getAssociations(any(), any()) } answers
+        {
+          val onSuccess = args[0] as (List<Association>) -> Unit
+          onSuccess(associations)
+        }
 
-    every { eventRepository.getEventsOfAssociation(any(), any(), any()) } answers {
-      val onSuccess =  args[1] as (List<Event>) -> Unit
-      onSuccess(events)
-    }
+    every { eventRepository.getEventsOfAssociation(any(), any(), any()) } answers
+        {
+          val onSuccess = args[1] as (List<Event>) -> Unit
+          onSuccess(events)
+        }
 
-    every { userViewModel.isEventSavedForCurrentUser(any()) } answers  {
-      events.map { it.uid }.contains(args[0])
-    }
+    every { userViewModel.isEventSavedForCurrentUser(any()) } answers
+        {
+          events.map { it.uid }.contains(args[0])
+        }
 
     associationViewModel =
         AssociationViewModel(associationRepository, eventRepository, imageRepository)
@@ -110,7 +111,9 @@ class AssociationProfileTest {
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationDescription"))
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationEventTitle"))
     if (events.isNotEmpty()) {
-      assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationEventCard-"+events.sortedBy{ it.date }[0].uid))
+      assertDisplayComponentInScroll(
+          composeTestRule.onNodeWithTag(
+              "AssociationEventCard-" + events.sortedBy { it.date }[0].uid))
     }
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationSeeMoreButton"))
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationContactMembersTitle"))

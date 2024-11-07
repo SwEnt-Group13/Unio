@@ -10,21 +10,25 @@ import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventListViewModel
 import com.android.unio.model.event.EventRepository
 import com.android.unio.model.event.EventRepositoryMock
-import com.android.unio.model.image.ImageRepository
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
-import com.android.unio.model.user.UserRepository
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.home.HomeScreen
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
+import com.android.unio.ui.navigation.TopLevelDestination
+import dagger.hilt.android.testing.HiltAndroidRule
+import dagger.hilt.android.testing.HiltAndroidTest
+import io.mockk.MockKAnnotations
+import io.mockk.every
+import io.mockk.impl.annotations.MockK
+import io.mockk.verify
+import javax.inject.Inject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.mockito.Mockito.mock
-import org.mockito.kotlin.verify
 
 // import org.robolectric.RobolectricTestRunner
 
@@ -32,27 +36,28 @@ import org.mockito.kotlin.verify
  * Test class for the EventListOverview Composable. This class contains unit tests to validate the
  * behavior of the Event List UI.
  */
+@HiltAndroidTest
 @ExperimentalUnitApi
 class EventListOverviewTest {
 
   @get:Rule val composeTestRule = createComposeRule()
+  @get:Rule val hiltRule = HiltAndroidRule(this)
 
   private lateinit var userViewModel: UserViewModel
   private lateinit var eventListViewModel: EventListViewModel
 
   // Mock event repository to provide test data.
-  private lateinit var mockEventRepository: EventRepository
-  private lateinit var navigationAction: NavigationAction
-  private lateinit var imageRepository: ImageRepository
-  private lateinit var userRepository: UserRepository
+  @Inject lateinit var mockEventRepository: EventRepository
+  @MockK private lateinit var navigationAction: NavigationAction
+  @MockK private lateinit var imageRepository: ImageRepositoryFirebaseStorage
+  @MockK private lateinit var userRepository: UserRepositoryFirestore
 
   @Before
   fun setUp() {
-    navigationAction = mock(NavigationAction::class.java)
-    mockEventRepository = EventRepositoryMock()
-    imageRepository = mock(ImageRepositoryFirebaseStorage::class.java)
-    userRepository = mock(UserRepositoryFirestore::class.java)
-
+    MockKAnnotations.init(this)
+    hiltRule.inject()
+    every { navigationAction.navigateTo(any(TopLevelDestination::class)) } returns Unit
+    every { navigationAction.navigateTo(any(String::class)) } returns Unit
     userViewModel = UserViewModel(userRepository)
   }
 
@@ -93,7 +98,7 @@ class EventListOverviewTest {
     composeTestRule.onNodeWithTag("event_MapButton").assertHasClickAction()
 
     composeTestRule.onNodeWithTag("event_MapButton").performClick()
-    verify(navigationAction).navigateTo(Screen.MAP)
+    verify { navigationAction.navigateTo(Screen.MAP) }
   }
 
   /**
@@ -116,6 +121,6 @@ class EventListOverviewTest {
     composeTestRule.onNodeWithTag("event_MapButton").assertExists()
     composeTestRule.onNodeWithTag("event_MapButton").performClick()
 
-    verify(navigationAction).navigateTo(Screen.MAP)
+    verify { navigationAction.navigateTo(Screen.MAP) }
   }
 }

@@ -49,9 +49,14 @@ import com.google.firebase.storage.storage
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.HiltAndroidApp
 import me.zhanghai.compose.preference.ProvidePreferenceLocals
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+  @Inject
+  lateinit var imageRepository: ImageRepositoryFirebaseStorage
+
 
   @SuppressLint("SourceLockedOrientationActivity")
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -59,7 +64,7 @@ class MainActivity : ComponentActivity() {
     super.onCreate(savedInstanceState)
     setContent {
       Surface(modifier = Modifier.fillMaxSize()) {
-        ProvidePreferenceLocals { AppTheme { UnioApp() } }
+        ProvidePreferenceLocals { AppTheme { UnioApp(imageRepository) } }
       }
     }
   }
@@ -68,7 +73,7 @@ class MainActivity : ComponentActivity() {
 @HiltAndroidApp class UnioApplication : Application() {}
 
 @Composable
-fun UnioApp() {
+fun UnioApp(imageRepository: ImageRepositoryFirebaseStorage) {
   val navController = rememberNavController()
 
   val navigationActions = NavigationAction(navController)
@@ -80,8 +85,6 @@ fun UnioApp() {
   val authViewModel = hiltViewModel<AuthViewModel>()
 
   val context = LocalContext.current
-
-  val imageRepository = ImageRepositoryFirebaseStorage(Firebase.storage)
 
   // Observe the authentication state
   val authState by authViewModel.authState.collectAsState()

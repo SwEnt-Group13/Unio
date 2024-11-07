@@ -8,16 +8,20 @@ import com.android.unio.mocks.map.MockLocation
 import com.android.unio.model.event.EventType
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserViewModel
-import com.google.firebase.Firebase
 import com.google.firebase.Timestamp
-import com.google.firebase.firestore.firestore
+import dagger.hilt.android.testing.HiltAndroidRule
+import dagger.hilt.android.testing.HiltAndroidTest
 import java.util.Date
+import javax.inject.Inject
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 
+@HiltAndroidTest
 class EventCardTest {
 
   @get:Rule val composeTestRule = createComposeRule()
+  @get:Rule val hiltRule = HiltAndroidRule(this)
 
   private val sampleEvent =
       MockEvent.createMockEvent(
@@ -25,8 +29,14 @@ class EventCardTest {
           location = MockLocation.createMockLocation(name = "Sample Location"),
           date = Timestamp(Date(2024 - 1900, 6, 20)),
           catchyDescription = "This is a catchy description.")
+  @Inject lateinit var userRepositoryFirestore: UserRepositoryFirestore
+  lateinit var userViewModel: UserViewModel
 
-  private val userViewModel = UserViewModel(UserRepositoryFirestore(Firebase.firestore), false)
+  @Before
+  fun setUp() {
+    hiltRule.inject()
+    userViewModel = UserViewModel(userRepositoryFirestore)
+  }
 
   @Test
   fun testEventCardElementsExist() {
