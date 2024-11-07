@@ -9,9 +9,14 @@ import androidx.compose.ui.unit.ExperimentalUnitApi
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventRepositoryMock
 import com.android.unio.model.event.EventViewModel
+import com.android.unio.model.search.SearchRepository
+import com.android.unio.model.search.SearchViewModel
 import com.android.unio.ui.home.HomeScreen
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
+import io.mockk.MockKAnnotations
+import io.mockk.impl.annotations.MockK
+import io.mockk.spyk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Before
@@ -20,10 +25,8 @@ import org.junit.Test
 import org.mockito.Mockito.mock
 import org.mockito.kotlin.verify
 
-// import org.robolectric.RobolectricTestRunner
-
 /**
- * Test class for the EventListOverview Composable. This class contains unit tests to validate the
+ * Test class for the HomeScreen Composable. This class contains unit tests to validate the
  * behavior of the Event List UI.
  */
 @ExperimentalUnitApi
@@ -35,8 +38,14 @@ class EventListOverviewTest {
   private val mockEventRepository = EventRepositoryMock()
   private lateinit var navigationAction: NavigationAction
 
+  private lateinit var searchViewModel: SearchViewModel
+  @MockK(relaxed = true) private lateinit var searchRepository: SearchRepository
+
   @Before
   fun setUp() {
+    MockKAnnotations.init(this)
+    searchViewModel = spyk(SearchViewModel(searchRepository))
+
     navigationAction = mock(NavigationAction::class.java)
   }
 
@@ -57,7 +66,7 @@ class EventListOverviewTest {
             }
           }
       val eventViewModel = EventViewModel(emptyEventRepository)
-      HomeScreen(navigationAction, eventViewModel = eventViewModel)
+      HomeScreen(navigationAction, eventViewModel = eventViewModel, searchViewModel = searchViewModel)
     }
 
     composeTestRule.onNodeWithTag("event_emptyEventPrompt").assertExists()
@@ -72,7 +81,7 @@ class EventListOverviewTest {
   fun testMapButton() {
     composeTestRule.setContent {
       val eventViewModel = EventViewModel(mockEventRepository)
-      HomeScreen(navigationAction = navigationAction, eventViewModel = eventViewModel)
+      HomeScreen(navigationAction = navigationAction, eventViewModel = eventViewModel, searchViewModel = searchViewModel)
     }
     composeTestRule.onNodeWithTag("event_MapButton").assertExists()
     composeTestRule.onNodeWithTag("event_MapButton").assertHasClickAction()
@@ -90,7 +99,7 @@ class EventListOverviewTest {
   fun testClickFollowingAndAdd() = runBlockingTest {
     composeTestRule.setContent {
       val eventViewModel = EventViewModel(mockEventRepository)
-      HomeScreen(navigationAction, eventViewModel = eventViewModel)
+      HomeScreen(navigationAction, eventViewModel = eventViewModel, searchViewModel = searchViewModel)
     }
 
     // Ensure the 'Following' tab exists and perform a click.

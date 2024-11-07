@@ -6,11 +6,16 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.navigation.NavHostController
 import com.android.unio.model.event.EventRepository
 import com.android.unio.model.event.EventViewModel
+import com.android.unio.model.search.SearchRepository
+import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.user.UserRepository
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.home.HomeScreen
 import com.android.unio.ui.navigation.NavigationAction
+import io.mockk.MockKAnnotations
+import io.mockk.impl.annotations.MockK
+import io.mockk.spyk
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -29,6 +34,9 @@ class BottomNavigationTest {
 
   @get:Rule val composeTestRule = createComposeRule()
 
+  private lateinit var searchViewModel: SearchViewModel
+  @MockK(relaxed = true) private lateinit var searchRepository: SearchRepository
+
   @Before
   fun setUp() {
     eventRepository = mock { EventRepository::class.java }
@@ -39,11 +47,14 @@ class BottomNavigationTest {
 
     navHostController = mock { NavHostController::class.java }
     navigationAction = NavigationAction(navHostController)
+
+    MockKAnnotations.init(this)
+    searchViewModel = spyk(SearchViewModel(searchRepository))
   }
 
   @Test
   fun testBottomNavigationMenuDisplayed() {
-    composeTestRule.setContent { HomeScreen(navigationAction, eventViewModel, userViewModel) }
+    composeTestRule.setContent { HomeScreen(navigationAction, eventViewModel, userViewModel, searchViewModel) }
     composeTestRule.onNodeWithTag("bottomNavigationMenu").assertIsDisplayed()
   }
 }

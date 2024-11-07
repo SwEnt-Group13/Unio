@@ -49,8 +49,6 @@ class ScreenDisplayingTest {
   private lateinit var navigationAction: NavigationAction
   private lateinit var userViewModel: UserViewModel
 
-  @MockK private lateinit var searchRepository: SearchRepository
-  @MockK private lateinit var searchViewModel: SearchViewModel
   @MockK private lateinit var eventRepository: EventRepositoryFirestore
   private lateinit var eventViewModel: EventViewModel
   @MockK private lateinit var associationViewModel: AssociationViewModel
@@ -64,9 +62,13 @@ class ScreenDisplayingTest {
 
   @get:Rule val composeTestRule = createComposeRule()
 
+  private lateinit var searchViewModel: SearchViewModel
+  @MockK(relaxed = true) private lateinit var searchRepository: SearchRepository
+
   @Before
   fun setUp() {
     MockKAnnotations.init(this, relaxed = true)
+    searchViewModel = spyk(SearchViewModel(searchRepository))
 
     navigationAction = mock { NavHostController::class.java }
     userViewModel = mockk()
@@ -120,7 +122,7 @@ class ScreenDisplayingTest {
 
   @Test
   fun testHomeDisplayed() {
-    composeTestRule.setContent { HomeScreen(navigationAction, eventViewModel) }
+    composeTestRule.setContent { HomeScreen(navigationAction, eventViewModel, userViewModel, searchViewModel) }
     composeTestRule.onNodeWithTag("HomeScreen").assertIsDisplayed()
   }
 
