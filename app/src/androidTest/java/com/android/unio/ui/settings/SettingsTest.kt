@@ -7,11 +7,11 @@ import com.android.unio.model.preferences.AppPreferences
 import com.android.unio.ui.navigation.NavigationAction
 import io.mockk.MockKAnnotations
 import io.mockk.impl.annotations.MockK
-import kotlin.reflect.full.memberProperties
 import me.zhanghai.compose.preference.ProvidePreferenceLocals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import kotlin.reflect.full.memberProperties
 
 class SettingsTest {
   @MockK private lateinit var navigationAction: NavigationAction
@@ -30,9 +30,8 @@ class SettingsTest {
     composeTestRule.onNodeWithTag("SettingsScreen").assertIsDisplayed()
     composeTestRule.onNodeWithTag("SettingsContainer").assertIsDisplayed()
 
-    // Iterate through the values of PreferenceKeys and thus check that each setting exists
+    // Iterate through the values of AppPreferences and thus check that each setting exists
     AppPreferences::class.memberProperties.forEach { key ->
-      println(key.call() as String)
       composeTestRule.onNodeWithTag(key.call() as String).assertExists()
     }
   }
