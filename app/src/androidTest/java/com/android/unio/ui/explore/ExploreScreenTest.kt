@@ -12,7 +12,6 @@ import com.android.unio.model.association.AssociationCategory
 import com.android.unio.model.association.AssociationRepository
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.event.EventRepository
-import com.android.unio.model.firestore.emptyFirestoreReferenceList
 import com.android.unio.model.search.SearchRepository
 import com.android.unio.model.search.SearchViewModel
 import com.android.unio.ui.navigation.NavigationAction
