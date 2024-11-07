@@ -352,7 +352,6 @@ private fun AssociationEventCard(
     event: Event,
     userViewModel: UserViewModel
 ) {
-  println("AssociationEventCard-${event.uid}")
   Box(modifier = Modifier.testTag("AssociationEventCard-${event.uid}")) {
     EventCard(navigationAction = navigationAction, event = event, userViewModel = userViewModel)
   }
