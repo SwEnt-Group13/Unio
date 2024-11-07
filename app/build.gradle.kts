@@ -120,6 +120,12 @@ android {
         res.setSrcDirs(emptyList<File>())
         resources.setSrcDirs(emptyList<File>())
     }
+
+  bundle {
+    language {
+      enableSplit = false
+    }
+  }
 }
 
 sonar {
