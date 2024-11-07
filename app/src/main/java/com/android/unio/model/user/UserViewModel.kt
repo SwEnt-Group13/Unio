@@ -50,7 +50,6 @@ class UserViewModel @Inject constructor(private val repository: UserRepository) 
     }
 
     _refreshState.value = true
-    _user.value = null
     repository.getUserWithId(
         uid,
         onSuccess = { fetchedUser ->

@@ -82,7 +82,8 @@ class SearchRepositoryTest {
           description = "ACM is the world's largest educational and scientific computing society.",
           followersCount = 1,
           members = User.firestoreReferenceListWith(listOf("1", "2")),
-          image = "https://www.example.com/image.jpg")
+          image = "https://www.example.com/image.jpg",
+          events = Event.firestoreReferenceListWith(listOf("1", "2")))
 
   private val association2 =
       Association(
@@ -95,7 +96,8 @@ class SearchRepositoryTest {
               "IEEE is the world's largest technical professional organization dedicated to advancing technology for the benefit of humanity.",
           followersCount = 1,
           members = User.firestoreReferenceListWith(listOf("3", "4")),
-          image = "https://www.example.com/image.jpg")
+          image = "https://www.example.com/image.jpg",
+          events = Event.firestoreReferenceListWith(listOf("3", "4")))
 
   private val event1 =
       Event(
