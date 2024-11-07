@@ -1,13 +1,19 @@
 [versions]
 # Plugins
+accompanistPermissions = "0.36.0"
 agp = "8.4.2"
 appsearch = "1.1.0-alpha03" # Should be upgraded, but requires Android SDK 35
 coilCompose = "2.2.2"
 firebaseBom = "33.3.0"
 googleServices = "4.4.2"
+hiltAndroid = "2.48"
+hiltAndroidCompiler = "2.48"
+hiltAndroidCompilerVersion = "2.51.1"
+hiltAndroidTesting = "2.51.1"
+hiltNavigationCompose = "1.0.0"
 guava = "33.3.1-android"
 json = "20240303"
-kotlin = "1.9.0"
+kotlin = "1.9.21"
 gms = "4.4.2"
 kotlinxCoroutinesAndroid = "1.7.3"
 kotlinxCoroutinesCore = "1.7.3"
@@ -21,8 +27,8 @@ lifecycleLivedataKtx = "2.8.6"
 materialIconsExtended = "1.7.3"
 mockitoAndroid = "5.13.0"
 mockkMockk = "1.9.3"
+mockkVersion = "1.13.8"
 robolectricVersion = "4.10.3"
-mockkVersion = "1.13.7"
 preferenceKtx = "1.2.1"
 ui = "1.7.2"
 uiTestJunit4 = "1.7.2"
@@ -90,12 +96,16 @@ firebaseStorageKtx = "21.0.1"
 uiTextGoogleFonts = "1.7.3"
 volley = "1.2.1"
 composeMaterial = "1.4.0"
+core = "1.46.0"
 
 
 [libraries]
+androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
+accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanistPermissions" }
 androidx-appsearch = { module = "androidx.appsearch:appsearch", version.ref = "appsearch" }
 androidx-appsearch-compiler = { module = "androidx.appsearch:appsearch-compiler", version.ref = "appsearch" }
 androidx-appsearch-local-storage = { module = "androidx.appsearch:appsearch-local-storage", version.ref = "appsearch" }
+androidx-hilt-navigation-fragment = { module = "androidx.hilt:hilt-navigation-fragment", version.ref = "hiltNavigationCompose" }
 androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "materialIconsExtended" }
 androidx-ui-test-manifest-v100 = { module = "androidx.compose.ui:ui-test-manifest", version.ref = "uiTestManifestVersion" }
 androidx-preference-ktx = { module = "androidx.preference:preference-ktx", version.ref = "preferenceKtx" }
@@ -110,6 +120,10 @@ compose-activity = { group = "androidx.activity", name = "activity-compose", ver
 compose-viewmodel = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "composeViewModel" }
 compose-test-junit = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 compose-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
+hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hiltAndroid" }
+hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hiltAndroidCompiler" }
+hilt-android-compiler-v2511 = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hiltAndroidCompilerVersion" }
+hilt-android-testing = { module = "com.google.dagger:hilt-android-testing", version.ref = "hiltAndroidTesting" }
 guava = { module = "com.google.guava:guava", version.ref = "guava" }
 kaspresso-compose = { group = "com.kaspersky.android-components", name = "kaspresso-compose-support", version.ref = "kaspresso" }
 
@@ -179,6 +193,7 @@ firebase-storage-ktx = { group = "com.google.firebase", name = "firebase-storage
 androidx-ui-text-google-fonts = { group = "androidx.compose.ui", name = "ui-text-google-fonts", version.ref = "uiTextGoogleFonts" }
 volley = { group = "com.android.volley", name = "volley", version.ref = "volley" }
 androidx-compose-material = { group = "androidx.wear.compose", name = "compose-material", version.ref = "composeMaterial" }
+core = { group = "com.google.ar", name = "core", version.ref = "core" }
 
 
 

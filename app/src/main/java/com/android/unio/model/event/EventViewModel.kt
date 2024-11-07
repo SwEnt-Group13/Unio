@@ -3,8 +3,10 @@ package com.android.unio.model.event
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.android.unio.model.image.ImageRepositoryFirebaseStorage
+import com.android.unio.model.image.ImageRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import java.io.InputStream
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -16,7 +18,11 @@ import kotlinx.coroutines.launch
  *
  * @property repository The [EventRepository] that provides the events.
  */
-class EventViewModel(private val repository: EventRepository) : ViewModel() {
+@HiltViewModel
+class EventViewModel
+@Inject
+constructor(private val repository: EventRepository, private val imageRepository: ImageRepository) :
+    ViewModel() {
 
   /**
    * A private mutable state flow that holds the list of events. It is internal to the ViewModel and
@@ -88,15 +94,14 @@ class EventViewModel(private val repository: EventRepository) : ViewModel() {
       onSuccess: () -> Unit,
       onFailure: (Exception) -> Unit
   ) {
-    ImageRepositoryFirebaseStorage()
-        .uploadImage(
-            inputStream,
-            "images/events/${event.uid}",
-            { uri ->
-              event.image = uri
-              event.uid = repository.getNewUid()
-              repository.addEvent(event, onSuccess, onFailure)
-            },
-            { e -> Log.e("ImageRepository", "Failed to store image: $e") })
+    imageRepository.uploadImage(
+        inputStream,
+        "images/events/${event.uid}",
+        { uri ->
+          event.image = uri
+          event.uid = repository.getNewUid()
+          repository.addEvent(event, onSuccess, onFailure)
+        },
+        { e -> Log.e("ImageRepository", "Failed to store image: $e") })
   }
 }
