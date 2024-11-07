@@ -9,7 +9,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 
-open class NavigationAction(private val navController: NavHostController) {
+open class NavigationAction(val navController: NavHostController) {
 
   /**
    * Navigate to the specified screen.

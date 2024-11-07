@@ -6,6 +6,7 @@ import com.android.unio.model.map.Location
 import com.google.firebase.Timestamp
 import java.util.Date
 import java.util.UUID
+import javax.inject.Inject
 
 /**
  * A mock implementation of the EventRepository interface. This class is used for testing purposes
@@ -14,7 +15,11 @@ import java.util.UUID
  * Since the actual EventRepository is not implemented yet, this mock repository allows for easy
  * testing with specific data.
  */
-open class EventRepositoryMock : EventRepository {
+open class EventRepositoryMock @Inject constructor() : EventRepository {
+  override fun init(onSuccess: () -> Unit) {
+    // This is a mock, so we assume the repository is initialized successfully
+    onSuccess()
+  }
 
   /**
    * Retrieves a list of mock events.
@@ -129,8 +134,6 @@ open class EventRepositoryMock : EventRepository {
       onFailure: (Exception) -> Unit
   ) {}
 
-  override fun init(onSuccess: () -> Unit) {}
-
   // Mock implementation for getting events by association
   override fun getEventsOfAssociation(
       association: String,
@@ -139,9 +142,7 @@ open class EventRepositoryMock : EventRepository {
   ) {
     // Filter mock events by tagged associations
     getEvents(
-        { events ->
-          onSuccess(events.filter { it.taggedAssociations.list.value.isEmpty() })
-        }, // Now filtering for empty tagged associations
+        { events -> onSuccess(events) }, // Now filtering for empty tagged associations
         onFailure)
   }
 

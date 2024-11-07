@@ -20,6 +20,8 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 import com.google.firebase.auth.internal.zzac
+import dagger.hilt.android.testing.HiltAndroidRule
+import dagger.hilt.android.testing.HiltAndroidTest
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
@@ -32,6 +34,7 @@ import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
 import org.mockito.kotlin.verify
 
+@HiltAndroidTest
 class AccountDetailsTest {
 
   @MockK private lateinit var firebaseAuth: FirebaseAuth
@@ -44,6 +47,7 @@ class AccountDetailsTest {
   @MockK private lateinit var mockFirebaseUser: zzac
 
   @get:Rule val composeTestRule = createComposeRule()
+  @get:Rule val hiltRule = HiltAndroidRule(this)
 
   @Before
   fun setUp() {

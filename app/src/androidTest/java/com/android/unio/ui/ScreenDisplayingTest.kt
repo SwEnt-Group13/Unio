@@ -32,6 +32,8 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 import com.google.firebase.auth.internal.zzac
+import dagger.hilt.android.testing.HiltAndroidRule
+import dagger.hilt.android.testing.HiltAndroidTest
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
@@ -42,18 +44,22 @@ import me.zhanghai.compose.preference.ProvidePreferenceLocals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.mockito.kotlin.mock
+import org.mockito.Mockito.mock
 
+@HiltAndroidTest
 class ScreenDisplayingTest {
 
-  private lateinit var navigationAction: NavigationAction
+  @MockK lateinit var navigationAction: NavigationAction
+
   private lateinit var userViewModel: UserViewModel
 
   @MockK private lateinit var searchRepository: SearchRepository
-  @MockK private lateinit var searchViewModel: SearchViewModel
-  @MockK private lateinit var eventRepository: EventRepositoryFirestore
+  private lateinit var searchViewModel: SearchViewModel
+
+  private lateinit var associationViewModel: AssociationViewModel
+
   private lateinit var eventViewModel: EventViewModel
-  @MockK private lateinit var associationViewModel: AssociationViewModel
+
   @MockK private lateinit var imageRepositoryFirestore: ImageRepositoryFirebaseStorage
 
   @MockK private lateinit var firebaseAuth: FirebaseAuth
@@ -64,23 +70,20 @@ class ScreenDisplayingTest {
 
   @get:Rule val composeTestRule = createComposeRule()
 
+  @get:Rule val hiltRule = HiltAndroidRule(this)
+
   @Before
   fun setUp() {
     MockKAnnotations.init(this, relaxed = true)
 
-    navigationAction = mock { NavHostController::class.java }
-    userViewModel = mockk(relaxed = true)
-    associationViewModel = mockk()
-    eventRepository = mockk()
+    hiltRule.inject()
 
-    every { eventRepository.init(any()) } answers {}
-    eventViewModel = EventViewModel(eventRepository)
-
-    every { eventRepository.getEvents(any(), any()) } answers
-        {
-          val onSuccess = args[1] as (List<Event>) -> Unit
-          onSuccess(emptyList())
-        }
+    associationViewModel =
+        spyk(
+            AssociationViewModel(
+                mock(), mockk<EventRepositoryFirestore>(), imageRepositoryFirestore))
+    eventViewModel = spyk(EventViewModel(mock(), mock()))
+    userViewModel = spyk(UserViewModel(mock()))
 
     val associations = MockAssociation.createAllMockAssociations(size = 2)
     searchViewModel = spyk(SearchViewModel(searchRepository))
@@ -120,14 +123,14 @@ class ScreenDisplayingTest {
 
   @Test
   fun testHomeDisplayed() {
-    composeTestRule.setContent { HomeScreen(navigationAction, eventViewModel) }
+    composeTestRule.setContent { HomeScreen(navigationAction, eventViewModel, userViewModel) }
     composeTestRule.onNodeWithTag("HomeScreen").assertIsDisplayed()
   }
 
   @Test
   fun testExploreDisplayed() {
     composeTestRule.setContent {
-      ExploreScreen(navigationAction, searchViewModel = searchViewModel)
+      ExploreScreen(navigationAction, associationViewModel, searchViewModel)
     }
     composeTestRule.onNodeWithTag("exploreScreen").assertIsDisplayed()
     composeTestRule.onNodeWithTag("searchBar").assertIsDisplayed()
