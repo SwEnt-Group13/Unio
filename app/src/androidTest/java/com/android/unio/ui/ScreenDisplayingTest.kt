@@ -3,9 +3,10 @@ package com.android.unio.ui
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.android.unio.mocks.association.MockAssociation
+import com.android.unio.model.association.Association
+import com.android.unio.model.association.AssociationRepositoryFirestore
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventRepositoryFirestore
@@ -42,9 +43,9 @@ import me.zhanghai.compose.preference.ProvidePreferenceLocals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.mockito.kotlin.mock
 
 class ScreenDisplayingTest {
+  val associations = MockAssociation.createAllMockAssociations(size = 2)
 
   private lateinit var navigationAction: NavigationAction
   private lateinit var userViewModel: UserViewModel
@@ -53,7 +54,8 @@ class ScreenDisplayingTest {
   @MockK private lateinit var searchViewModel: SearchViewModel
   @MockK private lateinit var eventRepository: EventRepositoryFirestore
   private lateinit var eventViewModel: EventViewModel
-  @MockK private lateinit var associationViewModel: AssociationViewModel
+  @MockK private lateinit var associationRepository: AssociationRepositoryFirestore
+  private lateinit var associationViewModel: AssociationViewModel
   @MockK private lateinit var imageRepositoryFirestore: ImageRepositoryFirebaseStorage
 
   @MockK private lateinit var firebaseAuth: FirebaseAuth
@@ -68,10 +70,9 @@ class ScreenDisplayingTest {
   fun setUp() {
     MockKAnnotations.init(this, relaxed = true)
 
-    navigationAction = mock { NavHostController::class.java }
+    navigationAction = mockk { NavHostController::class.java }
     userViewModel = mockk()
     associationViewModel = mockk()
-    eventRepository = mockk()
 
     every { eventRepository.init(any()) } answers {}
     eventViewModel = EventViewModel(eventRepository)
@@ -82,15 +83,16 @@ class ScreenDisplayingTest {
           onSuccess(emptyList())
         }
 
-    val associations = MockAssociation.createAllMockAssociations(size = 2)
     searchViewModel = spyk(SearchViewModel(searchRepository))
 
-    every { associationViewModel.findAssociationById(any()) } returns associations.first()
-    every { associationViewModel.getEventsForAssociation(any(), any()) } answers
+    every { associationRepository.init(any()) } returns Unit
+    every { associationRepository.getAssociations(any(), any()) } answers
         {
-          val onSuccess = args[1] as (List<Event>) -> Unit
-          onSuccess(emptyList())
+          val onSuccess = args[0] as (List<Association>) -> Unit
+          onSuccess(associations)
         }
+    associationViewModel = AssociationViewModel(associationRepository, eventRepository)
+    associationViewModel.getAssociations()
 
     // Mocking the Firebase.auth object and it's behaviour
     mockkStatic(FirebaseAuth::class)
@@ -127,7 +129,7 @@ class ScreenDisplayingTest {
   @Test
   fun testExploreDisplayed() {
     composeTestRule.setContent {
-      ExploreScreen(navigationAction, searchViewModel = searchViewModel)
+      ExploreScreen(navigationAction, associationViewModel, searchViewModel)
     }
     composeTestRule.onNodeWithTag("exploreScreen").assertIsDisplayed()
     composeTestRule.onNodeWithTag("searchBar").assertIsDisplayed()
@@ -160,10 +162,7 @@ class ScreenDisplayingTest {
   fun testAssociationProfileDisplayed() {
     composeTestRule.setContent {
       AssociationProfileScreen(
-          navigationAction,
-          "1",
-          associationViewModel,
-          userViewModel = viewModel(factory = UserViewModel.Factory))
+          navigationAction, associations.first().uid, associationViewModel, userViewModel)
     }
     composeTestRule.onNodeWithTag("AssociationScreen").assertIsDisplayed()
   }
