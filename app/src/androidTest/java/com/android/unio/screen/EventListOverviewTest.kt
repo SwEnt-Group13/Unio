@@ -53,7 +53,6 @@ class EventListOverviewTest {
                 onSuccess: (List<Event>) -> Unit,
                 onFailure: (Exception) -> Unit
             ) {
-              // Return an empty list for testing
               onSuccess(emptyList())
             }
           }

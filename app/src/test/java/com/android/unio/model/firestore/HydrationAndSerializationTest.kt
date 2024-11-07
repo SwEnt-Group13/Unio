@@ -20,6 +20,7 @@ import kotlin.reflect.full.memberProperties
 import org.junit.Test
 
 class HydrationAndSerializationTest {
+
   private val user =
       User(
           uid = "1",

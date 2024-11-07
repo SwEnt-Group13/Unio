@@ -5,15 +5,13 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import com.android.unio.model.association.Association
-import com.android.unio.model.association.AssociationCategory
+import com.android.unio.mocks.association.MockAssociation
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.event.Event
-import com.android.unio.model.firestore.firestoreReferenceListWith
+import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.search.SearchRepository
 import com.android.unio.model.search.SearchViewModel
-import com.android.unio.model.user.User
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.association.AssociationProfileScreen
@@ -55,6 +53,7 @@ class ScreenDisplayingTest {
   @MockK private lateinit var searchRepository: SearchRepository
   private lateinit var searchViewModel: SearchViewModel
 
+  @MockK private lateinit var eventViewModel: EventViewModel
   @MockK private lateinit var associationViewModel: AssociationViewModel
   @MockK private lateinit var imageRepositoryFirestore: ImageRepositoryFirebaseStorage
 
@@ -73,22 +72,10 @@ class ScreenDisplayingTest {
     navigationAction = mock { NavHostController::class.java }
     userViewModel = mockk()
     associationViewModel = mockk()
+    eventViewModel = mockk()
 
+    val associations = MockAssociation.createAllMockAssociations(size = 2)
     searchViewModel = spyk(SearchViewModel(searchRepository))
-
-    val associations =
-        listOf(
-            Association(
-                uid = "1",
-                url = "this is an url",
-                name = "ACM",
-                fullName = "Association for Computing Machinery",
-                category = AssociationCategory.SCIENCE_TECH,
-                description =
-                    "ACM is the world's largest educational and scientific computing society.",
-                members = User.firestoreReferenceListWith(listOf("1", "2", "3")),
-                followersCount = 321,
-                image = "https://www.example.com/image.jpg"))
 
     every { associationViewModel.findAssociationById(any()) } returns associations.first()
     every { associationViewModel.getEventsForAssociation(any(), any()) } answers
@@ -99,11 +86,6 @@ class ScreenDisplayingTest {
 
     // Mocking the Firebase.auth object and it's behaviour
     mockkStatic(FirebaseAuth::class)
-
-    //    every { searchViewModel.associations } returns MutableStateFlow(emptyList())
-    //    every { searchViewModel.events } returns MutableStateFlow(emptyList())
-    //    every { searchViewModel.status } returns MutableStateFlow(SearchViewModel.Status.IDLE)
-
     every { Firebase.auth } returns firebaseAuth
     every { firebaseAuth.currentUser } returns mockFirebaseUser
   }
@@ -151,7 +133,12 @@ class ScreenDisplayingTest {
 
   @Test
   fun testEventDisplayed() {
-    composeTestRule.setContent { EventScreen() }
+    composeTestRule.setContent {
+      EventScreen(
+          navigationAction = navigationAction,
+          eventViewModel = eventViewModel,
+          userViewModel = userViewModel)
+    }
     composeTestRule.onNodeWithTag("EventScreen").assertIsDisplayed()
   }
 
