@@ -203,7 +203,11 @@ fun ExploreScreenContent(
                     horizontalArrangement = Arrangement.spacedBy(32.dp, Alignment.Start),
                     verticalAlignment = Alignment.CenterVertically) {
                       items(alphabeticalAssociations.size) { index ->
-                        AssociationItem(alphabeticalAssociations[index], navigationAction)
+                        AssociationItem(alphabeticalAssociations[index]) {
+                          associationViewModel.selectAssociation(
+                              alphabeticalAssociations[index].uid)
+                          navigationAction.navigateTo(Screen.ASSOCIATION_PROFILE)
+                        }
                       }
                     }
               }
@@ -221,14 +225,10 @@ fun ExploreScreenContent(
  * @param navigationAction The navigation action to use when the item is clicked.
  */
 @Composable
-fun AssociationItem(association: Association, navigationAction: NavigationAction) {
+fun AssociationItem(association: Association, onClick: () -> Unit) {
   Column(
       modifier =
-          Modifier.clickable {
-                navigationAction.navigateTo(
-                    Screen.withParams(Screen.ASSOCIATION_PROFILE, association.uid))
-              }
-              .testTag("associationItem_${association.name}")) {
+          Modifier.clickable(onClick = onClick).testTag("associationItem_${association.name}")) {
         /**
          * AdEC image is used as the placeholder. Will need to add the actual image later, when the
          * actual view model is used.
