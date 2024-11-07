@@ -47,7 +47,8 @@ class HydrationAndSerializationTest {
           description = "An example association",
           members = User.firestoreReferenceListWith(listOf("1", "2")),
           followersCount = 0,
-          image = "https://www.example.com/image.jpg")
+          image = "https://www.example.com/image.jpg",
+          events = Event.firestoreReferenceListWith(listOf("1", "2")))
 
   private val event =
       Event(
@@ -105,6 +106,7 @@ class HydrationAndSerializationTest {
     assertEquals(association.description, serialized["description"])
     assertEquals(association.members.uids, serialized["members"])
     assertEquals(association.image, serialized["image"])
+    assertEquals(association.events.uids, serialized["events"])
 
     val hydrated = AssociationRepositoryFirestore.hydrate(serialized)
 
@@ -115,6 +117,7 @@ class HydrationAndSerializationTest {
     assertEquals(association.description, hydrated.description)
     assertEquals(association.members.list.value, hydrated.members.list.value)
     assertEquals(association.image, hydrated.image)
+    assertEquals(association.events.list.value, hydrated.events.list.value)
   }
 
   @Test
@@ -179,8 +182,9 @@ class HydrationAndSerializationTest {
     assertEquals("", hydrated.name)
     assertEquals("", hydrated.fullName)
     assertEquals("", hydrated.description)
-    assertEquals(emptyList<String>(), hydrated.members.list.value)
+    assertEquals(emptyList<User>(), hydrated.members.list.value)
     assertEquals("", hydrated.image)
+    assertEquals(emptyList<Event>(), hydrated.events.list.value)
   }
 
   @Test
@@ -197,8 +201,8 @@ class HydrationAndSerializationTest {
     assertEquals(0.0, hydrated.price)
     assertEquals(Timestamp(0, 0), hydrated.date)
     assertEquals(Location(), hydrated.location)
-    assertEquals(emptyList<String>(), hydrated.organisers.list.value)
-    assertEquals(emptyList<String>(), hydrated.taggedAssociations.list.value)
+    assertEquals(emptyList<Association>(), hydrated.organisers.list.value)
+    assertEquals(emptyList<Association>(), hydrated.taggedAssociations.list.value)
   }
 
   /** Test that serialization includes all data class fields. */

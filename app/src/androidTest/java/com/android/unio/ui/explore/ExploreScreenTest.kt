@@ -12,12 +12,13 @@ import com.android.unio.model.association.AssociationCategory
 import com.android.unio.model.association.AssociationRepository
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.event.EventRepository
+import com.android.unio.model.image.ImageRepository
 import com.android.unio.model.search.SearchRepository
 import com.android.unio.model.search.SearchViewModel
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
-import com.google.firebase.firestore.CollectionReference
-import com.google.firebase.firestore.FirebaseFirestore
+import dagger.hilt.android.testing.HiltAndroidRule
+import dagger.hilt.android.testing.HiltAndroidTest
 import io.mockk.MockKAnnotations
 import io.mockk.impl.annotations.MockK
 import io.mockk.spyk
@@ -30,19 +31,21 @@ import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
 import org.mockito.MockitoAnnotations
 import org.mockito.kotlin.any
+import org.mockito.kotlin.atLeastOnce
 import org.mockito.kotlin.verify
 
+@HiltAndroidTest
 class ExploreScreenTest {
   private lateinit var navigationAction: NavigationAction
-  @Mock private lateinit var db: FirebaseFirestore
-  @Mock private lateinit var collectionReference: CollectionReference
   @Mock private lateinit var associationRepository: AssociationRepository
   private lateinit var searchViewModel: SearchViewModel
   @MockK(relaxed = true) private lateinit var searchRepository: SearchRepository
   @Mock private lateinit var eventRepository: EventRepository
+  @Mock private lateinit var imageRepository: ImageRepository
   private lateinit var associationViewModel: AssociationViewModel
 
   @get:Rule val composeTestRule = createComposeRule()
+  @get:Rule val hiltRule = HiltAndroidRule(this)
 
   private lateinit var associations: List<Association>
   private lateinit var sortedByCategoryAssociations:
@@ -58,7 +61,11 @@ class ExploreScreenTest {
     // Mock the navigation action to do nothing
     `when`(navigationAction.navigateTo(any<String>())).then {}
 
-    `when`(db.collection(any())).thenReturn(collectionReference)
+    `when`(associationRepository.getAssociations(any(), any())).thenAnswer { invocation ->
+      val onSuccess = invocation.arguments[0] as (List<Association>) -> Unit
+      onSuccess(associations)
+    }
+
     associations =
         listOf(
             MockAssociation.createMockAssociation(
@@ -69,7 +76,8 @@ class ExploreScreenTest {
     sortedByCategoryAssociations =
         getSortedEntriesAssociationsByCategory(associations.groupBy { it.category })
 
-    associationViewModel = AssociationViewModel(associationRepository, eventRepository)
+    associationViewModel =
+        AssociationViewModel(associationRepository, eventRepository, imageRepository)
   }
 
   @Test
@@ -120,11 +128,6 @@ class ExploreScreenTest {
 
   @Test
   fun associationsAreDisplayed() {
-    `when`(associationRepository.getAssociations(any(), any())).thenAnswer { invocation ->
-      val onSuccess = invocation.arguments[0] as (List<Association>) -> Unit
-      onSuccess(associations)
-    }
-
     associationViewModel.getAssociations()
     composeTestRule.setContent {
       ExploreScreen(navigationAction, associationViewModel, searchViewModel)
@@ -139,11 +142,6 @@ class ExploreScreenTest {
 
   @Test
   fun testClickOnAssociation() {
-    `when`(associationRepository.getAssociations(any(), any())).thenAnswer { invocation ->
-      val onSuccess = invocation.arguments[0] as (List<Association>) -> Unit
-      onSuccess(associations)
-    }
-
     associationViewModel.getAssociations()
     composeTestRule.setContent {
       ExploreScreen(navigationAction, associationViewModel, searchViewModel)
@@ -152,8 +150,8 @@ class ExploreScreenTest {
     sortedByCategoryAssociations.forEach { (_, associations) ->
       associations.forEach {
         composeTestRule.onNodeWithTag("associationItem_${it.name}").performClick()
-        verify(navigationAction).navigateTo(Screen.withParams(Screen.ASSOCIATION_PROFILE, it.uid))
       }
     }
+    verify(navigationAction, atLeastOnce()).navigateTo(Screen.ASSOCIATION_PROFILE)
   }
 }

@@ -4,4 +4,6 @@ plugins {
     alias(libs.plugins.jetbrainsKotlinAndroid) apply false
     alias(libs.plugins.ktfmt) apply false
     alias(libs.plugins.gms) apply false
+    id("com.google.dagger.hilt.android") version "2.48" apply false
 }
+

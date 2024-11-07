@@ -1,6 +1,7 @@
 package com.android.unio.model.association
 
 import com.android.unio.mocks.association.MockAssociation
+import com.android.unio.model.event.Event
 import com.android.unio.model.firestore.FirestorePaths.ASSOCIATION_PATH
 import com.android.unio.model.firestore.FirestorePaths.USER_PATH
 import com.android.unio.model.firestore.emptyFirestoreReferenceList
@@ -96,7 +97,8 @@ class AssociationRepositoryFirestoreTest {
             "description" to association1.description,
             "members" to association1.members.uids,
             "followersCount" to association1.followersCount,
-            "image" to association1.image)
+            "image" to association1.image,
+            "events" to association1.events.uids)
 
     map2 =
         mapOf(
@@ -108,7 +110,8 @@ class AssociationRepositoryFirestoreTest {
             "description" to association2.description,
             "members" to association2.members.uids,
             "followersCount" to association2.followersCount,
-            "image" to association2.image)
+            "image" to association2.image,
+            "events" to association2.events.uids)
 
     `when`(queryDocumentSnapshot1.data).thenReturn(map1)
     `when`(queryDocumentSnapshot2.data).thenReturn(map2)
@@ -153,7 +156,8 @@ class AssociationRepositoryFirestoreTest {
                   description = "",
                   members = User.emptyFirestoreReferenceList(),
                   followersCount = 0,
-                  image = "")
+                  image = "",
+                  events = Event.emptyFirestoreReferenceList())
 
           assertEquals(2, associations.size)
 

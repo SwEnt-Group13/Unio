@@ -39,7 +39,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.android.unio.R
 import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationCategory
@@ -55,7 +54,7 @@ import com.android.unio.ui.theme.AppTypography
 @Composable
 fun ExploreScreen(
     navigationAction: NavigationAction,
-    associationViewModel: AssociationViewModel = viewModel(factory = AssociationViewModel.Factory),
+    associationViewModel: AssociationViewModel,
     searchViewModel: SearchViewModel
 ) {
 
@@ -85,7 +84,7 @@ fun ExploreScreenContent(
     searchViewModel: SearchViewModel
 ) {
   val associationsByCategory by associationViewModel.associationsByCategory.collectAsState()
-  val searchQuery = remember { mutableStateOf("") }
+  var searchQuery by remember { mutableStateOf("") }
   var expanded by rememberSaveable { mutableStateOf(false) }
   val assocationResults by searchViewModel.associations.collectAsState()
   val searchState by searchViewModel.status.collectAsState()
@@ -107,10 +106,10 @@ fun ExploreScreenContent(
             inputField = {
               SearchBarDefaults.InputField(
                   modifier = Modifier.testTag("searchBarInput"),
-                  query = searchQuery.value,
+                  query = searchQuery,
                   onQueryChange = {
-                    searchQuery.value = it
-                    searchViewModel.debouncedSearch(it)
+                    searchQuery = it
+                    searchViewModel.debouncedSearch(it, SearchViewModel.SearchType.ASSOCIATION)
                   },
                   onSearch = {},
                   expanded = expanded,
@@ -203,7 +202,11 @@ fun ExploreScreenContent(
                     horizontalArrangement = Arrangement.spacedBy(32.dp, Alignment.Start),
                     verticalAlignment = Alignment.CenterVertically) {
                       items(alphabeticalAssociations.size) { index ->
-                        AssociationItem(alphabeticalAssociations[index], navigationAction)
+                        AssociationItem(alphabeticalAssociations[index]) {
+                          associationViewModel.selectAssociation(
+                              alphabeticalAssociations[index].uid)
+                          navigationAction.navigateTo(Screen.ASSOCIATION_PROFILE)
+                        }
                       }
                     }
               }
@@ -221,14 +224,10 @@ fun ExploreScreenContent(
  * @param navigationAction The navigation action to use when the item is clicked.
  */
 @Composable
-fun AssociationItem(association: Association, navigationAction: NavigationAction) {
+fun AssociationItem(association: Association, onClick: () -> Unit) {
   Column(
       modifier =
-          Modifier.clickable {
-                navigationAction.navigateTo(
-                    Screen.withParams(Screen.ASSOCIATION_PROFILE, association.uid))
-              }
-              .testTag("associationItem_${association.name}")) {
+          Modifier.clickable(onClick = onClick).testTag("associationItem_${association.name}")) {
         /**
          * AdEC image is used as the placeholder. Will need to add the actual image later, when the
          * actual view model is used.

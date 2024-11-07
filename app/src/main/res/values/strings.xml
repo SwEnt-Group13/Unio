@@ -12,6 +12,7 @@
     <string name="event_tab_following">Following</string>
     <string name="event_add_event">Add Event</string>
     <string name="event_no_events_available">No events available.</string>
+    <string name="event_search_no_results">"No events found."</string>
 
     <!-- Event Card Strings -->
     <string name="event_event_title">Event Title</string>

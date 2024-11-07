@@ -9,7 +9,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 
-open class NavigationAction(private val navController: NavHostController) {
+open class NavigationAction(val navController: NavHostController) {
 
   /**
    * Navigate to the specified screen.
@@ -121,7 +121,7 @@ object Screen {
   const val SAVED = "Saved Screen"
   const val MY_PROFILE = "MyProfile Screen"
   const val SETTINGS = "Settings"
-  const val ASSOCIATION_PROFILE = "Association Profile Screen/{uid}"
+  const val ASSOCIATION_PROFILE = "Association Profile Screen"
   const val EDIT_ASSOCIATION = "Edit Assocation Screen/{associationId}"
   const val EVENT_DETAILS = "Event Details Screen/{uid}"
 

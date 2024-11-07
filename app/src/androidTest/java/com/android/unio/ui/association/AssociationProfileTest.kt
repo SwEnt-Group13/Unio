@@ -9,46 +9,55 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.android.unio.mocks.association.MockAssociation
 import com.android.unio.mocks.event.MockEvent
 import com.android.unio.model.association.Association
-import com.android.unio.model.association.AssociationRepository
+import com.android.unio.model.association.AssociationRepositoryFirestore
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.event.Event
-import com.android.unio.model.event.EventRepository
+import com.android.unio.model.event.EventRepositoryFirestore
+import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.navigation.NavigationAction
-import com.google.firebase.firestore.CollectionReference
-import com.google.firebase.firestore.FirebaseFirestore
+import dagger.hilt.android.testing.HiltAndroidRule
+import dagger.hilt.android.testing.HiltAndroidTest
+import io.mockk.MockKAnnotations
+import io.mockk.every
+import io.mockk.impl.annotations.MockK
+import io.mockk.mockk
+import io.mockk.spyk
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.mockito.Mock
+import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
-import org.mockito.MockitoAnnotations
-import org.mockito.kotlin.any
-import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 
+@HiltAndroidTest
 class AssociationProfileTest {
-  private lateinit var navHostController: NavHostController
-  private lateinit var navigationAction: NavigationAction
-  @Mock private lateinit var collectionReference: CollectionReference
-  @Mock private lateinit var db: FirebaseFirestore
-  @Mock private lateinit var associationRepository: AssociationRepository
-  @Mock private lateinit var eventRepository: EventRepository
+
+  lateinit var navigationAction: NavigationAction
+
+  lateinit var associationRepository: AssociationRepositoryFirestore
+
+  @MockK lateinit var eventRepository: EventRepositoryFirestore
+  @MockK lateinit var userViewModel: UserViewModel
+
   private lateinit var associationViewModel: AssociationViewModel
 
   private lateinit var associations: List<Association>
   private lateinit var events: List<Event>
 
+  @MockK lateinit var imageRepository: ImageRepositoryFirebaseStorage
+
   @get:Rule val composeTestRule = createComposeRule()
+  @get:Rule val hiltRule = HiltAndroidRule(this)
 
   @Before
   fun setUp() {
-    MockitoAnnotations.openMocks(this)
+    MockKAnnotations.init(this)
+    hiltRule.inject()
 
     associations =
         listOf(
@@ -57,31 +66,37 @@ class AssociationProfileTest {
 
     events = listOf(MockEvent.createMockEvent(uid = "a"), MockEvent.createMockEvent(uid = "b"))
 
-    `when`(db.collection(any())).thenReturn(collectionReference)
-    `when`(associationRepository.getAssociations(any(), any())).thenAnswer { invocation ->
-      val onSuccess = invocation.arguments[0] as (List<Association>) -> Unit
-      onSuccess(associations)
-    }
-    `when`(eventRepository.getEventsOfAssociation(any(), any(), any())).thenAnswer { invocation ->
-      val onSuccess = invocation.arguments[1] as (List<Event>) -> Unit
-      onSuccess(events)
-    }
+    navigationAction = NavigationAction(mock(NavHostController::class.java))
 
-    navHostController = mock { NavHostController::class.java }
-    navigationAction = NavigationAction(navHostController)
+    associationRepository = spyk(AssociationRepositoryFirestore(mockk()))
 
-    associationViewModel = AssociationViewModel(associationRepository, eventRepository)
+    every { associationRepository.getAssociations(any(), any()) } answers
+        {
+          val onSuccess = args[0] as (List<Association>) -> Unit
+          onSuccess(associations)
+        }
+
+    every { eventRepository.getEventsOfAssociation(any(), any(), any()) } answers
+        {
+          val onSuccess = args[1] as (List<Event>) -> Unit
+          onSuccess(events)
+        }
+
+    every { userViewModel.isEventSavedForCurrentUser(any()) } answers
+        {
+          events.map { it.uid }.contains(args[0])
+        }
+
+    associationViewModel =
+        AssociationViewModel(associationRepository, eventRepository, imageRepository)
     associationViewModel.getAssociations()
   }
 
   @Test
   fun testAssociationProfileDisplayComponent() {
     composeTestRule.setContent {
-      AssociationProfileScreen(
-          navigationAction,
-          "1",
-          associationViewModel,
-          userViewModel = viewModel(factory = UserViewModel.Factory))
+      AssociationProfileScaffold(
+          MockAssociation.createMockAssociation(), navigationAction, userViewModel)
     }
     composeTestRule.waitForIdle()
 
@@ -96,8 +111,6 @@ class AssociationProfileTest {
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationFollowButton"))
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationDescription"))
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationEventTitle"))
-    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationEventCard-a"))
-    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationSeeMoreButton"))
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationContactMembersTitle"))
     assertDisplayComponentInScroll(
         composeTestRule.onNodeWithTag("AssociationRecruitmentDescription"))
@@ -114,11 +127,8 @@ class AssociationProfileTest {
   @Test
   fun testButtonBehavior() {
     composeTestRule.setContent {
-      AssociationProfileScreen(
-          navigationAction,
-          "1",
-          associationViewModel,
-          userViewModel = viewModel(factory = UserViewModel.Factory))
+      AssociationProfileScaffold(
+          MockAssociation.createMockAssociation(), navigationAction, userViewModel)
     }
     // Share button
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("associationShareButton"))
@@ -129,11 +139,6 @@ class AssociationProfileTest {
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationFollowButton"))
     composeTestRule.onNodeWithTag("AssociationFollowButton").performClick()
     assertSnackBarIsDisplayed()
-
-    // See more button
-    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationSeeMoreButton"))
-    composeTestRule.onNodeWithTag("AssociationSeeMoreButton").performClick()
-    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationEventCard-b"))
 
     // Roles buttons
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationTreasurerRoles"))
@@ -153,26 +158,22 @@ class AssociationProfileTest {
   @Test
   fun testGoBackButton() {
     composeTestRule.setContent {
-      AssociationProfileScreen(
-          navigationAction,
-          "",
-          associationViewModel,
-          userViewModel = viewModel(factory = UserViewModel.Factory))
+      AssociationProfileScaffold(
+          MockAssociation.createMockAssociation(), navigationAction, userViewModel)
     }
+
+    `when`(navigationAction.navController.popBackStack()).thenReturn(true)
 
     composeTestRule.onNodeWithTag("goBackButton").performClick()
 
-    verify(navHostController).popBackStack()
+    verify(navigationAction.navController).popBackStack()
   }
 
   @Test
   fun testAssociationProfileGoodId() {
     composeTestRule.setContent {
-      AssociationProfileScreen(
-          navigationAction,
-          "1",
-          associationViewModel,
-          userViewModel = viewModel(factory = UserViewModel.Factory))
+      AssociationProfileScaffold(
+          MockAssociation.createMockAssociation(), navigationAction, userViewModel)
     }
 
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationProfileTitle"))
@@ -180,67 +181,11 @@ class AssociationProfileTest {
   }
 
   @Test
-  fun testAssociationProfileBadId() {
+  fun testAssociationProfileNoId() {
     composeTestRule.setContent {
-      AssociationProfileScreen(
-          navigationAction,
-          "IDONOTEXIST",
-          associationViewModel,
-          userViewModel = viewModel(factory = UserViewModel.Factory))
+      AssociationProfileScreen(navigationAction, associationViewModel, userViewModel)
     }
 
-    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("associationNotFound"))
-  }
-
-  @Test
-  fun testAssociationProfileEmptyUid() {
-    composeTestRule.setContent {
-      AssociationProfileScreen(
-          navigationAction,
-          "",
-          associationViewModel,
-          userViewModel = viewModel(factory = UserViewModel.Factory))
-    }
-
-    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("associationNotFound"))
-  }
-
-  @Test
-  fun testAssociationProfileSpecialCharacterUid() {
-    composeTestRule.setContent {
-      AssociationProfileScreen(
-          navigationAction,
-          MockAssociation.Companion.EdgeCaseUid.SPECIAL_CHARACTERS.value,
-          associationViewModel,
-          userViewModel = viewModel(factory = UserViewModel.Factory))
-    }
-
-    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationProfileTitle"))
-  }
-
-  @Test
-  fun testAssociationProfileLongUid() {
-    composeTestRule.setContent {
-      AssociationProfileScreen(
-          navigationAction,
-          MockAssociation.Companion.EdgeCaseUid.LONG.value,
-          associationViewModel,
-          userViewModel = viewModel(factory = UserViewModel.Factory))
-    }
-
-    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationProfileTitle"))
-  }
-
-  @Test
-  fun testAssociationProfileTypicalUid() {
-    composeTestRule.setContent {
-      AssociationProfileScreen(
-          navigationAction,
-          MockAssociation.Companion.EdgeCaseUid.TYPICAL.value,
-          associationViewModel,
-          userViewModel = viewModel(factory = UserViewModel.Factory))
-    }
-
-    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationProfileTitle"))
+    composeTestRule.onNodeWithTag("AssociationScreen").assertIsNotDisplayed()
   }
 }

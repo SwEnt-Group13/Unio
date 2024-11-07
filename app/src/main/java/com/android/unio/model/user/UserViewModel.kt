@@ -4,31 +4,44 @@ import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
-import com.google.firebase.firestore.firestore
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
-class UserViewModel(val repository: UserRepository, initializeWithAuthenticatedUser: Boolean) :
-    ViewModel() {
+@HiltViewModel
+class UserViewModel @Inject constructor(private val repository: UserRepository) : ViewModel() {
   private val _user = MutableStateFlow<User?>(null)
   val user: StateFlow<User?> = _user
 
   private val _refreshState = mutableStateOf(false)
   val refreshState: State<Boolean> = _refreshState
 
+  private var initializeWithAuthenticatedUser: Boolean = true
+
+  constructor(
+      repository: UserRepository,
+      initializeWithAuthenticatedUser: Boolean
+  ) : this(repository) {
+    this.initializeWithAuthenticatedUser = initializeWithAuthenticatedUser
+  }
+
   init {
     if (initializeWithAuthenticatedUser) {
       Firebase.auth.addAuthStateListener { auth ->
         if (auth.currentUser != null) {
-          repository.init { getUserByUid(auth.currentUser!!.uid, true) }
+          repository.init { getUserByUid(auth.currentUser!!.uid, initializeWithAuthenticatedUser) }
         }
       }
     } else {
       repository.init {}
     }
+  }
+
+  fun getUsersByUid(uid: String, onSuccess: (User) -> Unit, onFailure: (Exception) -> Unit) {
+    repository.getUserWithId(uid, onSuccess, onFailure)
   }
 
   fun getUserByUid(uid: String, fetchReferences: Boolean = false) {
@@ -37,7 +50,6 @@ class UserViewModel(val repository: UserRepository, initializeWithAuthenticatedU
     }
 
     _refreshState.value = true
-    _user.value = null
     repository.getUserWithId(
         uid,
         onSuccess = { fetchedUser ->
@@ -116,15 +128,5 @@ class UserViewModel(val repository: UserRepository, initializeWithAuthenticatedU
   fun isEventSavedForCurrentUser(eventUid: String): Boolean {
     val currentUser = getCurrentUserOrError() ?: return false
     return currentUser.savedEvents.contains(eventUid)
-  }
-
-  companion object {
-    val Factory: ViewModelProvider.Factory =
-        object : ViewModelProvider.Factory {
-          @Suppress("UNCHECKED_CAST")
-          override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return UserViewModel(UserRepositoryFirestore(Firebase.firestore), false) as T
-          }
-        }
   }
 }

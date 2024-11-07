@@ -8,8 +8,10 @@ import com.google.android.gms.tasks.Task
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FirebaseFirestore
+import javax.inject.Inject
 
-class AssociationRepositoryFirestore(private val db: FirebaseFirestore) : AssociationRepository {
+class AssociationRepositoryFirestore @Inject constructor(private val db: FirebaseFirestore) :
+    AssociationRepository {
 
   override fun init(onSuccess: () -> Unit) {
     Firebase.auth.addAuthStateListener {

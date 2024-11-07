@@ -2,22 +2,21 @@ package com.android.unio.model.authentication
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import com.android.unio.model.user.UserRepository
-import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.ui.navigation.Route
 import com.android.unio.ui.navigation.Screen
-import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.auth
-import com.google.firebase.firestore.firestore
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
-class AuthViewModel(
-    private val firebaseAuth: FirebaseAuth,
-    private val userRepository: UserRepository
-) : ViewModel() {
+@HiltViewModel
+class AuthViewModel
+@Inject
+constructor(private val firebaseAuth: FirebaseAuth, private val userRepository: UserRepository) :
+    ViewModel() {
+
   private val _authState = MutableStateFlow<String?>(null)
   val authState: StateFlow<String?>
     get() = _authState
@@ -56,15 +55,5 @@ class AuthViewModel(
         _authState.value = Route.AUTH
       }
     }
-  }
-
-  companion object {
-    val Factory: ViewModelProvider.Factory =
-        object : ViewModelProvider.Factory {
-          @Suppress("UNCHECKED_CAST")
-          override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return AuthViewModel(Firebase.auth, UserRepositoryFirestore(Firebase.firestore)) as T
-          }
-        }
   }
 }
