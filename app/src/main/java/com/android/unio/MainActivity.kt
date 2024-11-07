@@ -86,9 +86,7 @@ fun UnioApp(imageRepository: ImageRepositoryFirebaseStorage) {
   // Observe the authentication state
   val authState by authViewModel.authState.collectAsState()
   var previousAuthState by rememberSaveable { mutableStateOf<String?>(null) }
-
-  Log.d("UnioApp", "Auth state: $authState")
-
+  
   LaunchedEffect(authState) {
     authState?.let { screen ->
       // Only navigate if the screen has changed
