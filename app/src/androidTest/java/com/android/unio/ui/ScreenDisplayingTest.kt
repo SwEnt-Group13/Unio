@@ -3,9 +3,9 @@ package com.android.unio.ui
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.android.unio.mocks.association.MockAssociation
+import com.android.unio.mocks.user.MockUser
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventRepositoryFirestore
@@ -14,7 +14,7 @@ import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.search.SearchRepository
 import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.user.UserViewModel
-import com.android.unio.ui.association.AssociationProfileScreen
+import com.android.unio.ui.association.AssociationProfileScaffold
 import com.android.unio.ui.authentication.AccountDetails
 import com.android.unio.ui.authentication.EmailVerificationScreen
 import com.android.unio.ui.authentication.WelcomeScreen
@@ -27,7 +27,7 @@ import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.saved.SavedScreen
 import com.android.unio.ui.settings.SettingsScreen
 import com.android.unio.ui.user.SomeoneElseUserProfileScreen
-import com.android.unio.ui.user.UserProfileScreen
+import com.android.unio.ui.user.UserProfileScreenScaffold
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
@@ -69,7 +69,7 @@ class ScreenDisplayingTest {
     MockKAnnotations.init(this, relaxed = true)
 
     navigationAction = mock { NavHostController::class.java }
-    userViewModel = mockk()
+    userViewModel = mockk(relaxed = true)
     associationViewModel = mockk()
     eventRepository = mockk()
 
@@ -159,11 +159,8 @@ class ScreenDisplayingTest {
   @Test
   fun testAssociationProfileDisplayed() {
     composeTestRule.setContent {
-      AssociationProfileScreen(
-          navigationAction,
-          "1",
-          associationViewModel,
-          userViewModel = viewModel(factory = UserViewModel.Factory))
+      AssociationProfileScaffold(
+          MockAssociation.createMockAssociation(), navigationAction, userViewModel)
     }
     composeTestRule.onNodeWithTag("AssociationScreen").assertIsDisplayed()
   }
@@ -182,7 +179,9 @@ class ScreenDisplayingTest {
 
   @Test
   fun testUserProfileDisplayed() {
-    composeTestRule.setContent { UserProfileScreen(navigationAction) }
+    composeTestRule.setContent {
+      UserProfileScreenScaffold(MockUser.createMockUser(), navigationAction, false) {}
+    }
     composeTestRule.onNodeWithTag("UserProfileScreen").assertIsDisplayed()
   }
 
