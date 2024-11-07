@@ -10,6 +10,7 @@ import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventListViewModel
 import com.android.unio.model.event.EventRepository
 import com.android.unio.model.event.EventRepositoryMock
+import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserViewModel
@@ -77,8 +78,8 @@ class EventListOverviewTest {
               onSuccess(emptyList())
             }
           }
-      eventListViewModel = EventListViewModel(emptyEventRepository, imageRepository)
-      HomeScreen(navigationAction, eventListViewModel, userViewModel)
+      val eventViewModel = EventViewModel(emptyEventRepository)
+      HomeScreen(navigationAction, eventViewModel, userViewModel)
     }
     composeTestRule.onNodeWithTag("event_emptyEventPrompt").assertExists()
     composeTestRule.onNodeWithText("No events available.").assertExists()
@@ -91,8 +92,8 @@ class EventListOverviewTest {
   @Test
   fun testMapButton() {
     composeTestRule.setContent {
-      eventListViewModel = EventListViewModel(mockEventRepository, imageRepository)
-      HomeScreen(navigationAction = navigationAction, eventListViewModel, userViewModel)
+      val eventViewModel = EventViewModel(mockEventRepository)
+      HomeScreen(navigationAction, eventViewModel, userViewModel)
     }
     composeTestRule.onNodeWithTag("event_MapButton").assertExists()
     composeTestRule.onNodeWithTag("event_MapButton").assertHasClickAction()
@@ -109,8 +110,8 @@ class EventListOverviewTest {
   @Test
   fun testClickFollowingAndAdd() = runBlockingTest {
     composeTestRule.setContent {
-      val eventListViewModel = EventListViewModel(mockEventRepository, imageRepository)
-      HomeScreen(navigationAction, eventListViewModel, userViewModel)
+      val eventViewModel = EventViewModel(mockEventRepository)
+      HomeScreen(navigationAction, eventViewModel, userViewModel)
     }
 
     // Ensure the 'Following' tab exists and perform a click.

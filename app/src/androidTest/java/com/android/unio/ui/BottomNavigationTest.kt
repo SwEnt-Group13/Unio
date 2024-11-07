@@ -3,8 +3,8 @@ package com.android.unio.ui
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
-import com.android.unio.model.event.EventListViewModel
 import com.android.unio.model.event.EventRepository
+import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.user.UserRepository
 import com.android.unio.model.user.UserRepositoryFirestore
@@ -23,7 +23,7 @@ class BottomNavigationTest {
   @MockK private lateinit var navigationAction: NavigationAction
 
   private lateinit var eventRepository: EventRepository
-  private lateinit var eventViewModel: EventListViewModel
+  private lateinit var eventViewModel: EventViewModel
 
   @MockK private lateinit var imageRepository: ImageRepositoryFirebaseStorage
 
@@ -36,7 +36,7 @@ class BottomNavigationTest {
   fun setUp() {
     MockKAnnotations.init(this)
     eventRepository = mock { EventRepository::class.java }
-    eventViewModel = EventListViewModel(eventRepository, imageRepository)
+    eventViewModel = EventViewModel(eventRepository)
 
     userRepository = mock { UserRepositoryFirestore::class.java }
     userViewModel = UserViewModel(userRepository, false)

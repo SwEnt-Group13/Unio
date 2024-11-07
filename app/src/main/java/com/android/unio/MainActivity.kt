@@ -112,7 +112,7 @@ fun UnioApp(imageRepository: ImageRepositoryFirebaseStorage) {
     }
     navigation(startDestination = Screen.HOME, route = Route.HOME) {
       composable(Screen.HOME) {
-        HomeScreen(navigationActions, eventListViewModel, userViewModel = userViewModel)
+        HomeScreen(navigationActions, eventViewModel, userViewModel = userViewModel)
       }
       composable(Screen.EVENT_DETAILS) { navBackStackEntry ->
         // Get the event UID from the arguments
@@ -125,7 +125,7 @@ fun UnioApp(imageRepository: ImageRepositoryFirebaseStorage) {
               userViewModel = userViewModel)
         }
       }
-      composable(Screen.MAP) { MapScreen(navigationActions, eventListViewModel) }
+      composable(Screen.MAP) { MapScreen(navigationActions, eventViewModel) }
     }
     navigation(startDestination = Screen.EXPLORE, route = Route.EXPLORE) {
       composable(Screen.EXPLORE) {

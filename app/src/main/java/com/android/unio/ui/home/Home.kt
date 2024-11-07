@@ -40,7 +40,7 @@ import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
-import com.android.unio.model.event.EventListViewModel
+import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.event.EventCard
 import com.android.unio.ui.navigation.BottomNavigationMenu
@@ -54,10 +54,10 @@ import kotlinx.coroutines.launch
 @Composable
 fun HomeScreen(
     navigationAction: NavigationAction,
-    eventListViewModel: EventListViewModel,
+    eventViewModel: EventViewModel,
     userViewModel: UserViewModel
 ) {
-  val events by eventListViewModel.events.collectAsState()
+  val events by eventViewModel.events.collectAsState()
   var selectedTab by remember { mutableStateOf("All") }
   val density = LocalDensity.current.density
 

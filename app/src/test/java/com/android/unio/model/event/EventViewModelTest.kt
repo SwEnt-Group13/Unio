@@ -2,17 +2,16 @@ package com.android.unio.model.event
 
 import androidx.test.core.app.ApplicationProvider
 import com.android.unio.mocks.event.MockEvent
-import com.android.unio.model.firestore.ReferenceList
 import com.android.unio.model.image.ImageRepository
-import com.android.unio.model.user.UserRepositoryFirestore
 import com.google.firebase.FirebaseApp
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import java.io.InputStream
 import java.util.GregorianCalendar
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import junit.framework.TestCase.assertEquals
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -27,7 +26,6 @@ import org.robolectric.RobolectricTestRunner
 @RunWith(RobolectricTestRunner::class)
 class EventViewModelTest {
   @Mock private lateinit var repository: EventRepositoryFirestore
-  @Mock private lateinit var usrRepository: UserRepositoryFirestore
   @Mock private lateinit var db: FirebaseFirestore
   @Mock private lateinit var collectionReference: CollectionReference
   @Mock private lateinit var inputStream: InputStream
@@ -35,20 +33,18 @@ class EventViewModelTest {
 
   private lateinit var eventViewModel: EventViewModel
 
-  private val event1 =
-      MockEvent.createMockEvent(
-          uid = "1",
-          title = "Balelec",
-          price = 40.5,
-          date = Timestamp(GregorianCalendar(2004, 7, 1).time))
-  private val event3 =
-      MockEvent.createMockEvent(
-          uid = "3",
-          title = "Tremplin Sysmic",
-          price = 40.5,
-          date = Timestamp(GregorianCalendar(2008, 7, 1).time))
-
-  private val testEvents = listOf(event1, event3)
+  private val testEvents =
+      listOf(
+          MockEvent.createMockEvent(
+              uid = "1",
+              title = "Balelec",
+              price = 40.5,
+              date = Timestamp(GregorianCalendar(2004, 7, 1).time)),
+          MockEvent.createMockEvent(
+              uid = "2",
+              title = "Tremplin Sysmic",
+              price = 40.5,
+              date = Timestamp(GregorianCalendar(2008, 7, 1).time)))
 
   @Before
   fun setUp() {
@@ -59,35 +55,53 @@ class EventViewModelTest {
     }
     `when`(db.collection(any())).thenReturn(collectionReference)
 
-    eventViewModel = EventViewModel(repository, usrRepository, imageRepository)
+    eventViewModel = EventViewModel(repository)
   }
 
   @Test
   fun addEventTest() {
-    `when`(repository.addEvent(eq(event1), any(), any())).thenAnswer { invocation ->
+    val event = testEvents.get(0)
+    `when`(repository.addEvent(eq(event), any(), any())).thenAnswer { invocation ->
       val onSuccess = invocation.arguments[0] as () -> Unit
       onSuccess()
     }
     eventViewModel.addEvent(
-        inputStream, event1, { verify(repository).addEvent(eq(event1), any(), any()) }, {})
+        inputStream, event, { verify(repository).addEvent(eq(event), any(), any()) }, {})
   }
-}
 
-class MockReferenceList<T>(elements: List<T> = emptyList()) : ReferenceList<T> {
-  private val _list = MutableStateFlow(elements)
-  override val list: StateFlow<List<T>> = _list
-  override val uids: List<String>
-    get() = emptyList()
+  @Test
+  fun testFindEventById() {
+    `when`(repository.getEvents(any(), any())).thenAnswer { invocation ->
+      val onSuccess = invocation.arguments[0] as (List<Event>) -> Unit
+      onSuccess(testEvents)
+    }
 
-  override fun add(uid: String) {}
+    eventViewModel.loadEvents()
+    assertEquals(testEvents, eventViewModel.events.value)
 
-  override fun addAll(uids: List<String>) {}
+    runBlocking {
+      val result = eventViewModel.events.first()
 
-  override fun remove(uid: String) {}
+      assertEquals(2, result.size)
+      assertEquals("Balelec", result[0].title)
+      assertEquals("Tremplin Sysmic", result[1].title)
+    }
 
-  override fun requestAll(onSuccess: () -> Unit) {}
+    assertEquals(testEvents[0], eventViewModel.findEventById("1"))
+    assertEquals(testEvents[1], eventViewModel.findEventById("2"))
+    assertEquals(null, eventViewModel.findEventById("3"))
+  }
 
-  override fun contains(uid: String): Boolean {
-    return false
+  @Test
+  fun testSelectEvent() {
+    `when`(repository.getEvents(any(), any())).thenAnswer { invocation ->
+      val onSuccess = invocation.arguments[0] as (List<Event>) -> Unit
+      onSuccess(testEvents)
+    }
+
+    eventViewModel.loadEvents()
+
+    eventViewModel.selectEvent(testEvents[0].uid)
+    assertEquals(testEvents[0], eventViewModel.selectedEvent.value)
   }
 }
