@@ -163,9 +163,9 @@ class AssociationViewModelTest {
           val onSuccess = invocation.arguments[0] as () -> Unit
           onSuccess()
         }
-    viewModel.addAssociation(
-        inputStream,
+    viewModel.saveAssociation(
         testAssociations[0],
+        inputStream,
         { verify(associationRepository).saveAssociation(eq(testAssociations[0]), any(), any()) },
         {})
   }

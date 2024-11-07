@@ -70,24 +70,6 @@ constructor(
     }
   }
 
-  fun addAssociation(
-      inputStream: InputStream,
-      association: Association,
-      onSuccess: () -> Unit,
-      onFailure: (Exception) -> Unit
-  ) {
-    viewModelScope.launch {
-      imageRepository.uploadImage(
-          inputStream,
-          "images/associations/${association.uid}",
-          { uri ->
-            association.image = uri
-            associationRepository.saveAssociation(association, onSuccess, onFailure)
-          },
-          { e -> Log.e("ImageRepository", "Failed to store image : $e") })
-    }
-  }
-
   fun saveAssociation(
       association: Association,
       imageStream: InputStream?,

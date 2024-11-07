@@ -99,24 +99,17 @@ class AssociationRepositoryFirestore @Inject constructor(private val db: Firebas
       onSuccess: (T) -> Unit,
       onFailure: (Exception) -> Unit
   ) {
-    Log.d("AssociationRepositoryFirestore", "Attempting Firestore operation.")
     task.addOnCompleteListener { taskResult ->
       if (taskResult.isSuccessful) {
         val result = taskResult.result
         if (result != null) {
-          Log.d("AssociationRepositoryFirestore", "Firestore operation succeeded with result.")
           onSuccess(result)
         } else {
-          Log.d(
-              "AssociationRepositoryFirestore", "Firestore operation succeeded but result is null.")
           onSuccess(result)
         }
       } else {
         val exception = taskResult.exception
-        exception?.let {
-          Log.e("AssociationRepositoryFirestore", "Error performing Firestore operation", it)
-          onFailure(it)
-        }
+        exception?.let { onFailure(it) }
       }
     }
   }
