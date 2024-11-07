@@ -9,7 +9,6 @@ import com.android.unio.model.association.AssociationRepository
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.event.EventRepository
 import com.android.unio.ui.navigation.NavigationAction
-import com.android.unio.ui.navigation.Screen
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import org.junit.Before
@@ -20,7 +19,6 @@ import org.mockito.Mockito
 import org.mockito.MockitoAnnotations
 import org.mockito.kotlin.any
 import org.mockito.kotlin.mock
-import org.mockito.kotlin.verify
 
 class EditAssociationTest {
 
@@ -60,8 +58,9 @@ class EditAssociationTest {
   fun testEditAssociationScreenDisplaysCorrectly() {
     composeTestRule.setContent {
       EditAssociationScaffold(
-        MockAssociation.createMockAssociation(uid = "1"),
-          navigationAction = navigationAction, onSave = {})
+          MockAssociation.createMockAssociation(uid = "1"),
+          navigationAction = navigationAction,
+          onSave = {})
     }
 
     composeTestRule.waitForIdle()
@@ -80,6 +79,4 @@ class EditAssociationTest {
     }
     compose.assertIsDisplayed()
   }
-
-
 }
