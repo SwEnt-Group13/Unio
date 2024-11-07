@@ -37,7 +37,6 @@ class UserViewModel(val repository: UserRepository, initializeWithAuthenticatedU
     }
 
     _refreshState.value = true
-    _user.value = null
     repository.getUserWithId(
         uid,
         onSuccess = { fetchedUser ->

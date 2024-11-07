@@ -1,6 +1,7 @@
 package com.android.unio.ui.user
 
 import android.annotation.SuppressLint
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -57,7 +58,6 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.android.unio.model.user.User
 import com.android.unio.model.user.UserViewModel
@@ -72,20 +72,32 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun UserProfileScreen(
-    navigationAction: NavigationAction,
-    userViewModel: UserViewModel = viewModel(factory = UserViewModel.Factory)
-) {
+fun UserProfileScreen(userViewModel: UserViewModel, navigationAction: NavigationAction) {
 
   val user by userViewModel.user.collectAsState()
 
+  if (user == null) {
+    Log.e("UserProfileScreen", "User is null.")
+    Toast.makeText(LocalContext.current, "An error occurred.", Toast.LENGTH_SHORT).show()
+    return
+  }
+
   val refreshState by userViewModel.refreshState
-  val pullRefreshState =
-      rememberPullRefreshState(
-          refreshing = refreshState, onRefresh = { userViewModel.refreshUser() })
+
+  UserProfileScreenScaffold(user!!, navigationAction, refreshState) { userViewModel.refreshUser() }
+}
+
+@OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
+@Composable
+fun UserProfileScreenScaffold(
+    user: User,
+    navigationAction: NavigationAction,
+    refreshState: Boolean,
+    onRefresh: () -> Unit
+) {
+  val pullRefreshState = rememberPullRefreshState(refreshing = refreshState, onRefresh = onRefresh)
 
   var showSheet by remember { mutableStateOf(false) }
 
@@ -104,7 +116,7 @@ fun UserProfileScreen(
         BottomNavigationMenu(
             { navigationAction.navigateTo(it.route) }, LIST_TOP_LEVEL_DESTINATION, Route.MY_PROFILE)
       }) { padding ->
-        if (refreshState || user == null) {
+        if (refreshState) {
           Box(
               modifier = Modifier.fillMaxSize().background(Color.White).padding(padding),
               contentAlignment = Alignment.Center) {
@@ -117,7 +129,7 @@ fun UserProfileScreen(
                       .pullRefresh(pullRefreshState)
                       .fillMaxHeight()
                       .verticalScroll(rememberScrollState())) {
-                UserProfileScreenContent(navigationAction, user!!)
+                UserProfileScreenContent(navigationAction, user)
               }
         }
       }
@@ -132,7 +144,7 @@ fun UserProfileScreen(
   UserProfileBottomSheet(showSheet, navigationAction) { showSheet = false }
 }
 
-@OptIn(ExperimentalLayoutApi::class, ExperimentalMaterialApi::class)
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun UserProfileScreenContent(navigationAction: NavigationAction, user: User) {
 

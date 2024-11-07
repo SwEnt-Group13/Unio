@@ -155,7 +155,7 @@ fun UnioApp(authViewModel: AuthViewModel) {
       composable(Screen.SAVED) { SavedScreen(navigationActions) }
     }
     navigation(startDestination = Screen.MY_PROFILE, route = Route.MY_PROFILE) {
-      composable(Screen.MY_PROFILE) { UserProfileScreen(navigationActions, userViewModel) }
+      composable(Screen.MY_PROFILE) { UserProfileScreen(userViewModel, navigationActions) }
       composable(Screen.SETTINGS) { SettingsScreen(navigationActions) }
     }
   }
