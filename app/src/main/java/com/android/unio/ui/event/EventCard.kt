@@ -22,6 +22,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -61,6 +62,7 @@ fun EventCard(
     userViewModel: UserViewModel,
     eventViewModel: EventViewModel
 ) {
+  val user by userViewModel.user.collectAsState()
   var isSaved by remember { mutableStateOf(false) }
   LaunchedEffect(event.uid) { isSaved = userViewModel.isEventSavedForCurrentUser(event.uid) }
 
@@ -115,6 +117,7 @@ fun EventCard(
                       .background(MaterialTheme.colorScheme.inversePrimary)
                       .align(Alignment.TopEnd)
                       .clickable {
+                        if (user == null) return@clickable
                         if (isSaved) {
                           userViewModel.unSaveEventForCurrentUser(
                               event.uid, onSuccess = { isSaved = false })
@@ -122,6 +125,7 @@ fun EventCard(
                           userViewModel.saveEventForCurrentUser(
                               event.uid, onSuccess = { isSaved = true })
                         }
+                        userViewModel.updateUserDebounced(user!!)
                       }
                       .padding(4.dp)) {
                 Icon(
