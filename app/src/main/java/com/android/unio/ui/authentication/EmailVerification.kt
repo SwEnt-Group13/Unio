@@ -91,6 +91,7 @@ fun EmailVerificationScreen(navigationAction: NavigationAction) {
               if (success) {
                 Text("Email verified!", style = AppTypography.titleLarge)
                 Button(
+                    modifier = Modifier.testTag("EmailVerificationContinue"),
                     onClick = { navigationAction.navigateTo(Screen.ACCOUNT_DETAILS) },
                 ) {
                   Text("Continue")
@@ -108,7 +109,10 @@ fun EmailVerificationScreen(navigationAction: NavigationAction) {
                   Text("Resend email", style = AppTypography.labelLarge)
                 }
 
-                Button(onClick = { checkEmailVerification() }) {
+                Button(
+                  modifier = Modifier.testTag("EmailVerificationRefresh"),
+                  onClick = { checkEmailVerification() }
+                ) {
                   Icon(Icons.Outlined.Refresh, contentDescription = "Refresh")
                   Spacer(Modifier.width(8.dp))
                   Text("Refresh", style = AppTypography.labelLarge)
