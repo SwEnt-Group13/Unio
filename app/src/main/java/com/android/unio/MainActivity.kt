@@ -3,8 +3,6 @@ package com.android.unio
 import android.annotation.SuppressLint
 import android.content.pm.ActivityInfo
 import android.os.Bundle
-import android.util.Log
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -136,19 +134,8 @@ fun UnioApp(authViewModel: AuthViewModel) {
       composable(Screen.EXPLORE) {
         ExploreScreen(navigationActions, associationViewModel, searchViewModel)
       }
-      composable(Screen.ASSOCIATION_PROFILE) { navBackStackEntry ->
-        // Get the association UID from the arguments
-        val uid = navBackStackEntry.arguments?.getString("uid")
-
-        // Create the AssociationProfile screen with the association UID
-        uid?.let {
-          AssociationProfileScreen(
-              navigationActions, it, associationViewModel, userViewModel = userViewModel)
-        }
-            ?: run {
-              Log.e("AssociationProfile", "Association UID is null")
-              Toast.makeText(context, "Association UID is null", Toast.LENGTH_SHORT).show()
-            }
+      composable(Screen.ASSOCIATION_PROFILE) {
+        AssociationProfileScreen(navigationActions, associationViewModel, userViewModel)
       }
     }
     navigation(startDestination = Screen.SAVED, route = Route.SAVED) {
