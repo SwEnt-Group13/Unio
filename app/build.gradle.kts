@@ -10,6 +10,8 @@ plugins {
     alias(libs.plugins.gms)
     alias(libs.plugins.sonar)
     id("jacoco")
+    id("kotlin-kapt")
+    id("com.google.dagger.hilt.android")
     kotlin("kapt")
 }
 
@@ -28,13 +30,14 @@ android {
 
 
     defaultConfig {
+        manifestPlaceholders += mapOf()
         applicationId = "com.android.unio"
-        minSdk = 31
+        minSdk = 30
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "com.android.unio.HiltApplication"
         vectorDrawables {
             useSupportLibrary = true
         }
@@ -64,7 +67,7 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
+        kotlinCompilerExtensionVersion = "1.5.7"
     }
     packaging {
         resources {
@@ -180,10 +183,10 @@ dependencies {
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.firebase.storage.ktx)
     implementation(libs.androidx.ui.text.google.fonts)
+    implementation(libs.androidx.compose.material)
+    implementation(libs.core)
 
-  implementation(libs.androidx.compose.material)
-
-  testImplementation(libs.test.core.ktx)
+    testImplementation(libs.test.core.ktx)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
     implementation(libs.material)
@@ -272,10 +275,22 @@ dependencies {
     // For AsyncImage
     implementation(libs.coil.compose)
 
-    // AppSearch
+    // Hilt : Dependency Injection
+    implementation(libs.hilt.android)
+    implementation(libs.androidx.hilt.navigation.compose)
+    implementation(libs.androidx.hilt.navigation.fragment)
+    kapt(libs.hilt.android.compiler)
+
+    testImplementation(libs.hilt.android.testing)
+    kaptTest(libs.hilt.android.compiler.v2511)
+
+    androidTestImplementation(libs.hilt.android.testing)
+    kaptAndroidTest(libs.hilt.android.compiler.v2511)
     implementation(libs.androidx.appsearch)
     implementation(libs.androidx.appsearch.local.storage)
     kapt(libs.androidx.appsearch.compiler)
+
+    //App search
     implementation(libs.guava)
     implementation(libs.kotlinx.coroutines.guava)
 
@@ -286,6 +301,10 @@ dependencies {
     implementation(libs.androidx.preference.ktx)
     implementation(libs.library)
     implementation(libs.accompanist.permissions)
+}
+
+kapt {
+    correctErrorTypes = true
 }
 
 

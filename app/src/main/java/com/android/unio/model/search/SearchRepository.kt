@@ -18,6 +18,8 @@ import com.android.unio.model.event.EventRepository
 import com.android.unio.model.event.toEventDocument
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
+import dagger.hilt.android.qualifiers.ApplicationContext
+import javax.inject.Inject
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
@@ -26,8 +28,10 @@ import kotlinx.coroutines.guava.await
 import kotlinx.coroutines.withContext
 
 /** Repository for searching associations and events */
-class SearchRepository(
-    private val appContext: Context,
+class SearchRepository
+@Inject
+constructor(
+    @ApplicationContext private val appContext: Context,
     private val associationRepository: AssociationRepository,
     private val eventRepository: EventRepository
 ) {
