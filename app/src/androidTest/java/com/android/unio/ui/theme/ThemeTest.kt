@@ -19,7 +19,7 @@ class ThemeTest {
   @Test
   fun testLightTheme() {
     val preferencesFlow: MutableStateFlow<Preferences> =
-      MutableStateFlow(MapPreferences(mapOf(AppPreferences.THEME to AppPreferences.Theme.LIGHT)))
+        MutableStateFlow(MapPreferences(mapOf(AppPreferences.THEME to AppPreferences.Theme.LIGHT)))
 
     composeTestRule.setContent {
       ProvidePreferenceLocals(flow = preferencesFlow) {
@@ -31,7 +31,7 @@ class ThemeTest {
   @Test
   fun testDarkTheme() {
     val preferencesFlow: MutableStateFlow<Preferences> =
-      MutableStateFlow(MapPreferences(mapOf(AppPreferences.THEME to AppPreferences.Theme.DARK)))
+        MutableStateFlow(MapPreferences(mapOf(AppPreferences.THEME to AppPreferences.Theme.DARK)))
 
     composeTestRule.setContent {
       ProvidePreferenceLocals(flow = preferencesFlow) {
@@ -43,7 +43,7 @@ class ThemeTest {
   @Test
   fun testSystemTheme() {
     val preferencesFlow: MutableStateFlow<Preferences> =
-      MutableStateFlow(MapPreferences(mapOf(AppPreferences.THEME to AppPreferences.Theme.SYSTEM)))
+        MutableStateFlow(MapPreferences(mapOf(AppPreferences.THEME to AppPreferences.Theme.SYSTEM)))
 
     composeTestRule.setContent {
       ProvidePreferenceLocals(flow = preferencesFlow) {
@@ -59,13 +59,13 @@ class ThemeTest {
   }
 
   class MapMutablePreferences(private val map: MutableMap<String, Any> = mutableMapOf()) :
-    MutablePreferences {
+      MutablePreferences {
     @Suppress("UNCHECKED_CAST") override fun <T> get(key: String): T? = map[key] as T?
 
     override fun asMap(): Map<String, Any> = map
 
     override fun toMutablePreferences(): MutablePreferences =
-      MapMutablePreferences(map.toMutableMap())
+        MapMutablePreferences(map.toMutableMap())
 
     override fun <T> set(key: String, value: T?) {
       if (value != null) {
@@ -86,6 +86,6 @@ class ThemeTest {
     override fun asMap(): Map<String, Any> = map
 
     override fun toMutablePreferences(): MutablePreferences =
-      MapMutablePreferences(map.toMutableMap())
+        MapMutablePreferences(map.toMutableMap())
   }
 }
