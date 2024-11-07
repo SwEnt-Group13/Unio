@@ -63,7 +63,6 @@ class EditAssociationTest {
       EditAssociationScreen(
           associationId = "1",
           associationViewModel = associationViewModel,
-          imageRepository = mock(),
           navigationAction = navigationAction)
     }
 
@@ -93,7 +92,6 @@ class EditAssociationTest {
       EditAssociationScreen(
           associationId = "1",
           associationViewModel = associationViewModel,
-          imageRepository = mock(),
           navigationAction = mockNavigationAction)
     }
 

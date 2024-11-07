@@ -158,7 +158,6 @@ fun UnioApp(authViewModel: AuthViewModel) {
           EditAssociationScreen(
               associationId = it,
               associationViewModel = associationViewModel,
-              imageRepository = imageRepository,
               navigationAction = navigationActions)
         }
             ?: run {

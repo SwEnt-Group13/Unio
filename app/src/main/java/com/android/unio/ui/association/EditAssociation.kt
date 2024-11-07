@@ -17,7 +17,6 @@ import androidx.compose.ui.unit.dp
 import com.android.unio.R
 import com.android.unio.model.association.AssociationCategory
 import com.android.unio.model.association.AssociationViewModel
-import com.android.unio.model.image.ImageRepository
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
 import kotlinx.coroutines.launch
@@ -26,7 +25,6 @@ import kotlinx.coroutines.launch
 fun EditAssociationScreen(
     associationId: String,
     associationViewModel: AssociationViewModel,
-    imageRepository: ImageRepository,
     navigationAction: NavigationAction,
 ) {
   val context = LocalContext.current
