@@ -19,9 +19,8 @@ import kotlinx.coroutines.launch
  * @property repository The [EventRepository] that provides the events.
  */
 @HiltViewModel
-class EventViewModel @Inject constructor(private val repository: EventRepository) : ViewModel() {
-
-  @Inject lateinit var imageRepository: ImageRepository
+class EventViewModel @Inject constructor(private val repository: EventRepository,
+                                         private val imageRepository: ImageRepository) : ViewModel() {
 
   /**
    * A private mutable state flow that holds the list of events. It is internal to the ViewModel and

@@ -2,17 +2,22 @@ package com.android.unio.model.event
 
 import androidx.test.core.app.ApplicationProvider
 import com.android.unio.mocks.event.MockEvent
-import com.android.unio.model.image.ImageRepository
+import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.google.firebase.FirebaseApp
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
-import java.io.InputStream
-import java.util.GregorianCalendar
+import dagger.Module
+import dagger.hilt.android.testing.BindValue
+import dagger.hilt.android.testing.HiltAndroidRule
+import dagger.hilt.android.testing.HiltAndroidTest
+import io.mockk.MockKAnnotations
+import io.mockk.impl.annotations.MockK
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock
@@ -22,6 +27,8 @@ import org.mockito.MockitoAnnotations
 import org.mockito.kotlin.any
 import org.mockito.kotlin.eq
 import org.robolectric.RobolectricTestRunner
+import java.io.InputStream
+import java.util.GregorianCalendar
 
 @RunWith(RobolectricTestRunner::class)
 class EventViewModelTest {
@@ -29,7 +36,9 @@ class EventViewModelTest {
   @Mock private lateinit var db: FirebaseFirestore
   @Mock private lateinit var collectionReference: CollectionReference
   @Mock private lateinit var inputStream: InputStream
-  @Mock private lateinit var imageRepository: ImageRepository
+
+  @MockK
+  lateinit var imageRepository: ImageRepositoryFirebaseStorage
 
   private lateinit var eventViewModel: EventViewModel
 
@@ -49,13 +58,14 @@ class EventViewModelTest {
   @Before
   fun setUp() {
     MockitoAnnotations.openMocks(this)
+    MockKAnnotations.init(this)
 
     if (FirebaseApp.getApps(ApplicationProvider.getApplicationContext()).isEmpty()) {
       FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext())
     }
     `when`(db.collection(any())).thenReturn(collectionReference)
 
-    eventViewModel = EventViewModel(repository)
+    eventViewModel = EventViewModel(repository, imageRepository)
   }
 
   @Test
@@ -104,4 +114,13 @@ class EventViewModelTest {
     eventViewModel.selectEvent(testEvents[0].uid)
     assertEquals(testEvents[0], eventViewModel.selectedEvent.value)
   }
+
+//  @Module
+//    @InstallIn(SingletonComponent::class)
+//  abstract class ImageModuleTest{
+//    @Binds
+//    abstract fun bindImageRepository(
+//        imageRepositoryFirebaseStorage: ImageRepositoryFirebaseStorage
+//    ): ImageRepository
+//  }
 }
