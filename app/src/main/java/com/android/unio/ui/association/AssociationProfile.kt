@@ -63,7 +63,6 @@ import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.theme.AppTypography
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import kotlinx.serialization.json.JsonNull.content
 
 // These variable are only here for testing purpose. They should be deleted when the screen is
 // linked to the backend
