@@ -100,6 +100,7 @@ object Screen {
   const val MY_PROFILE = "MyProfile Screen"
   const val SETTINGS = "Settings"
   const val ASSOCIATION_PROFILE = "Association Profile Screen/{uid}"
+  const val EDIT_ASSOCIATION = "Edit Assocation Screen/{associationId}"
 
   /**
    * Replace the placeholders in the screen with the provided parameters.
