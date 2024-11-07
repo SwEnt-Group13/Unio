@@ -11,6 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.android.unio.R
@@ -37,7 +38,7 @@ fun EditAssociationScreen(
     Text(
         text = context.getString(R.string.association_not_found),
         color = Color.Red,
-        modifier = Modifier.padding(16.dp))
+        modifier = Modifier.padding(16.dp).testTag("AssociationNotFoundText"))
   } else {
     var url by remember { mutableStateOf(TextFieldValue(association.url)) }
     var name by remember { mutableStateOf(TextFieldValue(association.name)) }
@@ -51,49 +52,55 @@ fun EditAssociationScreen(
     Column(modifier = Modifier.fillMaxSize().padding(16.dp).verticalScroll(rememberScrollState())) {
       Text(
           text = context.getString(R.string.edit_association_title),
-          style = MaterialTheme.typography.headlineMedium)
+          style = MaterialTheme.typography.headlineMedium,
+          modifier = Modifier.testTag("EditAssociationTitle"))
 
       Spacer(modifier = Modifier.height(16.dp))
 
       // Explanation for "Name"
       Text(
           text = context.getString(R.string.name_explanation),
-          style = MaterialTheme.typography.bodySmall)
+          style = MaterialTheme.typography.bodySmall,
+          modifier = Modifier.testTag("NameExplanationText"))
 
       Spacer(modifier = Modifier.height(8.dp))
       OutlinedTextField(
           value = name,
           onValueChange = { name = it },
           label = { Text("Name") },
-          modifier = Modifier.fillMaxWidth())
+          modifier = Modifier.fillMaxWidth().testTag("NameTextField"))
 
       Spacer(modifier = Modifier.height(16.dp))
 
       // Explanation for "Full Name"
       Text(
           text = context.getString(R.string.full_name_explanation),
-          style = MaterialTheme.typography.bodySmall)
+          style = MaterialTheme.typography.bodySmall,
+          modifier = Modifier.testTag("FullNameExplanationText"))
 
       Spacer(modifier = Modifier.height(8.dp))
       OutlinedTextField(
           value = fullName,
           onValueChange = { fullName = it },
           label = { Text("Full Name") },
-          modifier = Modifier.fillMaxWidth())
+          modifier = Modifier.fillMaxWidth().testTag("FullNameTextField"))
 
       Spacer(modifier = Modifier.height(16.dp))
 
       // Explanation for "Category"
       Text(
           text = context.getString(R.string.category_explanation),
-          style = MaterialTheme.typography.bodySmall)
+          style = MaterialTheme.typography.bodySmall,
+          modifier = Modifier.testTag("CategoryExplanationText"))
 
       Spacer(modifier = Modifier.height(8.dp))
 
       // Category Button
-      Button(onClick = { expanded = true }, modifier = Modifier.fillMaxWidth()) {
-        Text(text = category.displayName)
-      }
+      Button(
+          onClick = { expanded = true },
+          modifier = Modifier.fillMaxWidth().testTag("CategoryButton")) {
+            Text(text = category.displayName)
+          }
 
       DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
         AssociationCategory.values().forEach { categoryOption ->
@@ -111,42 +118,45 @@ fun EditAssociationScreen(
       // Explanation for "Description"
       Text(
           text = context.getString(R.string.description_explanation),
-          style = MaterialTheme.typography.bodySmall)
+          style = MaterialTheme.typography.bodySmall,
+          modifier = Modifier.testTag("DescriptionExplanationText"))
 
       Spacer(modifier = Modifier.height(8.dp))
       OutlinedTextField(
           value = description,
           onValueChange = { description = it },
           label = { Text("Description") },
-          modifier = Modifier.fillMaxWidth())
+          modifier = Modifier.fillMaxWidth().testTag("DescriptionTextField"))
 
       Spacer(modifier = Modifier.height(16.dp))
 
       // Explanation for "Image URL"
       Text(
           text = context.getString(R.string.image_explanation),
-          style = MaterialTheme.typography.bodySmall)
+          style = MaterialTheme.typography.bodySmall,
+          modifier = Modifier.testTag("ImageExplanationText"))
 
       Spacer(modifier = Modifier.height(8.dp))
       OutlinedTextField(
           value = image,
           onValueChange = { image = it },
           label = { Text("Image URL") },
-          modifier = Modifier.fillMaxWidth())
+          modifier = Modifier.fillMaxWidth().testTag("ImageTextField"))
 
       Spacer(modifier = Modifier.height(16.dp))
 
       // Explanation for "URL"
       Text(
           text = context.getString(R.string.url_explanation),
-          style = MaterialTheme.typography.bodySmall)
+          style = MaterialTheme.typography.bodySmall,
+          modifier = Modifier.testTag("UrlExplanationText"))
 
       Spacer(modifier = Modifier.height(8.dp))
       OutlinedTextField(
           value = url,
           onValueChange = { url = it },
           label = { Text("URL") },
-          modifier = Modifier.fillMaxWidth())
+          modifier = Modifier.fillMaxWidth().testTag("UrlTextField"))
 
       Spacer(modifier = Modifier.height(24.dp))
 
@@ -158,7 +168,8 @@ fun EditAssociationScreen(
                 onClick = {
                   navigationAction.navigateTo(
                       Screen.withParams(Screen.ASSOCIATION_PROFILE, association.uid))
-                }) {
+                },
+                modifier = Modifier.testTag("CancelButton")) {
                   Text(context.getString(R.string.cancel_button_text))
                 }
 
@@ -191,7 +202,8 @@ fun EditAssociationScreen(
                               .show()
                         })
                   }
-                }) {
+                },
+                modifier = Modifier.testTag("SaveButton")) {
                   Text(context.getString(R.string.save_button_text))
                 }
           }
