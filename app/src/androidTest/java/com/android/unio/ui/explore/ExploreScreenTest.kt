@@ -12,13 +12,16 @@ import com.android.unio.model.association.AssociationRepository
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.event.EventRepository
 import com.android.unio.model.firestore.emptyFirestoreReferenceList
+import com.android.unio.model.search.SearchRepository
 import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.user.User
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
-import io.mockk.mockk
+import io.mockk.MockKAnnotations
+import io.mockk.impl.annotations.MockK
+import io.mockk.spyk
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
@@ -36,6 +39,7 @@ class ExploreScreenTest {
   @Mock private lateinit var collectionReference: CollectionReference
   @Mock private lateinit var associationRepository: AssociationRepository
   private lateinit var searchViewModel: SearchViewModel
+  @MockK(relaxed = true) private lateinit var searchRepository: SearchRepository
   @Mock private lateinit var eventRepository: EventRepository
   private lateinit var associationViewModel: AssociationViewModel
 
@@ -48,7 +52,8 @@ class ExploreScreenTest {
   @Before
   fun setUp() {
     MockitoAnnotations.openMocks(this)
-    searchViewModel = mockk()
+    MockKAnnotations.init(this)
+    searchViewModel = spyk(SearchViewModel(searchRepository))
     navigationAction = mock(NavigationAction::class.java)
 
     // Mock the navigation action to do nothing

@@ -11,6 +11,7 @@ import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.event.Event
 import com.android.unio.model.firestore.firestoreReferenceListWith
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
+import com.android.unio.model.search.SearchRepository
 import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.user.User
 import com.android.unio.model.user.UserRepositoryFirestore
@@ -38,6 +39,7 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import io.mockk.mockkStatic
+import io.mockk.spyk
 import me.zhanghai.compose.preference.ProvidePreferenceLocals
 import org.junit.Before
 import org.junit.Rule
@@ -50,7 +52,8 @@ class ScreenDisplayingTest {
   private lateinit var userViewModel: UserViewModel
   @MockK private lateinit var userRepositoryFirestore: UserRepositoryFirestore
 
-  @MockK private lateinit var searchViewModel: SearchViewModel
+  @MockK private lateinit var searchRepository: SearchRepository
+  private lateinit var searchViewModel: SearchViewModel
 
   @MockK private lateinit var associationViewModel: AssociationViewModel
   @MockK private lateinit var imageRepositoryFirestore: ImageRepositoryFirebaseStorage
@@ -70,6 +73,8 @@ class ScreenDisplayingTest {
     navigationAction = mock { NavHostController::class.java }
     userViewModel = mockk()
     associationViewModel = mockk()
+
+    searchViewModel = spyk(SearchViewModel(searchRepository))
 
     val associations =
         listOf(
@@ -94,6 +99,11 @@ class ScreenDisplayingTest {
 
     // Mocking the Firebase.auth object and it's behaviour
     mockkStatic(FirebaseAuth::class)
+
+    //    every { searchViewModel.associations } returns MutableStateFlow(emptyList())
+    //    every { searchViewModel.events } returns MutableStateFlow(emptyList())
+    //    every { searchViewModel.status } returns MutableStateFlow(SearchViewModel.Status.IDLE)
+
     every { Firebase.auth } returns firebaseAuth
     every { firebaseAuth.currentUser } returns mockFirebaseUser
   }
