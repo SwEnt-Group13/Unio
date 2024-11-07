@@ -27,6 +27,7 @@ import androidx.navigation.navigation
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.authentication.AuthViewModel
 import com.android.unio.model.event.EventListViewModel
+import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.user.UserViewModel
@@ -34,6 +35,7 @@ import com.android.unio.ui.association.AssociationProfileScreen
 import com.android.unio.ui.authentication.AccountDetails
 import com.android.unio.ui.authentication.EmailVerificationScreen
 import com.android.unio.ui.authentication.WelcomeScreen
+import com.android.unio.ui.event.EventScreen
 import com.android.unio.ui.explore.ExploreScreen
 import com.android.unio.ui.home.HomeScreen
 import com.android.unio.ui.map.MapScreen
@@ -44,19 +46,15 @@ import com.android.unio.ui.saved.SavedScreen
 import com.android.unio.ui.settings.SettingsScreen
 import com.android.unio.ui.theme.AppTheme
 import com.android.unio.ui.user.UserProfileScreen
-import com.google.firebase.Firebase
-import com.google.firebase.storage.storage
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.HiltAndroidApp
-import me.zhanghai.compose.preference.ProvidePreferenceLocals
 import javax.inject.Inject
+import me.zhanghai.compose.preference.ProvidePreferenceLocals
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-  @Inject
-  lateinit var imageRepository: ImageRepositoryFirebaseStorage
-
+  @Inject lateinit var imageRepository: ImageRepositoryFirebaseStorage
 
   @SuppressLint("SourceLockedOrientationActivity")
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -83,6 +81,7 @@ fun UnioApp(imageRepository: ImageRepositoryFirebaseStorage) {
   val userViewModel = hiltViewModel<UserViewModel>()
   val searchViewModel = hiltViewModel<SearchViewModel>()
   val authViewModel = hiltViewModel<AuthViewModel>()
+  val eventViewModel = hiltViewModel<EventViewModel>()
 
   val context = LocalContext.current
 
@@ -112,7 +111,20 @@ fun UnioApp(imageRepository: ImageRepositoryFirebaseStorage) {
       }
     }
     navigation(startDestination = Screen.HOME, route = Route.HOME) {
-      composable(Screen.HOME) { HomeScreen(navigationActions, eventListViewModel, userViewModel) }
+      composable(Screen.HOME) {
+        HomeScreen(navigationActions, eventListViewModel, userViewModel = userViewModel)
+      }
+      composable(Screen.EVENT_DETAILS) { navBackStackEntry ->
+        // Get the event UID from the arguments
+        val uid = navBackStackEntry.arguments?.getString("uid")
+        // Create the Event screen with the event UID
+        uid?.let {
+          EventScreen(
+              navigationAction = navigationActions,
+              eventViewModel = eventViewModel,
+              userViewModel = userViewModel)
+        }
+      }
       composable(Screen.MAP) { MapScreen(navigationActions, eventListViewModel) }
     }
     navigation(startDestination = Screen.EXPLORE, route = Route.EXPLORE) {

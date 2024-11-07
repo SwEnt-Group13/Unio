@@ -8,6 +8,7 @@ import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventListViewModel
 import com.android.unio.model.event.EventRepositoryFirestore
+import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.user.UserViewModel
@@ -55,6 +56,9 @@ class ScreenDisplayingTest {
   private lateinit var associationViewModel: AssociationViewModel
 
   private lateinit var eventListViewModel: EventListViewModel
+
+  @MockK lateinit var eventViewModel: EventViewModel
+
   @MockK private lateinit var imageRepositoryFirestore: ImageRepositoryFirebaseStorage
 
   @MockK private lateinit var firebaseAuth: FirebaseAuth
@@ -139,7 +143,12 @@ class ScreenDisplayingTest {
 
   @Test
   fun testEventDisplayed() {
-    composeTestRule.setContent { EventScreen() }
+    composeTestRule.setContent {
+      EventScreen(
+          navigationAction = navigationAction,
+          eventViewModel = eventViewModel,
+          userViewModel = userViewModel)
+    }
     composeTestRule.onNodeWithTag("EventScreen").assertIsDisplayed()
   }
 

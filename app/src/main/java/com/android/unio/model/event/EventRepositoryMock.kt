@@ -127,6 +127,7 @@ open class EventRepositoryMock @Inject constructor() : EventRepository {
     }
   }
 
+  // Mock implementation for getting an event with its id
   override fun getEventWithId(
       id: String,
       onSuccess: (Event) -> Unit,
@@ -153,9 +154,7 @@ open class EventRepositoryMock @Inject constructor() : EventRepository {
       onFailure: (Exception) -> Unit
   ) {
     // Filter mock events by date range
-    getEvents(
-        { events -> onSuccess(events.filter { it.date >= startDate && it.date <= endDate }) },
-        onFailure)
+    getEvents({ events -> onSuccess(events.filter { it.date in startDate..endDate }) }, onFailure)
   }
 
   // Mock implementation to generate a new UID

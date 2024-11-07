@@ -45,7 +45,7 @@ constructor(private val repository: EventRepository, private val imageRepository
    * Loads the list of events from the repository asynchronously using coroutines and updates the
    * internal [MutableStateFlow].
    */
-  private fun loadEvents() {
+  fun loadEvents() {
     // Launch a coroutine in the ViewModel scope to load events asynchronously
     viewModelScope.launch {
       repository.getEvents(
@@ -75,5 +75,19 @@ constructor(private val repository: EventRepository, private val imageRepository
           repository.addEvent(event, onSuccess, onFailure)
         },
         { e -> Log.e("ImageRepository", "Failed to store image : $e") })
+
+    /**
+     * Finds an event in the event list by its ID.
+     *
+     * @param id The ID of the event to find.
+     * @return The event with the given ID, or null if no such event exists.
+     */
+    fun findEventById(id: String): Event? {
+      _events.value
+          .find { it.uid == id }
+          ?.let {
+            return it
+          } ?: return null
+    }
   }
 }

@@ -4,9 +4,14 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.android.unio.model.image.ImageRepository
 import com.android.unio.model.user.UserRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import java.io.InputStream
+import javax.inject.Inject
 
-open class EventViewModel(
+@HiltViewModel
+open class EventViewModel
+@Inject
+constructor(
     val repository: EventRepository,
     val userRepository: UserRepository,
     val imageRepository: ImageRepository

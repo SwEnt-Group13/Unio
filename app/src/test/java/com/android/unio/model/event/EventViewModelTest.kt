@@ -48,6 +48,8 @@ class EventViewModelTest {
           price = 40.5,
           date = Timestamp(GregorianCalendar(2008, 7, 1).time))
 
+  private val testEvents = listOf(event1, event3)
+
   @Before
   fun setUp() {
     MockitoAnnotations.openMocks(this)

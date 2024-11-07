@@ -26,8 +26,8 @@ import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ModalBottomSheet
@@ -204,7 +204,7 @@ fun UserProfileScreenContent(navigationAction: NavigationAction, user: User) {
 
           // Display the associations that the user is a member of.
           if (joinedAssociations.isNotEmpty()) {
-            Divider()
+            HorizontalDivider()
 
             Text("Joined", style = AppTypography.headlineSmall)
             Column(
@@ -221,7 +221,7 @@ fun UserProfileScreenContent(navigationAction: NavigationAction, user: User) {
 
           // Display the associations that the user is following.
           if (followedAssociations.isNotEmpty()) {
-            Divider(modifier = Modifier)
+            HorizontalDivider(modifier = Modifier)
 
             Text("Following", style = AppTypography.headlineSmall)
             Column(
