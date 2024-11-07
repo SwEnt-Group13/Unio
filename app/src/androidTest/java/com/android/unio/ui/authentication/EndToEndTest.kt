@@ -19,6 +19,7 @@ import org.json.JSONObject
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import java.io.File
 
 @LargeTest
 class EndToEndTest {
@@ -26,22 +27,20 @@ class EndToEndTest {
 
   @Before
   fun setUp() {
+    /*Test that the emulators are indeed running*/
+    verifyEmulatorsAreRunning()
+
     Firebase.firestore.useEmulator("10.0.2.2", 8080)
     Firebase.auth.useEmulator("10.0.2.2", 9099)
 
-    /*Test that the emulators are indeed running*/
-    verifyEmulatorsAreRunning()
   }
 
   @Test
-  fun testFlush(){
-    flushAuthenticationClients()
-  }
-
-  @Test
-  fun `Test account creation flow`() {
+  fun testUserCanLoginAndCreateAnAccount() {
     flushFirestoreDatabase()
     flushAuthenticationClients()
+
+    Thread.sleep(3000)
 
     /** Create an account on the welcome screen */
     composeTestRule.onNodeWithTag("WelcomeScreen").assertIsDisplayed()
@@ -62,6 +61,7 @@ class EndToEndTest {
 
     /** Refresh the email verification and continue */
     composeTestRule.onNodeWithTag("EmailVerificationScreen").assertIsDisplayed()
+    Thread.sleep(1000)
     composeTestRule.onNodeWithTag("EmailVerificationRefresh").performClick()
 
     composeTestRule.waitForIdle()
@@ -84,7 +84,7 @@ class EndToEndTest {
     composeTestRule.onNodeWithTag("AccountDetailsContinueButton").performClick()
 
     // Wait until "HomeScreen" is displayed
-    composeTestRule.waitUntil(10000) {
+    composeTestRule.waitUntil(2000) {
       composeTestRule.onNodeWithTag("HomeScreen").isDisplayed()
     }
 
@@ -96,7 +96,10 @@ class EndToEndTest {
     composeTestRule.onNodeWithTag("UserProfileScreen").assertIsDisplayed()
     composeTestRule.onNodeWithTag("UserProfileName").assertTextContains("$FIRST_NAME $LAST_NAME")
     composeTestRule.onNodeWithTag("UserProfileBiography").assertTextContains(BIOGRAPHY)
-    composeTestRule.onNodeWithTag("UserProfileInterest").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("UserProfileInterest: SPORTS", useUnmergedTree = true).assertIsDisplayed()
+    composeTestRule.onNodeWithTag("UserProfileInterest: MUSIC", useUnmergedTree = true).assertIsDisplayed()
+    composeTestRule.onNodeWithTag("UserProfileInterest: ART", useUnmergedTree = true).assertIsDisplayed()
+
 
     Thread.sleep(10000)
   }
@@ -109,7 +112,7 @@ class EndToEndTest {
 
     val response = client.newCall(request).execute()
     val data = response.body?.string()
-    assert(data!!.contains("Ok"))
+    assert(data!!.contains("Ok")){"Start your emulators before running the end to end test"}
   }
 
   private fun getLatestEmailVerificationUrl(): String {
