@@ -2,12 +2,12 @@ package com.android.unio.ui.association
 
 import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
@@ -32,6 +32,7 @@ import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
@@ -74,34 +75,19 @@ private var scope: CoroutineScope? = null
 @Composable
 fun AssociationProfileScreen(
     navigationAction: NavigationAction,
-    associationId: String,
     associationViewModel: AssociationViewModel,
     userViewModel: UserViewModel,
     eventViewModel: EventViewModel
 ) {
-  val context = LocalContext.current
-  val association = associationViewModel.findAssociationById(associationId)
+  val association by associationViewModel.selectedAssociation.collectAsState()
+
   if (association == null) {
-    val error = context.getString(R.string.association_not_found)
-    Log.e("AssociationProfileScreen", error)
-    AssociationProfileScaffold(association = null, navigationAction = navigationAction) { padding ->
-      Column(modifier = Modifier.padding(padding)) {
-        Text(text = error, modifier = Modifier.testTag("associationNotFound"), color = Color.Red)
-      }
-    }
-  } else {
-    AssociationProfileScaffold(association = association, navigationAction = navigationAction) {
-        padding ->
-      AssociationProfileContent(
-          navigationAction,
-          padding,
-          association,
-          associationViewModel,
-          userViewModel,
-          context,
-          eventViewModel)
-    }
+    Log.e("UnioApp", "Association UID not found in arguments")
+    Toast.makeText(LocalContext.current, "Association UID not found", Toast.LENGTH_SHORT).show()
+    return
   }
+
+  AssociationProfileScaffold(association!!, navigationAction, userViewModel)
 }
 
 /**
@@ -109,16 +95,16 @@ fun AssociationProfileScreen(
  * it contains the top bar, the content given in parameter and the snackbar host used on
  * unimplemented features.
  *
- * @param association (Association) : The association to display
- * @param navigationAction (NavigationAction) : The navigation actions of the screen
- * @param content (Composable) : The content of the screen
+ * @param association [Association] : The association to display
+ * @param navigationAction [NavigationAction] : The navigation actions of the screen
+ * @param userViewModel [UserViewModel] : The user view model
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun AssociationProfileScaffold(
-    association: Association?,
+fun AssociationProfileScaffold(
+    association: Association,
     navigationAction: NavigationAction,
-    content: @Composable (padding: PaddingValues) -> Unit
+    userViewModel: UserViewModel
 ) {
   val context = LocalContext.current
   testSnackbar = remember { SnackbarHostState() }
@@ -128,7 +114,7 @@ private fun AssociationProfileScaffold(
         SnackbarHost(
             hostState = testSnackbar!!,
             modifier = Modifier.testTag("associationSnackbarHost"),
-            snackbar = { data ->
+            snackbar = {
               Snackbar {
                 TextButton(
                     onClick = { testSnackbar!!.currentSnackbarData?.dismiss() },
@@ -141,13 +127,7 @@ private fun AssociationProfileScaffold(
       topBar = {
         TopAppBar(
             title = {
-              val title: String
-              if (association != null) {
-                title = association.name
-              } else {
-                title = context.getString(R.string.association_not_found)
-              }
-              Text(text = title, modifier = Modifier.testTag("AssociationProfileTitle"))
+              Text(text = association.name, modifier = Modifier.testTag("AssociationProfileTitle"))
             },
             navigationIcon = {
               IconButton(
@@ -171,7 +151,13 @@ private fun AssociationProfileScaffold(
                   }
             })
       },
-      content = { padding -> content(padding) })
+      content = { padding ->
+        Surface(
+            modifier = Modifier.padding(padding),
+        ) {
+          AssociationProfileContent(navigationAction, association, userViewModel)
+        }
+      })
 }
 
 /**
@@ -179,44 +165,31 @@ private fun AssociationProfileScaffold(
  * elements that should be displayed on the screen, such as the header, the description, the events,
  * (...) separated by spacers.
  *
- * @param padding (PaddingValues) : The padding of the screen
- * @param association (Association) : The association to display
- * @param associationViewModel (AssociationViewModel) : The associations view model
- * @param context (Context) : The context of the screen
+ * @param navigationAction [NavigationAction] : The navigation actions of the screen
+ * @param association [Association] : The association to display
+ * @param userViewModel [UserViewModel] : The user view model
  */
 @Composable
 private fun AssociationProfileContent(
     navigationAction: NavigationAction,
-    padding: PaddingValues,
     association: Association,
-    associationViewModel: AssociationViewModel,
-    userViewModel: UserViewModel,
-    context: Context,
-    eventViewModel: EventViewModel
+    userViewModel: UserViewModel
 ) {
-  Column(
-      modifier =
-          Modifier.padding(padding)
-              .testTag("AssociationScreen")
-              .verticalScroll(rememberScrollState())) {
-        AssociationHeader(association, context)
-        Spacer(modifier = Modifier.size(22.dp))
-        AssociationDescription(association)
-        Spacer(modifier = Modifier.size(15.dp))
-        AssociationEventTitle(context)
-        Spacer(modifier = Modifier.size(11.dp))
-        AssociationProfileEvents(
-            navigationAction,
-            association,
-            associationViewModel,
-            userViewModel,
-            context,
-            eventViewModel)
-        Spacer(modifier = Modifier.size(11.dp))
-        UsersCard(association.members.list.collectAsState().value, context)
-        Spacer(modifier = Modifier.size(61.dp))
-        AssociationRecruitment(association, context)
-      }
+  val context = LocalContext.current
+
+  Column(modifier = Modifier.testTag("AssociationScreen").verticalScroll(rememberScrollState())) {
+    AssociationHeader(association, context)
+    Spacer(modifier = Modifier.size(22.dp))
+    AssociationDescription(association)
+    Spacer(modifier = Modifier.size(15.dp))
+    AssociationEventTitle()
+    Spacer(modifier = Modifier.size(11.dp))
+    AssociationProfileEvents(navigationAction, association, userViewModel)
+    Spacer(modifier = Modifier.size(11.dp))
+    UsersCard(association.members.list.collectAsState().value)
+    Spacer(modifier = Modifier.size(61.dp))
+    AssociationRecruitment(association)
+  }
 }
 
 /**
@@ -228,10 +201,11 @@ private fun AssociationProfileContent(
  * implemented !!!
  *
  * @param association (Association) : The association currently displayed
- * @param context (Context) : The context of the screen
  */
 @Composable
-private fun AssociationRecruitment(association: Association, context: Context) {
+private fun AssociationRecruitment(association: Association) {
+  val context = LocalContext.current
+
   Text(
       text = context.getString(R.string.association_join) + " ${association.name} ?",
       style = AppTypography.headlineMedium,
@@ -276,10 +250,11 @@ private fun AssociationRecruitment(association: Association, context: Context) {
  * the title of the section and then display the different users in the association.
  *
  * @param userList (List<User>) : The list of users in the association that can be contacted
- * @param context (Context) : The context of the screen
  */
 @Composable
-private fun UsersCard(userList: List<User>, context: Context) {
+private fun UsersCard(userList: List<User>) {
+  val context = LocalContext.current
+
   Text(
       context.getString(R.string.association_contact_members),
       style = AppTypography.headlineMedium,
@@ -318,9 +293,9 @@ private fun UsersCard(userList: List<User>, context: Context) {
  * Component that display all the events of the association in a card format, like in the home
  * screen.
  *
+ * @param navigationAction (NavigationAction) : The navigation actions of the screen
  * @param association (Association) : The association currently displayed
- * @param associationViewModel (AssociationViewModel) : The associations view model
- * @param context (Context) : The context of the screen
+ * @param userViewModel (UserViewModel) : The user view model
  */
 @Composable
 private fun AssociationProfileEvents(
@@ -328,14 +303,14 @@ private fun AssociationProfileEvents(
     association: Association,
     associationViewModel: AssociationViewModel,
     userViewModel: UserViewModel,
-    context: Context,
     eventViewModel: EventViewModel
 ) {
+  val context = LocalContext.current
+
   var isSeeMoreClicked by remember { mutableStateOf(false) }
-  var events = emptyList<Event>()
-  associationViewModel.getEventsForAssociation(association) { fetchedEvents ->
-    events = fetchedEvents
-  }
+
+  val events by association.events.list.collectAsState()
+
   if (events.isEmpty()) {
     Text(
         text = context.getString(R.string.association_no_event),
@@ -357,13 +332,17 @@ private fun AssociationProfileEvents(
           }
         }
     Spacer(modifier = Modifier.size(11.dp))
-    OutlinedButton(
-        onClick = { isSeeMoreClicked = true },
-        modifier = Modifier.padding(horizontal = 28.dp).testTag("AssociationSeeMoreButton")) {
-          Icon(Icons.AutoMirrored.Filled.ArrowForward, contentDescription = "See more")
-          Spacer(Modifier.width(2.dp))
-          Text(context.getString(R.string.association_see_more))
-        }
+    if (events.size > 1) {
+      OutlinedButton(
+          onClick = { isSeeMoreClicked = true },
+          modifier = Modifier.padding(horizontal = 28.dp).testTag("AssociationSeeMoreButton")) {
+            Icon(
+                Icons.AutoMirrored.Filled.ArrowForward,
+                contentDescription = context.getString(R.string.association_see_more))
+            Spacer(Modifier.width(2.dp))
+            Text(context.getString(R.string.association_see_more))
+          }
+    }
   }
 }
 
@@ -382,19 +361,16 @@ private fun AssociationEventCard(
   Box(modifier = Modifier.testTag("AssociationEventCard-${event.uid}")) {
     EventCard(
         navigationAction = navigationAction,
-        event = Event(organisers = event.organisers, taggedAssociations = event.taggedAssociations),
+        event = event,
         userViewModel = userViewModel,
         eventViewModel = eventViewModel)
   }
 }
 
-/**
- * Component that introduce the upcoming events of the association.
- *
- * @param context (Context) : The context of the screen
- */
+/** Component that introduces the upcoming events of the association. */
 @Composable
-private fun AssociationEventTitle(context: Context) {
+private fun AssociationEventTitle() {
+  val context = LocalContext.current
   Text(
       context.getString(R.string.association_upcoming_events),
       modifier = Modifier.padding(horizontal = 20.dp).testTag("AssociationEventTitle"),
@@ -440,8 +416,7 @@ private fun AssociationHeader(association: Association, context: Context) {
           style = AppTypography.headlineSmall,
           modifier = Modifier.padding(bottom = 5.dp).testTag("AssociationHeaderFollowers"))
       Text(
-          "${association.members.list.collectAsState().value.size} " +
-              context.getString(R.string.association_member),
+          "${association.members.uids.size} " + context.getString(R.string.association_member),
           style = AppTypography.headlineSmall,
           modifier = Modifier.padding(bottom = 14.dp).testTag("AssociationHeaderMembers"))
       Button(
