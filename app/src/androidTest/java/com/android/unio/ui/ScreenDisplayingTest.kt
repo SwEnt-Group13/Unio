@@ -51,11 +51,9 @@ class ScreenDisplayingTest {
 
   private lateinit var userViewModel: UserViewModel
 
-  @MockK private lateinit var searchRepository: SearchRepository
-  private lateinit var searchViewModel: SearchViewModel
-
   private lateinit var associationViewModel: AssociationViewModel
 
+  @MockK private lateinit var eventRepository: EventRepositoryFirestore
   private lateinit var eventViewModel: EventViewModel
 
   @MockK private lateinit var imageRepositoryFirestore: ImageRepositoryFirebaseStorage
@@ -70,9 +68,13 @@ class ScreenDisplayingTest {
 
   @get:Rule val hiltRule = HiltAndroidRule(this)
 
+  private lateinit var searchViewModel: SearchViewModel
+  @MockK(relaxed = true) private lateinit var searchRepository: SearchRepository
+
   @Before
   fun setUp() {
     MockKAnnotations.init(this, relaxed = true)
+    searchViewModel = spyk(SearchViewModel(searchRepository))
 
     hiltRule.inject()
 
@@ -121,8 +123,12 @@ class ScreenDisplayingTest {
 
   @Test
   fun testHomeDisplayed() {
-    composeTestRule.setContent { HomeScreen(navigationAction, eventViewModel, userViewModel) }
+    composeTestRule.setContent {
+      HomeScreen(navigationAction, eventViewModel, userViewModel, searchViewModel)
+    }
     composeTestRule.onNodeWithTag("HomeScreen").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("searchBar").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("searchBarInput").assertIsDisplayed()
   }
 
   @Test

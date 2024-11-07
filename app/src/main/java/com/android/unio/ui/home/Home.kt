@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -20,10 +19,15 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Place
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DockedSearchBar
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -37,10 +41,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
+import com.android.unio.R
 import com.android.unio.model.event.EventViewModel
+import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.event.EventCard
 import com.android.unio.ui.navigation.BottomNavigationMenu
@@ -48,14 +55,15 @@ import com.android.unio.ui.navigation.LIST_TOP_LEVEL_DESTINATION
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Route
 import com.android.unio.ui.navigation.Screen
-import com.android.unio.ui.theme.AppTypography
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     navigationAction: NavigationAction,
     eventViewModel: EventViewModel,
-    userViewModel: UserViewModel
+    userViewModel: UserViewModel,
+    searchViewModel: SearchViewModel
 ) {
   val events by eventViewModel.events.collectAsState()
   var selectedTab by remember { mutableStateOf("All") }
@@ -70,6 +78,11 @@ fun HomeScreen(
   var followingTabXCoordinate by remember { mutableStateOf(0f) }
 
   val horizontalHeaderPadding = 16.dp
+
+  var searchQuery by remember { mutableStateOf("") }
+  val context = LocalContext.current
+  val searchResults by searchViewModel.events.collectAsState()
+  val searchState by searchViewModel.status.collectAsState()
 
   Scaffold(
       floatingActionButton = {
@@ -93,9 +106,6 @@ fun HomeScreen(
                       .padding(vertical = 16.dp, horizontal = horizontalHeaderPadding)
                       .testTag("event_Header")) {
                 Column {
-                  Text(text = "Upcoming Events", style = AppTypography.headlineMedium)
-                  Spacer(modifier = Modifier.height(8.dp))
-
                   Row(
                       modifier = Modifier.fillMaxWidth(),
                       horizontalArrangement = Arrangement.SpaceBetween) {
@@ -148,30 +158,73 @@ fun HomeScreen(
                       }
 
                   // Underline to indicate selected tab with smooth sliding animation
-                  Box(
-                      modifier =
-                          Modifier.fillMaxWidth() // Makes sure the underline spans the entire width
-                              .padding(top = 4.dp)) {
-                        val selectedTabWidth =
-                            if (selectedTab == "All") allTabWidth else followingTabWidth
-                        Box(
-                            modifier =
-                                Modifier.offset(
-                                        x =
-                                            ((animatablePosition.value *
-                                                    (followingTabXCoordinate - allTabXCoordinate) +
-                                                    allTabXCoordinate) / density)
-                                                .dp - horizontalHeaderPadding)
-                                    .width(selectedTabWidth) // Use the width of the selected tab
-                                    .height(2.dp)
-                                    .background(Color.Blue)
-                                    .testTag("event_UnderlyingBar"))
-                      }
+                  Box(modifier = Modifier.fillMaxWidth().padding(top = 4.dp)) {
+                    val selectedTabWidth =
+                        if (selectedTab == "All") allTabWidth else followingTabWidth
+                    Box(
+                        modifier =
+                            Modifier.offset(
+                                    x =
+                                        ((animatablePosition.value *
+                                                (followingTabXCoordinate - allTabXCoordinate) +
+                                                allTabXCoordinate) / density)
+                                            .dp - horizontalHeaderPadding)
+                                .width(selectedTabWidth)
+                                .height(2.dp)
+                                .background(Color.Blue)
+                                .testTag("event_UnderlyingBar"))
+                  }
                 }
               }
 
+          DockedSearchBar(
+              inputField = {
+                SearchBarDefaults.InputField(
+                    modifier = Modifier.testTag("searchBarInput"),
+                    query = searchQuery,
+                    onQueryChange = {
+                      searchQuery = it
+                      searchViewModel.debouncedSearch(it, SearchViewModel.SearchType.EVENT)
+                    },
+                    onSearch = {},
+                    expanded = false,
+                    onExpandedChange = {},
+                    placeholder = {
+                      Text(text = context.getString(R.string.explore_search_placeholder))
+                    },
+                    trailingIcon = {
+                      if (searchState == SearchViewModel.Status.LOADING) {
+                        CircularProgressIndicator()
+                      } else {
+                        Icon(Icons.Default.Search, contentDescription = "Search icon")
+                      }
+                    },
+                )
+              },
+              expanded = false,
+              onExpandedChange = {},
+              modifier = Modifier.padding(horizontal = 16.dp).testTag("searchBar")) {}
+
           // Event List
-          if (events.isNotEmpty()) {
+          if (searchQuery.isNotEmpty() &&
+              (searchState == SearchViewModel.Status.SUCCESS ||
+                  searchState == SearchViewModel.Status.LOADING)) {
+            if (searchResults.isEmpty()) {
+              Box(
+                  modifier = Modifier.fillMaxSize().padding(paddingValues),
+                  contentAlignment = Alignment.Center) {
+                    Text(context.getString(R.string.explore_search_no_results))
+                  }
+            } else {
+              LazyColumn(
+                  contentPadding = PaddingValues(vertical = 8.dp),
+                  modifier = Modifier.fillMaxSize().padding(horizontal = 32.dp)) {
+                    items(searchResults) { event ->
+                      EventCard(navigationAction, event = event, userViewModel = userViewModel)
+                    }
+                  }
+            }
+          } else if (events.isNotEmpty()) {
             LazyColumn(
                 contentPadding = PaddingValues(vertical = 8.dp),
                 modifier = Modifier.fillMaxSize().padding(horizontal = 32.dp)) {
@@ -185,8 +238,7 @@ fun HomeScreen(
                 contentAlignment = Alignment.Center) {
                   Text(
                       modifier = Modifier.testTag("event_emptyEventPrompt"),
-                      text = "No events available.",
-                      color = Color.White)
+                      text = context.getString(R.string.event_no_events_available))
                 }
           }
         }
