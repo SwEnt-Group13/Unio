@@ -39,6 +39,7 @@ class BottomNavigationTest {
 
   @Before
   fun setUp() {
+    MockKAnnotations.init(this)
     eventRepository = mock { EventRepository::class.java }
     eventViewModel = EventViewModel(eventRepository)
 
@@ -48,15 +49,15 @@ class BottomNavigationTest {
     navHostController = mock { NavHostController::class.java }
     navigationAction = NavigationAction(navHostController)
 
-    MockKAnnotations.init(this)
     searchViewModel = spyk(SearchViewModel(searchRepository))
+
+    composeTestRule.setContent {
+      HomeScreen(navigationAction, eventViewModel, userViewModel, searchViewModel)
+    }
   }
 
   @Test
   fun testBottomNavigationMenuDisplayed() {
-    composeTestRule.setContent {
-      HomeScreen(navigationAction, eventViewModel, userViewModel, searchViewModel)
-    }
     composeTestRule.onNodeWithTag("bottomNavigationMenu").assertIsDisplayed()
   }
 }

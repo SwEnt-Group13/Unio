@@ -11,6 +11,7 @@
     <string name="event_tab_following">Suivis</string>
     <string name="event_add_event">Ajouter un évènement</string>
     <string name="event_no_events_available">Aucun évènement disponible.</string>
+    <string name="event_search_no_results">Aucun évènement trouvé.</string>
 
     <!-- Event Card Strings -->
     <string name="event_event_title">Titre de lévènement</string>

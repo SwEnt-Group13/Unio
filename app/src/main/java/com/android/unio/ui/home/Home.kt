@@ -214,7 +214,7 @@ fun HomeScreen(
               Box(
                   modifier = Modifier.fillMaxSize().padding(paddingValues),
                   contentAlignment = Alignment.Center) {
-                    Text(text = "No events found.")
+                    Text(context.getString(R.string.explore_search_no_results))
                   }
             } else {
               LazyColumn(
@@ -239,7 +239,7 @@ fun HomeScreen(
                 contentAlignment = Alignment.Center) {
                   Text(
                       modifier = Modifier.testTag("event_emptyEventPrompt"),
-                      text = "No events available.")
+                      text = context.getString(R.string.event_no_events_available))
                 }
           }
         }
