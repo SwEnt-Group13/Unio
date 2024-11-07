@@ -147,17 +147,16 @@ fun UnioApp(authViewModel: AuthViewModel) {
 
         associationId?.let {
           EditAssociationScreen(
-            associationId = it,
-            associationViewModel = associationViewModel,
-            imageRepository = imageRepository,
-            navigationAction = navigationActions
-          )
-        } ?: run {
-          Log.e("EditAssociation", "Association ID is null")
-          Toast.makeText(context, "Association ID is null", Toast.LENGTH_SHORT).show()
+              associationId = it,
+              associationViewModel = associationViewModel,
+              imageRepository = imageRepository,
+              navigationAction = navigationActions)
         }
+            ?: run {
+              Log.e("EditAssociation", "Association ID is null")
+              Toast.makeText(context, "Association ID is null", Toast.LENGTH_SHORT).show()
+            }
       }
-
     }
     navigation(startDestination = Screen.SAVED, route = Route.SAVED) {
       composable(Screen.SAVED) { SavedScreen(navigationActions) }

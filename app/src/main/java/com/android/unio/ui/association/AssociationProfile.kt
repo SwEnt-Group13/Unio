@@ -93,7 +93,8 @@ fun AssociationProfileScreen(
   } else {
     AssociationProfileScaffold(association = association, navigationAction = navigationAction) {
         padding ->
-      AssociationProfileContent(padding, association, associationViewModel, userViewModel, context, navigationAction)
+      AssociationProfileContent(
+          padding, association, associationViewModel, userViewModel, context, navigationAction)
     }
   }
 }
@@ -205,19 +206,15 @@ private fun AssociationProfileContent(
         Spacer(modifier = Modifier.size(61.dp))
         AssociationRecruitment(association, context)
 
-          Button(
-              onClick = {
-                  navigationAction.navigateTo(Screen.withParams(Screen.EDIT_ASSOCIATION, association.uid))
-              },
-              modifier = Modifier
-                  .padding(20.dp)
-                  .testTag("EditAssociationButton")
-          ) {
+        Button(
+            onClick = {
+              navigationAction.navigateTo(
+                  Screen.withParams(Screen.EDIT_ASSOCIATION, association.uid))
+            },
+            modifier = Modifier.padding(20.dp).testTag("EditAssociationButton")) {
               Text(text = "edit button")
-          }
+            }
       }
-
-
 }
 
 /**
