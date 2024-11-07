@@ -7,17 +7,13 @@ import com.google.firebase.FirebaseApp
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
-import dagger.Module
-import dagger.hilt.android.testing.BindValue
-import dagger.hilt.android.testing.HiltAndroidRule
-import dagger.hilt.android.testing.HiltAndroidTest
 import io.mockk.MockKAnnotations
+import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
-import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock
@@ -65,6 +61,11 @@ class EventViewModelTest {
     }
     `when`(db.collection(any())).thenReturn(collectionReference)
 
+    every { imageRepository.uploadImage(any(), any(), any(), any()) } answers {
+      val onSuccess = args[2] as (String) -> Unit
+      onSuccess("url")
+    }
+
     eventViewModel = EventViewModel(repository, imageRepository)
   }
 
@@ -72,9 +73,10 @@ class EventViewModelTest {
   fun addEventTest() {
     val event = testEvents.get(0)
     `when`(repository.addEvent(eq(event), any(), any())).thenAnswer { invocation ->
-      val onSuccess = invocation.arguments[0] as () -> Unit
+      val onSuccess = invocation.arguments[1] as () -> Unit
       onSuccess()
     }
+    `when`(repository.getNewUid()).thenReturn("1")
     eventViewModel.addEvent(
         inputStream, event, { verify(repository).addEvent(eq(event), any(), any()) }, {})
   }
