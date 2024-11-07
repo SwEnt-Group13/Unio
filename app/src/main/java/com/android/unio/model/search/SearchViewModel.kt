@@ -43,6 +43,11 @@ class SearchViewModel(private val repository: SearchRepository) : ViewModel() {
     ERROR,
     IDLE
   }
+
+  enum class SearchType {
+    ASSOCIATION,
+    EVENT
+  }
   /** Initializes the ViewModel by creating the search database and connecting it to the session. */
   init {
     viewModelScope.launch { repository.init() }
@@ -60,7 +65,6 @@ class SearchViewModel(private val repository: SearchRepository) : ViewModel() {
       val results = repository.searchAssociations(query)
       _associations.value = results
       status.value = Status.SUCCESS
-      Log.d("SearchViewModel", "searchAssociations: $results")
     }
   }
 
@@ -68,23 +72,37 @@ class SearchViewModel(private val repository: SearchRepository) : ViewModel() {
    * Debounces the search query to avoid making too many requests in a short period of time.
    *
    * @param query The query to search for.
+   * @param searchType The type of search to perform.
    */
-  fun debouncedSearch(query: String) {
+  fun debouncedSearch(query: String, searchType: SearchType) {
     searchJob?.cancel()
-    searchJob =
-        viewModelScope.launch {
-          delay(500)
-          if (query.isNotEmpty()) {
-            searchAssociations(query)
-          } else {
-            clearAssociations()
+    if (query.isEmpty()) {
+      when (searchType) {
+        SearchType.EVENT -> clearEvents()
+        SearchType.ASSOCIATION -> clearAssociations()
+      }
+
+    } else {
+      searchJob =
+          viewModelScope.launch {
+            delay(500)
+            when (searchType) {
+              SearchType.EVENT -> searchEvents(query)
+              SearchType.ASSOCIATION -> searchAssociations(query)
+            }
           }
-        }
+    }
   }
 
   /** Clears the list of associations and sets the search status to [Status.IDLE]. */
-  fun clearAssociations() {
+  private fun clearAssociations() {
     _associations.value = emptyList()
+    status.value = Status.IDLE
+    Log.d("SearchViewModel", status.value.toString())
+  }
+
+  private fun clearEvents() {
+    _events.value = emptyList()
     status.value = Status.IDLE
   }
 
@@ -96,8 +114,10 @@ class SearchViewModel(private val repository: SearchRepository) : ViewModel() {
    */
   fun searchEvents(query: String) {
     viewModelScope.launch {
+      status.value = Status.LOADING
       val results = repository.searchEvents(query)
       _events.value = results
+      status.value = Status.SUCCESS
     }
   }
 

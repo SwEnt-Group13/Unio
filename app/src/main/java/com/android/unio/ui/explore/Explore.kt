@@ -110,7 +110,7 @@ fun ExploreScreenContent(
                   query = searchQuery,
                   onQueryChange = {
                     searchQuery = it
-                    searchViewModel.debouncedSearch(it)
+                    searchViewModel.debouncedSearch(it, SearchViewModel.SearchType.ASSOCIATION)
                   },
                   onSearch = {},
                   expanded = expanded,
