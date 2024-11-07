@@ -12,20 +12,24 @@ import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.navigation.NavigationAction
-import com.google.firebase.Firebase
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.firestore
 import io.mockk.mockk
+import dagger.hilt.android.testing.HiltAndroidRule
+import dagger.hilt.android.testing.HiltAndroidTest
 import java.util.Date
+import javax.inject.Inject
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.mockito.Mockito.mock
 import org.mockito.MockitoAnnotations
 
+@HiltAndroidTest
 class EventCardTest {
 
   @get:Rule val composeTestRule = createComposeRule()
+  @get:Rule val hiltRule = HiltAndroidRule(this)
   private lateinit var navigationAction: NavigationAction
 
   private val sampleEvent =
@@ -34,9 +38,17 @@ class EventCardTest {
           location = MockLocation.createMockLocation(name = "Sample Location"),
           date = Timestamp(Date(2024 - 1900, 6, 20)),
           catchyDescription = "This is a catchy description.")
+  @Inject lateinit var userRepositoryFirestore: UserRepositoryFirestore
+  lateinit var userViewModel: UserViewModel
 
-  private val userViewModel = UserViewModel(UserRepositoryFirestore(Firebase.firestore), false)
-  private lateinit var eventViewModel: EventViewModel
+  @Before
+  fun setUp() {
+    MockitoAnnotations.openMocks(this)
+    hiltRule.inject()
+    navigationAction = mock(NavigationAction::class.java)
+
+    userViewModel = UserViewModel(userRepositoryFirestore)
+  }
 
   private fun setEventScreen(event: Event) {
     composeTestRule.setContent {
@@ -46,13 +58,6 @@ class EventCardTest {
           userViewModel = userViewModel,
           eventViewModel)
     }
-  }
-
-  @Before
-  fun setUp() {
-    MockitoAnnotations.openMocks(this)
-    navigationAction = mock(NavigationAction::class.java)
-    eventViewModel = mockk { EventViewModel::class.java }
   }
 
   @Test

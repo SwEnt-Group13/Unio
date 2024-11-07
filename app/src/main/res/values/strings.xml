@@ -12,6 +12,7 @@
     <string name="event_tab_following">Following</string>
     <string name="event_add_event">Add Event</string>
     <string name="event_no_events_available">No events available.</string>
+    <string name="event_search_no_results">"No events found."</string>
 
     <!-- Event Card Strings -->
     <string name="event_event_title">Event Title</string>
@@ -105,11 +106,18 @@
 
     <!-- Settings Strings -->
     <string name="settings_title" translatable="true">Settings</string>
+    <string name="settings_back_content_description" translatable="true">Go Back</string>
     <string name="settings_theme_title" translatable="true">Theme</string>
     <string name="settings_theme_content_description" translatable="true">Theme Settings</string>
     <string name="settings_notifications_title" translatable="true">Notifications</string>
     <string name="settings_notifications_summary" translatable="true">Enable push notifications</string>
     <string name="settings_notifications_content_description" translatable="true">Notification Settings</string>
+    <string name="settings_location_title" translatable="true">Enable Location Permissions</string>
+    <string name="settings_location_summary_granted" translatable="true">All location permissions have been granted</string>
+    <string name="settings_location_summary_denied" translatable="true">There are missing location permissions</string>
+    <string name="settings_location_content_description" translatable="true">Location Permissions</string>
+    <string name="settings_language_title">Language</string>
+    <string name="settings_language_content_description">Language Settings</string>
 
     <!-- Account Details Strings -->
     <string name="account_details_title" translatable="true">Tell us about yourself</string>

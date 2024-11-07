@@ -11,12 +11,15 @@ import com.google.firebase.auth.auth
 import com.google.firebase.firestore.firestore
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class UserViewModel(val repository: UserRepository, initializeWithAuthenticatedUser: Boolean) :
-    ViewModel() {
+@HiltViewModel
+class UserViewModel @Inject constructor(private val repository: UserRepository) : ViewModel() {
   private val _user = MutableStateFlow<User?>(null)
   val user: StateFlow<User?> = _user
 
@@ -26,17 +29,29 @@ class UserViewModel(val repository: UserRepository, initializeWithAuthenticatedU
   private val debounceInterval: Long = 500
 
   private var updateJob: Job? = null
+  private var initializeWithAuthenticatedUser: Boolean = true
+
+  constructor(
+      repository: UserRepository,
+      initializeWithAuthenticatedUser: Boolean
+  ) : this(repository) {
+    this.initializeWithAuthenticatedUser = initializeWithAuthenticatedUser
+  }
 
   init {
     if (initializeWithAuthenticatedUser) {
       Firebase.auth.addAuthStateListener { auth ->
         if (auth.currentUser != null) {
-          repository.init { getUserByUid(auth.currentUser!!.uid, true) }
+          repository.init { getUserByUid(auth.currentUser!!.uid, initializeWithAuthenticatedUser) }
         }
       }
     } else {
       repository.init {}
     }
+  }
+
+  fun getUsersByUid(uid: String, onSuccess: (User) -> Unit, onFailure: (Exception) -> Unit) {
+    repository.getUserWithId(uid, onSuccess, onFailure)
   }
 
   fun getUserByUid(uid: String, fetchReferences: Boolean = false) {
@@ -133,15 +148,5 @@ class UserViewModel(val repository: UserRepository, initializeWithAuthenticatedU
   fun isEventSavedForCurrentUser(eventUid: String): Boolean {
     val currentUser = getCurrentUserOrError() ?: return false
     return currentUser.savedEvents.contains(eventUid)
-  }
-
-  companion object {
-    val Factory: ViewModelProvider.Factory =
-        object : ViewModelProvider.Factory {
-          @Suppress("UNCHECKED_CAST")
-          override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return UserViewModel(UserRepositoryFirestore(Firebase.firestore), false) as T
-          }
-        }
   }
 }

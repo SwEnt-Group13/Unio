@@ -46,7 +46,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberAsyncImagePainter
 import com.android.unio.R
 import com.android.unio.model.association.Association
@@ -74,7 +73,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 @Composable
 fun AccountDetails(
     navigationAction: NavigationAction,
-    userViewModel: UserViewModel = viewModel(factory = UserViewModel.Factory),
+    userViewModel: UserViewModel,
     imageRepository: ImageRepository
 ) {
   var firstName: String by remember { mutableStateOf("") }

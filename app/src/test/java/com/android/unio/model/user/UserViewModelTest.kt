@@ -1,6 +1,8 @@
 package com.android.unio.model.user
 
+import androidx.test.core.app.ApplicationProvider
 import com.android.unio.mocks.user.MockUser
+import com.google.firebase.FirebaseApp
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
@@ -8,7 +10,10 @@ import io.mockk.verify
 import junit.framework.TestCase.assertEquals
 import org.junit.Before
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
 
+@RunWith(RobolectricTestRunner::class)
 class UserViewModelTest {
   private val user = MockUser.createMockUser()
 
@@ -21,7 +26,11 @@ class UserViewModelTest {
 
     every { repository.init(any()) } returns Unit
 
-    userViewModel = UserViewModel(repository, false)
+    if (FirebaseApp.getApps(ApplicationProvider.getApplicationContext()).isEmpty()) {
+      FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext())
+    }
+
+    userViewModel = UserViewModel(repository)
   }
 
   @Test

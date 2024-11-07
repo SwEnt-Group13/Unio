@@ -11,6 +11,7 @@
     <string name="event_tab_following">Suivis</string>
     <string name="event_add_event">Ajouter un évènement</string>
     <string name="event_no_events_available">Aucun évènement disponible.</string>
+    <string name="event_search_no_results">Aucun évènement trouvé.</string>
 
     <!-- Event Card Strings -->
     <string name="event_event_title">Titre de lévènement</string>
@@ -79,6 +80,12 @@
     <string name="settings_notifications_title">Notifications</string>
     <string name="settings_notifications_summary">Activer les notifications</string>
     <string name="settings_notifications_content_description">Réglages de Notifications</string>
+    <string name="settings_location_title">Activer les permissions de localisation</string>
+    <string name="settings_location_summary_granted">Toutes les permissions de localisation ont été accordées</string>
+    <string name="settings_location_summary_denied">Il manque des permissions de localisation</string>
+    <string name="settings_location_content_description">Réglages de localisation</string>
+    <string name="settings_language_title">Language</string>
+    <string name="settings_language_content_description">Réglages de Langue</string>
 
     <!-- Account Detail Strings -->
     <string name="account_details_title" translatable="true">Ajoutez des informations supplémentaires</string>
@@ -121,6 +128,7 @@
     <string name="interest_food" translatable="true">Nourritue</string>
     <string name="interest_gaming" translatable="true">Gaming</string>
     <string name="interest_festivals" translatable="true">Festivals</string>
+    <string name="settings_back_content_description">Retour</string>
 
 </resources>
 
