@@ -94,7 +94,7 @@ fun AssociationProfileScreen(
     AssociationProfileScaffold(association = association, navigationAction = navigationAction) {
         padding ->
       AssociationProfileContent(
-          padding, association, associationViewModel, userViewModel, context, navigationAction)
+          navigationAction, padding, association, associationViewModel, userViewModel, context)
     }
   }
 }
@@ -187,7 +187,6 @@ private fun AssociationProfileContent(
     associationViewModel: AssociationViewModel,
     userViewModel: UserViewModel,
     context: Context,
-    navigationAction: NavigationAction
 ) {
   Column(
       modifier =
