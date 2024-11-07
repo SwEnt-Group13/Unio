@@ -1,5 +1,9 @@
 package com.android.unio.model.preferences
 
+/**
+ * Constants for the app preferences. The object contains string constants for the keys of the app
+ * preferences, as well as nested objects for specific values of the preferences.
+ */
 object AppPreferences {
   const val THEME = "theme"
   const val NOTIFICATIONS = "notifications"

@@ -63,6 +63,10 @@ fun SettingsScreen(navigationAction: NavigationAction) {
       }
 }
 
+/**
+ * This composable makes use of the ComposePreference API. See
+ * https://github.com/zhanghai/ComposePreference
+ */
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun SettingsContainer() {
