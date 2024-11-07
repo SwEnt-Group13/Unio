@@ -179,4 +179,13 @@ class AssociationProfileTest {
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationProfileTitle"))
     assertDisplayComponentInScroll(composeTestRule.onNodeWithText(this.associations.first().name))
   }
+
+  @Test
+  fun testAssociationProfileNoId() {
+    composeTestRule.setContent {
+      AssociationProfileScreen(navigationAction, associationViewModel, userViewModel)
+    }
+
+    composeTestRule.onNodeWithTag("AssociationScreen").assertIsNotDisplayed()
+  }
 }
