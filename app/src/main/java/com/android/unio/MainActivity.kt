@@ -35,6 +35,7 @@ import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.association.AssociationProfileScreen
+import com.android.unio.ui.association.EditAssociationScreen
 import com.android.unio.ui.authentication.AccountDetails
 import com.android.unio.ui.authentication.EmailVerificationScreen
 import com.android.unio.ui.authentication.WelcomeScreen
@@ -141,6 +142,22 @@ fun UnioApp(authViewModel: AuthViewModel) {
               Toast.makeText(context, "Association UID is null", Toast.LENGTH_SHORT).show()
             }
       }
+      composable(Screen.EDIT_ASSOCIATION) { navBackStackEntry ->
+        val associationId = navBackStackEntry.arguments?.getString("associationId")
+
+        associationId?.let {
+          EditAssociationScreen(
+            associationId = it,
+            associationViewModel = associationViewModel,
+            imageRepository = imageRepository,
+            navigationAction = navigationActions
+          )
+        } ?: run {
+          Log.e("EditAssociation", "Association ID is null")
+          Toast.makeText(context, "Association ID is null", Toast.LENGTH_SHORT).show()
+        }
+      }
+
     }
     navigation(startDestination = Screen.SAVED, route = Route.SAVED) {
       composable(Screen.SAVED) { SavedScreen(navigationActions) }
