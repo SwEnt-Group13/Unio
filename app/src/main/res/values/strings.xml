@@ -101,6 +101,7 @@
 
     <!-- Settings Strings -->
     <string name="settings_title" translatable="true">Settings</string>
+    <string name="settings_back_content_description" translatable="true">Go Back</string>
     <string name="settings_theme_title" translatable="true">Theme</string>
     <string name="settings_theme_content_description" translatable="true">Theme Settings</string>
     <string name="settings_notifications_title" translatable="true">Notifications</string>

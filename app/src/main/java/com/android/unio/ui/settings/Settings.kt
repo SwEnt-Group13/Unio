@@ -53,7 +53,8 @@ fun SettingsScreen(navigationAction: NavigationAction) {
               IconButton(onClick = { navigationAction.goBack() }) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
-                    contentDescription = "Go back")
+                    contentDescription =
+                        context.getString(R.string.settings_back_content_description))
               }
             },
             title = { Text(context.getString(R.string.settings_title)) })
@@ -154,7 +155,9 @@ fun SettingsContainer() {
           },
           icon = {
             Icon(
-                imageVector = Icons.Default.LocationOn, contentDescription = "Location Permissions")
+                imageVector = Icons.Default.LocationOn,
+                contentDescription =
+                    context.getString(R.string.settings_location_content_description))
           },
           onClick = {
             if (!locationPermissions.allPermissionsGranted) {

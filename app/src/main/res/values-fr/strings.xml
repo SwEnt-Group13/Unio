@@ -125,6 +125,7 @@
     <string name="interest_food" translatable="true">Nourritue</string>
     <string name="interest_gaming" translatable="true">Gaming</string>
     <string name="interest_festivals" translatable="true">Festivals</string>
+    <string name="settings_back_content_description">Retour</string>
 
 </resources>
 
