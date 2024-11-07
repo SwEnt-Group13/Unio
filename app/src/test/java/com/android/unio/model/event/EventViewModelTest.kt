@@ -48,6 +48,8 @@ class EventViewModelTest {
           price = 40.5,
           date = Timestamp(GregorianCalendar(2008, 7, 1).time))
 
+  private val testEvents = listOf(event1, event3)
+
   @Before
   fun setUp() {
     MockitoAnnotations.openMocks(this)
@@ -75,7 +77,7 @@ class EventViewModelTest {
     val viewModel = EventViewModel.Factory.create(EventViewModel::class.java)
     assertTrue(viewModel is EventViewModel)
 
-    val eventViewModel = viewModel as EventViewModel
+    val eventViewModel = viewModel
     assertTrue(eventViewModel.repository is EventRepositoryFirestore)
     assertTrue(eventViewModel.userRepository is UserRepositoryFirestore)
   }

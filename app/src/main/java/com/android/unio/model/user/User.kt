@@ -59,7 +59,7 @@ data class User(
     val joinedAssociations: ReferenceList<Association>,
     val interests: List<Interest>,
     val socials: List<UserSocial>,
-    val profilePicture: String
+    val profilePicture: String,
 ) {
   companion object
 }

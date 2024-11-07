@@ -8,6 +8,7 @@ import androidx.navigation.NavHostController
 import com.android.unio.mocks.association.MockAssociation
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.event.Event
+import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.user.UserRepositoryFirestore
@@ -49,6 +50,7 @@ class ScreenDisplayingTest {
 
   @MockK private lateinit var searchViewModel: SearchViewModel
 
+  @MockK private lateinit var eventViewModel: EventViewModel
   @MockK private lateinit var associationViewModel: AssociationViewModel
   @MockK private lateinit var imageRepositoryFirestore: ImageRepositoryFirebaseStorage
 
@@ -67,6 +69,7 @@ class ScreenDisplayingTest {
     navigationAction = mock { NavHostController::class.java }
     userViewModel = mockk()
     associationViewModel = mockk()
+    eventViewModel = mockk()
 
     val associations = MockAssociation.createAllMockAssociations(size = 2)
 
@@ -126,7 +129,12 @@ class ScreenDisplayingTest {
 
   @Test
   fun testEventDisplayed() {
-    composeTestRule.setContent { EventScreen() }
+    composeTestRule.setContent {
+      EventScreen(
+          navigationAction = navigationAction,
+          eventViewModel = eventViewModel,
+          userViewModel = userViewModel)
+    }
     composeTestRule.onNodeWithTag("EventScreen").assertIsDisplayed()
   }
 

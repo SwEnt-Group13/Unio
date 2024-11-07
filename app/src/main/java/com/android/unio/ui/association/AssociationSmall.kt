@@ -6,7 +6,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowForwardIos
+import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -26,7 +26,7 @@ fun AssociationSmall(association: Association, onClick: () -> Unit) {
           Text(text = association.name, style = AppTypography.bodyMedium)
           Icon(
               modifier = Modifier.size(18.dp),
-              imageVector = Icons.Default.ArrowForwardIos,
+              imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
               contentDescription = null,
           )
         }
