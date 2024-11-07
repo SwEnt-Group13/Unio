@@ -7,6 +7,7 @@ import com.android.unio.mocks.association.MockAssociation
 import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationRepository
 import com.android.unio.model.association.AssociationViewModel
+import com.android.unio.model.event.EventRepository
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
 import com.google.firebase.firestore.CollectionReference
@@ -28,6 +29,7 @@ class EditAssociationTest {
   @Mock private lateinit var collectionReference: CollectionReference
   @Mock private lateinit var db: FirebaseFirestore
   @Mock private lateinit var associationRepository: AssociationRepository
+  @Mock private lateinit var eventRepository: EventRepository
   private lateinit var associationViewModel: AssociationViewModel
 
   private lateinit var associations: List<Association>
@@ -53,7 +55,7 @@ class EditAssociationTest {
     navHostController = mock()
     navigationAction = NavigationAction(navHostController)
 
-    associationViewModel = AssociationViewModel(associationRepository, mock())
+    associationViewModel = AssociationViewModel(associationRepository, eventRepository)
     associationViewModel.getAssociations()
   }
 
