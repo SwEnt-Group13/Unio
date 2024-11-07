@@ -2,32 +2,83 @@ package com.android.unio.model.event
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
-import com.android.unio.model.user.UserRepository
-import com.android.unio.model.user.UserRepositoryFirestore
-import com.google.firebase.Firebase
-import com.google.firebase.firestore.firestore
 import java.io.InputStream
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 
-open class EventViewModel(val repository: EventRepository, val userRepository: UserRepository) :
-    ViewModel() {
+/**
+ * ViewModel class that manages the event list data and provides it to the UI. It uses an
+ * [EventRepository] to load the list of events and exposes them through a [StateFlow] to be
+ * observed by the UI.
+ *
+ * @property repository The [EventRepository] that provides the events.
+ */
+class EventViewModel(private val repository: EventRepository) : ViewModel() {
 
-  companion object {
-    val Factory: ViewModelProvider.Factory =
-        object : ViewModelProvider.Factory {
-          @Suppress("UNCHECKED_CAST")
-          override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            // Check if the requested model class is EventViewModel
-            if (modelClass.isAssignableFrom(EventViewModel::class.java)) {
-              return EventViewModel(
-                  EventRepositoryFirestore(Firebase.firestore),
-                  UserRepositoryFirestore(Firebase.firestore))
-                  as T
-            }
-            throw IllegalArgumentException("Unknown ViewModel class")
-          }
-        }
+  /**
+   * A private mutable state flow that holds the list of events. It is internal to the ViewModel and
+   * cannot be modified from the outside.
+   */
+  private val _events = MutableStateFlow<List<Event>>(emptyList())
+
+  /**
+   * A public immutable [StateFlow] that exposes the list of events to the UI. This flow can only be
+   * observed and not modified.
+   */
+  val events: StateFlow<List<Event>> = _events
+
+  private val _selectedEvent = MutableStateFlow<Event?>(null)
+
+  val selectedEvent: StateFlow<Event?> = _selectedEvent
+
+  /** Initializes the ViewModel by loading the events from the repository. */
+  init {
+    repository.init { loadEvents() }
+  }
+
+  /**
+   * Loads the list of events from the repository asynchronously using coroutines and updates the
+   * internal [MutableStateFlow].
+   */
+  fun loadEvents() {
+    // Launch a coroutine in the ViewModel scope to load events asynchronously
+    viewModelScope.launch {
+      repository.getEvents(
+          onSuccess = { eventList ->
+            _events.value = eventList // Update the state flow with the loaded events
+          },
+          onFailure = { exception ->
+            // Handle error (e.g., log it, show a message to the user)
+            Log.e("EventViewModel", "An error occurred while loading events: $exception")
+            _events.value = emptyList() // Clear events on failure or handle accordingly
+          })
+    }
+  }
+
+  /**
+   * Selects an event given its id.
+   *
+   * @param eventId the ID of the event to select.
+   */
+  fun selectEvent(eventId: String) {
+    _selectedEvent.value = findEventById(eventId)
+  }
+
+  /**
+   * Finds an event in the event list by its ID.
+   *
+   * @param id The ID of the event to find.
+   * @return The event with the given ID, or null if no such event exists.
+   */
+  fun findEventById(id: String): Event? {
+    _events.value
+        .find { it.uid == id }
+        ?.let {
+          return it
+        } ?: return null
   }
 
   /** Add a new event to the repository. It uploads the event image first, then adds the event. */
