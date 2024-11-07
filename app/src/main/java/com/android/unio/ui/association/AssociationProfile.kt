@@ -60,6 +60,7 @@ import com.android.unio.model.user.User
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.event.EventCard
 import com.android.unio.ui.navigation.NavigationAction
+import com.android.unio.ui.navigation.Screen
 import com.android.unio.ui.theme.AppTypography
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -80,6 +81,7 @@ fun AssociationProfileScreen(
 ) {
   val context = LocalContext.current
   val association = associationViewModel.findAssociationById(associationId)
+
   if (association == null) {
     val error = context.getString(R.string.association_not_found)
     Log.e("AssociationProfileScreen", error)
@@ -91,7 +93,7 @@ fun AssociationProfileScreen(
   } else {
     AssociationProfileScaffold(association = association, navigationAction = navigationAction) {
         padding ->
-      AssociationProfileContent(padding, association, associationViewModel, userViewModel, context)
+      AssociationProfileContent(padding, association, associationViewModel, userViewModel, context, navigationAction)
     }
   }
 }
@@ -182,7 +184,8 @@ private fun AssociationProfileContent(
     association: Association,
     associationViewModel: AssociationViewModel,
     userViewModel: UserViewModel,
-    context: Context
+    context: Context,
+    navigationAction: NavigationAction
 ) {
   Column(
       modifier =
@@ -201,7 +204,20 @@ private fun AssociationProfileContent(
         UsersCard(association.members.list.collectAsState().value, context)
         Spacer(modifier = Modifier.size(61.dp))
         AssociationRecruitment(association, context)
+
+          Button(
+              onClick = {
+                  navigationAction.navigateTo(Screen.withParams(Screen.EDIT_ASSOCIATION, association.uid))
+              },
+              modifier = Modifier
+                  .padding(20.dp)
+                  .testTag("EditAssociationButton")
+          ) {
+              Text(text = "edit button")
+          }
       }
+
+
 }
 
 /**
