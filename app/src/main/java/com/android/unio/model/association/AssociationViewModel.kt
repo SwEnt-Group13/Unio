@@ -28,6 +28,9 @@ class AssociationViewModel(
   val associationsByCategory: StateFlow<Map<AssociationCategory, List<Association>>> =
       _associationsByCategory
 
+  private val _selectedAssociation = MutableStateFlow<Association?>(null)
+  val selectedAssociation: StateFlow<Association?> = _selectedAssociation
+
   init {
     associationRepository.init { getAssociations() }
   }
@@ -108,5 +111,13 @@ class AssociationViewModel(
         ?.let {
           return it
         } ?: return null
+  }
+
+  fun selectAssociation(associationId: String) {
+    _selectedAssociation.value =
+        findAssociationById(associationId).also {
+          it?.events?.requestAll()
+          it?.members?.requestAll()
+        }
   }
 }
