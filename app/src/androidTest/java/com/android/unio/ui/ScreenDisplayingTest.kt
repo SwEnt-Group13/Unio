@@ -122,8 +122,12 @@ class ScreenDisplayingTest {
 
   @Test
   fun testHomeDisplayed() {
-    composeTestRule.setContent { HomeScreen(navigationAction, eventViewModel, userViewModel, searchViewModel) }
+    composeTestRule.setContent {
+      HomeScreen(navigationAction, eventViewModel, userViewModel, searchViewModel)
+    }
     composeTestRule.onNodeWithTag("HomeScreen").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("searchBar").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("searchBarInput").assertIsDisplayed()
   }
 
   @Test
