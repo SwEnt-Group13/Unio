@@ -100,7 +100,6 @@ class SearchViewModel @Inject constructor(private val repository: SearchReposito
   private fun clearAssociations() {
     _associations.value = emptyList()
     status.value = Status.IDLE
-    Log.d("SearchViewModel", status.value.toString())
   }
 
   private fun clearEvents() {
