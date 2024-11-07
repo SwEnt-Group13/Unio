@@ -19,6 +19,8 @@
     <!-- Accessibility and Content Descriptions -->
     <string name="event_map_button_description">Ouvrir la carte pour ajouter un évènement</string>
     <string name="event_image_description">Image de l\'évènement</string>
+    <string name="event_save_button_description">Icone pour sauvegarder un évènement</string>
+    <string name="event_share_button_description">Icone pour partager un évènement</string>
 
     <!-- Event Types Strings from EventType.kt -->
     <string name="event_type_festival">Festival</string>
@@ -48,6 +50,8 @@
 
     <!-- Explore Screen Strings -->
     <string name="explore_search_placeholder">Recherche</string>
+    <string name="explore_search_error_message">Une erreur s\'est produite lors de la recherche</string>
+    <string name="explore_search_no_results">Aucun résultat trouvé</string>
 
     <!-- Map Screen Strings -->
     <string name="map_event_go_back_button">Retour</string>

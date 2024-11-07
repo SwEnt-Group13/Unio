@@ -15,10 +15,6 @@ import java.util.UUID
  * testing with specific data.
  */
 open class EventRepositoryMock : EventRepository {
-  override fun init(onSuccess: () -> Unit) {
-    // This is a mock, so we assume the repository is initialized successfully
-    onSuccess()
-  }
 
   /**
    * Retrieves a list of mock events.
@@ -126,11 +122,14 @@ open class EventRepositoryMock : EventRepository {
     }
   }
 
+  // Mock implementation for getting an event with its id
   override fun getEventWithId(
       id: String,
       onSuccess: (Event) -> Unit,
       onFailure: (Exception) -> Unit
   ) {}
+
+  override fun init(onSuccess: () -> Unit) {}
 
   // Mock implementation for getting events by association
   override fun getEventsOfAssociation(
@@ -154,9 +153,7 @@ open class EventRepositoryMock : EventRepository {
       onFailure: (Exception) -> Unit
   ) {
     // Filter mock events by date range
-    getEvents(
-        { events -> onSuccess(events.filter { it.date >= startDate && it.date <= endDate }) },
-        onFailure)
+    getEvents({ events -> onSuccess(events.filter { it.date in startDate..endDate }) }, onFailure)
   }
 
   // Mock implementation to generate a new UID

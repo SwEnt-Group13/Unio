@@ -8,9 +8,11 @@ import androidx.navigation.NavHostController
 import com.android.unio.mocks.association.MockAssociation
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.event.Event
+import com.android.unio.model.event.EventRepositoryFirestore
+import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
+import com.android.unio.model.search.SearchRepository
 import com.android.unio.model.search.SearchViewModel
-import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.association.AssociationProfileScreen
 import com.android.unio.ui.authentication.AccountDetails
@@ -35,6 +37,7 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import io.mockk.mockkStatic
+import io.mockk.spyk
 import me.zhanghai.compose.preference.ProvidePreferenceLocals
 import org.junit.Before
 import org.junit.Rule
@@ -45,10 +48,11 @@ class ScreenDisplayingTest {
 
   private lateinit var navigationAction: NavigationAction
   private lateinit var userViewModel: UserViewModel
-  @MockK private lateinit var userRepositoryFirestore: UserRepositoryFirestore
 
+  @MockK private lateinit var searchRepository: SearchRepository
   @MockK private lateinit var searchViewModel: SearchViewModel
-
+  @MockK private lateinit var eventRepository: EventRepositoryFirestore
+  private lateinit var eventViewModel: EventViewModel
   @MockK private lateinit var associationViewModel: AssociationViewModel
   @MockK private lateinit var imageRepositoryFirestore: ImageRepositoryFirebaseStorage
 
@@ -67,8 +71,19 @@ class ScreenDisplayingTest {
     navigationAction = mock { NavHostController::class.java }
     userViewModel = mockk()
     associationViewModel = mockk()
+    eventRepository = mockk()
+
+    every { eventRepository.init(any()) } answers {}
+    eventViewModel = EventViewModel(eventRepository)
+
+    every { eventRepository.getEvents(any(), any()) } answers
+        {
+          val onSuccess = args[1] as (List<Event>) -> Unit
+          onSuccess(emptyList())
+        }
 
     val associations = MockAssociation.createAllMockAssociations(size = 2)
+    searchViewModel = spyk(SearchViewModel(searchRepository))
 
     every { associationViewModel.findAssociationById(any()) } returns associations.first()
     every { associationViewModel.getEventsForAssociation(any(), any()) } answers
@@ -105,7 +120,7 @@ class ScreenDisplayingTest {
 
   @Test
   fun testHomeDisplayed() {
-    composeTestRule.setContent { HomeScreen(navigationAction) }
+    composeTestRule.setContent { HomeScreen(navigationAction, eventViewModel) }
     composeTestRule.onNodeWithTag("HomeScreen").assertIsDisplayed()
   }
 
@@ -120,13 +135,18 @@ class ScreenDisplayingTest {
 
   @Test
   fun testMapDisplayed() {
-    composeTestRule.setContent { MapScreen(navigationAction) }
+    composeTestRule.setContent { MapScreen(navigationAction, eventViewModel) }
     composeTestRule.onNodeWithTag("MapScreen").assertIsDisplayed()
   }
 
   @Test
   fun testEventDisplayed() {
-    composeTestRule.setContent { EventScreen() }
+    composeTestRule.setContent {
+      EventScreen(
+          navigationAction = navigationAction,
+          eventViewModel = eventViewModel,
+          userViewModel = userViewModel)
+    }
     composeTestRule.onNodeWithTag("EventScreen").assertIsDisplayed()
   }
 
