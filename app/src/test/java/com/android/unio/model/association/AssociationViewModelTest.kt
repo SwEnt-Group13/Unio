@@ -156,7 +156,7 @@ class AssociationViewModelTest {
 
   @Test
   fun testAddAssociation() {
-    `when`(associationRepository.addAssociation(eq(testAssociations[0]), any(), any()))
+    `when`(associationRepository.saveAssociation(eq(testAssociations[0]), any(), any()))
         .thenAnswer { invocation ->
           val onSuccess = invocation.arguments[0] as () -> Unit
           onSuccess()
@@ -164,7 +164,7 @@ class AssociationViewModelTest {
     viewModel.addAssociation(
         inputStream,
         testAssociations[0],
-        { verify(associationRepository).addAssociation(eq(testAssociations[0]), any(), any()) },
+        { verify(associationRepository).saveAssociation(eq(testAssociations[0]), any(), any()) },
         {})
   }
 }
