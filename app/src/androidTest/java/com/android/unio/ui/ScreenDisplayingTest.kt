@@ -6,6 +6,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.android.unio.mocks.association.MockAssociation
+import com.android.unio.mocks.user.MockUser
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventRepositoryFirestore
@@ -13,6 +14,8 @@ import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.search.SearchRepository
 import com.android.unio.model.search.SearchViewModel
+import com.android.unio.model.user.User
+import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.association.AssociationProfileScreen
 import com.android.unio.ui.authentication.AccountDetails
@@ -45,10 +48,12 @@ import org.junit.Test
 import org.mockito.kotlin.mock
 
 class ScreenDisplayingTest {
+  private val user = MockUser.createMockUser()
 
   private lateinit var navigationAction: NavigationAction
-  private lateinit var userViewModel: UserViewModel
 
+  @MockK private lateinit var userRepository: UserRepositoryFirestore
+  private lateinit var userViewModel: UserViewModel
   @MockK private lateinit var searchRepository: SearchRepository
   @MockK private lateinit var searchViewModel: SearchViewModel
   @MockK private lateinit var eventRepository: EventRepositoryFirestore
@@ -69,9 +74,17 @@ class ScreenDisplayingTest {
     MockKAnnotations.init(this, relaxed = true)
 
     navigationAction = mock { NavHostController::class.java }
-    userViewModel = mockk()
     associationViewModel = mockk()
     eventRepository = mockk()
+
+    every { userRepository.init(any()) } returns Unit
+    every { userRepository.getUserWithId("123", any(), any()) } answers
+        {
+          val onSuccess = it.invocation.args[1] as (User) -> Unit
+          onSuccess(user)
+        }
+    userViewModel = UserViewModel(userRepository, false)
+    userViewModel.getUserByUid("123")
 
     every { eventRepository.init(any()) } answers {}
     eventViewModel = EventViewModel(eventRepository)
@@ -120,7 +133,7 @@ class ScreenDisplayingTest {
 
   @Test
   fun testHomeDisplayed() {
-    composeTestRule.setContent { HomeScreen(navigationAction, eventViewModel) }
+    composeTestRule.setContent { HomeScreen(navigationAction, eventViewModel, userViewModel) }
     composeTestRule.onNodeWithTag("HomeScreen").assertIsDisplayed()
   }
 
@@ -135,7 +148,7 @@ class ScreenDisplayingTest {
 
   @Test
   fun testMapDisplayed() {
-    composeTestRule.setContent { MapScreen(navigationAction, eventViewModel) }
+    composeTestRule.setContent { MapScreen(navigationAction, eventViewModel, userViewModel) }
     composeTestRule.onNodeWithTag("MapScreen").assertIsDisplayed()
   }
 
