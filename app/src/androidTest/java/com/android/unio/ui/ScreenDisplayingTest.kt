@@ -11,6 +11,7 @@ import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventRepositoryFirestore
 import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
+import com.android.unio.model.search.SearchRepository
 import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.association.AssociationProfileScreen
@@ -48,6 +49,7 @@ class ScreenDisplayingTest {
   private lateinit var navigationAction: NavigationAction
   private lateinit var userViewModel: UserViewModel
 
+  @MockK private lateinit var searchRepository: SearchRepository
   @MockK private lateinit var searchViewModel: SearchViewModel
   @MockK private lateinit var eventRepository: EventRepositoryFirestore
   private lateinit var eventViewModel: EventViewModel
