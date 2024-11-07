@@ -10,21 +10,21 @@ import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventRepository
 import com.android.unio.model.event.EventRepositoryMock
 import com.android.unio.model.event.EventViewModel
+import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.search.SearchRepository
 import com.android.unio.model.search.SearchViewModel
-import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.home.HomeScreen
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
-import io.mockk.MockKAnnotations
-import io.mockk.impl.annotations.MockK
-import io.mockk.spyk
 import com.android.unio.ui.navigation.TopLevelDestination
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
+import io.mockk.MockKAnnotations
 import io.mockk.every
+import io.mockk.impl.annotations.MockK
+import io.mockk.spyk
 import io.mockk.verify
 import javax.inject.Inject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -58,8 +58,8 @@ class EventListOverviewTest {
   @Before
   fun setUp() {
     MockKAnnotations.init(this)
-      hiltRule.inject()
-      searchViewModel = spyk(SearchViewModel(searchRepository))
+    hiltRule.inject()
+    searchViewModel = spyk(SearchViewModel(searchRepository))
     every { navigationAction.navigateTo(any(TopLevelDestination::class)) } returns Unit
     every { navigationAction.navigateTo(any(String::class)) } returns Unit
     userViewModel = UserViewModel(userRepository)
