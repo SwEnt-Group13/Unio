@@ -33,12 +33,12 @@ import com.android.unio.model.preferences.AppPreferences
 import com.android.unio.ui.navigation.NavigationAction
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
+import java.util.Locale
 import me.zhanghai.compose.preference.LocalPreferenceFlow
 import me.zhanghai.compose.preference.ProvidePreferenceLocals
 import me.zhanghai.compose.preference.listPreference
 import me.zhanghai.compose.preference.preference
 import me.zhanghai.compose.preference.switchPreference
-import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
