@@ -38,7 +38,7 @@ fun EditAssociationScreen(
     Text(
         text = context.getString(R.string.association_not_found),
         color = Color.Red,
-        modifier = Modifier.padding(16.dp).testTag("AssociationNotFoundText"))
+        modifier = Modifier.padding(16.dp).testTag("associationNotFound"))
   } else {
     var url by remember { mutableStateOf(TextFieldValue(association.url)) }
     var name by remember { mutableStateOf(TextFieldValue(association.name)) }
@@ -203,7 +203,7 @@ fun EditAssociationScreen(
                         })
                   }
                 },
-                modifier = Modifier.testTag("SaveButton")) {
+                modifier = Modifier.testTag("saveButton")) {
                   Text(context.getString(R.string.save_button_text))
                 }
           }

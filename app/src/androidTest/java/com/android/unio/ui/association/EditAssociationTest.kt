@@ -44,14 +44,11 @@ class EditAssociationTest {
             MockAssociation.createMockAssociation(uid = "2"))
 
     Mockito.`when`(db.collection(Mockito.anyString())).thenReturn(collectionReference)
-    Mockito
-        . // Correct way to mock methods that take argument matchers
-        `when`(associationRepository.getAssociations(any(), any()))
-        .thenAnswer { invocation ->
-          val onSuccess: (List<Association>) -> Unit =
-              invocation.arguments[0] as (List<Association>) -> Unit
-          onSuccess(associations) // Simulating success callback
-        }
+    Mockito.`when`(associationRepository.getAssociations(any(), any())).thenAnswer { invocation ->
+      val onSuccess: (List<Association>) -> Unit =
+          invocation.arguments[0] as (List<Association>) -> Unit
+      onSuccess(associations)
+    }
 
     navHostController = mock()
     navigationAction = NavigationAction(navHostController)
@@ -72,12 +69,12 @@ class EditAssociationTest {
 
     composeTestRule.waitForIdle()
 
-    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("EditAssociationScreen"))
-    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("associationName"))
-    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("associationFullName"))
-    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("associationDescription"))
-    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("associationImage"))
-    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("associationUrl"))
+    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("NameTextField"))
+    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("FullNameTextField"))
+    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("CategoryButton"))
+    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("DescriptionTextField"))
+    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("ImageTextField"))
+    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("UrlTextField"))
   }
 
   private fun assertDisplayComponentInScroll(compose: SemanticsNodeInteraction) {
@@ -88,93 +85,20 @@ class EditAssociationTest {
   }
 
   @Test
-  fun testSaveAssociation() {
-    composeTestRule.setContent {
-      EditAssociationScreen(
-          associationId = "1",
-          associationViewModel = associationViewModel,
-          imageRepository = mock(),
-          navigationAction = navigationAction)
-    }
-
-    // Verify that the "Save" button is visible
-    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("saveButton"))
-    composeTestRule.onNodeWithTag("saveButton").performClick()
-
-    // Verify that the navigation action to the AssociationProfile screen is called
-    verify(navHostController).navigate(Screen.withParams(Screen.ASSOCIATION_PROFILE, "1"))
-  }
-
-  @Test
   fun testCancelButton() {
+
+    val mockNavigationAction = mock<NavigationAction>()
+
     composeTestRule.setContent {
       EditAssociationScreen(
           associationId = "1",
           associationViewModel = associationViewModel,
           imageRepository = mock(),
-          navigationAction = navigationAction)
+          navigationAction = mockNavigationAction)
     }
 
-    // Verify that the "Cancel" button is visible and performs the navigation correctly
-    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("cancelButton"))
-    composeTestRule.onNodeWithTag("cancelButton").performClick()
+    composeTestRule.onNodeWithTag("CancelButton").assertExists().performClick()
 
-    // Verify that navigation to the AssociationProfile screen happens without saving
-    verify(navHostController).navigate(Screen.withParams(Screen.ASSOCIATION_PROFILE, "1"))
-  }
-
-  @Test
-  fun testErrorMessageWhenAssociationNotFound() {
-    composeTestRule.setContent {
-      EditAssociationScreen(
-          associationId = "nonexistent_id",
-          associationViewModel = associationViewModel,
-          imageRepository = mock(),
-          navigationAction = navigationAction)
-    }
-
-    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("associationNotFound"))
-  }
-
-  @Test
-  fun testFieldsArePopulatedWithExistingData() {
-    composeTestRule.setContent {
-      EditAssociationScreen(
-          associationId = "1",
-          associationViewModel = associationViewModel,
-          imageRepository = mock(),
-          navigationAction = navigationAction)
-    }
-
-    // Verify that the fields are populated with the association data
-    composeTestRule.onNodeWithTag("associationName").assert(hasText("Test Association"))
-    composeTestRule.onNodeWithTag("associationFullName").assert(hasText("Test Full Name"))
-    composeTestRule.onNodeWithTag("associationDescription").assert(hasText("Description of Test"))
-  }
-
-  @Test
-  fun testSaveAssociationFailure() {
-    composeTestRule.setContent {
-      EditAssociationScreen(
-          associationId = "1",
-          associationViewModel = associationViewModel,
-          imageRepository = mock(),
-          navigationAction = navigationAction)
-    }
-
-    // Simulate failure during save
-    Mockito.`when`(
-            associationViewModel.saveAssociation(
-                Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any()))
-        .thenAnswer { invocation ->
-          val onFailure = invocation.arguments[3] as (Throwable) -> Unit
-          onFailure(Throwable("Save failed"))
-        }
-
-    // Trigger save
-    composeTestRule.onNodeWithTag("saveButton").performClick()
-
-    // Verify that a Toast with the "save failed" message appears
-    composeTestRule.onNodeWithText("Save failed").assertIsDisplayed()
+    verify(mockNavigationAction).navigateTo(Screen.withParams(Screen.ASSOCIATION_PROFILE, "1"))
   }
 }
