@@ -229,20 +229,25 @@ fun AssociationItem(association: Association, navigationAction: NavigationAction
               }
               .testTag(ExploreContentTestTags.ASSOCIATION_ITEM+association.name)) {
         /**
-         * AdEC image is used as the placeholder. Will need to add the actual image later, when the
-         * actual view model is used.
+         * AdEC image is used as the placeholder. Will need to remove it when all images
+         * are available on the Firestore database
          */
         Image(
             painter = painterResource(id = R.drawable.adec),
             contentDescription = "image description",
             modifier = Modifier.size(124.dp))
 
+
         /**
+         * The following code is commented out because all images are not available in the Firestore database.
+         * Uncomment the code when all images are available, and remove the placeholder image.
+         *
          * AsyncImage( model = association.image.toUri(), contentDescription = "Translated
          * description of what the image contains", modifier =
          * Modifier.size(124.dp).testTag("associationImage"), contentScale = ContentScale.Crop //
          * crop the image to fit )
          */
+      
         Spacer(modifier = Modifier.height(8.dp))
 
         Text(
