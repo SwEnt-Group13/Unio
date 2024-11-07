@@ -117,7 +117,8 @@ fun UnioApp(authViewModel: AuthViewModel) {
     }
     navigation(startDestination = Screen.HOME, route = Route.HOME) {
       composable(Screen.HOME) {
-        HomeScreen(navigationActions, eventViewModel, userViewModel = userViewModel)
+        HomeScreen(
+            navigationActions, eventViewModel, userViewModel = userViewModel, searchViewModel)
       }
       composable(Screen.EVENT_DETAILS) { navBackStackEntry ->
         // Get the event UID from the arguments
