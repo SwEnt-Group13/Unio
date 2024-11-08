@@ -69,9 +69,8 @@ fun MapScreen(
 
 @Composable
 fun EventMap(pd: PaddingValues, eventViewModel: EventViewModel, userViewModel: UserViewModel) {
-  val cameraPositionState = rememberCameraPositionState {
-    position = CameraPosition.fromLatLngZoom(LatLng(46.518831258, 6.559331096), 10f)
-  }
+  val epflCameraPosition = CameraPosition.fromLatLngZoom(LatLng(46.518831258, 6.559331096), 10f)
+  val cameraPositionState = rememberCameraPositionState { position = epflCameraPosition }
 
   val events = eventViewModel.events.collectAsState()
 
