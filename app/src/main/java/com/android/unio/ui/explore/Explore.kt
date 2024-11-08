@@ -229,7 +229,8 @@ fun ExploreScreenContent(
 fun AssociationItem(association: Association, onClick: () -> Unit) {
   Column(
       modifier =
-          Modifier.clickable(onClick = onClick).testTag(ExploreContentTestTags.ASSOCIATION_ITEM + association.name)) {
+          Modifier.clickable(onClick = onClick)
+              .testTag(ExploreContentTestTags.ASSOCIATION_ITEM + association.name)) {
         /**
          * AdEC image is used as the placeholder. Will need to remove it when all images are
          * available on the Firestore database
