@@ -13,17 +13,17 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import com.android.unio.R
-import com.android.unio.model.association.Association
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventViewModel
-import com.android.unio.model.firestore.emptyFirestoreReferenceList
-import com.android.unio.model.map.Location
 import com.android.unio.model.strings.MapStrings
+import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.navigation.NavigationAction
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
@@ -38,7 +38,11 @@ import java.util.concurrent.TimeUnit
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MapScreen(navigationAction: NavigationAction, eventViewModel: EventViewModel) {
+fun MapScreen(
+    navigationAction: NavigationAction,
+    eventViewModel: EventViewModel,
+    userViewModel: UserViewModel
+) {
   val context = LocalContext.current
   Scaffold(
       modifier = Modifier.testTag("MapScreen"),
@@ -59,43 +63,30 @@ fun MapScreen(navigationAction: NavigationAction, eventViewModel: EventViewModel
                   }
             })
       }) { pd ->
-        EventMap(pd, eventViewModel)
+        EventMap(pd, eventViewModel, userViewModel)
       }
 }
 
 @Composable
-fun EventMap(pd: PaddingValues, eventViewModel: EventViewModel) {
-  val cameraPositionState = rememberCameraPositionState {
-    position = CameraPosition.fromLatLngZoom(LatLng(46.518831258, 6.559331096), 10f)
-  }
+fun EventMap(pd: PaddingValues, eventViewModel: EventViewModel, userViewModel: UserViewModel) {
+  val epflCameraPosition = CameraPosition.fromLatLngZoom(LatLng(46.518831258, 6.559331096), 10f)
+  val cameraPositionState = rememberCameraPositionState { position = epflCameraPosition }
 
   val events = eventViewModel.events.collectAsState()
 
-  /** Mock arbitrary saved event for all users. */
-  val arbitrarySavedEvents: List<Event> =
-      listOf(
-          Event(
-              uid = "123456789",
-              title = "Arbitrary Saved Event",
-              organisers = Association.emptyFirestoreReferenceList(),
-              taggedAssociations = Association.emptyFirestoreReferenceList(),
-              description = "This is the description of an arbitrary saved event.",
-              catchyDescription = "This is an arbitrary saved event.",
-              date =
-                  Timestamp(
-                      Calendar.getInstance()
-                          .apply { add(Calendar.DAY_OF_YEAR, 1) }
-                          .time), // tomorrow's date
-              location =
-                  Location(
-                      latitude = 46.51848436506024, longitude = 6.568259761045008), // Rolex Center
-          ))
+  val user by userViewModel.user.collectAsState()
+  val savedEvents by user!!.savedEvents.list.collectAsState()
+  LaunchedEffect(user) {
+    if (user != null) {
+      user!!.savedEvents.requestAll()
+    }
+  }
 
   GoogleMap(
       modifier = Modifier.padding(pd).testTag("googleMaps"),
       cameraPositionState = cameraPositionState) {
         // Display saved events
-        arbitrarySavedEvents.forEach { event ->
+        savedEvents.forEach { event ->
           if (event.date.toDate() > Calendar.getInstance().time) {
             DisplayEventMarker(event, R.drawable.favorite_pinpoint)
           }
@@ -103,11 +94,13 @@ fun EventMap(pd: PaddingValues, eventViewModel: EventViewModel) {
 
         // Display all events (should refactor to the ones that are soon to happen when more events
         // are added)
-        events.value.forEach { event ->
-          if (event.date.toDate() > Calendar.getInstance().time) {
-            DisplayEventMarker(event, null)
-          }
-        }
+        events.value
+            .filterNot { event -> savedEvents.any { it.uid == event.uid } }
+            .forEach { event ->
+              if (event.date.toDate() > Calendar.getInstance().time) {
+                DisplayEventMarker(event, null)
+              }
+            }
       }
 }
 
@@ -125,7 +118,7 @@ fun DisplayEventMarker(event: Event, customIconResId: Int?) {
     val pinPointIcon =
         if (customIconResId != null) {
           val bitmap = BitmapFactory.decodeResource(LocalContext.current.resources, customIconResId)
-          val scaledBitmap = Bitmap.createScaledBitmap(bitmap, 64, 64, false)
+          val scaledBitmap = Bitmap.createScaledBitmap(bitmap, 96, 96, false)
           BitmapDescriptorFactory.fromBitmap(scaledBitmap)
         } else {
           BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)
