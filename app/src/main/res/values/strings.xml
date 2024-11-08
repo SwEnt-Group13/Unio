@@ -20,6 +20,7 @@
 
     <!-- Event Details Strings -->
     <string name="event_sign_up" translatable="false">I\'m going</string>
+    <string name="event_not_found" translatable="false">ERROR : Event not found</string>
 
     <!-- Accessibility and Content Descriptions -->
     <string name="event_map_button_description">Open Map to Add Event</string>
@@ -29,6 +30,7 @@
     <string name="event_association_icon_description" translatable="false">Icon of the event\'s organiser</string>
     <string name="event_location_button_description" translatable="false">Icon for seeing event\'s location</string>
     <string name="event_signup_button_description" translatable="false">Icon to sign up to the event</string>
+    <string name="association_image_description" translatable="false">Association Image</string>
 
     <!-- Event Types Strings from EventType.kt -->
     <string name="event_type_festival">Festival</string>

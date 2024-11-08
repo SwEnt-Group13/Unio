@@ -22,6 +22,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -44,6 +45,7 @@ import coil.request.ImageRequest
 import com.android.unio.R
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventType
+import com.android.unio.model.user.User
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
@@ -54,10 +56,40 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 
 @Composable
-fun EventCard(navigationAction: NavigationAction, event: Event, userViewModel: UserViewModel) {
+fun EventCard(
+    navigationAction: NavigationAction,
+    event: Event,
+    userViewModel: UserViewModel,
+) {
+  val user by userViewModel.user.collectAsState()
   var isSaved by remember { mutableStateOf(false) }
   LaunchedEffect(event.uid) { isSaved = userViewModel.isEventSavedForCurrentUser(event.uid) }
+  val onClickEventCard = {
+    userViewModel.isEventSavedForCurrentUser(event.uid)
+    navigationAction.navigateTo(Screen.EVENT_DETAILS)
+  }
 
+  val onClickSaveButton = {
+    if (user != null) {
+      if (isSaved) {
+        userViewModel.unSaveEventForCurrentUser(event.uid) { isSaved = false }
+      } else {
+        userViewModel.saveEventForCurrentUser(event.uid) { isSaved = true }
+      }
+      userViewModel.updateUserDebounced(user!!)
+    }
+  }
+  EventCardScaffold(user!!, event, isSaved, onClickEventCard, onClickSaveButton)
+}
+
+@Composable
+fun EventCardScaffold(
+    user: User,
+    event: Event,
+    isSaved: Boolean,
+    onClickEventCard: () -> Unit,
+    onClickSaveButton: () -> Unit
+) {
   val imgUrl = event.image.toUri()
   val placeholderImg = R.drawable.adec
   val imageRequest =
@@ -80,9 +112,7 @@ fun EventCard(navigationAction: NavigationAction, event: Event, userViewModel: U
               .testTag("event_EventListItem")
               .clip(RoundedCornerShape(10.dp))
               .background(MaterialTheme.colorScheme.primaryContainer)
-              .clickable {
-                navigationAction.navigateTo(Screen.withParams(Screen.EVENT_DETAILS, event.uid))
-              }) {
+              .clickable { onClickEventCard }) {
 
         // Event image section, displays the main event image or a placeholder if the URL is invalid
 
@@ -107,15 +137,7 @@ fun EventCard(navigationAction: NavigationAction, event: Event, userViewModel: U
                       .clip(RoundedCornerShape(14.dp))
                       .background(MaterialTheme.colorScheme.inversePrimary)
                       .align(Alignment.TopEnd)
-                      .clickable {
-                        if (isSaved) {
-                          userViewModel.unSaveEventForCurrentUser(
-                              event.uid, onSuccess = { isSaved = false })
-                        } else {
-                          userViewModel.saveEventForCurrentUser(
-                              event.uid, onSuccess = { isSaved = true })
-                        }
-                      }
+                      .clickable { onClickSaveButton }
                       .padding(4.dp)) {
                 Icon(
                     imageVector =

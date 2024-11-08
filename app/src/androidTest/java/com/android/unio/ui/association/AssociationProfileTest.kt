@@ -12,12 +12,14 @@ import androidx.compose.ui.test.performScrollTo
 import androidx.navigation.NavHostController
 import com.android.unio.mocks.association.MockAssociation
 import com.android.unio.mocks.event.MockEvent
+import com.android.unio.mocks.user.MockUser
 import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationRepositoryFirestore
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventRepositoryFirestore
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
+import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.navigation.NavigationAction
 import dagger.hilt.android.testing.HiltAndroidRule
@@ -39,10 +41,11 @@ class AssociationProfileTest {
 
   lateinit var navigationAction: NavigationAction
 
-  lateinit var associationRepository: AssociationRepositoryFirestore
+  private lateinit var associationRepository: AssociationRepositoryFirestore
 
   @MockK lateinit var eventRepository: EventRepositoryFirestore
-  @MockK lateinit var userViewModel: UserViewModel
+  private lateinit var userViewModel: UserViewModel
+  @MockK lateinit var userRepository: UserRepositoryFirestore
 
   private lateinit var associationViewModel: AssociationViewModel
 
@@ -81,11 +84,14 @@ class AssociationProfileTest {
           val onSuccess = args[1] as (List<Event>) -> Unit
           onSuccess(events)
         }
-
-    every { userViewModel.isEventSavedForCurrentUser(any()) } answers
+    userViewModel = UserViewModel(userRepository)
+    val user = MockUser.createMockUser()
+    every { userRepository.updateUser(user, any(), any()) } answers
         {
-          events.map { it.uid }.contains(args[0])
+          val onSuccess = args[1] as () -> Unit
+          onSuccess()
         }
+    userViewModel.addUser(user, {})
 
     associationViewModel =
         AssociationViewModel(associationRepository, eventRepository, imageRepository)

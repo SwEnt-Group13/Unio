@@ -112,15 +112,11 @@ fun UnioApp(imageRepository: ImageRepositoryFirebaseStorage) {
         HomeScreen(
             navigationActions, eventViewModel, userViewModel = userViewModel, searchViewModel)
       }
-      composable(Screen.EVENT_DETAILS) { navBackStackEntry ->
-        val uid = navBackStackEntry.arguments?.getString("uid")
-
-        uid?.let {
-          EventScreen(
-              navigationAction = navigationActions,
-              eventViewModel = eventViewModel,
-              userViewModel = userViewModel)
-        }
+      composable(Screen.EVENT_DETAILS) {
+        EventScreen(
+            navigationAction = navigationActions,
+            eventViewModel = eventViewModel,
+            userViewModel = userViewModel)
       }
       composable(Screen.MAP) { MapScreen(navigationActions, eventViewModel) }
     }

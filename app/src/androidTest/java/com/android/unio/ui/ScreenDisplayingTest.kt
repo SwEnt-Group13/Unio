@@ -4,6 +4,7 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import com.android.unio.mocks.association.MockAssociation
+import com.android.unio.mocks.event.MockEvent
 import com.android.unio.mocks.user.MockUser
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.event.Event
@@ -12,13 +13,14 @@ import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.search.SearchRepository
 import com.android.unio.model.search.SearchViewModel
+import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.association.AssociationProfileScaffold
 import com.android.unio.ui.authentication.AccountDetails
 import com.android.unio.ui.authentication.EmailVerificationScreen
 import com.android.unio.ui.authentication.WelcomeScreen
 import com.android.unio.ui.event.EventCreationScreen
-import com.android.unio.ui.event.EventScreen
+import com.android.unio.ui.event.EventScreenScaffold
 import com.android.unio.ui.explore.ExploreScreen
 import com.android.unio.ui.home.HomeScreen
 import com.android.unio.ui.map.MapScreen
@@ -51,10 +53,10 @@ class ScreenDisplayingTest {
   @MockK lateinit var navigationAction: NavigationAction
 
   private lateinit var userViewModel: UserViewModel
+  @MockK lateinit var userRepository: UserRepositoryFirestore
 
   private lateinit var associationViewModel: AssociationViewModel
 
-  @MockK private lateinit var eventRepository: EventRepositoryFirestore
   private lateinit var eventViewModel: EventViewModel
 
   @MockK private lateinit var imageRepositoryFirestore: ImageRepositoryFirebaseStorage
@@ -84,7 +86,14 @@ class ScreenDisplayingTest {
             AssociationViewModel(
                 mock(), mockk<EventRepositoryFirestore>(), imageRepositoryFirestore))
     eventViewModel = spyk(EventViewModel(mock(), mock()))
-    userViewModel = spyk(UserViewModel(mock()))
+    userViewModel = spyk(UserViewModel(userRepository))
+    val user = MockUser.createMockUser()
+    every { userRepository.updateUser(user, any(), any()) } answers
+        {
+          val onSuccess = args[1] as () -> Unit
+          onSuccess()
+        }
+    userViewModel.addUser(user, {})
 
     val associations = MockAssociation.createAllMockAssociations(size = 2)
     searchViewModel = spyk(SearchViewModel(searchRepository))
@@ -150,10 +159,8 @@ class ScreenDisplayingTest {
   @Test
   fun testEventDisplayed() {
     composeTestRule.setContent {
-      EventScreen(
-          navigationAction = navigationAction,
-          eventViewModel = eventViewModel,
-          userViewModel = userViewModel)
+      EventScreenScaffold(
+          navigationAction = navigationAction, event = MockEvent.createMockEvent(), true, {})
     }
     composeTestRule.onNodeWithTag("EventScreen").assertIsDisplayed()
   }
