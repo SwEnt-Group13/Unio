@@ -4,6 +4,7 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import com.android.unio.mocks.association.MockAssociation
+import com.android.unio.mocks.event.MockEvent
 import com.android.unio.mocks.user.MockUser
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.event.Event
@@ -50,6 +51,7 @@ import org.mockito.Mockito.mock
 @HiltAndroidTest
 class ScreenDisplayingTest {
   val user = MockUser.createMockUser(uid = "1")
+  val events = listOf(MockEvent.createMockEvent())
 
   @MockK lateinit var navigationAction: NavigationAction
 
@@ -87,7 +89,15 @@ class ScreenDisplayingTest {
         spyk(
             AssociationViewModel(
                 mock(), mockk<EventRepositoryFirestore>(), imageRepositoryFirestore))
-    eventViewModel = spyk(EventViewModel(mock(), mock()))
+
+    every { eventRepository.getEvents(any(), any()) } answers
+        {
+          val onSuccess = args[0] as (List<Event>) -> Unit
+          onSuccess(events)
+        }
+    eventViewModel = EventViewModel(eventRepository, imageRepositoryFirestore)
+    eventViewModel.loadEvents()
+    eventViewModel.selectEvent(events.first().uid)
 
     every { userRepository.getUserWithId(any(), any(), any()) } answers
         {
