@@ -86,7 +86,7 @@ fun ExploreScreenContent(
     searchViewModel: SearchViewModel
 ) {
   val associationsByCategory by associationViewModel.associationsByCategory.collectAsState()
-  val searchQuery = remember { mutableStateOf("") }
+  var searchQuery by remember { mutableStateOf("") }
   var expanded by rememberSaveable { mutableStateOf(false) }
   val assocationResults by searchViewModel.associations.collectAsState()
   val searchState by searchViewModel.status.collectAsState()
@@ -107,10 +107,10 @@ fun ExploreScreenContent(
             inputField = {
               SearchBarDefaults.InputField(
                   modifier = Modifier.testTag(ExploreContentTestTags.SEARCH_BAR_INPUT),
-                  query = searchQuery.value,
+                  query = searchQuery,
                   onQueryChange = {
-                    searchQuery.value = it
-                    searchViewModel.debouncedSearch(it)
+                    searchQuery = it
+                    searchViewModel.debouncedSearch(it, SearchViewModel.SearchType.ASSOCIATION)
                   },
                   onSearch = {},
                   expanded = expanded,
@@ -204,7 +204,11 @@ fun ExploreScreenContent(
                     horizontalArrangement = Arrangement.spacedBy(32.dp, Alignment.Start),
                     verticalAlignment = Alignment.CenterVertically) {
                       items(alphabeticalAssociations.size) { index ->
-                        AssociationItem(alphabeticalAssociations[index], navigationAction)
+                        AssociationItem(alphabeticalAssociations[index]) {
+                          associationViewModel.selectAssociation(
+                              alphabeticalAssociations[index].uid)
+                          navigationAction.navigateTo(Screen.ASSOCIATION_PROFILE)
+                        }
                       }
                     }
               }
@@ -222,14 +226,10 @@ fun ExploreScreenContent(
  * @param navigationAction The navigation action to use when the item is clicked.
  */
 @Composable
-fun AssociationItem(association: Association, navigationAction: NavigationAction) {
+fun AssociationItem(association: Association, onClick: () -> Unit) {
   Column(
       modifier =
-          Modifier.clickable {
-                navigationAction.navigateTo(
-                    Screen.withParams(Screen.ASSOCIATION_PROFILE, association.uid))
-              }
-              .testTag(ExploreContentTestTags.ASSOCIATION_ITEM + association.name)) {
+          Modifier.clickable(onClick = onClick).testTag(ExploreContentTestTags.ASSOCIATION_ITEM + association.name)) {
         /**
          * AdEC image is used as the placeholder. Will need to remove it when all images are
          * available on the Firestore database

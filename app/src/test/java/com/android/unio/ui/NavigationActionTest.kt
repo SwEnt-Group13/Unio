@@ -65,10 +65,10 @@ class NavigationActionTest {
 
   @Test
   fun testScreenWithSingleParam() {
-    val screen = Screen.ASSOCIATION_PROFILE
+    val screen = "association/{uid}"
     val uid = "2024"
     val result = Screen.withParams(screen, uid)
-    val expected = Screen.ASSOCIATION_PROFILE.replace("{uid}", uid)
+    val expected = screen.replace("{uid}", uid)
     assertEquals(expected, result)
   }
 

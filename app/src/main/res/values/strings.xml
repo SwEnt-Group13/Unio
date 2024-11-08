@@ -12,6 +12,7 @@
     <string name="event_tab_following">Following</string>
     <string name="event_add_event">Add Event</string>
     <string name="event_no_events_available">No events available.</string>
+    <string name="event_search_no_results">"No events found."</string>
 
     <!-- Event Card Strings -->
     <string name="event_event_title">Event Title</string>
@@ -19,6 +20,7 @@
 
     <!-- Event Details Strings -->
     <string name="event_sign_up" translatable="false">I\'m going</string>
+    <string name="event_not_found" translatable="false">ERROR : Event not found</string>
 
     <!-- Accessibility and Content Descriptions -->
     <string name="event_map_button_description">Open Map to Add Event</string>
@@ -28,6 +30,7 @@
     <string name="event_association_icon_description" translatable="false">Icon of the event\'s organiser</string>
     <string name="event_location_button_description" translatable="false">Icon for seeing event\'s location</string>
     <string name="event_signup_button_description" translatable="false">Icon to sign up to the event</string>
+    <string name="association_image_description" translatable="false">Association Image</string>
 
     <!-- Event Types Strings from EventType.kt -->
     <string name="event_type_festival">Festival</string>
@@ -38,6 +41,19 @@
     <string name="event_type_sport">Sport</string>
     <string name="event_type_trip">Trip</string>
     <string name="event_type_other">Other</string>
+
+    <!-- EditAssociation strings -->
+    <string name="edit_association_title">Edit Association</string>
+    <string name="name_explanation">The name of the association. This is typically a short identifier or acronym.</string>
+    <string name="full_name_explanation">The full name of the association. This can be the official long-form name.</string>
+    <string name="category_explanation">Select the category that best fits the association\'s purpose.</string>
+    <string name="description_explanation">Provide a brief description of the association, including its main activities and goals.</string>
+    <string name="image_explanation">Provide a URL for the association\'s image, which will be displayed on the profile page.</string>
+    <string name="url_explanation">Provide the URL of the association\'s webpage or online presence.</string>
+    <string name="cancel_button_text">Cancel</string>
+    <string name="save_button_text">Save</string>
+    <string name="category_button_text">Select Category</string>
+    <string name="save_failed_message">Failed to save association</string>
 
     <!-- EventRepositoryFirestore Strings -->
     <string name="event_error_converting_document" translatable="false">Error while converting db document to Event object</string>

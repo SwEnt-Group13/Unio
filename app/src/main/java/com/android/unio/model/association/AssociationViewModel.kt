@@ -29,6 +29,9 @@ constructor(
   val associationsByCategory: StateFlow<Map<AssociationCategory, List<Association>>> =
       _associationsByCategory.asStateFlow()
 
+  private val _selectedAssociation = MutableStateFlow<Association?>(null)
+  val selectedAssociation: StateFlow<Association?> = _selectedAssociation
+
   init {
     associationRepository.init { getAssociations() }
   }
@@ -62,20 +65,49 @@ constructor(
         })
   }
 
-  fun addAssociation(
-      inputStream: InputStream,
+  fun saveAssociation(
       association: Association,
+      imageStream: InputStream?,
       onSuccess: () -> Unit,
       onFailure: (Exception) -> Unit
   ) {
-    imageRepository.uploadImage(
-        inputStream,
-        "images/associations/${association.uid}",
-        { uri ->
-          association.image = uri
-          associationRepository.addAssociation(association, onSuccess, onFailure)
-        },
-        { e -> Log.e("ImageRepository", "Failed to store image : $e") })
+    viewModelScope.launch {
+      if (imageStream != null) {
+        imageRepository.uploadImage(
+            imageStream = imageStream,
+            firebasePath = "images/associations/${association.uid}",
+            onSuccess = { imageUrl ->
+              val updatedAssociation = association.copy(image = imageUrl)
+              associationRepository.saveAssociation(
+                  updatedAssociation,
+                  {
+                    // Update the list with the modified association
+                    Log.d("AssociationViewModel", "Association saved with updated image.")
+                    _associations.value =
+                        _associations.value.map {
+                          if (it.uid == updatedAssociation.uid) updatedAssociation else it
+                        }
+                    onSuccess()
+                  },
+                  onFailure)
+            },
+            onFailure = { exception ->
+              Log.e("ImageRepository", "Failed to store image: $exception")
+              onFailure(exception)
+            })
+      } else {
+        associationRepository.saveAssociation(
+            association,
+            {
+              Log.d("AssociationViewModel", "Association saved without image update.")
+              // Update the list with the modified association
+              _associations.value =
+                  _associations.value.map { if (it.uid == association.uid) association else it }
+              onSuccess()
+            },
+            onFailure)
+      }
+    }
   }
 
   /**
@@ -90,5 +122,13 @@ constructor(
         ?.let {
           return it
         } ?: return null
+  }
+
+  fun selectAssociation(associationId: String) {
+    _selectedAssociation.value =
+        findAssociationById(associationId).also {
+          it?.events?.requestAll()
+          it?.members?.requestAll()
+        }
   }
 }

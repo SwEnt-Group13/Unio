@@ -30,6 +30,9 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.mockito.MockitoAnnotations
+import org.mockito.kotlin.any
+import org.mockito.kotlin.atLeastOnce
+import org.mockito.kotlin.verify
 
 @HiltAndroidTest
 class ExploreScreenTest {
@@ -144,10 +147,8 @@ class ExploreScreenTest {
     sortedByCategoryAssociations.forEach { (_, associations) ->
       associations.forEach {
         composeTestRule.onNodeWithTag("associationItem_${it.name}").performClick()
-        verify {
-          navigationAction.navigateTo(Screen.withParams(Screen.ASSOCIATION_PROFILE, it.uid))
-        }
       }
     }
+    verify(navigationAction, atLeastOnce()).navigateTo(Screen.ASSOCIATION_PROFILE)
   }
 }

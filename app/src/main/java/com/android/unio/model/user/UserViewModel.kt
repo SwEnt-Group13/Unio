@@ -4,13 +4,17 @@ import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 
 @HiltViewModel
 class UserViewModel @Inject constructor(private val repository: UserRepository) : ViewModel() {
@@ -20,6 +24,9 @@ class UserViewModel @Inject constructor(private val repository: UserRepository) 
   private val _refreshState = mutableStateOf(false)
   val refreshState: State<Boolean> = _refreshState
 
+  private val debounceInterval: Long = 500
+
+  private var updateJob: Job? = null
   private var initializeWithAuthenticatedUser: Boolean = true
 
   constructor(
@@ -51,7 +58,6 @@ class UserViewModel @Inject constructor(private val repository: UserRepository) 
     }
 
     _refreshState.value = true
-    _user.value = null
     repository.getUserWithId(
         uid,
         onSuccess = { fetchedUser ->
@@ -89,6 +95,15 @@ class UserViewModel @Inject constructor(private val repository: UserRepository) 
         user,
         onSuccess = { getUserByUid(user.uid) },
         onFailure = { Log.e("UserViewModel", "Failed to update user", it) })
+  }
+
+  fun updateUserDebounced(user: User, interval: Long = debounceInterval) {
+    updateJob?.cancel()
+    updateJob =
+        viewModelScope.launch {
+          delay(interval)
+          updateUser(user)
+        }
   }
 
   fun addUser(user: User, onSuccess: () -> Unit) {

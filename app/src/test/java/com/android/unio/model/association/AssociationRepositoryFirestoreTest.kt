@@ -1,6 +1,7 @@
 package com.android.unio.model.association
 
 import com.android.unio.mocks.association.MockAssociation
+import com.android.unio.model.event.Event
 import com.android.unio.model.firestore.FirestorePaths.ASSOCIATION_PATH
 import com.android.unio.model.firestore.FirestorePaths.USER_PATH
 import com.android.unio.model.firestore.emptyFirestoreReferenceList
@@ -96,7 +97,8 @@ class AssociationRepositoryFirestoreTest {
             "description" to association1.description,
             "members" to association1.members.uids,
             "followersCount" to association1.followersCount,
-            "image" to association1.image)
+            "image" to association1.image,
+            "events" to association1.events.uids)
 
     map2 =
         mapOf(
@@ -108,7 +110,8 @@ class AssociationRepositoryFirestoreTest {
             "description" to association2.description,
             "members" to association2.members.uids,
             "followersCount" to association2.followersCount,
-            "image" to association2.image)
+            "image" to association2.image,
+            "events" to association2.events.uids)
 
     `when`(queryDocumentSnapshot1.data).thenReturn(map1)
     `when`(queryDocumentSnapshot2.data).thenReturn(map2)
@@ -153,7 +156,8 @@ class AssociationRepositoryFirestoreTest {
                   description = "",
                   members = User.emptyFirestoreReferenceList(),
                   followersCount = 0,
-                  image = "")
+                  image = "",
+                  events = Event.emptyFirestoreReferenceList())
 
           assertEquals(2, associations.size)
 
@@ -204,7 +208,7 @@ class AssociationRepositoryFirestoreTest {
   fun testAddAssociationSuccess() {
     `when`(documentReference.set(map1)).thenReturn(Tasks.forResult(null))
 
-    repository.addAssociation(
+    repository.saveAssociation(
         association1, onSuccess = { assert(true) }, onFailure = { assert(false) })
 
     verify(documentReference).set(map1)
@@ -214,7 +218,7 @@ class AssociationRepositoryFirestoreTest {
   fun testAddAssociationFailure() {
     `when`(documentReference.set(any())).thenReturn(Tasks.forException(Exception()))
 
-    repository.addAssociation(
+    repository.saveAssociation(
         association1, onSuccess = { assert(false) }, onFailure = { assert(true) })
 
     verify(documentReference).set(map1)
@@ -224,7 +228,7 @@ class AssociationRepositoryFirestoreTest {
   fun testUpdateAssociationSuccess() {
     `when`(documentReference.set(any())).thenReturn(Tasks.forResult(null))
 
-    repository.updateAssociation(
+    repository.saveAssociation(
         association1, onSuccess = { assert(true) }, onFailure = { assert(false) })
 
     verify(documentReference).set(map1)
@@ -234,7 +238,7 @@ class AssociationRepositoryFirestoreTest {
   fun testUpdateAssociationFailure() {
     `when`(documentReference.set(any())).thenReturn(Tasks.forException(Exception()))
 
-    repository.updateAssociation(
+    repository.saveAssociation(
         association1, onSuccess = { assert(false) }, onFailure = { assert(true) })
 
     verify(documentReference).set(map1)

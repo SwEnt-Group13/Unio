@@ -31,6 +31,7 @@ import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.association.AssociationProfileScreen
+import com.android.unio.ui.association.EditAssociationScreen
 import com.android.unio.ui.authentication.AccountDetails
 import com.android.unio.ui.authentication.EmailVerificationScreen
 import com.android.unio.ui.authentication.WelcomeScreen
@@ -59,6 +60,7 @@ class MainActivity : ComponentActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
     super.onCreate(savedInstanceState)
+
     setContent {
       Surface(modifier = Modifier.fillMaxSize()) {
         ProvidePreferenceLocals { AppTheme { UnioApp(imageRepository) } }
@@ -90,7 +92,6 @@ fun UnioApp(imageRepository: ImageRepositoryFirebaseStorage) {
   LaunchedEffect(authState) {
     authState?.let { screen ->
       // Only navigate if the screen has changed
-      Log.d("UnioApp", "Navigating to $screen")
       if (screen != previousAuthState) {
         navigationActions.navigateTo(screen)
         previousAuthState = screen
@@ -108,18 +109,14 @@ fun UnioApp(imageRepository: ImageRepositoryFirebaseStorage) {
     }
     navigation(startDestination = Screen.HOME, route = Route.HOME) {
       composable(Screen.HOME) {
-        HomeScreen(navigationActions, eventViewModel, userViewModel = userViewModel)
+        HomeScreen(
+            navigationActions, eventViewModel, userViewModel = userViewModel, searchViewModel)
       }
-      composable(Screen.EVENT_DETAILS) { navBackStackEntry ->
-        // Get the event UID from the arguments
-        val uid = navBackStackEntry.arguments?.getString("uid")
-        // Create the Event screen with the event UID
-        uid?.let {
-          EventScreen(
-              navigationAction = navigationActions,
-              eventViewModel = eventViewModel,
-              userViewModel = userViewModel)
-        }
+      composable(Screen.EVENT_DETAILS) {
+        EventScreen(
+            navigationAction = navigationActions,
+            eventViewModel = eventViewModel,
+            userViewModel = userViewModel)
       }
       composable(Screen.MAP) { MapScreen(navigationActions, eventViewModel) }
     }
@@ -127,17 +124,21 @@ fun UnioApp(imageRepository: ImageRepositoryFirebaseStorage) {
       composable(Screen.EXPLORE) {
         ExploreScreen(navigationActions, associationViewModel, searchViewModel)
       }
-      composable(Screen.ASSOCIATION_PROFILE) { navBackStackEntry ->
-        // Get the association UID from the arguments
-        val uid = navBackStackEntry.arguments?.getString("uid")
+      composable(Screen.ASSOCIATION_PROFILE) {
+        AssociationProfileScreen(navigationActions, associationViewModel, userViewModel)
+      }
+      composable(Screen.EDIT_ASSOCIATION) { navBackStackEntry ->
+        val associationId = navBackStackEntry.arguments?.getString("associationId")
 
-        // Create the AssociationProfile screen with the association UID
-        uid?.let {
-          AssociationProfileScreen(navigationActions, it, associationViewModel, userViewModel)
+        associationId?.let {
+          EditAssociationScreen(
+              associationId = it,
+              associationViewModel = associationViewModel,
+              navigationAction = navigationActions)
         }
             ?: run {
-              Log.e("AssociationProfile", "Association UID is null")
-              Toast.makeText(context, "Association UID is null", Toast.LENGTH_SHORT).show()
+              Log.e("EditAssociation", "Association ID is null")
+              Toast.makeText(context, "Association ID is null", Toast.LENGTH_SHORT).show()
             }
       }
     }
@@ -145,7 +146,7 @@ fun UnioApp(imageRepository: ImageRepositoryFirebaseStorage) {
       composable(Screen.SAVED) { SavedScreen(navigationActions) }
     }
     navigation(startDestination = Screen.MY_PROFILE, route = Route.MY_PROFILE) {
-      composable(Screen.MY_PROFILE) { UserProfileScreen(navigationActions, userViewModel) }
+      composable(Screen.MY_PROFILE) { UserProfileScreen(userViewModel, navigationActions) }
       composable(Screen.SETTINGS) { SettingsScreen(navigationActions) }
     }
   }
