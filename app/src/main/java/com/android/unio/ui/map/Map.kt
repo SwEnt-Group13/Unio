@@ -86,26 +86,6 @@ fun EventMap(pd: PaddingValues, eventViewModel: EventViewModel, userViewModel: U
     }
   }
 
-  /** Mock arbitrary saved event for all users. */
-  val arbitrarySavedEvents: List<Event> =
-      listOf(
-          Event(
-              uid = "123456789",
-              title = "Arbitrary Saved Event",
-              organisers = Association.emptyFirestoreReferenceList(),
-              taggedAssociations = Association.emptyFirestoreReferenceList(),
-              description = "This is the description of an arbitrary saved event.",
-              catchyDescription = "This is an arbitrary saved event.",
-              date =
-                  Timestamp(
-                      Calendar.getInstance()
-                          .apply { add(Calendar.DAY_OF_YEAR, 1) }
-                          .time), // tomorrow's date
-              location =
-                  Location(
-                      latitude = 46.51848436506024, longitude = 6.568259761045008), // Rolex Center
-          ))
-
   GoogleMap(
       modifier = Modifier.padding(pd).testTag("googleMaps"),
       cameraPositionState = cameraPositionState) {
