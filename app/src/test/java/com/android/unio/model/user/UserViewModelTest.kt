@@ -65,8 +65,9 @@ class UserViewModelTest {
           val onSuccess = it.invocation.args[1] as (User) -> Unit
           onSuccess(user)
         }
-    userViewModel.updateUser(user)
+    userViewModel.updateUserDebounced(user, 0)
 
     verify { repository.updateUser(user, any(), any()) }
+    assertEquals(userViewModel.user.value?.uid, user.uid)
   }
 }

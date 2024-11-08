@@ -96,11 +96,11 @@ class UserViewModel @Inject constructor(private val repository: UserRepository) 
         onFailure = { Log.e("UserViewModel", "Failed to update user", it) })
   }
 
-  fun updateUserDebounced(user: User) {
+  fun updateUserDebounced(user: User, interval: Long = debounceInterval) {
     updateJob?.cancel()
     updateJob =
         viewModelScope.launch {
-          delay(debounceInterval)
+          delay(interval)
           updateUser(user)
         }
   }
