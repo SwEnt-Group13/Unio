@@ -71,42 +71,39 @@ constructor(
       onSuccess: () -> Unit,
       onFailure: (Exception) -> Unit
   ) {
-    viewModelScope.launch {
-      if (imageStream != null) {
-        imageRepository.uploadImage(
-            imageStream = imageStream,
-            firebasePath = "images/associations/${association.uid}",
-            onSuccess = { imageUrl ->
-              val updatedAssociation = association.copy(image = imageUrl)
-              associationRepository.saveAssociation(
-                  updatedAssociation,
-                  {
-                    // Update the list with the modified association
-                    Log.d("AssociationViewModel", "Association saved with updated image.")
-                    _associations.value =
-                        _associations.value.map {
-                          if (it.uid == updatedAssociation.uid) updatedAssociation else it
-                        }
-                    onSuccess()
-                  },
-                  onFailure)
-            },
-            onFailure = { exception ->
-              Log.e("ImageRepository", "Failed to store image: $exception")
-              onFailure(exception)
-            })
-      } else {
-        associationRepository.saveAssociation(
-            association,
-            {
-              Log.d("AssociationViewModel", "Association saved without image update.")
-              // Update the list with the modified association
-              _associations.value =
-                  _associations.value.map { if (it.uid == association.uid) association else it }
-              onSuccess()
-            },
-            onFailure)
-      }
+    if (imageStream != null) {
+      imageRepository.uploadImage(
+          imageStream = imageStream,
+          firebasePath = "images/associations/${association.uid}",
+          onSuccess = { imageUrl ->
+            val updatedAssociation = association.copy(image = imageUrl)
+            associationRepository.saveAssociation(
+                updatedAssociation,
+                {
+                  // Update the list with the modified association
+                  Log.d("AssociationViewModel", "Association saved with updated image.")
+                  _associations.value =
+                      _associations.value.map {
+                        if (it.uid == updatedAssociation.uid) updatedAssociation else it
+                      }
+                  onSuccess()
+                },
+                onFailure)
+          },
+          onFailure = { exception ->
+            Log.e("ImageRepository", "Failed to store image: $exception")
+            onFailure(exception)
+          })
+    } else {
+      associationRepository.saveAssociation(
+          association,
+          {
+            // Update the list with the modified association
+            _associations.value =
+                _associations.value.map { if (it.uid == association.uid) association else it }
+            onSuccess()
+          },
+          onFailure)
     }
   }
 
