@@ -17,13 +17,13 @@ import com.android.unio.ui.navigation.NavigationAction
 import com.google.firebase.Timestamp
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
+import java.util.Date
+import javax.inject.Inject
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.mockito.Mockito.mock
 import org.mockito.MockitoAnnotations
-import java.util.Date
-import javax.inject.Inject
 
 @HiltAndroidTest
 class EventCardTest {
@@ -40,9 +40,9 @@ class EventCardTest {
           catchyDescription = "This is a catchy description.")
   @Inject lateinit var userRepositoryFirestore: UserRepositoryFirestore
   private lateinit var userViewModel: UserViewModel
-    @Inject lateinit var eventRepositoryFirestore: EventRepositoryFirestore
-    private lateinit var eventViewModel: EventViewModel
-    @Inject lateinit var imageRepository: ImageRepositoryFirebaseStorage
+  @Inject lateinit var eventRepositoryFirestore: EventRepositoryFirestore
+  private lateinit var eventViewModel: EventViewModel
+  @Inject lateinit var imageRepository: ImageRepositoryFirebaseStorage
 
   @Before
   fun setUp() {
@@ -51,16 +51,12 @@ class EventCardTest {
     navigationAction = mock(NavigationAction::class.java)
 
     userViewModel = UserViewModel(userRepositoryFirestore)
-      eventViewModel = EventViewModel(eventRepositoryFirestore, imageRepository)
+    eventViewModel = EventViewModel(eventRepositoryFirestore, imageRepository)
   }
 
   private fun setEventScreen(event: Event) {
     composeTestRule.setContent {
-      EventCard(
-          navigationAction = navigationAction,
-          event = event,
-          userViewModel = userViewModel,
-          eventViewModel)
+      EventCard(navigationAction = navigationAction, event = event, userViewModel = userViewModel)
     }
   }
 

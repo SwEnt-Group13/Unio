@@ -13,6 +13,7 @@ import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.search.SearchRepository
 import com.android.unio.model.search.SearchViewModel
+import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.association.AssociationProfileScaffold
 import com.android.unio.ui.authentication.AccountDetails
@@ -52,10 +53,10 @@ class ScreenDisplayingTest {
   @MockK lateinit var navigationAction: NavigationAction
 
   private lateinit var userViewModel: UserViewModel
+  @MockK lateinit var userRepository: UserRepositoryFirestore
 
   private lateinit var associationViewModel: AssociationViewModel
 
-  @MockK private lateinit var eventRepository: EventRepositoryFirestore
   private lateinit var eventViewModel: EventViewModel
 
   @MockK private lateinit var imageRepositoryFirestore: ImageRepositoryFirebaseStorage
@@ -85,7 +86,14 @@ class ScreenDisplayingTest {
             AssociationViewModel(
                 mock(), mockk<EventRepositoryFirestore>(), imageRepositoryFirestore))
     eventViewModel = spyk(EventViewModel(mock(), mock()))
-    userViewModel = spyk(UserViewModel(mock()))
+    userViewModel = UserViewModel(userRepository)
+    val user = MockUser.createMockUser()
+    every { userRepository.updateUser(user, any(), any()) } answers
+        {
+          val onSuccess = args[1] as () -> Unit
+          onSuccess()
+        }
+    userViewModel.addUser(user, {})
 
     val associations = MockAssociation.createAllMockAssociations(size = 2)
     searchViewModel = spyk(SearchViewModel(searchRepository))

@@ -56,7 +56,6 @@ import com.android.unio.R
 import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.event.Event
-import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.user.User
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.event.EventCard
@@ -76,8 +75,7 @@ private var scope: CoroutineScope? = null
 fun AssociationProfileScreen(
     navigationAction: NavigationAction,
     associationViewModel: AssociationViewModel,
-    userViewModel: UserViewModel,
-    eventViewModel: EventViewModel
+    userViewModel: UserViewModel
 ) {
   val association by associationViewModel.selectedAssociation.collectAsState()
 
@@ -301,9 +299,7 @@ private fun UsersCard(userList: List<User>) {
 private fun AssociationProfileEvents(
     navigationAction: NavigationAction,
     association: Association,
-    associationViewModel: AssociationViewModel,
-    userViewModel: UserViewModel,
-    eventViewModel: EventViewModel
+    userViewModel: UserViewModel
 ) {
   val context = LocalContext.current
 
@@ -324,11 +320,9 @@ private fun AssociationProfileEvents(
         modifier = Modifier.padding(horizontal = 28.dp),
         horizontalAlignment = Alignment.CenterHorizontally) {
           if (isSeeMoreClicked) {
-            events.forEach { event ->
-              AssociationEventCard(navigationAction, event, userViewModel, eventViewModel)
-            }
+            events.forEach { event -> AssociationEventCard(navigationAction, event, userViewModel) }
           } else {
-            AssociationEventCard(navigationAction, first, userViewModel, eventViewModel)
+            AssociationEventCard(navigationAction, first, userViewModel)
           }
         }
     Spacer(modifier = Modifier.size(11.dp))
@@ -355,15 +349,10 @@ private fun AssociationProfileEvents(
 private fun AssociationEventCard(
     navigationAction: NavigationAction,
     event: Event,
-    userViewModel: UserViewModel,
-    eventViewModel: EventViewModel
+    userViewModel: UserViewModel
 ) {
   Box(modifier = Modifier.testTag("AssociationEventCard-${event.uid}")) {
-    EventCard(
-        navigationAction = navigationAction,
-        event = event,
-        userViewModel = userViewModel,
-        eventViewModel = eventViewModel)
+    EventCard(navigationAction = navigationAction, event = event, userViewModel = userViewModel)
   }
 }
 
