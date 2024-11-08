@@ -12,7 +12,7 @@ import org.junit.Rule
 import org.junit.Test
 
 class SocialOverlayTest {
-  val userSocials = emptyList<UserSocial>().toMutableList()
+  private val userSocials = emptyList<UserSocial>().toMutableList()
 
   @get:Rule val composeTestRule = createComposeRule()
 
