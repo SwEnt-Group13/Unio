@@ -128,7 +128,7 @@ fun EditAssociationScaffold(
         }
 
     DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-      AssociationCategory.values().forEach { categoryOption ->
+      AssociationCategory.entries.forEach { categoryOption ->
         DropdownMenuItem(
             text = { Text(text = categoryOption.displayName) },
             onClick = {

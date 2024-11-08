@@ -1,6 +1,5 @@
 package com.android.unio.model.association
 
-import android.util.Log
 import com.android.unio.model.firestore.FirestorePaths.ASSOCIATION_PATH
 import com.android.unio.model.firestore.transform.hydrate
 import com.android.unio.model.firestore.transform.serialize
@@ -74,7 +73,6 @@ class AssociationRepositoryFirestore @Inject constructor(private val db: Firebas
       onSuccess: () -> Unit,
       onFailure: (Exception) -> Unit
   ) {
-    Log.d("AssociationViewModel", "Association saved INSIDE repository")
     performFirestoreOperation(
         db.collection(ASSOCIATION_PATH).document(association.uid).set(serialize(association)),
         onSuccess = { onSuccess() },
