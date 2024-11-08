@@ -208,7 +208,7 @@ class AssociationRepositoryFirestoreTest {
   fun testAddAssociationSuccess() {
     `when`(documentReference.set(map1)).thenReturn(Tasks.forResult(null))
 
-    repository.addAssociation(
+    repository.saveAssociation(
         association1, onSuccess = { assert(true) }, onFailure = { assert(false) })
 
     verify(documentReference).set(map1)
@@ -218,7 +218,7 @@ class AssociationRepositoryFirestoreTest {
   fun testAddAssociationFailure() {
     `when`(documentReference.set(any())).thenReturn(Tasks.forException(Exception()))
 
-    repository.addAssociation(
+    repository.saveAssociation(
         association1, onSuccess = { assert(false) }, onFailure = { assert(true) })
 
     verify(documentReference).set(map1)
@@ -228,7 +228,7 @@ class AssociationRepositoryFirestoreTest {
   fun testUpdateAssociationSuccess() {
     `when`(documentReference.set(any())).thenReturn(Tasks.forResult(null))
 
-    repository.updateAssociation(
+    repository.saveAssociation(
         association1, onSuccess = { assert(true) }, onFailure = { assert(false) })
 
     verify(documentReference).set(map1)
@@ -238,7 +238,7 @@ class AssociationRepositoryFirestoreTest {
   fun testUpdateAssociationFailure() {
     `when`(documentReference.set(any())).thenReturn(Tasks.forException(Exception()))
 
-    repository.updateAssociation(
+    repository.saveAssociation(
         association1, onSuccess = { assert(false) }, onFailure = { assert(true) })
 
     verify(documentReference).set(map1)
