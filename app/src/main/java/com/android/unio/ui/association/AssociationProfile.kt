@@ -60,6 +60,7 @@ import com.android.unio.model.user.User
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.event.EventCard
 import com.android.unio.ui.navigation.NavigationAction
+import com.android.unio.ui.navigation.Screen
 import com.android.unio.ui.theme.AppTypography
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -188,6 +189,14 @@ private fun AssociationProfileContent(
     Spacer(modifier = Modifier.size(61.dp))
     AssociationRecruitment(association)
   }
+
+  Button(
+      onClick = {
+        navigationAction.navigateTo(Screen.withParams(Screen.EDIT_ASSOCIATION, association.uid))
+      },
+      modifier = Modifier.padding(20.dp).testTag("EditAssociationButton")) {
+        Text(text = "edit button")
+      }
 }
 
 /**

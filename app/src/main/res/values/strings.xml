@@ -42,6 +42,19 @@
     <string name="event_type_trip">Trip</string>
     <string name="event_type_other">Other</string>
 
+    <!-- EditAssociation strings -->
+    <string name="edit_association_title">Edit Association</string>
+    <string name="name_explanation">The name of the association. This is typically a short identifier or acronym.</string>
+    <string name="full_name_explanation">The full name of the association. This can be the official long-form name.</string>
+    <string name="category_explanation">Select the category that best fits the association\'s purpose.</string>
+    <string name="description_explanation">Provide a brief description of the association, including its main activities and goals.</string>
+    <string name="image_explanation">Provide a URL for the association\'s image, which will be displayed on the profile page.</string>
+    <string name="url_explanation">Provide the URL of the association\'s webpage or online presence.</string>
+    <string name="cancel_button_text">Cancel</string>
+    <string name="save_button_text">Save</string>
+    <string name="category_button_text">Select Category</string>
+    <string name="save_failed_message">Failed to save association</string>
+
     <!-- EventRepositoryFirestore Strings -->
     <string name="event_error_converting_document" translatable="false">Error while converting db document to Event object</string>
     <string name="event_error_no_id_provided" translatable="false">No event ID was provided</string>

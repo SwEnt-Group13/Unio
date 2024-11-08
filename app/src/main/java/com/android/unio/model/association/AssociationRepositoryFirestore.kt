@@ -1,6 +1,5 @@
 package com.android.unio.model.association
 
-import android.util.Log
 import com.android.unio.model.firestore.FirestorePaths.ASSOCIATION_PATH
 import com.android.unio.model.firestore.transform.hydrate
 import com.android.unio.model.firestore.transform.serialize
@@ -69,18 +68,7 @@ class AssociationRepositoryFirestore @Inject constructor(private val db: Firebas
         onFailure = { exception -> onFailure(exception) })
   }
 
-  override fun addAssociation(
-      association: Association,
-      onSuccess: () -> Unit,
-      onFailure: (Exception) -> Unit
-  ) {
-    performFirestoreOperation(
-        db.collection(ASSOCIATION_PATH).document(association.uid).set(serialize(association)),
-        onSuccess = { onSuccess() },
-        onFailure)
-  }
-
-  override fun updateAssociation(
+  override fun saveAssociation(
       association: Association,
       onSuccess: () -> Unit,
       onFailure: (Exception) -> Unit
@@ -109,18 +97,20 @@ class AssociationRepositoryFirestore @Inject constructor(private val db: Firebas
       onSuccess: (T) -> Unit,
       onFailure: (Exception) -> Unit
   ) {
-    task.addOnCompleteListener {
-      if (it.isSuccessful) {
-        it.result?.let { result -> onSuccess(result) }
-      } else {
-        it.exception?.let { e ->
-          Log.e("AssociationRepositoryFirestore", "Error performing Firestore operation", e)
-          onFailure(e)
+    task.addOnCompleteListener { taskResult ->
+      if (taskResult.isSuccessful) {
+        val result = taskResult.result
+        if (result != null) {
+          onSuccess(result)
+        } else {
+          onSuccess(result)
         }
+      } else {
+        val exception = taskResult.exception
+        exception?.let { onFailure(it) }
       }
     }
   }
 
-  // Note: the following line is needed to add external methods to the companion object
   companion object
 }

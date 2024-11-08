@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import android.app.Application
 import android.content.pm.ActivityInfo
 import android.os.Bundle
+import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
@@ -29,6 +31,7 @@ import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.association.AssociationProfileScreen
+import com.android.unio.ui.association.EditAssociationScreen
 import com.android.unio.ui.authentication.AccountDetails
 import com.android.unio.ui.authentication.EmailVerificationScreen
 import com.android.unio.ui.authentication.WelcomeScreen
@@ -123,6 +126,20 @@ fun UnioApp(imageRepository: ImageRepositoryFirebaseStorage) {
       }
       composable(Screen.ASSOCIATION_PROFILE) {
         AssociationProfileScreen(navigationActions, associationViewModel, userViewModel)
+      }
+      composable(Screen.EDIT_ASSOCIATION) { navBackStackEntry ->
+        val associationId = navBackStackEntry.arguments?.getString("associationId")
+
+        associationId?.let {
+          EditAssociationScreen(
+              associationId = it,
+              associationViewModel = associationViewModel,
+              navigationAction = navigationActions)
+        }
+            ?: run {
+              Log.e("EditAssociation", "Association ID is null")
+              Toast.makeText(context, "Association ID is null", Toast.LENGTH_SHORT).show()
+            }
       }
     }
     navigation(startDestination = Screen.SAVED, route = Route.SAVED) {
