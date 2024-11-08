@@ -96,7 +96,7 @@ fun EventMap(pd: PaddingValues, eventViewModel: EventViewModel, userViewModel: U
         // Display all events (should refactor to the ones that are soon to happen when more events
         // are added)
         events.value
-            .filterNot { savedEvents.contains(it) }
+            .filterNot { event -> savedEvents.any { it.uid == event.uid } }
             .forEach { event ->
               if (event.date.toDate() > Calendar.getInstance().time) {
                 DisplayEventMarker(event, null)
@@ -119,7 +119,7 @@ fun DisplayEventMarker(event: Event, customIconResId: Int?) {
     val pinPointIcon =
         if (customIconResId != null) {
           val bitmap = BitmapFactory.decodeResource(LocalContext.current.resources, customIconResId)
-          val scaledBitmap = Bitmap.createScaledBitmap(bitmap, 64, 64, false)
+          val scaledBitmap = Bitmap.createScaledBitmap(bitmap, 96, 96, false)
           BitmapDescriptorFactory.fromBitmap(scaledBitmap)
         } else {
           BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)
