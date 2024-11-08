@@ -17,13 +17,7 @@ interface AssociationRepository {
       onFailure: (Exception) -> Unit
   )
 
-  fun addAssociation(
-      association: Association,
-      onSuccess: () -> Unit,
-      onFailure: (Exception) -> Unit
-  )
-
-  fun updateAssociation(
+  fun saveAssociation( // handles both add and update
       association: Association,
       onSuccess: () -> Unit,
       onFailure: (Exception) -> Unit

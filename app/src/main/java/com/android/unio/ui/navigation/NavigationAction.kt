@@ -51,6 +51,28 @@ open class NavigationAction(val navController: NavHostController) {
   }
 
   /**
+   * Navigate to the specified [TopLevelDestination] while allowing to pop up the stack
+   *
+   * @param tld Main destination to navigate to, clearing the back stack when navigating to a new
+   *   one.
+   */
+  open fun navigateTo(screen: String, screenPopUpTo: String) {
+    navController.navigate(screen) {
+      popUpTo(screenPopUpTo) {
+        saveState = true
+        inclusive = true
+      }
+
+      // To avoid having multiples copies of the same destination if we reselct the same item
+      launchSingleTop = true
+
+      if (screen != Route.AUTH) {
+        restoreState = true
+      }
+    }
+  }
+
+  /**
    * Get the current route.
    *
    * @return The current route
@@ -100,6 +122,7 @@ object Screen {
   const val MY_PROFILE = "MyProfile Screen"
   const val SETTINGS = "Settings"
   const val ASSOCIATION_PROFILE = "Association Profile Screen"
+  const val EDIT_ASSOCIATION = "Edit Assocation Screen/{associationId}"
   const val EVENT_DETAILS = "Event Details Screen/{uid}"
 
   /**
