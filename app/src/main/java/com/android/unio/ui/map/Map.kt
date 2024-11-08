@@ -20,11 +20,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import com.android.unio.R
-import com.android.unio.model.association.Association
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventViewModel
-import com.android.unio.model.firestore.emptyFirestoreReferenceList
-import com.android.unio.model.map.Location
 import com.android.unio.model.strings.MapStrings
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.navigation.NavigationAction
