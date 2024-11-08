@@ -86,7 +86,7 @@ class ScreenDisplayingTest {
             AssociationViewModel(
                 mock(), mockk<EventRepositoryFirestore>(), imageRepositoryFirestore))
     eventViewModel = spyk(EventViewModel(mock(), mock()))
-    userViewModel = UserViewModel(userRepository)
+    userViewModel = spyk(UserViewModel(userRepository))
     val user = MockUser.createMockUser()
     every { userRepository.updateUser(user, any(), any()) } answers
         {

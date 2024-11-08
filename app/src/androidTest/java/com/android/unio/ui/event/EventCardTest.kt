@@ -6,6 +6,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import com.android.unio.mocks.event.MockEvent
 import com.android.unio.mocks.map.MockLocation
+import com.android.unio.mocks.user.MockUser
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventRepositoryFirestore
 import com.android.unio.model.event.EventType
@@ -17,13 +18,16 @@ import com.android.unio.ui.navigation.NavigationAction
 import com.google.firebase.Timestamp
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
+import io.mockk.MockKAnnotations
+import io.mockk.every
+import io.mockk.impl.annotations.MockK
+import io.mockk.spyk
 import java.util.Date
 import javax.inject.Inject
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.mockito.Mockito.mock
-import org.mockito.MockitoAnnotations
 
 @HiltAndroidTest
 class EventCardTest {
@@ -38,7 +42,7 @@ class EventCardTest {
           location = MockLocation.createMockLocation(name = "Sample Location"),
           date = Timestamp(Date(2024 - 1900, 6, 20)),
           catchyDescription = "This is a catchy description.")
-  @Inject lateinit var userRepositoryFirestore: UserRepositoryFirestore
+  @MockK lateinit var userRepositoryFirestore: UserRepositoryFirestore
   private lateinit var userViewModel: UserViewModel
   @Inject lateinit var eventRepositoryFirestore: EventRepositoryFirestore
   private lateinit var eventViewModel: EventViewModel
@@ -46,11 +50,18 @@ class EventCardTest {
 
   @Before
   fun setUp() {
-    MockitoAnnotations.openMocks(this)
+    MockKAnnotations.init(this, relaxed = true)
     hiltRule.inject()
     navigationAction = mock(NavigationAction::class.java)
 
-    userViewModel = UserViewModel(userRepositoryFirestore)
+    userViewModel = spyk(UserViewModel(userRepositoryFirestore))
+    val user = MockUser.createMockUser()
+    every { userRepositoryFirestore.updateUser(user, any(), any()) } answers
+        {
+          val onSuccess = args[1] as () -> Unit
+          onSuccess()
+        }
+    userViewModel.addUser(user, {})
     eventViewModel = EventViewModel(eventRepositoryFirestore, imageRepository)
   }
 
