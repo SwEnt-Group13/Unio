@@ -76,11 +76,7 @@ constructor(private val repository: EventRepository, private val imageRepository
    * @return The event with the given ID, or null if no such event exists.
    */
   fun findEventById(id: String): Event? {
-    _events.value
-        .find { it.uid == id }
-        ?.let {
-          return it
-        } ?: return null
+    return _events.value.find { it.uid == id }
   }
 
   /** Add a new event to the repository. It uploads the event image first, then adds the event. */

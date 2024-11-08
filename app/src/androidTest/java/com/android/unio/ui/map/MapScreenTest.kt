@@ -31,9 +31,9 @@ class MapScreenTest {
   @get:Rule val composeTestRule = createComposeRule()
 
   @MockK private lateinit var eventRepository: EventRepositoryFirestore
+  @MockK private lateinit var imageRepository: ImageRepositoryFirebaseStorage
   @MockK private lateinit var userRepository: UserRepositoryFirestore
   @MockK private lateinit var navHostController: NavHostController
-  @MockK private lateinit var imageRepository: ImageRepositoryFirebaseStorage
   private lateinit var navigationAction: NavigationAction
   private lateinit var eventViewModel: EventViewModel
   private lateinit var userViewModel: UserViewModel
@@ -60,7 +60,10 @@ class MapScreenTest {
   @Test
   fun mapScreenComponentsAreDisplayed() {
     composeTestRule.setContent {
-      MapScreen(navigationAction = navigationAction, eventViewModel = eventViewModel)
+      MapScreen(
+          navigationAction = navigationAction,
+          eventViewModel = eventViewModel,
+          userViewModel = userViewModel)
     }
 
     composeTestRule.onNodeWithTag("MapScreen").assertIsDisplayed()
@@ -71,7 +74,10 @@ class MapScreenTest {
   @Test
   fun mapScreenBackButtonNavigatesBack() {
     composeTestRule.setContent {
-      MapScreen(navigationAction = navigationAction, eventViewModel = eventViewModel)
+      MapScreen(
+          navigationAction = navigationAction,
+          eventViewModel = eventViewModel,
+          userViewModel = userViewModel)
     }
 
     composeTestRule.onNodeWithTag("goBackButton").performClick()
