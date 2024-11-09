@@ -1,6 +1,5 @@
 package com.android.unio.ui.navigation
 
-import BookmarkIcon
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Person
@@ -8,6 +7,7 @@ import androidx.compose.material.icons.outlined.Search
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
+import com.android.unio.resources.BookmarkIcon
 
 open class NavigationAction(val navController: NavHostController) {
 
