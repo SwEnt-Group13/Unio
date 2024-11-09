@@ -66,7 +66,7 @@ class MockAssociation {
     }
 
     /** Edge cases list for category enums * */
-    val edgeCaseCategories = AssociationCategory.values().toList()
+    val edgeCaseCategories = AssociationCategory.entries
 
     /** Creates a mock Association with specified properties for testing edge cases. */
     fun createMockAssociation(
