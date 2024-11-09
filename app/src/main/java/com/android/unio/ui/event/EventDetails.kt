@@ -61,11 +61,11 @@ import androidx.core.net.toUri
 import coil.compose.AsyncImage
 import com.android.unio.R
 import com.android.unio.model.event.Event
+import com.android.unio.model.event.EventUtils.formatTimestamp
 import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.theme.AppTypography
-import com.android.unio.utils.EventUtils.formatTimestamp
 import java.text.SimpleDateFormat
 import java.util.Locale
 import kotlinx.coroutines.CoroutineScope
