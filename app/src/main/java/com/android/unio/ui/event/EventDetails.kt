@@ -1,6 +1,8 @@
 package com.android.unio.ui.event
 
 import android.annotation.SuppressLint
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -40,7 +42,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -93,20 +94,21 @@ fun EventScreen(
   val event by eventViewModel.selectedEvent.collectAsState()
   val user by userViewModel.user.collectAsState()
 
-  if (event == null) {
+  if (event == null || user == null) {
+    Log.e("EventScreen", "Event or user is null")
+    Toast.makeText(LocalContext.current, "An error occurred.", Toast.LENGTH_SHORT).show()
     return
   }
-  var isSaved by remember { mutableStateOf(false) }
-  LaunchedEffect(event!!.uid) { isSaved = userViewModel.isEventSavedForCurrentUser(event!!.uid) }
+
+  var isSaved by remember { mutableStateOf(user!!.savedEvents.contains(event!!.uid)) }
+
   val onClickSaveButton = {
-    if (user != null) {
-      if (isSaved) {
-        userViewModel.unSaveEventForCurrentUser(event!!.uid) { isSaved = false }
-      } else {
-        userViewModel.saveEventForCurrentUser(event!!.uid) { isSaved = true }
-      }
-      userViewModel.updateUserDebounced(user!!)
+    if (isSaved) {
+      userViewModel.unSaveEventForCurrentUser(event!!.uid) { isSaved = false }
+    } else {
+      userViewModel.saveEventForCurrentUser(event!!.uid) { isSaved = true }
     }
+    userViewModel.updateUserDebounced(user!!)
   }
 
   EventScreenScaffold(navigationAction, event!!, isSaved, onClickSaveButton)
