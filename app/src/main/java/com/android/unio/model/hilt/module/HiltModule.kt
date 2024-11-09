@@ -21,7 +21,7 @@ import dagger.hilt.components.SingletonComponent
 
 @Module
 @InstallIn(SingletonComponent::class)
-abstract class EventModule() {
+abstract class EventModule {
 
   @Binds
   abstract fun bindEventRepository(
@@ -68,7 +68,7 @@ abstract class ImageModule {
 abstract class UserModule {
 
   @Binds
-  abstract fun bindUserRepository(UserRepositoryFirestore: UserRepositoryFirestore): UserRepository
+  abstract fun bindUserRepository(userRepositoryFirestore: UserRepositoryFirestore): UserRepository
 }
 
 @Module
