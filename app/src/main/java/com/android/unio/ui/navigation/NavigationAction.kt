@@ -1,6 +1,5 @@
 package com.android.unio.ui.navigation
 
-import BookmarkIcon
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Person
@@ -8,6 +7,7 @@ import androidx.compose.material.icons.outlined.Search
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
+import com.android.unio.resources.BookmarkIcon
 
 open class NavigationAction(val navController: NavHostController) {
 
@@ -53,8 +53,9 @@ open class NavigationAction(val navController: NavHostController) {
   /**
    * Navigate to the specified [TopLevelDestination] while allowing to pop up the stack
    *
-   * @param tld Main destination to navigate to, clearing the back stack when navigating to a new
+   * @param screen Main destination to navigate to, clearing the back stack when navigating to a new
    *   one.
+   * @param screenPopUpTo Destination to pop up to
    */
   open fun navigateTo(screen: String, screenPopUpTo: String) {
     navController.navigate(screen) {
@@ -63,7 +64,7 @@ open class NavigationAction(val navController: NavHostController) {
         inclusive = true
       }
 
-      // To avoid having multiples copies of the same destination if we reselct the same item
+      // To avoid having multiples copies of the same destination if we reselect the same item
       launchSingleTop = true
 
       if (screen != Route.AUTH) {
@@ -103,7 +104,6 @@ object TopLevelDestinations {
 
 object Route {
   const val HOME = "Home"
-  const val MAP = "Map"
   const val AUTH = "Auth"
   const val EXPLORE = "Explore"
   const val SAVED = "Saved"
@@ -111,7 +111,6 @@ object Route {
 }
 
 object Screen {
-  const val AUTH = "Auth Screen"
   const val WELCOME = "Welcome Screen"
   const val EMAIL_VERIFICATION = "Email Verification Screen"
   const val ACCOUNT_DETAILS = "Account Details Screen"
@@ -122,8 +121,8 @@ object Screen {
   const val MY_PROFILE = "MyProfile Screen"
   const val SETTINGS = "Settings"
   const val ASSOCIATION_PROFILE = "Association Profile Screen"
-  const val EDIT_ASSOCIATION = "Edit Assocation Screen/{associationId}"
-  const val EVENT_DETAILS = "Event Details Screen/{uid}"
+  const val EDIT_ASSOCIATION = "Edit Assocation Screen"
+  const val EVENT_DETAILS = "Event Details Screen"
 
   /**
    * Replace the placeholders in the screen with the provided parameters.

@@ -10,8 +10,6 @@ import androidx.navigation.NavHostController
 import com.android.unio.mocks.association.MockAssociation
 import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationRepository
-import com.android.unio.model.association.AssociationViewModel
-import com.android.unio.model.event.EventRepository
 import com.android.unio.ui.navigation.NavigationAction
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
@@ -31,8 +29,6 @@ class EditAssociationTest {
   @Mock private lateinit var collectionReference: CollectionReference
   @Mock private lateinit var db: FirebaseFirestore
   @Mock private lateinit var associationRepository: AssociationRepository
-  @Mock private lateinit var eventRepository: EventRepository
-  private lateinit var associationViewModel: AssociationViewModel
 
   private lateinit var associations: List<Association>
 
@@ -62,9 +58,7 @@ class EditAssociationTest {
   fun testEditAssociationScreenDisplaysCorrectly() {
     composeTestRule.setContent {
       EditAssociationScaffold(
-          MockAssociation.createMockAssociation(uid = "1"),
-          navigationAction = navigationAction,
-          onSave = {})
+          MockAssociation.createMockAssociation(uid = "1"), onCancel = {}, onSave = {})
     }
 
     composeTestRule.waitForIdle()
@@ -73,7 +67,6 @@ class EditAssociationTest {
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("FullNameTextField"))
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("CategoryButton"))
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("DescriptionTextField"))
-    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("ImageTextField"))
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("UrlTextField"))
   }
 

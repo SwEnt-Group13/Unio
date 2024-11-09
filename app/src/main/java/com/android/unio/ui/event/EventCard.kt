@@ -1,5 +1,7 @@
 package com.android.unio.ui.event
 
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -21,7 +23,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -45,14 +46,15 @@ import coil.request.ImageRequest
 import com.android.unio.R
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventType
+import com.android.unio.model.event.EventUtils.addAlphaToColor
+import com.android.unio.model.event.EventUtils.formatTimestamp
+import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.strings.test_tags.EventCardTestTags
 import com.android.unio.model.user.User
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
 import com.android.unio.ui.theme.AppTypography
-import com.android.unio.utils.EventUtils.addAlphaToColor
-import com.android.unio.utils.EventUtils.formatTimestamp
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -61,31 +63,39 @@ fun EventCard(
     navigationAction: NavigationAction,
     event: Event,
     userViewModel: UserViewModel,
+    eventViewModel: EventViewModel
 ) {
   val user by userViewModel.user.collectAsState()
-  var isSaved by remember { mutableStateOf(false) }
-  LaunchedEffect(event.uid) { isSaved = userViewModel.isEventSavedForCurrentUser(event.uid) }
-  val onClickEventCard = {
-    userViewModel.isEventSavedForCurrentUser(event.uid)
-    navigationAction.navigateTo(Screen.EVENT_DETAILS)
+
+  if (user == null) {
+    Log.e("EventCard", "User not found.")
+    Toast.makeText(LocalContext.current, "An error occurred.", Toast.LENGTH_SHORT).show()
+    return
   }
 
+  var isSaved by remember { mutableStateOf(user!!.savedEvents.contains(event.uid)) }
+
   val onClickSaveButton = {
-    if (user != null) {
-      if (isSaved) {
-        userViewModel.unSaveEventForCurrentUser(event.uid) { isSaved = false }
-      } else {
-        userViewModel.saveEventForCurrentUser(event.uid) { isSaved = true }
-      }
-      userViewModel.updateUserDebounced(user!!)
+    if (isSaved) {
+      userViewModel.unSaveEventForCurrentUser(event.uid) { isSaved = false }
+    } else {
+      userViewModel.saveEventForCurrentUser(event.uid) { isSaved = true }
     }
+    userViewModel.updateUserDebounced(user!!)
   }
-  EventCardScaffold(user!!, event, isSaved, onClickEventCard, onClickSaveButton)
+
+  EventCardScaffold(
+      event,
+      isSaved,
+      {
+        eventViewModel.selectEvent(event.uid)
+        navigationAction.navigateTo(Screen.EVENT_DETAILS)
+      },
+      onClickSaveButton)
 }
 
 @Composable
 fun EventCardScaffold(
-    user: User,
     event: Event,
     isSaved: Boolean,
     onClickEventCard: () -> Unit,
@@ -114,7 +124,7 @@ fun EventCardScaffold(
               .testTag(EventCardTestTags.EVENT_ITEM)
               .clip(RoundedCornerShape(10.dp))
               .background(MaterialTheme.colorScheme.primaryContainer)
-              .clickable { onClickEventCard }) {
+              .clickable { onClickEventCard() }) {
 
         // Event image section, displays the main event image or a placeholder if the URL is invalid
 
@@ -140,7 +150,7 @@ fun EventCardScaffold(
                       .clip(RoundedCornerShape(14.dp))
                       .background(MaterialTheme.colorScheme.inversePrimary)
                       .align(Alignment.TopEnd)
-                      .clickable { onClickSaveButton }
+                      .clickable { onClickSaveButton() }
                       .padding(4.dp)) {
                 Icon(
                     imageVector =

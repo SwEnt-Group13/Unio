@@ -67,9 +67,7 @@ class EventCardTest {
   }
 
   private fun setEventScreen(event: Event) {
-    composeTestRule.setContent {
-      EventCard(navigationAction = navigationAction, event = event, userViewModel = userViewModel)
-    }
+    composeTestRule.setContent { EventCard(navigationAction, event, userViewModel, eventViewModel) }
   }
 
   @Test

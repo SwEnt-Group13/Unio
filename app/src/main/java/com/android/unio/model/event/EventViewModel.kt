@@ -66,7 +66,11 @@ constructor(private val repository: EventRepository, private val imageRepository
    * @param eventId the ID of the event to select.
    */
   fun selectEvent(eventId: String) {
-    _selectedEvent.value = findEventById(eventId)
+    _selectedEvent.value =
+        findEventById(eventId).also {
+          it?.organisers?.requestAll()
+          it?.taggedAssociations?.requestAll()
+        }
   }
 
   /**

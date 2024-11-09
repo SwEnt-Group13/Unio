@@ -164,9 +164,8 @@ fun ExploreScreenContent(
                             modifier =
                                 Modifier.clickable {
                                   expanded = false
-                                  navigationAction.navigateTo(
-                                      Screen.withParams(
-                                          Screen.ASSOCIATION_PROFILE, association.uid))
+                                  associationViewModel.selectAssociation(association.uid)
+                                  navigationAction.navigateTo(Screen.ASSOCIATION_PROFILE)
                                 },
                             headlineContent = { Text(association.name) },
                         )
@@ -224,7 +223,7 @@ fun ExploreScreenContent(
  * association profile.
  *
  * @param association The association to display.
- * @param navigationAction The navigation action to use when the item is clicked.
+ * @param onClick The action to perform when the item is clicked.
  */
 @Composable
 fun AssociationItem(association: Association, onClick: () -> Unit) {
