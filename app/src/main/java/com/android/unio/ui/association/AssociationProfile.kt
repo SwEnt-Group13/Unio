@@ -57,35 +57,26 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
-import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.android.unio.R
-import com.android.unio.mocks.association.MockAssociation
 import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.event.Event
-import com.android.unio.model.event.EventRepositoryFirestore
 import com.android.unio.model.event.EventViewModel
-import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.user.User
-import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.event.EventCard
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
 import com.android.unio.ui.theme.AppTypography
-import com.google.firebase.Firebase
-import com.google.firebase.firestore.firestore
-import com.google.firebase.storage.storage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 // These variable are only here for testing purpose. They should be deleted when the screen is
 // linked to the backend
-private val DEBUG_MESSAGE = "<DEBUG> Not implemented yet"
+private const val DEBUG_MESSAGE = "<DEBUG> Not implemented yet"
 
 private var testSnackbar: SnackbarHostState? = null
 private var scope: CoroutineScope? = null
