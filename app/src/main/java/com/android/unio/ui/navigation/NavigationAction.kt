@@ -103,7 +103,6 @@ object TopLevelDestinations {
 
 object Route {
   const val HOME = "Home"
-  const val MAP = "Map"
   const val AUTH = "Auth"
   const val EXPLORE = "Explore"
   const val SAVED = "Saved"
@@ -111,7 +110,6 @@ object Route {
 }
 
 object Screen {
-  const val AUTH = "Auth Screen"
   const val WELCOME = "Welcome Screen"
   const val EMAIL_VERIFICATION = "Email Verification Screen"
   const val ACCOUNT_DETAILS = "Account Details Screen"
@@ -122,8 +120,8 @@ object Screen {
   const val MY_PROFILE = "MyProfile Screen"
   const val SETTINGS = "Settings"
   const val ASSOCIATION_PROFILE = "Association Profile Screen"
-  const val EDIT_ASSOCIATION = "Edit Assocation Screen/{associationId}"
-  const val EVENT_DETAILS = "Event Details Screen/{uid}"
+  const val EDIT_ASSOCIATION = "Edit Assocation Screen"
+  const val EVENT_DETAILS = "Event Details Screen"
 
   /**
    * Replace the placeholders in the screen with the provided parameters.
