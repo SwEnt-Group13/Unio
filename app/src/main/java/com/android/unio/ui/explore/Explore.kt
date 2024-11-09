@@ -161,9 +161,8 @@ fun ExploreScreenContent(
                             modifier =
                                 Modifier.clickable {
                                   expanded = false
-                                  navigationAction.navigateTo(
-                                      Screen.withParams(
-                                          Screen.ASSOCIATION_PROFILE, association.uid))
+                                  associationViewModel.selectAssociation(association.uid)
+                                  navigationAction.navigateTo(Screen.ASSOCIATION_PROFILE)
                                 },
                             headlineContent = { Text(association.name) },
                         )
