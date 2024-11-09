@@ -32,6 +32,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Snackbar
@@ -160,7 +161,7 @@ fun EventScreenScaffold(
                         imageVector =
                             if (isSaved) Icons.Rounded.Favorite else Icons.Rounded.FavoriteBorder,
                         contentDescription = if (isSaved) "Saved" else "Not saved",
-                        tint = if (isSaved) Color.Red else Color.White)
+                        tint = if (isSaved) MaterialTheme.colorScheme.error else LocalContentColor.current)
                   }
               IconButton(modifier = Modifier.testTag("eventShareButton"), onClick = DEBUG_LAMBDA) {
                 Icon(
