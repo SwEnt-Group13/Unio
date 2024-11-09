@@ -12,6 +12,7 @@ import com.android.unio.model.event.EventRepositoryFirestore
 import com.android.unio.model.event.EventType
 import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
+import com.android.unio.model.strings.test_tags.EventCardTestTags
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.navigation.NavigationAction
@@ -76,32 +77,32 @@ class EventCardTest {
     setEventScreen(sampleEvent)
 
     composeTestRule
-        .onNodeWithTag("event_EventTitle", useUnmergedTree = true)
+        .onNodeWithTag(EventCardTestTags.EVENT_TITLE, useUnmergedTree = true)
         .assertExists()
         .assertTextEquals("Sample Event")
 
     composeTestRule
-        .onNodeWithTag("event_EventMainType", useUnmergedTree = true)
+        .onNodeWithTag(EventCardTestTags.EVENT_MAIN_TYPE, useUnmergedTree = true)
         .assertExists()
         .assertTextEquals(EventType.TRIP.text)
 
     composeTestRule
-        .onNodeWithTag("event_EventLocation", useUnmergedTree = true)
+        .onNodeWithTag(EventCardTestTags.EVENT_LOCATION, useUnmergedTree = true)
         .assertExists()
         .assertTextEquals("Sample Location")
 
     composeTestRule
-        .onNodeWithTag("event_EventDate", useUnmergedTree = true)
+        .onNodeWithTag(EventCardTestTags.EVENT_DATE, useUnmergedTree = true)
         .assertExists()
         .assertTextEquals("20/07")
 
     composeTestRule
-        .onNodeWithTag("event_EventTime", useUnmergedTree = true)
+        .onNodeWithTag(EventCardTestTags.EVENT_TIME, useUnmergedTree = true)
         .assertExists()
         .assertTextEquals("00:00")
 
     composeTestRule
-        .onNodeWithTag("event_EventCatchyDescription", useUnmergedTree = true)
+        .onNodeWithTag(EventCardTestTags.EVENT_CATCHY_DESCRIPTION, useUnmergedTree = true)
         .assertExists()
         .assertTextEquals("This is a catchy description.")
   }
@@ -112,7 +113,7 @@ class EventCardTest {
 
     // Check if the fallback image is displayed when no image is provided
     composeTestRule
-        .onNodeWithTag("event_EventImage", useUnmergedTree = true)
+        .onNodeWithTag(EventCardTestTags.EVENT_IMAGE, useUnmergedTree = true)
         .assertExists() // Fallback image exists when no image is provided
   }
 
@@ -121,7 +122,7 @@ class EventCardTest {
     val event = MockEvent.createMockEvent(uid = MockEvent.Companion.EdgeCaseUid.EMPTY.value)
     setEventScreen(event)
     composeTestRule
-        .onNodeWithTag("event_EventTitle", useUnmergedTree = true)
+        .onNodeWithTag(EventCardTestTags.EVENT_TITLE, useUnmergedTree = true)
         .assertIsDisplayed() // Ensure the title exists
   }
 
@@ -131,7 +132,7 @@ class EventCardTest {
         MockEvent.createMockEvent(uid = MockEvent.Companion.EdgeCaseUid.SPECIAL_CHARACTERS.value)
     setEventScreen(event)
     composeTestRule
-        .onNodeWithTag("event_EventTitle", useUnmergedTree = true)
+        .onNodeWithTag(EventCardTestTags.EVENT_TITLE, useUnmergedTree = true)
         .assertExists() // Ensure the title exists
   }
 
@@ -140,7 +141,7 @@ class EventCardTest {
     val event = MockEvent.createMockEvent(uid = MockEvent.Companion.EdgeCaseUid.LONG.value)
     setEventScreen(event)
     composeTestRule
-        .onNodeWithTag("event_EventTitle", useUnmergedTree = true)
+        .onNodeWithTag(EventCardTestTags.EVENT_TITLE, useUnmergedTree = true)
         .assertExists() // Ensure the title exists
   }
 
@@ -149,7 +150,7 @@ class EventCardTest {
     val event = MockEvent.createMockEvent(uid = MockEvent.Companion.EdgeCaseUid.TYPICAL.value)
     setEventScreen(event)
     composeTestRule
-        .onNodeWithTag("event_EventTitle", useUnmergedTree = true)
+        .onNodeWithTag(EventCardTestTags.EVENT_TITLE, useUnmergedTree = true)
         .assertExists() // Ensure the title exists
   }
 
@@ -158,7 +159,7 @@ class EventCardTest {
     val event = MockEvent.createMockEvent(title = MockEvent.Companion.EdgeCaseTitle.EMPTY.value)
     setEventScreen(event)
     composeTestRule
-        .onNodeWithTag("event_EventTitle", useUnmergedTree = true)
+        .onNodeWithTag(EventCardTestTags.EVENT_TITLE, useUnmergedTree = true)
         .assertTextEquals(MockEvent.Companion.EdgeCaseTitle.EMPTY.value)
   }
 
@@ -167,7 +168,7 @@ class EventCardTest {
     val event = MockEvent.createMockEvent(title = MockEvent.Companion.EdgeCaseTitle.SHORT.value)
     setEventScreen(event)
     composeTestRule
-        .onNodeWithTag("event_EventTitle", useUnmergedTree = true)
+        .onNodeWithTag(EventCardTestTags.EVENT_TITLE, useUnmergedTree = true)
         .assertTextEquals(MockEvent.Companion.EdgeCaseTitle.SHORT.value)
   }
 
@@ -176,7 +177,7 @@ class EventCardTest {
     val event = MockEvent.createMockEvent(title = MockEvent.Companion.EdgeCaseTitle.LONG.value)
     setEventScreen(event)
     composeTestRule
-        .onNodeWithTag("event_EventTitle", useUnmergedTree = true)
+        .onNodeWithTag(EventCardTestTags.EVENT_TITLE, useUnmergedTree = true)
         .assertTextEquals(MockEvent.Companion.EdgeCaseTitle.LONG.value)
   }
 
@@ -187,7 +188,7 @@ class EventCardTest {
             title = MockEvent.Companion.EdgeCaseTitle.SPECIAL_CHARACTERS.value)
     setEventScreen(event)
     composeTestRule
-        .onNodeWithTag("event_EventTitle", useUnmergedTree = true)
+        .onNodeWithTag(EventCardTestTags.EVENT_TITLE, useUnmergedTree = true)
         .assertTextEquals(MockEvent.Companion.EdgeCaseTitle.SPECIAL_CHARACTERS.value)
   }
 
@@ -197,7 +198,7 @@ class EventCardTest {
     val event = MockEvent.createMockEvent(image = MockEvent.Companion.EdgeCaseImage.EMPTY.value)
     setEventScreen(event)
     composeTestRule
-        .onNodeWithTag("event_EventImage", useUnmergedTree = true)
+        .onNodeWithTag(EventCardTestTags.EVENT_IMAGE, useUnmergedTree = true)
         .assertExists() // Expect fallback image
   }
 
@@ -206,7 +207,7 @@ class EventCardTest {
     val event = MockEvent.createMockEvent(image = MockEvent.Companion.EdgeCaseImage.TYPICAL.value)
     setEventScreen(event)
     composeTestRule
-        .onNodeWithTag("event_EventImage", useUnmergedTree = true)
+        .onNodeWithTag(EventCardTestTags.EVENT_IMAGE, useUnmergedTree = true)
         .assertExists() // Expect image to exist
   }
 
@@ -215,7 +216,7 @@ class EventCardTest {
     val event = MockEvent.createMockEvent(image = MockEvent.Companion.EdgeCaseImage.LONG.value)
     setEventScreen(event)
     composeTestRule
-        .onNodeWithTag("event_EventImage", useUnmergedTree = true)
+        .onNodeWithTag(EventCardTestTags.EVENT_IMAGE, useUnmergedTree = true)
         .assertExists() // Expect image to exist
   }
 
@@ -224,7 +225,7 @@ class EventCardTest {
     val event = MockEvent.createMockEvent(image = MockEvent.Companion.EdgeCaseImage.INVALID.value)
     setEventScreen(event)
     composeTestRule
-        .onNodeWithTag("event_EventImage", useUnmergedTree = true)
+        .onNodeWithTag(EventCardTestTags.EVENT_IMAGE, useUnmergedTree = true)
         .assertExists() // Expect image to exist
   }
 
@@ -238,7 +239,7 @@ class EventCardTest {
             catchyDescription = MockEvent.Companion.EdgeCaseCatchyDescription.EMPTY.value)
     setEventScreen(event)
     composeTestRule
-        .onNodeWithTag("event_EventCatchyDescription", useUnmergedTree = true)
+        .onNodeWithTag(EventCardTestTags.EVENT_CATCHY_DESCRIPTION, useUnmergedTree = true)
         .assertTextEquals("") // Expect empty catchy description
   }
 
@@ -249,7 +250,7 @@ class EventCardTest {
             catchyDescription = MockEvent.Companion.EdgeCaseCatchyDescription.SHORT.value)
     setEventScreen(event)
     composeTestRule
-        .onNodeWithTag("event_EventCatchyDescription", useUnmergedTree = true)
+        .onNodeWithTag(EventCardTestTags.EVENT_CATCHY_DESCRIPTION, useUnmergedTree = true)
         .assertTextEquals(MockEvent.Companion.EdgeCaseCatchyDescription.SHORT.value)
   }
 
@@ -260,7 +261,7 @@ class EventCardTest {
             catchyDescription = MockEvent.Companion.EdgeCaseCatchyDescription.LONG.value)
     setEventScreen(event)
     composeTestRule
-        .onNodeWithTag("event_EventCatchyDescription", useUnmergedTree = true)
+        .onNodeWithTag(EventCardTestTags.EVENT_CATCHY_DESCRIPTION, useUnmergedTree = true)
         .assertTextEquals(MockEvent.Companion.EdgeCaseCatchyDescription.LONG.value)
   }
 
@@ -272,7 +273,7 @@ class EventCardTest {
                 MockEvent.Companion.EdgeCaseCatchyDescription.SPECIAL_CHARACTERS.value)
     setEventScreen(event)
     composeTestRule
-        .onNodeWithTag("event_EventCatchyDescription", useUnmergedTree = true)
+        .onNodeWithTag(EventCardTestTags.EVENT_CATCHY_DESCRIPTION, useUnmergedTree = true)
         .assertTextEquals(MockEvent.Companion.EdgeCaseCatchyDescription.SPECIAL_CHARACTERS.value)
   }
 
@@ -281,27 +282,35 @@ class EventCardTest {
   fun testEventCardWithPastDate() {
     val event = MockEvent.createMockEvent(date = MockEvent.Companion.EdgeCaseDate.PAST.value)
     setEventScreen(event)
-    composeTestRule.onNodeWithTag("event_EventDate", useUnmergedTree = true).assertExists()
+    composeTestRule
+        .onNodeWithTag(EventCardTestTags.EVENT_DATE, useUnmergedTree = true)
+        .assertExists()
   }
 
   @Test
   fun testEventCardWithTodayDate() {
     val event = MockEvent.createMockEvent(date = MockEvent.Companion.EdgeCaseDate.TODAY.value)
     setEventScreen(event)
-    composeTestRule.onNodeWithTag("event_EventDate", useUnmergedTree = true).assertExists()
+    composeTestRule
+        .onNodeWithTag(EventCardTestTags.EVENT_DATE, useUnmergedTree = true)
+        .assertExists()
   }
 
   @Test
   fun testEventCardWithFutureDate() {
     val event = MockEvent.createMockEvent(date = MockEvent.Companion.EdgeCaseDate.FUTURE.value)
     setEventScreen(event)
-    composeTestRule.onNodeWithTag("event_EventDate", useUnmergedTree = true).assertExists()
+    composeTestRule
+        .onNodeWithTag(EventCardTestTags.EVENT_DATE, useUnmergedTree = true)
+        .assertExists()
   }
 
   @Test
   fun testEventCardWithFarFutureDate() {
     val event = MockEvent.createMockEvent(date = MockEvent.Companion.EdgeCaseDate.FAR_FUTURE.value)
     setEventScreen(event)
-    composeTestRule.onNodeWithTag("event_EventDate", useUnmergedTree = true).assertExists()
+    composeTestRule
+        .onNodeWithTag(EventCardTestTags.EVENT_DATE, useUnmergedTree = true)
+        .assertExists()
   }
 }
