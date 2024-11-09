@@ -65,7 +65,7 @@ fun EditAssociationScreen(
       association = association!!,
       onCancel = {
         associationViewModel.selectAssociation(association!!.uid)
-        navigationAction.navigateTo(Screen.ASSOCIATION_PROFILE)
+        navigationAction.navigateTo(Screen.ASSOCIATION_PROFILE, Screen.EDIT_ASSOCIATION)
       },
       onSave = { newAssociation ->
         associationViewModel.saveAssociation(
