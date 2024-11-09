@@ -2,9 +2,218 @@
 <!-- example in code : val greeting = getString(R.string.greeting) -->
 <!-- You must implement a version of the string in every language or mark it as untranslatable ! -->
 <resources>
+    /**
+    * Main activity
+    */
+
     <!-- App name and activity titles -->
     <string name="app_name">Unio</string>
     <string name="title_activity_main">MainActivity</string>
+
+    /**
+     * package: association
+    */
+
+    <!-- Association Strings -->
+    <string name="association_upcoming_events" translatable="true">Upcoming Events</string>
+    <string name="association_go_back" translatable="true">Go Back</string>
+    <string name="association_see_more" translatable="true">See More</string>
+    <string name="association_contact_members" translatable="true">Contact Members</string>
+    <string name="association_help_us" translatable="true">
+        Here’s where you could help us. Click on a role to learn more.
+    </string>
+    <string name="association_follower" translatable="true">followers</string>
+    <string name="association_member" translatable="true">members</string>
+    <string name="association_follow" translatable="true">Follow</string>
+    <string name="association_join" translatable="true">Join</string>
+    <string name="association_no_event" translatable="true">No event planned yet</string>
+    <string name="association_not_found" translatable="true">ERROR : Association not found</string>
+    <string name="association_content_description_sharing_icon">Icon for sharing association</string>
+    <string name="association_content_description_add_icon">Add icon</string>
+    <string name="association_content_description_user_pfp">User\'s profile picture</string>
+    <string name="association_content_description_association_image">Association image of </string>
+    <string name="association_content_description_follow_icon">Follow icon</string>
+
+
+    <!-- EditAssociation strings -->
+    <string name="edit_association_title">Edit Association</string>
+    <string name="name_explanation">The name of the association. This is typically a short identifier or acronym.</string>
+    <string name="full_name_explanation">The full name of the association. This can be the official long-form name.</string>
+    <string name="category_explanation">Select the category that best fits the association\'s purpose.</string>
+    <string name="description_explanation">Provide a brief description of the association, including its main activities and goals.</string>
+    <string name="image_explanation">Provide a URL for the association\'s image, which will be displayed on the profile page.</string>
+    <string name="url_explanation">Provide the URL of the association\'s webpage or online presence.</string>
+    <string name="cancel_button_text">Cancel</string>
+    <string name="save_button_text">Save</string>
+    <string name="category_button_text">Select Category</string>
+    <string name="save_failed_message">Failed to save association</string>
+
+    /**
+    * package: authentication
+    */
+
+    <!-- Interest Overlay Strings -->
+    <string name="interest_overlay_title" translatable="true">Your interests</string>
+    <string name="interest_overlay_description" translatable="true">Choose as many interests as you feel apply to you</string>
+    <string name="interest_overlay_cancel" translatable="true">Cancel</string>
+    <string name="interest_overlay_save" translatable="true">Save</string>
+
+    <!-- Social Overlay Strings -->
+    <string name="social_overlay_title" translatable="true">Your social media</string>
+    <string name="social_overlay_description" translatable="true">These will be displayed on your profile to allow other students to contact you</string>
+    <string name="social_overlay_add_social" translatable="true">Add social</string>
+    <string name="social_overlay_save" translatable="true">Save</string>
+    <string name="social_overlay_cancel" translatable="true">Cancel</string>
+    <string name="social_overlay_save_changes" translatable="true">Save changes</string>
+    <string name="social_overlay_empty_field" translatable="true">The input is empty or blank</string>
+    <string name="social_overlay_invalid_phone_number" translatable="true">The phone number has wrong format</string>
+    <string name="social_overlay_invalid_website" translatable="true">The website is not encoded with https</string>
+    <string name="social_overlay_content_description_close" translatable="true">Close</string>
+    <string name="social_overlay_content_description_add" translatable="true">Add</string>
+
+    <!-- Account Details Strings -->
+    <string name="account_details_title" translatable="true">Tell us about yourself</string>
+    <string name="account_details_first_name" translatable="true">First name</string>
+    <string name="account_details_last_name" translatable="true">Last name</string>
+    <string name="account_details_bio" translatable="true">Bio</string>
+    <string name="account_details_add_profile_picture" translatable="true">Maybe add a profile picture?</string>
+    <string name="account_details_add_interests" translatable="true">Add centers of interest</string>
+    <string name="account_details_add_socials" translatable="true">Add links to other social media</string>
+    <string name="account_details_continue" translatable="true">Continue</string>
+    <string name="account_details_first_name_error">Please fill in your first name</string>
+    <string name="account_details_last_name_error">Please fill in your last name</string>
+    <string name="account_details_created_successfully">Account Created Successfully</string>
+    <string name="account_details_image_upload_error">ERROR: Failed to load image</string>
+    <string name="account_details_content_description_account_circle">Account circle</string>
+    <string name="account_details_content_description_add">Add</string>
+    <string name="account_details_content_description_close">Close</string>
+    <string name="account_details_content_description_links_icon">Links icon</string>
+    <string name="account_details_content_description_pfp">Profile Picture</string>
+    <string name="account_details_content_description_remove_pfp">Remove Profile Picture</string>
+
+    <!-- EmailVerification Strings -->
+    <string name="email_verification_refresh_failed">Failed to refresh</string>
+    <string name="email_verification_sent_failed">Failed to send email</string>
+    <string name="email_verification_verified">Email verified!</string>
+    <string name="email_verification_verified_continue">Continue</string>
+    <string name="email_verification_verify_request">Verify your email</string>
+    <string name="email_verification_email_sent_to">We sent an email to </string>
+    <string name="email_verification_email_sent_to_verify">. Please verify your email to continue.</string>
+    <string name="email_verification_email_resend">Resend email</string>
+    <string name="email_verification_email_refresh">Refresh</string>
+    <string name="email_verification_content_description_go_back">Go back</string>
+    <string name="email_verification_content_description_refresh">Refresh</string>
+
+    <!-- Welcome Screen Strings -->
+    <string name="welcome_message">The world’s largest campus life platform.</string>
+    <string name="welcome_login_signup">Sign up or log in to get started.</string>
+    <string name="welcome_email_enter">Enter your email address</string>
+    <string name="welcome_email_display">john.doe@epfl.ch</string>
+    <string name="welcome_password_enter">Enter your password</string>
+    <string name="welcome_password_error_correction">Min. 6 characters and 1 digit</string>
+    <string name="welcome_malformed_email_password">Malformed email or password.</string>
+    <string name="welcome_button_continue">Continue</string>
+    <string name="welcome_toast_invalid_creds">Invalid credentials</string>
+    <string name="welcome_toast_enter_valid_email">Please enter a valid EPFL email address</string>
+    <string name="welcome_toast_sign_in">Signed in successfully</string>
+    <string name="welcome_toast_verification_sent">Verification email sent</string>
+    <string name="welcome_toast_verification_sent_failed">Failed to send verification email</string>
+    <string name="welcome_toast_account_created">Account created successfully</string>
+    <string name="welcome_content_description_hide_password">Hide password</string>
+    <string name="welcome_content_description_show_password">Show password</string>
+
+    /**
+    * package: event
+    */
+
+    <!-- Event Card Strings -->
+    <string name="event_event_title">Event Title</string>
+    <string name="event_catchy_description">Catchy Description</string>
+    <string name="event_card_content_description_event_image">Image of the event</string>
+    <string name="event_card_content_description_saved_event">Saved</string>
+    <string name="event_card_content_description_not_saved_event">Not saved</string>
+    <string name="event_card_content_description_association_logo">Association logo</string>
+
+    <!-- Event Creation Strings -->
+    <string name="event_creation_screen">Event creation</string>
+
+    <!-- Event Details Strings -->
+    <string name="event_sign_up" translatable="false">I\'m going.</string>
+    <string name="event_not_found" translatable="false">ERROR : event not found.</string>
+    <string name="event_details_content_description_saved" translatable="false">Saved</string>
+    <string name="event_details_content_description_not_saved" translatable="false">Not saved</string>
+
+    /**
+    * package: explore
+    */
+
+    <!-- Explore Screen Strings -->
+    <string name="explore_content_screen_title">Explore our Associations</string>
+    <string name="explore_search_placeholder">Search</string>
+    <string name="explore_search_error_message">An error occurred while searching</string>
+    <string name="explore_search_no_results">No results found</string>
+    <string name="explore_content_description_search_icon">Search icon</string>
+    <string name="explore_content_description_image">Association image</string>
+    <string name="explore_content_description_async_image">Association async image</string>
+
+    /**
+    * package: home
+    */
+
+    <!-- Home Screen Strings -->
+    <string name="home_content_description_map_button">Map button</string>
+    <string name="home_content_description_search_icon">Search icon</string>
+
+    /**
+    * package: map
+    */
+
+    <!-- Map Screen Strings -->
+    <string name="map_event_go_back_button">Go back</string>
+    <string name="map_event_title">Event map</string>
+
+    /**
+    * package: navigation
+    */
+
+    <!-- Navigation Strings -->
+    <string name="route_home" translatable="false">Home</string>
+    <string name="route_map" translatable="false">Map</string>
+    <string name="route_auth" translatable="false">Auth</string>
+    <string name="route_explore" translatable="false">Explore</string>
+    <string name="route_saved" translatable="false">Saved</string>
+    <string name="route_my_profile" translatable="false">My Profile</string>
+
+    /**
+    * package: saved
+    */
+
+    /**
+    * package: settings
+    */
+
+    <!-- Settings Strings -->
+    <string name="settings_title" translatable="true">Settings</string>
+    <string name="settings_back_content_description" translatable="true">Go Back</string>
+    <string name="settings_theme_title" translatable="true">Theme</string>
+    <string name="settings_theme_content_description" translatable="true">Theme Settings</string>
+    <string name="settings_notifications_title" translatable="true">Notifications</string>
+    <string name="settings_notifications_summary" translatable="true">Enable push notifications</string>
+    <string name="settings_notifications_content_description" translatable="true">Notification Settings</string>
+    <string name="settings_location_title" translatable="true">Enable Location Permissions</string>
+    <string name="settings_location_summary_granted" translatable="true">All location permissions have been granted</string>
+    <string name="settings_location_summary_denied" translatable="true">There are missing location permissions</string>
+    <string name="settings_location_content_description" translatable="true">Location Permissions</string>
+    <string name="settings_language_title">Language</string>
+    <string name="settings_language_content_description">Language Settings</string>
+
+    /**
+    * package: user
+    */
+
+    /**
+    * Other
+    */
 
     <!-- EventListOverview Strings -->
     <string name="event_upcomingEvents">Upcoming Events</string>
@@ -13,14 +222,6 @@
     <string name="event_add_event">Add Event</string>
     <string name="event_no_events_available">No events available.</string>
     <string name="event_search_no_results">"No events found."</string>
-
-    <!-- Event Card Strings -->
-    <string name="event_event_title">Event Title</string>
-    <string name="event_catchy_description">Catchy Description</string>
-
-    <!-- Event Details Strings -->
-    <string name="event_sign_up" translatable="false">I\'m going</string>
-    <string name="event_not_found" translatable="false">ERROR : Event not found</string>
 
     <!-- Accessibility and Content Descriptions -->
     <string name="event_map_button_description">Open Map to Add Event</string>
@@ -42,19 +243,6 @@
     <string name="event_type_trip">Trip</string>
     <string name="event_type_other">Other</string>
 
-    <!-- EditAssociation strings -->
-    <string name="edit_association_title">Edit Association</string>
-    <string name="name_explanation">The name of the association. This is typically a short identifier or acronym.</string>
-    <string name="full_name_explanation">The full name of the association. This can be the official long-form name.</string>
-    <string name="category_explanation">Select the category that best fits the association\'s purpose.</string>
-    <string name="description_explanation">Provide a brief description of the association, including its main activities and goals.</string>
-    <string name="image_explanation">Provide a URL for the association\'s image, which will be displayed on the profile page.</string>
-    <string name="url_explanation">Provide the URL of the association\'s webpage or online presence.</string>
-    <string name="cancel_button_text">Cancel</string>
-    <string name="save_button_text">Save</string>
-    <string name="category_button_text">Select Category</string>
-    <string name="save_failed_message">Failed to save association</string>
-
     <!-- EventRepositoryFirestore Strings -->
     <string name="event_error_converting_document" translatable="false">Error while converting db document to Event object</string>
     <string name="event_error_no_id_provided" translatable="false">No event ID was provided</string>
@@ -71,40 +259,6 @@
     <string name="login_password_label">And your password</string>
     <string name="login_continue_button">Continue</string>
 
-    <!-- Welcome Screen Strings -->
-    <string name="welcome_message">The world’s largest campus life platform.</string>
-    <string name="welcome_login_signup">Sign up or log in to get started.</string>
-    <string name="welcome_email_enter">Enter your email address</string>
-    <string name="welcome_email_display">john.doe@epfl.ch</string>
-    <string name="welcome_password_enter">Enter your password</string>
-    <string name="welcome_password_error_correction">Min. 6 characters and 1 digit</string>
-    <string name="welcome_malformed_email_password">Malformed email or password.</string>
-    <string name="welcome_button_continue">Continue</string>
-    <string name="welcome_toast_invalid_creds">Invalid credentials</string>
-    <string name="welcome_toast_enter_valid_email">Please enter a valid EPFL email address</string>
-    <string name="welcome_toast_sign_in">Signed in successfully</string>
-    <string name="welcome_toast_verification_sent">Verification email sent</string>
-    <string name="welcome_toast_verification_sent_failed">Failed to send verification email</string>
-    <string name="welcome_toast_account_created">Account created successfully</string>
-
-    <!-- Explore Screen Strings -->
-    <string name="explore_content_screen_title">Explore our Associations</string>
-    <string name="explore_search_placeholder">Search</string>
-    <string name="explore_search_error_message">An error occurred while searching</string>
-    <string name="explore_search_no_results">No results found</string>
-
-    <!-- Map Screen Strings -->
-    <string name="map_event_go_back_button">Go back</string>
-    <string name="map_event_title">Event map</string>
-
-    <!-- Navigation Strings -->
-    <string name="route_home" translatable="false">Home</string>
-    <string name="route_map" translatable="false">Map</string>
-    <string name="route_auth" translatable="false">Auth</string>
-    <string name="route_explore" translatable="false">Explore</string>
-    <string name="route_saved" translatable="false">Saved</string>
-    <string name="route_my_profile" translatable="false">My Profile</string>
-
     <!-- Screen Strings -->
     <string name="screen_auth" translatable="false">Auth Screen</string>
     <string name="screen_welcome" translatable="false">Welcome Screen</string>
@@ -113,78 +267,6 @@
     <string name="screen_explore" translatable="false">Explore Screen</string>
     <string name="screen_saved" translatable="false">Saved Screen</string>
     <string name="screen_my_profile" translatable="false">My Profile Screen</string>
-
-    <!-- Association Strings -->
-    <string name="association_upcoming_events" translatable="true">Upcoming Events</string>
-    <string name="association_go_back" translatable="true">Go Back</string>
-    <string name="association_see_more" translatable="true">See More</string>
-    <string name="association_contact_members" translatable="true">Contact Members</string>
-    <string name="association_help_us" translatable="true">
-        Here’s where you could help us. Click on a role to learn more.
-    </string>
-    <string name="association_follower" translatable="true">followers</string>
-    <string name="association_member" translatable="true">members</string>
-    <string name="association_follow" translatable="true">Follow</string>
-    <string name="association_join" translatable="true">Join</string>
-    <string name="association_no_event" translatable="true">No event planned yet</string>
-    <string name="association_not_found" translatable="true">ERROR : Association not found</string>
-
-    <!-- Settings Strings -->
-    <string name="settings_title" translatable="true">Settings</string>
-    <string name="settings_back_content_description" translatable="true">Go Back</string>
-    <string name="settings_theme_title" translatable="true">Theme</string>
-    <string name="settings_theme_content_description" translatable="true">Theme Settings</string>
-    <string name="settings_notifications_title" translatable="true">Notifications</string>
-    <string name="settings_notifications_summary" translatable="true">Enable push notifications</string>
-    <string name="settings_notifications_content_description" translatable="true">Notification Settings</string>
-    <string name="settings_location_title" translatable="true">Enable Location Permissions</string>
-    <string name="settings_location_summary_granted" translatable="true">All location permissions have been granted</string>
-    <string name="settings_location_summary_denied" translatable="true">There are missing location permissions</string>
-    <string name="settings_location_content_description" translatable="true">Location Permissions</string>
-    <string name="settings_language_title">Language</string>
-    <string name="settings_language_content_description">Language Settings</string>
-
-    <!-- Account Details Strings -->
-    <string name="account_details_title" translatable="true">Tell us about yourself</string>
-    <string name="account_details_first_name" translatable="true">First name</string>
-    <string name="account_details_last_name" translatable="true">Last name</string>
-    <string name="account_details_bio" translatable="true">Bio</string>
-    <string name="account_details_add_profile_picture" translatable="true">Maybe add a profile picture?</string>
-    <string name="account_details_add_interests" translatable="true">Add centers of interest</string>
-    <string name="account_details_add_socials" translatable="true">Add links to other social media</string>
-    <string name="account_details_continue" translatable="true">Continue</string>
-    <string name="account_details_first_name_error">Please fill in your first name</string>
-    <string name="account_details_last_name_error">Please fill in your last name</string>
-    <string name="account_details_created_successfully">Account Created Successfully</string>
-    <string name="account_details_image_upload_error">Error uploading image</string>
-
-    <!-- EmailVerification Strings -->
-    <string name="email_verification_refresh_failed">Failed to refresh</string>
-    <string name="email_verification_sent_failed">Failed to send email</string>
-    <string name="email_verification_verified">Email verified!</string>
-    <string name="email_verification_verified_continue">Continue</string>
-    <string name="email_verification_verify_request">Verify your email</string>
-    <string name="email_verification_email_sent_to">We sent an email to </string>
-    <string name="email_verification_email_sent_to_verify">. Please verify your email to continue.</string>
-    <string name="email_verification_email_resend">Resend email</string>
-    <string name="email_verification_email_refresh">Refresh</string>
-
-    <!-- Interest Overlay Strings -->
-    <string name="interest_overlay_title" translatable="true">Your interests</string>
-    <string name="interest_overlay_description" translatable="true">Choose as many interests as you feel apply to you</string>
-    <string name="interest_overlay_cancel" translatable="true">Cancel</string>
-    <string name="interest_overlay_save" translatable="true">Save</string>
-
-    <!-- Social Overlay Strings -->
-    <string name="social_overlay_title" translatable="true">Your social media</string>
-    <string name="social_overlay_description" translatable="true">These will be displayed on your profile to allow other students to contact you</string>
-    <string name="social_overlay_add_social" translatable="true">Add social</string>
-    <string name="social_overlay_save" translatable="true">Save</string>
-    <string name="social_overlay_cancel" translatable="true">Cancel</string>
-    <string name="social_overlay_save_changes" translatable="true">Save changes</string>
-    <string name="social_overlay_empty_field" translatable="true">The input is empty or blank</string>
-    <string name="social_overlay_invalid_phone_number" translatable="true">The phone number has wrong format</string>
-    <string name="social_overlay_invalid_website" translatable="true">The website is not encoded with https</string>
 
     <!-- Interest  Strings -->
     <string name="interest_sports" translatable="true">Sports</string>

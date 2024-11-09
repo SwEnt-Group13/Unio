@@ -225,7 +225,8 @@ fun AccountDetails(
               if (profilePictureUri.value == Uri.EMPTY) {
                 Icon(
                     imageVector = Icons.Rounded.AccountCircle,
-                    contentDescription = "Add",
+                    contentDescription =
+                        context.getString(R.string.account_details_content_description_add),
                     tint = primaryLight,
                     modifier =
                         Modifier.clickable {
@@ -244,7 +245,10 @@ fun AccountDetails(
         OutlinedButton(
             modifier = Modifier.fillMaxWidth().testTag(AccountDetailsTestTags.INTERESTS_BUTTON),
             onClick = { showInterestsOverlay = true }) {
-              Icon(Icons.Default.Add, contentDescription = "Add")
+              Icon(
+                  Icons.Default.Add,
+                  contentDescription =
+                      context.getString(R.string.account_details_content_description_add))
               Text(context.getString(R.string.account_details_add_interests))
             }
         FlowRow {
@@ -260,7 +264,8 @@ fun AccountDetails(
                   avatar = {
                     Icon(
                         Icons.Default.Close,
-                        contentDescription = "Add",
+                        contentDescription =
+                            context.getString(R.string.account_details_content_description_close),
                         modifier = Modifier.clickable { pair.second.value = !pair.second.value })
                   })
             }
@@ -269,7 +274,10 @@ fun AccountDetails(
         OutlinedButton(
             modifier = Modifier.fillMaxWidth().testTag(AccountDetailsTestTags.SOCIALS_BUTTON),
             onClick = { showSocialsOverlay = true }) {
-              Icon(Icons.Default.Add, contentDescription = "Add")
+              Icon(
+                  Icons.Default.Add,
+                  contentDescription =
+                      context.getString(R.string.account_details_content_description_links_icon))
               Text(context.getString(R.string.account_details_add_socials))
             }
         FlowRow(modifier = Modifier.fillMaxWidth()) {
@@ -284,7 +292,8 @@ fun AccountDetails(
                 avatar = {
                   Icon(
                       Icons.Default.Close,
-                      contentDescription = "Add",
+                      contentDescription =
+                          context.getString(R.string.account_details_content_description_close),
                       modifier =
                           Modifier.clickable {
                             userSocialsFlow.value =
@@ -345,15 +354,17 @@ private fun ProfilePictureWithRemoveIcon(
     profilePictureUri: Uri,
     onRemove: () -> Unit,
 ) {
+  val context = LocalContext.current
   Box(modifier = Modifier.size(100.dp)) {
     Image(
         painter = rememberAsyncImagePainter(profilePictureUri),
-        contentDescription = "Profile Picture",
+        contentDescription = context.getString(R.string.account_details_content_description_pfp),
         contentScale = ContentScale.Crop,
         modifier = Modifier.aspectRatio(1f).clip(CircleShape))
     Icon(
         imageVector = Icons.Default.Close,
-        contentDescription = "Remove Profile Picture",
+        contentDescription =
+            context.getString(R.string.account_details_content_description_remove_pfp),
         modifier =
             Modifier.size(24.dp).align(Alignment.TopEnd).clickable { onRemove() }.padding(4.dp))
   }

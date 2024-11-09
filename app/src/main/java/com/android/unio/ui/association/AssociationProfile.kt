@@ -146,7 +146,11 @@ fun AssociationProfileScaffold(
                           message = DEBUG_MESSAGE, duration = SnackbarDuration.Short)
                     }
                   }) {
-                    Icon(Icons.Outlined.Share, contentDescription = "Icon for sharing association")
+                    Icon(
+                        Icons.Outlined.Share,
+                        contentDescription =
+                            context.getString(
+                                R.string.association_content_description_sharing_icon))
                   }
             })
       },
@@ -232,7 +236,10 @@ private fun AssociationRecruitment(association: Association) {
           }
         },
         enabled = true) {
-          Icon(Icons.Filled.Add, contentDescription = "Add icon")
+          Icon(
+              Icons.Filled.Add,
+              contentDescription =
+                  context.getString(R.string.association_content_description_add_icon))
           Spacer(Modifier.width(2.dp))
           Text("<Graphic Designer>")
         }
@@ -245,7 +252,10 @@ private fun AssociationRecruitment(association: Association) {
           }
         },
         enabled = true) {
-          Icon(Icons.Filled.Add, contentDescription = "Add icon")
+          Icon(
+              Icons.Filled.Add,
+              contentDescription =
+                  context.getString(R.string.association_content_description_add_icon))
           Spacer(Modifier.width(2.dp))
           Text("<Treasurer>")
         }
@@ -288,7 +298,8 @@ private fun UsersCard(userList: List<User>) {
       ) {
         AsyncImage(
             user.profilePicture.toUri(),
-            contentDescription = "user's profile picture",
+            contentDescription =
+                context.getString(R.string.association_content_description_user_pfp),
             Modifier.size(36.dp))
         Text(text = user.firstName + " " + user.lastName, style = AppTypography.headlineSmall)
       }
@@ -405,7 +416,9 @@ private fun AssociationHeader(association: Association, context: Context) {
     Box(modifier = Modifier.padding(horizontal = 24.dp).testTag("AssociationImageHeader")) {
       AsyncImage(
           model = association.image.toUri(),
-          contentDescription = "Association image of " + association.name,
+          contentDescription =
+              context.getString(R.string.association_content_description_association_image) +
+                  association.name,
           modifier = Modifier.size(124.dp))
     }
     Column {
@@ -425,7 +438,10 @@ private fun AssociationHeader(association: Association, context: Context) {
             }
           },
           modifier = Modifier.testTag("AssociationFollowButton")) {
-            Icon(Icons.Filled.Add, contentDescription = "Follow icon")
+            Icon(
+                Icons.Filled.Add,
+                contentDescription =
+                    context.getString(R.string.association_content_description_follow_icon))
             Spacer(Modifier.width(2.dp))
             Text(context.getString(R.string.association_follow))
           }

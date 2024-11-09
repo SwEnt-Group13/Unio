@@ -91,6 +91,7 @@ fun EventCardScaffold(
     onClickEventCard: () -> Unit,
     onClickSaveButton: () -> Unit
 ) {
+  val context = LocalContext.current
   val imgUrl = event.image.toUri()
   val placeholderImg = R.drawable.adec
   val imageRequest =
@@ -120,7 +121,8 @@ fun EventCardScaffold(
         Box(modifier = Modifier.fillMaxWidth().height(100.dp)) {
           AsyncImage(
               model = imageRequest,
-              contentDescription = "Image of the event",
+              contentDescription =
+                  context.getString(R.string.event_card_content_description_event_image),
               modifier =
                   Modifier.fillMaxWidth()
                       .height(100.dp)
@@ -143,7 +145,12 @@ fun EventCardScaffold(
                 Icon(
                     imageVector =
                         if (isSaved) Icons.Rounded.Favorite else Icons.Rounded.FavoriteBorder,
-                    contentDescription = if (isSaved) "Saved" else "Not saved",
+                    contentDescription =
+                        if (isSaved)
+                            context.getString(R.string.event_card_content_description_saved_event)
+                        else
+                            context.getString(
+                                R.string.event_card_content_description_not_saved_event),
                     tint = if (isSaved) Color.Red else Color.White)
               }
         }
@@ -193,7 +200,8 @@ fun EventCardScaffold(
 
             Image(
                 painter = painterResource(id = R.drawable.clic),
-                contentDescription = "Association logo",
+                contentDescription =
+                    context.getString(R.string.event_card_content_description_association_logo),
                 modifier =
                     Modifier.size(24.dp)
                         .align(Alignment.CenterVertically)

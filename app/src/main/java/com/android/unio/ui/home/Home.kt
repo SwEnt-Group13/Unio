@@ -90,7 +90,10 @@ fun HomeScreen(
         FloatingActionButton(
             onClick = { navigationAction.navigateTo(Screen.MAP) },
             modifier = Modifier.testTag(HomeTestTags.MAP_BUTTON)) {
-              Icon(imageVector = Icons.Filled.Place, contentDescription = "Map button")
+              Icon(
+                  imageVector = Icons.Filled.Place,
+                  contentDescription =
+                      context.getString(R.string.home_content_description_map_button))
             }
       },
       bottomBar = {
@@ -197,7 +200,10 @@ fun HomeScreen(
                       if (searchState == SearchViewModel.Status.LOADING) {
                         CircularProgressIndicator()
                       } else {
-                        Icon(Icons.Default.Search, contentDescription = "Search icon")
+                        Icon(
+                            Icons.Default.Search,
+                            contentDescription =
+                                context.getString(R.string.home_content_description_search_icon))
                       }
                     },
                 )

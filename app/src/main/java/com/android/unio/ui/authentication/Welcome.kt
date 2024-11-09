@@ -126,7 +126,12 @@ fun WelcomeScreen() {
                       Icon(
                           if (showPassword) Icons.Filled.VisibilityOff else Icons.Filled.Visibility,
                           contentDescription =
-                              if (showPassword) "Hide password" else "Show password",
+                              if (showPassword)
+                                  context.getString(
+                                      R.string.welcome_content_description_hide_password)
+                              else
+                                  context.getString(
+                                      R.string.welcome_content_description_show_password),
                       )
                     }
                   },

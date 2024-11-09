@@ -124,7 +124,8 @@ fun ExploreScreenContent(
                   trailingIcon = {
                     Icon(
                         Icons.Default.Search,
-                        contentDescription = "Search icon",
+                        contentDescription =
+                            context.getString(R.string.explore_content_description_search_icon),
                         modifier = Modifier.testTag(ExploreContentTestTags.SEARCH_TRAILING_ICON))
                   },
               )
@@ -227,6 +228,7 @@ fun ExploreScreenContent(
  */
 @Composable
 fun AssociationItem(association: Association, onClick: () -> Unit) {
+  val context = LocalContext.current
   Column(
       modifier =
           Modifier.clickable(onClick = onClick)
@@ -237,7 +239,7 @@ fun AssociationItem(association: Association, onClick: () -> Unit) {
          */
         Image(
             painter = painterResource(id = R.drawable.adec),
-            contentDescription = "image description",
+            contentDescription = context.getString(R.string.explore_content_description_image),
             modifier = Modifier.size(124.dp))
 
         /**
@@ -245,8 +247,8 @@ fun AssociationItem(association: Association, onClick: () -> Unit) {
          * database. Uncomment the code when all images are available, and remove the placeholder
          * image.
          *
-         * AsyncImage( model = association.image.toUri(), contentDescription = "Translated
-         * description of what the image contains", modifier =
+         * AsyncImage( model = association.image.toUri(), contentDescription =
+         * context.getString(R.string.explore_content_description_async_image), modifier =
          * Modifier.size(124.dp).testTag("associationImage"), contentScale = ContentScale.Crop //
          * crop the image to fit )
          */

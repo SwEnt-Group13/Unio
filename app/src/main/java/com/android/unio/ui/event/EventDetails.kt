@@ -159,7 +159,12 @@ fun EventScreenScaffold(
                     Icon(
                         imageVector =
                             if (isSaved) Icons.Rounded.Favorite else Icons.Rounded.FavoriteBorder,
-                        contentDescription = if (isSaved) "Saved" else "Not saved",
+                        contentDescription =
+                            if (isSaved)
+                                context.getString(R.string.event_details_content_description_saved)
+                            else
+                                context.getString(
+                                    R.string.event_details_content_description_not_saved),
                         tint = if (isSaved) Color.Red else Color.White)
                   }
               IconButton(

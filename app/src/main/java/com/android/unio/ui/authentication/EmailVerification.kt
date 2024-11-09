@@ -88,7 +88,8 @@ fun EmailVerificationScreen(navigationAction: NavigationAction) {
               IconButton(onClick = { Firebase.auth.signOut() }) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
-                    contentDescription = "Go back")
+                    contentDescription =
+                        context.getString(R.string.email_verification_content_description_go_back))
               }
             })
       },
@@ -126,7 +127,11 @@ fun EmailVerificationScreen(navigationAction: NavigationAction) {
                 }
 
                 Button(onClick = { checkEmailVerification() }) {
-                  Icon(Icons.Outlined.Refresh, contentDescription = "Refresh")
+                  Icon(
+                      Icons.Outlined.Refresh,
+                      contentDescription =
+                          context.getString(
+                              R.string.email_verification_content_description_refresh))
                   Spacer(Modifier.width(8.dp))
                   Text(
                       context.getString(R.string.email_verification_email_refresh),
