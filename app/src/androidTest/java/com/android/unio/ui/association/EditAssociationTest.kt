@@ -58,9 +58,7 @@ class EditAssociationTest {
   fun testEditAssociationScreenDisplaysCorrectly() {
     composeTestRule.setContent {
       EditAssociationScaffold(
-          MockAssociation.createMockAssociation(uid = "1"),
-          navigationAction = navigationAction,
-          onSave = {})
+          MockAssociation.createMockAssociation(uid = "1"), onCancel = {}, onSave = {})
     }
 
     composeTestRule.waitForIdle()

@@ -189,7 +189,10 @@ class ScreenDisplayingTest {
   fun testAssociationProfileDisplayed() {
     composeTestRule.setContent {
       AssociationProfileScaffold(
-          MockAssociation.createMockAssociation(), navigationAction, userViewModel)
+          MockAssociation.createMockAssociation(),
+          navigationAction,
+          userViewModel,
+          eventViewModel) {}
     }
     composeTestRule.onNodeWithTag("AssociationScreen").assertIsDisplayed()
   }

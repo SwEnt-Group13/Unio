@@ -18,6 +18,7 @@ import com.android.unio.model.association.AssociationRepositoryFirestore
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventRepositoryFirestore
+import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserViewModel
@@ -27,7 +28,9 @@ import dagger.hilt.android.testing.HiltAndroidTest
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
+import io.mockk.just
 import io.mockk.mockk
+import io.mockk.runs
 import io.mockk.spyk
 import org.junit.Before
 import org.junit.Rule
@@ -44,8 +47,10 @@ class AssociationProfileTest {
   private lateinit var associationRepository: AssociationRepositoryFirestore
 
   @MockK lateinit var eventRepository: EventRepositoryFirestore
-  private lateinit var userViewModel: UserViewModel
+  private lateinit var eventViewModel: EventViewModel
+
   @MockK lateinit var userRepository: UserRepositoryFirestore
+  private lateinit var userViewModel: UserViewModel
 
   private lateinit var associationViewModel: AssociationViewModel
 
@@ -72,6 +77,17 @@ class AssociationProfileTest {
     navigationAction = NavigationAction(mock(NavHostController::class.java))
 
     associationRepository = spyk(AssociationRepositoryFirestore(mockk()))
+
+    every { eventRepository.init(any()) } just runs
+
+    every { eventRepository.getEvents(any(), any()) } answers
+        {
+          val onSuccess = args[0] as (List<Event>) -> Unit
+          onSuccess(events)
+        }
+    eventViewModel = EventViewModel(eventRepository, imageRepository)
+    eventViewModel.loadEvents()
+    eventViewModel.selectEvent(events.first().uid)
 
     every { associationRepository.getAssociations(any(), any()) } answers
         {
@@ -102,7 +118,10 @@ class AssociationProfileTest {
   fun testAssociationProfileDisplayComponent() {
     composeTestRule.setContent {
       AssociationProfileScaffold(
-          MockAssociation.createMockAssociation(), navigationAction, userViewModel)
+          MockAssociation.createMockAssociation(),
+          navigationAction,
+          userViewModel,
+          eventViewModel) {}
     }
     composeTestRule.waitForIdle()
 
@@ -134,7 +153,10 @@ class AssociationProfileTest {
   fun testButtonBehavior() {
     composeTestRule.setContent {
       AssociationProfileScaffold(
-          MockAssociation.createMockAssociation(), navigationAction, userViewModel)
+          MockAssociation.createMockAssociation(),
+          navigationAction,
+          userViewModel,
+          eventViewModel) {}
     }
     // Share button
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("associationShareButton"))
@@ -165,7 +187,10 @@ class AssociationProfileTest {
   fun testGoBackButton() {
     composeTestRule.setContent {
       AssociationProfileScaffold(
-          MockAssociation.createMockAssociation(), navigationAction, userViewModel)
+          MockAssociation.createMockAssociation(),
+          navigationAction,
+          userViewModel,
+          eventViewModel) {}
     }
 
     `when`(navigationAction.navController.popBackStack()).thenReturn(true)
@@ -179,7 +204,10 @@ class AssociationProfileTest {
   fun testAssociationProfileGoodId() {
     composeTestRule.setContent {
       AssociationProfileScaffold(
-          MockAssociation.createMockAssociation(), navigationAction, userViewModel)
+          MockAssociation.createMockAssociation(),
+          navigationAction,
+          userViewModel,
+          eventViewModel) {}
     }
 
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationProfileTitle"))
@@ -189,7 +217,8 @@ class AssociationProfileTest {
   @Test
   fun testAssociationProfileNoId() {
     composeTestRule.setContent {
-      AssociationProfileScreen(navigationAction, associationViewModel, userViewModel)
+      AssociationProfileScreen(
+          navigationAction, associationViewModel, userViewModel, eventViewModel)
     }
 
     composeTestRule.onNodeWithTag("AssociationScreen").assertIsNotDisplayed()
