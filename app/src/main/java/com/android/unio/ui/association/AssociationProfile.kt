@@ -116,19 +116,6 @@ fun AssociationProfileScreen(
       })
 }
 
-@Preview
-@Composable
-fun AssociationProfileScaffoldPreview() {
-  AssociationProfileScaffold(
-      MockAssociation.createMockAssociation(),
-      NavigationAction(NavHostController(LocalContext.current)),
-      UserViewModel(UserRepositoryFirestore(Firebase.firestore)),
-      EventViewModel(
-          EventRepositoryFirestore(Firebase.firestore),
-          ImageRepositoryFirebaseStorage(Firebase.storage)),
-  ) {}
-}
-
 /**
  * Composable element that contain the scaffold of the given association profile screen. Precisely,
  * it contains the top bar, the content given in parameter and the snackbar host used on
