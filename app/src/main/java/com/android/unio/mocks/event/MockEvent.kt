@@ -70,7 +70,7 @@ class MockEvent {
     }
 
     /** Edge cases for EventType enums * */
-    val edgeCaseEventTypes = EventType.values().toList()
+    val edgeCaseEventTypes = EventType.entries
 
     /** Creates a mock Event with specified properties for testing edge cases. */
     fun createMockEvent(

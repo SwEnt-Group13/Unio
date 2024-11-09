@@ -33,9 +33,9 @@ class MockLocation {
 
     /** Returns a list of edge-case locations based on selected edge cases */
     fun createEdgeCaseMockLocations(
-        selectedLatitudes: List<EdgeCaseLatitude> = EdgeCaseLatitude.values().toList(),
-        selectedLongitudes: List<EdgeCaseLongitude> = EdgeCaseLongitude.values().toList(),
-        selectedNames: List<EdgeCaseName> = EdgeCaseName.values().toList()
+        selectedLatitudes: List<EdgeCaseLatitude> = EdgeCaseLatitude.entries,
+        selectedLongitudes: List<EdgeCaseLongitude> = EdgeCaseLongitude.entries,
+        selectedNames: List<EdgeCaseName> = EdgeCaseName.entries
     ): List<Location> {
       val locations = mutableListOf<Location>()
       for (latitude in selectedLatitudes) {

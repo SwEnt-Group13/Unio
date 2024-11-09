@@ -60,9 +60,9 @@ class MockUser {
     }
 
     /** Edge cases for Interests and Socials */
-    val edgeCaseInterests = Interest.values().toList()
+    val edgeCaseInterests = Interest.entries
     val edgeCaseSocials =
-        Social.values().map { social ->
+        Social.entries.map { social ->
           when (social) {
             Social.WHATSAPP -> UserSocial(Social.WHATSAPP, "1234567890")
             else -> UserSocial(social, "user123")

@@ -1,6 +1,8 @@
 package com.android.unio.ui.event
 
 import android.annotation.SuppressLint
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -30,6 +32,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Snackbar
@@ -40,7 +43,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -60,11 +62,11 @@ import androidx.core.net.toUri
 import coil.compose.AsyncImage
 import com.android.unio.R
 import com.android.unio.model.event.Event
+import com.android.unio.model.event.EventUtils.formatTimestamp
 import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.theme.AppTypography
-import com.android.unio.utils.EventUtils.formatTimestamp
 import java.text.SimpleDateFormat
 import java.util.Locale
 import kotlinx.coroutines.CoroutineScope
@@ -93,20 +95,21 @@ fun EventScreen(
   val event by eventViewModel.selectedEvent.collectAsState()
   val user by userViewModel.user.collectAsState()
 
-  if (event == null) {
+  if (event == null || user == null) {
+    Log.e("EventScreen", "Event or user is null")
+    Toast.makeText(LocalContext.current, "An error occurred.", Toast.LENGTH_SHORT).show()
     return
   }
-  var isSaved by remember { mutableStateOf(false) }
-  LaunchedEffect(event!!.uid) { isSaved = userViewModel.isEventSavedForCurrentUser(event!!.uid) }
+
+  var isSaved by remember { mutableStateOf(user!!.savedEvents.contains(event!!.uid)) }
+
   val onClickSaveButton = {
-    if (user != null) {
-      if (isSaved) {
-        userViewModel.unSaveEventForCurrentUser(event!!.uid) { isSaved = false }
-      } else {
-        userViewModel.saveEventForCurrentUser(event!!.uid) { isSaved = true }
-      }
-      userViewModel.updateUserDebounced(user!!)
+    if (isSaved) {
+      userViewModel.unSaveEventForCurrentUser(event!!.uid) { isSaved = false }
+    } else {
+      userViewModel.saveEventForCurrentUser(event!!.uid) { isSaved = true }
     }
+    userViewModel.updateUserDebounced(user!!)
   }
 
   EventScreenScaffold(navigationAction, event!!, isSaved, onClickSaveButton)
@@ -158,7 +161,7 @@ fun EventScreenScaffold(
                         imageVector =
                             if (isSaved) Icons.Rounded.Favorite else Icons.Rounded.FavoriteBorder,
                         contentDescription = if (isSaved) "Saved" else "Not saved",
-                        tint = if (isSaved) Color.Red else Color.White)
+                        tint = if (isSaved) Color.Red else LocalContentColor.current)
                   }
               IconButton(modifier = Modifier.testTag("eventShareButton"), onClick = DEBUG_LAMBDA) {
                 Icon(

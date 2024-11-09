@@ -122,11 +122,7 @@ constructor(
    * @return The association with the given ID, or null if no such association exists.
    */
   fun findAssociationById(id: String): Association? {
-    _associations.value
-        .find { it.uid == id }
-        ?.let {
-          return it
-        } ?: return null
+    return _associations.value.find { it.uid == id }
   }
 
   fun selectAssociation(associationId: String) {

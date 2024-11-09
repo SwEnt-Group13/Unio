@@ -4,8 +4,6 @@ import android.annotation.SuppressLint
 import android.app.Application
 import android.content.pm.ActivityInfo
 import android.os.Bundle
-import android.util.Log
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
@@ -18,7 +16,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -69,7 +66,7 @@ class MainActivity : ComponentActivity() {
   }
 }
 
-@HiltAndroidApp class UnioApplication : Application() {}
+@HiltAndroidApp class UnioApplication : Application()
 
 @Composable
 fun UnioApp(imageRepository: ImageRepositoryFirebaseStorage) {
@@ -82,8 +79,6 @@ fun UnioApp(imageRepository: ImageRepositoryFirebaseStorage) {
   val searchViewModel = hiltViewModel<SearchViewModel>()
   val authViewModel = hiltViewModel<AuthViewModel>()
   val eventViewModel = hiltViewModel<EventViewModel>()
-
-  val context = LocalContext.current
 
   // Observe the authentication state
   val authState by authViewModel.authState.collectAsState()
@@ -109,8 +104,7 @@ fun UnioApp(imageRepository: ImageRepositoryFirebaseStorage) {
     }
     navigation(startDestination = Screen.HOME, route = Route.HOME) {
       composable(Screen.HOME) {
-        HomeScreen(
-            navigationActions, eventViewModel, userViewModel = userViewModel, searchViewModel)
+        HomeScreen(navigationActions, eventViewModel, userViewModel, searchViewModel)
       }
       composable(Screen.EVENT_DETAILS) {
         EventScreen(
@@ -125,21 +119,11 @@ fun UnioApp(imageRepository: ImageRepositoryFirebaseStorage) {
         ExploreScreen(navigationActions, associationViewModel, searchViewModel)
       }
       composable(Screen.ASSOCIATION_PROFILE) {
-        AssociationProfileScreen(navigationActions, associationViewModel, userViewModel)
+        AssociationProfileScreen(
+            navigationActions, associationViewModel, userViewModel, eventViewModel)
       }
-      composable(Screen.EDIT_ASSOCIATION) { navBackStackEntry ->
-        val associationId = navBackStackEntry.arguments?.getString("associationId")
-
-        associationId?.let {
-          EditAssociationScreen(
-              associationId = it,
-              associationViewModel = associationViewModel,
-              navigationAction = navigationActions)
-        }
-            ?: run {
-              Log.e("EditAssociation", "Association ID is null")
-              Toast.makeText(context, "Association ID is null", Toast.LENGTH_SHORT).show()
-            }
+      composable(Screen.EDIT_ASSOCIATION) {
+        EditAssociationScreen(associationViewModel, navigationActions)
       }
     }
     navigation(startDestination = Screen.SAVED, route = Route.SAVED) {

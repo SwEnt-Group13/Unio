@@ -32,6 +32,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.InputChip
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -114,7 +115,7 @@ fun AccountDetails(
   val userId = Firebase.auth.currentUser?.uid
 
   val createUser = { uri: String ->
-    var newUser =
+    val newUser =
         User(
             uid = userId!!,
             email = Firebase.auth.currentUser?.email!!,
@@ -139,177 +140,180 @@ fun AccountDetails(
     }
   }
 
-  Column(
-      modifier =
-          Modifier.padding(vertical = 20.dp, horizontal = 40.dp)
-              .verticalScroll(scrollState)
-              .testTag(AccountDetailsTestTags.ACCOUNT_DETAILS),
-      verticalArrangement = Arrangement.SpaceBetween,
-      horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(
-            text = context.getString(R.string.account_details_title),
-            style = AppTypography.headlineSmall,
-            modifier = Modifier.testTag(AccountDetailsTestTags.TITLE_TEXT))
+  Scaffold { padding ->
+    Column(
+        modifier =
+            Modifier.padding(padding)
+                .padding(vertical = 20.dp, horizontal = 40.dp)
+                .verticalScroll(scrollState)
+                .testTag(AccountDetailsTestTags.ACCOUNT_DETAILS),
+        verticalArrangement = Arrangement.SpaceBetween,
+        horizontalAlignment = Alignment.CenterHorizontally) {
+          Text(
+              text = context.getString(R.string.account_details_title),
+              style = AppTypography.headlineSmall,
+              modifier = Modifier.testTag(AccountDetailsTestTags.TITLE_TEXT))
 
-        val isFirstNameError = isErrors.contains(AccountDetailsError.EMPTY_FIRST_NAME)
-        OutlinedTextField(
-            modifier =
-                Modifier.padding(4.dp)
-                    .fillMaxWidth()
-                    .testTag(AccountDetailsTestTags.FIRST_NAME_TEXT_FIELD),
-            label = {
-              Text(
-                  context.getString(R.string.account_details_first_name),
-                  modifier = Modifier.testTag(AccountDetailsTestTags.FIRST_NAME_TEXT))
-            },
-            isError = (isFirstNameError),
-            supportingText = {
-              if (isFirstNameError) {
+          val isFirstNameError = isErrors.contains(AccountDetailsError.EMPTY_FIRST_NAME)
+          OutlinedTextField(
+              modifier =
+                  Modifier.padding(4.dp)
+                      .fillMaxWidth()
+                      .testTag(AccountDetailsTestTags.FIRST_NAME_TEXT_FIELD),
+              label = {
                 Text(
-                    context.getString(AccountDetailsError.EMPTY_FIRST_NAME.errorMessage),
-                    modifier = Modifier.testTag(AccountDetailsTestTags.FIRST_NAME_ERROR_TEXT))
-              }
-            },
-            onValueChange = { firstName = it },
-            value = firstName)
-        val isLastNameError = isErrors.contains(AccountDetailsError.EMPTY_LAST_NAME)
-        OutlinedTextField(
-            modifier =
-                Modifier.padding(4.dp)
-                    .fillMaxWidth()
-                    .testTag(AccountDetailsTestTags.LAST_NAME_TEXT_FIELD),
-            label = {
-              Text(
-                  context.getString(R.string.account_details_last_name),
-                  modifier = Modifier.testTag(AccountDetailsTestTags.LAST_NAME_TEXT))
-            },
-            isError = (isLastNameError),
-            supportingText = {
-              if (isLastNameError) {
+                    context.getString(R.string.account_details_first_name),
+                    modifier = Modifier.testTag(AccountDetailsTestTags.FIRST_NAME_TEXT))
+              },
+              isError = (isFirstNameError),
+              supportingText = {
+                if (isFirstNameError) {
+                  Text(
+                      context.getString(AccountDetailsError.EMPTY_FIRST_NAME.errorMessage),
+                      modifier = Modifier.testTag(AccountDetailsTestTags.FIRST_NAME_ERROR_TEXT))
+                }
+              },
+              onValueChange = { firstName = it },
+              value = firstName)
+          val isLastNameError = isErrors.contains(AccountDetailsError.EMPTY_LAST_NAME)
+          OutlinedTextField(
+              modifier =
+                  Modifier.padding(4.dp)
+                      .fillMaxWidth()
+                      .testTag(AccountDetailsTestTags.LAST_NAME_TEXT_FIELD),
+              label = {
                 Text(
-                    context.getString(AccountDetailsError.EMPTY_LAST_NAME.errorMessage),
-                    modifier = Modifier.testTag(AccountDetailsTestTags.LAST_NAME_ERROR_TEXT))
-              }
-            },
-            onValueChange = { lastName = it },
-            value = lastName)
-        OutlinedTextField(
-            modifier =
-                Modifier.padding(4.dp)
-                    .fillMaxWidth()
-                    .height(200.dp)
-                    .testTag(AccountDetailsTestTags.BIOGRAPHY_TEXT_FIELD),
-            label = {
-              Text(
-                  context.getString(R.string.account_details_bio),
-                  modifier = Modifier.testTag(AccountDetailsTestTags.BIOGRAPHY_TEXT))
-            },
-            onValueChange = { bio = it },
-            value = bio)
+                    context.getString(R.string.account_details_last_name),
+                    modifier = Modifier.testTag(AccountDetailsTestTags.LAST_NAME_TEXT))
+              },
+              isError = (isLastNameError),
+              supportingText = {
+                if (isLastNameError) {
+                  Text(
+                      context.getString(AccountDetailsError.EMPTY_LAST_NAME.errorMessage),
+                      modifier = Modifier.testTag(AccountDetailsTestTags.LAST_NAME_ERROR_TEXT))
+                }
+              },
+              onValueChange = { lastName = it },
+              value = lastName)
+          OutlinedTextField(
+              modifier =
+                  Modifier.padding(4.dp)
+                      .fillMaxWidth()
+                      .height(200.dp)
+                      .testTag(AccountDetailsTestTags.BIOGRAPHY_TEXT_FIELD),
+              label = {
+                Text(
+                    context.getString(R.string.account_details_bio),
+                    modifier = Modifier.testTag(AccountDetailsTestTags.BIOGRAPHY_TEXT))
+              },
+              onValueChange = { bio = it },
+              value = bio)
 
-        Row(
-            modifier = Modifier.fillMaxWidth().padding(8.dp),
-            horizontalArrangement = Arrangement.SpaceEvenly,
-            verticalAlignment = Alignment.CenterVertically) {
-              Text(
-                  text = context.getString(R.string.account_details_add_profile_picture),
-                  modifier =
-                      Modifier.widthIn(max = 140.dp)
-                          .testTag(AccountDetailsTestTags.PROFILE_PICTURE_TEXT),
-                  style = AppTypography.bodyLarge)
-
-              if (profilePictureUri.value == Uri.EMPTY) {
-                Icon(
-                    imageVector = Icons.Rounded.AccountCircle,
-                    contentDescription = "Add",
-                    tint = primaryLight,
+          Row(
+              modifier = Modifier.fillMaxWidth().padding(8.dp),
+              horizontalArrangement = Arrangement.SpaceEvenly,
+              verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = context.getString(R.string.account_details_add_profile_picture),
                     modifier =
-                        Modifier.clickable {
-                              pickMedia.launch(
-                                  PickVisualMediaRequest(
-                                      ActivityResultContracts.PickVisualMedia.ImageOnly))
-                            }
-                            .size(100.dp)
-                            .testTag(AccountDetailsTestTags.PROFILE_PICTURE_ICON))
-              } else {
-                ProfilePictureWithRemoveIcon(
-                    profilePictureUri = profilePictureUri.value,
-                    onRemove = { profilePictureUri.value = Uri.EMPTY })
+                        Modifier.widthIn(max = 140.dp)
+                            .testTag(AccountDetailsTestTags.PROFILE_PICTURE_TEXT),
+                    style = AppTypography.bodyLarge)
+
+                if (profilePictureUri.value == Uri.EMPTY) {
+                  Icon(
+                      imageVector = Icons.Rounded.AccountCircle,
+                      contentDescription = "Add",
+                      tint = primaryLight,
+                      modifier =
+                          Modifier.clickable {
+                                pickMedia.launch(
+                                    PickVisualMediaRequest(
+                                        ActivityResultContracts.PickVisualMedia.ImageOnly))
+                              }
+                              .size(100.dp)
+                              .testTag(AccountDetailsTestTags.PROFILE_PICTURE_ICON))
+                } else {
+                  ProfilePictureWithRemoveIcon(
+                      profilePictureUri = profilePictureUri.value,
+                      onRemove = { profilePictureUri.value = Uri.EMPTY })
+                }
+              }
+          OutlinedButton(
+              modifier = Modifier.fillMaxWidth().testTag(AccountDetailsTestTags.INTERESTS_BUTTON),
+              onClick = { showInterestsOverlay = true }) {
+                Icon(Icons.Default.Add, contentDescription = "Add")
+                Text(context.getString(R.string.account_details_add_interests))
+              }
+          FlowRow {
+            interests.forEachIndexed { index, pair ->
+              if (pair.second.value) {
+                InputChip(
+                    label = { Text(pair.first.name) },
+                    onClick = {},
+                    selected = pair.second.value,
+                    modifier =
+                        Modifier.padding(3.dp)
+                            .testTag(AccountDetailsTestTags.INTERESTS_CHIP + "$index"),
+                    avatar = {
+                      Icon(
+                          Icons.Default.Close,
+                          contentDescription = "Add",
+                          modifier = Modifier.clickable { pair.second.value = !pair.second.value })
+                    })
               }
             }
-        OutlinedButton(
-            modifier = Modifier.fillMaxWidth().testTag(AccountDetailsTestTags.INTERESTS_BUTTON),
-            onClick = { showInterestsOverlay = true }) {
-              Icon(Icons.Default.Add, contentDescription = "Add")
-              Text(context.getString(R.string.account_details_add_interests))
-            }
-        FlowRow {
-          interests.forEachIndexed { index, pair ->
-            if (pair.second.value) {
+          }
+          OutlinedButton(
+              modifier = Modifier.fillMaxWidth().testTag(AccountDetailsTestTags.SOCIALS_BUTTON),
+              onClick = { showSocialsOverlay = true }) {
+                Icon(Icons.Default.Add, contentDescription = "Add")
+                Text(context.getString(R.string.account_details_add_socials))
+              }
+          FlowRow(modifier = Modifier.fillMaxWidth()) {
+            socials.forEachIndexed { index, userSocial ->
               InputChip(
-                  label = { Text(pair.first.name) },
+                  label = { Text(userSocial.social.name) },
                   onClick = {},
-                  selected = pair.second.value,
+                  selected = true,
                   modifier =
                       Modifier.padding(3.dp)
-                          .testTag(AccountDetailsTestTags.INTERESTS_CHIP + "$index"),
+                          .testTag(AccountDetailsTestTags.SOCIALS_CHIP + userSocial.social.title),
                   avatar = {
                     Icon(
                         Icons.Default.Close,
                         contentDescription = "Add",
-                        modifier = Modifier.clickable { pair.second.value = !pair.second.value })
+                        modifier =
+                            Modifier.clickable {
+                              userSocialsFlow.value =
+                                  userSocialsFlow.value.toMutableList().apply { removeAt(index) }
+                            })
                   })
             }
           }
-        }
-        OutlinedButton(
-            modifier = Modifier.fillMaxWidth().testTag(AccountDetailsTestTags.SOCIALS_BUTTON),
-            onClick = { showSocialsOverlay = true }) {
-              Icon(Icons.Default.Add, contentDescription = "Add")
-              Text(context.getString(R.string.account_details_add_socials))
-            }
-        FlowRow(modifier = Modifier.fillMaxWidth()) {
-          socials.forEachIndexed { index, userSocial ->
-            InputChip(
-                label = { Text(userSocial.social.name) },
-                onClick = {},
-                selected = true,
-                modifier =
-                    Modifier.padding(3.dp)
-                        .testTag(AccountDetailsTestTags.SOCIALS_CHIP + userSocial.social.title),
-                avatar = {
-                  Icon(
-                      Icons.Default.Close,
-                      contentDescription = "Add",
-                      modifier =
-                          Modifier.clickable {
-                            userSocialsFlow.value =
-                                userSocialsFlow.value.toMutableList().apply { removeAt(index) }
-                          })
-                })
-          }
-        }
-        Button(
-            modifier = Modifier.testTag(AccountDetailsTestTags.CONTINUE_BUTTON),
-            onClick = {
-              if (profilePictureUri.value == Uri.EMPTY) {
-                createUser("")
-              } else {
-                val inputStream = context.contentResolver.openInputStream(profilePictureUri.value)
+          Button(
+              modifier = Modifier.testTag(AccountDetailsTestTags.CONTINUE_BUTTON),
+              onClick = {
+                if (profilePictureUri.value == Uri.EMPTY) {
+                  createUser("")
+                } else {
+                  val inputStream = context.contentResolver.openInputStream(profilePictureUri.value)
 
-                imageRepository.uploadImage(
-                    inputStream!!,
-                    "images/users/${userId}",
-                    onSuccess = createUser,
-                    onFailure = { exception ->
-                      Log.e("AccountDetails", "Error uploading image: $exception")
-                      Toast.makeText(context, "Error uploading image", Toast.LENGTH_SHORT).show()
-                    })
+                  imageRepository.uploadImage(
+                      inputStream!!,
+                      "images/users/${userId}",
+                      onSuccess = createUser,
+                      onFailure = { exception ->
+                        Log.e("AccountDetails", "Error uploading image: $exception")
+                        Toast.makeText(context, "Error uploading image", Toast.LENGTH_SHORT).show()
+                      })
+                }
+              }) {
+                Text(context.getString(R.string.account_details_continue))
               }
-            }) {
-              Text(context.getString(R.string.account_details_continue))
-            }
-      }
+        }
+  }
 
   if (showInterestsOverlay) {
     InterestOverlay(

@@ -1,4 +1,4 @@
-package com.android.unio.utils
+package com.android.unio.model.event
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
