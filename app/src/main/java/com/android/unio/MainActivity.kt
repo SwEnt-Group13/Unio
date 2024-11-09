@@ -66,7 +66,7 @@ class MainActivity : ComponentActivity() {
   }
 }
 
-@HiltAndroidApp class UnioApplication : Application() {}
+@HiltAndroidApp class UnioApplication : Application()
 
 @Composable
 fun UnioApp(imageRepository: ImageRepositoryFirebaseStorage) {
