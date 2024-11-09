@@ -314,8 +314,8 @@ private fun AssociationRecruitment(association: Association) {
       style = AppTypography.bodySmall,
       modifier = Modifier.testTag("AssociationRecruitmentDescription"))
   FlowRow(
-    modifier = Modifier.testTag("AssociationRecruitmentRoles"),
-    horizontalArrangement = Arrangement.spacedBy(8.dp),
+      modifier = Modifier.testTag("AssociationRecruitmentRoles"),
+      horizontalArrangement = Arrangement.spacedBy(8.dp),
   ) {
     OutlinedButton(
         modifier = Modifier.testTag("AssociationDesignerRoles"),
