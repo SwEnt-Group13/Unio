@@ -16,6 +16,8 @@ import com.android.unio.model.event.EventRepositoryFirestore
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.search.SearchRepository
 import com.android.unio.model.search.SearchViewModel
+import com.android.unio.model.strings.test_tags.ExploreContentTestTags
+import com.android.unio.model.strings.test_tags.ExploreTestTags
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
 import dagger.hilt.android.testing.HiltAndroidRule
@@ -82,12 +84,16 @@ class ExploreScreenTest {
     composeTestRule.setContent {
       ExploreScreen(navigationAction, associationViewModel, searchViewModel)
     }
-    composeTestRule.onNodeWithTag("exploreScreen").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("searchPlaceHolder", true).assertIsDisplayed()
-    composeTestRule.onNodeWithTag("searchTrailingIcon", true).assertIsDisplayed()
-    composeTestRule.onNodeWithTag("searchBar").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("exploreTitle").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("categoriesList").assertExists()
+    composeTestRule.onNodeWithTag(ExploreTestTags.EXPLORE_SCAFFOLD_TITLE).assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag(ExploreContentTestTags.SEARCH_BAR_PLACEHOLDER, true)
+        .assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag(ExploreContentTestTags.SEARCH_TRAILING_ICON, true)
+        .assertIsDisplayed()
+    composeTestRule.onNodeWithTag(ExploreContentTestTags.SEARCH_BAR).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(ExploreContentTestTags.TITLE_TEXT).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(ExploreContentTestTags.CATEGORIES_LIST).assertExists()
   }
 
   @Test
@@ -95,8 +101,8 @@ class ExploreScreenTest {
     composeTestRule.setContent {
       ExploreScreen(navigationAction, associationViewModel, searchViewModel)
     }
-    composeTestRule.onNodeWithTag("searchBarInput").performTextInput("Music")
-    composeTestRule.onNodeWithTag("searchBarInput").assertTextEquals("Music")
+    composeTestRule.onNodeWithTag(ExploreContentTestTags.SEARCH_BAR_INPUT).performTextInput("Music")
+    composeTestRule.onNodeWithTag(ExploreContentTestTags.SEARCH_BAR_INPUT).assertTextEquals("Music")
   }
 
   @Test
@@ -124,10 +130,16 @@ class ExploreScreenTest {
     }
 
     sortedByCategoryAssociations.forEach { (category, associations) ->
-      composeTestRule.onNodeWithTag("category_${category.name}", true).isDisplayed()
-      composeTestRule.onNodeWithTag("associationRow_${category.name}", true).isDisplayed()
+      composeTestRule
+          .onNodeWithTag(ExploreContentTestTags.CATEGORY_NAME + category.name, true)
+          .isDisplayed()
+      composeTestRule
+          .onNodeWithTag(ExploreContentTestTags.ASSOCIATION_ROW + category.name, true)
+          .isDisplayed()
       associations.forEach { association ->
-        composeTestRule.onNodeWithTag("associationItem_${association.name}", true).isDisplayed()
+        composeTestRule
+            .onNodeWithTag(ExploreContentTestTags.ASSOCIATION_ITEM + association.name, true)
+            .isDisplayed()
       }
     }
   }
@@ -141,7 +153,9 @@ class ExploreScreenTest {
 
     sortedByCategoryAssociations.forEach { (_, associations) ->
       associations.forEach {
-        composeTestRule.onNodeWithTag("associationItem_${it.name}").performClick()
+        composeTestRule
+            .onNodeWithTag(ExploreContentTestTags.ASSOCIATION_ITEM + it.name)
+            .performClick()
       }
     }
 
