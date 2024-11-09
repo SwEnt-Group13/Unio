@@ -161,9 +161,7 @@ fun EventScreenScaffold(
                         imageVector =
                             if (isSaved) Icons.Rounded.Favorite else Icons.Rounded.FavoriteBorder,
                         contentDescription = if (isSaved) "Saved" else "Not saved",
-                        tint =
-                            if (isSaved) Color.Red
-                            else LocalContentColor.current)
+                        tint = if (isSaved) Color.Red else LocalContentColor.current)
                   }
               IconButton(modifier = Modifier.testTag("eventShareButton"), onClick = DEBUG_LAMBDA) {
                 Icon(
