@@ -1,4 +1,4 @@
-package com.android.unio.ui.events
+package com.android.unio.ui.home
 
 import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.junit4.createComposeRule
@@ -16,7 +16,6 @@ import com.android.unio.model.search.SearchRepository
 import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserViewModel
-import com.android.unio.ui.home.HomeScreen
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
 import com.android.unio.ui.navigation.TopLevelDestination
@@ -40,7 +39,7 @@ import org.junit.Test
  */
 @HiltAndroidTest
 @ExperimentalUnitApi
-class EventListOverviewTest {
+class HomeTest {
 
   @get:Rule val composeTestRule = createComposeRule()
   @get:Rule val hiltRule = HiltAndroidRule(this)
