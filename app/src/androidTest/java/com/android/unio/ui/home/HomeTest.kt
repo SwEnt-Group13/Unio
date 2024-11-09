@@ -14,6 +14,7 @@ import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.search.SearchRepository
 import com.android.unio.model.search.SearchViewModel
+import com.android.unio.model.strings.test_tags.HomeTestTags
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.navigation.NavigationAction
@@ -91,7 +92,7 @@ class HomeTest {
       val eventViewModel = EventViewModel(emptyEventRepository, imageRepository)
       HomeScreen(navigationAction, eventViewModel, userViewModel, searchViewModel)
     }
-    composeTestRule.onNodeWithTag("event_emptyEventPrompt").assertExists()
+    composeTestRule.onNodeWithTag(HomeTestTags.EMPTY_EVENT_PROMPT).assertExists()
     composeTestRule.onNodeWithText("No events available.").assertExists()
   }
 
@@ -105,15 +106,15 @@ class HomeTest {
       val eventViewModel = EventViewModel(mockEventRepository, imageRepository)
       HomeScreen(navigationAction, eventViewModel, userViewModel, searchViewModel)
     }
-    composeTestRule.onNodeWithTag("event_MapButton").assertExists()
-    composeTestRule.onNodeWithTag("event_MapButton").assertHasClickAction()
+    composeTestRule.onNodeWithTag(HomeTestTags.MAP_BUTTON).assertExists()
+    composeTestRule.onNodeWithTag(HomeTestTags.MAP_BUTTON).assertHasClickAction()
 
-    composeTestRule.onNodeWithTag("event_MapButton").performClick()
+    composeTestRule.onNodeWithTag(HomeTestTags.MAP_BUTTON).performClick()
     verify { navigationAction.navigateTo(Screen.MAP) }
   }
 
   /**
-   * Tests the sequence of clicking on the 'Following' tab and then on the 'Add' button to ensure
+   * Tests the sequence of clicking on the 'Following' tab and then on the 'Map' button to ensure
    * that both actions trigger their respective animations and behaviors.
    */
   @OptIn(ExperimentalCoroutinesApi::class)
@@ -124,13 +125,11 @@ class HomeTest {
       HomeScreen(navigationAction, eventViewModel, userViewModel, searchViewModel)
     }
 
-    // Ensure the 'Following' tab exists and perform a click.
-    composeTestRule.onNodeWithTag("event_tabFollowing").assertExists()
-    composeTestRule.onNodeWithTag("event_tabFollowing").performClick()
+    composeTestRule.onNodeWithTag(HomeTestTags.TAB_SAVED).assertExists()
+    composeTestRule.onNodeWithTag(HomeTestTags.TAB_SAVED).performClick()
 
-    // Perform a click on the 'Add' button.
-    composeTestRule.onNodeWithTag("event_MapButton").assertExists()
-    composeTestRule.onNodeWithTag("event_MapButton").performClick()
+    composeTestRule.onNodeWithTag(HomeTestTags.MAP_BUTTON).assertExists()
+    composeTestRule.onNodeWithTag(HomeTestTags.MAP_BUTTON).performClick()
 
     verify { navigationAction.navigateTo(Screen.MAP) }
   }
