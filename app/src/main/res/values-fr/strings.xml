@@ -39,7 +39,6 @@
     <string name="full_name_explanation">Le nom complet de l\'association. Il peut s\'agir du nom officiel complet.</string>
     <string name="category_explanation">Sélectionnez la catégorie qui correspond le mieux à l\'objectif de l\'association.</string>
     <string name="description_explanation">Fournissez une brève description de l\'association, y compris ses principales activités et objectifs.</string>
-    <string name="image_explanation">Fournissez une URL pour l\'image de l\'association, qui sera affichée sur la page de profil.</string>
     <string name="url_explanation">Fournissez l\'URL de la page web ou de la présence en ligne de l\'association.</string>
     <string name="cancel_button_text">Annuler</string>
     <string name="save_button_text">Enregistrer</string>
@@ -75,6 +74,7 @@
     <string name="association_upcoming_events">Evenement à venir</string>
     <string name="association_go_back">Retour</string>
     <string name="association_see_more">Voir plus</string>
+    <string name="association_share">Partager l\'association</string>
     <string name="association_contact_members">Membres à contacter</string>
     <string name="association_help_us">
         Voici comment vous pouvez nous aider. Cliquez sur une fonction pour en savoir plus
@@ -142,6 +142,9 @@
     <string name="interest_gaming" translatable="true">Gaming</string>
     <string name="interest_festivals" translatable="true">Festivals</string>
     <string name="settings_back_content_description">Retour</string>
+    <string name="association_edit">Modifier l\'Association</string>
+    <string name="association_recruitment">Recrutement</string>
+    <string name="association_contact_member_profile_picture">Photo de profil du membre contactable</string>
 
 </resources>
 

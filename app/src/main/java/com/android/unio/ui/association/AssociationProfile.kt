@@ -195,10 +195,13 @@ fun AssociationProfileScaffold(
                       }
                     }) {
                       Icon(
-                          Icons.Outlined.Share, contentDescription = "Icon for sharing association")
+                          Icons.Outlined.Share,
+                          contentDescription = context.getString(R.string.association_share))
                     }
                 IconButton(onClick = { showSheet = true }) {
-                  Icon(Icons.Outlined.MoreVert, contentDescription = "More")
+                  Icon(
+                      Icons.Outlined.MoreVert,
+                      contentDescription = context.getString(R.string.association_see_more))
                 }
               }
             })
@@ -233,6 +236,8 @@ fun AssociationProfileBottomSheet(
 ) {
   val sheetState = rememberModalBottomSheetState()
 
+  val context = LocalContext.current
+
   if (showSheet) {
     ModalBottomSheet(
         modifier = Modifier.testTag("AssociationProfileBottomSheet"),
@@ -248,7 +253,7 @@ fun AssociationProfileBottomSheet(
             modifier = Modifier.align(Alignment.CenterHorizontally))
 
         TextButton(modifier = Modifier.fillMaxWidth(), onClick = onEdit) {
-          Text("Edit Association")
+          Text(context.getString(R.string.association_edit))
         }
       }
     }
@@ -327,7 +332,9 @@ private fun AssociationRecruitment(association: Association) {
           }
         },
         enabled = true) {
-          Icon(Icons.Filled.Add, contentDescription = "Add icon")
+          Icon(
+              Icons.Filled.Add,
+              contentDescription = context.getString(R.string.association_recruitment))
           Spacer(Modifier.width(2.dp))
           Text("Graphic Designer")
         }
@@ -339,7 +346,9 @@ private fun AssociationRecruitment(association: Association) {
           }
         },
         enabled = true) {
-          Icon(Icons.Filled.Add, contentDescription = "Add icon")
+          Icon(
+              Icons.Filled.Add,
+              contentDescription = context.getString(R.string.association_recruitment))
           Spacer(Modifier.width(2.dp))
           Text("Treasurer")
         }
@@ -390,7 +399,9 @@ private fun AssociationMembers(members: List<User>) {
                             .background(MaterialTheme.colorScheme.surfaceDim)) {
                       AsyncImage(
                           model = user.profilePicture,
-                          contentDescription = "User's profile picture",
+                          contentDescription =
+                              context.getString(
+                                  R.string.association_contact_member_profile_picture),
                           modifier = Modifier.fillMaxWidth(),
                           contentScale = ContentScale.Crop)
                     }

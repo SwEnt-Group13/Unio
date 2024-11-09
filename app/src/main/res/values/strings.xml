@@ -48,7 +48,6 @@
     <string name="full_name_explanation">The full name of the association. This can be the official long-form name.</string>
     <string name="category_explanation">Select the category that best fits the association\'s purpose.</string>
     <string name="description_explanation">Provide a brief description of the association, including its main activities and goals.</string>
-    <string name="image_explanation">Provide a URL for the association\'s image, which will be displayed on the profile page.</string>
     <string name="url_explanation">Provide the URL of the association\'s webpage or online presence.</string>
     <string name="cancel_button_text">Cancel</string>
     <string name="save_button_text">Save</string>
@@ -106,7 +105,10 @@
     <string name="association_upcoming_events" translatable="true">Upcoming Events</string>
     <string name="association_go_back" translatable="true">Go Back</string>
     <string name="association_see_more" translatable="true">See More</string>
+    <string name="association_share" translatable="true">Share Association</string>
+    <string name="association_edit" translatable="true">Edit Association</string>
     <string name="association_contact_members" translatable="true">Contact Members</string>
+    <string name="association_contact_member_profile_picture" translatable="true">Contact Member Profile Picture</string>
     <string name="association_help_us" translatable="true">
         Here’s where you could help us. Click on a role to learn more.
     </string>
@@ -114,6 +116,7 @@
     <string name="association_member" translatable="true">members</string>
     <string name="association_follow" translatable="true">Follow</string>
     <string name="association_join" translatable="true">Join</string>
+    <string name="association_recruitment" translatable="true">Recruitment</string>
     <string name="association_no_event" translatable="true">No event planned yet</string>
     <string name="association_not_found" translatable="true">ERROR : Association not found</string>
 
