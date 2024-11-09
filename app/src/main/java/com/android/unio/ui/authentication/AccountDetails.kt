@@ -228,7 +228,8 @@ fun AccountDetails(
                 if (profilePictureUri.value == Uri.EMPTY) {
                   Icon(
                       imageVector = Icons.Rounded.AccountCircle,
-                      contentDescription = context.getString(R.string.account_details_content_description_add),
+                      contentDescription =
+                          context.getString(R.string.account_details_content_description_add),
                       tint = primaryLight,
                       modifier =
                           Modifier.clickable {
@@ -247,7 +248,10 @@ fun AccountDetails(
           OutlinedButton(
               modifier = Modifier.fillMaxWidth().testTag(AccountDetailsTestTags.INTERESTS_BUTTON),
               onClick = { showInterestsOverlay = true }) {
-                Icon(Icons.Default.Add, contentDescription = context.getString(R.string.account_details_content_description_add))
+                Icon(
+                    Icons.Default.Add,
+                    contentDescription =
+                        context.getString(R.string.account_details_content_description_add))
                 Text(context.getString(R.string.account_details_add_interests))
               }
           FlowRow {
@@ -272,7 +276,10 @@ fun AccountDetails(
           OutlinedButton(
               modifier = Modifier.fillMaxWidth().testTag(AccountDetailsTestTags.SOCIALS_BUTTON),
               onClick = { showSocialsOverlay = true }) {
-                Icon(Icons.Default.Add, contentDescription = context.getString(R.string.account_details_content_description_close))
+                Icon(
+                    Icons.Default.Add,
+                    contentDescription =
+                        context.getString(R.string.account_details_content_description_close))
                 Text(context.getString(R.string.account_details_add_socials))
               }
           FlowRow(modifier = Modifier.fillMaxWidth()) {
@@ -287,7 +294,8 @@ fun AccountDetails(
                   avatar = {
                     Icon(
                         Icons.Default.Close,
-                        contentDescription = context.getString(R.string.account_details_content_description_close),
+                        contentDescription =
+                            context.getString(R.string.account_details_content_description_close),
                         modifier =
                             Modifier.clickable {
                               userSocialsFlow.value =
@@ -304,42 +312,43 @@ fun AccountDetails(
                 } else {
                   val inputStream = context.contentResolver.openInputStream(profilePictureUri.value)
 
-                imageRepository.uploadImage(
-                    inputStream!!,
-                    "images/users/${userId}",
-                    onSuccess = createUser,
-                    onFailure = { exception ->
-                      Log.e("AccountDetails", "Error uploading image: $exception")
-                      Toast.makeText(
-                              context,
-                              context.getString(R.string.account_details_image_upload_error),
-                              Toast.LENGTH_SHORT)
-                          .show()
-                    })
+                  imageRepository.uploadImage(
+                      inputStream!!,
+                      "images/users/${userId}",
+                      onSuccess = createUser,
+                      onFailure = { exception ->
+                        Log.e("AccountDetails", "Error uploading image: $exception")
+                        Toast.makeText(
+                                context,
+                                context.getString(R.string.account_details_image_upload_error),
+                                Toast.LENGTH_SHORT)
+                            .show()
+                      })
+                }
+              }) {
+                Text(context.getString(R.string.account_details_continue))
               }
-            }) {
-              Text(context.getString(R.string.account_details_continue))
-            }
-      }
+        }
 
-  if (showInterestsOverlay) {
-    InterestOverlay(
-        onDismiss = { showInterestsOverlay = false },
-        onSave = { newInterests ->
-          interestsFlow.value = newInterests
-          showInterestsOverlay = false
-        },
-        interests = interests)
-  }
+    if (showInterestsOverlay) {
+      InterestOverlay(
+          onDismiss = { showInterestsOverlay = false },
+          onSave = { newInterests ->
+            interestsFlow.value = newInterests
+            showInterestsOverlay = false
+          },
+          interests = interests)
+    }
 
-  if (showSocialsOverlay) {
-    SocialOverlay(
-        onDismiss = { showSocialsOverlay = false },
-        onSave = { newUserSocials ->
-          userSocialsFlow.value = newUserSocials
-          showSocialsOverlay = false
-        },
-        userSocials = socials)
+    if (showSocialsOverlay) {
+      SocialOverlay(
+          onDismiss = { showSocialsOverlay = false },
+          onSave = { newUserSocials ->
+            userSocialsFlow.value = newUserSocials
+            showSocialsOverlay = false
+          },
+          userSocials = socials)
+    }
   }
 }
 
