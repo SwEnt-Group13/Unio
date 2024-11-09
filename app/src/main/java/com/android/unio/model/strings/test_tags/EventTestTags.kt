@@ -13,12 +13,12 @@ object EventCardTestTags {
 }
 
 object EventCreationTestTags {
-  const val SCREEN = "EventCreationScreen"
+  const val SCREEN = "eventCreationScreen"
 }
 
 object EventDetailsTestTags {
-  const val SCREEN = "EventScreen"
-  const val SNACKBAR_HOST = "eventSnackbarHost"
+  const val SCREEN = "eventScreen"
+  const val SNACKBAR_HOST = "snackbarHost"
   const val SNACKBAR_ACTION_BUTTON = "snackbarActionButton"
   const val GO_BACK_BUTTON = "goBackButton"
   const val SAVE_BUTTON = "eventSaveButton"
