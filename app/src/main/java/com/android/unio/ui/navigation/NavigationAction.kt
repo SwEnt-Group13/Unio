@@ -53,8 +53,9 @@ open class NavigationAction(val navController: NavHostController) {
   /**
    * Navigate to the specified [TopLevelDestination] while allowing to pop up the stack
    *
-   * @param tld Main destination to navigate to, clearing the back stack when navigating to a new
+   * @param screen Main destination to navigate to, clearing the back stack when navigating to a new
    *   one.
+   * @param screenPopUpTo Destination to pop up to
    */
   open fun navigateTo(screen: String, screenPopUpTo: String) {
     navController.navigate(screen) {
@@ -63,7 +64,7 @@ open class NavigationAction(val navController: NavHostController) {
         inclusive = true
       }
 
-      // To avoid having multiples copies of the same destination if we reselct the same item
+      // To avoid having multiples copies of the same destination if we reselect the same item
       launchSingleTop = true
 
       if (screen != Route.AUTH) {
