@@ -64,6 +64,7 @@ import com.android.unio.R
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventUtils.formatTimestamp
 import com.android.unio.model.event.EventViewModel
+import com.android.unio.model.strings.test_tags.EventDetailsTestTags
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.theme.AppTypography
@@ -127,16 +128,16 @@ fun EventScreenScaffold(
   testSnackbar = remember { SnackbarHostState() }
   scope = rememberCoroutineScope()
   Scaffold(
-      modifier = Modifier.testTag("EventScreen"),
+      modifier = Modifier.testTag(EventDetailsTestTags.SCREEN),
       snackbarHost = {
         SnackbarHost(
             hostState = testSnackbar!!,
-            modifier = Modifier.testTag("eventSnackbarHost"),
+            modifier = Modifier.testTag(EventDetailsTestTags.SNACKBAR_HOST),
             snackbar = { data ->
               Snackbar {
                 TextButton(
                     onClick = { testSnackbar!!.currentSnackbarData?.dismiss() },
-                    modifier = Modifier.testTag("snackbarActionButton")) {
+                    modifier = Modifier.testTag(EventDetailsTestTags.SNACKBAR_ACTION_BUTTON)) {
                       Text(text = DEBUG_MESSAGE)
                     }
               }
@@ -148,7 +149,7 @@ fun EventScreenScaffold(
             navigationIcon = {
               IconButton(
                   onClick = { navigationAction.goBack() },
-                  modifier = Modifier.testTag("goBackButton")) {
+                  modifier = Modifier.testTag(EventDetailsTestTags.GO_BACK_BUTTON)) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
                         contentDescription = context.getString(R.string.association_go_back))
@@ -156,18 +157,27 @@ fun EventScreenScaffold(
             },
             actions = {
               IconButton(
-                  modifier = Modifier.testTag("eventSaveButton"), onClick = onClickSaveButton) {
+                  modifier = Modifier.testTag(EventDetailsTestTags.SAVE_BUTTON),
+                  onClick = onClickSaveButton) {
                     Icon(
                         imageVector =
                             if (isSaved) Icons.Rounded.Favorite else Icons.Rounded.FavoriteBorder,
-                        contentDescription = if (isSaved) "Saved" else "Not saved",
+                        contentDescription =
+                            if (isSaved)
+                                context.getString(R.string.event_details_content_description_saved)
+                            else
+                                context.getString(
+                                    R.string.event_details_content_description_not_saved),
                         tint = if (isSaved) Color.Red else LocalContentColor.current)
                   }
-              IconButton(modifier = Modifier.testTag("eventShareButton"), onClick = DEBUG_LAMBDA) {
-                Icon(
-                    Icons.Outlined.Share,
-                    contentDescription = context.getString(R.string.event_share_button_description))
-              }
+              IconButton(
+                  modifier = Modifier.testTag(EventDetailsTestTags.SHARE_BUTTON),
+                  onClick = DEBUG_LAMBDA) {
+                    Icon(
+                        Icons.Outlined.Share,
+                        contentDescription =
+                            context.getString(R.string.event_share_button_description))
+                  }
             })
       },
       content = { padding -> EventScreenContent(event, padding) })
@@ -179,25 +189,27 @@ fun EventScreenContent(event: Event, padding: PaddingValues) {
   val context = LocalContext.current
   Column(
       modifier =
-          Modifier.testTag("eventDetailsPage")
+          Modifier.testTag(EventDetailsTestTags.DETAILS_PAGE)
               .verticalScroll(rememberScrollState())
               .padding(padding)) {
         AsyncImage(
             event.image.toUri(),
             context.getString(R.string.event_image_description),
             placeholder = painterResource(R.drawable.no_picture_found),
-            modifier = Modifier.fillMaxSize().testTag("eventDetailsImage"))
+            modifier = Modifier.fillMaxSize().testTag(EventDetailsTestTags.DETAILS_IMAGE))
 
         Column(
             modifier =
-                Modifier.testTag("eventDetailsInformationCard")
+                Modifier.testTag(EventDetailsTestTags.DETAILS_INFORMATION_CARD)
                     .background(MaterialTheme.colorScheme.primary)
                     .align(Alignment.CenterHorizontally)
                     .padding(12.dp)
                     .fillMaxWidth()) {
               Text(
                   event.title,
-                  modifier = Modifier.testTag("eventTitle").align(Alignment.CenterHorizontally),
+                  modifier =
+                      Modifier.testTag(EventDetailsTestTags.TITLE)
+                          .align(Alignment.CenterHorizontally),
                   style = AppTypography.headlineLarge,
                   color = MaterialTheme.colorScheme.onPrimary)
 
@@ -206,7 +218,8 @@ fun EventScreenContent(event: Event, padding: PaddingValues) {
                 for (i in associations.indices) {
                   Row(
                       modifier =
-                          Modifier.testTag("eventOrganisingAssociation$i").padding(end = 6.dp),
+                          Modifier.testTag("${EventDetailsTestTags.ORGANIZING_ASSOCIATION}$i")
+                              .padding(end = 6.dp),
                       horizontalArrangement = Arrangement.Center) {
                         AsyncImage(
                             associations[i].image.toUri(),
@@ -216,13 +229,15 @@ fun EventScreenContent(event: Event, padding: PaddingValues) {
                                 Modifier.size(ASSOCIATION_ICON_SIZE)
                                     .clip(CircleShape)
                                     .align(Alignment.CenterVertically)
-                                    .testTag("associationLogo$i"),
+                                    .testTag("${EventDetailsTestTags.ASSOCIATION_LOGO}$i"),
                             contentScale = ContentScale.Crop,
                         )
 
                         Text(
                             associations[i].name,
-                            modifier = Modifier.testTag("associationName$i").padding(start = 3.dp),
+                            modifier =
+                                Modifier.testTag("${EventDetailsTestTags.ASSOCIATION_NAME}$i")
+                                    .padding(start = 3.dp),
                             style = AppTypography.bodySmall,
                             color = MaterialTheme.colorScheme.onPrimary)
                       }
@@ -231,23 +246,23 @@ fun EventScreenContent(event: Event, padding: PaddingValues) {
               Row {
                 Text(
                     formatTimestamp(event.date, SimpleDateFormat("HH:mm", Locale.getDefault())),
-                    modifier = Modifier.testTag("eventStartHour").weight(1f),
+                    modifier = Modifier.testTag(EventDetailsTestTags.START_HOUR).weight(1f),
                     color = MaterialTheme.colorScheme.onPrimary)
                 Text(
                     formatTimestamp(event.date, SimpleDateFormat("dd/MM", Locale.getDefault())),
-                    modifier = Modifier.testTag("eventDate"),
+                    modifier = Modifier.testTag(EventDetailsTestTags.DATE),
                     color = MaterialTheme.colorScheme.onPrimary)
               }
             }
-        Column(modifier = Modifier.testTag("eventDetailsBody").padding(9.dp)) {
+        Column(modifier = Modifier.testTag(EventDetailsTestTags.DETAILS_BODY).padding(9.dp)) {
           Text(
               "X places remaining",
-              modifier = Modifier.testTag("placesRemainingText"),
+              modifier = Modifier.testTag(EventDetailsTestTags.PLACES_REMAINING_TEXT),
               style = AppTypography.bodyLarge,
               color = MaterialTheme.colorScheme.secondary)
           Text(
               event.description,
-              modifier = Modifier.testTag("eventDescription").padding(6.dp),
+              modifier = Modifier.testTag(EventDetailsTestTags.DESCRIPTION).padding(6.dp),
               style = AppTypography.bodyMedium)
 
           Spacer(modifier = Modifier.height(10.dp))
@@ -258,10 +273,11 @@ fun EventScreenContent(event: Event, padding: PaddingValues) {
                 modifier = Modifier.align(Alignment.CenterHorizontally).wrapContentWidth()) {
                   Text(
                       event.location.name,
-                      modifier = Modifier.testTag("eventLocation").padding(end = 5.dp))
+                      modifier =
+                          Modifier.testTag(EventDetailsTestTags.LOCATION).padding(end = 5.dp))
                   Button(
                       onClick = DEBUG_LAMBDA,
-                      modifier = Modifier.testTag("mapButton").size(48.dp),
+                      modifier = Modifier.testTag(EventDetailsTestTags.MAP_BUTTON).size(48.dp),
                       shape = CircleShape,
                       colors =
                           ButtonDefaults.buttonColors(
@@ -279,7 +295,7 @@ fun EventScreenContent(event: Event, padding: PaddingValues) {
             Button(
                 onClick = DEBUG_LAMBDA,
                 modifier =
-                    Modifier.testTag("signUpButton")
+                    Modifier.testTag(EventDetailsTestTags.SIGN_UP_BUTTON)
                         .align(Alignment.CenterHorizontally)
                         .wrapContentWidth()
                         .height(56.dp),

@@ -49,6 +49,7 @@ import com.android.unio.model.event.EventType
 import com.android.unio.model.event.EventUtils.addAlphaToColor
 import com.android.unio.model.event.EventUtils.formatTimestamp
 import com.android.unio.model.event.EventViewModel
+import com.android.unio.model.strings.test_tags.EventCardTestTags
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
@@ -99,6 +100,7 @@ fun EventCardScaffold(
     onClickEventCard: () -> Unit,
     onClickSaveButton: () -> Unit
 ) {
+  val context = LocalContext.current
   val imgUrl = event.image.toUri()
   val placeholderImg = R.drawable.adec
   val imageRequest =
@@ -118,7 +120,7 @@ fun EventCardScaffold(
       modifier =
           Modifier.fillMaxWidth()
               .padding(vertical = 8.dp)
-              .testTag("event_EventListItem")
+              .testTag(EventCardTestTags.EVENT_ITEM)
               .clip(RoundedCornerShape(10.dp))
               .background(MaterialTheme.colorScheme.primaryContainer)
               .clickable { onClickEventCard() }) {
@@ -128,12 +130,13 @@ fun EventCardScaffold(
         Box(modifier = Modifier.fillMaxWidth().height(100.dp)) {
           AsyncImage(
               model = imageRequest,
-              contentDescription = "Image of the event",
+              contentDescription =
+                  context.getString(R.string.event_card_content_description_event_image),
               modifier =
                   Modifier.fillMaxWidth()
                       .height(100.dp)
                       .clip(RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp))
-                      .testTag("event_EventImage"),
+                      .testTag(EventCardTestTags.EVENT_IMAGE),
               contentScale = ContentScale.Crop // crop the image to fit
               )
 
@@ -151,7 +154,12 @@ fun EventCardScaffold(
                 Icon(
                     imageVector =
                         if (isSaved) Icons.Rounded.Favorite else Icons.Rounded.FavoriteBorder,
-                    contentDescription = if (isSaved) "Saved" else "Not saved",
+                    contentDescription =
+                        if (isSaved)
+                            context.getString(R.string.event_card_content_description_saved_event)
+                        else
+                            context.getString(
+                                R.string.event_card_content_description_not_saved_event),
                     tint = if (isSaved) Color.Red else Color.White)
               }
         }
@@ -167,9 +175,8 @@ fun EventCardScaffold(
               Text(
                   modifier =
                       Modifier.padding(vertical = 1.dp, horizontal = 4.dp)
-                          .testTag("event_EventTitle")
-                          .wrapContentWidth(), // Make sure the text only takes as much space as
-                  // needed
+                          .testTag(EventCardTestTags.EVENT_TITLE)
+                          .wrapContentWidth(),
                   text = event.title,
                   style = AppTypography.labelLarge,
                   color = MaterialTheme.colorScheme.onSurface)
@@ -191,7 +198,7 @@ fun EventCardScaffold(
                         text = type.text,
                         modifier =
                             Modifier.padding(horizontal = 4.dp, vertical = 4.dp)
-                                .testTag("event_EventMainType"),
+                                .testTag(EventCardTestTags.EVENT_MAIN_TYPE),
                         color = MaterialTheme.colorScheme.scrim,
                         style = TextStyle(fontSize = 8.sp))
                   }
@@ -202,12 +209,13 @@ fun EventCardScaffold(
 
             Image(
                 painter = painterResource(id = R.drawable.clic),
-                contentDescription = "Association logo",
+                contentDescription =
+                    context.getString(R.string.event_card_content_description_association_logo),
                 modifier =
                     Modifier.size(24.dp)
                         .align(Alignment.CenterVertically)
                         .clip(RoundedCornerShape(5.dp))
-                        .testTag("event_ClicImage"))
+                        .testTag(EventCardTestTags.EVENT_CLIC_IMAGE))
           }
 
           // Row displaying event location and formatted date/time details
@@ -217,7 +225,7 @@ fun EventCardScaffold(
               Text(
                   modifier =
                       Modifier.padding(vertical = 1.dp, horizontal = 4.dp)
-                          .testTag("event_EventLocation")
+                          .testTag(EventCardTestTags.EVENT_LOCATION)
                           .wrapContentWidth(), // Make sure the text only takes as much space as
                   // needed
                   text = event.location.name,
@@ -231,7 +239,8 @@ fun EventCardScaffold(
 
             Text(
                 modifier =
-                    Modifier.padding(vertical = 1.dp, horizontal = 0.dp).testTag("event_EventDate"),
+                    Modifier.padding(vertical = 1.dp, horizontal = 0.dp)
+                        .testTag(EventCardTestTags.EVENT_DATE),
                 text = formatTimestamp(event.date, SimpleDateFormat("dd/MM", Locale.getDefault())),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurface)
@@ -249,7 +258,7 @@ fun EventCardScaffold(
             // Time display for the event
 
             Text(
-                modifier = Modifier.testTag("event_EventTime").wrapContentWidth(),
+                modifier = Modifier.testTag(EventCardTestTags.EVENT_TIME).wrapContentWidth(),
                 text = formatTimestamp(event.date, SimpleDateFormat("HH:mm", Locale.getDefault())),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurface)
@@ -271,7 +280,7 @@ fun EventCardScaffold(
           Text(
               modifier =
                   Modifier.padding(vertical = 1.dp, horizontal = 4.dp)
-                      .testTag("event_EventCatchyDescription")
+                      .testTag(EventCardTestTags.EVENT_CATCHY_DESCRIPTION)
                       .wrapContentWidth(),
               text = event.catchyDescription,
               style = MaterialTheme.typography.bodySmall,

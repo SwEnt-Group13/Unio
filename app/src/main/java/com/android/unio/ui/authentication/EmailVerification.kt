@@ -31,6 +31,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.android.unio.R
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
 import com.android.unio.ui.theme.AppTypography
@@ -54,7 +55,11 @@ fun EmailVerificationScreen(navigationAction: NavigationAction) {
         }
       } else {
         Log.e("EmailVerificationScreen", "Failed to refresh", it.exception)
-        Toast.makeText(context, "Failed to refresh", Toast.LENGTH_SHORT).show()
+        Toast.makeText(
+                context,
+                context.getString(R.string.email_verification_refresh_failed),
+                Toast.LENGTH_SHORT)
+            .show()
       }
     }
   }
@@ -65,7 +70,11 @@ fun EmailVerificationScreen(navigationAction: NavigationAction) {
         Toast.makeText(context, "Email sent", Toast.LENGTH_SHORT).show()
       } else {
         Log.e("EmailVerificationScreen", "Failed to send email", it.exception)
-        Toast.makeText(context, "Failed to send email", Toast.LENGTH_SHORT).show()
+        Toast.makeText(
+                context,
+                context.getString(R.string.email_verification_sent_failed),
+                Toast.LENGTH_SHORT)
+            .show()
       }
     }
   }
@@ -79,7 +88,8 @@ fun EmailVerificationScreen(navigationAction: NavigationAction) {
               IconButton(onClick = { Firebase.auth.signOut() }) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
-                    contentDescription = "Go back")
+                    contentDescription =
+                        context.getString(R.string.email_verification_content_description_go_back))
               }
             })
       },
@@ -89,29 +99,43 @@ fun EmailVerificationScreen(navigationAction: NavigationAction) {
             verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically),
             horizontalAlignment = Alignment.CenterHorizontally) {
               if (success) {
-                Text("Email verified!", style = AppTypography.titleLarge)
+                Text(
+                    context.getString(R.string.email_verification_verified),
+                    style = AppTypography.titleLarge)
                 Button(
                     onClick = { navigationAction.navigateTo(Screen.ACCOUNT_DETAILS) },
                 ) {
-                  Text("Continue")
+                  Text(context.getString(R.string.email_verification_verified_continue))
                 }
               } else {
-                Text("Verify your email", style = AppTypography.titleLarge)
                 Text(
-                    "We sent an email to ${user?.email ?: ""}. Please verify your email to continue.",
+                    context.getString(R.string.email_verification_verify_request),
+                    style = AppTypography.titleLarge)
+                Text(
+                    context.getString(R.string.email_verification_email_sent_to) +
+                        (user?.email ?: "") +
+                        context.getString(R.string.email_verification_email_sent_to_verify),
                     textAlign = TextAlign.Center,
                     modifier = Modifier.fillMaxWidth(0.8f),
                     style = AppTypography.bodyMedium)
                 OutlinedButton(
                     onClick = { resendEmail() },
                 ) {
-                  Text("Resend email", style = AppTypography.labelLarge)
+                  Text(
+                      context.getString(R.string.email_verification_email_resend),
+                      style = AppTypography.labelLarge)
                 }
 
                 Button(onClick = { checkEmailVerification() }) {
-                  Icon(Icons.Outlined.Refresh, contentDescription = "Refresh")
+                  Icon(
+                      Icons.Outlined.Refresh,
+                      contentDescription =
+                          context.getString(
+                              R.string.email_verification_content_description_refresh))
                   Spacer(Modifier.width(8.dp))
-                  Text("Refresh", style = AppTypography.labelLarge)
+                  Text(
+                      context.getString(R.string.email_verification_email_refresh),
+                      style = AppTypography.labelLarge)
                 }
               }
             }

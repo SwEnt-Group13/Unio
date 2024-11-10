@@ -13,6 +13,10 @@ import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.search.SearchRepository
 import com.android.unio.model.search.SearchViewModel
+import com.android.unio.model.strings.test_tags.AccountDetailsTestTags
+import com.android.unio.model.strings.test_tags.EventCreationTestTags
+import com.android.unio.model.strings.test_tags.EventDetailsTestTags
+import com.android.unio.model.strings.test_tags.HomeTestTags
 import com.android.unio.model.user.User
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserViewModel
@@ -140,7 +144,7 @@ class ScreenDisplayingTest {
     composeTestRule.setContent {
       AccountDetails(navigationAction, userViewModel, imageRepositoryFirestore)
     }
-    composeTestRule.onNodeWithTag("AccountDetails").assertIsDisplayed()
+    composeTestRule.onNodeWithTag(AccountDetailsTestTags.ACCOUNT_DETAILS).assertIsDisplayed()
   }
 
   @Test
@@ -148,9 +152,9 @@ class ScreenDisplayingTest {
     composeTestRule.setContent {
       HomeScreen(navigationAction, eventViewModel, userViewModel, searchViewModel)
     }
-    composeTestRule.onNodeWithTag("HomeScreen").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("searchBar").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("searchBarInput").assertIsDisplayed()
+    composeTestRule.onNodeWithTag(HomeTestTags.SCREEN).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(HomeTestTags.SEARCH_BAR).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(HomeTestTags.SEARCH_BAR_INPUT).assertIsDisplayed()
   }
 
   @Test
@@ -176,13 +180,13 @@ class ScreenDisplayingTest {
           eventViewModel = eventViewModel,
           userViewModel = userViewModel)
     }
-    composeTestRule.onNodeWithTag("EventScreen").assertIsDisplayed()
+    composeTestRule.onNodeWithTag(EventDetailsTestTags.SCREEN).assertIsDisplayed()
   }
 
   @Test
   fun testEventCreationDisplayed() {
     composeTestRule.setContent { EventCreationScreen() }
-    composeTestRule.onNodeWithTag("EventCreationScreen").assertIsDisplayed()
+    composeTestRule.onNodeWithTag(EventCreationTestTags.SCREEN).assertIsDisplayed()
   }
 
   @Test

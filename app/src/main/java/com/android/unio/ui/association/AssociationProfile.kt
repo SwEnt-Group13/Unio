@@ -492,7 +492,9 @@ private fun AssociationHeader(association: Association, context: Context) {
     Box(modifier = Modifier.testTag("AssociationImageHeader")) {
       AsyncImage(
           model = association.image.toUri(),
-          contentDescription = "Association image of " + association.name,
+          contentDescription =
+              context.getString(R.string.association_content_description_association_image) +
+                  association.name,
           modifier = Modifier.size(124.dp))
     }
     Column {
@@ -512,7 +514,10 @@ private fun AssociationHeader(association: Association, context: Context) {
             }
           },
           modifier = Modifier.testTag("AssociationFollowButton")) {
-            Icon(Icons.Filled.Add, contentDescription = "Follow icon")
+            Icon(
+                Icons.Filled.Add,
+                contentDescription =
+                    context.getString(R.string.association_content_description_follow_icon))
             Spacer(Modifier.width(2.dp))
             Text(context.getString(R.string.association_follow))
           }

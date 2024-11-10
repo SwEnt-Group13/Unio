@@ -43,6 +43,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign.Companion.Center
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat.getSystemService
+import com.android.unio.R
 import com.android.unio.model.user.SignInState
 import com.android.unio.model.user.isValidEmail
 import com.android.unio.model.user.isValidPassword
@@ -77,13 +78,15 @@ fun WelcomeScreen() {
               Spacer(modifier = Modifier.size(20.dp))
 
               Text(
-                  "The world’s largest campus life platform.",
+                  context.getString(R.string.welcome_message),
                   style = AppTypography.titleLarge,
                   modifier = Modifier.fillMaxWidth(0.8f),
                   textAlign = Center)
 
               Spacer(modifier = Modifier.size(50.dp))
-              Text("Sign up or log in to get started.", style = AppTypography.titleMedium)
+              Text(
+                  context.getString(R.string.welcome_login_signup),
+                  style = AppTypography.titleMedium)
 
               OutlinedTextField(
                   modifier = Modifier.testTag("WelcomeEmail"),
@@ -95,8 +98,8 @@ fun WelcomeScreen() {
                           imeAction = ImeAction.Done,
                           capitalization = KeyboardCapitalization.None),
                   singleLine = true,
-                  label = { Text("Enter your email address") },
-                  placeholder = { Text("john.doe@epfl.ch") },
+                  label = { Text(context.getString(R.string.welcome_email_enter)) },
+                  placeholder = { Text(context.getString(R.string.welcome_email_display)) },
               )
 
               OutlinedTextField(
@@ -109,11 +112,11 @@ fun WelcomeScreen() {
                           imeAction = ImeAction.Done,
                           capitalization = KeyboardCapitalization.None),
                   singleLine = true,
-                  label = { Text("Enter your password") },
+                  label = { Text(context.getString(R.string.welcome_password_enter)) },
                   isError = passwordError,
                   supportingText = {
                     if (passwordError) {
-                      Text("Min. 6 characters and 1 digit")
+                      Text(context.getString(R.string.welcome_password_error_correction))
                     }
                   },
                   trailingIcon = {
@@ -123,7 +126,12 @@ fun WelcomeScreen() {
                       Icon(
                           if (showPassword) Icons.Filled.VisibilityOff else Icons.Filled.Visibility,
                           contentDescription =
-                              if (showPassword) "Hide password" else "Show password",
+                              if (showPassword)
+                                  context.getString(
+                                      R.string.welcome_content_description_hide_password)
+                              else
+                                  context.getString(
+                                      R.string.welcome_content_description_show_password),
                       )
                     }
                   },
@@ -138,14 +146,17 @@ fun WelcomeScreen() {
                   modifier = Modifier.testTag("WelcomeButton"),
                   onClick = {
                     if (!enabled) {
-                      Toast.makeText(context, "Malformed email or password.", Toast.LENGTH_SHORT)
+                      Toast.makeText(
+                              context,
+                              context.getString(R.string.welcome_malformed_email_password),
+                              Toast.LENGTH_SHORT)
                           .show()
                     } else {
                       handleAuthentication(email, password, context)
                     }
                   },
                   enabled = enabled) {
-                    Text("Continue")
+                    Text(context.getString(R.string.welcome_button_continue))
                   }
             }
       })
@@ -165,21 +176,37 @@ fun handleAuthentication(email: String, password: String, context: Context) {
     // MainActivity
     when (signInResult.state) {
       SignInState.INVALID_CREDENTIALS -> {
-        Toast.makeText(context, "Invalid credentials", Toast.LENGTH_SHORT).show()
+        Toast.makeText(
+                context,
+                context.getString(R.string.welcome_toast_invalid_creds),
+                Toast.LENGTH_SHORT)
+            .show()
       }
       SignInState.INVALID_EMAIL_FORMAT -> {
-        Toast.makeText(context, "Please enter a valid EPFL email address", Toast.LENGTH_SHORT)
+        Toast.makeText(
+                context,
+                context.getString(R.string.welcome_toast_enter_valid_email),
+                Toast.LENGTH_SHORT)
             .show()
       }
       SignInState.SUCCESS_SIGN_IN -> {
-        Toast.makeText(context, "Signed in successfully", Toast.LENGTH_SHORT).show()
+        Toast.makeText(
+                context, context.getString(R.string.welcome_toast_sign_in), Toast.LENGTH_SHORT)
+            .show()
 
         if (signInResult.user?.isEmailVerified == false) {
           signInResult.user.sendEmailVerification().addOnCompleteListener {
             if (it.isSuccessful) {
-              Toast.makeText(context, "Verification email sent", Toast.LENGTH_SHORT).show()
+              Toast.makeText(
+                      context,
+                      context.getString(R.string.welcome_toast_verification_sent),
+                      Toast.LENGTH_SHORT)
+                  .show()
             } else {
-              Toast.makeText(context, "Failed to send verification email", Toast.LENGTH_SHORT)
+              Toast.makeText(
+                      context,
+                      context.getString(R.string.welcome_toast_verification_sent_failed),
+                      Toast.LENGTH_SHORT)
                   .show()
               Log.e("WelcomeScreen", "Failed to send verification email", it.exception)
             }
@@ -187,13 +214,25 @@ fun handleAuthentication(email: String, password: String, context: Context) {
         }
       }
       SignInState.SUCCESS_CREATE_ACCOUNT -> {
-        Toast.makeText(context, "Account created successfully", Toast.LENGTH_SHORT).show()
+        Toast.makeText(
+                context,
+                context.getString(R.string.welcome_toast_account_created),
+                Toast.LENGTH_SHORT)
+            .show()
 
         signInResult.user?.sendEmailVerification()?.addOnCompleteListener {
           if (it.isSuccessful) {
-            Toast.makeText(context, "Verification email sent", Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                    context,
+                    context.getString(R.string.welcome_toast_verification_sent),
+                    Toast.LENGTH_SHORT)
+                .show()
           } else {
-            Toast.makeText(context, "Failed to send verification email", Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                    context,
+                    context.getString(R.string.welcome_toast_verification_sent_failed),
+                    Toast.LENGTH_SHORT)
+                .show()
             Log.e("WelcomeScreen", "Failed to send verification email", it.exception)
           }
         }

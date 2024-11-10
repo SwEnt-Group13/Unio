@@ -8,6 +8,7 @@ import java.io.InputStream
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 /**
  * ViewModel class that manages the event list data and provides it to the UI. It uses an
@@ -32,11 +33,11 @@ constructor(private val repository: EventRepository, private val imageRepository
    * A public immutable [StateFlow] that exposes the list of events to the UI. This flow can only be
    * observed and not modified.
    */
-  val events: StateFlow<List<Event>> = _events
+  val events: StateFlow<List<Event>> = _events.asStateFlow()
 
   private val _selectedEvent = MutableStateFlow<Event?>(null)
 
-  val selectedEvent: StateFlow<Event?> = _selectedEvent
+  val selectedEvent: StateFlow<Event?> = _selectedEvent.asStateFlow()
 
   /** Initializes the ViewModel by loading the events from the repository. */
   init {

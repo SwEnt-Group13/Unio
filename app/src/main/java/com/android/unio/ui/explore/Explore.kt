@@ -44,6 +44,8 @@ import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationCategory
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.search.SearchViewModel
+import com.android.unio.model.strings.test_tags.ExploreContentTestTags
+import com.android.unio.model.strings.test_tags.ExploreTestTags
 import com.android.unio.ui.navigation.BottomNavigationMenu
 import com.android.unio.ui.navigation.LIST_TOP_LEVEL_DESTINATION
 import com.android.unio.ui.navigation.NavigationAction
@@ -63,7 +65,7 @@ fun ExploreScreen(
         BottomNavigationMenu(
             { navigationAction.navigateTo(it.route) }, LIST_TOP_LEVEL_DESTINATION, Route.EXPLORE)
       },
-      modifier = Modifier.testTag("exploreScreen"),
+      modifier = Modifier.testTag(ExploreTestTags.EXPLORE_SCAFFOLD_TITLE),
       content = { padding ->
         ExploreScreenContent(padding, navigationAction, associationViewModel, searchViewModel)
       })
@@ -94,18 +96,17 @@ fun ExploreScreenContent(
       modifier = Modifier.padding(padding).fillMaxWidth(),
       horizontalAlignment = Alignment.CenterHorizontally) {
         Text(
-            text = "Explore our Associations",
-            /** Will go in the string.xml */
+            text = context.getString(R.string.explore_content_screen_title),
             style = AppTypography.headlineLarge,
             modifier =
                 Modifier.padding(top = 16.dp, bottom = 8.dp)
                     .align(Alignment.CenterHorizontally)
-                    .testTag("exploreTitle"))
+                    .testTag(ExploreContentTestTags.TITLE_TEXT))
 
         DockedSearchBar(
             inputField = {
               SearchBarDefaults.InputField(
-                  modifier = Modifier.testTag("searchBarInput"),
+                  modifier = Modifier.testTag(ExploreContentTestTags.SEARCH_BAR_INPUT),
                   query = searchQuery,
                   onQueryChange = {
                     searchQuery = it
@@ -118,19 +119,21 @@ fun ExploreScreenContent(
                     Text(
                         text = context.getString(R.string.explore_search_placeholder),
                         style = AppTypography.bodyLarge,
-                        modifier = Modifier.testTag("searchPlaceHolder"))
+                        modifier = Modifier.testTag(ExploreContentTestTags.SEARCH_BAR_PLACEHOLDER))
                   },
                   trailingIcon = {
                     Icon(
                         Icons.Default.Search,
-                        contentDescription = "Search icon",
-                        modifier = Modifier.testTag("searchTrailingIcon"))
+                        contentDescription =
+                            context.getString(R.string.explore_content_description_search_icon),
+                        modifier = Modifier.testTag(ExploreContentTestTags.SEARCH_TRAILING_ICON))
                   },
               )
             },
             expanded = expanded,
             onExpandedChange = { expanded = it },
-            modifier = Modifier.padding(horizontal = 16.dp).testTag("searchBar")) {
+            modifier =
+                Modifier.padding(horizontal = 16.dp).testTag(ExploreContentTestTags.SEARCH_BAR)) {
               when (searchState) {
                 SearchViewModel.Status.ERROR -> {
                   Box(
@@ -174,7 +177,7 @@ fun ExploreScreenContent(
             }
 
         LazyColumn(
-            modifier = Modifier.fillMaxSize().testTag("categoriesList"),
+            modifier = Modifier.fillMaxSize().testTag(ExploreContentTestTags.CATEGORIES_LIST),
             contentPadding = PaddingValues(vertical = 16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
@@ -189,14 +192,14 @@ fun ExploreScreenContent(
                     style = AppTypography.headlineSmall,
                     modifier =
                         Modifier.padding(horizontal = 16.dp)
-                            .testTag("category_${category.displayName}"))
+                            .testTag(ExploreContentTestTags.CATEGORY_NAME + category.name))
 
                 // Horizontal scrollable list of associations
                 LazyRow(
                     modifier =
                         Modifier.fillMaxSize()
                             .padding(vertical = 16.dp)
-                            .testTag("associationRow_${category.displayName}"),
+                            .testTag(ExploreContentTestTags.ASSOCIATION_ROW + category.name),
                     contentPadding = PaddingValues(horizontal = 16.dp),
                     horizontalArrangement = Arrangement.spacedBy(32.dp, Alignment.Start),
                     verticalAlignment = Alignment.CenterVertically) {
@@ -224,21 +227,27 @@ fun ExploreScreenContent(
  */
 @Composable
 fun AssociationItem(association: Association, onClick: () -> Unit) {
+  val context = LocalContext.current
   Column(
       modifier =
-          Modifier.clickable(onClick = onClick).testTag("associationItem_${association.name}")) {
+          Modifier.clickable(onClick = onClick)
+              .testTag(ExploreContentTestTags.ASSOCIATION_ITEM + association.name)) {
         /**
-         * AdEC image is used as the placeholder. Will need to add the actual image later, when the
-         * actual view model is used.
+         * AdEC image is used as the placeholder. Will need to remove it when all images are
+         * available on the Firestore database
          */
         Image(
             painter = painterResource(id = R.drawable.adec),
-            contentDescription = "image description",
+            contentDescription = context.getString(R.string.explore_content_description_image),
             modifier = Modifier.size(124.dp))
 
         /**
-         * AsyncImage( model = association.image.toUri(), contentDescription = "Translated
-         * description of what the image contains", modifier =
+         * The following code is commented out because all images are not available in the Firestore
+         * database. Uncomment the code when all images are available, and remove the placeholder
+         * image.
+         *
+         * AsyncImage( model = association.image.toUri(), contentDescription =
+         * context.getString(R.string.explore_content_description_async_image), modifier =
          * Modifier.size(124.dp).testTag("associationImage"), contentScale = ContentScale.Crop //
          * crop the image to fit )
          */
@@ -250,7 +259,7 @@ fun AssociationItem(association: Association, onClick: () -> Unit) {
             modifier =
                 Modifier.fillMaxWidth()
                     .align(Alignment.CenterHorizontally)
-                    .testTag("associationName_${association.name}"))
+                    .testTag(ExploreContentTestTags.ASSOCIATION_NAME_TEXT + association.name))
       }
 }
 

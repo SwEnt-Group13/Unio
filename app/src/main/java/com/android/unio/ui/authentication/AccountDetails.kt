@@ -134,7 +134,11 @@ fun AccountDetails(
       userViewModel.addUser(
           newUser,
           onSuccess = {
-            Toast.makeText(context, "Account Created Successfully", Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                    context,
+                    context.getString(R.string.account_details_created_successfully),
+                    Toast.LENGTH_SHORT)
+                .show()
             navigationAction.navigateTo(Screen.HOME)
           })
     }
@@ -224,7 +228,8 @@ fun AccountDetails(
                 if (profilePictureUri.value == Uri.EMPTY) {
                   Icon(
                       imageVector = Icons.Rounded.AccountCircle,
-                      contentDescription = "Add",
+                      contentDescription =
+                          context.getString(R.string.account_details_content_description_add),
                       tint = primaryLight,
                       modifier =
                           Modifier.clickable {
@@ -243,7 +248,10 @@ fun AccountDetails(
           OutlinedButton(
               modifier = Modifier.fillMaxWidth().testTag(AccountDetailsTestTags.INTERESTS_BUTTON),
               onClick = { showInterestsOverlay = true }) {
-                Icon(Icons.Default.Add, contentDescription = "Add")
+                Icon(
+                    Icons.Default.Add,
+                    contentDescription =
+                        context.getString(R.string.account_details_content_description_add))
                 Text(context.getString(R.string.account_details_add_interests))
               }
           FlowRow {
@@ -268,7 +276,10 @@ fun AccountDetails(
           OutlinedButton(
               modifier = Modifier.fillMaxWidth().testTag(AccountDetailsTestTags.SOCIALS_BUTTON),
               onClick = { showSocialsOverlay = true }) {
-                Icon(Icons.Default.Add, contentDescription = "Add")
+                Icon(
+                    Icons.Default.Add,
+                    contentDescription =
+                        context.getString(R.string.account_details_content_description_close))
                 Text(context.getString(R.string.account_details_add_socials))
               }
           FlowRow(modifier = Modifier.fillMaxWidth()) {
@@ -283,7 +294,8 @@ fun AccountDetails(
                   avatar = {
                     Icon(
                         Icons.Default.Close,
-                        contentDescription = "Add",
+                        contentDescription =
+                            context.getString(R.string.account_details_content_description_close),
                         modifier =
                             Modifier.clickable {
                               userSocialsFlow.value =
@@ -306,33 +318,37 @@ fun AccountDetails(
                       onSuccess = createUser,
                       onFailure = { exception ->
                         Log.e("AccountDetails", "Error uploading image: $exception")
-                        Toast.makeText(context, "Error uploading image", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                                context,
+                                context.getString(R.string.account_details_image_upload_error),
+                                Toast.LENGTH_SHORT)
+                            .show()
                       })
                 }
               }) {
                 Text(context.getString(R.string.account_details_continue))
               }
         }
-  }
 
-  if (showInterestsOverlay) {
-    InterestOverlay(
-        onDismiss = { showInterestsOverlay = false },
-        onSave = { newInterests ->
-          interestsFlow.value = newInterests
-          showInterestsOverlay = false
-        },
-        interests = interests)
-  }
+    if (showInterestsOverlay) {
+      InterestOverlay(
+          onDismiss = { showInterestsOverlay = false },
+          onSave = { newInterests ->
+            interestsFlow.value = newInterests
+            showInterestsOverlay = false
+          },
+          interests = interests)
+    }
 
-  if (showSocialsOverlay) {
-    SocialOverlay(
-        onDismiss = { showSocialsOverlay = false },
-        onSave = { newUserSocials ->
-          userSocialsFlow.value = newUserSocials
-          showSocialsOverlay = false
-        },
-        userSocials = socials)
+    if (showSocialsOverlay) {
+      SocialOverlay(
+          onDismiss = { showSocialsOverlay = false },
+          onSave = { newUserSocials ->
+            userSocialsFlow.value = newUserSocials
+            showSocialsOverlay = false
+          },
+          userSocials = socials)
+    }
   }
 }
 
@@ -341,15 +357,17 @@ private fun ProfilePictureWithRemoveIcon(
     profilePictureUri: Uri,
     onRemove: () -> Unit,
 ) {
+  val context = LocalContext.current
   Box(modifier = Modifier.size(100.dp)) {
     Image(
         painter = rememberAsyncImagePainter(profilePictureUri),
-        contentDescription = "Profile Picture",
+        contentDescription = context.getString(R.string.account_details_content_description_pfp),
         contentScale = ContentScale.Crop,
         modifier = Modifier.aspectRatio(1f).clip(CircleShape))
     Icon(
         imageVector = Icons.Default.Close,
-        contentDescription = "Remove Profile Picture",
+        contentDescription =
+            context.getString(R.string.account_details_content_description_remove_pfp),
         modifier =
             Modifier.size(24.dp).align(Alignment.TopEnd).clickable { onRemove() }.padding(4.dp))
   }

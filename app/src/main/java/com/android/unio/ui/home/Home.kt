@@ -48,6 +48,7 @@ import androidx.compose.ui.unit.dp
 import com.android.unio.R
 import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.search.SearchViewModel
+import com.android.unio.model.strings.test_tags.HomeTestTags
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.event.EventCard
 import com.android.unio.ui.navigation.BottomNavigationMenu
@@ -88,15 +89,18 @@ fun HomeScreen(
       floatingActionButton = {
         FloatingActionButton(
             onClick = { navigationAction.navigateTo(Screen.MAP) },
-            modifier = Modifier.testTag("event_MapButton")) {
-              Icon(imageVector = Icons.Filled.Place, contentDescription = "Map button")
+            modifier = Modifier.testTag(HomeTestTags.MAP_BUTTON)) {
+              Icon(
+                  imageVector = Icons.Filled.Place,
+                  contentDescription =
+                      context.getString(R.string.home_content_description_map_button))
             }
       },
       bottomBar = {
         BottomNavigationMenu(
             { navigationAction.navigateTo(it.route) }, LIST_TOP_LEVEL_DESTINATION, Route.HOME)
       },
-      modifier = Modifier.testTag("HomeScreen"),
+      modifier = Modifier.testTag(HomeTestTags.SCREEN),
       content = { paddingValues ->
         Column(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
           // Sticky Header
@@ -104,7 +108,7 @@ fun HomeScreen(
               modifier =
                   Modifier.fillMaxWidth()
                       .padding(vertical = 16.dp, horizontal = horizontalHeaderPadding)
-                      .testTag("event_Header")) {
+                      .testTag(HomeTestTags.HEADER)) {
                 Column {
                   Row(
                       modifier = Modifier.fillMaxWidth(),
@@ -130,7 +134,7 @@ fun HomeScreen(
                                       allTabWidth = (coordinates.size.width / density).dp
                                       allTabXCoordinate = coordinates.positionInRoot().x
                                     }
-                                    .testTag("event_tabAll"))
+                                    .testTag(HomeTestTags.TAB_ALL))
 
                         // Clickable text for "Following"
                         Text(
@@ -154,7 +158,7 @@ fun HomeScreen(
                                       followingTabWidth = (coordinates.size.width / density).dp
                                       followingTabXCoordinate = coordinates.positionInRoot().x
                                     }
-                                    .testTag("event_tabFollowing"))
+                                    .testTag(HomeTestTags.TAB_SAVED))
                       }
 
                   // Underline to indicate selected tab with smooth sliding animation
@@ -172,7 +176,7 @@ fun HomeScreen(
                                 .width(selectedTabWidth)
                                 .height(2.dp)
                                 .background(Color.Blue)
-                                .testTag("event_UnderlyingBar"))
+                                .testTag(HomeTestTags.UNDERLYING_BAR))
                   }
                 }
               }
@@ -180,7 +184,7 @@ fun HomeScreen(
           DockedSearchBar(
               inputField = {
                 SearchBarDefaults.InputField(
-                    modifier = Modifier.testTag("searchBarInput"),
+                    modifier = Modifier.testTag(HomeTestTags.SEARCH_BAR_INPUT),
                     query = searchQuery,
                     onQueryChange = {
                       searchQuery = it
@@ -196,14 +200,17 @@ fun HomeScreen(
                       if (searchState == SearchViewModel.Status.LOADING) {
                         CircularProgressIndicator()
                       } else {
-                        Icon(Icons.Default.Search, contentDescription = "Search icon")
+                        Icon(
+                            Icons.Default.Search,
+                            contentDescription =
+                                context.getString(R.string.home_content_description_search_icon))
                       }
                     },
                 )
               },
               expanded = false,
               onExpandedChange = {},
-              modifier = Modifier.padding(horizontal = 16.dp).testTag("searchBar")) {}
+              modifier = Modifier.padding(horizontal = 16.dp).testTag(HomeTestTags.SEARCH_BAR)) {}
 
           // Event List
           if (searchQuery.isNotEmpty() &&
@@ -237,7 +244,7 @@ fun HomeScreen(
                 modifier = Modifier.fillMaxSize().padding(paddingValues),
                 contentAlignment = Alignment.Center) {
                   Text(
-                      modifier = Modifier.testTag("event_emptyEventPrompt"),
+                      modifier = Modifier.testTag(HomeTestTags.EMPTY_EVENT_PROMPT),
                       text = context.getString(R.string.event_no_events_available))
                 }
           }

@@ -125,7 +125,10 @@ fun SocialOverlay(
                                         }
                                         Icon(
                                             Icons.Default.Close,
-                                            contentDescription = "Close",
+                                            contentDescription =
+                                                context.getString(
+                                                    R.string
+                                                        .social_overlay_content_description_close),
                                             modifier =
                                                 Modifier.clickable {
                                                       copiedUserSocialsFlow.value =
@@ -153,7 +156,12 @@ fun SocialOverlay(
                                               Modifier.padding(8.dp)
                                                   .testTag(SocialsOverlayTestTags.ADD_BUTTON),
                                           shape = RoundedCornerShape(16.dp)) {
-                                            Icon(Icons.Default.Add, contentDescription = "Add")
+                                            Icon(
+                                                Icons.Default.Add,
+                                                contentDescription =
+                                                    context.getString(
+                                                        R.string
+                                                            .social_overlay_content_description_add))
                                             Text(
                                                 context.getString(
                                                     R.string.social_overlay_add_social))
