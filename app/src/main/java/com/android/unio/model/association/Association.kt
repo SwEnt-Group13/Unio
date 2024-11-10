@@ -36,7 +36,10 @@ data class Association(
     val followersCount: Int,
     val members: ReferenceList<User>,
     var image: String,
-    val events: ReferenceList<Event>
+    val events: ReferenceList<Event>,
+    val principalEmailAdress: String,
+    val parentAssociations: ReferenceList<Association>,
+    val childAssociations: ReferenceList<Association>
 ) {
   companion object
 }

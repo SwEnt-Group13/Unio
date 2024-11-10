@@ -22,6 +22,13 @@ fun AssociationRepositoryFirestore.Companion.hydrate(data: Map<String, Any>?): A
 
   val events = Event.firestoreReferenceListWith(data?.get("events") as? List<String> ?: emptyList())
 
+  val parentAssociations =
+      Association.firestoreReferenceListWith(
+          data?.get("parentAssociations") as? List<String> ?: emptyList())
+  val childAssociations =
+      Association.firestoreReferenceListWith(
+          data?.get("childAssociations") as? List<String> ?: emptyList())
+
   return Association(
       uid = data?.get("uid") as? String ?: "",
       url = data?.get("url") as? String ?: "",
@@ -34,7 +41,10 @@ fun AssociationRepositoryFirestore.Companion.hydrate(data: Map<String, Any>?): A
       members = members,
       followersCount = data?.get("followersCount") as? Int ?: 0,
       image = data?.get("image") as? String ?: "",
-      events = events)
+      events = events,
+      principalEmailAdress = data?.get("principalEmailAdress") as? String ?: "",
+      parentAssociations = parentAssociations,
+      childAssociations = childAssociations)
 }
 
 fun UserRepositoryFirestore.Companion.hydrate(data: Map<String, Any>?): User {

@@ -7,6 +7,7 @@ import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationCategory
 import com.android.unio.model.event.Event
 import com.android.unio.model.firestore.ReferenceList
+import com.android.unio.model.firestore.emptyFirestoreReferenceList
 import com.android.unio.model.user.User
 
 /**
@@ -84,7 +85,10 @@ class MockAssociation {
             MockReferenceList(
                 listOf(
                     MockEvent.createMockEvent(
-                        associationDependency = true, userDependency = userDependency)))
+                        associationDependency = true, userDependency = userDependency))),
+        principalEmailAddress: String = "principal@email_adress.com",
+        parentAssociations: ReferenceList<Association> = Association.emptyFirestoreReferenceList(),
+        childAssociations: ReferenceList<Association> = Association.emptyFirestoreReferenceList()
     ): Association {
       val membersHelper =
           if (userDependency) {
@@ -103,7 +107,10 @@ class MockAssociation {
           members = MockReferenceList(membersHelper),
           image = image,
           followersCount = 2,
-          events = events)
+          events = events,
+          principalEmailAdress = principalEmailAddress,
+          parentAssociations = parentAssociations,
+          childAssociations = childAssociations)
     }
 
     fun createAllMockAssociations(
