@@ -9,38 +9,79 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import androidx.test.filters.LargeTest
 import com.android.unio.MainActivity
-import com.google.api.AnnotationsProto.http
+import com.android.unio.model.hilt.module.FirebaseAuthModule
+import com.android.unio.model.hilt.module.FirebaseModule
+import com.android.unio.model.strings.test_tags.AccountDetailsTestTags
+import com.android.unio.model.strings.test_tags.HomeTestTags
+import com.android.unio.model.strings.test_tags.InterestsOverlayTestTags
 import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.testing.HiltAndroidRule
+import dagger.hilt.android.testing.HiltAndroidTest
+import dagger.hilt.android.testing.UninstallModules
+import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.json.JSONObject
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import java.io.File
+
 
 @LargeTest
+@HiltAndroidTest
+@UninstallModules(FirebaseModule::class, FirebaseAuthModule::class)
 class EndToEndTest {
   @get:Rule val composeTestRule = createAndroidComposeRule<MainActivity>()
+  @get:Rule val hiltRule = HiltAndroidRule(this)
+
+
+  @Module
+  @InstallIn(SingletonComponent::class)
+  object FirebaseModule {
+
+    @Provides
+    fun provideFirebaseFirestore(): FirebaseFirestore {
+      Firebase.firestore.useEmulator("10.0.2.2", 8080)
+      return Firebase.firestore
+    }
+  }
+
+  @Module
+  @InstallIn(SingletonComponent::class)
+  object FirebaseAuthModule {
+
+    @Provides fun provideFirebaseAuth(): FirebaseAuth{
+      Firebase.auth.useEmulator("10.0.2.2", 9099)
+      return FirebaseAuth.getInstance()
+    }
+  }
 
   @Before
   fun setUp() {
+    hiltRule.inject()
     /*Test that the emulators are indeed running*/
     verifyEmulatorsAreRunning()
-
-    Firebase.firestore.useEmulator("10.0.2.2", 8080)
-    Firebase.auth.useEmulator("10.0.2.2", 9099)
 
   }
 
   @Test
-  fun testUserCanLoginAndCreateAnAccount() {
-    flushFirestoreDatabase()
+  fun deleteUserAuth(){
     flushAuthenticationClients()
+  }
 
-    Thread.sleep(3000)
+  @Test
+  fun testUserCanLoginAndCreateAnAccount() {
+    flushAuthenticationClients()
+    flushFirestoreDatabase()
+
+    Thread.sleep(5000)
 
     /** Create an account on the welcome screen */
     composeTestRule.onNodeWithTag("WelcomeScreen").assertIsDisplayed()
@@ -49,59 +90,51 @@ class EndToEndTest {
 
     composeTestRule.onNodeWithTag("WelcomeButton").performClick()
 
-    composeTestRule.waitForIdle()
-    Thread.sleep(1000)
-
     /** Verify the email */
+
     val emailVerificationUrl = getLatestEmailVerificationUrl()
     verifyEmail(emailVerificationUrl)
 
+
     // This sleep is required to wait for the email verification to complete
-    Thread.sleep(5000)
+    Thread.sleep(10000)
+
 
     /** Refresh the email verification and continue */
     composeTestRule.onNodeWithTag("EmailVerificationScreen").assertIsDisplayed()
-    Thread.sleep(1000)
     composeTestRule.onNodeWithTag("EmailVerificationRefresh").performClick()
 
-    composeTestRule.waitForIdle()
+    Thread.sleep(5000)
 
     composeTestRule.onNodeWithTag("EmailVerificationContinue").performClick()
-    composeTestRule.onNodeWithTag("AccountDetails").assertIsDisplayed()
-
-    composeTestRule.waitForIdle()
+    composeTestRule.onNodeWithTag(AccountDetailsTestTags.TITLE_TEXT).assertExists()
 
     /** Fill in the account details */
-    composeTestRule.onNodeWithTag("AccountDetailsFirstNameTextField").performTextInput(FIRST_NAME)
-    composeTestRule.onNodeWithTag("AccountDetailsLastNameTextField").performTextInput(LAST_NAME)
-    composeTestRule.onNodeWithTag("AccountDetailsBioTextField").performTextInput(BIOGRAPHY)
-    composeTestRule.onNodeWithTag("AccountDetailsInterestsButton").performClick()
-    composeTestRule.onNodeWithTag("InterestOverlayClickableRow: 0").performClick()
-    composeTestRule.onNodeWithTag("InterestOverlayClickableRow: 1").performClick()
-    composeTestRule.onNodeWithTag("InterestOverlayClickableRow: 2").performClick()
-    composeTestRule.onNodeWithTag("InterestsOverlayContinueButton").performClick()
+    composeTestRule.onNodeWithTag(AccountDetailsTestTags.FIRST_NAME_TEXT_FIELD).performTextInput(FIRST_NAME)
+    composeTestRule.onNodeWithTag(AccountDetailsTestTags.LAST_NAME_TEXT_FIELD).performTextInput(LAST_NAME)
+    composeTestRule.onNodeWithTag(AccountDetailsTestTags.BIOGRAPHY_TEXT_FIELD).performTextInput(BIOGRAPHY)
+    composeTestRule.onNodeWithTag(AccountDetailsTestTags.INTERESTS_BUTTON).performClick()
+    composeTestRule.onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW +"0").performClick()
+    composeTestRule.onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW +"1").performClick()
+    composeTestRule.onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW +"2").performClick()
+    composeTestRule.onNodeWithTag(InterestsOverlayTestTags.SAVE_BUTTON).performClick()
 
-    composeTestRule.onNodeWithTag("AccountDetailsContinueButton").performClick()
+    composeTestRule.onNodeWithTag(AccountDetailsTestTags.CONTINUE_BUTTON).performClick()
 
     // Wait until "HomeScreen" is displayed
-    composeTestRule.waitUntil(2000) {
-      composeTestRule.onNodeWithTag("HomeScreen").isDisplayed()
-    }
+    composeTestRule.waitForIdle()
+    composeTestRule.onNodeWithTag(HomeTestTags.SCREEN).isDisplayed()
 
     /** Navigate to the profile screen */
     composeTestRule.onNodeWithTag("My Profile").performClick()
 
     composeTestRule.waitForIdle()
-
     composeTestRule.onNodeWithTag("UserProfileScreen").assertIsDisplayed()
     composeTestRule.onNodeWithTag("UserProfileName").assertTextContains("$FIRST_NAME $LAST_NAME")
     composeTestRule.onNodeWithTag("UserProfileBiography").assertTextContains(BIOGRAPHY)
     composeTestRule.onNodeWithTag("UserProfileInterest: SPORTS", useUnmergedTree = true).assertIsDisplayed()
     composeTestRule.onNodeWithTag("UserProfileInterest: MUSIC", useUnmergedTree = true).assertIsDisplayed()
     composeTestRule.onNodeWithTag("UserProfileInterest: ART", useUnmergedTree = true).assertIsDisplayed()
-
-
-    Thread.sleep(10000)
   }
 
   private fun verifyEmulatorsAreRunning(){
@@ -120,7 +153,7 @@ class EndToEndTest {
 
     val oobRequest = Request.Builder()
       .url(OOB_URL)
-      .build();
+      .build()
 
     val response = client.newCall(oobRequest).execute()
 
