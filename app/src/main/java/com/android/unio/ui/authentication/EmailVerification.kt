@@ -103,11 +103,13 @@ fun EmailVerificationScreen(navigationAction: NavigationAction) {
                     context.getString(R.string.email_verification_verified),
                     style = AppTypography.titleLarge)
                 Button(
+                    modifier = Modifier.testTag("EmailVerificationContinue"),
                     onClick = { navigationAction.navigateTo(Screen.ACCOUNT_DETAILS) },
                 ) {
                   Text(context.getString(R.string.email_verification_verified_continue))
                 }
               } else {
+                Text("Verify your email", style = AppTypography.titleLarge)
                 Text(
                     context.getString(R.string.email_verification_verify_request),
                     style = AppTypography.titleLarge)
@@ -126,7 +128,9 @@ fun EmailVerificationScreen(navigationAction: NavigationAction) {
                       style = AppTypography.labelLarge)
                 }
 
-                Button(onClick = { checkEmailVerification() }) {
+                Button(
+                    modifier = Modifier.testTag("EmailVerificationRefresh"),
+                    onClick = { checkEmailVerification() }) {
                   Icon(
                       Icons.Outlined.Refresh,
                       contentDescription =

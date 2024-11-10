@@ -344,3 +344,9 @@ tasks.register("jacocoTestReport",JacocoReport::class) {
         include("outputs/code_coverage/debugAndroidTest/connected/*/coverage.ec")
     })
 }
+
+configurations.forEach { configuration ->
+  // Exclude protobuf-lite from all configurations
+  // This fixes the "Internal error in Cloud Firestore" issue
+  configuration.exclude("com.google.protobuf", "protobuf-lite")
+}
