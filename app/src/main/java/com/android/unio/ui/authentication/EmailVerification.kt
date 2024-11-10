@@ -109,7 +109,6 @@ fun EmailVerificationScreen(navigationAction: NavigationAction) {
                   Text(context.getString(R.string.email_verification_verified_continue))
                 }
               } else {
-                Text("Verify your email", style = AppTypography.titleLarge)
                 Text(
                     context.getString(R.string.email_verification_verify_request),
                     style = AppTypography.titleLarge)
