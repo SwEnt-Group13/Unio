@@ -6,15 +6,11 @@ import androidx.test.runner.AndroidJUnitRunner
 import com.android.unio.model.event.EventRepository
 import com.android.unio.model.event.EventRepositoryMock
 import com.android.unio.model.hilt.module.EventModule
-import com.android.unio.model.hilt.module.FirebaseModule
-import com.google.firebase.firestore.FirebaseFirestore
 import dagger.Binds
 import dagger.Module
-import dagger.Provides
 import dagger.hilt.android.testing.HiltTestApplication
 import dagger.hilt.components.SingletonComponent
 import dagger.hilt.testing.TestInstallIn
-import io.mockk.mockk
 
 /**
  * Instead of using the default [AndroidJUnitRunner], we use a custom runner that extends from
@@ -41,12 +37,5 @@ object HiltModuleAndroidTest {
 
     @Binds
     abstract fun bindEventRepository(eventRepositoryMock: EventRepositoryMock): EventRepository
-  }
-
-  @Module
-  @TestInstallIn(components = [SingletonComponent::class], replaces = [FirebaseModule::class])
-  object FirebaseModuleTest {
-
-    @Provides fun provideFirebaseFirestore(): FirebaseFirestore = mockk()
   }
 }
