@@ -72,11 +72,6 @@ class EndToEndTest {
   }
 
   @Test
-  fun deleteUserAuth(){
-    flushAuthenticationClients()
-  }
-
-  @Test
   fun testUserCanLoginAndCreateAnAccount() {
     flushAuthenticationClients()
     flushFirestoreDatabase()
@@ -90,6 +85,8 @@ class EndToEndTest {
 
     composeTestRule.onNodeWithTag("WelcomeButton").performClick()
 
+    Thread.sleep(5000)
+
     /** Verify the email */
 
     val emailVerificationUrl = getLatestEmailVerificationUrl()
@@ -97,7 +94,7 @@ class EndToEndTest {
 
 
     // This sleep is required to wait for the email verification to complete
-    Thread.sleep(10000)
+    Thread.sleep(5000)
 
 
     /** Refresh the email verification and continue */
@@ -122,13 +119,14 @@ class EndToEndTest {
     composeTestRule.onNodeWithTag(AccountDetailsTestTags.CONTINUE_BUTTON).performClick()
 
     // Wait until "HomeScreen" is displayed
-    composeTestRule.waitForIdle()
+    Thread.sleep(5000)
     composeTestRule.onNodeWithTag(HomeTestTags.SCREEN).isDisplayed()
 
     /** Navigate to the profile screen */
     composeTestRule.onNodeWithTag("My Profile").performClick()
 
-    composeTestRule.waitForIdle()
+    Thread.sleep(5000)
+
     composeTestRule.onNodeWithTag("UserProfileScreen").assertIsDisplayed()
     composeTestRule.onNodeWithTag("UserProfileName").assertTextContains("$FIRST_NAME $LAST_NAME")
     composeTestRule.onNodeWithTag("UserProfileBiography").assertTextContains(BIOGRAPHY)
@@ -196,7 +194,7 @@ class EndToEndTest {
   }
 
   companion object {
-    const val EMAIL = "alexeithornber@gmail.com"
+    const val EMAIL = "ishinzqyR6S@gmail.com"
     const val PWD = "123456"
 
     const val FIRST_NAME = "Alexei"
