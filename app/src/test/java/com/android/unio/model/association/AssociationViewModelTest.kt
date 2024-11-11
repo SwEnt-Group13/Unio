@@ -175,15 +175,14 @@ class AssociationViewModelTest {
   @Test
   fun testGetEventsForAssociationSuccess() {
     val association = MockAssociation.createMockAssociation(uid = "1", name = "ACM")
-    val testEvents = listOf(MockEvent.createMockEvent(organisers = listOf(association), title = "Event 1"))
+    val testEvents =
+        listOf(MockEvent.createMockEvent(organisers = listOf(association), title = "Event 1"))
     `when`(eventRepository.getEventsOfAssociation(eq("1"), any(), any())).thenAnswer { invocation ->
       val onSuccess = invocation.arguments[1] as (List<Event>) -> Unit
       onSuccess(testEvents)
     }
 
-    viewModel.getEventsForAssociation(association) { events ->
-      assertEquals(testEvents, events)
-    }
+    viewModel.getEventsForAssociation(association) { events -> assertEquals(testEvents, events) }
 
     verify(eventRepository).getEventsOfAssociation(eq("1"), any(), any())
   }
