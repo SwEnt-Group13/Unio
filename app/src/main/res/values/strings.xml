@@ -15,6 +15,7 @@
     */
 
     <!-- Association Strings -->
+    <string name="association_toast_error" translatable="true">An error occurred.</string>
     <string name="association_upcoming_events" translatable="true">Upcoming Events</string>
     <string name="association_go_back" translatable="true">Go Back</string>
     <string name="association_see_more" translatable="true">See More</string>

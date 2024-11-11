@@ -13,6 +13,7 @@
     */
 
     <!-- Association Strings -->
+    <string name="association_toast_error" translatable="true">Une erreur est survenue.</string>
     <string name="association_upcoming_events">Evenement à venir</string>
     <string name="association_go_back">Retour</string>
     <string name="association_see_more">Voir plus</string>

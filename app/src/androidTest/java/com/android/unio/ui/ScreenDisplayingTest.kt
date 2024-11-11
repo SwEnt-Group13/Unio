@@ -14,9 +14,12 @@ import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.search.SearchRepository
 import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.strings.test_tags.AccountDetailsTestTags
+import com.android.unio.model.strings.test_tags.AssociationProfileTestTags
+import com.android.unio.model.strings.test_tags.EmailVerificationTestTags
 import com.android.unio.model.strings.test_tags.EventCreationTestTags
 import com.android.unio.model.strings.test_tags.EventDetailsTestTags
 import com.android.unio.model.strings.test_tags.HomeTestTags
+import com.android.unio.model.strings.test_tags.WelcomeTestTags
 import com.android.unio.model.user.User
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserViewModel
@@ -130,13 +133,13 @@ class ScreenDisplayingTest {
   @Test
   fun testWelcomeDisplayed() {
     composeTestRule.setContent { WelcomeScreen() }
-    composeTestRule.onNodeWithTag("WelcomeScreen").assertIsDisplayed()
+    composeTestRule.onNodeWithTag(WelcomeTestTags.SCREEN).assertIsDisplayed()
   }
 
   @Test
   fun testEmailVerificationDisplayed() {
     composeTestRule.setContent { EmailVerificationScreen(navigationAction) }
-    composeTestRule.onNodeWithTag("EmailVerificationScreen").assertIsDisplayed()
+    composeTestRule.onNodeWithTag(EmailVerificationTestTags.SCREEN).assertIsDisplayed()
   }
 
   @Test
@@ -198,7 +201,7 @@ class ScreenDisplayingTest {
           userViewModel,
           eventViewModel) {}
     }
-    composeTestRule.onNodeWithTag("AssociationScreen").assertIsDisplayed()
+    composeTestRule.onNodeWithTag(AssociationProfileTestTags.SCREEN).assertIsDisplayed()
   }
 
   @Test
