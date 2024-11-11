@@ -1,0 +1,11 @@
+{
+  "name": "unio",
+  "version": "1.0.0",
+  "description": "The world's largest campus life platform.",
+  "main": "",
+  "scripts": {
+    "test": "./gradlew connectedCheck"
+  },
+  "author": "",
+  "license": "ISC"
+}
