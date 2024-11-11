@@ -24,6 +24,8 @@ import com.android.unio.model.strings.test_tags.HomeTestTags
 import com.android.unio.model.strings.test_tags.MapTestTags
 import com.android.unio.model.strings.test_tags.SavedTestTags
 import com.android.unio.model.strings.test_tags.SettingsTestTags
+import com.android.unio.model.strings.test_tags.SomeoneElseUserProfileTestTags
+import com.android.unio.model.strings.test_tags.UserProfileTestTags
 import com.android.unio.model.strings.test_tags.WelcomeTestTags
 import com.android.unio.model.user.User
 import com.android.unio.model.user.UserRepositoryFirestore
@@ -226,12 +228,12 @@ class ScreenDisplayingTest {
     composeTestRule.setContent {
       UserProfileScreenScaffold(MockUser.createMockUser(), navigationAction, false) {}
     }
-    composeTestRule.onNodeWithTag("UserProfileScreen").assertIsDisplayed()
+    composeTestRule.onNodeWithTag(UserProfileTestTags.SCREEN).assertIsDisplayed()
   }
 
   @Test
   fun testSomeoneElseUserProfileDisplayed() {
     composeTestRule.setContent { SomeoneElseUserProfileScreen() }
-    composeTestRule.onNodeWithTag("SomeoneElseUserProfileScreen").assertIsDisplayed()
+    composeTestRule.onNodeWithTag(SomeoneElseUserProfileTestTags.SCREEN).assertIsDisplayed()
   }
 }
