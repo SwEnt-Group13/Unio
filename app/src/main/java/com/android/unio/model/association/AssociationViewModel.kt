@@ -1,12 +1,14 @@
 package com.android.unio.model.association
 
 import android.util.Log
+import android.widget.Toast
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventRepository
+import com.android.unio.model.follow.ConcurrentAssociationUserRepository
 import com.android.unio.model.image.ImageRepository
 import com.android.unio.model.user.User
-import com.android.unio.model.user.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.io.InputStream
 import javax.inject.Inject
@@ -21,7 +23,7 @@ constructor(
     private val associationRepository: AssociationRepository,
     private val eventRepository: EventRepository,
     private val imageRepository: ImageRepository,
-    private val userRepository: UserRepository
+    private val concurrentAssociationUserRepository: ConcurrentAssociationUserRepository
 ) : ViewModel() {
 
   private val _associations = MutableStateFlow<List<Association>>(emptyList())
@@ -68,16 +70,25 @@ constructor(
         })
   }
 
-  fun updateFollow(target: Association, user: User, isUnfollow: Boolean) {
+  fun updateFollow(target: Association, user: User, isUnfollowAction: Boolean){
     val updatedAssociation: Association
     val updatedUser: User = user.copy()
-    if (isUnfollow) {
+    if (isUnfollowAction) {
       updatedAssociation = target.copy(followersCount = target.followersCount - 1)
       updatedUser.followedAssociations.remove(target.uid)
     } else {
       updatedAssociation = target.copy(followersCount = target.followersCount + 1)
       updatedUser.followedAssociations.add(target.uid)
     }
+    concurrentAssociationUserRepository.updateFollow(
+        updatedUser,
+        updatedAssociation,
+        {
+
+        },
+        { exception ->
+          Log.e("AssociationViewModel", "Failed to update follow", exception)
+        })
   }
 
   fun saveAssociation(
