@@ -81,7 +81,6 @@ constructor(
                 updatedAssociation,
                 {
                   // Update the list with the modified association
-                  Log.d("AssociationViewModel", "Association saved with updated image.")
                   _associations.value =
                       _associations.value.map {
                         if (it.uid == updatedAssociation.uid) updatedAssociation else it
