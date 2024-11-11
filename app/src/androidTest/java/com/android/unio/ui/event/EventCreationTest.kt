@@ -24,7 +24,7 @@ import org.junit.Rule
 import org.junit.Test
 
 @HiltAndroidTest
-class ScreenDisplayingTest {
+class EventCreationTest {
   val user = MockUser.createMockUser(uid = "1")
   @MockK lateinit var navigationAction: NavigationAction
   @MockK private lateinit var firebaseAuth: FirebaseAuth
