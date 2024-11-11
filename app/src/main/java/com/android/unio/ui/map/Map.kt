@@ -23,6 +23,7 @@ import com.android.unio.R
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.strings.MapStrings
+import com.android.unio.model.strings.test_tags.MapTestTags
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.navigation.NavigationAction
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
@@ -45,18 +46,18 @@ fun MapScreen(
 ) {
   val context = LocalContext.current
   Scaffold(
-      modifier = Modifier.testTag("MapScreen"),
+      modifier = Modifier.testTag(MapTestTags.SCREEN),
       topBar = {
         TopAppBar(
             title = {
               Text(
                   context.getString(R.string.map_event_title),
-                  modifier = Modifier.testTag("MapTitle"))
+                  modifier = Modifier.testTag(MapTestTags.TITLE))
             },
             navigationIcon = {
               IconButton(
                   onClick = { navigationAction.goBack() },
-                  modifier = Modifier.testTag("goBackButton")) {
+                  modifier = Modifier.testTag(MapTestTags.GO_BACK_BUTTON)) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
                         contentDescription = context.getString(R.string.map_event_go_back_button))
@@ -83,7 +84,7 @@ fun EventMap(pd: PaddingValues, eventViewModel: EventViewModel, userViewModel: U
   }
 
   GoogleMap(
-      modifier = Modifier.padding(pd).testTag("googleMaps"),
+      modifier = Modifier.padding(pd).testTag(MapTestTags.GOOGLE_MAPS),
       cameraPositionState = cameraPositionState) {
         // Display saved events
         savedEvents.forEach { event ->
