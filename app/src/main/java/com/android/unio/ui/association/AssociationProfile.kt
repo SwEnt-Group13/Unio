@@ -101,6 +101,7 @@ fun AssociationProfileScreen(
       navigationAction = navigationAction,
       userViewModel = userViewModel,
       eventViewModel = eventViewModel,
+      associationViewModel = associationViewModel,
       onEdit = {
         associationViewModel.selectAssociation(association!!.uid)
         navigationAction.navigateTo(Screen.EDIT_ASSOCIATION)
@@ -125,6 +126,7 @@ fun AssociationProfileScaffold(
     navigationAction: NavigationAction,
     userViewModel: UserViewModel,
     eventViewModel: EventViewModel,
+    associationViewModel: AssociationViewModel,
     onEdit: () -> Unit
 ) {
 
@@ -188,7 +190,7 @@ fun AssociationProfileScaffold(
         Surface(
             modifier = Modifier.padding(padding),
         ) {
-          AssociationProfileContent(navigationAction, association, userViewModel, eventViewModel)
+          AssociationProfileContent(navigationAction, association, userViewModel, eventViewModel, associationViewModel)
         }
       })
 
@@ -247,17 +249,20 @@ fun AssociationProfileBottomSheet(
  * @param association [Association] : The association to display
  * @param userViewModel [UserViewModel] : The user view model
  * @param eventViewModel [EventViewModel] : The event view model
+ * @param associationViewModel [AssociationViewModel] : The association view model
  */
 @Composable
 private fun AssociationProfileContent(
     navigationAction: NavigationAction,
     association: Association,
     userViewModel: UserViewModel,
-    eventViewModel: EventViewModel
+    eventViewModel: EventViewModel,
+    associationViewModel: AssociationViewModel
 ) {
   val context = LocalContext.current
 
   val members by association.members.list.collectAsState()
+    val user by userViewModel.user.collectAsState()
 
   // Add spacedBy to the horizontalArrangement
   Column(
@@ -267,7 +272,7 @@ private fun AssociationProfileContent(
               .fillMaxWidth()
               .padding(24.dp),
       verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        AssociationHeader(association, context)
+        AssociationHeader(association, user!!, context, associationViewModel)
         AssociationDescription(association)
         AssociationEvents(navigationAction, association, userViewModel, eventViewModel)
         AssociationMembers(members)
@@ -487,7 +492,7 @@ private fun AssociationDescription(association: Association) {
  * @param context (Context) : The context of the screen
  */
 @Composable
-private fun AssociationHeader(association: Association, context: Context) {
+private fun AssociationHeader(association: Association, user: User, context: Context, associationViewModel: AssociationViewModel) {
   Row {
     Box(modifier = Modifier.testTag("AssociationImageHeader")) {
       AsyncImage(
