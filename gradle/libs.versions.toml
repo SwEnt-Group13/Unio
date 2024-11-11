@@ -49,7 +49,7 @@ firebaseFirestore = "25.1.1"
 firebaseUiAuth = "8.0.0"
 
 # Google Service and Maps
-playServicesAuth = "21.2.0" # Do not upgrade. See https://stackoverflow.com/a/78107308/11618935
+playServicesAuth = "20.7.0" # Do not upgrade. See https://stackoverflow.com/a/78107308/11618935
 playServicesMaps = "19.0.0"
 mapsCompose = "4.3.3"
 mapsComposeUtils = "4.3.0"
