@@ -115,8 +115,13 @@ jobs:
           ./gradlew check --parallel --build-cache
 
       # Create shell executable for the firebase emulator
-      - name: Create sh file
+      - name: Create shell file
         run: echo './gradlew connectedCheck --parallel --build-cache' > run_tests.sh
+
+      # Grant execute permission for shell script
+      - name: Grant execute permission for shell script
+        run: |
+          chmod +x ./run_tests.sh
 
       # Run connected tests on the emulator
       - name: Run connected tests
