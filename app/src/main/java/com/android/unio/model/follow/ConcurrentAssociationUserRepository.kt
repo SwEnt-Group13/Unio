@@ -5,6 +5,5 @@ import com.android.unio.model.user.User
 
 interface ConcurrentAssociationUserRepository {
 
-    fun updateFollow(user: User, association: Association)
-
+  fun updateFollow(user: User, association: Association)
 }
