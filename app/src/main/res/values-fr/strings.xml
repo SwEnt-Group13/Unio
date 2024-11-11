@@ -13,6 +13,7 @@
     */
 
     <!-- Association Strings -->
+    <string name="association_toast_error" translatable="true">Une erreur est survenue.</string>
     <string name="association_upcoming_events">Evenement à venir</string>
     <string name="association_go_back">Retour</string>
     <string name="association_see_more">Voir plus</string>
@@ -209,6 +210,16 @@
     /**
     * package: user
     */
+
+    <!-- UserProfile Strings -->
+    <string name="user_profile_toast_error">Une erreur est survenue.</string>
+    <string name="user_profile_your_profile_text">Votre profile</string>
+    <string name="user_profile_content_description_more">Voir plus</string>
+    <string name="user_profile_content_description_pfp">Photo de Profil</string>
+    <string name="user_profile_following_associations_text">Suivis</string>
+    <string name="user_profile_bottom_sheet_edit">Modifier le profil</string>
+    <string name="user_profile_bottom_sheet_settings">Paramètres</string>
+    <string name="user_profile_bottom_sheet_sign_out">Se déconnecter</string>
 
     /**
     * Other

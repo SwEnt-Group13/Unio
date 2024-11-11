@@ -66,6 +66,7 @@ import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventViewModel
+import com.android.unio.model.strings.test_tags.AssociationProfileTestTags
 import com.android.unio.model.user.User
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.event.EventCard
@@ -90,10 +91,15 @@ fun AssociationProfileScreen(
     eventViewModel: EventViewModel
 ) {
   val association by associationViewModel.selectedAssociation.collectAsState()
+  val context = LocalContext.current
 
   if (association == null) {
     Log.e("AssociationProfileScreen", "Association not found.")
-    Toast.makeText(LocalContext.current, "An error occurred.", Toast.LENGTH_SHORT).show()
+    Toast.makeText(
+            LocalContext.current,
+            context.getString(R.string.association_toast_error),
+            Toast.LENGTH_SHORT)
+        .show()
     return
   }
 
@@ -138,12 +144,13 @@ fun AssociationProfileScaffold(
       snackbarHost = {
         SnackbarHost(
             hostState = testSnackbar!!,
-            modifier = Modifier.testTag("associationSnackbarHost"),
+            modifier = Modifier.testTag(AssociationProfileTestTags.SNACKBAR_HOST),
             snackbar = {
               Snackbar {
                 TextButton(
                     onClick = { testSnackbar!!.currentSnackbarData?.dismiss() },
-                    modifier = Modifier.testTag("snackbarActionButton")) {
+                    modifier =
+                        Modifier.testTag(AssociationProfileTestTags.SNACKBAR_ACTION_BUTTON)) {
                       Text(text = DEBUG_MESSAGE)
                     }
               }
@@ -152,12 +159,14 @@ fun AssociationProfileScaffold(
       topBar = {
         TopAppBar(
             title = {
-              Text(text = association.name, modifier = Modifier.testTag("AssociationProfileTitle"))
+              Text(
+                  text = association.name,
+                  modifier = Modifier.testTag(AssociationProfileTestTags.TITLE))
             },
             navigationIcon = {
               IconButton(
                   onClick = { navigationAction.goBack() },
-                  modifier = Modifier.testTag("goBackButton")) {
+                  modifier = Modifier.testTag(AssociationProfileTestTags.GO_BACK_BUTTON)) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
                         contentDescription = context.getString(R.string.association_go_back))
@@ -166,7 +175,7 @@ fun AssociationProfileScaffold(
             actions = {
               Row {
                 IconButton(
-                    modifier = Modifier.testTag("associationShareButton"),
+                    modifier = Modifier.testTag(AssociationProfileTestTags.SHARE_BUTTON),
                     onClick = {
                       scope!!.launch {
                         testSnackbar!!.showSnackbar(
@@ -219,7 +228,7 @@ fun AssociationProfileBottomSheet(
 
   if (showSheet) {
     ModalBottomSheet(
-        modifier = Modifier.testTag("AssociationProfileBottomSheet"),
+        modifier = Modifier.testTag(AssociationProfileTestTags.BOTTOM_SHEET),
         sheetState = sheetState,
         onDismissRequest = onClose,
         properties = ModalBottomSheetProperties(shouldDismissOnBackPress = true),
@@ -263,7 +272,7 @@ private fun AssociationProfileContent(
   // Add spacedBy to the horizontalArrangement
   Column(
       modifier =
-          Modifier.testTag("AssociationScreen")
+          Modifier.testTag(AssociationProfileTestTags.SCREEN)
               .verticalScroll(rememberScrollState())
               .fillMaxWidth()
               .padding(24.dp),
@@ -294,17 +303,17 @@ private fun AssociationRecruitment(association: Association) {
   Text(
       text = context.getString(R.string.association_join) + " ${association.name} ?",
       style = AppTypography.headlineMedium,
-      modifier = Modifier.testTag("AssociationRecruitmentTitle"))
+      modifier = Modifier.testTag(AssociationProfileTestTags.RECRUITMENT_TITLE))
   Text(
       text = context.getString(R.string.association_help_us),
       style = AppTypography.bodySmall,
-      modifier = Modifier.testTag("AssociationRecruitmentDescription"))
+      modifier = Modifier.testTag(AssociationProfileTestTags.RECRUITMENT_DESCRIPTION))
   FlowRow(
-      modifier = Modifier.testTag("AssociationRecruitmentRoles"),
+      modifier = Modifier.testTag(AssociationProfileTestTags.RECRUITMENT_ROLES),
       horizontalArrangement = Arrangement.spacedBy(8.dp),
   ) {
     OutlinedButton(
-        modifier = Modifier.testTag("AssociationDesignerRoles"),
+        modifier = Modifier.testTag(AssociationProfileTestTags.DESIGNER_ROLES),
         onClick = {
           scope!!.launch {
             testSnackbar!!.showSnackbar(message = DEBUG_MESSAGE, duration = SnackbarDuration.Short)
@@ -318,7 +327,7 @@ private fun AssociationRecruitment(association: Association) {
           Text("Graphic Designer")
         }
     OutlinedButton(
-        modifier = Modifier.testTag("AssociationTreasurerRoles"),
+        modifier = Modifier.testTag(AssociationProfileTestTags.TREASURER_ROLES),
         onClick = {
           scope!!.launch {
             testSnackbar!!.showSnackbar(message = DEBUG_MESSAGE, duration = SnackbarDuration.Short)
@@ -352,7 +361,7 @@ private fun AssociationMembers(members: List<User>) {
   Text(
       context.getString(R.string.association_contact_members),
       style = AppTypography.headlineMedium,
-      modifier = Modifier.testTag("AssociationContactMembersTitle"))
+      modifier = Modifier.testTag(AssociationProfileTestTags.CONTACT_MEMBERS_TITLE))
   FlowRow(
       modifier = Modifier.fillMaxWidth(),
       horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally),
@@ -416,7 +425,7 @@ private fun AssociationEvents(
   if (events.isNotEmpty()) {
     Text(
         context.getString(R.string.association_upcoming_events),
-        modifier = Modifier.testTag("AssociationEventTitle"),
+        modifier = Modifier.testTag(AssociationProfileTestTags.EVENT_TITLE),
         style = AppTypography.headlineMedium)
     events.sortedBy { it.date }
     val first = events.first()
@@ -432,7 +441,7 @@ private fun AssociationEvents(
     if (events.size > 1) {
       OutlinedButton(
           onClick = { isSeeMoreClicked = true },
-          modifier = Modifier.testTag("AssociationSeeMoreButton")) {
+          modifier = Modifier.testTag(AssociationProfileTestTags.SEE_MORE_BUTTON)) {
             Icon(
                 Icons.AutoMirrored.Filled.ArrowForward,
                 contentDescription = context.getString(R.string.association_see_more))
@@ -467,7 +476,7 @@ private fun AssociationEventCard(
     userViewModel: UserViewModel,
     eventViewModel: EventViewModel
 ) {
-  Box(modifier = Modifier.testTag("AssociationEventCard-${event.uid}")) {
+  Box(modifier = Modifier.testTag(AssociationProfileTestTags.EVENT_CARD + event.uid)) {
     EventCard(
         navigationAction = navigationAction,
         event = event,
@@ -486,7 +495,7 @@ private fun AssociationDescription(association: Association) {
   Text(
       association.description,
       style = AppTypography.bodyMedium,
-      modifier = Modifier.testTag("AssociationDescription"))
+      modifier = Modifier.testTag(AssociationProfileTestTags.DESCRIPTION))
 }
 
 /**
@@ -503,7 +512,7 @@ private fun AssociationDescription(association: Association) {
 @Composable
 private fun AssociationHeader(association: Association, context: Context) {
   Row {
-    Box(modifier = Modifier.testTag("AssociationImageHeader")) {
+    Box(modifier = Modifier.testTag(AssociationProfileTestTags.IMAGE_HEADER)) {
       AsyncImage(
           model = association.image.toUri(),
           contentDescription =
@@ -515,11 +524,13 @@ private fun AssociationHeader(association: Association, context: Context) {
       Text(
           "${association.followersCount} " + context.getString(R.string.association_follower),
           style = AppTypography.headlineSmall,
-          modifier = Modifier.padding(bottom = 5.dp).testTag("AssociationHeaderFollowers"))
+          modifier =
+              Modifier.padding(bottom = 5.dp).testTag(AssociationProfileTestTags.HEADER_FOLLOWERS))
       Text(
           "${association.members.uids.size} " + context.getString(R.string.association_member),
           style = AppTypography.headlineSmall,
-          modifier = Modifier.padding(bottom = 14.dp).testTag("AssociationHeaderMembers"))
+          modifier =
+              Modifier.padding(bottom = 14.dp).testTag(AssociationProfileTestTags.HEADER_MEMBERS))
       Button(
           onClick = {
             scope!!.launch {
@@ -527,7 +538,7 @@ private fun AssociationHeader(association: Association, context: Context) {
                   message = DEBUG_MESSAGE, duration = SnackbarDuration.Short)
             }
           },
-          modifier = Modifier.testTag("AssociationFollowButton")) {
+          modifier = Modifier.testTag(AssociationProfileTestTags.FOLLOW_BUTTON)) {
             Icon(
                 Icons.Filled.Add,
                 contentDescription =

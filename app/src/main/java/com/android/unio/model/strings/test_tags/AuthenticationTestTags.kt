@@ -78,3 +78,16 @@ object SocialsOverlayTestTags {
   const val PROMPT_CANCEL_BUTTON = "socialPromptCancelButton"
   const val PROMPT_SAVE_BUTTON = "socialPromptSaveButton"
 }
+
+object EmailVerificationTestTags {
+  // SCREEN
+  const val SCREEN = "emailVerificationScreen"
+}
+
+object WelcomeTestTags {
+  // SCREEN
+  const val SCREEN = "welcomeScreen"
+  const val EMAIL = "welcomeEmail"
+  const val PASSWORD = "welcomePassword"
+  const val BUTTON = "welcomeButton"
+}

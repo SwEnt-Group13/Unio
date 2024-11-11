@@ -42,6 +42,7 @@ import com.android.unio.R
 import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationCategory
 import com.android.unio.model.association.AssociationViewModel
+import com.android.unio.model.strings.test_tags.EditAssociationTestTags
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
 import kotlinx.coroutines.launch
@@ -116,7 +117,7 @@ fun EditAssociationScaffold(
               Text(
                   text = context.getString(R.string.edit_association_title),
                   style = MaterialTheme.typography.headlineMedium,
-                  modifier = Modifier.testTag("EditAssociationTitle"))
+                  modifier = Modifier.testTag(EditAssociationTestTags.TITLE))
             })
       }) { padding ->
         Column(
@@ -130,14 +131,15 @@ fun EditAssociationScaffold(
               Text(
                   text = context.getString(R.string.name_explanation),
                   style = MaterialTheme.typography.bodySmall,
-                  modifier = Modifier.testTag("NameExplanationText"))
+                  modifier = Modifier.testTag(EditAssociationTestTags.NAME_EXPLANATION_TEXT))
 
               Spacer(modifier = Modifier.height(8.dp))
               OutlinedTextField(
                   value = name,
                   onValueChange = { name = it },
                   label = { Text("Name") },
-                  modifier = Modifier.fillMaxWidth().testTag("NameTextField"))
+                  modifier =
+                      Modifier.fillMaxWidth().testTag(EditAssociationTestTags.NAME_TEXT_FIELD))
 
               Spacer(modifier = Modifier.height(16.dp))
 
@@ -145,14 +147,15 @@ fun EditAssociationScaffold(
               Text(
                   text = context.getString(R.string.full_name_explanation),
                   style = MaterialTheme.typography.bodySmall,
-                  modifier = Modifier.testTag("FullNameExplanationText"))
+                  modifier = Modifier.testTag(EditAssociationTestTags.FULL_NAME_EXPLANATION_TEXT))
 
               Spacer(modifier = Modifier.height(8.dp))
               OutlinedTextField(
                   value = fullName,
                   onValueChange = { fullName = it },
                   label = { Text("Full Name") },
-                  modifier = Modifier.fillMaxWidth().testTag("FullNameTextField"))
+                  modifier =
+                      Modifier.fillMaxWidth().testTag(EditAssociationTestTags.FULL_NAME_TEXT_FIELD))
 
               Spacer(modifier = Modifier.height(16.dp))
 
@@ -160,14 +163,15 @@ fun EditAssociationScaffold(
               Text(
                   text = context.getString(R.string.category_explanation),
                   style = MaterialTheme.typography.bodySmall,
-                  modifier = Modifier.testTag("CategoryExplanationText"))
+                  modifier = Modifier.testTag(EditAssociationTestTags.CATEGORY_EXPLANATION_TEXT))
 
               Spacer(modifier = Modifier.height(8.dp))
 
               // Category Button
               Button(
                   onClick = { expanded = true },
-                  modifier = Modifier.fillMaxWidth().testTag("CategoryButton")) {
+                  modifier =
+                      Modifier.fillMaxWidth().testTag(EditAssociationTestTags.CATEGORY_BUTTON)) {
                     Text(text = category.displayName)
                   }
 
@@ -188,14 +192,16 @@ fun EditAssociationScaffold(
               Text(
                   text = context.getString(R.string.description_explanation),
                   style = MaterialTheme.typography.bodySmall,
-                  modifier = Modifier.testTag("DescriptionExplanationText"))
+                  modifier = Modifier.testTag(EditAssociationTestTags.DESCRIPTION_EXPLANATION_TEXT))
 
               Spacer(modifier = Modifier.height(8.dp))
               OutlinedTextField(
                   value = description,
                   onValueChange = { description = it },
                   label = { Text("Description") },
-                  modifier = Modifier.fillMaxWidth().testTag("DescriptionTextField"))
+                  modifier =
+                      Modifier.fillMaxWidth()
+                          .testTag(EditAssociationTestTags.DESCRIPTION_TEXT_FIELD))
 
               Spacer(modifier = Modifier.height(16.dp))
 
@@ -203,14 +209,15 @@ fun EditAssociationScaffold(
               Text(
                   text = context.getString(R.string.url_explanation),
                   style = MaterialTheme.typography.bodySmall,
-                  modifier = Modifier.testTag("UrlExplanationText"))
+                  modifier = Modifier.testTag(EditAssociationTestTags.URL_EXPLANATION_TEXT))
 
               Spacer(modifier = Modifier.height(8.dp))
               OutlinedTextField(
                   value = url,
                   onValueChange = { url = it },
                   label = { Text("URL") },
-                  modifier = Modifier.fillMaxWidth().testTag("UrlTextField"))
+                  modifier =
+                      Modifier.fillMaxWidth().testTag(EditAssociationTestTags.URL_TEXT_FIELD))
 
               Spacer(modifier = Modifier.height(24.dp))
 
@@ -218,9 +225,11 @@ fun EditAssociationScaffold(
                   horizontalArrangement = Arrangement.End,
                   verticalAlignment = Alignment.CenterVertically,
                   modifier = Modifier.fillMaxWidth()) {
-                    TextButton(onClick = onCancel, modifier = Modifier.testTag("CancelButton")) {
-                      Text(context.getString(R.string.cancel_button_text))
-                    }
+                    TextButton(
+                        onClick = onCancel,
+                        modifier = Modifier.testTag(EditAssociationTestTags.CANCEL_BUTTON)) {
+                          Text(context.getString(R.string.cancel_button_text))
+                        }
 
                     Spacer(modifier = Modifier.width(8.dp))
 
@@ -236,7 +245,7 @@ fun EditAssociationScaffold(
                                     url = url))
                           }
                         },
-                        modifier = Modifier.testTag("saveButton")) {
+                        modifier = Modifier.testTag(EditAssociationTestTags.SAVE_BUTTON)) {
                           Text(context.getString(R.string.save_button_text))
                         }
                   }

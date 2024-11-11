@@ -15,6 +15,7 @@
     */
 
     <!-- Association Strings -->
+    <string name="association_toast_error" translatable="true">An error occurred.</string>
     <string name="association_upcoming_events" translatable="true">Upcoming Events</string>
     <string name="association_go_back" translatable="true">Go Back</string>
     <string name="association_see_more" translatable="true">See More</string>
@@ -211,6 +212,9 @@
     * package: saved
     */
 
+    <!-- Saved Screen Strings -->
+    <string name="saved_screen_title" translatable="false">Saved screen</string>
+
     /**
     * package: settings
     */
@@ -233,6 +237,19 @@
     /**
     * package: user
     */
+
+    <!-- UserProfile Strings -->
+    <string name="user_profile_toast_error">An error occurred.</string>
+    <string name="user_profile_your_profile_text">Your Profile</string>
+    <string name="user_profile_content_description_more">More</string>
+    <string name="user_profile_content_description_pfp">Profile Picture</string>
+    <string name="user_profile_following_associations_text">Following</string>
+    <string name="user_profile_bottom_sheet_edit">Edit Profile</string>
+    <string name="user_profile_bottom_sheet_settings">Settings</string>
+    <string name="user_profile_bottom_sheet_sign_out">Sign Out</string>
+
+    <!-- SomeoneElseUserProfile Strings -->
+    <string name="someone_else_user_profile_screen_title" translatable="false">Someone else user profile screen</string>
 
     /**
     * Other

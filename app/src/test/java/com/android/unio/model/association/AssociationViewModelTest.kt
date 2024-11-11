@@ -2,6 +2,8 @@ package com.android.unio.model.association
 
 import androidx.test.core.app.ApplicationProvider
 import com.android.unio.mocks.association.MockAssociation
+import com.android.unio.mocks.event.MockEvent
+import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventRepository
 import com.android.unio.model.image.ImageRepository
 import com.google.firebase.Firebase
@@ -26,6 +28,8 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock
+import org.mockito.Mockito.mock
+import org.mockito.Mockito.never
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
 import org.mockito.MockitoAnnotations
@@ -157,16 +161,108 @@ class AssociationViewModelTest {
   }
 
   @Test
-  fun testAddAssociation() {
-    `when`(associationRepository.saveAssociation(eq(testAssociations[0]), any(), any()))
-        .thenAnswer { invocation ->
-          val onSuccess = invocation.arguments[0] as () -> Unit
-          onSuccess()
-        }
-    viewModel.saveAssociation(
-        testAssociations[0],
-        inputStream,
-        { verify(associationRepository).saveAssociation(eq(testAssociations[0]), any(), any()) },
-        {})
+  fun testSaveAssociationWithImageStreamSuccess() {
+    val association = testAssociations[0]
+    val imageUrl = "https://example.com"
+
+    `when`(imageRepository.uploadImage(any(), any(), any(), any())).thenAnswer { invocation ->
+      val onSuccess = invocation.getArgument(2) as (String) -> Unit
+      onSuccess(imageUrl)
+    }
+
+    `when`(associationRepository.saveAssociation(any(), any(), any())).thenAnswer { invocation ->
+      val onSuccess = invocation.getArgument(1) as () -> Unit
+      onSuccess()
+    }
+
+    val onSuccess = mock<() -> Unit>()
+    viewModel.saveAssociation(association, inputStream, onSuccess, {})
+
+    verify(imageRepository).uploadImage(eq(inputStream), any(), any(), any())
+    verify(associationRepository)
+        .saveAssociation(eq(association.copy(image = imageUrl)), any(), any())
+    verify(onSuccess).invoke()
+  }
+
+  @Test
+  fun testSaveAssociationWithImageStreamFailure() {
+    val association = testAssociations[0]
+    val failureException = Exception("Upload failed")
+
+    `when`(imageRepository.uploadImage(any(), any(), any(), any())).thenAnswer { invocation ->
+      val onFailure = invocation.getArgument(3) as (Exception) -> Unit
+      onFailure(failureException)
+    }
+
+    val onFailure = mock<(Exception) -> Unit>()
+    viewModel.saveAssociation(association, inputStream, {}, onFailure)
+
+    verify(imageRepository)
+        .uploadImage(eq(inputStream), eq("images/associations/${association.uid}"), any(), any())
+    verify(associationRepository, never()).saveAssociation(any(), any(), any())
+    verify(onFailure).invoke(failureException)
+  }
+
+  @Test
+  fun testSaveAssociationNoImageStreamSuccess() {
+    val association = testAssociations[0]
+
+    `when`(associationRepository.saveAssociation(any(), any(), any())).thenAnswer { invocation ->
+      val onSuccess = invocation.getArgument(1) as () -> Unit
+      onSuccess()
+    }
+
+    val onSuccess = mock<() -> Unit>()
+    viewModel.saveAssociation(association, null, onSuccess, {})
+
+    verify(associationRepository).saveAssociation(eq(association), any(), any())
+    verify(onSuccess).invoke()
+  }
+
+  @Test
+  fun testSaveAssociationNoImageStreamFailure() {
+    val association = testAssociations[0]
+    val failureException = Exception("Save failed")
+
+    `when`(associationRepository.saveAssociation(any(), any(), any())).thenAnswer { invocation ->
+      val onFailure = invocation.getArgument(2) as (Exception) -> Unit
+      onFailure(failureException)
+    }
+
+    val onFailure = mock<(Exception) -> Unit>()
+    viewModel.saveAssociation(association, null, {}, onFailure)
+
+    verify(associationRepository).saveAssociation(eq(association), any(), any())
+    verify(onFailure).invoke(failureException)
+  }
+
+  @Test
+  fun testGetEventsForAssociationSuccess() {
+    val association = MockAssociation.createMockAssociation(uid = "1", name = "ACM")
+    val testEvents =
+        listOf(MockEvent.createMockEvent(organisers = listOf(association), title = "Event 1"))
+    `when`(eventRepository.getEventsOfAssociation(eq("1"), any(), any())).thenAnswer { invocation ->
+      val onSuccess = invocation.arguments[1] as (List<Event>) -> Unit
+      onSuccess(testEvents)
+    }
+
+    viewModel.getEventsForAssociation(association) { events -> assertEquals(testEvents, events) }
+
+    verify(eventRepository).getEventsOfAssociation(eq("1"), any(), any())
+  }
+
+  @Test
+  fun testGetEventsForAssociationFailure() {
+    val association = MockAssociation.createMockAssociation(uid = "1", name = "ACM")
+    `when`(eventRepository.getEventsOfAssociation(eq("1"), any(), any())).thenAnswer { invocation ->
+      val onFailure = invocation.arguments[2] as (Exception) -> Unit
+      onFailure(Exception("Fake exception"))
+    }
+
+    viewModel.getEventsForAssociation(association) { events ->
+      assertEquals(emptyList<Event>(), events)
+    }
+
+    verify(eventRepository).getEventsOfAssociation(eq("1"), any(), any())
   }
 }
