@@ -20,6 +20,7 @@ import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventRepositoryFirestore
 import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
+import com.android.unio.model.strings.test_tags.AssociationProfileTestTags
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.navigation.NavigationAction
@@ -100,6 +101,8 @@ class AssociationProfileTest {
           val onSuccess = args[1] as (List<Event>) -> Unit
           onSuccess(events)
         }
+
+    every { userRepository.init(any()) } just runs
     userViewModel = UserViewModel(userRepository)
     val user = MockUser.createMockUser()
     every { userRepository.updateUser(user, any(), any()) } answers
@@ -125,21 +128,31 @@ class AssociationProfileTest {
     }
     composeTestRule.waitForIdle()
 
-    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationScreen"))
-    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("goBackButton"))
-
-    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationImageHeader"))
-    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationProfileTitle"))
-    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("associationShareButton"))
-    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationHeaderFollowers"))
-    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationHeaderMembers"))
-    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationFollowButton"))
-    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationDescription"))
-    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationEventTitle"))
-    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationContactMembersTitle"))
+    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag(AssociationProfileTestTags.SCREEN))
     assertDisplayComponentInScroll(
-        composeTestRule.onNodeWithTag("AssociationRecruitmentDescription"))
-    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationRecruitmentRoles"))
+        composeTestRule.onNodeWithTag(AssociationProfileTestTags.GO_BACK_BUTTON))
+
+    assertDisplayComponentInScroll(
+        composeTestRule.onNodeWithTag(AssociationProfileTestTags.IMAGE_HEADER))
+    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag(AssociationProfileTestTags.TITLE))
+    assertDisplayComponentInScroll(
+        composeTestRule.onNodeWithTag(AssociationProfileTestTags.SHARE_BUTTON))
+    assertDisplayComponentInScroll(
+        composeTestRule.onNodeWithTag(AssociationProfileTestTags.HEADER_FOLLOWERS))
+    assertDisplayComponentInScroll(
+        composeTestRule.onNodeWithTag(AssociationProfileTestTags.HEADER_MEMBERS))
+    assertDisplayComponentInScroll(
+        composeTestRule.onNodeWithTag(AssociationProfileTestTags.FOLLOW_BUTTON))
+    assertDisplayComponentInScroll(
+        composeTestRule.onNodeWithTag(AssociationProfileTestTags.DESCRIPTION))
+    assertDisplayComponentInScroll(
+        composeTestRule.onNodeWithTag(AssociationProfileTestTags.EVENT_TITLE))
+    assertDisplayComponentInScroll(
+        composeTestRule.onNodeWithTag(AssociationProfileTestTags.CONTACT_MEMBERS_TITLE))
+    assertDisplayComponentInScroll(
+        composeTestRule.onNodeWithTag(AssociationProfileTestTags.RECRUITMENT_DESCRIPTION))
+    assertDisplayComponentInScroll(
+        composeTestRule.onNodeWithTag(AssociationProfileTestTags.RECRUITMENT_ROLES))
   }
 
   private fun assertDisplayComponentInScroll(compose: SemanticsNodeInteraction) {
@@ -159,28 +172,32 @@ class AssociationProfileTest {
           eventViewModel) {}
     }
     // Share button
-    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("associationShareButton"))
-    composeTestRule.onNodeWithTag("associationShareButton").performClick()
+    assertDisplayComponentInScroll(
+        composeTestRule.onNodeWithTag(AssociationProfileTestTags.SHARE_BUTTON))
+    composeTestRule.onNodeWithTag(AssociationProfileTestTags.SHARE_BUTTON).performClick()
     assertSnackBarIsDisplayed()
 
     // Follow button
-    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationFollowButton"))
-    composeTestRule.onNodeWithTag("AssociationFollowButton").performClick()
+    assertDisplayComponentInScroll(
+        composeTestRule.onNodeWithTag(AssociationProfileTestTags.FOLLOW_BUTTON))
+    composeTestRule.onNodeWithTag(AssociationProfileTestTags.FOLLOW_BUTTON).performClick()
     assertSnackBarIsDisplayed()
 
     // Roles buttons
-    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationTreasurerRoles"))
-    composeTestRule.onNodeWithTag("AssociationTreasurerRoles").performClick()
+    assertDisplayComponentInScroll(
+        composeTestRule.onNodeWithTag(AssociationProfileTestTags.TREASURER_ROLES))
+    composeTestRule.onNodeWithTag(AssociationProfileTestTags.TREASURER_ROLES).performClick()
     assertSnackBarIsDisplayed()
-    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationDesignerRoles"))
-    composeTestRule.onNodeWithTag("AssociationDesignerRoles").performClick()
+    assertDisplayComponentInScroll(
+        composeTestRule.onNodeWithTag(AssociationProfileTestTags.DESIGNER_ROLES))
+    composeTestRule.onNodeWithTag(AssociationProfileTestTags.DESIGNER_ROLES).performClick()
     assertSnackBarIsDisplayed()
   }
 
   private fun assertSnackBarIsDisplayed() {
-    composeTestRule.onNodeWithTag("associationSnackbarHost").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("snackbarActionButton").performClick()
-    composeTestRule.onNodeWithTag("associationSnackbarHost").assertIsNotDisplayed()
+    composeTestRule.onNodeWithTag(AssociationProfileTestTags.SNACKBAR_HOST).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(AssociationProfileTestTags.SNACKBAR_ACTION_BUTTON).performClick()
+    composeTestRule.onNodeWithTag(AssociationProfileTestTags.SNACKBAR_HOST).assertIsNotDisplayed()
   }
 
   @Test
@@ -195,7 +212,7 @@ class AssociationProfileTest {
 
     `when`(navigationAction.navController.popBackStack()).thenReturn(true)
 
-    composeTestRule.onNodeWithTag("goBackButton").performClick()
+    composeTestRule.onNodeWithTag(AssociationProfileTestTags.GO_BACK_BUTTON).performClick()
 
     verify(navigationAction.navController).popBackStack()
   }
@@ -210,7 +227,7 @@ class AssociationProfileTest {
           eventViewModel) {}
     }
 
-    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("AssociationProfileTitle"))
+    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag(AssociationProfileTestTags.TITLE))
     assertDisplayComponentInScroll(composeTestRule.onNodeWithText(this.associations.first().name))
   }
 
@@ -221,6 +238,6 @@ class AssociationProfileTest {
           navigationAction, associationViewModel, userViewModel, eventViewModel)
     }
 
-    composeTestRule.onNodeWithTag("AssociationScreen").assertIsNotDisplayed()
+    composeTestRule.onNodeWithTag(AssociationProfileTestTags.SCREEN).assertIsNotDisplayed()
   }
 }
