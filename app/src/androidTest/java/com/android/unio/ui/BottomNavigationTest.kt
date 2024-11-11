@@ -8,6 +8,7 @@ import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.search.SearchRepository
 import com.android.unio.model.search.SearchViewModel
+import com.android.unio.model.strings.test_tags.NavigationActionTestTags
 import com.android.unio.model.user.UserRepository
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserViewModel
@@ -56,6 +57,6 @@ class BottomNavigationTest {
 
   @Test
   fun testBottomNavigationMenuDisplayed() {
-    composeTestRule.onNodeWithTag("bottomNavigationMenu").assertIsDisplayed()
+    composeTestRule.onNodeWithTag(NavigationActionTestTags.BOTTOM_NAV_MENU).assertIsDisplayed()
   }
 }

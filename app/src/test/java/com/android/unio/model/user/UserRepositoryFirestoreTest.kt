@@ -1,5 +1,6 @@
 package com.android.unio.model.user
 
+import android.os.Looper
 import com.android.unio.model.association.Association
 import com.android.unio.model.event.Event
 import com.android.unio.model.firestore.FirestorePaths.ASSOCIATION_PATH
@@ -8,6 +9,8 @@ import com.android.unio.model.firestore.emptyFirestoreReferenceList
 import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.gms.tasks.Task
 import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
@@ -19,14 +22,23 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
 import junit.framework.TestCase.assertEquals
+import junit.framework.TestCase.assertTrue
+import org.junit.Assert.assertFalse
 import org.junit.Before
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.mockito.ArgumentCaptor
+import org.mockito.Captor
 import org.mockito.Mock
+import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
 import org.mockito.MockitoAnnotations
 import org.mockito.kotlin.any
 import org.mockito.kotlin.eq
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.Shadows.shadowOf
 
+@RunWith(RobolectricTestRunner::class)
 class UserRepositoryFirestoreTest {
   private lateinit var db: FirebaseFirestore
   @Mock private lateinit var userCollectionReference: CollectionReference
@@ -41,6 +53,11 @@ class UserRepositoryFirestoreTest {
   @Mock private lateinit var querySnapshotTask: Task<QuerySnapshot>
   @Mock private lateinit var documentSnapshotTask: Task<DocumentSnapshot>
 
+  @Mock private lateinit var auth: FirebaseAuth
+  @Mock private lateinit var firebaseUser: FirebaseUser
+  @Captor
+  private lateinit var authStateListenerCaptor: ArgumentCaptor<FirebaseAuth.AuthStateListener>
+
   private lateinit var repository: UserRepositoryFirestore
 
   private lateinit var user1: User
@@ -53,6 +70,9 @@ class UserRepositoryFirestoreTest {
     db = mockk()
     mockkStatic(FirebaseFirestore::class)
     every { Firebase.firestore } returns db
+
+    mockkStatic(FirebaseAuth::class)
+    every { FirebaseAuth.getInstance() } returns auth
 
     // When getting the collection, return the task
     every { db.collection(USER_PATH) } returns userCollectionReference
@@ -137,6 +157,40 @@ class UserRepositoryFirestoreTest {
     `when`(map2.get("uid")).thenReturn(user2.uid)
 
     repository = UserRepositoryFirestore(db)
+  }
+
+  @Test
+  fun testInitUserAuthenticated() {
+    `when`(auth.currentUser).thenReturn(firebaseUser)
+    var onSuccessCalled = false
+    val onSuccess = { onSuccessCalled = true }
+
+    repository.init(onSuccess)
+
+    // Capture listener and trigger it
+    verify(auth).addAuthStateListener(authStateListenerCaptor.capture())
+    authStateListenerCaptor.value.onAuthStateChanged(auth)
+
+    shadowOf(Looper.getMainLooper()).idle()
+
+    assertTrue(onSuccessCalled)
+  }
+
+  @Test
+  fun testInitUserNotAuthenticated() {
+    `when`(auth.currentUser).thenReturn(null)
+    var onSuccessCalled = false
+    val onSuccess = { onSuccessCalled = true }
+
+    repository.init(onSuccess)
+
+    // Capture listener and trigger it
+    verify(auth).addAuthStateListener(authStateListenerCaptor.capture())
+    authStateListenerCaptor.value.onAuthStateChanged(auth)
+
+    shadowOf(Looper.getMainLooper()).idle()
+
+    assertFalse(onSuccessCalled)
   }
 
   @Test
