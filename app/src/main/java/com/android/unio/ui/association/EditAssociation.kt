@@ -98,6 +98,7 @@ fun EditAssociationScaffold(
   var name by remember { mutableStateOf(association.name) }
   var fullName by remember { mutableStateOf(association.fullName) }
   var description by remember { mutableStateOf(association.description) }
+    var principalEmailAdress by remember { mutableStateOf(association.principalEmailAdress) }
 
   var expanded by remember { mutableStateOf(false) }
   var category by remember { mutableStateOf(association.category) }
@@ -125,8 +126,6 @@ fun EditAssociationScaffold(
                     .padding(16.dp)
                     .fillMaxWidth()
                     .verticalScroll(rememberScrollState())) {
-
-              // Explanation for "Name"
               Text(
                   text = context.getString(R.string.name_explanation),
                   style = MaterialTheme.typography.bodySmall,
@@ -212,6 +211,21 @@ fun EditAssociationScaffold(
                   label = { Text("URL") },
                   modifier = Modifier.fillMaxWidth().testTag("UrlTextField"))
 
+              Spacer(modifier = Modifier.height(16.dp))
+
+              Text(
+                  text = context.getString(R.string.principal_email_address_explanation),
+                  style = MaterialTheme.typography.bodySmall,
+                  modifier = Modifier.testTag("PrincipalEmailAddressExplanationText"))
+
+              Spacer(modifier = Modifier.height(8.dp))
+
+              OutlinedTextField(
+                  value = principalEmailAdress,
+                  onValueChange = { principalEmailAdress = it },
+                  label = { Text("Principal Email Address") },
+                  modifier = Modifier.fillMaxWidth().testTag("PrincipalEmailAddressTextField"))
+
               Spacer(modifier = Modifier.height(24.dp))
 
               Row(
@@ -233,7 +247,8 @@ fun EditAssociationScaffold(
                                     fullName = fullName,
                                     description = description,
                                     category = category,
-                                    url = url))
+                                    url = url,
+                                    principalEmailAdress = principalEmailAdress))
                           }
                         },
                         modifier = Modifier.testTag("saveButton")) {
