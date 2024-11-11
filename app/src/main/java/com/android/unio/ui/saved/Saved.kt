@@ -17,7 +17,7 @@ import com.android.unio.ui.navigation.Route
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun SavedScreen(navigationAction: NavigationAction) {
-    val context = LocalContext.current
+  val context = LocalContext.current
   Scaffold(
       content = { Text(context.getString(R.string.saved_screen_title)) },
       modifier = Modifier.testTag(SavedTestTags.SCREEN),

@@ -20,7 +20,9 @@ fun AssociationRepositoryFirestore.Companion.hydrate(data: Map<String, Any>?): A
   val memberUids = data?.get(Association::members.name) as? List<String> ?: emptyList()
   val members = User.firestoreReferenceListWith(memberUids)
 
-  val events = Event.firestoreReferenceListWith(data?.get(Association::events.name) as? List<String> ?: emptyList())
+  val events =
+      Event.firestoreReferenceListWith(
+          data?.get(Association::events.name) as? List<String> ?: emptyList())
 
   return Association(
       uid = data?.get(Association::uid.name) as? String ?: "",
@@ -38,13 +40,15 @@ fun AssociationRepositoryFirestore.Companion.hydrate(data: Map<String, Any>?): A
 }
 
 fun UserRepositoryFirestore.Companion.hydrate(data: Map<String, Any>?): User {
-  val followedAssociationsUids = data?.get(User::followedAssociations.name) as? List<String> ?: emptyList()
+  val followedAssociationsUids =
+      data?.get(User::followedAssociations.name) as? List<String> ?: emptyList()
   val followedAssociations = Association.firestoreReferenceListWith(followedAssociationsUids)
 
   val savedEventsUids = data?.get(User::savedEvents.name) as? List<String> ?: emptyList()
   val savedEvents = Event.firestoreReferenceListWith(savedEventsUids)
 
-  val joinedAssociationsUids = data?.get(User::joinedAssociations.name) as? List<String> ?: emptyList()
+  val joinedAssociationsUids =
+      data?.get(User::joinedAssociations.name) as? List<String> ?: emptyList()
   val joinedAssociations = Association.firestoreReferenceListWith(joinedAssociationsUids)
 
   return User(
@@ -57,10 +61,14 @@ fun UserRepositoryFirestore.Companion.hydrate(data: Map<String, Any>?): User {
       savedEvents = savedEvents,
       joinedAssociations = joinedAssociations,
       interests =
-          (data?.get(User::interests.name) as? List<String> ?: emptyList()).map { Interest.valueOf(it) },
+          (data?.get(User::interests.name) as? List<String> ?: emptyList()).map {
+            Interest.valueOf(it)
+          },
       socials =
           (data?.get(User::socials.name) as? List<Map<String, String>> ?: emptyList()).map {
-            UserSocial(Social.valueOf(it[UserSocial::social.name] ?: ""), it[UserSocial::content.name] ?: "")
+            UserSocial(
+                Social.valueOf(it[UserSocial::social.name] ?: ""),
+                it[UserSocial::content.name] ?: "")
           },
       profilePicture = data?.get(User::profilePicture.name) as? String ?: "")
 }
