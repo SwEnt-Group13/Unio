@@ -18,7 +18,10 @@ import com.android.unio.model.strings.test_tags.AssociationProfileTestTags
 import com.android.unio.model.strings.test_tags.EmailVerificationTestTags
 import com.android.unio.model.strings.test_tags.EventCreationTestTags
 import com.android.unio.model.strings.test_tags.EventDetailsTestTags
+import com.android.unio.model.strings.test_tags.ExploreContentTestTags
+import com.android.unio.model.strings.test_tags.ExploreTestTags
 import com.android.unio.model.strings.test_tags.HomeTestTags
+import com.android.unio.model.strings.test_tags.MapTestTags
 import com.android.unio.model.strings.test_tags.WelcomeTestTags
 import com.android.unio.model.user.User
 import com.android.unio.model.user.UserRepositoryFirestore
@@ -165,14 +168,14 @@ class ScreenDisplayingTest {
     composeTestRule.setContent {
       ExploreScreen(navigationAction, associationViewModel, searchViewModel)
     }
-    composeTestRule.onNodeWithTag("exploreScreen").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("searchBar").assertIsDisplayed()
+    composeTestRule.onNodeWithTag(ExploreTestTags.EXPLORE_SCAFFOLD_TITLE).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(ExploreContentTestTags.SEARCH_BAR).assertIsDisplayed()
   }
 
   @Test
   fun testMapDisplayed() {
     composeTestRule.setContent { MapScreen(navigationAction, eventViewModel, userViewModel) }
-    composeTestRule.onNodeWithTag("MapScreen").assertIsDisplayed()
+    composeTestRule.onNodeWithTag(MapTestTags.SCREEN).assertIsDisplayed()
   }
 
   @Test
