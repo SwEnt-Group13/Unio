@@ -22,6 +22,7 @@ import com.android.unio.model.strings.test_tags.ExploreContentTestTags
 import com.android.unio.model.strings.test_tags.ExploreTestTags
 import com.android.unio.model.strings.test_tags.HomeTestTags
 import com.android.unio.model.strings.test_tags.MapTestTags
+import com.android.unio.model.strings.test_tags.SavedTestTags
 import com.android.unio.model.strings.test_tags.WelcomeTestTags
 import com.android.unio.model.user.User
 import com.android.unio.model.user.UserRepositoryFirestore
@@ -210,7 +211,7 @@ class ScreenDisplayingTest {
   @Test
   fun testSavedDisplayed() {
     composeTestRule.setContent { SavedScreen(navigationAction) }
-    composeTestRule.onNodeWithTag("SavedScreen").assertIsDisplayed()
+    composeTestRule.onNodeWithTag(SavedTestTags.SCREEN).assertIsDisplayed()
   }
 
   @Test
