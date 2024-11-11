@@ -190,7 +190,8 @@ fun AssociationProfileScaffold(
         Surface(
             modifier = Modifier.padding(padding),
         ) {
-          AssociationProfileContent(navigationAction, association, userViewModel, eventViewModel, associationViewModel)
+          AssociationProfileContent(
+              navigationAction, association, userViewModel, eventViewModel, associationViewModel)
         }
       })
 
@@ -262,7 +263,7 @@ private fun AssociationProfileContent(
   val context = LocalContext.current
 
   val members by association.members.list.collectAsState()
-    val user by userViewModel.user.collectAsState()
+  val user by userViewModel.user.collectAsState()
 
   // Add spacedBy to the horizontalArrangement
   Column(
@@ -492,7 +493,12 @@ private fun AssociationDescription(association: Association) {
  * @param context (Context) : The context of the screen
  */
 @Composable
-private fun AssociationHeader(association: Association, user: User, context: Context, associationViewModel: AssociationViewModel) {
+private fun AssociationHeader(
+    association: Association,
+    user: User,
+    context: Context,
+    associationViewModel: AssociationViewModel
+) {
   Row {
     Box(modifier = Modifier.testTag("AssociationImageHeader")) {
       AsyncImage(
