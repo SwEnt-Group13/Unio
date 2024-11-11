@@ -23,6 +23,7 @@ import com.android.unio.model.strings.test_tags.ExploreTestTags
 import com.android.unio.model.strings.test_tags.HomeTestTags
 import com.android.unio.model.strings.test_tags.MapTestTags
 import com.android.unio.model.strings.test_tags.SavedTestTags
+import com.android.unio.model.strings.test_tags.SettingsTestTags
 import com.android.unio.model.strings.test_tags.WelcomeTestTags
 import com.android.unio.model.user.User
 import com.android.unio.model.user.UserRepositoryFirestore
@@ -217,7 +218,7 @@ class ScreenDisplayingTest {
   @Test
   fun testSettingsDisplayed() {
     composeTestRule.setContent { ProvidePreferenceLocals { SettingsScreen(navigationAction) } }
-    composeTestRule.onNodeWithTag("SettingsScreen").assertIsDisplayed()
+    composeTestRule.onNodeWithTag(SettingsTestTags.SCREEN).assertIsDisplayed()
   }
 
   @Test

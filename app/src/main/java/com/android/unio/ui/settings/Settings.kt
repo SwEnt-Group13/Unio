@@ -29,6 +29,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.AnnotatedString
 import com.android.unio.R
 import com.android.unio.model.preferences.AppPreferences
+import com.android.unio.model.strings.test_tags.SettingsTestTags
 import com.android.unio.ui.navigation.NavigationAction
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
@@ -45,7 +46,7 @@ fun SettingsScreen(navigationAction: NavigationAction) {
   val context = LocalContext.current
 
   Scaffold(
-      modifier = Modifier.testTag("SettingsScreen"),
+      modifier = Modifier.testTag(SettingsTestTags.SCREEN),
       topBar = {
         TopAppBar(
             navigationIcon = {
@@ -97,7 +98,7 @@ fun SettingsContainer() {
 
   ProvidePreferenceLocals(flow = LocalPreferenceFlow.current) {
     LazyColumn(
-        modifier = Modifier.testTag("SettingsContainer"),
+        modifier = Modifier.testTag(SettingsTestTags.CONTAINER),
     ) {
       listPreference(
           modifier = Modifier.testTag(AppPreferences.THEME),
