@@ -33,14 +33,12 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 
-
 @LargeTest
 @HiltAndroidTest
 @UninstallModules(FirebaseModule::class, FirebaseAuthModule::class)
 class EndToEndTest {
   @get:Rule val composeTestRule = createAndroidComposeRule<MainActivity>()
   @get:Rule val hiltRule = HiltAndroidRule(this)
-
 
   @Module
   @InstallIn(SingletonComponent::class)
@@ -57,7 +55,8 @@ class EndToEndTest {
   @InstallIn(SingletonComponent::class)
   object FirebaseAuthModule {
 
-    @Provides fun provideFirebaseAuth(): FirebaseAuth{
+    @Provides
+    fun provideFirebaseAuth(): FirebaseAuth {
       Firebase.auth.useEmulator("10.0.2.2", 9099)
       return FirebaseAuth.getInstance()
     }
@@ -68,7 +67,6 @@ class EndToEndTest {
     hiltRule.inject()
     /*Test that the emulators are indeed running*/
     verifyEmulatorsAreRunning()
-
   }
 
   @Test
@@ -88,14 +86,11 @@ class EndToEndTest {
     Thread.sleep(5000)
 
     /** Verify the email */
-
     val emailVerificationUrl = getLatestEmailVerificationUrl()
     verifyEmail(emailVerificationUrl)
 
-
     // This sleep is required to wait for the email verification to complete
     Thread.sleep(5000)
-
 
     /** Refresh the email verification and continue */
     composeTestRule.onNodeWithTag("EmailVerificationScreen").assertIsDisplayed()
@@ -107,13 +102,19 @@ class EndToEndTest {
     composeTestRule.onNodeWithTag(AccountDetailsTestTags.TITLE_TEXT).assertExists()
 
     /** Fill in the account details */
-    composeTestRule.onNodeWithTag(AccountDetailsTestTags.FIRST_NAME_TEXT_FIELD).performTextInput(FIRST_NAME)
-    composeTestRule.onNodeWithTag(AccountDetailsTestTags.LAST_NAME_TEXT_FIELD).performTextInput(LAST_NAME)
-    composeTestRule.onNodeWithTag(AccountDetailsTestTags.BIOGRAPHY_TEXT_FIELD).performTextInput(BIOGRAPHY)
+    composeTestRule
+        .onNodeWithTag(AccountDetailsTestTags.FIRST_NAME_TEXT_FIELD)
+        .performTextInput(FIRST_NAME)
+    composeTestRule
+        .onNodeWithTag(AccountDetailsTestTags.LAST_NAME_TEXT_FIELD)
+        .performTextInput(LAST_NAME)
+    composeTestRule
+        .onNodeWithTag(AccountDetailsTestTags.BIOGRAPHY_TEXT_FIELD)
+        .performTextInput(BIOGRAPHY)
     composeTestRule.onNodeWithTag(AccountDetailsTestTags.INTERESTS_BUTTON).performClick()
-    composeTestRule.onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW +"0").performClick()
-    composeTestRule.onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW +"1").performClick()
-    composeTestRule.onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW +"2").performClick()
+    composeTestRule.onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW + "0").performClick()
+    composeTestRule.onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW + "1").performClick()
+    composeTestRule.onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW + "2").performClick()
     composeTestRule.onNodeWithTag(InterestsOverlayTestTags.SAVE_BUTTON).performClick()
 
     composeTestRule.onNodeWithTag(AccountDetailsTestTags.CONTINUE_BUTTON).performClick()
@@ -130,28 +131,30 @@ class EndToEndTest {
     composeTestRule.onNodeWithTag("UserProfileScreen").assertIsDisplayed()
     composeTestRule.onNodeWithTag("UserProfileName").assertTextContains("$FIRST_NAME $LAST_NAME")
     composeTestRule.onNodeWithTag("UserProfileBiography").assertTextContains(BIOGRAPHY)
-    composeTestRule.onNodeWithTag("UserProfileInterest: SPORTS", useUnmergedTree = true).assertIsDisplayed()
-    composeTestRule.onNodeWithTag("UserProfileInterest: MUSIC", useUnmergedTree = true).assertIsDisplayed()
-    composeTestRule.onNodeWithTag("UserProfileInterest: ART", useUnmergedTree = true).assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag("UserProfileInterest: SPORTS", useUnmergedTree = true)
+        .assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag("UserProfileInterest: MUSIC", useUnmergedTree = true)
+        .assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag("UserProfileInterest: ART", useUnmergedTree = true)
+        .assertIsDisplayed()
   }
 
-  private fun verifyEmulatorsAreRunning(){
+  private fun verifyEmulatorsAreRunning() {
     val client = OkHttpClient()
-    val request = Request.Builder()
-      .url(FIRESTORE_URL)
-      .build()
+    val request = Request.Builder().url(FIRESTORE_URL).build()
 
     val response = client.newCall(request).execute()
     val data = response.body?.string()
-    assert(data!!.contains("Ok")){"Start your emulators before running the end to end test"}
+    assert(data!!.contains("Ok")) { "Start your emulators before running the end to end test" }
   }
 
   private fun getLatestEmailVerificationUrl(): String {
     val client = OkHttpClient()
 
-    val oobRequest = Request.Builder()
-      .url(OOB_URL)
-      .build()
+    val oobRequest = Request.Builder().url(OOB_URL).build()
 
     val response = client.newCall(oobRequest).execute()
 
@@ -164,31 +167,23 @@ class EndToEndTest {
   private fun verifyEmail(url: String) {
     val client = OkHttpClient()
 
-    val request = Request.Builder()
-      .url(url.replace("127.0.0.1", "10.0.2.2"))
-      .build()
+    val request = Request.Builder().url(url.replace("127.0.0.1", "10.0.2.2")).build()
 
     client.newCall(request).execute()
   }
 
-  private fun flushAuthenticationClients(){
+  private fun flushAuthenticationClients() {
     val client = OkHttpClient()
 
-    val request = Request.Builder()
-      .url(FLUSH_AUTH_URL)
-      .delete()
-      .build()
+    val request = Request.Builder().url(FLUSH_AUTH_URL).delete().build()
 
     client.newCall(request).execute()
   }
 
-  private fun flushFirestoreDatabase(){
+  private fun flushFirestoreDatabase() {
     val client = OkHttpClient()
 
-    val request = Request.Builder()
-      .url(FLUSH_FIRESTORE_URL)
-      .delete()
-      .build()
+    val request = Request.Builder().url(FLUSH_FIRESTORE_URL).delete().build()
 
     client.newCall(request).execute()
   }
@@ -203,7 +198,8 @@ class EndToEndTest {
 
     const val OOB_URL = "http://10.0.2.2:9099/emulator/v1/projects/unio-1b8ee/oobCodes"
     const val FIRESTORE_URL = "http://10.0.2.2:8080"
-    const val FLUSH_FIRESTORE_URL = "http://10.0.2.2:8080/emulator/v1/projects/unio-1b8ee/databases/(default)/documents"
+    const val FLUSH_FIRESTORE_URL =
+        "http://10.0.2.2:8080/emulator/v1/projects/unio-1b8ee/databases/(default)/documents"
     const val FLUSH_AUTH_URL = "http://10.0.2.2:9099/emulator/v1/projects/unio-1b8ee/accounts"
   }
 }

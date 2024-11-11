@@ -130,16 +130,16 @@ fun EmailVerificationScreen(navigationAction: NavigationAction) {
                 Button(
                     modifier = Modifier.testTag("EmailVerificationRefresh"),
                     onClick = { checkEmailVerification() }) {
-                  Icon(
-                      Icons.Outlined.Refresh,
-                      contentDescription =
-                          context.getString(
-                              R.string.email_verification_content_description_refresh))
-                  Spacer(Modifier.width(8.dp))
-                  Text(
-                      context.getString(R.string.email_verification_email_refresh),
-                      style = AppTypography.labelLarge)
-                }
+                      Icon(
+                          Icons.Outlined.Refresh,
+                          contentDescription =
+                              context.getString(
+                                  R.string.email_verification_content_description_refresh))
+                      Spacer(Modifier.width(8.dp))
+                      Text(
+                          context.getString(R.string.email_verification_email_refresh),
+                          style = AppTypography.labelLarge)
+                    }
               }
             }
       })
