@@ -1,8 +1,6 @@
 package com.android.unio.model.association
 
 import android.util.Log
-import android.widget.Toast
-import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventRepository
@@ -70,7 +68,7 @@ constructor(
         })
   }
 
-  fun updateFollow(target: Association, user: User, isUnfollowAction: Boolean){
+  fun updateFollow(target: Association, user: User, isUnfollowAction: Boolean) {
     val updatedAssociation: Association
     val updatedUser: User = user.copy()
     if (isUnfollowAction) {
@@ -83,12 +81,8 @@ constructor(
     concurrentAssociationUserRepository.updateFollow(
         updatedUser,
         updatedAssociation,
-        {
-
-        },
-        { exception ->
-          Log.e("AssociationViewModel", "Failed to update follow", exception)
-        })
+        {},
+        { exception -> Log.e("AssociationViewModel", "Failed to update follow", exception) })
   }
 
   fun saveAssociation(
@@ -107,7 +101,6 @@ constructor(
                 updatedAssociation,
                 {
                   // Update the list with the modified association
-                  Log.d("AssociationViewModel", "Association saved with updated image.")
                   _associations.value =
                       _associations.value.map {
                         if (it.uid == updatedAssociation.uid) updatedAssociation else it

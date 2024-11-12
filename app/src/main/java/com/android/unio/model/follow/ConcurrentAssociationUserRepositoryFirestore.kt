@@ -34,5 +34,4 @@ constructor(
         .addOnSuccessListener { onSuccess() }
         .addOnFailureListener { onFailure(it) }
   }
-
 }

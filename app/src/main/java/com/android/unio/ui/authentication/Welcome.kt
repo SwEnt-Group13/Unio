@@ -44,6 +44,7 @@ import androidx.compose.ui.text.style.TextAlign.Companion.Center
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat.getSystemService
 import com.android.unio.R
+import com.android.unio.model.strings.test_tags.WelcomeTestTags
 import com.android.unio.model.user.SignInState
 import com.android.unio.model.user.isValidEmail
 import com.android.unio.model.user.isValidPassword
@@ -68,7 +69,7 @@ fun WelcomeScreen() {
   val passwordError = !validPassword && password.isNotEmpty()
 
   Scaffold(
-      modifier = Modifier.testTag("WelcomeScreen").fillMaxSize(),
+      modifier = Modifier.testTag(WelcomeTestTags.SCREEN).fillMaxSize(),
       content = { padding ->
         Column(
             modifier = Modifier.padding(padding).fillMaxSize(),
@@ -89,7 +90,7 @@ fun WelcomeScreen() {
                   style = AppTypography.titleMedium)
 
               OutlinedTextField(
-                  modifier = Modifier.testTag("WelcomeEmail"),
+                  modifier = Modifier.testTag(WelcomeTestTags.EMAIL),
                   value = email,
                   onValueChange = { email = it },
                   keyboardOptions =
@@ -103,7 +104,7 @@ fun WelcomeScreen() {
               )
 
               OutlinedTextField(
-                  modifier = Modifier.testTag("WelcomePassword"),
+                  modifier = Modifier.testTag(WelcomeTestTags.PASSWORD),
                   value = password,
                   onValueChange = { password = it },
                   keyboardOptions =
@@ -143,7 +144,7 @@ fun WelcomeScreen() {
               Spacer(modifier = Modifier.size(70.dp))
 
               Button(
-                  modifier = Modifier.testTag("WelcomeButton"),
+                  modifier = Modifier.testTag(WelcomeTestTags.BUTTON),
                   onClick = {
                     if (!enabled) {
                       Toast.makeText(

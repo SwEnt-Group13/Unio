@@ -11,6 +11,7 @@ import com.android.unio.mocks.user.MockUser
 import com.android.unio.model.event.EventRepositoryFirestore
 import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
+import com.android.unio.model.strings.test_tags.MapTestTags
 import com.android.unio.model.user.User
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserViewModel
@@ -66,9 +67,10 @@ class MapScreenTest {
           userViewModel = userViewModel)
     }
 
-    composeTestRule.onNodeWithTag("MapScreen").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("MapTitle").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("goBackButton").assertHasClickAction()
+    composeTestRule.onNodeWithTag(MapTestTags.SCREEN).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(MapTestTags.TITLE).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(MapTestTags.GO_BACK_BUTTON).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(MapTestTags.GO_BACK_BUTTON).assertHasClickAction()
   }
 
   @Test
@@ -80,7 +82,8 @@ class MapScreenTest {
           userViewModel = userViewModel)
     }
 
-    composeTestRule.onNodeWithTag("goBackButton").performClick()
+    composeTestRule.onNodeWithTag(MapTestTags.GO_BACK_BUTTON).assertHasClickAction()
+    composeTestRule.onNodeWithTag(MapTestTags.GO_BACK_BUTTON).performClick()
     verify { navigationAction.goBack() }
   }
 }

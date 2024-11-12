@@ -1,6 +1,5 @@
 package com.android.unio.ui.association
 
-import android.content.Context
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
@@ -24,7 +23,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -65,6 +63,7 @@ import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventViewModel
+import com.android.unio.model.strings.test_tags.AssociationProfileTestTags
 import com.android.unio.model.user.User
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.event.EventCard
@@ -88,24 +87,26 @@ fun AssociationProfileScreen(
     userViewModel: UserViewModel,
     eventViewModel: EventViewModel
 ) {
-    val association by associationViewModel.selectedAssociation.collectAsState()
+  val association by associationViewModel.selectedAssociation.collectAsState()
+  val context = LocalContext.current
 
-    if (association == null) {
-        Log.e("AssociationProfileScreen", "Association not found.")
-        Toast.makeText(LocalContext.current, "An error occurred.", Toast.LENGTH_SHORT).show()
-        return
-    }
+  if (association == null) {
+    Log.e("AssociationProfileScreen", "Association not found.")
+    Toast.makeText(context, context.getString(R.string.association_toast_error), Toast.LENGTH_SHORT)
+        .show()
+    return
+  }
 
-    AssociationProfileScaffold(
-        association = association!!,
-        navigationAction = navigationAction,
-        userViewModel = userViewModel,
-        eventViewModel = eventViewModel,
-        associationViewModel = associationViewModel,
-        onEdit = {
-            associationViewModel.selectAssociation(association!!.uid)
-            navigationAction.navigateTo(Screen.EDIT_ASSOCIATION)
-        })
+  AssociationProfileScaffold(
+      association = association!!,
+      navigationAction = navigationAction,
+      userViewModel = userViewModel,
+      eventViewModel = eventViewModel,
+      associationViewModel = associationViewModel,
+      onEdit = {
+        associationViewModel.selectAssociation(association!!.uid)
+        navigationAction.navigateTo(Screen.EDIT_ASSOCIATION)
+      })
 }
 
 /**
@@ -130,88 +131,71 @@ fun AssociationProfileScaffold(
     onEdit: () -> Unit
 ) {
 
-    var showSheet by remember { mutableStateOf(false) }
+  var showSheet by remember { mutableStateOf(false) }
 
-    val context = LocalContext.current
-    testSnackbar = remember { SnackbarHostState() }
-    scope = rememberCoroutineScope()
-    Scaffold(
-        snackbarHost = {
-            SnackbarHost(
-                hostState = testSnackbar!!,
-                modifier = Modifier.testTag("associationSnackbarHost"),
-                snackbar = {
-                    Snackbar {
-                        TextButton(
-                            onClick = { testSnackbar!!.currentSnackbarData?.dismiss() },
-                            modifier = Modifier.testTag("snackbarActionButton")
-                        ) {
-                            Text(text = DEBUG_MESSAGE)
-                        }
+  val context = LocalContext.current
+  testSnackbar = remember { SnackbarHostState() }
+  scope = rememberCoroutineScope()
+  Scaffold(
+      snackbarHost = {
+        SnackbarHost(
+            hostState = testSnackbar!!,
+            modifier = Modifier.testTag(AssociationProfileTestTags.SNACKBAR_HOST),
+            snackbar = {
+              Snackbar {
+                TextButton(
+                    onClick = { testSnackbar!!.currentSnackbarData?.dismiss() },
+                    modifier =
+                        Modifier.testTag(AssociationProfileTestTags.SNACKBAR_ACTION_BUTTON)) {
+                      Text(text = DEBUG_MESSAGE)
                     }
-                })
-        },
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        text = association.name,
-                        modifier = Modifier.testTag("AssociationProfileTitle")
-                    )
-                },
-                navigationIcon = {
-                    IconButton(
-                        onClick = { navigationAction.goBack() },
-                        modifier = Modifier.testTag("goBackButton")
-                    ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
-                            contentDescription = context.getString(R.string.association_go_back)
-                        )
+              }
+            })
+      },
+      topBar = {
+        TopAppBar(
+            title = {
+              Text(
+                  text = association.name,
+                  modifier = Modifier.testTag(AssociationProfileTestTags.TITLE))
+            },
+            navigationIcon = {
+              IconButton(
+                  onClick = { navigationAction.goBack() },
+                  modifier = Modifier.testTag(AssociationProfileTestTags.GO_BACK_BUTTON)) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
+                        contentDescription = context.getString(R.string.association_go_back))
+                  }
+            },
+            actions = {
+              Row {
+                IconButton(
+                    modifier = Modifier.testTag(AssociationProfileTestTags.SHARE_BUTTON),
+                    onClick = {
+                      scope!!.launch {
+                        testSnackbar!!.showSnackbar(
+                            message = DEBUG_MESSAGE, duration = SnackbarDuration.Short)
+                      }
+                    }) {
+                      Icon(
+                          Icons.Outlined.Share,
+                          contentDescription = context.getString(R.string.association_share))
                     }
-                },
-                actions = {
-                    Row {
-                        IconButton(
-                            modifier = Modifier.testTag("associationShareButton"),
-                            onClick = {
-                                scope!!.launch {
-                                    testSnackbar!!.showSnackbar(
-                                        message = DEBUG_MESSAGE, duration = SnackbarDuration.Short
-                                    )
-                                }
-                            }) {
-                            Icon(
-                                Icons.Outlined.Share,
-                                contentDescription = context.getString(R.string.association_share)
-                            )
-                        }
-                        IconButton(onClick = { showSheet = true }) {
-                            Icon(
-                                Icons.Outlined.MoreVert,
-                                contentDescription = context.getString(R.string.association_see_more)
-                            )
-                        }
-                    }
-                })
-        },
-        content = { padding ->
-            Surface(
-                modifier = Modifier.padding(padding),
-            ) {
-                AssociationProfileContent(
-                    navigationAction,
-                    association,
-                    userViewModel,
-                    eventViewModel,
-                    associationViewModel
-                )
-            }
-        })
+              }
+            })
+      },
+      content = { padding ->
+        Surface(
+            modifier = Modifier.padding(padding),
+        ) {
+          AssociationProfileContent(
+              navigationAction, association, userViewModel, eventViewModel, associationViewModel)
+        }
+      })
 
-    AssociationProfileBottomSheet(
-        association, showSheet, onClose = { showSheet = false }, onEdit = onEdit
-    )
+  AssociationProfileBottomSheet(
+      association, showSheet, onClose = { showSheet = false }, onEdit = onEdit)
 }
 
 /**
@@ -230,31 +214,30 @@ fun AssociationProfileBottomSheet(
     onClose: () -> Unit,
     onEdit: () -> Unit
 ) {
-    val sheetState = rememberModalBottomSheetState()
+  val sheetState = rememberModalBottomSheetState()
 
-    val context = LocalContext.current
+  val context = LocalContext.current
 
-    if (showSheet) {
-        ModalBottomSheet(
-            modifier = Modifier.testTag("AssociationProfileBottomSheet"),
-            sheetState = sheetState,
-            onDismissRequest = onClose,
-            properties = ModalBottomSheetProperties(shouldDismissOnBackPress = true),
-        ) {
-            Column(modifier = Modifier) {
-                Text(
-                    association.uid,
-                    color = MaterialTheme.colorScheme.inversePrimary,
-                    style = MaterialTheme.typography.bodySmall,
-                    modifier = Modifier.align(Alignment.CenterHorizontally)
-                )
+  if (showSheet) {
+    ModalBottomSheet(
+        modifier = Modifier.testTag(AssociationProfileTestTags.BOTTOM_SHEET),
+        sheetState = sheetState,
+        onDismissRequest = onClose,
+        properties = ModalBottomSheetProperties(shouldDismissOnBackPress = true),
+    ) {
+      Column(modifier = Modifier) {
+        Text(
+            association.uid,
+            color = MaterialTheme.colorScheme.inversePrimary,
+            style = MaterialTheme.typography.bodySmall,
+            modifier = Modifier.align(Alignment.CenterHorizontally))
 
-                TextButton(modifier = Modifier.fillMaxWidth(), onClick = onEdit) {
-                    Text(context.getString(R.string.association_edit))
-                }
-            }
+        TextButton(modifier = Modifier.fillMaxWidth(), onClick = onEdit) {
+          Text(context.getString(R.string.association_edit))
         }
+      }
     }
+  }
 }
 
 /**
@@ -276,27 +259,23 @@ private fun AssociationProfileContent(
     eventViewModel: EventViewModel,
     associationViewModel: AssociationViewModel
 ) {
-    val context = LocalContext.current
+  val members by association.members.list.collectAsState()
+  val user by userViewModel.user.collectAsState()
 
-    val members by association.members.list.collectAsState()
-    val user by userViewModel.user.collectAsState()
-
-    // Add spacedBy to the horizontalArrangement
-    Column(
-        modifier =
-        Modifier
-            .testTag("AssociationScreen")
-            .verticalScroll(rememberScrollState())
-            .fillMaxWidth()
-            .padding(24.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        AssociationHeader(association, user!!, context, associationViewModel)
+  // Add spacedBy to the horizontalArrangement
+  Column(
+      modifier =
+          Modifier.testTag(AssociationProfileTestTags.SCREEN)
+              .verticalScroll(rememberScrollState())
+              .fillMaxWidth()
+              .padding(24.dp),
+      verticalArrangement = Arrangement.spacedBy(16.dp)) {
+        AssociationHeader(association, associationViewModel, user!!)
         AssociationDescription(association)
         AssociationEvents(navigationAction, association, userViewModel, eventViewModel)
         AssociationMembers(members)
         AssociationRecruitment(association)
-    }
+      }
 }
 
 /**
@@ -312,61 +291,49 @@ private fun AssociationProfileContent(
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun AssociationRecruitment(association: Association) {
-    val context = LocalContext.current
+  val context = LocalContext.current
 
-    Text(
-        text = context.getString(R.string.association_join) + " ${association.name} ?",
-        style = AppTypography.headlineMedium,
-        modifier = Modifier.testTag("AssociationRecruitmentTitle")
-    )
-    Text(
-        text = context.getString(R.string.association_help_us),
-        style = AppTypography.bodySmall,
-        modifier = Modifier.testTag("AssociationRecruitmentDescription")
-    )
-    FlowRow(
-        modifier = Modifier.testTag("AssociationRecruitmentRoles"),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        OutlinedButton(
-            modifier = Modifier.testTag("AssociationDesignerRoles"),
-            onClick = {
-                scope!!.launch {
-                    testSnackbar!!.showSnackbar(
-                        message = DEBUG_MESSAGE,
-                        duration = SnackbarDuration.Short
-                    )
-                }
-            },
-            enabled = true
-        ) {
-            Icon(
-                Icons.Filled.Add,
-                contentDescription = context.getString(R.string.association_recruitment)
-            )
-            Spacer(Modifier.width(2.dp))
-            Text("Graphic Designer")
+  Text(
+      text = context.getString(R.string.association_join) + " ${association.name} ?",
+      style = AppTypography.headlineMedium,
+      modifier = Modifier.testTag(AssociationProfileTestTags.RECRUITMENT_TITLE))
+  Text(
+      text = context.getString(R.string.association_help_us),
+      style = AppTypography.bodySmall,
+      modifier = Modifier.testTag(AssociationProfileTestTags.RECRUITMENT_DESCRIPTION))
+  FlowRow(
+      modifier = Modifier.testTag(AssociationProfileTestTags.RECRUITMENT_ROLES),
+      horizontalArrangement = Arrangement.spacedBy(8.dp),
+  ) {
+    OutlinedButton(
+        modifier = Modifier.testTag(AssociationProfileTestTags.DESIGNER_ROLES),
+        onClick = {
+          scope!!.launch {
+            testSnackbar!!.showSnackbar(message = DEBUG_MESSAGE, duration = SnackbarDuration.Short)
+          }
+        },
+        enabled = true) {
+          Icon(
+              Icons.Filled.Add,
+              contentDescription = context.getString(R.string.association_recruitment))
+          Spacer(Modifier.width(2.dp))
+          Text("Graphic Designer")
         }
-        OutlinedButton(
-            modifier = Modifier.testTag("AssociationTreasurerRoles"),
-            onClick = {
-                scope!!.launch {
-                    testSnackbar!!.showSnackbar(
-                        message = DEBUG_MESSAGE,
-                        duration = SnackbarDuration.Short
-                    )
-                }
-            },
-            enabled = true
-        ) {
-            Icon(
-                Icons.Filled.Add,
-                contentDescription = context.getString(R.string.association_recruitment)
-            )
-            Spacer(Modifier.width(2.dp))
-            Text("Treasurer")
+    OutlinedButton(
+        modifier = Modifier.testTag(AssociationProfileTestTags.TREASURER_ROLES),
+        onClick = {
+          scope!!.launch {
+            testSnackbar!!.showSnackbar(message = DEBUG_MESSAGE, duration = SnackbarDuration.Short)
+          }
+        },
+        enabled = true) {
+          Icon(
+              Icons.Filled.Add,
+              contentDescription = context.getString(R.string.association_recruitment))
+          Spacer(Modifier.width(2.dp))
+          Text("Treasurer")
         }
-    }
+  }
 }
 
 /**
@@ -378,60 +345,51 @@ private fun AssociationRecruitment(association: Association) {
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun AssociationMembers(members: List<User>) {
-    val context = LocalContext.current
+  val context = LocalContext.current
 
-    if (members.isEmpty()) {
-        return
-    }
+  if (members.isEmpty()) {
+    return
+  }
 
-    Text(
-        context.getString(R.string.association_contact_members),
-        style = AppTypography.headlineMedium,
-        modifier = Modifier.testTag("AssociationContactMembersTitle")
-    )
-    FlowRow(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
+  Text(
+      context.getString(R.string.association_contact_members),
+      style = AppTypography.headlineMedium,
+      modifier = Modifier.testTag(AssociationProfileTestTags.CONTACT_MEMBERS_TITLE))
+  FlowRow(
+      modifier = Modifier.fillMaxWidth(),
+      horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally),
+      verticalArrangement = Arrangement.spacedBy(16.dp)) {
         members.forEach { user ->
-            Column(
-                modifier =
-                Modifier
-                    .background(
-                        MaterialTheme.colorScheme.secondaryContainer, RoundedCornerShape(8.dp)
-                    )
-                    .clickable {
+          Column(
+              modifier =
+                  Modifier.background(
+                          MaterialTheme.colorScheme.secondaryContainer, RoundedCornerShape(8.dp))
+                      .clickable {
                         scope!!.launch {
-                            testSnackbar!!.showSnackbar(
-                                message = DEBUG_MESSAGE, duration = SnackbarDuration.Short
-                            )
+                          testSnackbar!!.showSnackbar(
+                              message = DEBUG_MESSAGE, duration = SnackbarDuration.Short)
                         }
-                    }
-                    .padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                horizontalAlignment = Alignment.CenterHorizontally) {
+                      }
+                      .padding(16.dp),
+              verticalArrangement = Arrangement.spacedBy(8.dp),
+              horizontalAlignment = Alignment.CenterHorizontally) {
                 Box(
                     modifier =
-                    Modifier
-                        .clip(CircleShape)
-                        .size(75.dp)
-                        .background(MaterialTheme.colorScheme.surfaceDim)
-                ) {
-                    AsyncImage(
-                        model = user.profilePicture,
-                        contentDescription =
-                        context.getString(
-                            R.string.association_contact_member_profile_picture
-                        ),
-                        modifier = Modifier.fillMaxWidth(),
-                        contentScale = ContentScale.Crop
-                    )
-                }
+                        Modifier.clip(CircleShape)
+                            .size(75.dp)
+                            .background(MaterialTheme.colorScheme.surfaceDim)) {
+                      AsyncImage(
+                          model = user.profilePicture,
+                          contentDescription =
+                              context.getString(
+                                  R.string.association_contact_member_profile_picture),
+                          modifier = Modifier.fillMaxWidth(),
+                          contentScale = ContentScale.Crop)
+                    }
                 Text("${user.firstName} ${user.lastName}")
-            }
+              }
         }
-    }
+      }
 }
 
 /**
@@ -449,44 +407,41 @@ private fun AssociationEvents(
     userViewModel: UserViewModel,
     eventViewModel: EventViewModel
 ) {
-    val context = LocalContext.current
+  val context = LocalContext.current
 
-    var isSeeMoreClicked by remember { mutableStateOf(false) }
+  var isSeeMoreClicked by remember { mutableStateOf(false) }
 
-    val events by association.events.list.collectAsState()
+  val events by association.events.list.collectAsState()
 
-    if (events.isNotEmpty()) {
+  if (events.isNotEmpty()) {
 
-        Text(
-            context.getString(R.string.association_upcoming_events),
-            modifier = Modifier.testTag("AssociationEventTitle"),
-            style = AppTypography.headlineMedium
-        )
-        events.sortedBy { it.date }
-        val first = events.first()
-        Column(modifier = Modifier, horizontalAlignment = Alignment.CenterHorizontally) {
-            if (isSeeMoreClicked) {
-                events.forEach { event ->
-                    AssociationEventCard(navigationAction, event, userViewModel, eventViewModel)
-                }
-            } else {
-                AssociationEventCard(navigationAction, first, userViewModel, eventViewModel)
-            }
+    Text(
+        context.getString(R.string.association_upcoming_events),
+        modifier = Modifier.testTag(AssociationProfileTestTags.EVENT_TITLE),
+        style = AppTypography.headlineMedium)
+    events.sortedBy { it.date }
+    val first = events.first()
+    Column(modifier = Modifier, horizontalAlignment = Alignment.CenterHorizontally) {
+      if (isSeeMoreClicked) {
+        events.forEach { event ->
+          AssociationEventCard(navigationAction, event, userViewModel, eventViewModel)
         }
-        if (events.size > 1) {
-            OutlinedButton(
-                onClick = { isSeeMoreClicked = true },
-                modifier = Modifier.testTag("AssociationSeeMoreButton")
-            ) {
-                Icon(
-                    Icons.AutoMirrored.Filled.ArrowForward,
-                    contentDescription = context.getString(R.string.association_see_more)
-                )
-                Spacer(Modifier.width(2.dp))
-                Text(context.getString(R.string.association_see_more))
-            }
-        }
+      } else {
+        AssociationEventCard(navigationAction, first, userViewModel, eventViewModel)
+      }
     }
+    if (events.size > 1) {
+      OutlinedButton(
+          onClick = { isSeeMoreClicked = true },
+          modifier = Modifier.testTag(AssociationProfileTestTags.SEE_MORE_BUTTON)) {
+            Icon(
+                Icons.AutoMirrored.Filled.ArrowForward,
+                contentDescription = context.getString(R.string.association_see_more))
+            Spacer(Modifier.width(2.dp))
+            Text(context.getString(R.string.association_see_more))
+          }
+    }
+  }
 }
 
 /**
@@ -501,14 +456,13 @@ private fun AssociationEventCard(
     userViewModel: UserViewModel,
     eventViewModel: EventViewModel
 ) {
-    Box(modifier = Modifier.testTag("AssociationEventCard-${event.uid}")) {
-        EventCard(
-            navigationAction = navigationAction,
-            event = event,
-            userViewModel = userViewModel,
-            eventViewModel = eventViewModel
-        )
-    }
+  Box(modifier = Modifier.testTag(AssociationProfileTestTags.EVENT_CARD + event.uid)) {
+    EventCard(
+        navigationAction = navigationAction,
+        event = event,
+        userViewModel = userViewModel,
+        eventViewModel = eventViewModel)
+  }
 }
 
 /**
@@ -518,11 +472,10 @@ private fun AssociationEventCard(
  */
 @Composable
 private fun AssociationDescription(association: Association) {
-    Text(
-        association.description,
-        style = AppTypography.bodyMedium,
-        modifier = Modifier.testTag("AssociationDescription")
-    )
+  Text(
+      association.description,
+      style = AppTypography.bodyMedium,
+      modifier = Modifier.testTag(AssociationProfileTestTags.DESCRIPTION))
 }
 
 /**
@@ -539,63 +492,55 @@ private fun AssociationDescription(association: Association) {
 @Composable
 private fun AssociationHeader(
     association: Association,
-    user: User,
-    context: Context,
-    associationViewModel: AssociationViewModel
+    associationViewModel: AssociationViewModel,
+    user: User
 ) {
-    var isFollowed by remember { mutableStateOf(user.isFollowAssociation(association)) }
-    Row {
-        Box(modifier = Modifier.testTag("AssociationImageHeader")) {
-            AsyncImage(
-                model = association.image.toUri(),
-                contentDescription =
-                context.getString(R.string.association_content_description_association_image) +
-                        association.name,
-                modifier = Modifier.size(124.dp)
-            )
-        }
-        Column {
-            Text(
-                "${association.followersCount} " + context.getString(R.string.association_follower),
-                style = AppTypography.headlineSmall,
-                modifier = Modifier
-                    .padding(bottom = 5.dp)
-                    .testTag("AssociationHeaderFollowers")
-            )
-            Text(
-                "${association.members.uids.size} " + context.getString(R.string.association_member),
-                style = AppTypography.headlineSmall,
-                modifier = Modifier
-                    .padding(bottom = 14.dp)
-                    .testTag("AssociationHeaderMembers")
-            )
-            if (isFollowed) {
-                OutlinedButton(
-                    onClick = {
-                        associationViewModel.updateFollow(association, user, isFollowed)
-                        isFollowed = !isFollowed
-                    },
-                    modifier = Modifier.testTag("AssociationFollowButton")
-                ) {
-                    Text(context.getString(R.string.association_unfollow))
-                }
-            } else {
-                Button(
-                    onClick = {
-                        associationViewModel.updateFollow(association, user, isFollowed)
-                        isFollowed = !isFollowed
-                    },
-                    modifier = Modifier.testTag("AssociationFollowButton")
-                ) {
-                    Icon(
-                        Icons.Filled.Add,
-                        contentDescription =
-                        context.getString(R.string.association_content_description_follow_icon)
-                    )
-                    Spacer(Modifier.width(2.dp))
-                    Text(context.getString(R.string.association_follow))
-                }
-            }
-        }
+  var isFollowed = false
+  val context = LocalContext.current
+  Row {
+    Box(modifier = Modifier.testTag(AssociationProfileTestTags.IMAGE_HEADER)) {
+      AsyncImage(
+          model = association.image.toUri(),
+          contentDescription =
+              context.getString(R.string.association_content_description_association_image) +
+                  association.name,
+          modifier = Modifier.size(124.dp))
     }
+    Column {
+      Text(
+          "${association.followersCount} " + context.getString(R.string.association_follower),
+          style = AppTypography.headlineSmall,
+          modifier =
+              Modifier.padding(bottom = 5.dp).testTag(AssociationProfileTestTags.HEADER_FOLLOWERS))
+      Text(
+          "${association.members.uids.size} " + context.getString(R.string.association_member),
+          style = AppTypography.headlineSmall,
+          modifier =
+              Modifier.padding(bottom = 14.dp).testTag(AssociationProfileTestTags.HEADER_MEMBERS))
+      if (isFollowed) {
+        OutlinedButton(
+            onClick = {
+              associationViewModel.updateFollow(association, user, isFollowed)
+              isFollowed = !isFollowed
+            },
+            modifier = Modifier.testTag("AssociationFollowButton")) {
+              Text(context.getString(R.string.association_unfollow))
+            }
+      } else {
+        Button(
+            onClick = {
+              associationViewModel.updateFollow(association, user, isFollowed)
+              isFollowed = !isFollowed
+            },
+            modifier = Modifier.testTag("AssociationFollowButton")) {
+              Icon(
+                  Icons.Filled.Add,
+                  contentDescription =
+                      context.getString(R.string.association_content_description_follow_icon))
+              Spacer(Modifier.width(2.dp))
+              Text(context.getString(R.string.association_follow))
+            }
+      }
+    }
+  }
 }
