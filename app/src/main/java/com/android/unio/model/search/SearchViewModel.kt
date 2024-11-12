@@ -9,13 +9,13 @@ import com.android.unio.model.association.AssociationRepository
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 /**
  * ViewModel for searching associations and events. It uses a [SearchRepository] to create the

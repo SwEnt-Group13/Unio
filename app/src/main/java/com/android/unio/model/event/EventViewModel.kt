@@ -4,11 +4,11 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.android.unio.model.image.ImageRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.io.InputStream
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import java.io.InputStream
-import javax.inject.Inject
 
 /**
  * ViewModel class that manages the event list data and provides it to the UI. It uses an

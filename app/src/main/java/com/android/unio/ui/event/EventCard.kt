@@ -196,7 +196,7 @@ fun EventCardScaffold(
                     contentDescription =
                         context.getString(R.string.event_card_content_description_association_logo),
                     modifier =
-                        Modifier.testTag(EventCardTestTags.EVENT_ORGANISER_IMAGE + i.toString())
+                        Modifier.testTag("${EventCardTestTags.ASSOCIATION_LOGO}$i")
                             .size(24.dp)
                             .align(Alignment.CenterVertically)
                             .padding(end = 3.dp)
