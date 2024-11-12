@@ -270,7 +270,7 @@ private fun AssociationProfileContent(
               .fillMaxWidth()
               .padding(24.dp),
       verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        AssociationHeader(association, associationViewModel, user!!)
+        AssociationHeader(association, associationViewModel, userViewModel, user!!)
         AssociationDescription(association)
         AssociationEvents(navigationAction, association, userViewModel, eventViewModel)
         AssociationMembers(members)
@@ -493,9 +493,10 @@ private fun AssociationDescription(association: Association) {
 private fun AssociationHeader(
     association: Association,
     associationViewModel: AssociationViewModel,
+    userViewModel: UserViewModel,
     user: User
 ) {
-  var isFollowed = false
+  var isFollowed by remember { mutableStateOf(user.isFollowAssociation(association)) }
   val context = LocalContext.current
   Row {
     Box(modifier = Modifier.testTag(AssociationProfileTestTags.IMAGE_HEADER)) {
@@ -520,8 +521,9 @@ private fun AssociationHeader(
       if (isFollowed) {
         OutlinedButton(
             onClick = {
-              associationViewModel.updateFollow(association, user, isFollowed)
-              isFollowed = !isFollowed
+              associationViewModel.updateFollow(association, user, isFollowed
+              ) { userViewModel.refreshUser() }
+                isFollowed = !isFollowed
             },
             modifier = Modifier.testTag("AssociationFollowButton")) {
               Text(context.getString(R.string.association_unfollow))
@@ -529,7 +531,9 @@ private fun AssociationHeader(
       } else {
         Button(
             onClick = {
-              associationViewModel.updateFollow(association, user, isFollowed)
+              associationViewModel.updateFollow(association, user, isFollowed){
+                userViewModel.refreshUser()
+              }
               isFollowed = !isFollowed
             },
             modifier = Modifier.testTag("AssociationFollowButton")) {
