@@ -37,7 +37,8 @@ service cloud.firestore {
       }
 
       allow get: if isVerified();
-      allow create, delete: if isOwner() && validate();
+      allow create: if isOwner() && validate();
+      allow delete: if isOwner();
       allow update: if isOwner() && validateJoinedAssociations() && validate();
     }
 
@@ -69,11 +70,9 @@ service cloud.firestore {
       }
 
       allow read: if isVerified();
-
       // Allow update if the user is a member of the association or if the changed data is the followersCount field
       allow update: if isVerified() &&
           ((isMember() || onlyUpdatedFollowerCount())) && validate();
-      allow delete: if isMember();
     }
 
     match /events/{uid} {
