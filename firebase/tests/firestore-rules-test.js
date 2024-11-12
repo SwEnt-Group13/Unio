@@ -54,6 +54,8 @@ async function runTests(testEnv) {
   await assertFails(updateDoc(doc(aliceDb, `/users/${otherUser.uid}`), alice));
   await assertSucceeds(getDoc(doc(aliceDb, `/users/${otherUser.uid}`)));
   await assertFails(getDocs(collection(aliceDb, `/users`)));
+  await assertSucceeds(deleteDoc(doc(aliceDb, `/users/${alice.uid}`)));
+  await assertSucceeds(setDoc(doc(aliceDb, `/users/${alice.uid}`), alice));
 
   /** Reading and writing to associations **/
   await assertSucceeds(setDoc(doc(aliceDb, `/associations/${aliceAssociation.uid}`), aliceAssociation));
@@ -65,6 +67,8 @@ async function runTests(testEnv) {
   await assertSucceeds(updateDoc(doc(aliceDb, `/associations/${otherAssociation.uid}`), { ...otherAssociation, followersCount: 0 }));
   await assertFails(updateDoc(doc(aliceDb, `/associations/${otherAssociation.uid}`), { ...otherAssociation, followersCount: 1000 }));
   await assertSucceeds(getDocs(collection(aliceDb, `/associations`)));
+  await assertFails(deleteDoc(doc(aliceDb, `/associations/${aliceAssociation.uid}`)));
+  await assertFails(setDoc(doc(aliceDb, `/associations/new-association`), aliceAssociation));
 
   /** Reading and writing to events **/
   await assertSucceeds(setDoc(doc(aliceDb, `/events/${aliceEvent.uid}`), aliceEvent));
