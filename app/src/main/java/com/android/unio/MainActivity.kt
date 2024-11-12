@@ -43,6 +43,11 @@ import com.android.unio.ui.saved.SavedScreen
 import com.android.unio.ui.settings.SettingsScreen
 import com.android.unio.ui.theme.AppTheme
 import com.android.unio.ui.user.UserProfileScreen
+import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
+import com.google.firebase.firestore.firestore
+import com.google.firebase.functions.functions
+import com.google.firebase.storage.storage
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.HiltAndroidApp
 import javax.inject.Inject
@@ -58,11 +63,22 @@ class MainActivity : ComponentActivity() {
     requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
     super.onCreate(savedInstanceState)
 
+    useEmulator(true) // Modify this to launch the project with Firebase Emulators
+
     setContent {
       Surface(modifier = Modifier.fillMaxSize()) {
         ProvidePreferenceLocals { AppTheme { UnioApp(imageRepository) } }
       }
     }
+  }
+}
+
+private fun useEmulator(useEmulator : Boolean){
+  if (useEmulator) {
+    Firebase.functions.useEmulator("10.0.2.2", 5001)
+    Firebase.auth.useEmulator("10.0.2.2", 9099)
+    Firebase.firestore.useEmulator("10.0.2.2", 8080)
+    Firebase.storage.useEmulator("10.0.2.2", 9199)
   }
 }
 
