@@ -139,6 +139,7 @@ class ScreenDisplayingTest {
     mockkStatic(FirebaseAuth::class)
     every { Firebase.auth } returns firebaseAuth
     every { firebaseAuth.currentUser } returns mockFirebaseUser
+    associationViewModel.selectAssociation(associations.first().uid)
   }
 
   @Test
@@ -207,11 +208,7 @@ class ScreenDisplayingTest {
   fun testAssociationProfileDisplayed() {
     composeTestRule.setContent {
       AssociationProfileScaffold(
-          MockAssociation.createMockAssociation(),
-          navigationAction,
-          userViewModel,
-          eventViewModel,
-          associationViewModel) {}
+          navigationAction, userViewModel, eventViewModel, associationViewModel) {}
     }
     composeTestRule.onNodeWithTag(AssociationProfileTestTags.SCREEN).assertIsDisplayed()
   }

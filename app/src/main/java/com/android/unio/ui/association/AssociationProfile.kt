@@ -98,7 +98,6 @@ fun AssociationProfileScreen(
   }
 
   AssociationProfileScaffold(
-      association = association!!,
       navigationAction = navigationAction,
       userViewModel = userViewModel,
       eventViewModel = eventViewModel,
@@ -123,13 +122,15 @@ fun AssociationProfileScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AssociationProfileScaffold(
-    association: Association,
     navigationAction: NavigationAction,
     userViewModel: UserViewModel,
     eventViewModel: EventViewModel,
     associationViewModel: AssociationViewModel,
     onEdit: () -> Unit
 ) {
+
+  val associationState by associationViewModel.selectedAssociation.collectAsState()
+  val association = associationState!!
 
   var showSheet by remember { mutableStateOf(false) }
 
@@ -190,7 +191,7 @@ fun AssociationProfileScaffold(
             modifier = Modifier.padding(padding),
         ) {
           AssociationProfileContent(
-              association, navigationAction, userViewModel, eventViewModel, associationViewModel)
+              navigationAction, userViewModel, eventViewModel, associationViewModel)
         }
       })
 
@@ -253,12 +254,13 @@ fun AssociationProfileBottomSheet(
  */
 @Composable
 private fun AssociationProfileContent(
-    association: Association,
     navigationAction: NavigationAction,
     userViewModel: UserViewModel,
     eventViewModel: EventViewModel,
     associationViewModel: AssociationViewModel
 ) {
+  val associationState by associationViewModel.selectedAssociation.collectAsState()
+  val association = associationState!!
   val members by association.members.list.collectAsState()
   val user by userViewModel.user.collectAsState()
 

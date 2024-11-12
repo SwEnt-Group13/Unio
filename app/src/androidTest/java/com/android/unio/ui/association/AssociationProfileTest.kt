@@ -153,17 +153,14 @@ class AssociationProfileTest {
             imageRepository,
             concurrentAssociationUserRepository)
     associationViewModel.getAssociations()
+    associationViewModel.selectAssociation(associations.first().uid)
   }
 
   @Test
   fun testAssociationProfileDisplayComponent() {
     composeTestRule.setContent {
       AssociationProfileScaffold(
-          MockAssociation.createMockAssociation(),
-          navigationAction,
-          userViewModel,
-          eventViewModel,
-          associationViewModel) {}
+          navigationAction, userViewModel, eventViewModel, associationViewModel) {}
     }
     composeTestRule.waitForIdle()
 
@@ -204,15 +201,10 @@ class AssociationProfileTest {
   @Test
   fun testFollowAssociation() {
     var context: Context? = null
-    associationViewModel.selectAssociation(associations.first().uid)
     composeTestRule.setContent {
       context = LocalContext.current
       AssociationProfileScaffold(
-          associations.first(),
-          navigationAction,
-          userViewModel,
-          eventViewModel,
-          associationViewModel) {}
+          navigationAction, userViewModel, eventViewModel, associationViewModel) {}
     }
     val currentCount = associationViewModel.selectedAssociation.value!!.followersCount
 
@@ -243,11 +235,7 @@ class AssociationProfileTest {
   fun testButtonBehavior() {
     composeTestRule.setContent {
       AssociationProfileScaffold(
-          MockAssociation.createMockAssociation(),
-          navigationAction,
-          userViewModel,
-          eventViewModel,
-          associationViewModel) {}
+          navigationAction, userViewModel, eventViewModel, associationViewModel) {}
     }
     // Share button
     assertDisplayComponentInScroll(
@@ -276,11 +264,7 @@ class AssociationProfileTest {
   fun testGoBackButton() {
     composeTestRule.setContent {
       AssociationProfileScaffold(
-          MockAssociation.createMockAssociation(),
-          navigationAction,
-          userViewModel,
-          eventViewModel,
-          associationViewModel) {}
+          navigationAction, userViewModel, eventViewModel, associationViewModel) {}
     }
 
     `when`(navigationAction.navController.popBackStack()).thenReturn(true)
@@ -294,11 +278,7 @@ class AssociationProfileTest {
   fun testAssociationProfileGoodId() {
     composeTestRule.setContent {
       AssociationProfileScaffold(
-          MockAssociation.createMockAssociation(),
-          navigationAction,
-          userViewModel,
-          eventViewModel,
-          associationViewModel) {}
+          navigationAction, userViewModel, eventViewModel, associationViewModel) {}
     }
 
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag(AssociationProfileTestTags.TITLE))
@@ -307,6 +287,7 @@ class AssociationProfileTest {
 
   @Test
   fun testAssociationProfileNoId() {
+    associationViewModel.selectAssociation("3")
     composeTestRule.setContent {
       AssociationProfileScreen(
           navigationAction, associationViewModel, userViewModel, eventViewModel)
