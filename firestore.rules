@@ -23,7 +23,12 @@ service cloud.firestore {
         return request.resource.data.joinedAssociations == resource.data.joinedAssociations;
       }
       function validate() {
-        return request.resource.data.uid == request.auth.uid &&
+        let fields = ['uid', 'email', 'firstName', 'lastName', 'biography', 'savedEvents', 'followedAssociations', 'joinedAssociations', 'interests', 'socials', 'profilePicture'];
+        let hasCorrectNumberOfFields = request.resource.data.size() == fields.size();
+        let hasCorrectFields = request.resource.data.keys().hasAll(fields);
+
+        return hasCorrectNumberOfFields && hasCorrectFields &&
+          request.resource.data.uid == request.auth.uid &&
           request.resource.data.email == request.auth.token.email &&
           request.resource.data.firstName is string &&
           request.resource.data.lastName is string &&
@@ -56,8 +61,13 @@ service cloud.firestore {
         return onlyFollowerCountChanged && (newCount == oldCount || newCount == oldCount + 1 || newCount == oldCount - 1);
       }
       function validate() {
-        return request.resource.data.uid == uid &&
-          request.resource.data.url == uid &&
+        let fields = ['uid', 'url', 'name', 'fullName', 'category', 'description', 'followersCount', 'members', 'image', 'events'];
+        let hasCorrectNumberOfFields = request.resource.data.size() == fields.size();
+        let hasCorrectFields = request.resource.data.keys().hasAll(fields);
+
+        return hasCorrectNumberOfFields && hasCorrectFields &&
+          request.resource.data.uid == uid &&
+          request.resource.data.url is string &&
           request.resource.data.name is string &&
           request.resource.data.fullName is string &&
           request.resource.data.category is string &&
@@ -88,7 +98,12 @@ service cloud.firestore {
         );
       }
       function validate() {
-        return request.resource.data.uid == uid &&
+        let fields = ['uid', 'title', 'organisers', 'taggedAssociations', 'image', 'description', 'catchyDescription', 'price', 'date', 'location', 'types'];
+        let hasCorrectNumberOfFields = request.resource.data.size() == fields.size();
+        let hasCorrectFields = request.resource.data.keys().hasAll(fields);
+
+        return hasCorrectNumberOfFields && hasCorrectFields &&
+          request.resource.data.uid == uid &&
           request.resource.data.title is string &&
           request.resource.data.organisers is list &&
           request.resource.data.taggedAssociations is list &&
