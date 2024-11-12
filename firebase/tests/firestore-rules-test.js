@@ -4,8 +4,8 @@ import {
   initializeTestEnvironment
 } from "@firebase/rules-unit-testing"
 import { readFile } from "fs/promises"
-import { setDoc, doc, updateDoc, getDoc, getDocs, collection } from "firebase/firestore";
-import { alice, aliceAssociation, aliceEvent, otherAssociation, otherUser, setupFirestore } from './firestore-mock-data.js';
+import { setDoc, doc, updateDoc, getDoc, getDocs, collection, deleteDoc } from "firebase/firestore";
+import { alice, aliceAssociation, aliceEvent, otherEvent, otherAssociation, otherUser, setupFirestore } from './firestore-mock-data.js';
 
 (async () => {
   /** Initialize testing environment **/  
@@ -65,6 +65,16 @@ async function runTests(testEnv) {
   await assertSucceeds(updateDoc(doc(aliceDb, `/associations/${otherAssociation.uid}`), { ...otherAssociation, followersCount: 0 }));
   await assertFails(updateDoc(doc(aliceDb, `/associations/${otherAssociation.uid}`), { ...otherAssociation, followersCount: 1000 }));
   await assertSucceeds(getDocs(collection(aliceDb, `/associations`)));
+
+  /** Reading and writing to events **/
+  await assertSucceeds(setDoc(doc(aliceDb, `/events/${aliceEvent.uid}`), aliceEvent));
+  await assertFails(setDoc(doc(aliceDb, `/events/${aliceEvent.uid}`), { ...aliceEvent, uid: "other" }));
+  await assertSucceeds(getDoc(doc(aliceDb, `/events/${aliceEvent.uid}`)));
+  await assertFails(updateDoc(doc(aliceDb, `/events/${otherEvent.uid}`), aliceEvent));
+  await assertSucceeds(updateDoc(doc(aliceDb, `/events/${aliceEvent.uid}`), { ...aliceEvent, title: "New title" }));
+  await assertSucceeds(getDocs(collection(aliceDb, `/events`)));
+  await assertSucceeds(deleteDoc(doc(aliceDb, `/events/${aliceEvent.uid}`)));
+  await assertSucceeds(setDoc(doc(aliceDb, `/events/${aliceEvent.uid}`), aliceEvent));
 
   /** Deny all unauthenticated requests **/
   const unAuthenticated = testEnv.unauthenticatedContext();
