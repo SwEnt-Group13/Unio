@@ -41,12 +41,15 @@ import com.google.firebase.auth.internal.zzac
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import io.mockk.MockKAnnotations
+import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.spyk
+import io.mockk.unmockkAll
 import me.zhanghai.compose.preference.ProvidePreferenceLocals
+import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -225,5 +228,11 @@ class ScreenDisplayingTest {
   fun testSomeoneElseUserProfileDisplayed() {
     composeTestRule.setContent { SomeoneElseUserProfileScreen() }
     composeTestRule.onNodeWithTag("SomeoneElseUserProfileScreen").assertIsDisplayed()
+  }
+
+  @After
+  fun tearDown() {
+    clearAllMocks()
+    unmockkAll()
   }
 }

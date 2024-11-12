@@ -9,6 +9,9 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import com.android.unio.model.strings.test_tags.InterestsOverlayTestTags
 import com.android.unio.model.user.Interest
+import io.mockk.clearAllMocks
+import io.mockk.unmockkAll
+import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -55,4 +58,10 @@ class InterestOverlayTest {
           .assertIsOn()
     }
   }
+
+    @After
+    fun tearDown(){
+        clearAllMocks()
+        unmockkAll()
+    }
 }

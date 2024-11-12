@@ -10,6 +10,8 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.navigation.NavHostController
+import androidx.preference.PreferenceManager
+import androidx.test.platform.app.InstrumentationRegistry
 import com.android.unio.mocks.association.MockAssociation
 import com.android.unio.mocks.event.MockEvent
 import com.android.unio.mocks.user.MockUser
@@ -26,12 +28,15 @@ import com.android.unio.ui.navigation.NavigationAction
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import io.mockk.MockKAnnotations
+import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.spyk
+import io.mockk.unmockkAll
+import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -223,4 +228,10 @@ class AssociationProfileTest {
 
     composeTestRule.onNodeWithTag("AssociationScreen").assertIsNotDisplayed()
   }
+
+    @After
+    fun tearDown() {
+        clearAllMocks()
+        unmockkAll()
+    }
 }

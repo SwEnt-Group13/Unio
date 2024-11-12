@@ -6,9 +6,12 @@ import androidx.compose.ui.test.onNodeWithTag
 import com.android.unio.model.preferences.AppPreferences
 import com.android.unio.ui.navigation.NavigationAction
 import io.mockk.MockKAnnotations
+import io.mockk.clearAllMocks
 import io.mockk.impl.annotations.MockK
+import io.mockk.unmockkAll
 import kotlin.reflect.full.memberProperties
 import me.zhanghai.compose.preference.ProvidePreferenceLocals
+import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -34,5 +37,12 @@ class SettingsTest {
     AppPreferences::class.memberProperties.forEach { key ->
       composeTestRule.onNodeWithTag(key.call() as String).assertExists()
     }
+  }
+
+
+  @After
+  fun tearDown(){
+    clearAllMocks()
+    unmockkAll()
   }
 }

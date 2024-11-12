@@ -16,9 +16,12 @@ import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.navigation.NavigationAction
 import io.mockk.MockKAnnotations
+import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
+import io.mockk.unmockkAll
 import io.mockk.verify
+import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -82,5 +85,12 @@ class MapScreenTest {
 
     composeTestRule.onNodeWithTag("goBackButton").performClick()
     verify { navigationAction.goBack() }
+  }
+
+
+  @After
+  fun tearDown(){
+    clearAllMocks()
+    unmockkAll()
   }
 }

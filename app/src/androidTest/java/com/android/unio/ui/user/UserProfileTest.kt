@@ -12,7 +12,10 @@ import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.navigation.NavigationAction
 import io.mockk.MockKAnnotations
+import io.mockk.clearAllMocks
 import io.mockk.impl.annotations.MockK
+import io.mockk.unmockkAll
+import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -67,5 +70,12 @@ class UserProfileTest {
     composeTestRule.setContent { UserProfileScreen(userViewModel, navigationAction) }
 
     composeTestRule.onNodeWithTag("UserProfileScreen").assertIsNotDisplayed()
+  }
+
+
+  @After
+  fun tearDown(){
+    clearAllMocks()
+    unmockkAll()
   }
 }

@@ -23,10 +23,13 @@ import com.android.unio.ui.navigation.Screen
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import io.mockk.MockKAnnotations
+import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.spyk
+import io.mockk.unmockkAll
 import io.mockk.verify
+import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
@@ -161,4 +164,10 @@ class ExploreScreenTest {
 
     verify(atLeast = 1) { navigationAction.navigateTo(Screen.ASSOCIATION_PROFILE) }
   }
+
+    @After
+    fun tearDown(){
+        clearAllMocks()
+        unmockkAll()
+    }
 }
