@@ -19,7 +19,7 @@ fun AssociationRepositoryFirestore.Companion.serialize(association: Association)
       "followersCount" to association.followersCount,
       "image" to association.image,
       "events" to association.events.uids,
-      "principalEmailAdress" to association.principalEmailAdress,
+      "principalEmailAdress" to association.principalEmailAddress,
       "parentAssociations" to association.parentAssociations.uids,
       "childAssociations" to association.childAssociations.uids)
 }

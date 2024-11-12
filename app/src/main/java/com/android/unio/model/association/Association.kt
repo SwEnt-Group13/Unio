@@ -37,7 +37,7 @@ data class Association(
     val members: ReferenceList<User>,
     var image: String,
     val events: ReferenceList<Event>,
-    val principalEmailAdress: String,
+    val principalEmailAddress: String,
     val parentAssociations: ReferenceList<Association>,
     val childAssociations: ReferenceList<Association>
 ) {

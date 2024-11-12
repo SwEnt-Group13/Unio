@@ -108,7 +108,7 @@ class MockAssociation {
           image = image,
           followersCount = 2,
           events = events,
-          principalEmailAdress = principalEmailAddress,
+          principalEmailAddress = principalEmailAddress,
           parentAssociations = parentAssociations,
           childAssociations = childAssociations)
     }

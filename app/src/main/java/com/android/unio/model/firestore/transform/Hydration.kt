@@ -42,7 +42,7 @@ fun AssociationRepositoryFirestore.Companion.hydrate(data: Map<String, Any>?): A
       followersCount = data?.get("followersCount") as? Int ?: 0,
       image = data?.get("image") as? String ?: "",
       events = events,
-      principalEmailAdress = data?.get("principalEmailAdress") as? String ?: "",
+      principalEmailAddress = data?.get("principalEmailAdress") as? String ?: "",
       parentAssociations = parentAssociations,
       childAssociations = childAssociations)
 }
