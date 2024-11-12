@@ -16,7 +16,7 @@ export const alice = {
 
 export const aliceAssociation = {
   uid: "alice-association",
-  url: "alice-association",
+  url: "alice-association.com",
   name: "AA",
   fullName: "Alice Association",
   category: "UNKNOWN",
@@ -81,7 +81,7 @@ export const otherEvent = {
 
 export const otherAssociation = {
   uid: "other-association",
-  url: "other-association",
+  url: "other-association.com",
   name: "OA",
   fullName: "Other Association",
   category: "UNKNOWN",
