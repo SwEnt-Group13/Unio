@@ -233,14 +233,20 @@ dependencies {
     implementation(libs.play.services.maps)
     implementation(libs.maps.compose)
     implementation(libs.maps.compose.utils)
-    implementation(libs.play.services.auth)
+
+    //TODO see if this is really useful
+    implementation(libs.play.services.auth.v2041)
+//    implementation(libs.play.services.auth)
 
     // Firebase
+
     implementation(libs.firebase.database.ktx)
-    implementation(libs.firebase.firestore)
+    implementation(libs.firebase.firestore.v2440)
+//    implementation(libs.firebase.firestore)
     implementation(libs.firebase.ui.auth)
     implementation(libs.firebase.auth.ktx)
-    implementation(libs.firebase.auth)
+    implementation(libs.firebase.auth.v2200)
+//    implementation(libs.firebase.auth)
 
     // Networking with OkHttp
     implementation(libs.okhttp)
