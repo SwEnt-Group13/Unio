@@ -277,7 +277,8 @@ fun EventScreenContent(event: Event, associations: List<Association>, padding: P
                     val priceStr =
                         if (event.price > 0) {
                           "${context.getString(R.string.event_price)}${event.price}.-"
-                        } else context.getString(R.string.event_price_free)
+                        } else
+                            "${context.getString(R.string.event_price)} ${context.getString(R.string.event_price_free)}"
 
                     Text(
                         priceStr,

@@ -146,8 +146,8 @@
     <string name="event_not_found" translatable="false">ERROR : event not found.</string>
     <string name="event_details_content_description_saved" translatable="false">Saved</string>
     <string name="event_details_content_description_not_saved" translatable="false">Not saved</string>
-    <string name="event_price_free" translatable="false">Free :)</string>
-    <string name="event_price" translatable="false">Entrée: </string>
+    <string name="event_price_free" translatable="false">Free !</string>
+    <string name="event_price" translatable="false">Entry: </string>
 
     /**
     * package: explore

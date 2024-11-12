@@ -10,7 +10,9 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.navigation.NavHostController
+import com.android.unio.mocks.association.MockAssociation
 import com.android.unio.mocks.event.MockEvent
+import com.android.unio.model.association.Association
 import com.android.unio.model.event.Event
 import com.android.unio.model.strings.test_tags.EventDetailsTestTags
 import com.android.unio.ui.navigation.NavigationAction
@@ -26,6 +28,7 @@ class EventDetailsTest {
   private lateinit var navigationAction: NavigationAction
 
   private lateinit var events: List<Event>
+  private lateinit var associations: List<Association>
 
   @get:Rule val composeTestRule = createComposeRule()
 
@@ -33,6 +36,10 @@ class EventDetailsTest {
   fun setUp() {
     MockitoAnnotations.openMocks(this)
     events = listOf(MockEvent.createMockEvent(uid = "a"), MockEvent.createMockEvent(uid = "b"))
+    associations =
+        listOf(
+            MockAssociation.createMockAssociation(uid = "c"),
+            MockAssociation.createMockAssociation(uid = "d"))
 
     navHostController = mock { NavHostController::class.java }
     navigationAction = NavigationAction(navHostController)
@@ -40,7 +47,9 @@ class EventDetailsTest {
 
   private fun setEventScreen() {
 
-    composeTestRule.setContent { EventScreenScaffold(navigationAction, events[0], true) {} }
+    composeTestRule.setContent {
+      EventScreenScaffold(navigationAction, events[0], associations, true) {}
+    }
   }
 
   @Test
