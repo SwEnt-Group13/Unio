@@ -190,7 +190,7 @@ fun AssociationProfileScaffold(
             modifier = Modifier.padding(padding),
         ) {
           AssociationProfileContent(
-              navigationAction, userViewModel, eventViewModel, associationViewModel)
+            association,  navigationAction, userViewModel, eventViewModel, associationViewModel)
         }
       })
 
@@ -253,12 +253,12 @@ fun AssociationProfileBottomSheet(
  */
 @Composable
 private fun AssociationProfileContent(
+    association: Association,
     navigationAction: NavigationAction,
     userViewModel: UserViewModel,
     eventViewModel: EventViewModel,
     associationViewModel: AssociationViewModel
 ) {
-  val association = associationViewModel.selectedAssociation.collectAsState().value!!
   val members by association.members.list.collectAsState()
   val user by userViewModel.user.collectAsState()
 
