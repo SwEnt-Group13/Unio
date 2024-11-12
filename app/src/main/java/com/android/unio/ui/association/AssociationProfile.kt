@@ -521,9 +521,10 @@ private fun AssociationHeader(
       if (isFollowed) {
         OutlinedButton(
             onClick = {
-              associationViewModel.updateFollow(association, user, isFollowed
-              ) { userViewModel.refreshUser() }
-                isFollowed = !isFollowed
+              associationViewModel.updateFollow(association, user, isFollowed) {
+                userViewModel.refreshUser()
+              }
+              isFollowed = !isFollowed
             },
             modifier = Modifier.testTag(AssociationProfileTestTags.FOLLOW_BUTTON)) {
               Text(context.getString(R.string.association_unfollow))
@@ -531,7 +532,7 @@ private fun AssociationHeader(
       } else {
         Button(
             onClick = {
-              associationViewModel.updateFollow(association, user, isFollowed){
+              associationViewModel.updateFollow(association, user, isFollowed) {
                 userViewModel.refreshUser()
               }
               isFollowed = !isFollowed
