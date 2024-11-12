@@ -78,7 +78,6 @@ constructor(
     val updatedUser: User = user.copy()
     if (isUnfollowAction) {
       val updatedFollowCount = if (target.followersCount - 1 >= 0) target.followersCount - 1 else 0
-
       updatedAssociation = target.copy(followersCount = updatedFollowCount)
       updatedUser.followedAssociations.remove(target.uid)
     } else {

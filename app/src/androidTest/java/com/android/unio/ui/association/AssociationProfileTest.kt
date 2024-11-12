@@ -19,6 +19,7 @@ import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventRepositoryFirestore
 import com.android.unio.model.event.EventViewModel
+import com.android.unio.model.follow.ConcurrentAssociationUserRepository
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.strings.test_tags.AssociationProfileTestTags
 import com.android.unio.model.user.UserRepositoryFirestore
@@ -46,6 +47,8 @@ class AssociationProfileTest {
   lateinit var navigationAction: NavigationAction
 
   private lateinit var associationRepository: AssociationRepositoryFirestore
+
+  @MockK lateinit var concurrentAssociationUserRepository: ConcurrentAssociationUserRepository
 
   @MockK lateinit var eventRepository: EventRepositoryFirestore
   private lateinit var eventViewModel: EventViewModel
@@ -113,7 +116,11 @@ class AssociationProfileTest {
     userViewModel.addUser(user, {})
 
     associationViewModel =
-        AssociationViewModel(associationRepository, eventRepository, imageRepository)
+        AssociationViewModel(
+            associationRepository,
+            eventRepository,
+            imageRepository,
+            concurrentAssociationUserRepository)
     associationViewModel.getAssociations()
   }
 
@@ -124,7 +131,8 @@ class AssociationProfileTest {
           MockAssociation.createMockAssociation(),
           navigationAction,
           userViewModel,
-          eventViewModel) {}
+          eventViewModel,
+          associationViewModel) {}
     }
     composeTestRule.waitForIdle()
 
@@ -169,7 +177,8 @@ class AssociationProfileTest {
           MockAssociation.createMockAssociation(),
           navigationAction,
           userViewModel,
-          eventViewModel) {}
+          eventViewModel,
+          associationViewModel) {}
     }
     // Share button
     assertDisplayComponentInScroll(
@@ -207,7 +216,8 @@ class AssociationProfileTest {
           MockAssociation.createMockAssociation(),
           navigationAction,
           userViewModel,
-          eventViewModel) {}
+          eventViewModel,
+          associationViewModel) {}
     }
 
     `when`(navigationAction.navController.popBackStack()).thenReturn(true)
@@ -224,7 +234,8 @@ class AssociationProfileTest {
           MockAssociation.createMockAssociation(),
           navigationAction,
           userViewModel,
-          eventViewModel) {}
+          eventViewModel,
+          associationViewModel) {}
     }
 
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag(AssociationProfileTestTags.TITLE))

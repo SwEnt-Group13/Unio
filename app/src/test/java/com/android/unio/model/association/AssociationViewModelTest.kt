@@ -5,7 +5,10 @@ import com.android.unio.mocks.association.MockAssociation
 import com.android.unio.mocks.event.MockEvent
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventRepository
+import com.android.unio.model.firestore.emptyFirestoreReferenceList
+import com.android.unio.model.follow.ConcurrentAssociationUserRepository
 import com.android.unio.model.image.ImageRepository
+import com.android.unio.model.user.User
 import com.google.firebase.Firebase
 import com.google.firebase.FirebaseApp
 import com.google.firebase.firestore.CollectionReference
@@ -45,6 +48,8 @@ class AssociationViewModelTest {
   @Mock private lateinit var inputStream: InputStream
   @Mock private lateinit var eventRepository: EventRepository
   @Mock private lateinit var imageRepository: ImageRepository
+  @Mock
+  private lateinit var concurrentAssociationUserRepository: ConcurrentAssociationUserRepository
 
   private lateinit var viewModel: AssociationViewModel
 
@@ -69,13 +74,76 @@ class AssociationViewModelTest {
             MockAssociation.createMockAssociation(uid = "1", name = "ACM"),
             MockAssociation.createMockAssociation(uid = "2", name = "IEEE"))
 
-    viewModel = AssociationViewModel(associationRepository, eventRepository, imageRepository)
+    viewModel =
+        AssociationViewModel(
+            associationRepository,
+            eventRepository,
+            imageRepository,
+            concurrentAssociationUserRepository)
   }
 
   @OptIn(ExperimentalCoroutinesApi::class)
   @After
   fun tearDown() {
     Dispatchers.resetMain()
+  }
+
+  @Test
+  fun testUpdateFollowIncrement() {
+    `when`(concurrentAssociationUserRepository.updateFollow(any(), any(), any(), any()))
+        .thenAnswer { invocation ->
+          val onSuccess = invocation.arguments[2] as () -> Unit
+          onSuccess()
+        }
+    val association = MockAssociation.createMockAssociation(uid = "1", name = "ACM")
+    val followCount = association.followersCount
+    val user =
+        User(
+            uid = "1",
+            email = "",
+            firstName = "",
+            lastName = "",
+            biography = "",
+            savedEvents = Event.emptyFirestoreReferenceList(),
+            followedAssociations = Association.emptyFirestoreReferenceList(),
+            joinedAssociations = Association.emptyFirestoreReferenceList(),
+            interests = emptyList(),
+            socials = emptyList(),
+            profilePicture = "")
+    viewModel.selectAssociation(association.uid)
+    val updateUser = { user.followedAssociations.add(association.uid) }
+    viewModel.updateFollow(association, user, false, updateUser)
+    assert(user.followedAssociations.contains(association.uid))
+    assert(viewModel.selectedAssociation.value?.followersCount == followCount + 1)
+  }
+
+  @Test
+  fun testUpdateFollowDecrement() {
+    `when`(concurrentAssociationUserRepository.updateFollow(any(), any(), any(), any()))
+        .thenAnswer { invocation ->
+          val onSuccess = invocation.arguments[2] as () -> Unit
+          onSuccess()
+        }
+    val association = MockAssociation.createMockAssociation(uid = "1", name = "ACM")
+    val followCount = association.followersCount
+    val user =
+        User(
+            uid = "1",
+            email = "",
+            firstName = "",
+            lastName = "",
+            biography = "",
+            savedEvents = Event.emptyFirestoreReferenceList(),
+            followedAssociations = Association.emptyFirestoreReferenceList(),
+            joinedAssociations = Association.emptyFirestoreReferenceList(),
+            interests = emptyList(),
+            socials = emptyList(),
+            profilePicture = "")
+    viewModel.selectAssociation(association.uid)
+    val updateUser = { user.followedAssociations.remove(association.uid) }
+    viewModel.updateFollow(association, user, true, updateUser)
+    assert(!user.followedAssociations.contains(association.uid))
+    assert(viewModel.selectedAssociation.value?.followersCount == followCount - 1)
   }
 
   @Test
@@ -127,7 +195,12 @@ class AssociationViewModelTest {
       onSuccess(testAssociations)
     }
 
-    val newViewModel = AssociationViewModel(associationRepository, eventRepository, imageRepository)
+    val newViewModel =
+        AssociationViewModel(
+            associationRepository,
+            eventRepository,
+            imageRepository,
+            concurrentAssociationUserRepository)
 
     runBlocking {
       val result = newViewModel.associations.first()
