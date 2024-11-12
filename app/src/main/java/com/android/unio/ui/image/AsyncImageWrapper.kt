@@ -19,7 +19,7 @@ fun AsyncImageWrapper(
     modifier: Modifier = Modifier,
     contentScale: ContentScale = ContentScale.None,
     placeholderResourceId: Int = R.drawable.no_picture_found,
-    filterQuality: FilterQuality = DefaultFilterQuality
+    filterQuality: FilterQuality = DefaultFilterQuality,
 ) {
   val imageRequest =
       ImageRequest.Builder(LocalContext.current)

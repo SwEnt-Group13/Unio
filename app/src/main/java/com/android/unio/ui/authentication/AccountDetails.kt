@@ -6,7 +6,6 @@ import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -43,11 +42,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
-import coil.compose.rememberAsyncImagePainter
 import com.android.unio.R
 import com.android.unio.model.association.Association
 import com.android.unio.model.event.Event
@@ -62,6 +61,7 @@ import com.android.unio.model.user.UserViewModel
 import com.android.unio.model.user.checkNewUser
 import com.android.unio.ui.authentication.overlay.InterestOverlay
 import com.android.unio.ui.authentication.overlay.SocialOverlay
+import com.android.unio.ui.image.AsyncImageWrapper
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
 import com.android.unio.ui.theme.AppTypography
@@ -359,11 +359,14 @@ private fun ProfilePictureWithRemoveIcon(
 ) {
   val context = LocalContext.current
   Box(modifier = Modifier.size(100.dp)) {
-    Image(
-        painter = rememberAsyncImagePainter(profilePictureUri),
+    AsyncImageWrapper(
+        imageUri = profilePictureUri,
         contentDescription = context.getString(R.string.account_details_content_description_pfp),
         contentScale = ContentScale.Crop,
-        modifier = Modifier.aspectRatio(1f).clip(CircleShape))
+        modifier = Modifier.aspectRatio(1f).clip(CircleShape),
+        filterQuality = FilterQuality.Medium,
+        placeholderResourceId = 0 // to have no placeholder
+        )
     Icon(
         imageVector = Icons.Default.Close,
         contentDescription =
