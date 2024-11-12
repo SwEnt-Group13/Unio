@@ -190,7 +190,7 @@ fun AssociationProfileScaffold(
             modifier = Modifier.padding(padding),
         ) {
           AssociationProfileContent(
-              navigationAction, association, userViewModel, eventViewModel, associationViewModel)
+              navigationAction, userViewModel, eventViewModel, associationViewModel)
         }
       })
 
@@ -254,11 +254,11 @@ fun AssociationProfileBottomSheet(
 @Composable
 private fun AssociationProfileContent(
     navigationAction: NavigationAction,
-    association: Association,
     userViewModel: UserViewModel,
     eventViewModel: EventViewModel,
     associationViewModel: AssociationViewModel
 ) {
+    val association = associationViewModel.selectedAssociation.collectAsState().value!!
   val members by association.members.list.collectAsState()
   val user by userViewModel.user.collectAsState()
 
@@ -270,7 +270,7 @@ private fun AssociationProfileContent(
               .fillMaxWidth()
               .padding(24.dp),
       verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        AssociationHeader(association, associationViewModel, userViewModel, user!!)
+        AssociationHeader(associationViewModel, userViewModel, user!!)
         AssociationDescription(association)
         AssociationEvents(navigationAction, association, userViewModel, eventViewModel)
         AssociationMembers(members)
@@ -491,11 +491,11 @@ private fun AssociationDescription(association: Association) {
  */
 @Composable
 private fun AssociationHeader(
-    association: Association,
     associationViewModel: AssociationViewModel,
     userViewModel: UserViewModel,
     user: User
 ) {
+    val association = associationViewModel.selectedAssociation.collectAsState().value!!
   var isFollowed by remember { mutableStateOf(user.isFollowAssociation(association)) }
     var isEnable by remember { mutableStateOf(true) }
   val context = LocalContext.current

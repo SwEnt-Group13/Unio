@@ -89,7 +89,9 @@ constructor(
         updatedAssociation,
         {
           _associations.value =
-              _associations.value.map { if (it.uid == target.uid) updatedAssociation else it }
+              _associations.value.map { if (it.uid == target.uid){
+                  updatedAssociation}
+              else it }
           _selectedAssociation.value = updatedAssociation
           updateUser()
         },

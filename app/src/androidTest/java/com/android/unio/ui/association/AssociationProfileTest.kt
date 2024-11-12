@@ -230,6 +230,7 @@ class AssociationProfileTest {
     @Test
     fun testFollowAssociation() {
         var context: Context? = null
+        associationViewModel.selectAssociation(associations.first().uid)
         composeTestRule.setContent {
             context = LocalContext.current
             AssociationProfileScaffold(
@@ -240,7 +241,6 @@ class AssociationProfileTest {
                 associationViewModel
             ) {}
         }
-        associationViewModel.selectAssociation(associations.first().uid)
         val currentCount = associationViewModel.selectedAssociation.value!!.followersCount
 
         assertDisplayComponentInScroll(
@@ -255,7 +255,7 @@ class AssociationProfileTest {
         assert(associationViewModel.selectedAssociation.value!!.followersCount == currentCount + 1)
         composeTestRule.onNodeWithText(context!!.getString(R.string.association_unfollow))
             .assertIsDisplayed()
-
+        composeTestRule.waitForIdle()
         //Unfollow operation
         composeTestRule.onNodeWithTag(AssociationProfileTestTags.FOLLOW_BUTTON).performClick()
         composeTestRule.onNodeWithText(context!!.getString(R.string.association_follow))
