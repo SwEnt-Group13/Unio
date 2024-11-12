@@ -73,24 +73,23 @@ fun EventCard(
 
   var isSaved by remember { mutableStateOf(user!!.savedEvents.contains(event.uid)) }
 
-  val onClickSaveButton = {
-    if (isSaved) {
-      userViewModel.unSaveEventForCurrentUser(event.uid) { isSaved = false }
-    } else {
-      userViewModel.saveEventForCurrentUser(event.uid) { isSaved = true }
-    }
-    userViewModel.updateUserDebounced(user!!)
-  }
-
-  EventCardScaffold(
-      event,
-      associations,
-      isSaved,
-      {
-        eventViewModel.selectEvent(event.uid)
-        navigationAction.navigateTo(Screen.EVENT_DETAILS)
-      },
-      onClickSaveButton)
+  val onClickSaveButton =
+      EventCardScaffold(
+          event,
+          associations,
+          isSaved,
+          onClickEventCard = {
+            eventViewModel.selectEvent(event.uid)
+            navigationAction.navigateTo(Screen.EVENT_DETAILS)
+          },
+          onClickSaveButton = {
+            if (isSaved) {
+              userViewModel.unSaveEventForCurrentUser(event.uid) { isSaved = false }
+            } else {
+              userViewModel.saveEventForCurrentUser(event.uid) { isSaved = true }
+            }
+            userViewModel.updateUserDebounced(user!!)
+          })
 }
 
 @Composable
