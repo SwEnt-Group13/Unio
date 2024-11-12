@@ -27,6 +27,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -419,8 +420,9 @@ private fun AssociationEvents(
 
   val events by association.events.list.collectAsState()
 
-  if (events.isNotEmpty()) {
+  var isAdmin by remember { mutableStateOf(true) }
 
+  if (events.isNotEmpty()) {
     Text(
         context.getString(R.string.association_upcoming_events),
         modifier = Modifier.testTag(AssociationProfileTestTags.EVENT_TITLE),
@@ -447,6 +449,18 @@ private fun AssociationEvents(
             Text(context.getString(R.string.association_see_more))
           }
     }
+  }
+  if (isAdmin) {
+    Button(
+        onClick = { navigationAction.navigateTo(Screen.EVENT_CREATION) },
+        contentPadding = ButtonDefaults.ButtonWithIconContentPadding) {
+          Icon(
+              Icons.Filled.Add,
+              contentDescription = context.getString(R.string.association_profile_add_event_button),
+              modifier = Modifier.size(ButtonDefaults.IconSize))
+          Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+          Text(context.getString(R.string.association_profile_add_event_button))
+        }
   }
 }
 

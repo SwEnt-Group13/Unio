@@ -14,6 +14,17 @@ object EventCardTestTags {
 
 object EventCreationTestTags {
   const val SCREEN = "eventCreationScreen"
+  const val TITLE = "eventCreationTitle"
+  const val EVENT_TITLE = "eventCreationEventTitle"
+  const val SHORT_DESCRIPTION = "eventCreationShortDescription"
+  const val COAUTHORS = "eventCreationCoauthors"
+  const val TAGGED_ASSOCIATIONS = "eventCreationTaggedAssociations"
+  const val DESCRIPTION = "eventCreationDescription"
+  const val LOCATION = "eventCreationLocation"
+  const val SAVE_BUTTON = "eventCreationSaveButton"
+  const val EVENT_IMAGE = "eventCreationEventImage"
+  const val START_TIME = "eventCreationStartTime"
+  const val END_TIME = "eventCreationEndTime"
 }
 
 object EventDetailsTestTags {

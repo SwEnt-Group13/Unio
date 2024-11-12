@@ -195,7 +195,7 @@ class ScreenDisplayingTest {
 
   @Test
   fun testEventCreationDisplayed() {
-    composeTestRule.setContent { EventCreationScreen() }
+    composeTestRule.setContent { EventCreationScreen(navigationAction) }
     composeTestRule.onNodeWithTag(EventCreationTestTags.SCREEN).assertIsDisplayed()
   }
 
