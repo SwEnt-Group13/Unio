@@ -171,6 +171,22 @@ class AssociationProfileTest {
   }
 
   @Test
+  fun testFollowAssociation() {
+    composeTestRule.setContent {
+      AssociationProfileScaffold(
+          MockAssociation.createMockAssociation(),
+          navigationAction,
+          userViewModel,
+          eventViewModel,
+          associationViewModel) {}
+    }
+
+    assertDisplayComponentInScroll(
+        composeTestRule.onNodeWithTag(AssociationProfileTestTags.FOLLOW_BUTTON))
+    composeTestRule.onNodeWithTag(AssociationProfileTestTags.FOLLOW_BUTTON).performClick()
+  }
+
+  @Test
   fun testButtonBehavior() {
     composeTestRule.setContent {
       AssociationProfileScaffold(
@@ -184,12 +200,6 @@ class AssociationProfileTest {
     assertDisplayComponentInScroll(
         composeTestRule.onNodeWithTag(AssociationProfileTestTags.SHARE_BUTTON))
     composeTestRule.onNodeWithTag(AssociationProfileTestTags.SHARE_BUTTON).performClick()
-    assertSnackBarIsDisplayed()
-
-    // Follow button
-    assertDisplayComponentInScroll(
-        composeTestRule.onNodeWithTag(AssociationProfileTestTags.FOLLOW_BUTTON))
-    composeTestRule.onNodeWithTag(AssociationProfileTestTags.FOLLOW_BUTTON).performClick()
     assertSnackBarIsDisplayed()
 
     // Roles buttons
