@@ -126,7 +126,6 @@ class AssociationProfileTest {
                 any()
             )
         } answers {
-            Log.d("AssociationProfileTest", "updateFollow")
             val onSuccess = args[2] as () -> Unit
             onSuccess()
         }
@@ -252,7 +251,6 @@ class AssociationProfileTest {
 
         //Follow operation
         composeTestRule.onNodeWithTag(AssociationProfileTestTags.FOLLOW_BUTTON).performClick()
-
         assert(userViewModel.user.value?.followedAssociations!!.contains(associations.first().uid))
         assert(associationViewModel.selectedAssociation.value!!.followersCount == currentCount + 1)
         composeTestRule.onNodeWithText(context!!.getString(R.string.association_unfollow))
@@ -260,10 +258,10 @@ class AssociationProfileTest {
 
         //Unfollow operation
         composeTestRule.onNodeWithTag(AssociationProfileTestTags.FOLLOW_BUTTON).performClick()
-        assert(!userViewModel.user.value?.followedAssociations!!.contains(associations.first().uid))
-        assert(associationViewModel.selectedAssociation.value!!.followersCount == currentCount)
         composeTestRule.onNodeWithText(context!!.getString(R.string.association_follow))
             .assertIsDisplayed()
+        assert(!userViewModel.user.value?.followedAssociations!!.contains(associations.first().uid))
+        assert(associationViewModel.selectedAssociation.value!!.followersCount == currentCount)
     }
 
     @Test
