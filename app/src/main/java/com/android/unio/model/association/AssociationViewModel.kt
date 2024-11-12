@@ -78,11 +78,11 @@ constructor(
         val updatedAssociation: Association
         val updatedUser: User = user.copy()
         if (isUnfollowAction) {
-            Log.d("AssociationViewModel", "Unfollowed association: ${target.fullName}, -1")
-            updatedAssociation = target.copy(followersCount = target.followersCount - 1)
+            val updatedFollowCount = if (target.followersCount - 1 >= 0) target.followersCount - 1 else 0
+
+            updatedAssociation = target.copy(followersCount = updatedFollowCount )
             updatedUser.followedAssociations.remove(target.uid)
         } else {
-            Log.d("AssociationViewModel", "Followed association: ${target.fullName}, +1")
             updatedAssociation = target.copy(followersCount = target.followersCount + 1)
             updatedUser.followedAssociations.add(target.uid)
         }
