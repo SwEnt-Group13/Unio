@@ -123,6 +123,7 @@ object Screen {
   const val ASSOCIATION_PROFILE = "Association Profile Screen"
   const val EDIT_ASSOCIATION = "Edit Assocation Screen"
   const val EVENT_DETAILS = "Event Details Screen"
+  const val CLAIM_ASSOCIATION = "User Claim Association Screen"
 
   /**
    * Replace the placeholders in the screen with the provided parameters.

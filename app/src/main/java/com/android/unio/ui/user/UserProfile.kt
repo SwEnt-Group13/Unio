@@ -25,6 +25,7 @@ import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -58,7 +59,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.android.unio.R
 import com.android.unio.mocks.association.MockAssociation
+import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.user.User
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.association.AssociationSearchBar
@@ -74,7 +77,7 @@ import com.google.firebase.auth.auth
 import kotlinx.coroutines.launch
 
 @Composable
-fun UserProfileScreen(userViewModel: UserViewModel, navigationAction: NavigationAction) {
+fun UserProfileScreen(userViewModel: UserViewModel, navigationAction: NavigationAction, searchViewModel: SearchViewModel) {
 
   val user by userViewModel.user.collectAsState()
 
@@ -86,7 +89,7 @@ fun UserProfileScreen(userViewModel: UserViewModel, navigationAction: Navigation
 
   val refreshState by userViewModel.refreshState
 
-  UserProfileScreenScaffold(user!!, navigationAction, refreshState) { userViewModel.refreshUser() }
+  UserProfileScreenScaffold(user!!, navigationAction, refreshState, searchViewModel) { userViewModel.refreshUser() }
 }
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
@@ -95,7 +98,8 @@ fun UserProfileScreenScaffold(
     user: User,
     navigationAction: NavigationAction,
     refreshState: Boolean,
-    onRefresh: () -> Unit
+    searchViewModel: SearchViewModel,
+    onRefresh: () -> Unit,
 ) {
   val pullRefreshState = rememberPullRefreshState(refreshing = refreshState, onRefresh = onRefresh)
 
@@ -129,7 +133,7 @@ fun UserProfileScreenScaffold(
                       .pullRefresh(pullRefreshState)
                       .fillMaxHeight()
                       .verticalScroll(rememberScrollState())) {
-                UserProfileScreenContent(navigationAction, user)
+                UserProfileScreenContent(navigationAction, user, searchViewModel)
               }
         }
       }
@@ -146,7 +150,7 @@ fun UserProfileScreenScaffold(
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun UserProfileScreenContent(navigationAction: NavigationAction, user: User) {
+fun UserProfileScreenContent(navigationAction: NavigationAction, user: User, searchViewModel: SearchViewModel) {
 
   val context = LocalContext.current
 
@@ -231,6 +235,13 @@ fun UserProfileScreenContent(navigationAction: NavigationAction, user: User) {
                 AssociationSmall(it) { navigationAction.navigateTo(Screen.ASSOCIATION_PROFILE) }
               }
             }
+          } else {
+              Text("You are not member of any association yet", style = AppTypography.bodySmall)
+
+              Button(onClick = {navigationAction.navigateTo(Screen.CLAIM_ASSOCIATION)},
+                  modifier = Modifier.testTag("claimButton")){
+                  Text("Claim Association")
+              }
           }
 
           // Display the associations that the user is following.
@@ -247,7 +258,6 @@ fun UserProfileScreenContent(navigationAction: NavigationAction, user: User) {
               }
             }
           }
-
 
 
         }
