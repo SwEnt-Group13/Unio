@@ -4,7 +4,7 @@ import {
   initializeTestEnvironment
 } from "@firebase/rules-unit-testing"
 import { readFile } from "fs/promises"
-import { setDoc, doc, updateDoc, getDoc, getDocs, collection, deleteDoc } from "firebase/firestore";
+import { setDoc, doc, updateDoc, getDoc, getDocs, deleteDoc, collection } from "firebase/firestore";
 import { alice, aliceAssociation, aliceEvent, otherEvent, otherAssociation, otherUser, setupFirestore } from './firestore-mock-data.js';
 
 (async () => {
@@ -17,6 +17,7 @@ import { alice, aliceAssociation, aliceEvent, otherEvent, otherAssociation, othe
       port: 8080
     },
   });
+  process.env['FIRESTORE_EMULATOR_HOST'] = `${testEnv.firestoreEmulatorHost}:${testEnv.firestoreEmulatorPort}`;
   
   /** Load data **/
   await setupFirestore(testEnv);
@@ -57,6 +58,14 @@ async function runTests(testEnv) {
   await assertFails(getDocs(collection(aliceDb, `/users`)));
   await assertSucceeds(deleteDoc(doc(aliceDb, `/users/${alice.uid}`)));
   await assertSucceeds(setDoc(doc(aliceDb, `/users/${alice.uid}`), alice));
+  await assertFails(setDoc(doc(aliceDb, `/users/${alice.uid}`), {
+    uid: alice.uid,
+    email: alice.email,
+  }));
+  await assertFails(setDoc(doc(aliceDb, `/users/${alice.uid}`), {
+    ...alice,
+    savedEvents: "invalid type"
+  }));
 
   /** Reading and writing to associations **/
   await assertSucceeds(setDoc(doc(aliceDb, `/associations/${aliceAssociation.uid}`), aliceAssociation));
@@ -70,6 +79,13 @@ async function runTests(testEnv) {
   await assertSucceeds(getDocs(collection(aliceDb, `/associations`)));
   await assertFails(deleteDoc(doc(aliceDb, `/associations/${aliceAssociation.uid}`)));
   await assertFails(setDoc(doc(aliceDb, `/associations/new-association`), aliceAssociation));
+  await assertFails(setDoc(doc(aliceDb, `/associations/${aliceAssociation.uid}`), {
+    uid: aliceAssociation.uid
+  }));
+  await assertFails(setDoc(doc(aliceDb, `/associations/${aliceAssociation.uid}`), {
+    ...aliceAssociation,
+    members: "invalid type"
+  }));
 
   /** Reading and writing to events **/
   await assertSucceeds(setDoc(doc(aliceDb, `/events/${aliceEvent.uid}`), aliceEvent));
@@ -80,6 +96,13 @@ async function runTests(testEnv) {
   await assertSucceeds(getDocs(collection(aliceDb, `/events`)));
   await assertSucceeds(deleteDoc(doc(aliceDb, `/events/${aliceEvent.uid}`)));
   await assertSucceeds(setDoc(doc(aliceDb, `/events/${aliceEvent.uid}`), aliceEvent));
+  await assertFails(setDoc(doc(aliceDb, `/events/${aliceEvent.uid}`), {
+    uid: aliceEvent.uid
+  }));
+  await assertFails(setDoc(doc(aliceDb, `/events/${aliceEvent.uid}`), {
+    ...aliceEvent,
+    organisers: "invalid type"
+  }));
 
   /** Deny all unauthenticated requests **/
   const unAuthenticated = testEnv.unauthenticatedContext();
