@@ -61,17 +61,19 @@ import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import coil.compose.AsyncImage
 import com.android.unio.R
+import com.android.unio.model.association.Association
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventUtils.formatTimestamp
 import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.strings.test_tags.EventDetailsTestTags
 import com.android.unio.model.user.UserViewModel
+import com.android.unio.ui.image.AsyncImageWrapper
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.theme.AppTypography
-import java.text.SimpleDateFormat
-import java.util.Locale
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 private const val DEBUG_MESSAGE = "<DEBUG> Not implemented yet"
 private val DEBUG_LAMBDA: () -> Unit = {
@@ -94,6 +96,7 @@ fun EventScreen(
 ) {
 
   val event by eventViewModel.selectedEvent.collectAsState()
+
   val user by userViewModel.user.collectAsState()
 
   if (event == null || user == null) {
@@ -101,6 +104,7 @@ fun EventScreen(
     Toast.makeText(LocalContext.current, "An error occurred.", Toast.LENGTH_SHORT).show()
     return
   }
+  val associations by event!!.organisers.list.collectAsState()
 
   var isSaved by remember { mutableStateOf(user!!.savedEvents.contains(event!!.uid)) }
 
@@ -113,7 +117,7 @@ fun EventScreen(
     userViewModel.updateUserDebounced(user!!)
   }
 
-  EventScreenScaffold(navigationAction, event!!, isSaved, onClickSaveButton)
+  EventScreenScaffold(navigationAction, event!!, associations, isSaved, onClickSaveButton)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -121,6 +125,7 @@ fun EventScreen(
 fun EventScreenScaffold(
     navigationAction: NavigationAction,
     event: Event,
+    associations: List<Association>,
     isSaved: Boolean,
     onClickSaveButton: () -> Unit
 ) {
@@ -180,23 +185,25 @@ fun EventScreenScaffold(
                   }
             })
       },
-      content = { padding -> EventScreenContent(event, padding) })
+      content = { padding -> EventScreenContent(event, associations, padding) })
 }
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun EventScreenContent(event: Event, padding: PaddingValues) {
+fun EventScreenContent(event: Event, associations: List<Association>, padding: PaddingValues) {
   val context = LocalContext.current
   Column(
       modifier =
           Modifier.testTag(EventDetailsTestTags.DETAILS_PAGE)
               .verticalScroll(rememberScrollState())
               .padding(padding)) {
-        AsyncImage(
-            event.image.toUri(),
-            context.getString(R.string.event_image_description),
-            placeholder = painterResource(R.drawable.no_picture_found),
-            modifier = Modifier.fillMaxSize().testTag(EventDetailsTestTags.DETAILS_IMAGE))
+        Column(verticalArrangement = Arrangement.Center, modifier = Modifier.height(200.dp)) {
+          AsyncImageWrapper(
+              imageUri = event.image.toUri(),
+              contentDescription = context.getString(R.string.event_image_description),
+              modifier = Modifier.fillMaxWidth().testTag(EventDetailsTestTags.DETAILS_IMAGE),
+              contentScale = ContentScale.Crop)
+        }
 
         Column(
             modifier =
@@ -214,7 +221,6 @@ fun EventScreenContent(event: Event, padding: PaddingValues) {
                   color = MaterialTheme.colorScheme.onPrimary)
 
               Row(modifier = Modifier.align(Alignment.Start)) {
-                val associations by event.organisers.list.collectAsState()
                 for (i in associations.indices) {
                   Row(
                       modifier =

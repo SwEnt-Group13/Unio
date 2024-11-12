@@ -5,7 +5,7 @@ object EventCardTestTags {
   const val EVENT_IMAGE = "event_EventImage"
   const val EVENT_TITLE = "event_EventTitle"
   const val EVENT_MAIN_TYPE = "event_EventMainType"
-  const val EVENT_CLIC_IMAGE = "event_ClicImage" // This should be factored out later on.
+  const val EVENT_ORGANISER_IMAGE = "event_OrganiserImage"
   const val EVENT_LOCATION = "event_EventLocation"
   const val EVENT_DATE = "event_EventDate"
   const val EVENT_TIME = "event_EventTime"
