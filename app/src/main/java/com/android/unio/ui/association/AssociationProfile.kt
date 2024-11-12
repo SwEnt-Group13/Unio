@@ -190,7 +190,7 @@ fun AssociationProfileScaffold(
             modifier = Modifier.padding(padding),
         ) {
           AssociationProfileContent(
-            association,  navigationAction, userViewModel, eventViewModel, associationViewModel)
+              association, navigationAction, userViewModel, eventViewModel, associationViewModel)
         }
       })
 
