@@ -27,7 +27,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.AccessTime
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -75,6 +74,7 @@ fun EventCreationScreen(navigationAction: NavigationAction) {
   var name by remember { mutableStateOf("") }
   var shortDescription by remember { mutableStateOf("") }
   var longDescription by remember { mutableStateOf("") }
+  val scrollState = rememberScrollState()
 
   Scaffold(
       modifier = Modifier.testTag(EventCreationTestTags.SCREEN),
@@ -82,9 +82,9 @@ fun EventCreationScreen(navigationAction: NavigationAction) {
         Column(
             modifier =
                 Modifier.padding(padding)
-                    .padding(horizontal = 20.dp, vertical = 20.dp)
+                    .padding(20.dp)
                     .fillMaxWidth()
-                    .verticalScroll(rememberScrollState()),
+                    .verticalScroll(scrollState),
             verticalArrangement = Arrangement.spacedBy(6.dp),
             horizontalAlignment = CenterHorizontally) {
               Row(

@@ -38,6 +38,7 @@
     <string name="association_content_description_user_pfp">User\'s profile picture</string>
     <string name="association_content_description_association_image">Association image of </string>
     <string name="association_content_description_follow_icon">Follow icon</string>
+    <string name="association_profile_add_event_button">Add event</string>
 
 
     <!-- EditAssociation strings -->

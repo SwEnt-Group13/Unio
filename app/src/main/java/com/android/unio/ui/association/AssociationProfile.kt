@@ -456,10 +456,10 @@ private fun AssociationEvents(
         contentPadding = ButtonDefaults.ButtonWithIconContentPadding) {
           Icon(
               Icons.Filled.Add,
-              contentDescription = "Add event",
+              contentDescription = context.getString(R.string.association_profile_add_event_button),
               modifier = Modifier.size(ButtonDefaults.IconSize))
           Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-          Text("Add event")
+          Text(context.getString(R.string.association_profile_add_event_button))
         }
   }
 }
