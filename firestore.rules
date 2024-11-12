@@ -37,9 +37,8 @@ service cloud.firestore {
       }
 
       allow get: if isVerified();
-      allow create: if isOwner() && validate();
+      allow create, delete: if isOwner() && validate();
       allow update: if isOwner() && validateJoinedAssociations() && validate();
-      allow delete: if isOwner() && validate();
     }
 
     match /associations/{uid} {
@@ -97,19 +96,20 @@ service cloud.firestore {
           request.resource.data.image is string &&
           request.resource.data.description is string &&
           request.resource.data.catchyDescription is string &&
-          request.resource.data.price is int &&
+          request.resource.data.price is number &&
           request.resource.data.price >= 0 &&
           request.resource.data.date is timestamp &&
           request.resource.data.location is map &&
-          request.resource.data.location.latitude is float &&
-          request.resource.data.location.longitude is float &&
+          request.resource.data.location.latitude is number &&
+          request.resource.data.location.longitude is number &&
           request.resource.data.location.name is string &&
           request.resource.data.types is list;
       }
 
       allow read: if isVerified();
       allow create: if canCreateEvent() && validate();
-      allow update, delete: if isEventOrganiser() && validate();
+      allow update: if isEventOrganiser() && validate();
+      allow delete: if isEventOrganiser();
     }
   }
 }
