@@ -1,6 +1,5 @@
 package com.android.unio.model.firestore.transform
 
-import android.util.Log
 import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationCategory
 import com.android.unio.model.association.AssociationRepositoryFirestore
