@@ -81,10 +81,7 @@ fun EventCreationScreen(navigationAction: NavigationAction) {
       content = { padding ->
         Column(
             modifier =
-                Modifier.padding(padding)
-                    .padding(20.dp)
-                    .fillMaxWidth()
-                    .verticalScroll(scrollState),
+                Modifier.padding(padding).padding(20.dp).fillMaxWidth().verticalScroll(scrollState),
             verticalArrangement = Arrangement.spacedBy(6.dp),
             horizontalAlignment = CenterHorizontally) {
               Row(
