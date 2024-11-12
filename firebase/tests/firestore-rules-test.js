@@ -51,6 +51,7 @@ async function runTests(testEnv) {
   await assertSucceeds(getDoc(doc(aliceDb, `/users/${alice.uid}`)));
   await assertFails(setDoc(doc(aliceDb, `/users/${alice.uid}`), { ...alice, uid: "other" }));
   await assertFails(setDoc(doc(aliceDb, `/users/${alice.uid}`), { ...alice, email: "other" }));
+  await assertFails(setDoc(doc(aliceDb, `/users/${alice.uid}`), { ...alice, joinedAssociations: ["other-association"] }));
   await assertFails(updateDoc(doc(aliceDb, `/users/${otherUser.uid}`), alice));
   await assertSucceeds(getDoc(doc(aliceDb, `/users/${otherUser.uid}`)));
   await assertFails(getDocs(collection(aliceDb, `/users`)));
