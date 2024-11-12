@@ -33,7 +33,7 @@
     <string name="association_content_description_user_pfp">Photo de profil de l\'utilisateur</string>
     <string name="association_content_description_association_image">Image de l\'association </string>
     <string name="association_content_description_follow_icon">Icône suivre</string>
-    <array name="association_profile_add_event_button">Ajouter un événement</array>
+    <string name="association_profile_add_event_button">Ajouter un événement</string>
 
     <!-- EditAssociation strings -->
     <string name="edit_association_title">Modifier l\'Association</string>
