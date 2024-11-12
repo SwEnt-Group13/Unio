@@ -525,7 +525,7 @@ private fun AssociationHeader(
               ) { userViewModel.refreshUser() }
                 isFollowed = !isFollowed
             },
-            modifier = Modifier.testTag("AssociationFollowButton")) {
+            modifier = Modifier.testTag(AssociationProfileTestTags.FOLLOW_BUTTON)) {
               Text(context.getString(R.string.association_unfollow))
             }
       } else {
@@ -536,7 +536,7 @@ private fun AssociationHeader(
               }
               isFollowed = !isFollowed
             },
-            modifier = Modifier.testTag("AssociationFollowButton")) {
+            modifier = Modifier.testTag(AssociationProfileTestTags.FOLLOW_BUTTON)) {
               Icon(
                   Icons.Filled.Add,
                   contentDescription =
