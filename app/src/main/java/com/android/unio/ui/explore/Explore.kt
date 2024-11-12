@@ -46,6 +46,7 @@ import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.strings.test_tags.ExploreContentTestTags
 import com.android.unio.model.strings.test_tags.ExploreTestTags
+import com.android.unio.ui.association.AssociationSearchBar
 import com.android.unio.ui.navigation.BottomNavigationMenu
 import com.android.unio.ui.navigation.LIST_TOP_LEVEL_DESTINATION
 import com.android.unio.ui.navigation.NavigationAction
@@ -103,78 +104,14 @@ fun ExploreScreenContent(
                     .align(Alignment.CenterHorizontally)
                     .testTag(ExploreContentTestTags.TITLE_TEXT))
 
-        DockedSearchBar(
-            inputField = {
-              SearchBarDefaults.InputField(
-                  modifier = Modifier.testTag(ExploreContentTestTags.SEARCH_BAR_INPUT),
-                  query = searchQuery,
-                  onQueryChange = {
-                    searchQuery = it
-                    searchViewModel.debouncedSearch(it, SearchViewModel.SearchType.ASSOCIATION)
-                  },
-                  onSearch = {},
-                  expanded = expanded,
-                  onExpandedChange = { expanded = it },
-                  placeholder = {
-                    Text(
-                        text = context.getString(R.string.explore_search_placeholder),
-                        style = AppTypography.bodyLarge,
-                        modifier = Modifier.testTag(ExploreContentTestTags.SEARCH_BAR_PLACEHOLDER))
-                  },
-                  trailingIcon = {
-                    Icon(
-                        Icons.Default.Search,
-                        contentDescription =
-                            context.getString(R.string.explore_content_description_search_icon),
-                        modifier = Modifier.testTag(ExploreContentTestTags.SEARCH_TRAILING_ICON))
-                  },
-              )
-            },
-            expanded = expanded,
-            onExpandedChange = { expanded = it },
-            modifier =
-                Modifier.padding(horizontal = 16.dp).testTag(ExploreContentTestTags.SEARCH_BAR)) {
-              when (searchState) {
-                SearchViewModel.Status.ERROR -> {
-                  Box(
-                      modifier = Modifier.fillMaxWidth().padding(16.dp),
-                      contentAlignment = Alignment.Center) {
-                        Text(context.getString(R.string.explore_search_error_message))
-                      }
-                }
-                SearchViewModel.Status.LOADING -> {
-                  Box(
-                      modifier = Modifier.fillMaxWidth().padding(16.dp),
-                      contentAlignment = Alignment.Center) {
-                        LinearProgressIndicator()
-                      }
-                }
-                SearchViewModel.Status.IDLE -> {}
-                SearchViewModel.Status.SUCCESS -> {
-                  if (assocationResults.isEmpty()) {
-                    Box(
-                        modifier = Modifier.fillMaxWidth().padding(16.dp),
-                        contentAlignment = Alignment.Center) {
-                          Text(context.getString(R.string.explore_search_no_results))
-                        }
-                  } else {
-                    Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
-                      assocationResults.forEach { association ->
-                        ListItem(
-                            modifier =
-                                Modifier.clickable {
-                                  expanded = false
-                                  associationViewModel.selectAssociation(association.uid)
-                                  navigationAction.navigateTo(Screen.ASSOCIATION_PROFILE)
-                                },
-                            headlineContent = { Text(association.name) },
-                        )
-                      }
-                    }
-                  }
-                }
-              }
-            }
+      AssociationSearchBar(
+          searchViewModel = searchViewModel,
+          onAssociationSelected = { association ->
+              associationViewModel.selectAssociation(association.uid)
+              navigationAction.navigateTo(Screen.ASSOCIATION_PROFILE)
+          }
+      )
+
 
         LazyColumn(
             modifier = Modifier.fillMaxSize().testTag(ExploreContentTestTags.CATEGORIES_LIST),

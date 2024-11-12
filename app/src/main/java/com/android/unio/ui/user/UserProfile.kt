@@ -58,8 +58,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.android.unio.mocks.association.MockAssociation
 import com.android.unio.model.user.User
 import com.android.unio.model.user.UserViewModel
+import com.android.unio.ui.association.AssociationSearchBar
 import com.android.unio.ui.association.AssociationSmall
 import com.android.unio.ui.navigation.BottomNavigationMenu
 import com.android.unio.ui.navigation.LIST_TOP_LEVEL_DESTINATION
@@ -245,6 +247,9 @@ fun UserProfileScreenContent(navigationAction: NavigationAction, user: User) {
               }
             }
           }
+
+
+
         }
   }
 }
