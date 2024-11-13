@@ -12,8 +12,6 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import androidx.test.filters.LargeTest
 import com.android.unio.MainActivity
-import com.android.unio.model.hilt.module.FirebaseAuthModule
-import com.android.unio.model.hilt.module.FirebaseModule
 import com.android.unio.model.strings.test_tags.AccountDetailsTestTags
 import com.android.unio.model.strings.test_tags.BottomNavBarTestTags
 import com.android.unio.model.strings.test_tags.EmailVerificationTestTags
@@ -25,56 +23,48 @@ import com.android.unio.ui.flushAuthenticationClients
 import com.android.unio.ui.flushFirestoreDatabase
 import com.android.unio.ui.verifyEmulatorsAreRunning
 import com.google.firebase.Firebase
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
-import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
-import dagger.hilt.android.testing.UninstallModules
-import dagger.hilt.components.SingletonComponent
 import io.mockk.clearAllMocks
 import io.mockk.unmockkAll
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.json.JSONObject
 import org.junit.After
-import org.junit.Before
 import org.junit.BeforeClass
 import org.junit.Rule
 import org.junit.Test
 
 @LargeTest
 @HiltAndroidTest
-//@UninstallModules(FirebaseModule::class, FirebaseAuthModule::class)
+// @UninstallModules(FirebaseModule::class, FirebaseAuthModule::class)
 class UserAccountCreationTest {
   @get:Rule val composeTestRule = createAndroidComposeRule<MainActivity>()
   @get:Rule val hiltRule = HiltAndroidRule(this)
 
-//  @Module
-//  @InstallIn(SingletonComponent::class)
-//  object FirebaseModule {
-//
-//    @Provides
-//    fun provideFirebaseFirestore(): FirebaseFirestore {
-//      Firebase.firestore.useEmulator("10.0.2.2", 8080)
-//      return Firebase.firestore
-//    }
-//  }
-//
-//  @Module
-//  @InstallIn(SingletonComponent::class)
-//  object FirebaseAuthModule {
-//
-//    @Provides
-//    fun provideFirebaseAuth(): FirebaseAuth {
-//      Firebase.auth.useEmulator("10.0.2.2", 9099)
-//      return FirebaseAuth.getInstance()
-//    }
-//  }
+  //  @Module
+  //  @InstallIn(SingletonComponent::class)
+  //  object FirebaseModule {
+  //
+  //    @Provides
+  //    fun provideFirebaseFirestore(): FirebaseFirestore {
+  //      Firebase.firestore.useEmulator("10.0.2.2", 8080)
+  //      return Firebase.firestore
+  //    }
+  //  }
+  //
+  //  @Module
+  //  @InstallIn(SingletonComponent::class)
+  //  object FirebaseAuthModule {
+  //
+  //    @Provides
+  //    fun provideFirebaseAuth(): FirebaseAuth {
+  //      Firebase.auth.useEmulator("10.0.2.2", 9099)
+  //      return FirebaseAuth.getInstance()
+  //    }
+  //  }
 
   @Test
   fun testUserCanLoginAndCreateAnAccount() {
