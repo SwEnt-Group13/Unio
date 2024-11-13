@@ -208,7 +208,7 @@ fun UserProfileScreenContent(navigationAction: NavigationAction, user: User) {
           ) {
             user.interests.forEach { interest ->
               SuggestionChip(
-                  modifier = Modifier.testTag("UserProfileInterest: ${interest.name}"),
+                  modifier = Modifier.testTag("UserProfileInterest"),
                   onClick = {},
                   label = {
                     Text(context.getString(interest.title), style = AppTypography.bodySmall)

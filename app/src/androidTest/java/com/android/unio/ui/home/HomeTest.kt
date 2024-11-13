@@ -26,16 +26,18 @@ import io.mockk.MockKAnnotations
 import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
+import io.mockk.just
+import io.mockk.runs
 import io.mockk.spyk
 import io.mockk.unmockkAll
 import io.mockk.verify
-import javax.inject.Inject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import javax.inject.Inject
 
 /**
  * Test class for the HomeScreen Composable. This class contains unit tests to validate the behavior
@@ -51,7 +53,7 @@ class HomeTest {
   private lateinit var userViewModel: UserViewModel
 
   // Mock event repository to provide test data.
-  @MockK private lateinit var mockEventRepository: EventRepository
+  @Inject lateinit var mockEventRepository: EventRepository
   @MockK private lateinit var userRepository: UserRepositoryFirestore
   @MockK private lateinit var navigationAction: NavigationAction
   @MockK private lateinit var imageRepository: ImageRepositoryFirebaseStorage
@@ -66,6 +68,8 @@ class HomeTest {
     searchViewModel = spyk(SearchViewModel(searchRepository))
     every { navigationAction.navigateTo(any(TopLevelDestination::class)) } returns Unit
     every { navigationAction.navigateTo(any(String::class)) } returns Unit
+
+    every { userRepository.init(any()) } just runs
     userViewModel = spyk(UserViewModel(userRepository))
     val user = MockUser.createMockUser()
     every { userRepository.updateUser(user, any(), any()) } answers

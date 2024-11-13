@@ -10,8 +10,6 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.navigation.NavHostController
-import androidx.preference.PreferenceManager
-import androidx.test.platform.app.InstrumentationRegistry
 import com.android.unio.mocks.association.MockAssociation
 import com.android.unio.mocks.event.MockEvent
 import com.android.unio.mocks.user.MockUser
@@ -105,6 +103,9 @@ class AssociationProfileTest {
           val onSuccess = args[1] as (List<Event>) -> Unit
           onSuccess(events)
         }
+
+      every{userRepository.init(any())} just runs
+
     userViewModel = UserViewModel(userRepository)
     val user = MockUser.createMockUser()
     every { userRepository.updateUser(user, any(), any()) } answers
