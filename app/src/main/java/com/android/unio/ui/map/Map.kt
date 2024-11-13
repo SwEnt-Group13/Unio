@@ -41,7 +41,6 @@ import com.android.unio.model.strings.MapStrings
 import com.android.unio.model.strings.test_tags.MapTestTags
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.navigation.NavigationAction
-import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
@@ -72,7 +71,6 @@ fun MapScreen(
     mapViewModel: MapViewModel
 ) {
   val context = LocalContext.current
-  val fusedLocationClient = remember { LocationServices.getFusedLocationProviderClient(context) }
   val cameraPositionState = rememberCameraPositionState()
   val userLocation by mapViewModel.userLocation.collectAsState()
   var initialCentered by remember { mutableStateOf(false) }
@@ -84,12 +82,12 @@ fun MapScreen(
           permissions ->
         when {
           permissions.getOrDefault(Manifest.permission.ACCESS_FINE_LOCATION, false) -> {
-            mapViewModel.fetchUserLocation(context, fusedLocationClient)
+            mapViewModel.fetchUserLocation(context)
             isMyLocationEnabled = true
             showApproximateCircle = false
           }
           permissions.getOrDefault(Manifest.permission.ACCESS_COARSE_LOCATION, false) -> {
-            mapViewModel.fetchUserLocation(context, fusedLocationClient)
+            mapViewModel.fetchUserLocation(context)
             isMyLocationEnabled = false
             showApproximateCircle = true
           }
@@ -112,13 +110,13 @@ fun MapScreen(
       ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) -> {
         isMyLocationEnabled = true
         showApproximateCircle = false
-        mapViewModel.fetchUserLocation(context, fusedLocationClient)
+        mapViewModel.fetchUserLocation(context)
       }
       ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) -> {
         isMyLocationEnabled = false
         showApproximateCircle = true
         requestPermissions()
-        mapViewModel.fetchUserLocation(context, fusedLocationClient)
+        mapViewModel.fetchUserLocation(context)
       }
       else -> {
         requestPermissions()
