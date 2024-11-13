@@ -10,6 +10,7 @@ import androidx.navigation.NavHostController
 import com.android.unio.mocks.association.MockAssociation
 import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationRepository
+import com.android.unio.model.strings.test_tags.EditAssociationTestTags
 import com.android.unio.ui.navigation.NavigationAction
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
@@ -66,11 +67,16 @@ class EditAssociationTest {
 
     composeTestRule.waitForIdle()
 
-    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("NameTextField"))
-    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("FullNameTextField"))
-    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("CategoryButton"))
-    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("DescriptionTextField"))
-    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag("UrlTextField"))
+    assertDisplayComponentInScroll(
+        composeTestRule.onNodeWithTag(EditAssociationTestTags.NAME_TEXT_FIELD))
+    assertDisplayComponentInScroll(
+        composeTestRule.onNodeWithTag(EditAssociationTestTags.FULL_NAME_TEXT_FIELD))
+    assertDisplayComponentInScroll(
+        composeTestRule.onNodeWithTag(EditAssociationTestTags.CATEGORY_BUTTON))
+    assertDisplayComponentInScroll(
+        composeTestRule.onNodeWithTag(EditAssociationTestTags.DESCRIPTION_TEXT_FIELD))
+    assertDisplayComponentInScroll(
+        composeTestRule.onNodeWithTag(EditAssociationTestTags.URL_TEXT_FIELD))
   }
 
   private fun assertDisplayComponentInScroll(compose: SemanticsNodeInteraction) {

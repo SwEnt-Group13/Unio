@@ -7,6 +7,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import com.android.unio.model.strings.test_tags.NavigationActionTestTags
 
 @Composable
 fun BottomNavigationMenu(
@@ -14,7 +15,7 @@ fun BottomNavigationMenu(
     tabList: List<TopLevelDestination>,
     selectedItem: String
 ) {
-  NavigationBar(modifier = Modifier.testTag("bottomNavigationMenu")) {
+  NavigationBar(modifier = Modifier.testTag(NavigationActionTestTags.BOTTOM_NAV_MENU)) {
     tabList.map { tld ->
       NavigationBarItem(
           modifier = Modifier.testTag(tld.textId),

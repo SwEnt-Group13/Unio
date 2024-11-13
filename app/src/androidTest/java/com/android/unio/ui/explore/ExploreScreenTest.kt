@@ -13,6 +13,7 @@ import com.android.unio.model.association.AssociationCategory
 import com.android.unio.model.association.AssociationRepositoryFirestore
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.event.EventRepositoryFirestore
+import com.android.unio.model.follow.ConcurrentAssociationUserRepositoryFirestore
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.search.SearchRepository
 import com.android.unio.model.search.SearchViewModel
@@ -41,6 +42,9 @@ class ExploreScreenTest {
   @MockK private lateinit var associationRepository: AssociationRepositoryFirestore
   private lateinit var searchViewModel: SearchViewModel
   @MockK private lateinit var searchRepository: SearchRepository
+  @MockK
+  private lateinit var concurrentAssociationUserRepositoryFirestore:
+      ConcurrentAssociationUserRepositoryFirestore
   @MockK private lateinit var eventRepository: EventRepositoryFirestore
   @MockK private lateinit var imageRepository: ImageRepositoryFirebaseStorage
   private lateinit var associationViewModel: AssociationViewModel
@@ -79,7 +83,11 @@ class ExploreScreenTest {
         getSortedEntriesAssociationsByCategory(associations.groupBy { it.category })
 
     associationViewModel =
-        AssociationViewModel(associationRepository, eventRepository, imageRepository)
+        AssociationViewModel(
+            associationRepository,
+            eventRepository,
+            imageRepository,
+            concurrentAssociationUserRepositoryFirestore)
   }
 
   @Test

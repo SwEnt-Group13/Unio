@@ -4,6 +4,7 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import com.android.unio.model.preferences.AppPreferences
+import com.android.unio.model.strings.test_tags.SettingsTestTags
 import com.android.unio.ui.navigation.NavigationAction
 import io.mockk.MockKAnnotations
 import io.mockk.clearAllMocks
@@ -30,8 +31,8 @@ class SettingsTest {
   fun testEverythingIsDisplayed() {
     composeTestRule.setContent { ProvidePreferenceLocals { SettingsScreen(navigationAction) } }
 
-    composeTestRule.onNodeWithTag("SettingsScreen").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("SettingsContainer").assertIsDisplayed()
+    composeTestRule.onNodeWithTag(SettingsTestTags.SCREEN).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(SettingsTestTags.CONTAINER).assertIsDisplayed()
 
     // Iterate through the values of AppPreferences and thus check that each setting exists
     AppPreferences::class.memberProperties.forEach { key ->
