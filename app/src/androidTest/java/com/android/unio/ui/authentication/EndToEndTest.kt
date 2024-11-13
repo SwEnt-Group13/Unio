@@ -1,5 +1,6 @@
 package com.android.unio.ui.authentication
 
+import android.util.Log
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextContains
