@@ -13,52 +13,52 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 
 /*
-* Adds a new user social to the list of user socials
+ * Adds a new user social to the list of user socials
  */
 fun addNewUserSocial(composeTestRule: ComposeContentTestRule, username: String, platform: String) {
-    composeTestRule.onNodeWithTag(SocialsOverlayTestTags.ADD_BUTTON).performScrollTo().performClick()
-    composeTestRule.onNodeWithTag(SocialsOverlayTestTags.PROMPT_TEXT_FIELD).performTextInput(username)
-    composeTestRule.onNodeWithTag(SocialsOverlayTestTags.PROMPT_DROP_BOX).performClick()
-    composeTestRule
-        .onNodeWithTag(SocialsOverlayTestTags.PROMPT_DROP_BOX_ITEM + "$platform")
-        .performClick()
-    composeTestRule.onNodeWithTag(SocialsOverlayTestTags.PROMPT_SAVE_BUTTON).performClick()
+  composeTestRule.onNodeWithTag(SocialsOverlayTestTags.ADD_BUTTON).performScrollTo().performClick()
+  composeTestRule.onNodeWithTag(SocialsOverlayTestTags.PROMPT_TEXT_FIELD).performTextInput(username)
+  composeTestRule.onNodeWithTag(SocialsOverlayTestTags.PROMPT_DROP_BOX).performClick()
+  composeTestRule
+      .onNodeWithTag(SocialsOverlayTestTags.PROMPT_DROP_BOX_ITEM + "$platform")
+      .performClick()
+  composeTestRule.onNodeWithTag(SocialsOverlayTestTags.PROMPT_SAVE_BUTTON).performClick()
 }
 
 /*
-* This tests verifies that your local Firebase emulator is running before running tests that use it
+ * This tests verifies that your local Firebase emulator is running before running tests that use it
  */
 fun verifyEmulatorsAreRunning() {
-    try {
-        val client = OkHttpClient()
-        val request = Request.Builder().url(FIRESTORE_URL).build()
+  try {
+    val client = OkHttpClient()
+    val request = Request.Builder().url(FIRESTORE_URL).build()
 
-        val response = client.newCall(request).execute()
-        val data = response.body?.string()
-        assert(data!!.contains("Ok")) { "Your emulators don't seem to be running correctly" }
-    } catch (e: Exception) {
-        assert(false) { "Start your emulators before running the end to end test" }
-    }
+    val response = client.newCall(request).execute()
+    val data = response.body?.string()
+    assert(data!!.contains("Ok")) { "Your emulators don't seem to be running correctly" }
+  } catch (e: Exception) {
+    assert(false) { "Start your emulators before running the end to end test" }
+  }
 }
 
 /*
-* This method empties all users in the authentication emulator
+ * This method empties all users in the authentication emulator
  */
 fun flushAuthenticationClients() {
-    val client = OkHttpClient()
+  val client = OkHttpClient()
 
-    val request = Request.Builder().url(FLUSH_AUTH_URL).delete().build()
+  val request = Request.Builder().url(FLUSH_AUTH_URL).delete().build()
 
-    client.newCall(request).execute()
+  client.newCall(request).execute()
 }
 
 /*
-* This method empties all users in the Firestore Database
+ * This method empties all users in the Firestore Database
  */
 fun flushFirestoreDatabase() {
-    val client = OkHttpClient()
+  val client = OkHttpClient()
 
-    val request = Request.Builder().url(FLUSH_FIRESTORE_URL).delete().build()
+  val request = Request.Builder().url(FLUSH_FIRESTORE_URL).delete().build()
 
-    client.newCall(request).execute()
+  client.newCall(request).execute()
 }

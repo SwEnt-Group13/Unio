@@ -105,7 +105,7 @@ class UserAccountCreationTest {
     composeTestRule.onNodeWithTag(EmailVerificationTestTags.SCREEN).assertIsDisplayed()
     composeTestRule.onNodeWithTag(EmailVerificationTestTags.REFRESH).performClick()
 
-//    Thread.sleep(5000)
+    //    Thread.sleep(5000)
 
     composeTestRule.onNodeWithTag(EmailVerificationTestTags.CONTINUE).performClick()
     composeTestRule.onNodeWithTag(AccountDetailsTestTags.TITLE_TEXT).assertExists()
@@ -129,14 +129,10 @@ class UserAccountCreationTest {
     composeTestRule.onNodeWithTag(AccountDetailsTestTags.CONTINUE_BUTTON).performClick()
 
     // Wait until "HomeScreen" is displayed
-    composeTestRule.waitUntil {
-      composeTestRule.onNodeWithTag(HomeTestTags.SCREEN).isDisplayed()
-    }
+    composeTestRule.waitUntil { composeTestRule.onNodeWithTag(HomeTestTags.SCREEN).isDisplayed() }
 
     // Wait until the bottom nav bar is displayed
-    composeTestRule.waitUntil {
-      composeTestRule.onNodeWithTag("My Profile").isDisplayed()
-    }
+    composeTestRule.waitUntil { composeTestRule.onNodeWithTag("My Profile").isDisplayed() }
 
     /** Navigate to the profile screen */
     composeTestRule.onNodeWithTag("My Profile").performClick()
