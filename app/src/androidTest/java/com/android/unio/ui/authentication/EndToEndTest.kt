@@ -145,16 +145,15 @@ class EndToEndTest {
   }
 
   private fun verifyEmulatorsAreRunning() {
-    try {
-      val client = OkHttpClient()
-      val request = Request.Builder().url(FIRESTORE_URL).build()
+    val client = OkHttpClient()
+    val request = Request.Builder().url(FIRESTORE_URL).build()
 
-      val response = client.newCall(request).execute()
-      val data = response.body?.string()
-      assert(data!!.contains("Ok")) { "Your emulators don't seem to be running correctly" }
-    } catch (e: Exception) {
-      assert(false) { "Start your emulators before running the end to end test" }
+    val response = client.newCall(request).execute()
+    if (response.body == null) {
+      throw Exception("Firebase Emulators are not running.")
     }
+    val data = response.body!!.string()
+    assert(data.contains("Ok")) { "Firebase Emulators are not running." }
   }
 
   private fun getLatestEmailVerificationUrl(): String {
@@ -167,6 +166,10 @@ class EndToEndTest {
     val data = response.body?.string()
     val json = JSONObject(data ?: "")
     val codes = json.getJSONArray("oobCodes")
+    if (codes.length() == 0) {
+      Log.e("EndToEndTest", "No email verification codes found. Data: $data")
+      throw Exception("No email verification codes found.")
+    }
     return codes.getJSONObject(codes.length() - 1).getString("oobLink")
   }
 
