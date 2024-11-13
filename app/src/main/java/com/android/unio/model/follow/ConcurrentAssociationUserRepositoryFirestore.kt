@@ -7,6 +7,8 @@ import com.android.unio.model.firestore.transform.serialize
 import com.android.unio.model.user.User
 import com.android.unio.model.user.UserRepository
 import com.android.unio.model.user.UserRepositoryFirestore
+import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import javax.inject.Inject
 
@@ -17,6 +19,14 @@ constructor(
     private val userRepository: UserRepository,
     private val associationRepository: AssociationRepository
 ) : ConcurrentAssociationUserRepository {
+
+  override fun init(onSuccess: () -> Unit) {
+    Firebase.auth.addAuthStateListener {
+      if (it.currentUser != null) {
+        onSuccess()
+      }
+    }
+  }
 
   override fun updateFollow(
       user: User,
