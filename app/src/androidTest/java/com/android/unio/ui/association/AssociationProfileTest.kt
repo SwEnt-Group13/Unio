@@ -15,13 +15,13 @@ import androidx.navigation.NavHostController
 import com.android.unio.R
 import com.android.unio.mocks.association.MockAssociation
 import com.android.unio.mocks.event.MockEvent
-import com.android.unio.mocks.user.MockUser
 import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationRepositoryFirestore
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventRepositoryFirestore
 import com.android.unio.model.event.EventViewModel
+import com.android.unio.model.firestore.emptyFirestoreReferenceList
 import com.android.unio.model.follow.ConcurrentAssociationUserRepositoryFirestore
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.strings.test_tags.AssociationProfileTestTags
@@ -123,7 +123,19 @@ class AssociationProfileTest {
         }
 
       userViewModel = UserViewModel(userRepository)
-    val user = MockUser.createMockUser()
+    val user = User(
+        uid = "1",
+        email = "",
+        firstName = "",
+        lastName = "",
+        biography = "",
+        savedEvents = Event.emptyFirestoreReferenceList(),
+        followedAssociations = Association.emptyFirestoreReferenceList(),
+        joinedAssociations = Association.emptyFirestoreReferenceList(),
+        interests = emptyList(),
+        socials = emptyList(),
+        profilePicture = "",
+    )
 
       every { userRepository.getUserWithId(any(), any(), any()) } answers
               {
