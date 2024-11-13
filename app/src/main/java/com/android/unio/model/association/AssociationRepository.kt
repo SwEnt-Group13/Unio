@@ -1,7 +1,11 @@
 package com.android.unio.model.association
 
+import com.google.firebase.firestore.DocumentReference
+
 interface AssociationRepository {
   fun init(onSuccess: () -> Unit)
+
+  fun getAssociationRef(uid: String): DocumentReference
 
   fun getAssociations(onSuccess: (List<Association>) -> Unit, onFailure: (Exception) -> Unit)
 

@@ -25,6 +25,7 @@
     <string name="association_follower">abonnés</string>
     <string name="association_member">membres</string>
     <string name="association_follow">S\'abonner</string>
+    <string name="association_unfollow">Se désabonner</string>
     <string name="association_join">Rejoindre</string>
     <string name="association_no_event">Pas d\'événement plannifié pour l\'instant</string>
     <string name="association_not_found">Erreur : Association introuvable</string>
