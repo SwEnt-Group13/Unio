@@ -7,24 +7,26 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.maps.model.LatLng
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import javax.inject.Inject
 
-class MapViewModel : ViewModel() {
+@HiltViewModel
+class MapViewModel
+@Inject
+constructor(
+  private val fusedLocationClient: FusedLocationProviderClient
+) : ViewModel() {
 
   /** State flow that holds the user's location. */
   private val _userLocation = MutableStateFlow<LatLng?>(null)
   val userLocation: StateFlow<LatLng?> = _userLocation.asStateFlow()
 
   /** Fetches the user's location and updates the [_userLocation] state flow. */
-  fun fetchUserLocation(context: Context, fusedLocationClient: FusedLocationProviderClient) {
-    if (ContextCompat.checkSelfPermission(
-        context, android.Manifest.permission.ACCESS_FINE_LOCATION) ==
-        PackageManager.PERMISSION_GRANTED ||
-        ContextCompat.checkSelfPermission(
-            context, android.Manifest.permission.ACCESS_COARSE_LOCATION) ==
-            PackageManager.PERMISSION_GRANTED) {
+  fun fetchUserLocation(context: Context) {
+    if (hasLocationPermissions(context)) {
       try {
         fusedLocationClient.lastLocation.addOnSuccessListener { location ->
           location?.let { _userLocation.value = LatLng(it.latitude, it.longitude) }
@@ -36,4 +38,13 @@ class MapViewModel : ViewModel() {
       Log.e("MapViewModel", "Location permission is not granted.")
     }
   }
+
+    private fun hasLocationPermissions(context: Context): Boolean {
+        return ContextCompat.checkSelfPermission(
+            context, android.Manifest.permission.ACCESS_FINE_LOCATION) ==
+                PackageManager.PERMISSION_GRANTED ||
+                ContextCompat.checkSelfPermission(
+                    context, android.Manifest.permission.ACCESS_COARSE_LOCATION) ==
+                PackageManager.PERMISSION_GRANTED
+    }
 }

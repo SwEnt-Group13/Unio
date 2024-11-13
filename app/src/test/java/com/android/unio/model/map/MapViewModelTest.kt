@@ -51,7 +51,7 @@ class MapViewModelTest {
         } returns PackageManager.PERMISSION_GRANTED
 
         // This is fine to do because the fusedLocationClient is a mock
-        mapViewModel = MapViewModel()
+        mapViewModel = MapViewModel(fusedLocationClient)
     }
 
     @Test
@@ -68,7 +68,7 @@ class MapViewModelTest {
             locationTask
         }
 
-        mapViewModel.fetchUserLocation(context, fusedLocationClient)
+        mapViewModel.fetchUserLocation(context)
 
         // Required for the location Task to complete
         shadowOf(Looper.getMainLooper()).idle()
@@ -85,7 +85,7 @@ class MapViewModelTest {
             locationTask
         }
 
-        mapViewModel.fetchUserLocation(context, fusedLocationClient)
+        mapViewModel.fetchUserLocation(context)
 
         // Required for the location Task to complete
         shadowOf(Looper.getMainLooper()).idle()
@@ -103,7 +103,7 @@ class MapViewModelTest {
             )
         } returns PackageManager.PERMISSION_DENIED
 
-        mapViewModel.fetchUserLocation(context, fusedLocationClient)
+        mapViewModel.fetchUserLocation(context)
 
         val result = mapViewModel.userLocation.first()
         assertEquals(null, result)
