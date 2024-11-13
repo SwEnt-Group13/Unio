@@ -160,6 +160,10 @@ class UserAccountCreationTest {
     val data = response.body?.string()
     val json = JSONObject(data ?: "")
     val codes = json.getJSONArray("oobCodes")
+    if (codes.length() == 0) {
+      Log.e("EndToEndTest", "No email verification codes found. Data: $data")
+      throw Exception("No email verification codes found.")
+    }
     return codes.getJSONObject(codes.length() - 1).getString("oobLink")
   }
 

@@ -29,16 +29,15 @@ fun addNewUserSocial(composeTestRule: ComposeContentTestRule, username: String, 
  * This tests verifies that your local Firebase emulator is running before running tests that use it
  */
 fun verifyEmulatorsAreRunning() {
-  try {
-    val client = OkHttpClient()
-    val request = Request.Builder().url(FIRESTORE_URL).build()
+  val client = OkHttpClient()
+  val request = Request.Builder().url(FIRESTORE_URL).build()
 
-    val response = client.newCall(request).execute()
-    val data = response.body?.string()
-    assert(data!!.contains("Ok")) { "Your emulators don't seem to be running correctly" }
-  } catch (e: Exception) {
-    assert(false) { "Start your emulators before running the end to end test" }
+  val response = client.newCall(request).execute()
+  if (response.body == null) {
+    throw Exception("Firebase Emulators are not running.")
   }
+  val data = response.body!!.string()
+  assert(data.contains("Ok")) { "Firebase Emulators are not running." }
 }
 
 /*
