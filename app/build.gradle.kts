@@ -185,6 +185,7 @@ dependencies {
     implementation(libs.androidx.ui.text.google.fonts)
     implementation(libs.androidx.compose.material)
     implementation(libs.core)
+    implementation(libs.play.services.location)
 
     testImplementation(libs.test.core.ktx)
     debugImplementation(libs.androidx.ui.tooling)
