@@ -45,6 +45,8 @@ fun UserClaimAssociationPresidentialRightsScreen(
     userViewModel: UserViewModel
 ) {
     val context = LocalContext.current
+    val association by associationViewModel.selectedAssociation.collectAsState()
+    val user by userViewModel.user.collectAsState()
 
     // State variables to hold the user input and verification status
     var email by remember { mutableStateOf("") }
@@ -113,30 +115,52 @@ fun UserClaimAssociationPresidentialRightsScreen(
 
                         Button(
                             onClick = {
-                                // Simulate email verification
-                                if (email == "correct@example.com") {
-                                    isEmailVerified = true
-                                    showErrorMessage = false
-                                    coroutineScope.launch {
-                                        sendVerificationEmail(Firebase.functions, "aurelien.domenget@icloud.com", "0NWT977EXGpFtnVOEXAE").addOnCompleteListener { task ->
-                                            if (!task.isSuccessful) {
-                                                val e = task.exception
-                                                if (e is FirebaseFunctionsException) {
-                                                    val code = e.code
-                                                    val details = e.details
-                                                    Log.e("CloudFunctionError", "Error Code: $code, Details: $details", e)
-                                                } else {
-                                                    Log.e("CloudFunctionError", "Unexpected error occurred", e)
-                                                }
-                                            } else {
-                                                Log.d("CloudFunction", "OK")
-                                            }
-                                        }
+                                if (association != null) {
+                                    if (user != null){
+                                        if (email == association!!.principalEmailAddress) {
+                                            isEmailVerified = true
+                                            showErrorMessage = false
 
+                                            // send verification email
+                                            coroutineScope.launch {
+                                                sendVerificationEmail(
+                                                    Firebase.functions,
+                                                    user!!.email,
+                                                    association!!.uid
+                                                ).addOnCompleteListener { task ->
+                                                    if (!task.isSuccessful) {
+                                                        val e = task.exception
+                                                        if (e is FirebaseFunctionsException) {
+                                                            val code = e.code
+                                                            val details = e.details
+                                                            Log.e("CloudFunctionError", "Error Code: $code, Details: $details", e)
+                                                        } else {
+                                                            Log.e("CloudFunctionError", "Unexpected error occurred", e)
+                                                        }
+                                                    } else {
+                                                        Log.d("CloudFunction", "OK")
+                                                    }
+                                                }
+                                            }
+                                        } else {
+                                            // email does not match principalEmailAddress
+                                            Log.d("emailVerification", email)
+                                            Log.d("emailVerification", association!!.principalEmailAddress)
+                                            Log.d("emailVerification", association!!.uid)
+                                            Log.d("emailVerification", association!!.description)
+                                            showErrorMessage = true
+                                        }
+                                    }else{
+                                        showErrorMessage = true
+                                        Log.e("UserError", "User does not exist or has no email")
                                     }
+
                                 } else {
+                                    // association is null
                                     showErrorMessage = true
+                                    Log.e("AssociationError", "Association does not exist or has no principalEmailAddress")
                                 }
+
                             },
                             modifier = Modifier.padding(vertical = 8.dp)
                         ) {
@@ -157,38 +181,44 @@ fun UserClaimAssociationPresidentialRightsScreen(
 
                         Button(
                             onClick = {
-                                coroutineScope.launch {
-                                    verifyCode(Firebase.functions, "0NWT977EXGpFtnVOEXAE", verificationCode).addOnCompleteListener { task ->
-                                        if (!task.isSuccessful) {
-                                            val e = task.exception
-                                            if (e is FirebaseFunctionsException) {
-                                                val code = e.code
-                                                Log.e("CloudFunctionError", "Error Code: $code", e)
+                                if (association != null) {
+                                    coroutineScope.launch {
+                                        verifyCode(Firebase.functions, association!!.uid, verificationCode).addOnCompleteListener { task ->
+                                            if (!task.isSuccessful) {
+                                                val e = task.exception
+                                                if (e is FirebaseFunctionsException) {
+                                                    val code = e.code
+                                                    Log.e("CloudFunctionError", "Error Code: $code", e)
 
-                                                when (code) {
-                                                    FirebaseFunctionsException.Code.INVALID_ARGUMENT -> {
-                                                        Toast.makeText(context, "Wrong code, please try again", Toast.LENGTH_SHORT).show()
+                                                    when (code) {
+                                                        FirebaseFunctionsException.Code.INVALID_ARGUMENT -> {
+                                                            Toast.makeText(context, "Wrong code, please try again", Toast.LENGTH_SHORT).show()
+                                                        }
+                                                        FirebaseFunctionsException.Code.NOT_FOUND -> {
+                                                            Toast.makeText(context, "Verification request not found", Toast.LENGTH_SHORT).show()
+                                                        }
+                                                        FirebaseFunctionsException.Code.UNAVAILABLE -> {
+                                                            Toast.makeText(context, "Service unavailable. Please try later", Toast.LENGTH_SHORT).show()
+                                                        }
+                                                        else -> {
+                                                            Toast.makeText(context, "Unexpected error occurred", Toast.LENGTH_SHORT).show()
+                                                        }
                                                     }
-                                                    FirebaseFunctionsException.Code.NOT_FOUND -> {
-                                                        Toast.makeText(context, "Verification request not found", Toast.LENGTH_SHORT).show()
-                                                    }
-                                                    FirebaseFunctionsException.Code.UNAVAILABLE -> {
-                                                        Toast.makeText(context, "Service unavailable. Please try later", Toast.LENGTH_SHORT).show()
-                                                    }
-                                                    else -> {
-                                                        Toast.makeText(context, "Unexpected error occurred", Toast.LENGTH_SHORT).show()
-                                                    }
+                                                } else {
+                                                    Log.e("CloudFunctionError", "Unexpected error occurred", e)
+                                                    Toast.makeText(context, "Unexpected error occurred", Toast.LENGTH_SHORT).show()
                                                 }
                                             } else {
-                                                Log.e("CloudFunctionError", "Unexpected error occurred", e)
-                                                Toast.makeText(context, "Unexpected error occurred", Toast.LENGTH_SHORT).show()
+                                                Log.d("CloudFunction", "OK")
+                                                Toast.makeText(context, "Verified successfully!", Toast.LENGTH_SHORT).show()
                                             }
-                                        } else {
-                                            Log.d("CloudFunction", "OK")
-                                            Toast.makeText(context, "Verified successfully!", Toast.LENGTH_SHORT).show()
                                         }
                                     }
+                                }else{
+                                    Log.e("AssociationError", "Association does not exist or has no principalEmailAddress")
+                                    Toast.makeText(context, "Unexpected error occurred", Toast.LENGTH_SHORT).show()
                                 }
+
 
 
                             },
