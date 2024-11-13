@@ -173,9 +173,9 @@ class ExploreScreenTest {
     verify(atLeast = 1) { navigationAction.navigateTo(Screen.ASSOCIATION_PROFILE) }
   }
 
-    @After
-    fun tearDown(){
-        clearAllMocks()
-        unmockkAll()
-    }
+  @After
+  fun tearDown() {
+    clearAllMocks()
+    unmockkAll()
+  }
 }

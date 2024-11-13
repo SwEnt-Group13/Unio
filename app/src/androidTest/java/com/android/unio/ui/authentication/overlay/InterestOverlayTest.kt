@@ -59,9 +59,9 @@ class InterestOverlayTest {
     }
   }
 
-    @After
-    fun tearDown(){
-        clearAllMocks()
-        unmockkAll()
-    }
+  @After
+  fun tearDown() {
+    clearAllMocks()
+    unmockkAll()
+  }
 }

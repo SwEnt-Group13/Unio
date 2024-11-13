@@ -7,10 +7,10 @@ import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performTextInput
+import com.android.unio.model.strings.test_tags.WelcomeTestTags
 import io.mockk.clearAllMocks
 import io.mockk.unmockkAll
 import org.junit.After
-import com.android.unio.model.strings.test_tags.WelcomeTestTags
 import org.junit.Rule
 import org.junit.Test
 
@@ -39,9 +39,8 @@ class WelcomeTest {
     composeTestRule.onNodeWithTag(WelcomeTestTags.BUTTON).assertIsEnabled()
   }
 
-
   @After
-  fun tearDown(){
+  fun tearDown() {
     clearAllMocks()
     unmockkAll()
   }

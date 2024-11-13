@@ -40,9 +40,8 @@ class SettingsTest {
     }
   }
 
-
   @After
-  fun tearDown(){
+  fun tearDown() {
     clearAllMocks()
     unmockkAll()
   }

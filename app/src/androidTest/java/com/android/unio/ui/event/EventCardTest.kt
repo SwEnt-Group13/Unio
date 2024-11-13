@@ -25,9 +25,9 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.spyk
 import io.mockk.unmockkAll
-import org.junit.After
 import java.util.Date
 import javax.inject.Inject
+import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -315,10 +315,9 @@ class EventCardTest {
         .assertExists()
   }
 
-
-    @After
-    fun tearDown(){
-        clearAllMocks()
-        unmockkAll()
-    }
+  @After
+  fun tearDown() {
+    clearAllMocks()
+    unmockkAll()
+  }
 }

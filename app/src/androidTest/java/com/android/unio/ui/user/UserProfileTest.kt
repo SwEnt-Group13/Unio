@@ -62,7 +62,7 @@ class UserProfileTest {
   }
 
   @After
-  fun tearDown(){
+  fun tearDown() {
     clearAllMocks()
     unmockkAll()
   }

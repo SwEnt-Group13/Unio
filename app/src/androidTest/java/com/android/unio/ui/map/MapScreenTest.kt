@@ -90,9 +90,8 @@ class MapScreenTest {
     verify { navigationAction.goBack() }
   }
 
-
   @After
-  fun tearDown(){
+  fun tearDown() {
     clearAllMocks()
     unmockkAll()
   }

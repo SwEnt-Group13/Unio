@@ -204,9 +204,9 @@ class AccountDetailsTest {
     verify(navigationAction).navigateTo(screen = Screen.HOME)
   }
 
-    @After
-    fun tearDown() {
-        clearAllMocks()
-        unmockkAll()
-    }
+  @After
+  fun tearDown() {
+    clearAllMocks()
+    unmockkAll()
+  }
 }

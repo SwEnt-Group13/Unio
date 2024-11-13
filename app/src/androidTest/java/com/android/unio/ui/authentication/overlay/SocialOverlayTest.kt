@@ -79,9 +79,9 @@ class SocialOverlayTest {
         .assertIsDisplayed()
   }
 
-    @After
-    fun tearDown(){
-        clearAllMocks()
-        unmockkAll()
-    }
+  @After
+  fun tearDown() {
+    clearAllMocks()
+    unmockkAll()
+  }
 }

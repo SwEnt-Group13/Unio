@@ -138,9 +138,8 @@ class EventDetailsTest {
     assertDisplayComponentInScroll(composeTestRule.onNodeWithText(event.location.name))
   }
 
-
   @After
-  fun tearDown(){
+  fun tearDown() {
     clearAllMocks()
     unmockkAll()
   }

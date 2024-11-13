@@ -92,9 +92,8 @@ class ThemeTest {
         MapMutablePreferences(map.toMutableMap())
   }
 
-
   @After
-  fun tearDown(){
+  fun tearDown() {
     clearAllMocks()
     unmockkAll()
   }

@@ -56,7 +56,9 @@ class AssociationProfileTest {
   private lateinit var associationRepository: AssociationRepositoryFirestore
 
   @MockK private lateinit var eventRepository: EventRepositoryFirestore
-  @MockK private lateinit var concurrentAssociationUserRepository: ConcurrentAssociationUserRepositoryFirestore
+  @MockK
+  private lateinit var concurrentAssociationUserRepository:
+      ConcurrentAssociationUserRepositoryFirestore
 
   private lateinit var eventViewModel: EventViewModel
 
@@ -113,8 +115,7 @@ class AssociationProfileTest {
           onSuccess(events)
         }
 
-      every{userRepository.init(any())} just runs
-
+    every { userRepository.init(any()) } just runs
 
     every { concurrentAssociationUserRepository.updateFollow(any(), any(), any(), any()) } answers
         {
@@ -122,26 +123,27 @@ class AssociationProfileTest {
           onSuccess()
         }
 
-      userViewModel = UserViewModel(userRepository)
-    val user = User(
-        uid = "1",
-        email = "",
-        firstName = "",
-        lastName = "",
-        biography = "",
-        savedEvents = Event.emptyFirestoreReferenceList(),
-        followedAssociations = Association.emptyFirestoreReferenceList(),
-        joinedAssociations = Association.emptyFirestoreReferenceList(),
-        interests = emptyList(),
-        socials = emptyList(),
-        profilePicture = "",
-    )
+    userViewModel = UserViewModel(userRepository)
+    val user =
+        User(
+            uid = "1",
+            email = "",
+            firstName = "",
+            lastName = "",
+            biography = "",
+            savedEvents = Event.emptyFirestoreReferenceList(),
+            followedAssociations = Association.emptyFirestoreReferenceList(),
+            joinedAssociations = Association.emptyFirestoreReferenceList(),
+            interests = emptyList(),
+            socials = emptyList(),
+            profilePicture = "",
+        )
 
-      every { userRepository.getUserWithId(any(), any(), any()) } answers
-              {
-                  val onSuccess = args[1] as (User) -> Unit
-                  onSuccess(user)
-              }
+    every { userRepository.getUserWithId(any(), any(), any()) } answers
+        {
+          val onSuccess = args[1] as (User) -> Unit
+          onSuccess(user)
+        }
     every { userRepository.updateUser(user, any(), any()) } answers
         {
           val onSuccess = args[1] as () -> Unit
@@ -299,9 +301,9 @@ class AssociationProfileTest {
     composeTestRule.onNodeWithTag(AssociationProfileTestTags.SCREEN).assertIsNotDisplayed()
   }
 
-    @After
-    fun tearDown() {
-        clearAllMocks()
-        unmockkAll()
-    }
+  @After
+  fun tearDown() {
+    clearAllMocks()
+    unmockkAll()
+  }
 }

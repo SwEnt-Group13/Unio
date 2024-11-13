@@ -47,32 +47,32 @@ class EndToEndTest {
   @get:Rule val composeTestRule = createAndroidComposeRule<MainActivity>()
   @get:Rule val hiltRule = HiltAndroidRule(this)
 
-    @Module
-    @InstallIn(SingletonComponent::class)
-    object FirebaseModule {
+  @Module
+  @InstallIn(SingletonComponent::class)
+  object FirebaseModule {
 
-      @Provides
-      fun provideFirebaseFirestore(): FirebaseFirestore {
-        Firebase.firestore.useEmulator("10.0.2.2", 8080)
-        return Firebase.firestore
-      }
+    @Provides
+    fun provideFirebaseFirestore(): FirebaseFirestore {
+      Firebase.firestore.useEmulator("10.0.2.2", 8080)
+      return Firebase.firestore
     }
+  }
 
-    @Module
-    @InstallIn(SingletonComponent::class)
-    object FirebaseAuthModule {
+  @Module
+  @InstallIn(SingletonComponent::class)
+  object FirebaseAuthModule {
 
-      @Provides
-      fun provideFirebaseAuth(): FirebaseAuth {
-        Firebase.auth.useEmulator("10.0.2.2", 9099)
-        return FirebaseAuth.getInstance()
-      }
+    @Provides
+    fun provideFirebaseAuth(): FirebaseAuth {
+      Firebase.auth.useEmulator("10.0.2.2", 9099)
+      return FirebaseAuth.getInstance()
     }
+  }
 
   @Before
   fun setUp() {
-//    Firebase.auth.useEmulator("10.0.2.2", 9099)
-//    Firebase.firestore.useEmulator("10.0.2.2", 8080)
+    //    Firebase.auth.useEmulator("10.0.2.2", 9099)
+    //    Firebase.firestore.useEmulator("10.0.2.2", 8080)
 
     hiltRule.inject()
     /*Test that the emulators are indeed running*/
@@ -136,9 +136,11 @@ class EndToEndTest {
     Thread.sleep(5000)
 
     composeTestRule.onNodeWithTag(UserProfileTestTags.SCREEN).assertIsDisplayed()
-    composeTestRule.onNodeWithTag(UserProfileTestTags.NAME).assertTextContains("$FIRST_NAME $LAST_NAME")
+    composeTestRule
+        .onNodeWithTag(UserProfileTestTags.NAME)
+        .assertTextContains("$FIRST_NAME $LAST_NAME")
     composeTestRule.onNodeWithTag(UserProfileTestTags.BIOGRAPHY).assertTextContains(BIOGRAPHY)
-      composeTestRule.onAllNodesWithTag(UserProfileTestTags.INTEREST).assertCountEquals(3)
+    composeTestRule.onAllNodesWithTag(UserProfileTestTags.INTEREST).assertCountEquals(3)
   }
 
   private fun verifyEmulatorsAreRunning() {
@@ -149,7 +151,7 @@ class EndToEndTest {
       val response = client.newCall(request).execute()
       val data = response.body?.string()
       assert(data!!.contains("Ok")) { "Your emulators don't seem to be running correctly" }
-    }catch (e: Exception) {
+    } catch (e: Exception) {
       assert(false) { "Start your emulators before running the end to end test" }
     }
   }
@@ -207,7 +209,7 @@ class EndToEndTest {
   }
 
   @After
-  fun tearDown(){
+  fun tearDown() {
     clearAllMocks()
     unmockkAll()
   }
