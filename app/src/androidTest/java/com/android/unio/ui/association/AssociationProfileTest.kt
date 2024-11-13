@@ -47,14 +47,14 @@ import org.mockito.kotlin.verify
 @HiltAndroidTest
 class AssociationProfileTest {
 
-  lateinit var navigationAction: NavigationAction
+  private lateinit var navigationAction: NavigationAction
 
   private lateinit var associationRepository: AssociationRepositoryFirestore
 
-  @MockK lateinit var eventRepository: EventRepositoryFirestore
+  @MockK private lateinit var eventRepository: EventRepositoryFirestore
   private lateinit var eventViewModel: EventViewModel
 
-  @MockK lateinit var userRepository: UserRepositoryFirestore
+  @MockK private lateinit var userRepository: UserRepositoryFirestore
   private lateinit var userViewModel: UserViewModel
 
   private lateinit var associationViewModel: AssociationViewModel
@@ -62,7 +62,7 @@ class AssociationProfileTest {
   private lateinit var associations: List<Association>
   private lateinit var events: List<Event>
 
-  @MockK lateinit var imageRepository: ImageRepositoryFirebaseStorage
+  @MockK private lateinit var imageRepository: ImageRepositoryFirebaseStorage
 
   @get:Rule val composeTestRule = createComposeRule()
   @get:Rule val hiltRule = HiltAndroidRule(this)

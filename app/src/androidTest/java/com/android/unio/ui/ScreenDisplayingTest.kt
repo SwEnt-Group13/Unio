@@ -60,9 +60,9 @@ class ScreenDisplayingTest {
   val user = MockUser.createMockUser(uid = "1")
   val events = listOf(MockEvent.createMockEvent())
 
-  @MockK lateinit var navigationAction: NavigationAction
+  @MockK private lateinit var navigationAction: NavigationAction
 
-  @MockK lateinit var userRepository: UserRepositoryFirestore
+  @MockK private lateinit var userRepository: UserRepositoryFirestore
   private lateinit var userViewModel: UserViewModel
 
   private lateinit var associationViewModel: AssociationViewModel

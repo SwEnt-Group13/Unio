@@ -51,10 +51,10 @@ class HomeTest {
   private lateinit var userViewModel: UserViewModel
 
   // Mock event repository to provide test data.
-  @Inject lateinit var mockEventRepository: EventRepository
+  @MockK private lateinit var mockEventRepository: EventRepository
+  @MockK private lateinit var userRepository: UserRepositoryFirestore
   @MockK private lateinit var navigationAction: NavigationAction
   @MockK private lateinit var imageRepository: ImageRepositoryFirebaseStorage
-  @MockK private lateinit var userRepository: UserRepositoryFirestore
 
   private lateinit var searchViewModel: SearchViewModel
   @MockK(relaxed = true) private lateinit var searchRepository: SearchRepository
