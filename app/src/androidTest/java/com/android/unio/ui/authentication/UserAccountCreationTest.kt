@@ -19,6 +19,9 @@ import com.android.unio.model.strings.test_tags.HomeTestTags
 import com.android.unio.model.strings.test_tags.InterestsOverlayTestTags
 import com.android.unio.model.strings.test_tags.UserProfileTestTags
 import com.android.unio.model.strings.test_tags.WelcomeTestTags
+import com.android.unio.ui.flushAuthenticationClients
+import com.android.unio.ui.flushFirestoreDatabase
+import com.android.unio.ui.verifyEmulatorsAreRunning
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
@@ -44,7 +47,7 @@ import org.junit.Test
 @LargeTest
 @HiltAndroidTest
 @UninstallModules(FirebaseModule::class, FirebaseAuthModule::class)
-class EndToEndTest {
+class UserAccountCreationTest {
   @get:Rule val composeTestRule = createAndroidComposeRule<MainActivity>()
   @get:Rule val hiltRule = HiltAndroidRule(this)
 
@@ -72,8 +75,6 @@ class EndToEndTest {
 
   @Before
   fun setUp() {
-    //    Firebase.auth.useEmulator("10.0.2.2", 9099)
-    //    Firebase.firestore.useEmulator("10.0.2.2", 8080)
 
     hiltRule.inject()
     /*Test that the emulators are indeed running*/
@@ -104,7 +105,7 @@ class EndToEndTest {
     composeTestRule.onNodeWithTag(EmailVerificationTestTags.SCREEN).assertIsDisplayed()
     composeTestRule.onNodeWithTag(EmailVerificationTestTags.REFRESH).performClick()
 
-    Thread.sleep(5000)
+//    Thread.sleep(5000)
 
     composeTestRule.onNodeWithTag(EmailVerificationTestTags.CONTINUE).performClick()
     composeTestRule.onNodeWithTag(AccountDetailsTestTags.TITLE_TEXT).assertExists()
@@ -128,13 +129,21 @@ class EndToEndTest {
     composeTestRule.onNodeWithTag(AccountDetailsTestTags.CONTINUE_BUTTON).performClick()
 
     // Wait until "HomeScreen" is displayed
-    Thread.sleep(5000)
-    composeTestRule.onNodeWithTag(HomeTestTags.SCREEN).isDisplayed()
+    composeTestRule.waitUntil {
+      composeTestRule.onNodeWithTag(HomeTestTags.SCREEN).isDisplayed()
+    }
+
+    // Wait until the bottom nav bar is displayed
+    composeTestRule.waitUntil {
+      composeTestRule.onNodeWithTag("My Profile").isDisplayed()
+    }
 
     /** Navigate to the profile screen */
     composeTestRule.onNodeWithTag("My Profile").performClick()
 
-    Thread.sleep(5000)
+    composeTestRule.waitUntil {
+      composeTestRule.onNodeWithTag(UserProfileTestTags.SCREEN).isDisplayed()
+    }
 
     composeTestRule.onNodeWithTag(UserProfileTestTags.SCREEN).assertIsDisplayed()
     composeTestRule
@@ -142,19 +151,6 @@ class EndToEndTest {
         .assertTextContains("$FIRST_NAME $LAST_NAME")
     composeTestRule.onNodeWithTag(UserProfileTestTags.BIOGRAPHY).assertTextContains(BIOGRAPHY)
     composeTestRule.onAllNodesWithTag(UserProfileTestTags.INTEREST).assertCountEquals(3)
-  }
-
-  private fun verifyEmulatorsAreRunning() {
-    try {
-      val client = OkHttpClient()
-      val request = Request.Builder().url(FIRESTORE_URL).build()
-
-      val response = client.newCall(request).execute()
-      val data = response.body?.string()
-      assert(data!!.contains("Ok")) { "Your emulators don't seem to be running correctly" }
-    } catch (e: Exception) {
-      assert(false) { "Start your emulators before running the end to end test" }
-    }
   }
 
   private fun getLatestEmailVerificationUrl(): String {
@@ -178,28 +174,12 @@ class EndToEndTest {
     client.newCall(request).execute()
   }
 
-  private fun flushAuthenticationClients() {
-    val client = OkHttpClient()
-
-    val request = Request.Builder().url(FLUSH_AUTH_URL).delete().build()
-
-    client.newCall(request).execute()
-  }
-
-  private fun flushFirestoreDatabase() {
-    val client = OkHttpClient()
-
-    val request = Request.Builder().url(FLUSH_FIRESTORE_URL).delete().build()
-
-    client.newCall(request).execute()
-  }
-
   companion object {
     const val EMAIL = "ishinzqyR6S@gmail.com"
     const val PWD = "123456"
 
-    const val FIRST_NAME = "Alexei"
-    const val LAST_NAME = "Thornber"
+    const val FIRST_NAME = "John"
+    const val LAST_NAME = "Doe"
     const val BIOGRAPHY = "I am a software engineer"
 
     const val OOB_URL = "http://10.0.2.2:9099/emulator/v1/projects/unio-1b8ee/oobCodes"

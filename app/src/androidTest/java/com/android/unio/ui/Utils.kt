@@ -6,9 +6,9 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextInput
 import com.android.unio.model.strings.test_tags.SocialsOverlayTestTags
-import com.android.unio.ui.authentication.UserLoginAndAccountCreationTest.Companion.FIRESTORE_URL
-import com.android.unio.ui.authentication.UserLoginAndAccountCreationTest.Companion.FLUSH_AUTH_URL
-import com.android.unio.ui.authentication.UserLoginAndAccountCreationTest.Companion.FLUSH_FIRESTORE_URL
+import com.android.unio.ui.authentication.UserAccountCreationTest.Companion.FIRESTORE_URL
+import com.android.unio.ui.authentication.UserAccountCreationTest.Companion.FLUSH_AUTH_URL
+import com.android.unio.ui.authentication.UserAccountCreationTest.Companion.FLUSH_FIRESTORE_URL
 import okhttp3.OkHttpClient
 import okhttp3.Request
 
