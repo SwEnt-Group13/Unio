@@ -43,47 +43,38 @@ import okhttp3.Request
 import org.json.JSONObject
 import org.junit.After
 import org.junit.Before
+import org.junit.BeforeClass
 import org.junit.Rule
 import org.junit.Test
 
 @LargeTest
 @HiltAndroidTest
-@UninstallModules(FirebaseModule::class, FirebaseAuthModule::class)
+//@UninstallModules(FirebaseModule::class, FirebaseAuthModule::class)
 class UserAccountCreationTest {
   @get:Rule val composeTestRule = createAndroidComposeRule<MainActivity>()
   @get:Rule val hiltRule = HiltAndroidRule(this)
 
-  @Module
-  @InstallIn(SingletonComponent::class)
-  object FirebaseModule {
-
-    @Provides
-    fun provideFirebaseFirestore(): FirebaseFirestore {
-      Firebase.firestore.useEmulator("10.0.2.2", 8080)
-      return Firebase.firestore
-    }
-  }
-
-  @Module
-  @InstallIn(SingletonComponent::class)
-  object FirebaseAuthModule {
-
-    @Provides
-    fun provideFirebaseAuth(): FirebaseAuth {
-      Firebase.auth.useEmulator("10.0.2.2", 9099)
-      return FirebaseAuth.getInstance()
-    }
-  }
-
-  @Before
-  fun setUp() {
-
-    hiltRule.inject()
-    /*Test that the emulators are indeed running*/
-    verifyEmulatorsAreRunning()
-    flushAuthenticationClients()
-    flushFirestoreDatabase()
-  }
+//  @Module
+//  @InstallIn(SingletonComponent::class)
+//  object FirebaseModule {
+//
+//    @Provides
+//    fun provideFirebaseFirestore(): FirebaseFirestore {
+//      Firebase.firestore.useEmulator("10.0.2.2", 8080)
+//      return Firebase.firestore
+//    }
+//  }
+//
+//  @Module
+//  @InstallIn(SingletonComponent::class)
+//  object FirebaseAuthModule {
+//
+//    @Provides
+//    fun provideFirebaseAuth(): FirebaseAuth {
+//      Firebase.auth.useEmulator("10.0.2.2", 9099)
+//      return FirebaseAuth.getInstance()
+//    }
+//  }
 
   @Test
   fun testUserCanLoginAndCreateAnAccount() {
@@ -107,7 +98,7 @@ class UserAccountCreationTest {
     composeTestRule.onNodeWithTag(EmailVerificationTestTags.SCREEN).assertIsDisplayed()
     composeTestRule.onNodeWithTag(EmailVerificationTestTags.REFRESH).performClick()
 
-    //    Thread.sleep(5000)
+    Thread.sleep(5000)
 
     composeTestRule.onNodeWithTag(EmailVerificationTestTags.CONTINUE).performClick()
     composeTestRule.onNodeWithTag(AccountDetailsTestTags.TITLE_TEXT).assertExists()
@@ -140,6 +131,8 @@ class UserAccountCreationTest {
 
     /** Navigate to the profile screen */
     composeTestRule.onNodeWithTag(BottomNavBarTestTags.MY_PROFILE).performClick()
+
+    Thread.sleep(5000)
 
     composeTestRule.waitUntil {
       composeTestRule.onNodeWithTag(UserProfileTestTags.SCREEN).isDisplayed()
@@ -191,6 +184,20 @@ class UserAccountCreationTest {
     const val FLUSH_FIRESTORE_URL =
         "http://10.0.2.2:8080/emulator/v1/projects/unio-1b8ee/databases/(default)/documents"
     const val FLUSH_AUTH_URL = "http://10.0.2.2:9099/emulator/v1/projects/unio-1b8ee/accounts"
+
+    @JvmStatic
+    @BeforeClass
+    fun setUp() {
+      //    hiltRule.inject()
+
+      Firebase.firestore.useEmulator("10.0.2.2", 8080)
+      Firebase.auth.useEmulator("10.0.2.2", 9099)
+
+      /*Test that the emulators are indeed running*/
+      verifyEmulatorsAreRunning()
+      flushAuthenticationClients()
+      flushFirestoreDatabase()
+    }
   }
 
   @After
