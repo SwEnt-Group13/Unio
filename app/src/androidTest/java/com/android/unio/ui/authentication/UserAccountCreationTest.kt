@@ -14,6 +14,7 @@ import com.android.unio.MainActivity
 import com.android.unio.model.hilt.module.FirebaseAuthModule
 import com.android.unio.model.hilt.module.FirebaseModule
 import com.android.unio.model.strings.test_tags.AccountDetailsTestTags
+import com.android.unio.model.strings.test_tags.BottomNavBarTestTags
 import com.android.unio.model.strings.test_tags.EmailVerificationTestTags
 import com.android.unio.model.strings.test_tags.HomeTestTags
 import com.android.unio.model.strings.test_tags.InterestsOverlayTestTags
@@ -132,10 +133,12 @@ class UserAccountCreationTest {
     composeTestRule.waitUntil { composeTestRule.onNodeWithTag(HomeTestTags.SCREEN).isDisplayed() }
 
     // Wait until the bottom nav bar is displayed
-    composeTestRule.waitUntil { composeTestRule.onNodeWithTag("My Profile").isDisplayed() }
+    composeTestRule.waitUntil(10000) {
+      composeTestRule.onNodeWithTag(BottomNavBarTestTags.MY_PROFILE).isDisplayed()
+    }
 
     /** Navigate to the profile screen */
-    composeTestRule.onNodeWithTag("My Profile").performClick()
+    composeTestRule.onNodeWithTag(BottomNavBarTestTags.MY_PROFILE).performClick()
 
     composeTestRule.waitUntil {
       composeTestRule.onNodeWithTag(UserProfileTestTags.SCREEN).isDisplayed()
