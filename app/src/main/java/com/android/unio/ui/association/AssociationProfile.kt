@@ -499,7 +499,7 @@ private fun AssociationHeader(
 ) {
   val association = associationViewModel.selectedAssociation.collectAsState().value!!
   var isFollowed by remember { mutableStateOf(user.isFollowAssociation(association)) }
-  var isEnable by remember { mutableStateOf(true) }
+  var isButtonEnabled by remember { mutableStateOf(true) }
   val context = LocalContext.current
   Row {
     Box(modifier = Modifier.testTag(AssociationProfileTestTags.IMAGE_HEADER)) {
@@ -523,12 +523,12 @@ private fun AssociationHeader(
               Modifier.padding(bottom = 14.dp).testTag(AssociationProfileTestTags.HEADER_MEMBERS))
       if (isFollowed) {
         OutlinedButton(
-            enabled = isEnable,
+            enabled = isButtonEnabled,
             onClick = {
-              isEnable = false
+              isButtonEnabled = false
               associationViewModel.updateFollow(association, user, isFollowed) {
                 userViewModel.refreshUser()
-                isEnable = true
+                isButtonEnabled = true
               }
               isFollowed = !isFollowed
             },
@@ -537,12 +537,12 @@ private fun AssociationHeader(
             }
       } else {
         Button(
-            enabled = isEnable,
+            enabled = isButtonEnabled,
             onClick = {
-              isEnable = false
+              isButtonEnabled = false
               associationViewModel.updateFollow(association, user, isFollowed) {
                 userViewModel.refreshUser()
-                isEnable = true
+                isButtonEnabled = true
               }
               isFollowed = !isFollowed
             },
