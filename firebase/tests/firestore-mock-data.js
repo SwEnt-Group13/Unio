@@ -95,7 +95,6 @@ export const otherAssociation = {
 export async function setupFirestore(testEnv) {
   testEnv.clearFirestore();
 
-  console.log("Setting up Firestore data...");
   await testEnv.withSecurityRulesDisabled(async env => {
     const db = env.firestore();
 
@@ -107,5 +106,4 @@ export async function setupFirestore(testEnv) {
     await setDoc(doc(db, `/associations/${otherAssociation.uid}`), otherAssociation);
     await setDoc(doc(db, `/events/${otherEvent.uid}`), otherEvent);
   });
-  console.log("Done.");
 }
