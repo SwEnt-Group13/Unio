@@ -57,6 +57,8 @@ class AssociationViewModelTest {
 
   private lateinit var testAssociations: List<Association>
 
+  private lateinit var user: User
+
   @Before
   fun setUp() {
     MockitoAnnotations.openMocks(this)
@@ -80,6 +82,20 @@ class AssociationViewModelTest {
             eventRepository,
             imageRepository,
             concurrentAssociationUserRepository)
+
+    user =
+        User(
+            uid = "1",
+            email = "",
+            firstName = "",
+            lastName = "",
+            biography = "",
+            savedEvents = Event.emptyFirestoreReferenceList(),
+            followedAssociations = Association.emptyFirestoreReferenceList(),
+            joinedAssociations = Association.emptyFirestoreReferenceList(),
+            interests = emptyList(),
+            socials = emptyList(),
+            profilePicture = "")
   }
 
   @OptIn(ExperimentalCoroutinesApi::class)
@@ -97,19 +113,6 @@ class AssociationViewModelTest {
         }
     val association = MockAssociation.createMockAssociation(uid = "1", name = "ACM")
     val followCount = association.followersCount
-    val user =
-        User(
-            uid = "1",
-            email = "",
-            firstName = "",
-            lastName = "",
-            biography = "",
-            savedEvents = Event.emptyFirestoreReferenceList(),
-            followedAssociations = Association.emptyFirestoreReferenceList(),
-            joinedAssociations = Association.emptyFirestoreReferenceList(),
-            interests = emptyList(),
-            socials = emptyList(),
-            profilePicture = "")
     viewModel.selectAssociation(association.uid)
     val updateUser = { user.followedAssociations.add(association.uid) }
     viewModel.updateFollow(association, user, false, updateUser)
@@ -126,19 +129,6 @@ class AssociationViewModelTest {
         }
     val association = MockAssociation.createMockAssociation(uid = "1", name = "ACM")
     val followCount = association.followersCount
-    val user =
-        User(
-            uid = "1",
-            email = "",
-            firstName = "",
-            lastName = "",
-            biography = "",
-            savedEvents = Event.emptyFirestoreReferenceList(),
-            followedAssociations = Association.emptyFirestoreReferenceList(),
-            joinedAssociations = Association.emptyFirestoreReferenceList(),
-            interests = emptyList(),
-            socials = emptyList(),
-            profilePicture = "")
     viewModel.selectAssociation(association.uid)
     val updateUser = { user.followedAssociations.remove(association.uid) }
     viewModel.updateFollow(association, user, true, updateUser)
