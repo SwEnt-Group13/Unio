@@ -9,3 +9,4 @@
 local.properties
 *.log
 node_modules/
+firebase/tests/coverage/
