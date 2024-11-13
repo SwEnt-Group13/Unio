@@ -8,13 +8,14 @@ import { setDoc, doc, updateDoc, getDoc, getDocs, deleteDoc, collection } from "
 import { alice, aliceAssociation, aliceEvent, otherEvent, otherAssociation, otherUser, setupFirestore } from './firestore-mock-data.js';
 
 test("Testing Firestore Rules", async () => {
-  const host = "localhost";
+  const host = "127.0.0.1";
   const port = 8080;
 
   /** Check that emulators are running **/
   try {
     await fetch(`http://${host}:${port}`);
   } catch(e) {
+    console.error(e);
     throw new Error("Emulators are not running, please start them before running tests.");
   }
 
