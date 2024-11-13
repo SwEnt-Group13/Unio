@@ -112,7 +112,9 @@ class UserAccountCreationTest {
     composeTestRule.onNodeWithTag(AccountDetailsTestTags.CONTINUE_BUTTON).performClick()
 
     // Wait until "HomeScreen" is displayed
-    composeTestRule.waitUntil { composeTestRule.onNodeWithTag(HomeTestTags.SCREEN).isDisplayed() }
+    composeTestRule.waitUntil(10000) {
+      composeTestRule.onNodeWithTag(HomeTestTags.SCREEN).isDisplayed()
+    }
 
     // Wait until the bottom nav bar is displayed
     composeTestRule.waitUntil(10000) {
@@ -122,9 +124,7 @@ class UserAccountCreationTest {
     /** Navigate to the profile screen */
     composeTestRule.onNodeWithTag(BottomNavBarTestTags.MY_PROFILE).performClick()
 
-    Thread.sleep(5000)
-
-    composeTestRule.waitUntil {
+    composeTestRule.waitUntil(10000) {
       composeTestRule.onNodeWithTag(UserProfileTestTags.SCREEN).isDisplayed()
     }
 
