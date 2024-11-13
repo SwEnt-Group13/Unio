@@ -38,6 +38,7 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "com.android.unio.HiltApplication"
+//        testInstrumentationRunnerArguments["clearPackageData"] = "true"
         vectorDrawables {
             useSupportLibrary = true
         }
@@ -94,6 +95,7 @@ android {
                 useLegacyPackaging = true
             }
         }
+//        execution = "ANDROIDX_TEST_ORCHESTRATOR"
     }
 
 
@@ -233,20 +235,14 @@ dependencies {
     implementation(libs.play.services.maps)
     implementation(libs.maps.compose)
     implementation(libs.maps.compose.utils)
-
-    //TODO see if this is really useful
-    implementation(libs.play.services.auth.v2041)
-//    implementation(libs.play.services.auth)
+    implementation(libs.play.services.auth)
 
     // Firebase
-
     implementation(libs.firebase.database.ktx)
-    implementation(libs.firebase.firestore.v2440)
-//    implementation(libs.firebase.firestore)
+    implementation(libs.firebase.firestore)
     implementation(libs.firebase.ui.auth)
     implementation(libs.firebase.auth.ktx)
-    implementation(libs.firebase.auth.v2200)
-//    implementation(libs.firebase.auth)
+    implementation(libs.firebase.auth)
 
     // Networking with OkHttp
     implementation(libs.okhttp)
@@ -307,6 +303,11 @@ dependencies {
     implementation(libs.androidx.preference.ktx)
     implementation(libs.library)
     implementation(libs.accompanist.permissions)
+
+    // Orchestrator
+    // This is to ensure that all test run independently and remove any leakage
+    androidTestImplementation(libs.androidx.runner)
+    androidTestUtil(libs.androidx.orchestrator)
 }
 
 kapt {
