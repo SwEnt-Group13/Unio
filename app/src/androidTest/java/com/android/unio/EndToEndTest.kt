@@ -13,8 +13,11 @@ import androidx.test.filters.LargeTest
 import com.android.unio.model.hilt.module.FirebaseAuthModule
 import com.android.unio.model.hilt.module.FirebaseModule
 import com.android.unio.model.strings.test_tags.AccountDetailsTestTags
+import com.android.unio.model.strings.test_tags.EmailVerificationTestTags
 import com.android.unio.model.strings.test_tags.HomeTestTags
 import com.android.unio.model.strings.test_tags.InterestsOverlayTestTags
+import com.android.unio.model.strings.test_tags.UserProfileTestTags
+import com.android.unio.model.strings.test_tags.WelcomeTestTags
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
@@ -81,11 +84,11 @@ class EndToEndTest {
   @Test
   fun testUserCanLoginAndCreateAnAccount() {
     /** Create an account on the welcome screen */
-    composeTestRule.onNodeWithTag("WelcomeScreen").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("WelcomeEmail").performTextInput(EMAIL)
-    composeTestRule.onNodeWithTag("WelcomePassword").performTextInput(PWD)
+    composeTestRule.onNodeWithTag(WelcomeTestTags.SCREEN).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(WelcomeTestTags.EMAIL).performTextInput(EMAIL)
+    composeTestRule.onNodeWithTag(WelcomeTestTags.PASSWORD).performTextInput(PWD)
 
-    composeTestRule.onNodeWithTag("WelcomeButton").performClick()
+    composeTestRule.onNodeWithTag(WelcomeTestTags.BUTTON).performClick()
 
     Thread.sleep(5000)
 
@@ -97,12 +100,12 @@ class EndToEndTest {
     Thread.sleep(5000)
 
     /** Refresh the email verification and continue */
-    composeTestRule.onNodeWithTag("EmailVerificationScreen").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("EmailVerificationRefresh").performClick()
+    composeTestRule.onNodeWithTag(EmailVerificationTestTags.SCREEN).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(EmailVerificationTestTags.REFRESH).performClick()
 
     Thread.sleep(5000)
 
-    composeTestRule.onNodeWithTag("EmailVerificationContinue").performClick()
+    composeTestRule.onNodeWithTag(EmailVerificationTestTags.CONTINUE).performClick()
     composeTestRule.onNodeWithTag(AccountDetailsTestTags.TITLE_TEXT).assertExists()
 
     /** Fill in the account details */
@@ -132,10 +135,10 @@ class EndToEndTest {
 
     Thread.sleep(5000)
 
-    composeTestRule.onNodeWithTag("UserProfileScreen").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("UserProfileName").assertTextContains("$FIRST_NAME $LAST_NAME")
-    composeTestRule.onNodeWithTag("UserProfileBiography").assertTextContains(BIOGRAPHY)
-      composeTestRule.onAllNodesWithTag("UserProfileInterest").assertCountEquals(3)
+    composeTestRule.onNodeWithTag(UserProfileTestTags.SCREEN).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(UserProfileTestTags.NAME).assertTextContains("$FIRST_NAME $LAST_NAME")
+    composeTestRule.onNodeWithTag(UserProfileTestTags.BIOGRAPHY).assertTextContains(BIOGRAPHY)
+      composeTestRule.onAllNodesWithTag(UserProfileTestTags.INTEREST).assertCountEquals(3)
   }
 
   private fun verifyEmulatorsAreRunning() {
