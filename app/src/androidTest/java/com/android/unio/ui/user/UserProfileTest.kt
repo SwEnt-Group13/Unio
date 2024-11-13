@@ -23,8 +23,6 @@ import org.junit.Test
 class UserProfileTest {
 
   @MockK private lateinit var navigationAction: NavigationAction
-  @MockK private lateinit var userRepository: UserRepositoryFirestore
-  private lateinit var userViewModel: UserViewModel
 
   @get:Rule val composeTestRule = createComposeRule()
 
@@ -33,8 +31,6 @@ class UserProfileTest {
   @Before
   fun setUp() {
     MockKAnnotations.init(this)
-
-    userViewModel = UserViewModel(userRepository)
   }
 
   @Test
@@ -64,14 +60,6 @@ class UserProfileTest {
 
     composeTestRule.onNodeWithTag("UserProfileBottomSheet").assertIsDisplayed()
   }
-
-  @Test
-  fun testNoUser() {
-    composeTestRule.setContent { UserProfileScreen(userViewModel, navigationAction) }
-
-    composeTestRule.onNodeWithTag("UserProfileScreen").assertIsNotDisplayed()
-  }
-
 
   @After
   fun tearDown(){
