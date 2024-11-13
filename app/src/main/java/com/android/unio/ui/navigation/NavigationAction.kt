@@ -7,6 +7,7 @@ import androidx.compose.material.icons.outlined.Search
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
+import com.android.unio.model.strings.test_tags.BottomNavBarTestTags
 import com.android.unio.resources.BookmarkIcon
 
 open class NavigationAction(val navController: NavHostController) {
@@ -93,13 +94,22 @@ val LIST_TOP_LEVEL_DESTINATION =
 data class TopLevelDestination(val route: String, val icon: ImageVector, val textId: String)
 
 object TopLevelDestinations {
-  val HOME = TopLevelDestination(route = Route.HOME, icon = Icons.Outlined.Home, textId = "Home")
-  val SAVED = TopLevelDestination(route = Route.SAVED, icon = BookmarkIcon, textId = "Saved")
+  val HOME =
+      TopLevelDestination(
+          route = Route.HOME, icon = Icons.Outlined.Home, textId = BottomNavBarTestTags.HOME)
+  val SAVED =
+      TopLevelDestination(
+          route = Route.SAVED, icon = BookmarkIcon, textId = BottomNavBarTestTags.SAVED)
   val EXPLORE =
-      TopLevelDestination(route = Route.EXPLORE, icon = Icons.Outlined.Search, textId = "Explore")
+      TopLevelDestination(
+          route = Route.EXPLORE,
+          icon = Icons.Outlined.Search,
+          textId = BottomNavBarTestTags.EXPLORE)
   val MY_PROFILE =
       TopLevelDestination(
-          route = Route.MY_PROFILE, icon = Icons.Outlined.Person, textId = "My Profile")
+          route = Route.MY_PROFILE,
+          icon = Icons.Outlined.Person,
+          textId = BottomNavBarTestTags.MY_PROFILE)
 }
 
 object Route {
