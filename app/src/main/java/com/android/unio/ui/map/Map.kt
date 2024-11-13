@@ -1,14 +1,22 @@
 package com.android.unio.ui.map
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
+import androidx.compose.material.icons.filled.MyLocation
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -16,35 +24,118 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import com.android.unio.R
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventViewModel
+import com.android.unio.model.map.MapViewModel
 import com.android.unio.model.strings.MapStrings
 import com.android.unio.model.strings.test_tags.MapTestTags
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.navigation.NavigationAction
+import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.Timestamp
+import com.google.maps.android.compose.CameraPositionState
+import com.google.maps.android.compose.Circle
 import com.google.maps.android.compose.GoogleMap
+import com.google.maps.android.compose.MapProperties
+import com.google.maps.android.compose.MapUiSettings
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
 import java.util.Calendar
 import java.util.concurrent.TimeUnit
+import com.android.unio.ui.theme.mapUserLocationCircleFiller
+import com.android.unio.ui.theme.mapUserLocationCircleStroke
+
+val EPFL_COORDINATES = LatLng(46.518831258, 6.559331096)
+const val APPROXIMATE_CIRCLE_RADIUS = 30.0
+const val APPROXIMATE_CIRCLE_OUTLINE_WIDTH = 2f
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MapScreen(
     navigationAction: NavigationAction,
     eventViewModel: EventViewModel,
-    userViewModel: UserViewModel
+    userViewModel: UserViewModel,
+    mapViewModel: MapViewModel
 ) {
   val context = LocalContext.current
+  val fusedLocationClient = remember { LocationServices.getFusedLocationProviderClient(context) }
+  val cameraPositionState = rememberCameraPositionState()
+  val userLocation by mapViewModel.userLocation.collectAsState()
+  var initialCentered by remember { mutableStateOf(false) }
+  var isMyLocationEnabled by remember { mutableStateOf(false) }
+  var showApproximateCircle by remember { mutableStateOf(false) }
+
+  val permissionLauncher =
+      rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
+          permissions ->
+        when {
+          permissions.getOrDefault(Manifest.permission.ACCESS_FINE_LOCATION, false) -> {
+            mapViewModel.fetchUserLocation(context, fusedLocationClient)
+            isMyLocationEnabled = true
+            showApproximateCircle = false
+          }
+          permissions.getOrDefault(Manifest.permission.ACCESS_COARSE_LOCATION, false) -> {
+            mapViewModel.fetchUserLocation(context, fusedLocationClient)
+            isMyLocationEnabled = false
+            showApproximateCircle = true
+          }
+          else -> {
+            Log.e("MapScreen", "Location permission is not granted.")
+          }
+        }
+      }
+
+  /** Request location permissions. */
+  fun requestPermissions() {
+    permissionLauncher.launch(
+        arrayOf(
+            Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION))
+  }
+
+  // Check what permissions are already granted
+  LaunchedEffect(Unit) {
+    when (PackageManager.PERMISSION_GRANTED) {
+      ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) -> {
+        isMyLocationEnabled = true
+        showApproximateCircle = false
+        mapViewModel.fetchUserLocation(context, fusedLocationClient)
+      }
+      ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) -> {
+        isMyLocationEnabled = false
+        showApproximateCircle = true
+        requestPermissions()
+        mapViewModel.fetchUserLocation(context, fusedLocationClient)
+      }
+      else -> {
+        requestPermissions()
+      }
+    }
+    cameraPositionState.position =
+        CameraPosition.fromLatLngZoom(userLocation ?: EPFL_COORDINATES, 10f)
+  }
+
+  // Center map on the user's location initially if available
+  LaunchedEffect(userLocation) {
+    if (userLocation != null && !initialCentered) {
+      cameraPositionState.position = CameraPosition.fromLatLngZoom(userLocation!!, 15f)
+      initialCentered = true
+    }
+  }
+
   Scaffold(
       modifier = Modifier.testTag(MapTestTags.SCREEN),
       topBar = {
@@ -63,29 +154,61 @@ fun MapScreen(
                         contentDescription = context.getString(R.string.map_event_go_back_button))
                   }
             })
+      },
+      floatingActionButton = {
+        FloatingActionButton(
+            modifier = Modifier.padding(bottom = 80.dp),
+            onClick = {
+              userLocation?.let {
+                cameraPositionState.position = CameraPosition.fromLatLngZoom(it, 15f)
+              }
+            }) {
+              Icon(Icons.Default.MyLocation, contentDescription = context.getString(R.string.map_content_description_center_on_user))
+            }
       }) { pd ->
-        EventMap(pd, eventViewModel, userViewModel)
+        EventMap(
+            pd,
+            eventViewModel,
+            userViewModel,
+            cameraPositionState,
+            isMyLocationEnabled,
+            showApproximateCircle,
+            userLocation)
       }
 }
 
 @Composable
-fun EventMap(pd: PaddingValues, eventViewModel: EventViewModel, userViewModel: UserViewModel) {
-  val epflCameraPosition = CameraPosition.fromLatLngZoom(LatLng(46.518831258, 6.559331096), 10f)
-  val cameraPositionState = rememberCameraPositionState { position = epflCameraPosition }
-
+fun EventMap(
+    pd: PaddingValues,
+    eventViewModel: EventViewModel,
+    userViewModel: UserViewModel,
+    cameraPositionState: CameraPositionState,
+    isMyLocatonEnabled: Boolean,
+    showApproximateCircle: Boolean,
+    userLocation: LatLng?
+) {
   val events = eventViewModel.events.collectAsState()
 
   val user by userViewModel.user.collectAsState()
   val savedEvents by user!!.savedEvents.list.collectAsState()
-  LaunchedEffect(user) {
-    if (user != null) {
-      user!!.savedEvents.requestAll()
-    }
-  }
+  LaunchedEffect(user) { user?.savedEvents?.requestAll() }
 
   GoogleMap(
       modifier = Modifier.padding(pd).testTag(MapTestTags.GOOGLE_MAPS),
-      cameraPositionState = cameraPositionState) {
+      cameraPositionState = cameraPositionState,
+      properties = MapProperties(isMyLocationEnabled = isMyLocatonEnabled),
+      uiSettings = MapUiSettings( myLocationButtonEnabled = false)
+  ) {
+      // Display the user's approximate location if only coarse location is available
+        if (showApproximateCircle && userLocation != null) {
+          Circle(
+              center = userLocation,
+              radius = APPROXIMATE_CIRCLE_RADIUS,
+              fillColor = mapUserLocationCircleFiller,
+              strokeColor = mapUserLocationCircleStroke,
+              strokeWidth = APPROXIMATE_CIRCLE_OUTLINE_WIDTH)
+        }
+
         // Display saved events
         savedEvents.forEach { event ->
           if (event.date.toDate() > Calendar.getInstance().time) {
