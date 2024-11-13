@@ -1,11 +1,10 @@
-package com.android.unio.model
+package com.android.unio.model.map
 
 import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Looper
 import androidx.core.content.ContextCompat
-import com.android.unio.model.map.MapViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.tasks.OnFailureListener
