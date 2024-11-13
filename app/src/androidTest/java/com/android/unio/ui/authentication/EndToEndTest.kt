@@ -1,4 +1,4 @@
-package com.android.unio
+package com.android.unio.ui.authentication
 
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
@@ -10,6 +10,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import androidx.test.filters.LargeTest
+import com.android.unio.MainActivity
 import com.android.unio.model.hilt.module.FirebaseAuthModule
 import com.android.unio.model.hilt.module.FirebaseModule
 import com.android.unio.model.strings.test_tags.AccountDetailsTestTags
