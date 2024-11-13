@@ -3,42 +3,48 @@ import {
   assertSucceeds,
   initializeTestEnvironment
 } from "@firebase/rules-unit-testing"
-import { readFile } from "fs/promises"
+import { mkdir, readFile, writeFile } from "fs/promises"
 import { setDoc, doc, updateDoc, getDoc, getDocs, deleteDoc, collection } from "firebase/firestore";
 import { alice, aliceAssociation, aliceEvent, otherEvent, otherAssociation, otherUser, setupFirestore } from './firestore-mock-data.js';
 
-(async () => {
-  /** Initialize testing environment **/  
+test("Testing Firestore Rules", async () => {
+  const host = "localhost";
+  const port = 8080;
+
+  /** Check that emulators are running **/
+  try {
+    await fetch(`http://${host}:${port}`);
+  } catch(e) {
+    throw new Error("Emulators are not running, please start them before running tests.");
+  }
+
+  /** Initialize testing environment **/
   const testEnv = await initializeTestEnvironment({
     projectId: "unio-1b8ee",
     firestore: {
       rules: await readFile("firestore.rules", "utf8"),
-      host: "localhost",
-      port: 8080
+      host: host,
+      port: port
     },
   });
-  process.env['FIRESTORE_EMULATOR_HOST'] = `${testEnv.firestoreEmulatorHost}:${testEnv.firestoreEmulatorPort}`;
+  process.env['FIRESTORE_EMULATOR_HOST'] = `${host}:${port}`;
   
   /** Load data **/
   await setupFirestore(testEnv);
 
   /** Run tests **/
-  console.log("Running tests...");
-
   try {
     await runTests(testEnv);
   } catch(e) {
-    console.error("\x1b[31mTests failed, cleaning up.\x1b[0m");
     await testEnv.clearFirestore();
-
     throw e;
   }
 
-  console.log("\x1b[32mAll tests passed successfully!\x1b[0m");
+  await generateCoverageReport(host, port);
+  
   await testEnv.clearFirestore();
   await testEnv.cleanup();
-
-})();
+});
 
 async function runTests(testEnv) {
   const aliceAuth = testEnv.authenticatedContext(alice.uid, {
@@ -47,7 +53,7 @@ async function runTests(testEnv) {
   });  
   const aliceDb = aliceAuth.firestore();
 
-  /** Reading and writing to users **/
+  /** Read and write operations on users **/
   await assertSucceeds(setDoc(doc(aliceDb, `/users/${alice.uid}`), alice));
   await assertSucceeds(getDoc(doc(aliceDb, `/users/${alice.uid}`)));
   await assertFails(setDoc(doc(aliceDb, `/users/${alice.uid}`), { ...alice, uid: "other" }));
@@ -67,7 +73,7 @@ async function runTests(testEnv) {
     savedEvents: "invalid type"
   }));
 
-  /** Reading and writing to associations **/
+  /** Read and write operations on associations **/
   await assertSucceeds(setDoc(doc(aliceDb, `/associations/${aliceAssociation.uid}`), aliceAssociation));
   await assertFails(setDoc(doc(aliceDb, `/associations/${aliceAssociation.uid}`), { ...aliceAssociation, uid: "other" }));
   await assertSucceeds(getDoc(doc(aliceDb, `/associations/${aliceAssociation.uid}`)));
@@ -87,7 +93,7 @@ async function runTests(testEnv) {
     members: "invalid type"
   }));
 
-  /** Reading and writing to events **/
+  /** Read and write operations on events **/
   await assertSucceeds(setDoc(doc(aliceDb, `/events/${aliceEvent.uid}`), aliceEvent));
   await assertFails(setDoc(doc(aliceDb, `/events/${aliceEvent.uid}`), { ...aliceEvent, uid: "other" }));
   await assertSucceeds(getDoc(doc(aliceDb, `/events/${aliceEvent.uid}`)));
@@ -104,7 +110,7 @@ async function runTests(testEnv) {
     organisers: "invalid type"
   }));
 
-  /** Deny all unauthenticated requests **/
+  /** All unauthenticated requests should be denied **/
   const unAuthenticated = testEnv.unauthenticatedContext();
   const unAuthenticatedDb = unAuthenticated.firestore();
   await assertFails(getDoc(doc(unAuthenticatedDb, `/users/${alice.uid}`)));
@@ -114,7 +120,7 @@ async function runTests(testEnv) {
   await assertFails(getDoc(doc(unAuthenticatedDb, `/associations/${alice.uid}`)));
   await assertFails(getDocs(collection(unAuthenticatedDb, `/associations`)));
 
-  /** Deny all authenticated but not email verified requests **/
+  /** All authenticated requests should be denied if email is not verified **/
   const unverified = testEnv.authenticatedContext(alice.uid, {
     email_verified: false,
     email: alice.email
@@ -126,5 +132,12 @@ async function runTests(testEnv) {
   await assertFails(getDocs(collection(unVerifiedDb, `/events`)));
   await assertFails(getDoc(doc(unVerifiedDb, `/associations/${alice.uid}`)));
   await assertFails(getDocs(collection(unVerifiedDb, `/associations`)));
+}
 
+async function generateCoverageReport(host, port) {
+  const data = await fetch(`http://${host}:${port}/emulator/v1/projects/unio-1b8ee:ruleCoverage.html`);
+  const coverage = await data.text();
+
+  await mkdir("firebase/tests/coverage", { recursive: true });
+  await writeFile("firebase/tests/coverage/firestore-rules-coverage.html", coverage);
 }
