@@ -87,7 +87,10 @@ fun UserClaimAssociationScreen(
                     Text("Claim president rights for an existing association", style = AppTypography.bodySmall)
                     Spacer(modifier = Modifier.height(6.dp))
 
-                    AssociationSearchBar(searchViewModel = searchViewModel, onAssociationSelected = {}, modifier = Modifier)
+                    AssociationSearchBar(searchViewModel = searchViewModel, onAssociationSelected = { association ->
+                        associationViewModel.selectAssociation(association.uid)
+                        navigationAction.navigateTo(Screen.CLAIM_ASSOCIATION_PRESIDENTIAL_RIGHTS)
+                    }, modifier = Modifier)
                 }
             }
         }

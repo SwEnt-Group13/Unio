@@ -42,6 +42,7 @@ import com.android.unio.ui.navigation.Screen
 import com.android.unio.ui.saved.SavedScreen
 import com.android.unio.ui.settings.SettingsScreen
 import com.android.unio.ui.theme.AppTheme
+import com.android.unio.ui.user.UserClaimAssociationPresidentialRightsScreen
 import com.android.unio.ui.user.UserClaimAssociationScreen
 import com.android.unio.ui.user.UserProfileScreen
 import com.google.firebase.Firebase
@@ -149,8 +150,11 @@ fun UnioApp(imageRepository: ImageRepositoryFirebaseStorage) {
     navigation(startDestination = Screen.MY_PROFILE, route = Route.MY_PROFILE) {
       composable(Screen.MY_PROFILE) { UserProfileScreen(userViewModel, navigationActions, searchViewModel) }
       composable(Screen.SETTINGS) { SettingsScreen(navigationActions) }
-      composable(Screen.CLAIM_ASSOCIATION) {
+      composable(Screen.CLAIM_ASSOCIATION_RIGHTS) {
         UserClaimAssociationScreen(associationViewModel, navigationActions, searchViewModel)
+      }
+      composable(Screen.CLAIM_ASSOCIATION_PRESIDENTIAL_RIGHTS) {
+        UserClaimAssociationPresidentialRightsScreen(associationViewModel, navigationActions, searchViewModel, userViewModel)
       }
     }
   }

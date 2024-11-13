@@ -238,7 +238,7 @@ fun UserProfileScreenContent(navigationAction: NavigationAction, user: User, sea
           } else {
               Text("You are not member of any association yet", style = AppTypography.bodySmall)
 
-              Button(onClick = {navigationAction.navigateTo(Screen.CLAIM_ASSOCIATION)},
+              Button(onClick = {navigationAction.navigateTo(Screen.CLAIM_ASSOCIATION_RIGHTS)},
                   modifier = Modifier.testTag("claimButton")){
                   Text("Claim Association")
               }
