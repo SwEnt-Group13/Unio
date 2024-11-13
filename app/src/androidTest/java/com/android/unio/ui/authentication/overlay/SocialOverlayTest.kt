@@ -7,6 +7,7 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import com.android.unio.model.strings.test_tags.SocialsOverlayTestTags
 import com.android.unio.model.user.UserSocial
+import com.android.unio.ui.addNewUserSocial
 import io.mockk.clearAllMocks
 import io.mockk.unmockkAll
 import org.junit.After
