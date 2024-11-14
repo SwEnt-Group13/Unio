@@ -30,8 +30,9 @@ class UserViewModel @Inject constructor(private val repository: UserRepository) 
   private var updateJob: Job? = null
   private var initializeWithAuthenticatedUser: Boolean = true
 
-  private var _credential :AuthCredential? = null
-  val credential: AuthCredential? get() = _credential
+  private var _credential: AuthCredential? = null
+  val credential: AuthCredential?
+    get() = _credential
 
   constructor(
       repository: UserRepository,

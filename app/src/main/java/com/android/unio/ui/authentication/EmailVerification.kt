@@ -31,7 +31,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.android.unio.R
 import com.android.unio.model.strings.test_tags.EmailVerificationTestTags
 import com.android.unio.model.user.UserViewModel
@@ -39,7 +38,6 @@ import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
 import com.android.unio.ui.theme.AppTypography
 import com.google.firebase.Firebase
-import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.auth
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -58,14 +56,13 @@ fun EmailVerificationScreen(navigationAction: NavigationAction, userViewModel: U
           if (userViewModel.credential == null) {
             Log.e("EmailVerificationScreen", "Credential is null")
           } else {
-            Firebase.auth.currentUser?.reauthenticate(
-              userViewModel.credential!!
-            )?.addOnSuccessListener {
-              success = true
-              userViewModel.setCredential(null)
-            }
+            Firebase.auth.currentUser
+                ?.reauthenticate(userViewModel.credential!!)
+                ?.addOnSuccessListener {
+                  success = true
+                  userViewModel.setCredential(null)
+                }
           }
-
         }
       } else {
         Log.e("EmailVerificationScreen", "Failed to refresh", it.exception)

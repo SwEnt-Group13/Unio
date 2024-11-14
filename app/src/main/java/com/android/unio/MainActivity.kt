@@ -44,9 +44,6 @@ import com.android.unio.ui.saved.SavedScreen
 import com.android.unio.ui.settings.SettingsScreen
 import com.android.unio.ui.theme.AppTheme
 import com.android.unio.ui.user.UserProfileScreen
-import com.google.firebase.Firebase
-import com.google.firebase.auth.auth
-import com.google.firebase.firestore.firestore
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.HiltAndroidApp
 import javax.inject.Inject
@@ -101,7 +98,9 @@ fun UnioApp(imageRepository: ImageRepositoryFirebaseStorage) {
   NavHost(navController = navController, startDestination = Route.AUTH) {
     navigation(startDestination = Screen.WELCOME, route = Route.AUTH) {
       composable(Screen.WELCOME) { WelcomeScreen(userViewModel) }
-      composable(Screen.EMAIL_VERIFICATION) { EmailVerificationScreen(navigationActions, userViewModel) }
+      composable(Screen.EMAIL_VERIFICATION) {
+        EmailVerificationScreen(navigationActions, userViewModel)
+      }
       composable(Screen.ACCOUNT_DETAILS) {
         AccountDetails(navigationActions, userViewModel, imageRepository)
       }

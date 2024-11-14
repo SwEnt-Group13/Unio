@@ -107,6 +107,7 @@ object EmulatorUtils {
     const val ROOT = "http://$HOST:$PORT"
     const val DATABASE_URL = "$ROOT/emulator/v1/projects/unio-1b8ee/databases/(default)/documents"
   }
+
   object Auth {
     const val HOST = "10.0.2.2"
     const val PORT = 9099
