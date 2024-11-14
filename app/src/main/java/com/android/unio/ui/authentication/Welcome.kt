@@ -43,18 +43,21 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign.Companion.Center
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat.getSystemService
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.android.unio.R
 import com.android.unio.model.strings.test_tags.WelcomeTestTags
 import com.android.unio.model.user.SignInState
+import com.android.unio.model.user.UserViewModel
 import com.android.unio.model.user.isValidEmail
 import com.android.unio.model.user.isValidPassword
 import com.android.unio.model.user.signInOrCreateAccount
 import com.android.unio.ui.theme.AppTypography
 import com.google.firebase.Firebase
+import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.auth
 
 @Composable
-fun WelcomeScreen() {
+fun WelcomeScreen(userViewModel: UserViewModel) {
   val context = LocalContext.current
 
   var email by remember { mutableStateOf("") }
@@ -153,6 +156,7 @@ fun WelcomeScreen() {
                               Toast.LENGTH_SHORT)
                           .show()
                     } else {
+                      userViewModel.setCredential(EmailAuthProvider.getCredential(email, password))
                       handleAuthentication(email, password, context)
                     }
                   },
