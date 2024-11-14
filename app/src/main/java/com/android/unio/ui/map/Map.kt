@@ -16,7 +16,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -28,7 +27,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
@@ -41,6 +39,8 @@ import com.android.unio.model.strings.MapStrings
 import com.android.unio.model.strings.test_tags.MapTestTags
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.navigation.NavigationAction
+import com.android.unio.ui.theme.mapUserLocationCircleFiller
+import com.android.unio.ui.theme.mapUserLocationCircleStroke
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
@@ -55,8 +55,6 @@ import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
 import java.util.Calendar
 import java.util.concurrent.TimeUnit
-import com.android.unio.ui.theme.mapUserLocationCircleFiller
-import com.android.unio.ui.theme.mapUserLocationCircleStroke
 
 val EPFL_COORDINATES = LatLng(46.518831258, 6.559331096)
 const val APPROXIMATE_CIRCLE_RADIUS = 30.0
@@ -155,13 +153,16 @@ fun MapScreen(
       },
       floatingActionButton = {
         FloatingActionButton(
-            modifier = Modifier.padding(bottom = 80.dp),
+            modifier = Modifier.padding(bottom = 80.dp).testTag(MapTestTags.CENTER_ON_USER_FAB),
             onClick = {
               userLocation?.let {
                 cameraPositionState.position = CameraPosition.fromLatLngZoom(it, 15f)
               }
             }) {
-              Icon(Icons.Default.MyLocation, contentDescription = context.getString(R.string.map_content_description_center_on_user))
+              Icon(
+                  Icons.Default.MyLocation,
+                  contentDescription =
+                      context.getString(R.string.map_content_description_center_on_user))
             }
       }) { pd ->
         EventMap(
@@ -195,16 +196,16 @@ fun EventMap(
       modifier = Modifier.padding(pd).testTag(MapTestTags.GOOGLE_MAPS),
       cameraPositionState = cameraPositionState,
       properties = MapProperties(isMyLocationEnabled = isMyLocatonEnabled),
-      uiSettings = MapUiSettings( myLocationButtonEnabled = false)
-  ) {
-      // Display the user's approximate location if only coarse location is available
+      uiSettings = MapUiSettings(myLocationButtonEnabled = false)) {
+        // Display the user's approximate location if only coarse location is available
         if (showApproximateCircle && userLocation != null) {
           Circle(
               center = userLocation,
               radius = APPROXIMATE_CIRCLE_RADIUS,
               fillColor = mapUserLocationCircleFiller,
               strokeColor = mapUserLocationCircleStroke,
-              strokeWidth = APPROXIMATE_CIRCLE_OUTLINE_WIDTH)
+              strokeWidth = APPROXIMATE_CIRCLE_OUTLINE_WIDTH,
+              tag = MapTestTags.LOCATION_APPROXIMATE_CIRCLE)
         }
 
         // Display saved events

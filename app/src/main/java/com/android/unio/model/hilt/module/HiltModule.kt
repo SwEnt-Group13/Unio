@@ -88,7 +88,7 @@ object LocationModule {
 
   @Provides
   fun provideFusedLocationProviderClient(
-    @ApplicationContext context: Context
+      @ApplicationContext context: Context
   ): FusedLocationProviderClient {
     return LocationServices.getFusedLocationProviderClient(context)
   }
