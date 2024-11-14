@@ -223,6 +223,7 @@ class EventRepositoryFirestoreTest {
   @Test
   fun testAddEvent() {
     `when`(collectionReference.document(event1.uid)).thenReturn(documentReference)
+    `when`(voidTask.addOnSuccessListener(any())).thenReturn(voidTask)
     `when`(documentReference.set(any())).thenReturn(voidTask)
     repository.addEvent(event1, {}, { e -> throw e })
   }
@@ -242,6 +243,7 @@ class EventRepositoryFirestoreTest {
   @Test
   fun testDeleteEventById() {
     `when`(collectionReference.document(event1.uid)).thenReturn(documentReference)
+    `when`(voidTask.addOnSuccessListener(any())).thenReturn(voidTask)
     `when`(documentReference.delete()).thenReturn(voidTask)
     repository.deleteEventById(event1.uid, {}, { e -> throw e })
   }
