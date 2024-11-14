@@ -31,11 +31,11 @@ class HiltApplication : AndroidJUnitRunner() {
  */
 object HiltModuleAndroidTest {
 
-  @Module
-  @TestInstallIn(components = [SingletonComponent::class], replaces = [EventModule::class])
-  abstract class EventModuleTest() {
-
-    @Binds
-    abstract fun bindEventRepository(eventRepositoryMock: EventRepositoryMock): EventRepository
-  }
+//  @Module
+//  @TestInstallIn(components = [SingletonComponent::class], replaces = [EventModule::class])
+//  abstract class EventModuleTest() {
+//
+//    @Binds
+//    abstract fun bindEventRepository(eventRepositoryMock: EventRepositoryMock): EventRepository
+//  }
 }
