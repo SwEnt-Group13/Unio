@@ -23,13 +23,18 @@ import com.android.unio.ui.navigation.TopLevelDestination
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import io.mockk.MockKAnnotations
+import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
+import io.mockk.just
+import io.mockk.runs
 import io.mockk.spyk
+import io.mockk.unmockkAll
 import io.mockk.verify
 import javax.inject.Inject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
+import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -49,9 +54,9 @@ class HomeTest {
 
   // Mock event repository to provide test data.
   @Inject lateinit var mockEventRepository: EventRepository
+  @MockK private lateinit var userRepository: UserRepositoryFirestore
   @MockK private lateinit var navigationAction: NavigationAction
   @MockK private lateinit var imageRepository: ImageRepositoryFirebaseStorage
-  @MockK private lateinit var userRepository: UserRepositoryFirestore
 
   private lateinit var searchViewModel: SearchViewModel
   @MockK(relaxed = true) private lateinit var searchRepository: SearchRepository
@@ -63,6 +68,8 @@ class HomeTest {
     searchViewModel = spyk(SearchViewModel(searchRepository))
     every { navigationAction.navigateTo(any(TopLevelDestination::class)) } returns Unit
     every { navigationAction.navigateTo(any(String::class)) } returns Unit
+
+    every { userRepository.init(any()) } just runs
     userViewModel = spyk(UserViewModel(userRepository))
     val user = MockUser.createMockUser()
     every { userRepository.updateUser(user, any(), any()) } answers
@@ -132,5 +139,11 @@ class HomeTest {
     composeTestRule.onNodeWithTag(HomeTestTags.MAP_BUTTON).performClick()
 
     verify { navigationAction.navigateTo(Screen.MAP) }
+  }
+
+  @After
+  fun tearDown() {
+    clearAllMocks()
+    unmockkAll()
   }
 }

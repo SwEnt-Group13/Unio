@@ -33,6 +33,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.android.unio.R
 import com.android.unio.model.strings.test_tags.EmailVerificationTestTags
+import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
 import com.android.unio.ui.theme.AppTypography
@@ -41,7 +42,7 @@ import com.google.firebase.auth.auth
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EmailVerificationScreen(navigationAction: NavigationAction) {
+fun EmailVerificationScreen(navigationAction: NavigationAction, userViewModel: UserViewModel) {
 
   val user by remember { mutableStateOf(Firebase.auth.currentUser) }
   var success by remember { mutableStateOf(false) }
@@ -52,7 +53,16 @@ fun EmailVerificationScreen(navigationAction: NavigationAction) {
     Firebase.auth.currentUser?.reload()?.addOnCompleteListener {
       if (it.isSuccessful) {
         if (Firebase.auth.currentUser?.isEmailVerified == true) {
-          success = true
+          if (userViewModel.credential == null) {
+            Log.e("EmailVerificationScreen", "Credential is null")
+          } else {
+            Firebase.auth.currentUser
+                ?.reauthenticate(userViewModel.credential!!)
+                ?.addOnSuccessListener {
+                  success = true
+                  userViewModel.setCredential(null)
+                }
+          }
         }
       } else {
         Log.e("EmailVerificationScreen", "Failed to refresh", it.exception)
@@ -104,6 +114,7 @@ fun EmailVerificationScreen(navigationAction: NavigationAction) {
                     context.getString(R.string.email_verification_verified),
                     style = AppTypography.titleLarge)
                 Button(
+                    modifier = Modifier.testTag(EmailVerificationTestTags.CONTINUE),
                     onClick = { navigationAction.navigateTo(Screen.ACCOUNT_DETAILS) },
                 ) {
                   Text(context.getString(R.string.email_verification_verified_continue))
@@ -127,17 +138,19 @@ fun EmailVerificationScreen(navigationAction: NavigationAction) {
                       style = AppTypography.labelLarge)
                 }
 
-                Button(onClick = { checkEmailVerification() }) {
-                  Icon(
-                      Icons.Outlined.Refresh,
-                      contentDescription =
-                          context.getString(
-                              R.string.email_verification_content_description_refresh))
-                  Spacer(Modifier.width(8.dp))
-                  Text(
-                      context.getString(R.string.email_verification_email_refresh),
-                      style = AppTypography.labelLarge)
-                }
+                Button(
+                    modifier = Modifier.testTag(EmailVerificationTestTags.REFRESH),
+                    onClick = { checkEmailVerification() }) {
+                      Icon(
+                          Icons.Outlined.Refresh,
+                          contentDescription =
+                              context.getString(
+                                  R.string.email_verification_content_description_refresh))
+                      Spacer(Modifier.width(8.dp))
+                      Text(
+                          context.getString(R.string.email_verification_email_refresh),
+                          style = AppTypography.labelLarge)
+                    }
               }
             }
       })
