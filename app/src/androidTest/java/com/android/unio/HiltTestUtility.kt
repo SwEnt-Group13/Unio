@@ -3,14 +3,7 @@ package com.android.unio
 import android.app.Application
 import android.content.Context
 import androidx.test.runner.AndroidJUnitRunner
-import com.android.unio.model.event.EventRepository
-import com.android.unio.model.event.EventRepositoryMock
-import com.android.unio.model.hilt.module.EventModule
-import dagger.Binds
-import dagger.Module
 import dagger.hilt.android.testing.HiltTestApplication
-import dagger.hilt.components.SingletonComponent
-import dagger.hilt.testing.TestInstallIn
 
 /**
  * Instead of using the default [AndroidJUnitRunner], we use a custom runner that extends from
@@ -31,11 +24,11 @@ class HiltApplication : AndroidJUnitRunner() {
  */
 object HiltModuleAndroidTest {
 
-  @Module
-  @TestInstallIn(components = [SingletonComponent::class], replaces = [EventModule::class])
-  abstract class EventModuleTest() {
-
-    @Binds
-    abstract fun bindEventRepository(eventRepositoryMock: EventRepositoryMock): EventRepository
-  }
+  //  @Module
+  //  @TestInstallIn(components = [SingletonComponent::class], replaces = [EventModule::class])
+  //  abstract class EventModuleTest() {
+  //
+  //    @Binds
+  //    abstract fun bindEventRepository(eventRepositoryMock: EventRepositoryMock): EventRepository
+  //  }
 }
