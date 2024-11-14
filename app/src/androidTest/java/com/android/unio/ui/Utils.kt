@@ -5,10 +5,10 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextInput
-import com.android.unio.model.strings.test_tags.SocialsOverlayTestTags
 import com.android.unio.UserAccountCreationTest.Companion.FIRESTORE_URL
 import com.android.unio.UserAccountCreationTest.Companion.FLUSH_AUTH_URL
 import com.android.unio.UserAccountCreationTest.Companion.FLUSH_FIRESTORE_URL
+import com.android.unio.model.strings.test_tags.SocialsOverlayTestTags
 import okhttp3.OkHttpClient
 import okhttp3.Request
 
