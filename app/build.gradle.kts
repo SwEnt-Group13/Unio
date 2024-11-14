@@ -185,6 +185,7 @@ dependencies {
     implementation(libs.androidx.ui.text.google.fonts)
     implementation(libs.androidx.compose.material)
     implementation(libs.core)
+    implementation(libs.firebase.functions.ktx)
 
     testImplementation(libs.test.core.ktx)
     debugImplementation(libs.androidx.ui.tooling)
