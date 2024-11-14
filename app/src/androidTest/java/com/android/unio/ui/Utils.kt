@@ -44,19 +44,21 @@ fun addNewUserSocial(composeTestRule: ComposeContentTestRule, username: String, 
  */
 object EmulatorUtils {
   /*
-   * Links the Firebase objects to the emulator
+   * Connects Firebase to the local emulators
    */
-  fun linkFirebaseToLocalEmulator() {
+  fun useEmulators() {
     Firebase.firestore.useEmulator("10.0.2.2", 8080)
     Firebase.auth.useEmulator("10.0.2.2", 9099)
   }
 
   /*
-   * This tests verifies that your local Firebase emulator is running before running tests that use it
+   * Verify that the local Firebase emulator is running.
+   *
+   * @throws Exception if the emulator is not running
    */
   fun verifyEmulatorsAreRunning() {
     val client = OkHttpClient()
-    val request = Request.Builder().url(FIRESTORE_URL).build()
+    val request = Request.Builder().url(Firestore.ROOT).build()
 
     client
         .newCall(request)
@@ -77,33 +79,39 @@ object EmulatorUtils {
   }
 
   /*
-   * This method empties all users in the authentication emulator
+   * Delete all users in the Firebase Authentication emulator
    */
-  fun flushAuthenticationClients() {
+  fun flushAuthenticationUsers() {
     val client = OkHttpClient()
 
-    val request = Request.Builder().url(FLUSH_AUTH_URL).delete().build()
+    val request = Request.Builder().url(Auth.ACCOUNTS_URL).delete().build()
 
     client.newCall(request).execute()
   }
 
   /*
-   * This method empties all users in the Firestore Database
+   * Delete all documents in the Firestore emulator
    */
   fun flushFirestoreDatabase() {
     val client = OkHttpClient()
 
-    val request = Request.Builder().url(FLUSH_FIRESTORE_URL).delete().build()
+    val request = Request.Builder().url(Firestore.DATABASE_URL).delete().build()
 
     client.newCall(request).execute()
   }
 
-  /*
-  Constant URLS used by the local emulator
-   */
-  const val OOB_URL = "http://10.0.2.2:9099/emulator/v1/projects/unio-1b8ee/oobCodes"
-  const val FIRESTORE_URL = "http://10.0.2.2:8080"
-  const val FLUSH_FIRESTORE_URL =
-      "http://10.0.2.2:8080/emulator/v1/projects/unio-1b8ee/databases/(default)/documents"
-  const val FLUSH_AUTH_URL = "http://10.0.2.2:9099/emulator/v1/projects/unio-1b8ee/accounts"
+  /* Constant URLs used by the local emulator */
+  object Firestore {
+    const val HOST = "10.0.2.2"
+    const val PORT = 8080
+    const val ROOT = "http://$HOST:$PORT"
+    const val DATABASE_URL = "$ROOT/emulator/v1/projects/unio-1b8ee/databases/(default)/documents"
+  }
+  object Auth {
+    const val HOST = "10.0.2.2"
+    const val PORT = 9099
+    const val ROOT = "http://$HOST:$PORT"
+    const val OOB_URL = "$ROOT/emulator/v1/projects/unio-1b8ee/oobCodes"
+    const val ACCOUNTS_URL = "$ROOT/emulator/v1/projects/unio-1b8ee/accounts"
+  }
 }

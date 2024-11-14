@@ -41,11 +41,14 @@ class UserAccountCreationTest {
 
   @Before
   fun setUp() {
-    EmulatorUtils.linkFirebaseToLocalEmulator()
-
-    /*Test that the emulators are indeed running*/
+    /** Verify that the emulators are running **/
     EmulatorUtils.verifyEmulatorsAreRunning()
-    EmulatorUtils.flushAuthenticationClients()
+
+    /** Connect Firebase to the emulators **/
+    EmulatorUtils.useEmulators()
+
+    /** Clear all users and the Firestore database **/
+    EmulatorUtils.flushAuthenticationUsers()
     EmulatorUtils.flushFirestoreDatabase()
   }
 
@@ -138,7 +141,7 @@ class UserAccountCreationTest {
   private fun getLatestEmailVerificationUrl(): String {
     val client = OkHttpClient()
 
-    val oobRequest = Request.Builder().url(EmulatorUtils.OOB_URL).build()
+    val oobRequest = Request.Builder().url(EmulatorUtils.Auth.OOB_URL).build()
 
     val response = client.newCall(oobRequest).execute()
 
