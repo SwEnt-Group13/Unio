@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.Firebase
+import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.auth
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -28,6 +29,9 @@ class UserViewModel @Inject constructor(private val repository: UserRepository) 
 
   private var updateJob: Job? = null
   private var initializeWithAuthenticatedUser: Boolean = true
+
+  private var _credential :AuthCredential? = null
+  val credential: AuthCredential? get() = _credential
 
   constructor(
       repository: UserRepository,
@@ -145,5 +149,9 @@ class UserViewModel @Inject constructor(private val repository: UserRepository) 
   fun isEventSavedForCurrentUser(eventUid: String): Boolean {
     val currentUser = getCurrentUserOrError() ?: return false
     return currentUser.savedEvents.contains(eventUid)
+  }
+
+  fun setCredential(credential: AuthCredential?) {
+    _credential = credential
   }
 }
