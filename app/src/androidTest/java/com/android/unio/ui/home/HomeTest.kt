@@ -132,8 +132,8 @@ class HomeTest {
       HomeScreen(navigationAction, eventViewModel, userViewModel, searchViewModel)
     }
 
-    composeTestRule.onNodeWithTag(HomeTestTags.TAB_SAVED).assertExists()
-    composeTestRule.onNodeWithTag(HomeTestTags.TAB_SAVED).performClick()
+    composeTestRule.onNodeWithTag(HomeTestTags.TAB_FOLLOWING).assertExists()
+    composeTestRule.onNodeWithTag(HomeTestTags.TAB_FOLLOWING).performClick()
 
     composeTestRule.onNodeWithTag(HomeTestTags.MAP_BUTTON).assertExists()
     composeTestRule.onNodeWithTag(HomeTestTags.MAP_BUTTON).performClick()
