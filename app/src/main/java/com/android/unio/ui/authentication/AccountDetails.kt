@@ -317,6 +317,8 @@ fun AccountDetails(
                       "images/users/${userId}",
                       onSuccess = createUser,
                       onFailure = { exception ->
+                        // TODO remove exception
+                        throw exception
                         Log.e("AccountDetails", "Error uploading image: $exception")
                         Toast.makeText(
                                 context,

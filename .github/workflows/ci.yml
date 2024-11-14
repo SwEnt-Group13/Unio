@@ -116,7 +116,7 @@ jobs:
 
       # Create shell executable for the firebase emulator
       - name: Create shell file
-        run: echo './gradlew connectedCheck --build-cache' > run_tests.sh
+        run: echo './gradlew connectedCheck --build-cache --info' > run_tests.sh
 
       # Grant execute permission for shell script
       - name: Grant execute permission for shell script
