@@ -12,6 +12,14 @@ import coil.request.CachePolicy
 import coil.request.ImageRequest
 import com.android.unio.R
 
+/**
+ * @param imageUri : Uri of the image
+ * @param contentDescription : Content description (accessibility purposes)
+ * @param modifier : the modifier to be applied on AsyncImage composable
+ * @param contentScale : How the image is scaled
+ * @param placeholderResourceId : Resource id of the placeholder (0 for a blank image)
+ * @param filterQuality : type of filtering algorithm. None is the fastest, High the slowest
+ */
 @Composable
 fun AsyncImageWrapper(
     imageUri: Uri,
