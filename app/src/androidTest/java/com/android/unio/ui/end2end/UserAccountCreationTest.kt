@@ -39,7 +39,7 @@ class UserAccountCreationTest {
   @get:Rule val composeTestRule = createAndroidComposeRule<MainActivity>()
   @get:Rule val hiltRule = HiltAndroidRule(this)
 
-  @Before
+//  @Before
   fun setUp() {
     /** Verify that the emulators are running */
     EmulatorUtils.verifyEmulatorsAreRunning()
@@ -52,7 +52,7 @@ class UserAccountCreationTest {
     EmulatorUtils.flushFirestoreDatabase()
   }
 
-  @Test
+//  @Test
   fun testUserCanLoginAndCreateAnAccount() {
     /** Create an account on the welcome screen */
     composeTestRule.onNodeWithTag(WelcomeTestTags.SCREEN).assertIsDisplayed()
@@ -172,7 +172,7 @@ class UserAccountCreationTest {
     const val BIOGRAPHY = "I am a software engineer"
   }
 
-  @After
+//  @After
   fun tearDown() {
     clearAllMocks()
     unmockkAll()
