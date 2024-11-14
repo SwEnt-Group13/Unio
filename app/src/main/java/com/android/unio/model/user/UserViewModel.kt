@@ -110,9 +110,7 @@ class UserViewModel @Inject constructor(private val repository: UserRepository) 
     repository.updateUser(
         user,
         onSuccess = onSuccess,
-        onFailure = {
-          Log.e("UserViewModel", "Failed to add user", it)
-        })
+        onFailure = { Log.e("UserViewModel", "Failed to add user", it) })
     _user.value = user
   }
 
