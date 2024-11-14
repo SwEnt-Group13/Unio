@@ -72,7 +72,6 @@ class UserProfileTest {
     composeTestRule.onNodeWithTag(UserProfileTestTags.BOTTOM_SHEET).assertIsDisplayed()
   }
 
-
   @After
   fun tearDown() {
     clearAllMocks()
