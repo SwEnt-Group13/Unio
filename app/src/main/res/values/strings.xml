@@ -148,6 +148,7 @@
     <string name="event_details_content_description_not_saved" translatable="false">Not saved</string>
     <string name="event_price_free" translatable="false">Free !</string>
     <string name="event_price" translatable="false">Entry: </string>
+    <string name="event_places_remaining" translatable="false"> places remaining</string>
 
     /**
     * package: explore
