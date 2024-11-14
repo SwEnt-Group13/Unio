@@ -183,7 +183,8 @@ fun ExploreScreenContentCopy(
         ) {
           getSortedEntriesAssociationsByCategoryCopy(associationsByCategory).forEach {
               (category, associations) ->
-            val alphabeticalAssociations = getFilteredAssociationsByAlphabeticalOrderCopy(associations)
+            val alphabeticalAssociations =
+                getFilteredAssociationsByAlphabeticalOrderCopy(associations)
 
             if (alphabeticalAssociations.isNotEmpty()) {
               item {
@@ -264,7 +265,9 @@ fun AssociationItemCopy(association: Association, onClick: () -> Unit) {
 }
 
 /** Returns a list of associations sorted by alphabetical order. */
-fun getFilteredAssociationsByAlphabeticalOrderCopy(associations: List<Association>): List<Association> {
+fun getFilteredAssociationsByAlphabeticalOrderCopy(
+    associations: List<Association>
+): List<Association> {
   return associations.sortedBy { it.name }
 }
 
