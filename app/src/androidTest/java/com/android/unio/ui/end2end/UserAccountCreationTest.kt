@@ -35,22 +35,9 @@ import org.junit.Test
 
 @LargeTest
 @HiltAndroidTest
-class UserAccountCreationTest {
+class UserAccountCreationTest : EndToEndTest() {
   @get:Rule val composeTestRule = createAndroidComposeRule<MainActivity>()
   @get:Rule val hiltRule = HiltAndroidRule(this)
-
-  @Before
-  fun setUp() {
-    /** Verify that the emulators are running */
-    EmulatorUtils.verifyEmulatorsAreRunning()
-
-    /** Connect Firebase to the emulators */
-    EmulatorUtils.useEmulators()
-
-    /** Clear all users and the Firestore database */
-    EmulatorUtils.flushAuthenticationUsers()
-    EmulatorUtils.flushFirestoreDatabase()
-  }
 
   @Test
   fun testUserCanLoginAndCreateAnAccount() {
