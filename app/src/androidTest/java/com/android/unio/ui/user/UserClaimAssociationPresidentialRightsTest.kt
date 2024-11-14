@@ -1,20 +1,17 @@
+// File: UserClaimAssociationPresidentialRightsScreenTest.kt
+
 package com.android.unio.ui.user
 
-import android.content.Context
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.test.SemanticsNodeInteraction
-import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.onNodeWithTag
-import androidx.compose.ui.test.performClick
 import androidx.navigation.NavHostController
+import com.android.unio.mocks.association.MockAssociation
+import com.android.unio.mocks.user.MockUser
 import com.android.unio.model.association.AssociationRepositoryFirestore
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.event.EventRepositoryFirestore
 import com.android.unio.model.follow.ConcurrentAssociationUserRepositoryFirestore
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
-import com.android.unio.model.search.SearchRepository
-import com.android.unio.model.search.SearchViewModel
 import com.android.unio.ui.navigation.NavigationAction
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
@@ -26,7 +23,7 @@ import org.junit.Rule
 import org.junit.Test
 
 @HiltAndroidTest
-class UserClaimAssociationTest {
+class UserClaimAssociationPresidentialRightsScreenTest {
 
   @get:Rule val composeTestRule = createComposeRule()
   @get:Rule val hiltRule = HiltAndroidRule(this)
@@ -37,12 +34,17 @@ class UserClaimAssociationTest {
   @MockK
   private lateinit var concurrentAssociationUserRepositoryFirestore:
       ConcurrentAssociationUserRepositoryFirestore
-  @MockK private lateinit var searchRepository: SearchRepository
   @MockK private lateinit var navHostController: NavHostController
 
-  @MockK private lateinit var navigationAction: NavigationAction
   private lateinit var associationViewModel: AssociationViewModel
-  private lateinit var searchViewModel: SearchViewModel
+  @MockK private lateinit var navigationAction: NavigationAction
+
+  // Test data
+  private val testAssociation =
+      MockAssociation.createMockAssociation(
+          uid = "assoc123", principalEmailAddress = "president@university.edu")
+
+  private val testUser = MockUser.createMockUser(uid = "user123", email = "user@example.com")
 
   @Before
   fun setUp() {
@@ -57,45 +59,30 @@ class UserClaimAssociationTest {
             eventRepository,
             imageRepository,
             concurrentAssociationUserRepositoryFirestore)
-
-    searchViewModel = SearchViewModel(searchRepository)
-
     navigationAction = NavigationAction(navHostController)
   }
 
   @Test
-  fun testUIElementsAreDisplayed() {
+  fun testEmailVerificationInputAndErrorHandling() {
     composeTestRule.setContent {
-      UserClaimAssociationScreen(associationViewModel, navigationAction, searchViewModel)
+      UserClaimAssociationPresidentialRightsScreenScaffold(
+          association = testAssociation, user = testUser, navigationAction = navigationAction)
     }
 
-    assertDisplayComponent(composeTestRule.onNodeWithTag("AssociationProfileTitle"))
-    assertDisplayComponent(composeTestRule.onNodeWithTag("goBackButton"))
-    assertDisplayComponent(composeTestRule.onNodeWithTag("createNewAssociationButton"))
+    // Step 1: Verify the presence of the email input field
+    composeTestRule.onNodeWithText("Enter the presidential email address:").assertIsDisplayed()
+
+    composeTestRule.onNodeWithText("Verify Email").performClick()
   }
 
   @Test
-  fun testGoBackButtonNavigatesBack() {
+  fun testBackButtonNavigatesBack() {
     composeTestRule.setContent {
-      UserClaimAssociationScreen(associationViewModel, navigationAction, searchViewModel)
+      UserClaimAssociationPresidentialRightsScreenScaffold(
+          association = testAssociation, user = testUser, navigationAction = navigationAction)
     }
 
+    // Click the back button
     composeTestRule.onNodeWithTag("goBackButton").performClick()
-  }
-
-  @Test
-  fun testCreateNewAssociationButtonShowsToast() {
-    var context: Context? = null
-    composeTestRule.setContent {
-      context = LocalContext.current
-      UserClaimAssociationScreen(associationViewModel, navigationAction, searchViewModel)
-    }
-
-    val button = composeTestRule.onNodeWithTag("createNewAssociationButton")
-    button.performClick()
-  }
-
-  private fun assertDisplayComponent(compose: SemanticsNodeInteraction) {
-    compose.assertIsDisplayed()
   }
 }

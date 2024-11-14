@@ -161,7 +161,7 @@ fun UnioApp(imageRepository: ImageRepositoryFirebaseStorage) {
       }
       composable(Screen.CLAIM_ASSOCIATION_PRESIDENTIAL_RIGHTS) {
         UserClaimAssociationPresidentialRightsScreen(
-            associationViewModel, navigationActions, searchViewModel, userViewModel)
+            associationViewModel, navigationActions, userViewModel)
       }
     }
   }

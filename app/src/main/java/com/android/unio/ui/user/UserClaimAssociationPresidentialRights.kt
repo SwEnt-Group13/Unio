@@ -25,8 +25,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.android.unio.R
+import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationViewModel
-import com.android.unio.model.search.SearchViewModel
+import com.android.unio.model.user.User
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
@@ -43,12 +44,26 @@ import kotlinx.coroutines.launch
 fun UserClaimAssociationPresidentialRightsScreen(
     associationViewModel: AssociationViewModel,
     navigationAction: NavigationAction,
-    searchViewModel: SearchViewModel,
     userViewModel: UserViewModel
 ) {
-  val context = LocalContext.current
   val association by associationViewModel.selectedAssociation.collectAsState()
   val user by userViewModel.user.collectAsState()
+
+  association?.let {
+    user?.let { it1 ->
+      UserClaimAssociationPresidentialRightsScreenScaffold(navigationAction, it, it1)
+    }
+  }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun UserClaimAssociationPresidentialRightsScreenScaffold(
+    navigationAction: NavigationAction,
+    association: Association,
+    user: User
+) {
+  val context = LocalContext.current
 
   // State variables to hold the user input and verification status
   var email by remember { mutableStateOf("") }
