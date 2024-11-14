@@ -1,8 +1,12 @@
 package com.android.unio.ui
 
+import android.app.Instrumentation
+import android.content.Context
+import android.location.Location
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.test.platform.app.InstrumentationRegistry
 import com.android.unio.mocks.association.MockAssociation
 import com.android.unio.mocks.event.MockEvent
 import com.android.unio.mocks.user.MockUser
@@ -11,6 +15,7 @@ import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventRepositoryFirestore
 import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
+import com.android.unio.model.map.MapViewModel
 import com.android.unio.model.search.SearchRepository
 import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.strings.test_tags.AccountDetailsTestTags
@@ -44,6 +49,9 @@ import com.android.unio.ui.saved.SavedScreen
 import com.android.unio.ui.settings.SettingsScreen
 import com.android.unio.ui.user.SomeoneElseUserProfileScreen
 import com.android.unio.ui.user.UserProfileScreenScaffold
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.tasks.OnSuccessListener
+import com.google.android.gms.tasks.Task
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
@@ -61,6 +69,8 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.mockito.Mockito.mock
+import org.mockito.Mockito.`when`
+import org.mockito.kotlin.any
 
 @HiltAndroidTest
 class ScreenDisplayingTest {
@@ -76,6 +86,18 @@ class ScreenDisplayingTest {
 
   @MockK private lateinit var eventRepository: EventRepositoryFirestore
   private lateinit var eventViewModel: EventViewModel
+
+  // Mocking the mapViewModel and it's dependencies
+  private lateinit var locationTask: Task<Location>
+  private lateinit var instrumentation: Instrumentation
+  private lateinit var context: Context
+  private lateinit var mapViewModel: MapViewModel
+  private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+  private val location =
+      Location("mockProvider").apply {
+        latitude = 46.518831258
+        longitude = 6.559331096
+      }
 
   @MockK private lateinit var imageRepositoryFirestore: ImageRepositoryFirebaseStorage
 
@@ -112,6 +134,29 @@ class ScreenDisplayingTest {
     eventViewModel = EventViewModel(eventRepository, imageRepositoryFirestore)
     eventViewModel.loadEvents()
     eventViewModel.selectEvent(events.first().uid)
+
+    // Mocking the location permission checks
+    instrumentation = InstrumentationRegistry.getInstrumentation()
+    instrumentation.uiAutomation.executeShellCommand(
+        "pm grant ${InstrumentationRegistry.getInstrumentation().targetContext.packageName} android.permission.ACCESS_FINE_LOCATION")
+    instrumentation.uiAutomation.executeShellCommand(
+        "pm grant ${InstrumentationRegistry.getInstrumentation().targetContext.packageName} android.permission.ACCESS_COARSE_LOCATION")
+
+    // Mocking the mapViewModel and it's dependencies
+    fusedLocationProviderClient = mock()
+    locationTask = mock()
+    context = mock()
+    `when`(fusedLocationProviderClient.lastLocation).thenReturn(locationTask)
+    `when`(locationTask.addOnSuccessListener(any())).thenAnswer {
+      (it.arguments[0] as OnSuccessListener<Location?>).onSuccess(location)
+      locationTask
+    }
+    mapViewModel =
+        spyk(MapViewModel(fusedLocationProviderClient)) {
+          every { hasLocationPermissions(any()) } returns true
+        }
+    mapViewModel = MapViewModel(fusedLocationProviderClient)
+    mapViewModel.fetchUserLocation(context)
 
     every { userRepository.getUserWithId(any(), any(), any()) } answers
         {
@@ -178,7 +223,9 @@ class ScreenDisplayingTest {
 
   @Test
   fun testMapDisplayed() {
-    composeTestRule.setContent { MapScreen(navigationAction, eventViewModel, userViewModel) }
+    composeTestRule.setContent {
+      MapScreen(navigationAction, eventViewModel, userViewModel, mapViewModel)
+    }
     composeTestRule.onNodeWithTag(MapTestTags.SCREEN).assertIsDisplayed()
   }
 
