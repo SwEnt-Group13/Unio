@@ -21,9 +21,8 @@ fun AssociationRepositoryFirestore.Companion.serialize(association: Association)
       Association::followersCount.name to association.followersCount,
       Association::image.name to association.image,
       Association::events.name to association.events.uids,
-  "principalEmailAddress" to association.principalEmailAddress,
+      "principalEmailAddress" to association.principalEmailAddress,
       "adminUid" to association.adminUid)
-
 }
 
 fun UserRepositoryFirestore.Companion.serialize(user: User): Map<String, Any> {

@@ -59,8 +59,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import com.android.unio.model.search.SearchViewModel
 import com.android.unio.R
+import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.strings.test_tags.UserProfileTestTags
 import com.android.unio.model.user.User
 import com.android.unio.model.user.UserViewModel
