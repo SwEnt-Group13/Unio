@@ -1,6 +1,5 @@
 package com.android.unio.ui.map
 
-import android.app.Instrumentation
 import android.content.Context
 import android.location.Location
 import androidx.compose.ui.test.assertHasClickAction
@@ -10,7 +9,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.navigation.NavHostController
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.test.platform.app.InstrumentationRegistry
+import androidx.test.rule.GrantPermissionRule
 import com.android.unio.mocks.user.MockUser
 import com.android.unio.model.event.EventRepositoryFirestore
 import com.android.unio.model.event.EventViewModel
@@ -41,6 +40,12 @@ import org.mockito.kotlin.any
 class MapScreenTest {
   @get:Rule val composeTestRule = createComposeRule()
 
+  @get:Rule
+  val permissionRule =
+      GrantPermissionRule.grant(
+          android.Manifest.permission.ACCESS_FINE_LOCATION,
+          android.Manifest.permission.ACCESS_COARSE_LOCATION)
+
   private val user = MockUser.createMockUser()
 
   @MockK private lateinit var eventRepository: EventRepositoryFirestore
@@ -49,7 +54,6 @@ class MapScreenTest {
   @MockK private lateinit var navHostController: NavHostController
 
   private lateinit var locationTask: Task<Location>
-  private lateinit var instrumentation: Instrumentation
   private lateinit var context: Context
   private lateinit var mapViewModel: MapViewModel
   private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
@@ -80,12 +84,6 @@ class MapScreenTest {
         }
     userViewModel = UserViewModel(userRepository, false)
     userViewModel.getUserByUid("123")
-
-    instrumentation = InstrumentationRegistry.getInstrumentation()
-    instrumentation.uiAutomation.executeShellCommand(
-        "pm grant ${InstrumentationRegistry.getInstrumentation().targetContext.packageName} android.permission.ACCESS_FINE_LOCATION")
-    instrumentation.uiAutomation.executeShellCommand(
-        "pm grant ${InstrumentationRegistry.getInstrumentation().targetContext.packageName} android.permission.ACCESS_COARSE_LOCATION")
 
     fusedLocationProviderClient = mock()
     locationTask = mock()
