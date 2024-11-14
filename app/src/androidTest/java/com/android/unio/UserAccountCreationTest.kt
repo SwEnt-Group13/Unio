@@ -1,4 +1,4 @@
-package com.android.unio.ui.authentication
+package com.android.unio
 
 import android.util.Log
 import androidx.compose.ui.test.assertCountEquals
@@ -11,7 +11,6 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import androidx.test.filters.LargeTest
-import com.android.unio.MainActivity
 import com.android.unio.model.strings.test_tags.AccountDetailsTestTags
 import com.android.unio.model.strings.test_tags.BottomNavBarTestTags
 import com.android.unio.model.strings.test_tags.EmailVerificationTestTags

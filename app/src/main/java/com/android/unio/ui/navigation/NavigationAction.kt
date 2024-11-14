@@ -121,20 +121,20 @@ object Route {
 }
 
 object Screen {
-  const val WELCOME = "Welcome Screen"
-  const val EMAIL_VERIFICATION = "Email Verification Screen"
-  const val ACCOUNT_DETAILS = "Account Details Screen"
-  const val HOME = "Home Screen"
-  const val MAP = "Map Screen"
-  const val EXPLORE = "Explore Screen"
-  const val SAVED = "Saved Screen"
-  const val MY_PROFILE = "MyProfile Screen"
+  const val WELCOME = "Welcome_Screen"
+  const val EMAIL_VERIFICATION = "Email_Verification_Screen"
+  const val ACCOUNT_DETAILS = "Account_Details_Screen"
+  const val HOME = "Home_Screen"
+  const val MAP = "Map_Screen"
+  const val EXPLORE = "Explore_Screen"
+  const val SAVED = "Saved_Screen"
+  const val MY_PROFILE = "MyProfile_Screen"
   const val SETTINGS = "Settings"
-  const val ASSOCIATION_PROFILE = "Association Profile Screen"
-  const val EDIT_ASSOCIATION = "Edit Assocation Screen"
-  const val EVENT_DETAILS = "Event Details Screen"
-  const val EVENT_CREATION = "Event Creation Screen"
-  const val EDIT_EVENT = "Edit Event Screen"
+  const val ASSOCIATION_PROFILE = "Association_Profile_Screen"
+  const val EDIT_ASSOCIATION = "Edit_Assocation_Screen"
+  const val EVENT_DETAILS = "Event_Details_Screen"
+  const val EVENT_CREATION = "Event_Creation_Screen"
+  const val EDIT_EVENT = "Edit_Event_Screen"
 
   /**
    * Replace the placeholders in the screen with the provided parameters.
