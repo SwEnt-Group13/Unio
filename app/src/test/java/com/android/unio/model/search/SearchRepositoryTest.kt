@@ -109,7 +109,8 @@ class SearchRepositoryTest {
           description = "Plus grand festival du monde (non contractuel)",
           price = 40.5,
           date = Timestamp(GregorianCalendar(2004, 7, 1).time),
-          location = Location(1.2345, 2.3455, "Somewhere"))
+          location = Location(1.2345, 2.3455, "Somewhere"),
+          placesRemaining = -1)
   private val event2 =
       Event(
           uid = "2",
@@ -120,7 +121,8 @@ class SearchRepositoryTest {
           description = "Plus grand festival du monde (non contractuel)",
           price = 40.5,
           date = Timestamp(GregorianCalendar(2008, 7, 1).time),
-          location = Location(1.2345, 2.3455, "Somewhere"))
+          location = Location(1.2345, 2.3455, "Somewhere"),
+          placesRemaining = -1)
 
   @Before
   fun setUp() {

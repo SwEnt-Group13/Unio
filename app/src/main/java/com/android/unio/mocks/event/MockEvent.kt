@@ -109,7 +109,8 @@ class MockEvent {
           price = price,
           date = date,
           location = location,
-          types = types)
+          types = types,
+          placesRemaining = -1)
     }
 
     /** Creates a list of mock Events with default properties */
