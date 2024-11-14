@@ -25,6 +25,8 @@ import dagger.hilt.android.testing.HiltAndroidTest
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
+import io.mockk.just
+import io.mockk.runs
 import io.mockk.spyk
 import io.mockk.verify
 import javax.inject.Inject
@@ -71,6 +73,7 @@ class HomeTest {
           onSuccess()
         }
     userViewModel.addUser(user, {})
+    every { userRepository.init(any()) } just runs
   }
 
   /**
