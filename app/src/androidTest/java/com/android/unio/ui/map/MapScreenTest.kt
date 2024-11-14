@@ -24,10 +24,13 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.gms.tasks.Task
 import io.mockk.MockKAnnotations
+import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.spyk
+import io.mockk.unmockkAll
 import io.mockk.verify
+import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -133,5 +136,11 @@ class MapScreenTest {
     assert(mapViewModel.userLocation.value != null)
     assert(mapViewModel.userLocation.value!!.latitude == location.latitude)
     assert(mapViewModel.userLocation.value!!.longitude == location.longitude)
+  }
+
+  @After
+  fun tearDown() {
+    clearAllMocks()
+    unmockkAll()
   }
 }

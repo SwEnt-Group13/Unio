@@ -14,6 +14,7 @@ import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventRepositoryFirestore
 import com.android.unio.model.event.EventViewModel
+import com.android.unio.model.follow.ConcurrentAssociationUserRepositoryFirestore
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.map.MapViewModel
 import com.android.unio.model.search.SearchRepository
@@ -59,12 +60,15 @@ import com.google.firebase.auth.internal.zzac
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import io.mockk.MockKAnnotations
+import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.spyk
+import io.mockk.unmockkAll
 import me.zhanghai.compose.preference.ProvidePreferenceLocals
+import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -77,9 +81,9 @@ class ScreenDisplayingTest {
   val user = MockUser.createMockUser(uid = "1")
   val events = listOf(MockEvent.createMockEvent())
 
-  @MockK lateinit var navigationAction: NavigationAction
+  @MockK private lateinit var navigationAction: NavigationAction
 
-  @MockK lateinit var userRepository: UserRepositoryFirestore
+  @MockK private lateinit var userRepository: UserRepositoryFirestore
   private lateinit var userViewModel: UserViewModel
 
   private lateinit var associationViewModel: AssociationViewModel
@@ -124,7 +128,10 @@ class ScreenDisplayingTest {
     associationViewModel =
         spyk(
             AssociationViewModel(
-                mock(), mockk<EventRepositoryFirestore>(), imageRepositoryFirestore))
+                mock(),
+                mockk<EventRepositoryFirestore>(),
+                imageRepositoryFirestore,
+                mockk<ConcurrentAssociationUserRepositoryFirestore>()))
 
     every { eventRepository.getEvents(any(), any()) } answers
         {
@@ -180,17 +187,18 @@ class ScreenDisplayingTest {
     mockkStatic(FirebaseAuth::class)
     every { Firebase.auth } returns firebaseAuth
     every { firebaseAuth.currentUser } returns mockFirebaseUser
+    associationViewModel.selectAssociation(associations.first().uid)
   }
 
   @Test
   fun testWelcomeDisplayed() {
-    composeTestRule.setContent { WelcomeScreen() }
+    composeTestRule.setContent { WelcomeScreen(userViewModel) }
     composeTestRule.onNodeWithTag(WelcomeTestTags.SCREEN).assertIsDisplayed()
   }
 
   @Test
   fun testEmailVerificationDisplayed() {
-    composeTestRule.setContent { EmailVerificationScreen(navigationAction) }
+    composeTestRule.setContent { EmailVerificationScreen(navigationAction, userViewModel) }
     composeTestRule.onNodeWithTag(EmailVerificationTestTags.SCREEN).assertIsDisplayed()
   }
 
@@ -242,7 +250,7 @@ class ScreenDisplayingTest {
 
   @Test
   fun testEventCreationDisplayed() {
-    composeTestRule.setContent { EventCreationScreen() }
+    composeTestRule.setContent { EventCreationScreen(navigationAction) }
     composeTestRule.onNodeWithTag(EventCreationTestTags.SCREEN).assertIsDisplayed()
   }
 
@@ -250,10 +258,7 @@ class ScreenDisplayingTest {
   fun testAssociationProfileDisplayed() {
     composeTestRule.setContent {
       AssociationProfileScaffold(
-          MockAssociation.createMockAssociation(),
-          navigationAction,
-          userViewModel,
-          eventViewModel) {}
+          navigationAction, userViewModel, eventViewModel, associationViewModel) {}
     }
     composeTestRule.onNodeWithTag(AssociationProfileTestTags.SCREEN).assertIsDisplayed()
   }
@@ -282,5 +287,11 @@ class ScreenDisplayingTest {
   fun testSomeoneElseUserProfileDisplayed() {
     composeTestRule.setContent { SomeoneElseUserProfileScreen() }
     composeTestRule.onNodeWithTag(SomeoneElseUserProfileTestTags.SCREEN).assertIsDisplayed()
+  }
+
+  @After
+  fun tearDown() {
+    clearAllMocks()
+    unmockkAll()
   }
 }
