@@ -147,13 +147,13 @@ class ScreenDisplayingTest {
 
   @Test
   fun testWelcomeDisplayed() {
-    composeTestRule.setContent { WelcomeScreen() }
+    composeTestRule.setContent { WelcomeScreen(userViewModel) }
     composeTestRule.onNodeWithTag(WelcomeTestTags.SCREEN).assertIsDisplayed()
   }
 
   @Test
   fun testEmailVerificationDisplayed() {
-    composeTestRule.setContent { EmailVerificationScreen(navigationAction) }
+    composeTestRule.setContent { EmailVerificationScreen(navigationAction, userViewModel) }
     composeTestRule.onNodeWithTag(EmailVerificationTestTags.SCREEN).assertIsDisplayed()
   }
 

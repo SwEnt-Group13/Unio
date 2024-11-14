@@ -8,19 +8,31 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performTextInput
 import com.android.unio.model.strings.test_tags.WelcomeTestTags
+import com.android.unio.model.user.UserViewModel
 import io.mockk.clearAllMocks
 import io.mockk.unmockkAll
 import org.junit.After
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.mockito.Mock
+import org.mockito.MockitoAnnotations
 
 class WelcomeTest {
 
   @get:Rule val composeTestRule = createComposeRule()
 
+  @Mock
+  lateinit var userViewModel: UserViewModel
+
+  @Before
+  fun setUp() {
+    MockitoAnnotations.openMocks(this)
+  }
+
   @Test
   fun testWelcomeIsDisplayed() {
-    composeTestRule.setContent { WelcomeScreen() }
+    composeTestRule.setContent { WelcomeScreen(userViewModel) }
     composeTestRule.onNodeWithTag(WelcomeTestTags.EMAIL).assertIsDisplayed()
     composeTestRule.onNodeWithTag(WelcomeTestTags.PASSWORD).assertIsDisplayed()
     composeTestRule.onNodeWithTag(WelcomeTestTags.BUTTON).assertIsDisplayed()
@@ -30,7 +42,7 @@ class WelcomeTest {
 
   @Test
   fun testButtonEnables() {
-    composeTestRule.setContent { WelcomeScreen() }
+    composeTestRule.setContent { WelcomeScreen(userViewModel) }
     composeTestRule.onNodeWithTag(WelcomeTestTags.BUTTON).assertIsNotEnabled()
 
     composeTestRule.onNodeWithTag(WelcomeTestTags.EMAIL).performTextInput("john.doe@epfl.ch")
