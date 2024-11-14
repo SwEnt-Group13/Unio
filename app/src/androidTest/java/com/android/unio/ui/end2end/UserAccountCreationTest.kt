@@ -41,13 +41,13 @@ class UserAccountCreationTest {
 
   @Before
   fun setUp() {
-    /** Verify that the emulators are running **/
+    /** Verify that the emulators are running */
     EmulatorUtils.verifyEmulatorsAreRunning()
 
-    /** Connect Firebase to the emulators **/
+    /** Connect Firebase to the emulators */
     EmulatorUtils.useEmulators()
 
-    /** Clear all users and the Firestore database **/
+    /** Clear all users and the Firestore database */
     EmulatorUtils.flushAuthenticationUsers()
     EmulatorUtils.flushFirestoreDatabase()
   }
