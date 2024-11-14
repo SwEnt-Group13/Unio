@@ -1,5 +1,6 @@
 package com.android.unio.ui.home
 
+import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -197,8 +198,18 @@ fun TopBar(
               Box(
                   modifier =
                       Modifier.fillMaxSize().drawBehind {
-                        val tabWidth = sizeList[0]!!.first
-                        val height = sizeList[0]!!.second
+                        val tabWidth: Float
+                        val height: Float
+                        if (sizeList[0] == null) {
+                          Log.e(
+                              "Home Page", "The size values of tabs are null, should not happen !")
+                          // hardcoded values in case sizeList[0] is null
+                          tabWidth = 576.0F
+                          height = 92.0F
+                        } else {
+                          tabWidth = sizeList[0]!!.first
+                          height = sizeList[0]!!.second
+                        }
                         val startOffset =
                             Offset(
                                 x = progressFromFirstPage * tabWidth + tabWidth / 3,
