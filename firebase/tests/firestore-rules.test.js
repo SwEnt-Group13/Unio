@@ -24,8 +24,7 @@ test("Testing Firestore Rules", async () => {
     projectId: "unio-1b8ee",
     firestore: {
       rules: await readFile("firestore.rules", "utf8"),
-      host: host,
-      port: port
+      host, port
     },
   });
   process.env['FIRESTORE_EMULATOR_HOST'] = `${host}:${port}`;
@@ -41,8 +40,10 @@ test("Testing Firestore Rules", async () => {
     throw e;
   }
 
+  /** Generate coverage report **/
   await generateCoverageReport(host, port);
   
+  /** Cleanup **/
   await testEnv.clearFirestore();
   await testEnv.cleanup();
 });
@@ -61,6 +62,7 @@ async function runTests(testEnv) {
   await assertFails(setDoc(doc(aliceDb, `/users/${alice.uid}`), { ...alice, email: "other" }));
   await assertFails(setDoc(doc(aliceDb, `/users/${alice.uid}`), { ...alice, joinedAssociations: ["other-association"] }));
   await assertFails(updateDoc(doc(aliceDb, `/users/${otherUser.uid}`), alice));
+  await assertFails(setDoc(doc(aliceDb, `/users/new-user`), { ...alice, uid: "new-user" }));
   await assertSucceeds(getDoc(doc(aliceDb, `/users/${otherUser.uid}`)));
   await assertFails(getDocs(collection(aliceDb, `/users`)));
   await assertSucceeds(deleteDoc(doc(aliceDb, `/users/${alice.uid}`)));
@@ -79,6 +81,7 @@ async function runTests(testEnv) {
   await assertFails(setDoc(doc(aliceDb, `/associations/${aliceAssociation.uid}`), { ...aliceAssociation, uid: "other" }));
   await assertSucceeds(getDoc(doc(aliceDb, `/associations/${aliceAssociation.uid}`)));
   await assertFails(updateDoc(doc(aliceDb, `/associations/${otherAssociation.uid}`), aliceAssociation));
+  await assertFails(setDoc(doc(aliceDb, `/associations/new-association`), { ...aliceAssociation, uid: "new-association" }));
   await assertSucceeds(updateDoc(doc(aliceDb, `/associations/${aliceAssociation.uid}`), { ...aliceAssociation, name: "New name" }));
   await assertSucceeds(updateDoc(doc(aliceDb, `/associations/${otherAssociation.uid}`), { ...otherAssociation, followersCount: 1 }));
   await assertSucceeds(updateDoc(doc(aliceDb, `/associations/${otherAssociation.uid}`), { ...otherAssociation, followersCount: 0 }));
@@ -99,6 +102,8 @@ async function runTests(testEnv) {
   await assertFails(setDoc(doc(aliceDb, `/events/${aliceEvent.uid}`), { ...aliceEvent, uid: "other" }));
   await assertSucceeds(getDoc(doc(aliceDb, `/events/${aliceEvent.uid}`)));
   await assertFails(updateDoc(doc(aliceDb, `/events/${otherEvent.uid}`), aliceEvent));
+  await assertFails(setDoc(doc(aliceDb, `/events/new-event`), aliceEvent));
+  await assertSucceeds(setDoc(doc(aliceDb, `/events/new-event`), { ...aliceEvent, uid: "new-event" }));
   await assertSucceeds(updateDoc(doc(aliceDb, `/events/${aliceEvent.uid}`), { ...aliceEvent, title: "New title" }));
   await assertSucceeds(getDocs(collection(aliceDb, `/events`)));
   await assertSucceeds(deleteDoc(doc(aliceDb, `/events/${aliceEvent.uid}`)));
