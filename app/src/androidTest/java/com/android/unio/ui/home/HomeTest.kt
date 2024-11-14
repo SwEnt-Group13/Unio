@@ -78,6 +78,7 @@ class HomeTest {
           onSuccess()
         }
     userViewModel.addUser(user, {})
+    every { userRepository.init(any()) } just runs
   }
 
   /**

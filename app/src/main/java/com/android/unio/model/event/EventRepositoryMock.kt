@@ -42,7 +42,8 @@ open class EventRepositoryMock @Inject constructor() : EventRepository {
                   price = 0.0,
                   date = Timestamp(Date(2024 - 1900, 6, 20)), // July 20, 2024
                   location = Location(0.0, 0.0, "USA"),
-                  types = listOf(EventType.TRIP)),
+                  types = listOf(EventType.TRIP),
+                  placesRemaining = -1),
               Event(
                   uid = UUID.randomUUID().toString(),
                   title = "Oktoberweekdnsjandjas",
@@ -55,7 +56,8 @@ open class EventRepositoryMock @Inject constructor() : EventRepository {
                   price = 10.0,
                   date = Timestamp(Date(2024 - 1900, 4, 15)), // May 15, 2024
                   location = Location(1.0, 1.0, "USA"),
-                  types = listOf(EventType.OTHER)),
+                  types = listOf(EventType.OTHER),
+                  placesRemaining = -1),
               Event(
                   uid = UUID.randomUUID().toString(),
                   title = "SwissTech Talk",
@@ -68,7 +70,8 @@ open class EventRepositoryMock @Inject constructor() : EventRepository {
                   price = 0.0,
                   date = Timestamp(Date(2024 - 1900, 2, 10)), // March 10, 2024
                   location = Location(2.0, 2.0, "USA"),
-                  types = listOf(EventType.OTHER)),
+                  types = listOf(EventType.OTHER),
+                  placesRemaining = -1),
               Event(
                   uid = UUID.randomUUID().toString(),
                   title = "Lapin Vert",
@@ -81,7 +84,8 @@ open class EventRepositoryMock @Inject constructor() : EventRepository {
                   price = 0.0,
                   date = Timestamp(Date(2024 - 1900, 8, 25)), // September 25, 2024
                   location = Location(3.0, 3.0, "USA"),
-                  types = listOf(EventType.OTHER)),
+                  types = listOf(EventType.OTHER),
+                  placesRemaining = -1),
               Event(
                   uid = UUID.randomUUID().toString(),
                   title = "Choose your coach!",
@@ -94,7 +98,8 @@ open class EventRepositoryMock @Inject constructor() : EventRepository {
                   price = 5.0,
                   date = Timestamp(Date(2024 - 1900, 5, 5)), // June 5, 2024
                   location = Location(4.0, 4.0, "USA"),
-                  types = listOf(EventType.SPORT)),
+                  types = listOf(EventType.SPORT),
+                  placesRemaining = -1),
               Event(
                   uid = UUID.randomUUID().toString(),
                   title = "Concert",
@@ -107,7 +112,8 @@ open class EventRepositoryMock @Inject constructor() : EventRepository {
                   price = 15.0,
                   date = Timestamp(Date(2024 - 1900, 7, 30)), // August 30, 2024
                   location = Location(5.0, 5.0, "USA"),
-                  types = listOf(EventType.OTHER)),
+                  types = listOf(EventType.OTHER),
+                  placesRemaining = -1),
               Event(
                   uid = UUID.randomUUID().toString(),
                   title = "Jam Session: Local Artists",
@@ -120,7 +126,8 @@ open class EventRepositoryMock @Inject constructor() : EventRepository {
                   price = 0.0,
                   date = Timestamp(Date(2024 - 1900, 3, 12)), // April 12, 2024
                   location = Location(6.0, 6.0, "USA"),
-                  types = listOf(EventType.JAM)))
+                  types = listOf(EventType.JAM),
+                  placesRemaining = -1))
       onSuccess(events)
     } catch (e: Exception) {
       onFailure(e)

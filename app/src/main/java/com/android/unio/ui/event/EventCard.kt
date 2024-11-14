@@ -2,7 +2,6 @@ package com.android.unio.ui.event
 
 import android.util.Log
 import android.widget.Toast
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -32,18 +31,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
-import coil.compose.AsyncImage
-import coil.request.CachePolicy
-import coil.request.ImageRequest
 import com.android.unio.R
+import com.android.unio.model.association.Association
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventType
 import com.android.unio.model.event.EventUtils.addAlphaToColor
@@ -51,6 +48,7 @@ import com.android.unio.model.event.EventUtils.formatTimestamp
 import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.strings.test_tags.EventCardTestTags
 import com.android.unio.model.user.UserViewModel
+import com.android.unio.ui.image.AsyncImageWrapper
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
 import com.android.unio.ui.theme.AppTypography
@@ -65,6 +63,7 @@ fun EventCard(
     eventViewModel: EventViewModel
 ) {
   val user by userViewModel.user.collectAsState()
+  val associations by event.organisers.list.collectAsState()
 
   if (user == null) {
     Log.e("EventCard", "User not found.")
@@ -74,48 +73,33 @@ fun EventCard(
 
   var isSaved by remember { mutableStateOf(user!!.savedEvents.contains(event.uid)) }
 
-  val onClickSaveButton = {
-    if (isSaved) {
-      userViewModel.unSaveEventForCurrentUser(event.uid) { isSaved = false }
-    } else {
-      userViewModel.saveEventForCurrentUser(event.uid) { isSaved = true }
-    }
-    userViewModel.updateUserDebounced(user!!)
-  }
-
   EventCardScaffold(
       event,
+      associations,
       isSaved,
-      {
+      onClickEventCard = {
         eventViewModel.selectEvent(event.uid)
         navigationAction.navigateTo(Screen.EVENT_DETAILS)
       },
-      onClickSaveButton)
+      onClickSaveButton = {
+        if (isSaved) {
+          userViewModel.unSaveEventForCurrentUser(event.uid) { isSaved = false }
+        } else {
+          userViewModel.saveEventForCurrentUser(event.uid) { isSaved = true }
+        }
+        userViewModel.updateUserDebounced(user!!)
+      })
 }
 
 @Composable
 fun EventCardScaffold(
     event: Event,
+    organisers: List<Association>,
     isSaved: Boolean,
     onClickEventCard: () -> Unit,
     onClickSaveButton: () -> Unit
 ) {
   val context = LocalContext.current
-  val imgUrl = event.image.toUri()
-  val placeholderImg = R.drawable.adec
-  val imageRequest =
-      ImageRequest.Builder(LocalContext.current)
-          .data(imgUrl)
-          .memoryCacheKey(imgUrl.toString())
-          .diskCacheKey(imgUrl.toString())
-          .placeholder(placeholderImg)
-          .error(placeholderImg)
-          .fallback(placeholderImg)
-          .diskCachePolicy(CachePolicy.ENABLED)
-          .memoryCachePolicy(CachePolicy.ENABLED)
-          .crossfade(true)
-          .build()
-
   Column(
       modifier =
           Modifier.fillMaxWidth()
@@ -128,8 +112,8 @@ fun EventCardScaffold(
         // Event image section, displays the main event image or a placeholder if the URL is invalid
 
         Box(modifier = Modifier.fillMaxWidth().height(100.dp)) {
-          AsyncImage(
-              model = imageRequest,
+          AsyncImageWrapper(
+              imageUri = event.image.toUri(),
               contentDescription =
                   context.getString(R.string.event_card_content_description_event_image),
               modifier =
@@ -202,20 +186,25 @@ fun EventCardScaffold(
                         color = MaterialTheme.colorScheme.scrim,
                         style = TextStyle(fontSize = 8.sp))
                   }
+              Spacer(modifier = Modifier.weight(1f))
+              // Organiser associations' logos on the right of the title and type
+              for (i in organisers.indices) {
+                AsyncImageWrapper(
+                    imageUri = organisers[i].image.toUri(),
+                    contentDescription =
+                        context.getString(R.string.event_card_content_description_association_logo),
+                    modifier =
+                        Modifier.testTag("${EventCardTestTags.ASSOCIATION_LOGO}$i")
+                            .size(24.dp)
+                            .align(Alignment.CenterVertically)
+                            .padding(end = 3.dp)
+                            .clip(RoundedCornerShape(5.dp)),
+                    contentScale = ContentScale.Crop,
+                    placeholderResourceId = R.drawable.adec,
+                    filterQuality = FilterQuality.None)
+              }
             }
             Spacer(modifier = Modifier.width(6.dp))
-
-            // Static association logo on the right of the title and type
-
-            Image(
-                painter = painterResource(id = R.drawable.clic),
-                contentDescription =
-                    context.getString(R.string.event_card_content_description_association_logo),
-                modifier =
-                    Modifier.size(24.dp)
-                        .align(Alignment.CenterVertically)
-                        .clip(RoundedCornerShape(5.dp))
-                        .testTag(EventCardTestTags.EVENT_CLIC_IMAGE))
           }
 
           // Row displaying event location and formatted date/time details
