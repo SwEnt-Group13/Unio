@@ -23,6 +23,7 @@ service cloud.firestore {
         return request.resource.data.joinedAssociations == resource.data.joinedAssociations;
       }
       function validate() {
+        // CHeck that the user document has the correct fields
         let fields = ['uid', 'email', 'firstName', 'lastName', 'biography', 'savedEvents', 'followedAssociations', 'joinedAssociations', 'interests', 'socials', 'profilePicture'];
         let hasCorrectNumberOfFields = request.resource.data.size() == fields.size();
         let hasCorrectFields = request.resource.data.keys().hasAll(fields);
@@ -42,8 +43,8 @@ service cloud.firestore {
       }
 
       allow get: if isVerified();
-      allow create: if isOwner() && validate();
       allow delete: if isOwner();
+      allow create: if isOwner() && validate();
       allow update: if isOwner() && validateJoinedAssociations() && validate();
     }
 
@@ -52,6 +53,8 @@ service cloud.firestore {
         return isVerified() && get(/databases/$(database)/documents/associations/$(uid)).data.members.hasAny([request.auth.uid]);
       }
       function onlyUpdatedFollowerCount() {
+        // Check that the only updated field is the followersCount field
+        // and that it was only incremented or decremented by 1
         let newCount = request.resource.data.followersCount;
         let oldCount = resource.data.followersCount;
 
@@ -61,6 +64,7 @@ service cloud.firestore {
         return onlyFollowerCountChanged && (newCount == oldCount || newCount == oldCount + 1 || newCount == oldCount - 1);
       }
       function validate() {
+        // Check that the association document has the correct fields
         let fields = ['uid', 'url', 'name', 'fullName', 'category', 'description', 'followersCount', 'members', 'image', 'events'];
         let hasCorrectNumberOfFields = request.resource.data.size() == fields.size();
         let hasCorrectFields = request.resource.data.keys().hasAll(fields);
@@ -86,18 +90,14 @@ service cloud.firestore {
     }
 
     match /events/{uid} {
-      function isEventOrganiser() {
-        // This assumes the event document already exists
-        return isVerified() && resource.data.organisers.hasAny(
-          get(/databases/$(database)/documents/users/$(request.auth.uid)).data.joinedAssociations
-        );
-      }
-      function canCreateEvent() {
-        return isVerified() && request.resource.data.organisers.hasAny(
+      function isEventOrganiser(organisers) {
+        // Check that the user creating the event is member of any of the organisers
+        return isVerified() && organisers.hasAny(
           get(/databases/$(database)/documents/users/$(request.auth.uid)).data.joinedAssociations
         );
       }
       function validate() {
+        // Check that the event document has the correct fields
         let fields = ['uid', 'title', 'organisers', 'taggedAssociations', 'image', 'description', 'catchyDescription', 'price', 'date', 'location', 'types'];
         let hasCorrectNumberOfFields = request.resource.data.size() == fields.size();
         let hasCorrectFields = request.resource.data.keys().hasAll(fields);
@@ -121,9 +121,15 @@ service cloud.firestore {
       }
 
       allow read: if isVerified();
-      allow create: if canCreateEvent() && validate();
-      allow update: if isEventOrganiser() && validate();
-      allow delete: if isEventOrganiser();
+
+      // To create an event, the user must be an organiser
+      // specified in the event document of the request
+      allow create: if isEventOrganiser(request.resource.data.organisers) && validate();
+
+      // To update or delete an event, the user must be an
+      // organiser in the existing event document
+      allow update: if isEventOrganiser(resource.data.organisers) && validate();
+      allow delete: if isEventOrganiser(resource.data.organisers);
     }
   }
 }
