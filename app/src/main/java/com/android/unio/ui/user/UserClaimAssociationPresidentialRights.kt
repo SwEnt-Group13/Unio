@@ -28,6 +28,7 @@ import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.navigation.NavigationAction
+import com.android.unio.ui.navigation.Screen
 import com.android.unio.ui.theme.AppTypography
 import com.google.android.gms.tasks.Task
 import com.google.firebase.Firebase
@@ -182,38 +183,45 @@ fun UserClaimAssociationPresidentialRightsScreen(
                         Button(
                             onClick = {
                                 if (association != null) {
-                                    coroutineScope.launch {
-                                        verifyCode(Firebase.functions, association!!.uid, verificationCode).addOnCompleteListener { task ->
-                                            if (!task.isSuccessful) {
-                                                val e = task.exception
-                                                if (e is FirebaseFunctionsException) {
-                                                    val code = e.code
-                                                    Log.e("CloudFunctionError", "Error Code: $code", e)
+                                    if (user != null){
+                                        coroutineScope.launch {
+                                            verifyCode(Firebase.functions, association!!.uid, verificationCode, user!!.uid).addOnCompleteListener { task ->
+                                                if (!task.isSuccessful) {
+                                                    val e = task.exception
+                                                    if (e is FirebaseFunctionsException) {
+                                                        val code = e.code
+                                                        Log.e("CloudFunctionError", "Error Code: $code", e)
 
-                                                    when (code) {
-                                                        FirebaseFunctionsException.Code.INVALID_ARGUMENT -> {
-                                                            Toast.makeText(context, "Wrong code, please try again", Toast.LENGTH_SHORT).show()
+                                                        when (code) {
+                                                            FirebaseFunctionsException.Code.INVALID_ARGUMENT -> {
+                                                                Toast.makeText(context, "Wrong code, please try again", Toast.LENGTH_SHORT).show()
+                                                            }
+                                                            FirebaseFunctionsException.Code.NOT_FOUND -> {
+                                                                Toast.makeText(context, "Verification request not found", Toast.LENGTH_SHORT).show()
+                                                            }
+                                                            FirebaseFunctionsException.Code.UNAVAILABLE -> {
+                                                                Toast.makeText(context, "Service unavailable. Please try later", Toast.LENGTH_SHORT).show()
+                                                            }
+                                                            else -> {
+                                                                Toast.makeText(context, "Unexpected error occurred", Toast.LENGTH_SHORT).show()
+                                                            }
                                                         }
-                                                        FirebaseFunctionsException.Code.NOT_FOUND -> {
-                                                            Toast.makeText(context, "Verification request not found", Toast.LENGTH_SHORT).show()
-                                                        }
-                                                        FirebaseFunctionsException.Code.UNAVAILABLE -> {
-                                                            Toast.makeText(context, "Service unavailable. Please try later", Toast.LENGTH_SHORT).show()
-                                                        }
-                                                        else -> {
-                                                            Toast.makeText(context, "Unexpected error occurred", Toast.LENGTH_SHORT).show()
-                                                        }
+                                                    } else {
+                                                        Log.e("CloudFunctionError", "Unexpected error occurred", e)
+                                                        Toast.makeText(context, "Unexpected error occurred", Toast.LENGTH_SHORT).show()
                                                     }
                                                 } else {
-                                                    Log.e("CloudFunctionError", "Unexpected error occurred", e)
-                                                    Toast.makeText(context, "Unexpected error occurred", Toast.LENGTH_SHORT).show()
+                                                    Log.d("CloudFunction", "OK")
+                                                    Toast.makeText(context, "Verified successfully!", Toast.LENGTH_SHORT).show()
+                                                    navigationAction.navigateTo(Screen.MY_PROFILE)
                                                 }
-                                            } else {
-                                                Log.d("CloudFunction", "OK")
-                                                Toast.makeText(context, "Verified successfully!", Toast.LENGTH_SHORT).show()
                                             }
                                         }
+                                    }else{
+                                        Log.e("UserError", "User does not exist or has no uid")
+                                        Toast.makeText(context, "Unexpected error occurred", Toast.LENGTH_SHORT).show()
                                     }
+
                                 }else{
                                     Log.e("AssociationError", "Association does not exist or has no principalEmailAddress")
                                     Toast.makeText(context, "Unexpected error occurred", Toast.LENGTH_SHORT).show()
@@ -233,9 +241,9 @@ fun UserClaimAssociationPresidentialRightsScreen(
     )
 }
 
-private fun verifyCode(functions: FirebaseFunctions, associationUid: String, code : String): Task<String> {
+private fun verifyCode(functions: FirebaseFunctions, associationUid: String, code : String, userUid : String): Task<String> {
     // the continuation runs on either success or failure :)
-    return functions.getHttpsCallable("verifyCode").call(hashMapOf("associationUid" to associationUid, "code" to code)).continueWith { task ->
+    return functions.getHttpsCallable("verifyCode").call(hashMapOf("associationUid" to associationUid, "code" to code, "userUid" to userUid)).continueWith { task ->
         val result = task.result?.data as String
         result
     }
