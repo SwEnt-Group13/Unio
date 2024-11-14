@@ -1,9 +1,138 @@
 rules_version = '2';
 
+// Read rules can be divided into get and list rules
+// Write rules can be divided into create, update, and delete rules
+
 service cloud.firestore {
   match /databases/{database}/documents {
-		match /{document=**} {
+    
+    match /{document=**} { //UNSURE ABOUT THAT MAYBE DELETE
       allow read, write: if request.auth != null;
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    function isVerified() {
+      return isSignedIn() && request.auth.token.email_verified;
+    }
+
+    match /users/{uid} {
+      function isOwner() {
+        return isVerified() && request.auth.uid == uid;
+      }
+      function validateJoinedAssociations() {
+        // Prevent the user from changing the joinedAssociations field
+        // This will be handled by a Firebase Function
+        return request.resource.data.joinedAssociations == resource.data.joinedAssociations;
+      }
+      function validate() {
+        // CHeck that the user document has the correct fields
+        let fields = ['uid', 'email', 'firstName', 'lastName', 'biography', 'savedEvents', 'followedAssociations', 'joinedAssociations', 'interests', 'socials', 'profilePicture'];
+        let hasCorrectNumberOfFields = request.resource.data.size() == fields.size();
+        let hasCorrectFields = request.resource.data.keys().hasAll(fields);
+
+        return hasCorrectNumberOfFields && hasCorrectFields &&
+          request.resource.data.uid == request.auth.uid &&
+          request.resource.data.email == request.auth.token.email &&
+          request.resource.data.firstName is string &&
+          request.resource.data.lastName is string &&
+          request.resource.data.biography is string &&
+          request.resource.data.savedEvents is list &&
+          request.resource.data.followedAssociations is list &&
+          request.resource.data.joinedAssociations is list &&
+          request.resource.data.interests is list &&
+          request.resource.data.socials is list &&
+          request.resource.data.profilePicture is string;
+      }
+
+      allow get: if isVerified();
+      allow delete: if isOwner();
+      allow create: if isOwner() && validate();
+      allow update: if isOwner() && validateJoinedAssociations() && validate();
+    }
+
+    match /associations/{uid} {
+      function isMember() {
+        return isVerified() && get(/databases/$(database)/documents/associations/$(uid)).data.members.hasAny([request.auth.uid]);
+      }
+      function onlyUpdatedFollowerCount() {
+        // Check that the only updated field is the followersCount field
+        // and that it was only incremented or decremented by 1
+        let newCount = request.resource.data.followersCount;
+        let oldCount = resource.data.followersCount;
+
+        let affectedKeys = request.resource.data.diff(resource.data).affectedKeys();
+        let onlyFollowerCountChanged = affectedKeys.hasOnly(['followersCount']);
+
+        return onlyFollowerCountChanged && (newCount == oldCount || newCount == oldCount + 1 || newCount == oldCount - 1);
+      }
+      function validate() {
+        // Check that the association document has the correct fields
+        let fields = ['uid', 'url', 'name', 'fullName', 'category', 'description', 'followersCount', 'members', 'image', 'events'];
+        let hasCorrectNumberOfFields = request.resource.data.size() == fields.size();
+        let hasCorrectFields = request.resource.data.keys().hasAll(fields);
+
+        return hasCorrectNumberOfFields && hasCorrectFields &&
+          request.resource.data.uid == uid &&
+          request.resource.data.url is string &&
+          request.resource.data.name is string &&
+          request.resource.data.fullName is string &&
+          request.resource.data.category is string &&
+          request.resource.data.description is string &&
+          request.resource.data.followersCount is int &&
+          request.resource.data.followersCount >= 0 &&
+          request.resource.data.members is list &&
+          request.resource.data.image is string &&
+          request.resource.data.events is list;
+      }
+
+      allow read: if isVerified();
+      // Allow update if the user is a member of the association or if the changed data is the followersCount field
+      allow update: if isVerified() &&
+          ((isMember() || onlyUpdatedFollowerCount())) && validate();
+    }
+
+    match /events/{uid} {
+      function isEventOrganiser(organisers) {
+        // Check that the user creating the event is member of any of the organisers
+        return isVerified() && organisers.hasAny(
+          get(/databases/$(database)/documents/users/$(request.auth.uid)).data.joinedAssociations
+        );
+      }
+      function validate() {
+        // Check that the event document has the correct fields
+        let fields = ['uid', 'title', 'organisers', 'taggedAssociations', 'image', 'description', 'catchyDescription', 'price', 'date', 'location', 'types'];
+        let hasCorrectNumberOfFields = request.resource.data.size() == fields.size();
+        let hasCorrectFields = request.resource.data.keys().hasAll(fields);
+
+        return hasCorrectNumberOfFields && hasCorrectFields &&
+          request.resource.data.uid == uid &&
+          request.resource.data.title is string &&
+          request.resource.data.organisers is list &&
+          request.resource.data.taggedAssociations is list &&
+          request.resource.data.image is string &&
+          request.resource.data.description is string &&
+          request.resource.data.catchyDescription is string &&
+          request.resource.data.price is number &&
+          request.resource.data.price >= 0 &&
+          request.resource.data.date is timestamp &&
+          request.resource.data.location is map &&
+          request.resource.data.location.latitude is number &&
+          request.resource.data.location.longitude is number &&
+          request.resource.data.location.name is string &&
+          request.resource.data.types is list;
+      }
+
+      allow read: if isVerified();
+
+      // To create an event, the user must be an organiser
+      // specified in the event document of the request
+      allow create: if isEventOrganiser(request.resource.data.organisers) && validate();
+
+      // To update or delete an event, the user must be an
+      // organiser in the existing event document
+      allow update: if isEventOrganiser(resource.data.organisers) && validate();
+      allow delete: if isEventOrganiser(resource.data.organisers);
     }
   }
 }

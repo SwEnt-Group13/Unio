@@ -7,6 +7,7 @@ import androidx.compose.material.icons.outlined.Search
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
+import com.android.unio.model.strings.test_tags.BottomNavBarTestTags
 import com.android.unio.resources.BookmarkIcon
 
 open class NavigationAction(val navController: NavHostController) {
@@ -93,13 +94,22 @@ val LIST_TOP_LEVEL_DESTINATION =
 data class TopLevelDestination(val route: String, val icon: ImageVector, val textId: String)
 
 object TopLevelDestinations {
-  val HOME = TopLevelDestination(route = Route.HOME, icon = Icons.Outlined.Home, textId = "Home")
-  val SAVED = TopLevelDestination(route = Route.SAVED, icon = BookmarkIcon, textId = "Saved")
+  val HOME =
+      TopLevelDestination(
+          route = Route.HOME, icon = Icons.Outlined.Home, textId = BottomNavBarTestTags.HOME)
+  val SAVED =
+      TopLevelDestination(
+          route = Route.SAVED, icon = BookmarkIcon, textId = BottomNavBarTestTags.SAVED)
   val EXPLORE =
-      TopLevelDestination(route = Route.EXPLORE, icon = Icons.Outlined.Search, textId = "Explore")
+      TopLevelDestination(
+          route = Route.EXPLORE,
+          icon = Icons.Outlined.Search,
+          textId = BottomNavBarTestTags.EXPLORE)
   val MY_PROFILE =
       TopLevelDestination(
-          route = Route.MY_PROFILE, icon = Icons.Outlined.Person, textId = "My Profile")
+          route = Route.MY_PROFILE,
+          icon = Icons.Outlined.Person,
+          textId = BottomNavBarTestTags.MY_PROFILE)
 }
 
 object Route {
@@ -111,23 +121,23 @@ object Route {
 }
 
 object Screen {
-  const val WELCOME = "Welcome Screen"
-  const val EMAIL_VERIFICATION = "Email Verification Screen"
-  const val ACCOUNT_DETAILS = "Account Details Screen"
-  const val HOME = "Home Screen"
-  const val MAP = "Map Screen"
-  const val EXPLORE = "Explore Screen"
-  const val SAVED = "Saved Screen"
-  const val MY_PROFILE = "MyProfile Screen"
+  const val WELCOME = "Welcome_Screen"
+  const val EMAIL_VERIFICATION = "Email_Verification_Screen"
+  const val ACCOUNT_DETAILS = "Account_Details_Screen"
+  const val HOME = "Home_Screen"
+  const val MAP = "Map_Screen"
+  const val EXPLORE = "Explore_Screen"
+  const val SAVED = "Saved_Screen"
+  const val MY_PROFILE = "MyProfile_Screen"
   const val SETTINGS = "Settings"
-  const val ASSOCIATION_PROFILE = "Association Profile Screen"
-  const val EDIT_ASSOCIATION = "Edit Assocation Screen"
-  const val EVENT_DETAILS = "Event Details Screen"
-  const val CLAIM_ASSOCIATION_RIGHTS = "User Claim Association Rights Screen"
+  const val ASSOCIATION_PROFILE = "Association_Profile_Screen"
+  const val EDIT_ASSOCIATION = "Edit_Assocation_Screen"
+  const val EVENT_DETAILS = "Event_Details_Screen"
+  const val CLAIM_ASSOCIATION_RIGHTS = "User_Claim_Association_Rights_Screen"
   const val CLAIM_ASSOCIATION_PRESIDENTIAL_RIGHTS =
-      "User Claim Association Presidential Rights Screen"
-  const val EVENT_CREATION = "Event Creation Screen"
-  const val EDIT_EVENT = "Edit Event Screen"
+      "User_Claim_Association_Presidential_Rights_Screen"
+  const val EVENT_CREATION = "Event_Creation_Screen"
+  const val EDIT_EVENT = "Edit_Event_Screen"
 
   /**
    * Replace the placeholders in the screen with the provided parameters.

@@ -3,6 +3,7 @@ package com.android.unio.model.user
 import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
+import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.google.firebase.auth.FirebaseUser
 
 enum class SignInState {
@@ -31,17 +32,19 @@ fun signInOrCreateAccount(
     onResult: (SignInResult) -> Unit,
 ) {
   if (isValidEmail(email)) {
-    auth
-        .signInWithEmailAndPassword(email.trim(), password)
-        .addOnSuccessListener { onResult(SignInResult(SignInState.SUCCESS_SIGN_IN, it.user)) }
-        .addOnFailureListener {
-          if (it is FirebaseAuthInvalidCredentialsException) {
-            createAccount(email.trim(), password, auth, onResult)
-          } else {
-            Log.e("Auth", "Failed to sign in", it)
-            onResult(SignInResult(SignInState.INVALID_CREDENTIALS, null))
-          }
+    auth.signInWithEmailAndPassword(email.trim(), password).addOnCompleteListener {
+      if (it.isSuccessful) {
+        onResult(SignInResult(SignInState.SUCCESS_SIGN_IN, it.result.user))
+      } else {
+        if (it.exception is FirebaseAuthInvalidUserException ||
+            it.exception is FirebaseAuthInvalidCredentialsException) {
+          createAccount(email.trim(), password, auth, onResult)
+        } else {
+          Log.e("Auth", "Failed to sign in", it.exception)
+          onResult(SignInResult(SignInState.INVALID_CREDENTIALS, null))
         }
+      }
+    }
   } else {
     onResult(SignInResult(SignInState.INVALID_EMAIL_FORMAT, null))
   }

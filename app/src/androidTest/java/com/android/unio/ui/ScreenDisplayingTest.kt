@@ -52,12 +52,15 @@ import com.google.firebase.auth.internal.zzac
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import io.mockk.MockKAnnotations
+import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.spyk
+import io.mockk.unmockkAll
 import me.zhanghai.compose.preference.ProvidePreferenceLocals
+import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -68,9 +71,9 @@ class ScreenDisplayingTest {
   val user = MockUser.createMockUser(uid = "1")
   val events = listOf(MockEvent.createMockEvent())
 
-  @MockK lateinit var navigationAction: NavigationAction
+  @MockK private lateinit var navigationAction: NavigationAction
 
-  @MockK lateinit var userRepository: UserRepositoryFirestore
+  @MockK private lateinit var userRepository: UserRepositoryFirestore
   private lateinit var userViewModel: UserViewModel
 
   private lateinit var associationViewModel: AssociationViewModel
@@ -144,13 +147,13 @@ class ScreenDisplayingTest {
 
   @Test
   fun testWelcomeDisplayed() {
-    composeTestRule.setContent { WelcomeScreen() }
+    composeTestRule.setContent { WelcomeScreen(userViewModel) }
     composeTestRule.onNodeWithTag(WelcomeTestTags.SCREEN).assertIsDisplayed()
   }
 
   @Test
   fun testEmailVerificationDisplayed() {
-    composeTestRule.setContent { EmailVerificationScreen(navigationAction) }
+    composeTestRule.setContent { EmailVerificationScreen(navigationAction, userViewModel) }
     composeTestRule.onNodeWithTag(EmailVerificationTestTags.SCREEN).assertIsDisplayed()
   }
 
@@ -238,5 +241,11 @@ class ScreenDisplayingTest {
   fun testSomeoneElseUserProfileDisplayed() {
     composeTestRule.setContent { SomeoneElseUserProfileScreen() }
     composeTestRule.onNodeWithTag(SomeoneElseUserProfileTestTags.SCREEN).assertIsDisplayed()
+  }
+
+  @After
+  fun tearDown() {
+    clearAllMocks()
+    unmockkAll()
   }
 }

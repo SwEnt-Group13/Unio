@@ -14,6 +14,9 @@ import com.android.unio.model.strings.test_tags.EditAssociationTestTags
 import com.android.unio.ui.navigation.NavigationAction
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
+import io.mockk.clearAllMocks
+import io.mockk.unmockkAll
+import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -81,5 +84,11 @@ class EditAssociationTest {
       compose.performScrollTo()
     }
     compose.assertIsDisplayed()
+  }
+
+  @After
+  fun tearDown() {
+    clearAllMocks()
+    unmockkAll()
   }
 }
