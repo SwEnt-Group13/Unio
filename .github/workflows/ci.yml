@@ -91,11 +91,11 @@ jobs:
 
       # Install the firebase emulator suite
       - name: Install Firebase Emulator Suite
-        run: npm ci -g firebase-tools
+        run: npm install -g firebase-tools
 
       # Install dependencies for the firebase emulator suite
       - name: Install dependencies for the firebase emulator suite
-        run: npm ci
+        run: npm install
 
       # Check formatting
       - name: KTFmt Check
