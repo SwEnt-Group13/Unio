@@ -75,7 +75,7 @@ class MainActivity : ComponentActivity() {
   }
 }
 
-private fun useEmulator(useEmulator : Boolean){
+private fun useEmulator(useEmulator: Boolean) {
   if (useEmulator) {
     Firebase.functions.useEmulator("10.0.2.2", 5001)
     Firebase.auth.useEmulator("10.0.2.2", 9099)
@@ -148,13 +148,16 @@ fun UnioApp(imageRepository: ImageRepositoryFirebaseStorage) {
       composable(Screen.SAVED) { SavedScreen(navigationActions) }
     }
     navigation(startDestination = Screen.MY_PROFILE, route = Route.MY_PROFILE) {
-      composable(Screen.MY_PROFILE) { UserProfileScreen(userViewModel, navigationActions, searchViewModel) }
+      composable(Screen.MY_PROFILE) {
+        UserProfileScreen(userViewModel, navigationActions, searchViewModel)
+      }
       composable(Screen.SETTINGS) { SettingsScreen(navigationActions) }
       composable(Screen.CLAIM_ASSOCIATION_RIGHTS) {
         UserClaimAssociationScreen(associationViewModel, navigationActions, searchViewModel)
       }
       composable(Screen.CLAIM_ASSOCIATION_PRESIDENTIAL_RIGHTS) {
-        UserClaimAssociationPresidentialRightsScreen(associationViewModel, navigationActions, searchViewModel, userViewModel)
+        UserClaimAssociationPresidentialRightsScreen(
+            associationViewModel, navigationActions, searchViewModel, userViewModel)
       }
     }
   }

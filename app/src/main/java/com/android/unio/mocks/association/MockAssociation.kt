@@ -89,7 +89,7 @@ class MockAssociation {
         principalEmailAddress: String = "principal@email_adress.com",
         parentAssociations: ReferenceList<Association> = Association.emptyFirestoreReferenceList(),
         childAssociations: ReferenceList<Association> = Association.emptyFirestoreReferenceList(),
-        admins: ReferenceList<User> = User.emptyFirestoreReferenceList()
+        adminUid: String = "1"
     ): Association {
       val membersHelper =
           if (userDependency) {
@@ -110,9 +110,7 @@ class MockAssociation {
           followersCount = 2,
           events = events,
           principalEmailAddress = principalEmailAddress,
-          parentAssociations = parentAssociations,
-          childAssociations = childAssociations,
-          admins = admins)
+          adminUid = adminUid)
     }
 
     fun createAllMockAssociations(

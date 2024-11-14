@@ -20,9 +20,7 @@ fun AssociationRepositoryFirestore.Companion.serialize(association: Association)
       "image" to association.image,
       "events" to association.events.uids,
       "principalEmailAddress" to association.principalEmailAddress,
-      "parentAssociations" to association.parentAssociations.uids,
-      "childAssociations" to association.childAssociations.uids,
-        "admins" to association.admins.uids)
+      "adminUid" to association.adminUid)
 }
 
 fun UserRepositoryFirestore.Companion.serialize(user: User): Map<String, Any> {

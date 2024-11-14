@@ -38,13 +38,10 @@ data class Association(
     var image: String,
     val events: ReferenceList<Event>,
     val principalEmailAddress: String,
-    val parentAssociations: ReferenceList<Association>,
-    val childAssociations: ReferenceList<Association>,
-    val admins: ReferenceList<User>
+    val adminUid: String
 ) {
   companion object
 }
-
 
 enum class AssociationCategory(val displayName: String) {
   EPFL_BODIES(AssociationStrings.EPFL_BODIES),

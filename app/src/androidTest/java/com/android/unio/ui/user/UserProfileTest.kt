@@ -8,11 +8,14 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
 import com.android.unio.mocks.user.MockUser
+import com.android.unio.model.search.SearchRepository
+import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.navigation.NavigationAction
 import io.mockk.MockKAnnotations
 import io.mockk.impl.annotations.MockK
+import io.mockk.spyk
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -27,16 +30,22 @@ class UserProfileTest {
 
   private val user = MockUser.createMockUser()
 
+  private lateinit var searchViewModel: SearchViewModel
+  @MockK(relaxed = true) private lateinit var searchRepository: SearchRepository
+
   @Before
   fun setUp() {
     MockKAnnotations.init(this)
+    searchViewModel = spyk(SearchViewModel(searchRepository))
 
     userViewModel = UserViewModel(userRepository)
   }
 
   @Test
   fun testEverythingIsDisplayed() {
-    composeTestRule.setContent { UserProfileScreenScaffold(user, navigationAction, false) {} }
+    composeTestRule.setContent {
+      UserProfileScreenScaffold(user, navigationAction, false, searchViewModel = searchViewModel) {}
+    }
 
     composeTestRule.onNodeWithTag("UserProfilePicture").assertExists()
 
@@ -64,7 +73,10 @@ class UserProfileTest {
 
   @Test
   fun testNoUser() {
-    composeTestRule.setContent { UserProfileScreen(userViewModel, navigationAction) }
+    composeTestRule.setContent {
+      UserProfileScreen(
+          userViewModel, navigationAction = navigationAction, searchViewModel = searchViewModel)
+    }
 
     composeTestRule.onNodeWithTag("UserProfileScreen").assertIsNotDisplayed()
   }

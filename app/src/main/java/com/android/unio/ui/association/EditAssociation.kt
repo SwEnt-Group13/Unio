@@ -44,14 +44,7 @@ import com.android.unio.model.association.AssociationCategory
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
-import com.google.android.gms.tasks.Task
-import com.google.firebase.Firebase
-import com.google.firebase.functions.FirebaseFunctions
-import com.google.firebase.functions.FirebaseFunctionsException
-import com.google.firebase.functions.HttpsCallableReference
-import com.google.firebase.functions.functions
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
 
 @Composable
 fun EditAssociationScreen(
@@ -105,7 +98,7 @@ fun EditAssociationScaffold(
   var name by remember { mutableStateOf(association.name) }
   var fullName by remember { mutableStateOf(association.fullName) }
   var description by remember { mutableStateOf(association.description) }
-    var principalEmailAddress by remember { mutableStateOf(association.principalEmailAddress) }
+  var principalEmailAddress by remember { mutableStateOf(association.principalEmailAddress) }
 
   var expanded by remember { mutableStateOf(false) }
   var category by remember { mutableStateOf(association.category) }
@@ -265,4 +258,3 @@ fun EditAssociationScaffold(
             }
       }
 }
-

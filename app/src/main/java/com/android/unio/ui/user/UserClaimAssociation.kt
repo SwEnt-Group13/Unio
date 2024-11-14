@@ -29,7 +29,6 @@ import com.android.unio.ui.association.AssociationSearchBar
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
 import com.android.unio.ui.theme.AppTypography
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -38,61 +37,65 @@ fun UserClaimAssociationScreen(
     navigationAction: NavigationAction,
     searchViewModel: SearchViewModel
 ) {
-    val context = LocalContext.current
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(text = "Go Back", modifier = Modifier.testTag("AssociationProfileTitle"))
-                },
-                navigationIcon = {
-                    IconButton(
-                        onClick = { navigationAction.goBack() },
-                        modifier = Modifier.testTag("goBackButton")) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
-                            contentDescription = context.getString(R.string.association_go_back))
-                    }
-                },
-                actions = {
-                    Row {
-                        IconButton(onClick = {}) {
-                            Icon(
-                                Icons.Outlined.MoreVert,
-                                contentDescription = context.getString(R.string.association_see_more))
-                        }
-                    }
-                })
-        },
-        content = { padding ->
-            Surface(
-                modifier = Modifier.padding(padding),
-            ) {
-
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Text("You can either", style = AppTypography.headlineSmall)
-                    Spacer(modifier = Modifier.height(6.dp))
-
-                    Text("Create a new association", style = AppTypography.bodySmall)
-                    Spacer(modifier = Modifier.height(6.dp))
-
-                    Button(
-                        onClick = { Toast.makeText(context, "Not implemented yet", Toast.LENGTH_SHORT).show() },
-                        modifier = Modifier.testTag("createNewAssociationButton")
-                    ) {
-                        Text("Create association")
-                    }
-                    Spacer(modifier = Modifier.height(6.dp))
-
-                    Text("Claim president rights for an existing association", style = AppTypography.bodySmall)
-                    Spacer(modifier = Modifier.height(6.dp))
-
-                    AssociationSearchBar(searchViewModel = searchViewModel, onAssociationSelected = { association ->
-                        associationViewModel.selectAssociation(association.uid)
-                        navigationAction.navigateTo(Screen.CLAIM_ASSOCIATION_PRESIDENTIAL_RIGHTS)
-                    }, modifier = Modifier)
+  val context = LocalContext.current
+  Scaffold(
+      topBar = {
+        TopAppBar(
+            title = {
+              Text(text = "Go Back", modifier = Modifier.testTag("AssociationProfileTitle"))
+            },
+            navigationIcon = {
+              IconButton(
+                  onClick = { navigationAction.goBack() },
+                  modifier = Modifier.testTag("goBackButton")) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
+                        contentDescription = context.getString(R.string.association_go_back))
+                  }
+            },
+            actions = {
+              Row {
+                IconButton(onClick = {}) {
+                  Icon(
+                      Icons.Outlined.MoreVert,
+                      contentDescription = context.getString(R.string.association_see_more))
                 }
-            }
+              }
+            })
+      },
+      content = { padding ->
+        Surface(
+            modifier = Modifier.padding(padding),
+        ) {
+          Column(modifier = Modifier.padding(16.dp)) {
+            Text("You can either", style = AppTypography.headlineSmall)
+            Spacer(modifier = Modifier.height(6.dp))
+
+            Text("Create a new association", style = AppTypography.bodySmall)
+            Spacer(modifier = Modifier.height(6.dp))
+
+            Button(
+                onClick = {
+                  Toast.makeText(context, "Not implemented yet", Toast.LENGTH_SHORT).show()
+                },
+                modifier = Modifier.testTag("createNewAssociationButton")) {
+                  Text("Create association")
+                }
+            Spacer(modifier = Modifier.height(6.dp))
+
+            Text(
+                "Claim president rights for an existing association",
+                style = AppTypography.bodySmall)
+            Spacer(modifier = Modifier.height(6.dp))
+
+            AssociationSearchBar(
+                searchViewModel = searchViewModel,
+                onAssociationSelected = { association ->
+                  associationViewModel.selectAssociation(association.uid)
+                  navigationAction.navigateTo(Screen.CLAIM_ASSOCIATION_PRESIDENTIAL_RIGHTS)
+                },
+                modifier = Modifier)
+          }
         }
-    )
+      })
 }
