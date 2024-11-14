@@ -134,6 +134,7 @@ fun AccountDetails(
       userViewModel.addUser(
           newUser,
           onSuccess = {
+              assert(false){ "User added successfully" }
             Toast.makeText(
                     context,
                     context.getString(R.string.account_details_created_successfully),
@@ -317,6 +318,7 @@ fun AccountDetails(
                       "images/users/${userId}",
                       onSuccess = createUser,
                       onFailure = { exception ->
+                          throw exception
                         Log.e("AccountDetails", "Error uploading image: $exception")
                         Toast.makeText(
                                 context,
