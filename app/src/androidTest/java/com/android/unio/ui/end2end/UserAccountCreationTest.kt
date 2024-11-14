@@ -1,19 +1,17 @@
-package com.android.unio
+package com.android.unio.ui.end2end
 
 import android.util.Log
-import androidx.compose.ui.test.SemanticsNodeInteraction
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextContains
 import androidx.compose.ui.test.isDisplayed
-import androidx.compose.ui.test.isNotDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
-import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextInput
 import androidx.test.filters.LargeTest
+import com.android.unio.MainActivity
 import com.android.unio.model.strings.test_tags.AccountDetailsTestTags
 import com.android.unio.model.strings.test_tags.BottomNavBarTestTags
 import com.android.unio.model.strings.test_tags.EmailVerificationTestTags
@@ -21,12 +19,8 @@ import com.android.unio.model.strings.test_tags.HomeTestTags
 import com.android.unio.model.strings.test_tags.InterestsOverlayTestTags
 import com.android.unio.model.strings.test_tags.UserProfileTestTags
 import com.android.unio.model.strings.test_tags.WelcomeTestTags
-import com.android.unio.ui.flushAuthenticationClients
-import com.android.unio.ui.flushFirestoreDatabase
-import com.android.unio.ui.verifyEmulatorsAreRunning
-import com.google.firebase.Firebase
-import com.google.firebase.auth.auth
-import com.google.firebase.firestore.firestore
+import com.android.unio.ui.EmulatorUtils
+import com.android.unio.ui.assertDisplayComponentInScroll
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import io.mockk.clearAllMocks
@@ -35,44 +29,24 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.json.JSONObject
 import org.junit.After
-import org.junit.BeforeClass
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 
 @LargeTest
 @HiltAndroidTest
-// @UninstallModules(FirebaseModule::class, FirebaseAuthModule::class)
 class UserAccountCreationTest {
   @get:Rule val composeTestRule = createAndroidComposeRule<MainActivity>()
   @get:Rule val hiltRule = HiltAndroidRule(this)
 
-  //  @Module
-  //  @InstallIn(SingletonComponent::class)
-  //  object FirebaseModule {
-  //
-  //    @Provides
-  //    fun provideFirebaseFirestore(): FirebaseFirestore {
-  //      Firebase.firestore.useEmulator("10.0.2.2", 8080)
-  //      return Firebase.firestore
-  //    }
-  //  }
-  //
-  //  @Module
-  //  @InstallIn(SingletonComponent::class)
-  //  object FirebaseAuthModule {
-  //
-  //    @Provides
-  //    fun provideFirebaseAuth(): FirebaseAuth {
-  //      Firebase.auth.useEmulator("10.0.2.2", 9099)
-  //      return FirebaseAuth.getInstance()
-  //    }
-  //  }
+  @Before
+  fun setUp() {
+    EmulatorUtils.linkFirebaseToLocalEmulator()
 
-  private fun assertDisplayComponentInScroll(compose: SemanticsNodeInteraction) {
-    if (compose.isNotDisplayed()) {
-      compose.performScrollTo()
-    }
-    compose.assertIsDisplayed()
+    /*Test that the emulators are indeed running*/
+    EmulatorUtils.verifyEmulatorsAreRunning()
+    EmulatorUtils.flushAuthenticationClients()
+    EmulatorUtils.flushFirestoreDatabase()
   }
 
   @Test
@@ -154,7 +128,6 @@ class UserAccountCreationTest {
       composeTestRule.onNodeWithTag(UserProfileTestTags.SCREEN).isDisplayed()
     }
 
-    composeTestRule.onNodeWithTag(UserProfileTestTags.SCREEN).assertIsDisplayed()
     composeTestRule
         .onNodeWithTag(UserProfileTestTags.NAME)
         .assertTextContains("$FIRST_NAME $LAST_NAME")
@@ -165,7 +138,7 @@ class UserAccountCreationTest {
   private fun getLatestEmailVerificationUrl(): String {
     val client = OkHttpClient()
 
-    val oobRequest = Request.Builder().url(OOB_URL).build()
+    val oobRequest = Request.Builder().url(EmulatorUtils.OOB_URL).build()
 
     val response = client.newCall(oobRequest).execute()
 
@@ -194,26 +167,6 @@ class UserAccountCreationTest {
     const val FIRST_NAME = "John"
     const val LAST_NAME = "Doe"
     const val BIOGRAPHY = "I am a software engineer"
-
-    const val OOB_URL = "http://10.0.2.2:9099/emulator/v1/projects/unio-1b8ee/oobCodes"
-    const val FIRESTORE_URL = "http://10.0.2.2:8080"
-    const val FLUSH_FIRESTORE_URL =
-        "http://10.0.2.2:8080/emulator/v1/projects/unio-1b8ee/databases/(default)/documents"
-    const val FLUSH_AUTH_URL = "http://10.0.2.2:9099/emulator/v1/projects/unio-1b8ee/accounts"
-
-    @JvmStatic
-    @BeforeClass
-    fun setUp() {
-      //    hiltRule.inject()
-
-      Firebase.firestore.useEmulator("10.0.2.2", 8080)
-      Firebase.auth.useEmulator("10.0.2.2", 9099)
-
-      /*Test that the emulators are indeed running*/
-      verifyEmulatorsAreRunning()
-      flushAuthenticationClients()
-      flushFirestoreDatabase()
-    }
   }
 
   @After
