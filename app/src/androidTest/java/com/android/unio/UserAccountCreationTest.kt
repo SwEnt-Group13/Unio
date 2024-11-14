@@ -1,10 +1,12 @@
 package com.android.unio
 
 import android.util.Log
+import androidx.compose.ui.test.SemanticsNodeInteraction
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextContains
 import androidx.compose.ui.test.isDisplayed
+import androidx.compose.ui.test.isNotDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
@@ -66,6 +68,13 @@ class UserAccountCreationTest {
   //    }
   //  }
 
+  private fun assertDisplayComponentInScroll(compose: SemanticsNodeInteraction) {
+    if (compose.isNotDisplayed()) {
+      compose.performScrollTo()
+    }
+    compose.assertIsDisplayed()
+  }
+
   @Test
   fun testUserCanLoginAndCreateAnAccount() {
     /** Create an account on the welcome screen */
@@ -103,36 +112,32 @@ class UserAccountCreationTest {
     composeTestRule
         .onNodeWithTag(AccountDetailsTestTags.BIOGRAPHY_TEXT_FIELD)
         .performTextInput(BIOGRAPHY)
-    composeTestRule
-        .onNodeWithTag(AccountDetailsTestTags.INTERESTS_BUTTON)
-        .performScrollTo()
-        .assertIsDisplayed()
+    assertDisplayComponentInScroll(
+        composeTestRule.onNodeWithTag(AccountDetailsTestTags.INTERESTS_BUTTON))
     composeTestRule.onNodeWithTag(AccountDetailsTestTags.INTERESTS_BUTTON).performClick()
-    composeTestRule
-        .onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW + "0")
-        .performScrollTo()
-        .assertIsDisplayed()
+    assertDisplayComponentInScroll(
+        composeTestRule.onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW + "0"))
+
     composeTestRule.onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW + "0").performClick()
-    composeTestRule
-        .onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW + "1")
-        .performScrollTo()
-        .assertIsDisplayed()
+
+    assertDisplayComponentInScroll(
+        composeTestRule.onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW + "1"))
+
     composeTestRule.onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW + "1").performClick()
-    composeTestRule
-        .onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW + "2")
-        .performScrollTo()
-        .assertIsDisplayed()
+
+    assertDisplayComponentInScroll(
+        composeTestRule.onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW + "2"))
+
     composeTestRule.onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW + "2").performClick()
-    composeTestRule
-        .onNodeWithTag(InterestsOverlayTestTags.SAVE_BUTTON)
-        .performScrollTo()
-        .assertIsDisplayed()
+
+    assertDisplayComponentInScroll(
+        composeTestRule.onNodeWithTag(InterestsOverlayTestTags.SAVE_BUTTON))
+
     composeTestRule.onNodeWithTag(InterestsOverlayTestTags.SAVE_BUTTON).performClick()
 
-    composeTestRule
-        .onNodeWithTag(AccountDetailsTestTags.CONTINUE_BUTTON)
-        .performScrollTo()
-        .assertIsDisplayed()
+    assertDisplayComponentInScroll(
+        composeTestRule.onNodeWithTag(AccountDetailsTestTags.CONTINUE_BUTTON))
+
     composeTestRule.onNodeWithTag(AccountDetailsTestTags.CONTINUE_BUTTON).performClick()
 
     // Wait until "HomeScreen" is displayed
