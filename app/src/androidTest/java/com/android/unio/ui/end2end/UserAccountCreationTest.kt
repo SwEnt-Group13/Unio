@@ -114,7 +114,9 @@ class UserAccountCreationTest : EndToEndTest() {
     composeTestRule
         .onNodeWithTag(UserProfileTestTags.NAME)
         .assertTextContains("${UnverifiedUser.FIRST_NAME} ${UnverifiedUser.LAST_NAME}")
-    composeTestRule.onNodeWithTag(UserProfileTestTags.BIOGRAPHY).assertTextContains(UnverifiedUser.BIOGRAPHY)
+    composeTestRule
+        .onNodeWithTag(UserProfileTestTags.BIOGRAPHY)
+        .assertTextContains(UnverifiedUser.BIOGRAPHY)
     composeTestRule.onAllNodesWithTag(UserProfileTestTags.INTEREST).assertCountEquals(3)
   }
 

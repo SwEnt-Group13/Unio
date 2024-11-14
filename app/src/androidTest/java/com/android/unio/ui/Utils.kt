@@ -33,4 +33,3 @@ fun addNewUserSocial(composeTestRule: ComposeContentTestRule, username: String, 
       .performClick()
   composeTestRule.onNodeWithTag(SocialsOverlayTestTags.PROMPT_SAVE_BUTTON).performClick()
 }
-
