@@ -145,7 +145,7 @@ jobs:
 
       # Run
       - name: Run Node tests with Firestore and Storage emulators
-        run: firebase emulators:exec --only firestore,storage ./run_nodes_tests.sh
+        run: firebase emulators:exec --only firestore,storage ./run_node_tests.sh
 
       # This step generates the coverage report which will be uploaded to sonar
       - name: Generate Coverage Report
