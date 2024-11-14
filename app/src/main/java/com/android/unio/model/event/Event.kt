@@ -63,7 +63,6 @@ enum class EventType(val color: Color, val text: String) {
   TRIP(eventTypeTrip, "trip"),
   OTHER(eventTypeOther, "other")
 }
-// Default color
 
 @Document
 data class EventDocument(

@@ -10,6 +10,7 @@ import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventRepositoryFirestore
 import com.android.unio.model.event.EventViewModel
+import com.android.unio.model.follow.ConcurrentAssociationUserRepositoryFirestore
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.search.SearchRepository
 import com.android.unio.model.search.SearchViewModel
@@ -102,7 +103,10 @@ class ScreenDisplayingTest {
     associationViewModel =
         spyk(
             AssociationViewModel(
-                mock(), mockk<EventRepositoryFirestore>(), imageRepositoryFirestore))
+                mock(),
+                mockk<EventRepositoryFirestore>(),
+                imageRepositoryFirestore,
+                mockk<ConcurrentAssociationUserRepositoryFirestore>()))
 
     every { eventRepository.getEvents(any(), any()) } answers
         {
@@ -135,6 +139,7 @@ class ScreenDisplayingTest {
     mockkStatic(FirebaseAuth::class)
     every { Firebase.auth } returns firebaseAuth
     every { firebaseAuth.currentUser } returns mockFirebaseUser
+    associationViewModel.selectAssociation(associations.first().uid)
   }
 
   @Test
@@ -195,7 +200,7 @@ class ScreenDisplayingTest {
 
   @Test
   fun testEventCreationDisplayed() {
-    composeTestRule.setContent { EventCreationScreen() }
+    composeTestRule.setContent { EventCreationScreen(navigationAction) }
     composeTestRule.onNodeWithTag(EventCreationTestTags.SCREEN).assertIsDisplayed()
   }
 
@@ -203,10 +208,7 @@ class ScreenDisplayingTest {
   fun testAssociationProfileDisplayed() {
     composeTestRule.setContent {
       AssociationProfileScaffold(
-          MockAssociation.createMockAssociation(),
-          navigationAction,
-          userViewModel,
-          eventViewModel) {}
+          navigationAction, userViewModel, eventViewModel, associationViewModel) {}
     }
     composeTestRule.onNodeWithTag(AssociationProfileTestTags.SCREEN).assertIsDisplayed()
   }

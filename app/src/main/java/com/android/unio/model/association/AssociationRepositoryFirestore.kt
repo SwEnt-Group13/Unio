@@ -6,6 +6,7 @@ import com.android.unio.model.firestore.transform.serialize
 import com.google.android.gms.tasks.Task
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
+import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import javax.inject.Inject
 
@@ -18,6 +19,10 @@ class AssociationRepositoryFirestore @Inject constructor(private val db: Firebas
         onSuccess()
       }
     }
+  }
+
+  override fun getAssociationRef(uid: String): DocumentReference {
+    return db.collection(ASSOCIATION_PATH).document(uid)
   }
 
   override fun getAssociations(
@@ -63,7 +68,7 @@ class AssociationRepositoryFirestore @Inject constructor(private val db: Firebas
       onFailure: (Exception) -> Unit
   ) {
     performFirestoreOperation(
-        db.collection(ASSOCIATION_PATH).document(id).get(),
+        getAssociationRef(id).get(),
         onSuccess = { document -> onSuccess(hydrate(document.data)) },
         onFailure = { exception -> onFailure(exception) })
   }
@@ -74,7 +79,7 @@ class AssociationRepositoryFirestore @Inject constructor(private val db: Firebas
       onFailure: (Exception) -> Unit
   ) {
     performFirestoreOperation(
-        db.collection(ASSOCIATION_PATH).document(association.uid).set(serialize(association)),
+        getAssociationRef(association.uid).set(serialize(association)),
         onSuccess = { onSuccess() },
         onFailure)
   }
@@ -85,9 +90,7 @@ class AssociationRepositoryFirestore @Inject constructor(private val db: Firebas
       onFailure: (Exception) -> Unit
   ) {
     performFirestoreOperation(
-        db.collection(ASSOCIATION_PATH).document(associationId).delete(),
-        onSuccess = { onSuccess() },
-        onFailure)
+        getAssociationRef(associationId).delete(), onSuccess = { onSuccess() }, onFailure)
   }
 
   // TODO extract this to a util

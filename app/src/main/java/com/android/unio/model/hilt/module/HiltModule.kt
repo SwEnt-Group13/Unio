@@ -4,6 +4,8 @@ import com.android.unio.model.association.AssociationRepository
 import com.android.unio.model.association.AssociationRepositoryFirestore
 import com.android.unio.model.event.EventRepository
 import com.android.unio.model.event.EventRepositoryFirestore
+import com.android.unio.model.follow.ConcurrentAssociationUserRepository
+import com.android.unio.model.follow.ConcurrentAssociationUserRepositoryFirestore
 import com.android.unio.model.image.ImageRepository
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.user.UserRepository
@@ -69,6 +71,16 @@ abstract class UserModule {
 
   @Binds
   abstract fun bindUserRepository(userRepositoryFirestore: UserRepositoryFirestore): UserRepository
+}
+
+@Module
+@InstallIn(SingletonComponent::class)
+abstract class ConcurrentAssociationUserModule {
+
+  @Binds
+  abstract fun bindConcurrentAssociationUserRepository(
+      concurrentAssociationUserRepositoryFirestore: ConcurrentAssociationUserRepositoryFirestore
+  ): ConcurrentAssociationUserRepository
 }
 
 @Module
