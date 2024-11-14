@@ -38,7 +38,6 @@ import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
@@ -191,7 +190,7 @@ fun TopBar(
         // Tab Menu at the top of the page
         TabRow(
             selectedTabIndex = pagerState.currentPage,
-            contentColor = Color(0xFF362C28),
+            contentColor = colorScheme.primary,
             divider = {},
             indicator = {
               // method that draws the indicator bar below the tab menu
