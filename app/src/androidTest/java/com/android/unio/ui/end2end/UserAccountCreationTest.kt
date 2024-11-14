@@ -19,7 +19,6 @@ import com.android.unio.model.strings.test_tags.HomeTestTags
 import com.android.unio.model.strings.test_tags.InterestsOverlayTestTags
 import com.android.unio.model.strings.test_tags.UserProfileTestTags
 import com.android.unio.model.strings.test_tags.WelcomeTestTags
-import com.android.unio.ui.EmulatorUtils
 import com.android.unio.ui.assertDisplayComponentInScroll
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
@@ -29,7 +28,6 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.json.JSONObject
 import org.junit.After
-import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 
@@ -128,7 +126,7 @@ class UserAccountCreationTest : EndToEndTest() {
   private fun getLatestEmailVerificationUrl(): String {
     val client = OkHttpClient()
 
-    val oobRequest = Request.Builder().url(EmulatorUtils.Auth.OOB_URL).build()
+    val oobRequest = Request.Builder().url(Auth.OOB_URL).build()
 
     val response = client.newCall(oobRequest).execute()
 

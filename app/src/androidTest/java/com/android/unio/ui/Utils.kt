@@ -34,17 +34,3 @@ fun addNewUserSocial(composeTestRule: ComposeContentTestRule, username: String, 
   composeTestRule.onNodeWithTag(SocialsOverlayTestTags.PROMPT_SAVE_BUTTON).performClick()
 }
 
-/*
- * This object contains all utility methods relating to the firebase emulator suite
- */
-object EmulatorUtils {
-
-
-  object Auth {
-    const val HOST = "10.0.2.2"
-    const val PORT = 9099
-    const val ROOT = "http://$HOST:$PORT"
-    const val OOB_URL = "$ROOT/emulator/v1/projects/unio-1b8ee/oobCodes"
-    const val ACCOUNTS_URL = "$ROOT/emulator/v1/projects/unio-1b8ee/accounts"
-  }
-}

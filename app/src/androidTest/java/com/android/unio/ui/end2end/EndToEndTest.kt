@@ -83,4 +83,16 @@ open class EndToEndTest : FirebaseEmulatorFunctions {
         const val ACCOUNTS_URL = "$ROOT/emulator/v1/projects/unio-1b8ee/accounts"
     }
 
+    //This user's email is already verified
+    object User1{
+        const val EMAIL = "example1@gmail.com"
+        const val PASSWORD = "password123"
+    }
+
+    //This user's email is already verified
+    object User2{
+        const val EMAIL = "example2@gmail.com"
+        const val PASSWORD = "helloWorld123"
+    }
+
 }
