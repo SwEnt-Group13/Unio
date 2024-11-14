@@ -65,7 +65,7 @@ class MainActivity : ComponentActivity() {
     requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
     super.onCreate(savedInstanceState)
 
-    useEmulator(true) // Modify this to launch the project with Firebase Emulators
+    useEmulator(false) // Modify this to launch the project with Firebase Emulators
 
     setContent {
       Surface(modifier = Modifier.fillMaxSize()) {
