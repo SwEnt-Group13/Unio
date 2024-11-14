@@ -32,12 +32,15 @@ import com.android.unio.ui.navigation.NavigationAction
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import io.mockk.MockKAnnotations
+import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.spyk
+import io.mockk.unmockkAll
+import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -48,17 +51,18 @@ import org.mockito.kotlin.verify
 @HiltAndroidTest
 class AssociationProfileTest {
 
-  lateinit var navigationAction: NavigationAction
+  private lateinit var navigationAction: NavigationAction
 
   private lateinit var associationRepository: AssociationRepositoryFirestore
 
+  @MockK private lateinit var eventRepository: EventRepositoryFirestore
   @MockK
-  lateinit var concurrentAssociationUserRepository: ConcurrentAssociationUserRepositoryFirestore
+  private lateinit var concurrentAssociationUserRepository:
+      ConcurrentAssociationUserRepositoryFirestore
 
-  @MockK lateinit var eventRepository: EventRepositoryFirestore
   private lateinit var eventViewModel: EventViewModel
 
-  @MockK lateinit var userRepository: UserRepositoryFirestore
+  @MockK private lateinit var userRepository: UserRepositoryFirestore
   private lateinit var userViewModel: UserViewModel
 
   private lateinit var associationViewModel: AssociationViewModel
@@ -66,7 +70,7 @@ class AssociationProfileTest {
   private lateinit var associations: List<Association>
   private lateinit var events: List<Event>
 
-  @MockK lateinit var imageRepository: ImageRepositoryFirebaseStorage
+  @MockK private lateinit var imageRepository: ImageRepositoryFirebaseStorage
 
   @get:Rule val composeTestRule = createComposeRule()
 
@@ -111,13 +115,14 @@ class AssociationProfileTest {
           onSuccess(events)
         }
 
+    every { userRepository.init(any()) } just runs
+
     every { concurrentAssociationUserRepository.updateFollow(any(), any(), any(), any()) } answers
         {
           val onSuccess = args[2] as () -> Unit
           onSuccess()
         }
 
-    every { userRepository.init(any()) } just runs
     userViewModel = UserViewModel(userRepository)
     val user =
         User(
@@ -131,14 +136,14 @@ class AssociationProfileTest {
             joinedAssociations = Association.emptyFirestoreReferenceList(),
             interests = emptyList(),
             socials = emptyList(),
-            profilePicture = "")
+            profilePicture = "",
+        )
 
     every { userRepository.getUserWithId(any(), any(), any()) } answers
         {
           val onSuccess = args[1] as (User) -> Unit
           onSuccess(user)
         }
-
     every { userRepository.updateUser(user, any(), any()) } answers
         {
           val onSuccess = args[1] as () -> Unit
@@ -294,5 +299,11 @@ class AssociationProfileTest {
     }
 
     composeTestRule.onNodeWithTag(AssociationProfileTestTags.SCREEN).assertIsNotDisplayed()
+  }
+
+  @After
+  fun tearDown() {
+    clearAllMocks()
+    unmockkAll()
   }
 }

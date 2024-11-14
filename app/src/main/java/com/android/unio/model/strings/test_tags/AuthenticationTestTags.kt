@@ -82,6 +82,8 @@ object SocialsOverlayTestTags {
 object EmailVerificationTestTags {
   // SCREEN
   const val SCREEN = "emailVerificationScreen"
+  const val CONTINUE = "emailVerificationContinue"
+  const val REFRESH = "emailVerificationRefresh"
 }
 
 object WelcomeTestTags {

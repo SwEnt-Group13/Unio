@@ -2,7 +2,6 @@ package com.android.unio.ui.explore
 
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextEquals
-import androidx.compose.ui.test.isDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
@@ -24,10 +23,13 @@ import com.android.unio.ui.navigation.Screen
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import io.mockk.MockKAnnotations
+import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.spyk
+import io.mockk.unmockkAll
 import io.mockk.verify
+import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
@@ -140,14 +142,14 @@ class ExploreScreenTest {
     sortedByCategoryAssociations.forEach { (category, associations) ->
       composeTestRule
           .onNodeWithTag(ExploreContentTestTags.CATEGORY_NAME + category.name, true)
-          .isDisplayed()
+          .assertIsDisplayed()
       composeTestRule
           .onNodeWithTag(ExploreContentTestTags.ASSOCIATION_ROW + category.name, true)
-          .isDisplayed()
+          .assertIsDisplayed()
       associations.forEach { association ->
         composeTestRule
             .onNodeWithTag(ExploreContentTestTags.ASSOCIATION_ITEM + association.name, true)
-            .isDisplayed()
+            .assertIsDisplayed()
       }
     }
   }
@@ -168,5 +170,11 @@ class ExploreScreenTest {
     }
 
     verify(atLeast = 1) { navigationAction.navigateTo(Screen.ASSOCIATION_PROFILE) }
+  }
+
+  @After
+  fun tearDown() {
+    clearAllMocks()
+    unmockkAll()
   }
 }

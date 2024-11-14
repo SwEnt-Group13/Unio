@@ -15,8 +15,11 @@ import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.home.HomeScreen
 import com.android.unio.ui.navigation.NavigationAction
 import io.mockk.MockKAnnotations
+import io.mockk.clearAllMocks
 import io.mockk.impl.annotations.MockK
 import io.mockk.spyk
+import io.mockk.unmockkAll
+import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -58,5 +61,11 @@ class BottomNavigationTest {
   @Test
   fun testBottomNavigationMenuDisplayed() {
     composeTestRule.onNodeWithTag(NavigationActionTestTags.BOTTOM_NAV_MENU).assertIsDisplayed()
+  }
+
+  @After
+  fun tearDown() {
+    clearAllMocks()
+    unmockkAll()
   }
 }

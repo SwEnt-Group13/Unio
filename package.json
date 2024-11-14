@@ -2,7 +2,7 @@
   "name": "unio",
   "version": "1.0.0",
   "description": "The world's largest campus life platform.",
-  "main": "index.js",
+  "main": "",
   "scripts": {
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
   },
