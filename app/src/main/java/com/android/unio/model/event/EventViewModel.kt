@@ -39,7 +39,6 @@ constructor(private val repository: EventRepository, private val imageRepository
 
   val selectedEvent: StateFlow<Event?> = _selectedEvent.asStateFlow()
 
-  /** Initializes the ViewModel by loading the events from the repository. */
   init {
     repository.init { loadEvents() }
   }
@@ -51,12 +50,12 @@ constructor(private val repository: EventRepository, private val imageRepository
   fun loadEvents() {
     repository.getEvents(
         onSuccess = { eventList ->
-          _events.value = eventList // Update the state flow with the loaded events
+          eventList.forEach { event -> event.organisers.requestAll() }
+          _events.value = eventList
         },
         onFailure = { exception ->
-          // Handle error (e.g., log it, show a message to the user)
           Log.e("EventViewModel", "An error occurred while loading events: $exception")
-          _events.value = emptyList() // Clear events on failure or handle accordingly
+          _events.value = emptyList()
         })
   }
 
@@ -66,11 +65,7 @@ constructor(private val repository: EventRepository, private val imageRepository
    * @param eventId the ID of the event to select.
    */
   fun selectEvent(eventId: String) {
-    _selectedEvent.value =
-        findEventById(eventId).also {
-          it?.organisers?.requestAll()
-          it?.taggedAssociations?.requestAll()
-        }
+    _selectedEvent.value = findEventById(eventId).also { it?.taggedAssociations?.requestAll() }
   }
 
   /**

@@ -185,6 +185,8 @@
     */
 
     <!-- Map Screen Strings -->
+    <string name="home_tab_all">Tout</string>
+    <string name="home_tab_following">Suivis</string>
     <string name="map_event_go_back_button">Retour</string>
     <string name="map_event_title">Carte d\'évènements</string>
 

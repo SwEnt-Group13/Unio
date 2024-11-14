@@ -11,7 +11,7 @@
     <string name="title_activity_main">MainActivity</string>
 
     /**
-     * package: association
+    * package: association
     */
 
     <!-- Association Strings -->
@@ -169,6 +169,9 @@
     <string name="event_not_found" translatable="false">ERROR : event not found.</string>
     <string name="event_details_content_description_saved" translatable="false">Saved</string>
     <string name="event_details_content_description_not_saved" translatable="false">Not saved</string>
+    <string name="event_price_free" translatable="false">Free !</string>
+    <string name="event_price" translatable="false">Entry: </string>
+    <string name="event_places_remaining" translatable="false"> places remaining</string>
 
     /**
     * package: explore
@@ -190,6 +193,8 @@
     <!-- Home Screen Strings -->
     <string name="home_content_description_map_button">Map button</string>
     <string name="home_content_description_search_icon">Search icon</string>
+    <string name="home_tab_all">All</string>
+    <string name="home_tab_following">Following</string>
 
     /**
     * package: map
