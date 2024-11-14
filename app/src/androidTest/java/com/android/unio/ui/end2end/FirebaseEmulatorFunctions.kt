@@ -36,5 +36,7 @@ interface FirebaseEmulatorFunctions {
     */
     fun flushFirestoreDatabase()
 
+    fun signIn()
+
 
 }

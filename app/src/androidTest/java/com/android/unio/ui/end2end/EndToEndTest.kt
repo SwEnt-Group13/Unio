@@ -11,16 +11,15 @@ open class EndToEndTest : FirebaseEmulatorFunctions {
 
     @Before
     override fun setUp() {
-        println("Oskar's mother is very very nice")
         /** Verify that the emulators are running */
         verifyEmulatorsAreRunning()
 
         /** Connect Firebase to the emulators */
         useEmulators()
+    }
 
-        /** Clear all users and the Firestore database */
-        flushAuthenticatedUsers()
-        flushFirestoreDatabase()
+    override fun signIn() {
+
     }
 
     override fun verifyEmulatorsAreRunning() {
