@@ -15,6 +15,7 @@
     */
 
     <!-- Association Strings -->
+    <string name="association_toast_error" translatable="true">An error occurred.</string>
     <string name="association_upcoming_events" translatable="true">Upcoming Events</string>
     <string name="association_go_back" translatable="true">Go Back</string>
     <string name="association_see_more" translatable="true">See More</string>
@@ -28,6 +29,7 @@
     <string name="association_follower" translatable="true">followers</string>
     <string name="association_member" translatable="true">members</string>
     <string name="association_follow" translatable="true">Follow</string>
+    <string name="association_unfollow" translatable="true">Unfollow</string>
     <string name="association_join" translatable="true">Join</string>
     <string name="association_recruitment" translatable="true">Recruitment</string>
     <string name="association_no_event" translatable="true">No event planned yet</string>
@@ -37,6 +39,7 @@
     <string name="association_content_description_user_pfp">User\'s profile picture</string>
     <string name="association_content_description_association_image">Association image of </string>
     <string name="association_content_description_follow_icon">Follow icon</string>
+    <string name="association_profile_add_event_button">Add event</string>
 
 
     <!-- EditAssociation strings -->
@@ -140,6 +143,26 @@
 
     <!-- Event Creation Strings -->
     <string name="event_creation_screen">Event creation</string>
+    <string name="event_creation_title">Create an event</string>
+    <string name="event_creation_name_label">Event Name</string>
+    <string name="event_creation_short_description_label">Short Description</string>
+    <string name="event_creation_description_label">Description</string>
+    <string name="event_creation_coauthors_label">Co-authoring Associations</string>
+    <string name="event_creation_tagged_label">Tagged Associations</string>
+    <string name="event_creation_location_label">Location</string>
+    <string name="event_creation_image_label">Add a banner</string>
+    <string name="event_creation_save_button">Create</string>
+    <string name="event_creation_cancel_button">Cancel</string>
+    <string name="event_creation_placeholder_image_description">Placeholder Image</string>
+    <string name="event_creation_selected_image_description">Selected Banner Image</string>
+    <string name="event_creation_dialog_ok">OK</string>
+    <string name="event_creation_dialog_cancel">Cancel</string>
+    <string name="event_creation_placeholder_time_input">HH:mm</string>
+    <string name="event_creation_placeholder_date_input">dd/MM/yy</string>
+    <string name="event_creation_startdate_label">Start Date</string>
+    <string name="event_creation_enddate_label">End Date</string>
+    <string name="event_creation_starttime_label">Start Time</string>
+    <string name="event_creation_endtime_label">End Time</string>
 
     <!-- Event Details Strings -->
     <string name="event_sign_up" translatable="false">I\'m going.</string>
@@ -192,6 +215,9 @@
     * package: saved
     */
 
+    <!-- Saved Screen Strings -->
+    <string name="saved_screen_title" translatable="false">Saved screen</string>
+
     /**
     * package: settings
     */
@@ -214,6 +240,19 @@
     /**
     * package: user
     */
+
+    <!-- UserProfile Strings -->
+    <string name="user_profile_toast_error">An error occurred.</string>
+    <string name="user_profile_your_profile_text">Your Profile</string>
+    <string name="user_profile_content_description_more">More</string>
+    <string name="user_profile_content_description_pfp">Profile Picture</string>
+    <string name="user_profile_following_associations_text">Following</string>
+    <string name="user_profile_bottom_sheet_edit">Edit Profile</string>
+    <string name="user_profile_bottom_sheet_settings">Settings</string>
+    <string name="user_profile_bottom_sheet_sign_out">Sign Out</string>
+
+    <!-- SomeoneElseUserProfile Strings -->
+    <string name="someone_else_user_profile_screen_title" translatable="false">Someone else user profile screen</string>
 
     /**
     * Other

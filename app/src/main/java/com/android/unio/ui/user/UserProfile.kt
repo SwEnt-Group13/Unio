@@ -60,6 +60,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.android.unio.model.search.SearchViewModel
+import com.android.unio.R
+import com.android.unio.model.strings.test_tags.UserProfileTestTags
 import com.android.unio.model.user.User
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.association.AssociationSmall
@@ -80,11 +82,16 @@ fun UserProfileScreen(
     searchViewModel: SearchViewModel
 ) {
 
+  val context = LocalContext.current
   val user by userViewModel.user.collectAsState()
 
   if (user == null) {
     Log.e("UserProfileScreen", "User is null.")
-    Toast.makeText(LocalContext.current, "An error occurred.", Toast.LENGTH_SHORT).show()
+    Toast.makeText(
+            LocalContext.current,
+            context.getString(R.string.user_profile_toast_error),
+            Toast.LENGTH_SHORT)
+        .show()
     return
   }
 
@@ -104,18 +111,22 @@ fun UserProfileScreenScaffold(
     searchViewModel: SearchViewModel,
     onRefresh: () -> Unit,
 ) {
+  val context = LocalContext.current
   val pullRefreshState = rememberPullRefreshState(refreshing = refreshState, onRefresh = onRefresh)
 
   var showSheet by remember { mutableStateOf(false) }
 
   Scaffold(
-      modifier = Modifier.testTag("UserProfileScreen"),
+      modifier = Modifier.testTag(UserProfileTestTags.SCREEN),
       topBar = {
         TopAppBar(
-            title = { Text("Your Profile") },
+            title = { Text(context.getString(R.string.user_profile_your_profile_text)) },
             actions = {
               IconButton(onClick = { showSheet = true }) {
-                Icon(Icons.Outlined.MoreVert, contentDescription = "More")
+                Icon(
+                    Icons.Outlined.MoreVert,
+                    contentDescription =
+                        context.getString(R.string.user_profile_content_description_more))
               }
             })
       },
@@ -176,32 +187,33 @@ fun UserProfileScreenContent(
           Box(modifier = Modifier.size(100.dp)) {
             AsyncImage(
                 model = user.profilePicture,
-                contentDescription = "Profile Picture",
+                contentDescription =
+                    context.getString(R.string.user_profile_content_description_pfp),
                 contentScale = ContentScale.Crop,
                 modifier =
                     Modifier.size(100.dp)
                         .clip(CircleShape)
                         .background(Color.Gray)
-                        .testTag("UserProfilePicture"))
+                        .testTag(UserProfileTestTags.PROFILE_PICTURE))
           }
 
           // Display the user's name and biography.
           Text(
               user.firstName + " " + user.lastName,
               style = AppTypography.headlineLarge,
-              modifier = Modifier.testTag("UserProfileName"))
+              modifier = Modifier.testTag(UserProfileTestTags.NAME))
           Text(
               user.biography,
               style = AppTypography.bodyMedium,
               textAlign = TextAlign.Center,
-              modifier = Modifier.testTag("UserProfileBiography"))
+              modifier = Modifier.testTag(UserProfileTestTags.BIOGRAPHY))
 
           // Display the user's socials.
           FlowRow(horizontalArrangement = Arrangement.Center) {
             user.socials.forEach { userSocial ->
               IconButton(
                   onClick = { uriHandler.openUri(userSocial.getFullUrl()) },
-                  modifier = Modifier.testTag("UserProfileSocialButton")) {
+                  modifier = Modifier.testTag(UserProfileTestTags.SOCIAL_BUTTON)) {
                     Image(
                         modifier = Modifier.size(32.dp).wrapContentSize(),
                         painter = painterResource(userSocial.social.icon),
@@ -221,7 +233,7 @@ fun UserProfileScreenContent(
           ) {
             user.interests.forEach { interest ->
               SuggestionChip(
-                  modifier = Modifier.testTag("UserProfileInterest"),
+                  modifier = Modifier.testTag(UserProfileTestTags.INTEREST),
                   onClick = {},
                   label = {
                     Text(context.getString(interest.title), style = AppTypography.bodySmall)
@@ -235,7 +247,7 @@ fun UserProfileScreenContent(
 
             Text("Joined", style = AppTypography.headlineSmall)
             Column(
-                modifier = Modifier.fillMaxWidth().testTag("UserProfileJoinedAssociations"),
+                modifier = Modifier.fillMaxWidth().testTag(UserProfileTestTags.JOINED_ASSOCIATIONS),
                 verticalArrangement = Arrangement.spacedBy(4.dp),
             ) {
               joinedAssociations.map {
@@ -256,9 +268,11 @@ fun UserProfileScreenContent(
           if (followedAssociations.isNotEmpty()) {
             HorizontalDivider(modifier = Modifier)
 
-            Text("Following", style = AppTypography.headlineSmall)
+            Text(
+                context.getString(R.string.user_profile_following_associations_text),
+                style = AppTypography.headlineSmall)
             Column(
-                modifier = Modifier.testTag("UserProfileFollowedAssociations"),
+                modifier = Modifier.testTag(UserProfileTestTags.FOLLOWED_ASSOCIATIONS),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
               followedAssociations.map {
@@ -285,7 +299,7 @@ fun UserProfileBottomSheet(
 
   if (showSheet) {
     ModalBottomSheet(
-        modifier = Modifier.testTag("UserProfileBottomSheet"),
+        modifier = Modifier.testTag(UserProfileTestTags.BOTTOM_SHEET),
         sheetState = sheetState,
         onDismissRequest = onClose,
         properties = ModalBottomSheetProperties(shouldDismissOnBackPress = true),
@@ -296,7 +310,7 @@ fun UserProfileBottomSheet(
             onClick = {
               Toast.makeText(context, "Not yet implemented.", Toast.LENGTH_SHORT).show()
             }) {
-              Text("Edit Profile")
+              Text(context.getString(R.string.user_profile_bottom_sheet_edit))
             }
         TextButton(
             modifier = Modifier.fillMaxWidth(),
@@ -307,7 +321,7 @@ fun UserProfileBottomSheet(
                 navigationAction.navigateTo(Screen.SETTINGS)
               }
             }) {
-              Text("Settings")
+              Text(context.getString(R.string.user_profile_bottom_sheet_settings))
             }
         TextButton(
             modifier = Modifier.fillMaxWidth(),
@@ -318,7 +332,7 @@ fun UserProfileBottomSheet(
                 onClose()
               }
             }) {
-              Text("Sign Out")
+              Text(context.getString(R.string.user_profile_bottom_sheet_sign_out))
             }
       }
     }

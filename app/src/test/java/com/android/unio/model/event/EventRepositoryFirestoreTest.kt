@@ -1,11 +1,14 @@
 package com.android.unio.model.event
 
+import android.os.Looper
 import com.android.unio.mocks.event.MockEvent
 import com.android.unio.model.firestore.FirestorePaths.EVENT_PATH
 import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.gms.tasks.Task
 import com.google.firebase.Firebase
 import com.google.firebase.Timestamp
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
@@ -18,14 +21,23 @@ import io.mockk.mockk
 import io.mockk.mockkStatic
 import java.util.GregorianCalendar
 import junit.framework.TestCase.assertEquals
+import junit.framework.TestCase.assertTrue
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertThrows
 import org.junit.Before
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.mockito.ArgumentCaptor
+import org.mockito.Captor
 import org.mockito.Mock
+import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
 import org.mockito.MockitoAnnotations
 import org.mockito.kotlin.any
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.Shadows.shadowOf
 
+@RunWith(RobolectricTestRunner::class)
 class EventRepositoryFirestoreTest {
   private lateinit var db: FirebaseFirestore
 
@@ -50,6 +62,11 @@ class EventRepositoryFirestoreTest {
 
   @Mock private lateinit var voidTask: Task<Void>
 
+  @Mock private lateinit var auth: FirebaseAuth
+  @Mock private lateinit var firebaseUser: FirebaseUser
+  @Captor
+  private lateinit var authStateListenerCaptor: ArgumentCaptor<FirebaseAuth.AuthStateListener>
+
   private lateinit var repository: EventRepositoryFirestore
   private val event1 =
       MockEvent.createMockEvent(
@@ -72,6 +89,9 @@ class EventRepositoryFirestoreTest {
     mockkStatic(FirebaseFirestore::class)
     every { Firebase.firestore } returns db
     every { db.collection(EVENT_PATH) } returns collectionReference
+
+    mockkStatic(FirebaseAuth::class)
+    every { FirebaseAuth.getInstance() } returns auth
 
     `when`(collectionReference.get()).thenReturn(getTask)
 
@@ -99,6 +119,38 @@ class EventRepositoryFirestoreTest {
     `when`(map3["uid"]).thenReturn(event3.uid)
 
     repository = EventRepositoryFirestore(db)
+  }
+
+  @Test
+  fun testInitUserAuthenticated() {
+    `when`(auth.currentUser).thenReturn(firebaseUser)
+    var onSuccessCalled = false
+    val onSuccess = { onSuccessCalled = true }
+
+    repository.init(onSuccess)
+
+    verify(auth).addAuthStateListener(authStateListenerCaptor.capture())
+    authStateListenerCaptor.value.onAuthStateChanged(auth)
+
+    shadowOf(Looper.getMainLooper()).idle()
+
+    assertTrue(onSuccessCalled)
+  }
+
+  @Test
+  fun testInitUserNotAuthenticated() {
+    `when`(auth.currentUser).thenReturn(null)
+    var onSuccessCalled = false
+    val onSuccess = { onSuccessCalled = true }
+
+    repository.init(onSuccess)
+
+    verify(auth).addAuthStateListener(authStateListenerCaptor.capture())
+    authStateListenerCaptor.value.onAuthStateChanged(auth)
+
+    shadowOf(Looper.getMainLooper()).idle()
+
+    assertFalse(onSuccessCalled)
   }
 
   /** Asserts that getEvents returns all events */

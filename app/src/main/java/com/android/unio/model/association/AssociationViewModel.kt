@@ -4,7 +4,9 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventRepository
+import com.android.unio.model.follow.ConcurrentAssociationUserRepository
 import com.android.unio.model.image.ImageRepository
+import com.android.unio.model.user.User
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.io.InputStream
 import javax.inject.Inject
@@ -18,7 +20,8 @@ class AssociationViewModel
 constructor(
     private val associationRepository: AssociationRepository,
     private val eventRepository: EventRepository,
-    private val imageRepository: ImageRepository
+    private val imageRepository: ImageRepository,
+    private val concurrentAssociationUserRepository: ConcurrentAssociationUserRepository
 ) : ViewModel() {
 
   private val _associations = MutableStateFlow<List<Association>>(emptyList())
@@ -65,6 +68,38 @@ constructor(
         })
   }
 
+  fun updateFollow(
+      target: Association,
+      user: User,
+      isUnfollowAction: Boolean,
+      updateUser: () -> Unit
+  ) {
+    val updatedAssociation: Association
+    val updatedUser: User = user.copy()
+    if (isUnfollowAction) {
+      val updatedFollowCount = if (target.followersCount - 1 >= 0) target.followersCount - 1 else 0
+      updatedAssociation = target.copy(followersCount = updatedFollowCount)
+      updatedUser.followedAssociations.remove(target.uid)
+    } else {
+      updatedAssociation = target.copy(followersCount = target.followersCount + 1)
+      updatedUser.followedAssociations.add(target.uid)
+    }
+    concurrentAssociationUserRepository.updateFollow(
+        updatedUser,
+        updatedAssociation,
+        {
+          _associations.value =
+              _associations.value.map {
+                if (it.uid == target.uid) {
+                  updatedAssociation
+                } else it
+              }
+          _selectedAssociation.value = updatedAssociation
+          updateUser()
+        },
+        { exception -> Log.e("AssociationViewModel", "Failed to update follow", exception) })
+  }
+
   fun saveAssociation(
       association: Association,
       imageStream: InputStream?,
@@ -81,7 +116,6 @@ constructor(
                 updatedAssociation,
                 {
                   // Update the list with the modified association
-                  Log.d("AssociationViewModel", "Association saved with updated image.")
                   _associations.value =
                       _associations.value.map {
                         if (it.uid == updatedAssociation.uid) updatedAssociation else it

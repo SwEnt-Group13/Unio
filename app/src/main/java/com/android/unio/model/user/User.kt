@@ -61,6 +61,11 @@ data class User(
     val socials: List<UserSocial>,
     val profilePicture: String,
 ) {
+
+  fun isFollowAssociation(association: Association): Boolean {
+    return followedAssociations.contains(association.uid)
+  }
+
   companion object
 }
 

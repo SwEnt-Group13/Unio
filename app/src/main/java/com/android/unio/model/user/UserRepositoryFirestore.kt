@@ -5,6 +5,7 @@ import com.android.unio.model.firestore.transform.hydrate
 import com.android.unio.model.firestore.transform.serialize
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
+import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import javax.inject.Inject
 
@@ -17,6 +18,10 @@ class UserRepositoryFirestore @Inject constructor(private val db: FirebaseFirest
         onSuccess()
       }
     }
+  }
+
+  override fun getUserRef(uid: String): DocumentReference {
+    return db.collection(USER_PATH).document(uid)
   }
 
   override fun getUsers(onSuccess: (List<User>) -> Unit, onFailure: (Exception) -> Unit) {
@@ -34,8 +39,7 @@ class UserRepositoryFirestore @Inject constructor(private val db: FirebaseFirest
       onSuccess: (User) -> Unit,
       onFailure: (Exception) -> Unit
   ) {
-    db.collection(USER_PATH)
-        .document(id)
+    getUserRef(id)
         .get()
         .addOnSuccessListener { document ->
           val user = hydrate(document.data)
@@ -45,8 +49,7 @@ class UserRepositoryFirestore @Inject constructor(private val db: FirebaseFirest
   }
 
   override fun updateUser(user: User, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
-    db.collection(USER_PATH)
-        .document(user.uid)
+    getUserRef(user.uid)
         .set(serialize(user))
         .addOnSuccessListener { document -> onSuccess() }
         .addOnFailureListener { exception -> onFailure(exception) }

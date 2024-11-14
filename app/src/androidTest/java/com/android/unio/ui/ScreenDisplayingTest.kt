@@ -10,13 +10,24 @@ import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventRepositoryFirestore
 import com.android.unio.model.event.EventViewModel
+import com.android.unio.model.follow.ConcurrentAssociationUserRepositoryFirestore
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.search.SearchRepository
 import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.strings.test_tags.AccountDetailsTestTags
+import com.android.unio.model.strings.test_tags.AssociationProfileTestTags
+import com.android.unio.model.strings.test_tags.EmailVerificationTestTags
 import com.android.unio.model.strings.test_tags.EventCreationTestTags
 import com.android.unio.model.strings.test_tags.EventDetailsTestTags
+import com.android.unio.model.strings.test_tags.ExploreContentTestTags
+import com.android.unio.model.strings.test_tags.ExploreTestTags
 import com.android.unio.model.strings.test_tags.HomeTestTags
+import com.android.unio.model.strings.test_tags.MapTestTags
+import com.android.unio.model.strings.test_tags.SavedTestTags
+import com.android.unio.model.strings.test_tags.SettingsTestTags
+import com.android.unio.model.strings.test_tags.SomeoneElseUserProfileTestTags
+import com.android.unio.model.strings.test_tags.UserProfileTestTags
+import com.android.unio.model.strings.test_tags.WelcomeTestTags
 import com.android.unio.model.user.User
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserViewModel
@@ -92,7 +103,10 @@ class ScreenDisplayingTest {
     associationViewModel =
         spyk(
             AssociationViewModel(
-                mock(), mockk<EventRepositoryFirestore>(), imageRepositoryFirestore))
+                mock(),
+                mockk<EventRepositoryFirestore>(),
+                imageRepositoryFirestore,
+                mockk<ConcurrentAssociationUserRepositoryFirestore>()))
 
     every { eventRepository.getEvents(any(), any()) } answers
         {
@@ -125,18 +139,19 @@ class ScreenDisplayingTest {
     mockkStatic(FirebaseAuth::class)
     every { Firebase.auth } returns firebaseAuth
     every { firebaseAuth.currentUser } returns mockFirebaseUser
+    associationViewModel.selectAssociation(associations.first().uid)
   }
 
   @Test
   fun testWelcomeDisplayed() {
     composeTestRule.setContent { WelcomeScreen() }
-    composeTestRule.onNodeWithTag("WelcomeScreen").assertIsDisplayed()
+    composeTestRule.onNodeWithTag(WelcomeTestTags.SCREEN).assertIsDisplayed()
   }
 
   @Test
   fun testEmailVerificationDisplayed() {
     composeTestRule.setContent { EmailVerificationScreen(navigationAction) }
-    composeTestRule.onNodeWithTag("EmailVerificationScreen").assertIsDisplayed()
+    composeTestRule.onNodeWithTag(EmailVerificationTestTags.SCREEN).assertIsDisplayed()
   }
 
   @Test
@@ -162,14 +177,14 @@ class ScreenDisplayingTest {
     composeTestRule.setContent {
       ExploreScreen(navigationAction, associationViewModel, searchViewModel)
     }
-    composeTestRule.onNodeWithTag("exploreScreen").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("searchBar").assertIsDisplayed()
+    composeTestRule.onNodeWithTag(ExploreTestTags.EXPLORE_SCAFFOLD_TITLE).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(ExploreContentTestTags.SEARCH_BAR).assertIsDisplayed()
   }
 
   @Test
   fun testMapDisplayed() {
     composeTestRule.setContent { MapScreen(navigationAction, eventViewModel, userViewModel) }
-    composeTestRule.onNodeWithTag("MapScreen").assertIsDisplayed()
+    composeTestRule.onNodeWithTag(MapTestTags.SCREEN).assertIsDisplayed()
   }
 
   @Test
@@ -185,7 +200,7 @@ class ScreenDisplayingTest {
 
   @Test
   fun testEventCreationDisplayed() {
-    composeTestRule.setContent { EventCreationScreen() }
+    composeTestRule.setContent { EventCreationScreen(navigationAction) }
     composeTestRule.onNodeWithTag(EventCreationTestTags.SCREEN).assertIsDisplayed()
   }
 
@@ -193,24 +208,21 @@ class ScreenDisplayingTest {
   fun testAssociationProfileDisplayed() {
     composeTestRule.setContent {
       AssociationProfileScaffold(
-          MockAssociation.createMockAssociation(),
-          navigationAction,
-          userViewModel,
-          eventViewModel) {}
+          navigationAction, userViewModel, eventViewModel, associationViewModel) {}
     }
-    composeTestRule.onNodeWithTag("AssociationScreen").assertIsDisplayed()
+    composeTestRule.onNodeWithTag(AssociationProfileTestTags.SCREEN).assertIsDisplayed()
   }
 
   @Test
   fun testSavedDisplayed() {
     composeTestRule.setContent { SavedScreen(navigationAction) }
-    composeTestRule.onNodeWithTag("SavedScreen").assertIsDisplayed()
+    composeTestRule.onNodeWithTag(SavedTestTags.SCREEN).assertIsDisplayed()
   }
 
   @Test
   fun testSettingsDisplayed() {
     composeTestRule.setContent { ProvidePreferenceLocals { SettingsScreen(navigationAction) } }
-    composeTestRule.onNodeWithTag("SettingsScreen").assertIsDisplayed()
+    composeTestRule.onNodeWithTag(SettingsTestTags.SCREEN).assertIsDisplayed()
   }
 
   @Test
@@ -219,12 +231,12 @@ class ScreenDisplayingTest {
       UserProfileScreenScaffold(
           MockUser.createMockUser(), navigationAction, false, searchViewModel = searchViewModel) {}
     }
-    composeTestRule.onNodeWithTag("UserProfileScreen").assertIsDisplayed()
+    composeTestRule.onNodeWithTag(UserProfileTestTags.SCREEN).assertIsDisplayed()
   }
 
   @Test
   fun testSomeoneElseUserProfileDisplayed() {
     composeTestRule.setContent { SomeoneElseUserProfileScreen() }
-    composeTestRule.onNodeWithTag("SomeoneElseUserProfileScreen").assertIsDisplayed()
+    composeTestRule.onNodeWithTag(SomeoneElseUserProfileTestTags.SCREEN).assertIsDisplayed()
   }
 }

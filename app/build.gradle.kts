@@ -345,3 +345,7 @@ tasks.register("jacocoTestReport",JacocoReport::class) {
         include("outputs/code_coverage/debugAndroidTest/connected/*/coverage.ec")
     })
 }
+
+configurations.forEach{ configuration ->
+    configuration.exclude("com.google.protobuf", "protobuf-lite")
+}

@@ -10,6 +10,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import com.android.unio.mocks.user.MockUser
 import com.android.unio.model.search.SearchRepository
 import com.android.unio.model.search.SearchViewModel
+import com.android.unio.model.strings.test_tags.UserProfileTestTags
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.navigation.NavigationAction
@@ -47,20 +48,22 @@ class UserProfileTest {
       UserProfileScreenScaffold(user, navigationAction, false, searchViewModel = searchViewModel) {}
     }
 
-    composeTestRule.onNodeWithTag("UserProfilePicture").assertExists()
+    composeTestRule.onNodeWithTag(UserProfileTestTags.PROFILE_PICTURE).assertExists()
 
-    composeTestRule.onNodeWithTag("UserProfileName").assertExists()
+    composeTestRule.onNodeWithTag(UserProfileTestTags.NAME).assertExists()
     composeTestRule
-        .onNodeWithTag("UserProfileName")
+        .onNodeWithTag(UserProfileTestTags.NAME)
         .assertTextEquals("${user.firstName} ${user.lastName}")
 
-    composeTestRule.onNodeWithTag("UserProfileBiography").assertExists()
-    composeTestRule.onNodeWithTag("UserProfileBiography").assertTextEquals(user.biography)
+    composeTestRule.onNodeWithTag(UserProfileTestTags.BIOGRAPHY).assertExists()
+    composeTestRule.onNodeWithTag(UserProfileTestTags.BIOGRAPHY).assertTextEquals(user.biography)
 
     composeTestRule
-        .onAllNodesWithTag("UserProfileSocialButton")
+        .onAllNodesWithTag(UserProfileTestTags.SOCIAL_BUTTON)
         .assertCountEquals(user.socials.size)
-    composeTestRule.onAllNodesWithTag("UserProfileInterest").assertCountEquals(user.interests.size)
+    composeTestRule
+        .onAllNodesWithTag(UserProfileTestTags.INTEREST)
+        .assertCountEquals(user.interests.size)
   }
 
   @Test
@@ -68,7 +71,7 @@ class UserProfileTest {
 
     composeTestRule.setContent { UserProfileBottomSheet(true, navigationAction) {} }
 
-    composeTestRule.onNodeWithTag("UserProfileBottomSheet").assertIsDisplayed()
+    composeTestRule.onNodeWithTag(UserProfileTestTags.BOTTOM_SHEET).assertIsDisplayed()
   }
 
   @Test
@@ -78,6 +81,6 @@ class UserProfileTest {
           userViewModel, navigationAction = navigationAction, searchViewModel = searchViewModel)
     }
 
-    composeTestRule.onNodeWithTag("UserProfileScreen").assertIsNotDisplayed()
+    composeTestRule.onNodeWithTag(UserProfileTestTags.SCREEN).assertIsNotDisplayed()
   }
 }

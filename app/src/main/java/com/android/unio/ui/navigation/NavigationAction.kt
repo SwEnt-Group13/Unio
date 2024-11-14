@@ -126,6 +126,8 @@ object Screen {
   const val CLAIM_ASSOCIATION_RIGHTS = "User Claim Association Rights Screen"
   const val CLAIM_ASSOCIATION_PRESIDENTIAL_RIGHTS =
       "User Claim Association Presidential Rights Screen"
+  const val EVENT_CREATION = "Event Creation Screen"
+  const val EDIT_EVENT = "Edit Event Screen"
 
   /**
    * Replace the placeholders in the screen with the provided parameters.

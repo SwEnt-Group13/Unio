@@ -13,6 +13,7 @@
     */
 
     <!-- Association Strings -->
+    <string name="association_toast_error" translatable="true">Une erreur est survenue.</string>
     <string name="association_upcoming_events">Evenement à venir</string>
     <string name="association_go_back">Retour</string>
     <string name="association_see_more">Voir plus</string>
@@ -24,6 +25,7 @@
     <string name="association_follower">abonnés</string>
     <string name="association_member">membres</string>
     <string name="association_follow">S\'abonner</string>
+    <string name="association_unfollow">Se désabonner</string>
     <string name="association_join">Rejoindre</string>
     <string name="association_no_event">Pas d\'événement plannifié pour l\'instant</string>
     <string name="association_not_found">Erreur : Association introuvable</string>
@@ -32,6 +34,7 @@
     <string name="association_content_description_user_pfp">Photo de profil de l\'utilisateur</string>
     <string name="association_content_description_association_image">Image de l\'association </string>
     <string name="association_content_description_follow_icon">Icône suivre</string>
+    <string name="association_profile_add_event_button">Ajouter un événement</string>
 
     <!-- EditAssociation strings -->
     <string name="edit_association_title">Modifier l\'Association</string>
@@ -135,6 +138,26 @@
 
     <!-- Event Creation Strings -->
     <string name="event_creation_screen">Création d\'un évènement</string>
+    <string name="event_creation_title">Crée un évènement</string>
+    <string name="event_creation_name_label">Nom de l\'évènement</string>
+    <string name="event_creation_short_description_label">Description courte</string>
+    <string name="event_creation_description_label">Description</string>
+    <string name="event_creation_coauthors_label">Associations co-organisatrices</string>
+    <string name="event_creation_tagged_label">Associations participantes</string>
+    <string name="event_creation_location_label">Localisation</string>
+    <string name="event_creation_image_label">Ajouter une bannière</string>
+    <string name="event_creation_save_button">Créer</string>
+    <string name="event_creation_cancel_button">Annuler</string>
+    <string name="event_creation_placeholder_image_description">Image temporaire</string>
+    <string name="event_creation_selected_image_description">Bannière choisie</string>
+    <string name="event_creation_dialog_ok">OK</string>
+    <string name="event_creation_dialog_cancel">Annuler</string>
+    <string name="event_creation_placeholder_time_input">HH:mm</string>
+    <string name="event_creation_placeholder_date_input">dd/MM/yy</string>
+    <string name="event_creation_startdate_label">Date de début</string>
+    <string name="event_creation_enddate_label">Date de fin</string>
+    <string name="event_creation_starttime_label">Heure de début</string>
+    <string name="event_creation_endtime_label">Heure de fin</string>
 
     /**
     * package: explore
@@ -190,6 +213,16 @@
     /**
     * package: user
     */
+
+    <!-- UserProfile Strings -->
+    <string name="user_profile_toast_error">Une erreur est survenue.</string>
+    <string name="user_profile_your_profile_text">Votre profile</string>
+    <string name="user_profile_content_description_more">Voir plus</string>
+    <string name="user_profile_content_description_pfp">Photo de Profil</string>
+    <string name="user_profile_following_associations_text">Suivis</string>
+    <string name="user_profile_bottom_sheet_edit">Modifier le profil</string>
+    <string name="user_profile_bottom_sheet_settings">Paramètres</string>
+    <string name="user_profile_bottom_sheet_sign_out">Se déconnecter</string>
 
     /**
     * Other
