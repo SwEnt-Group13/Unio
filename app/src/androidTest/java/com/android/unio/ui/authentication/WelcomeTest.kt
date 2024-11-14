@@ -8,26 +8,29 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performTextInput
 import com.android.unio.model.strings.test_tags.WelcomeTestTags
+import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserViewModel
+import io.mockk.MockKAnnotations
 import io.mockk.clearAllMocks
+import io.mockk.impl.annotations.MockK
 import io.mockk.unmockkAll
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.mockito.Mock
-import org.mockito.MockitoAnnotations
 
 class WelcomeTest {
 
   @get:Rule val composeTestRule = createComposeRule()
 
-  @Mock
-  lateinit var userViewModel: UserViewModel
+  private lateinit var userViewModel: UserViewModel
+  @MockK private lateinit var userRepository: UserRepositoryFirestore
 
   @Before
   fun setUp() {
-    MockitoAnnotations.openMocks(this)
+    MockKAnnotations.init(this)
+
+    userViewModel = UserViewModel(userRepository)
   }
 
   @Test
