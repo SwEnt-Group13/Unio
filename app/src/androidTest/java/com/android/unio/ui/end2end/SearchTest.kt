@@ -15,9 +15,6 @@ import com.android.unio.MainActivity
 import com.android.unio.model.strings.test_tags.EventCardTestTags
 import com.android.unio.model.strings.test_tags.EventDetailsTestTags
 import com.android.unio.model.strings.test_tags.HomeTestTags
-import com.android.unio.model.strings.test_tags.WelcomeTestTags
-import com.android.unio.ui.end2end.UserAccountCreationTest.Companion.EMAIL
-import com.android.unio.ui.end2end.UserAccountCreationTest.Companion.PWD
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import org.junit.Rule
@@ -33,10 +30,7 @@ class SearchTest : EndToEndTest() {
 
     @Test
     fun testSearchDisplaysCorrectResultsForEvents(){
-        composeTestRule.onNodeWithTag(WelcomeTestTags.SCREEN).assertIsDisplayed()
-        composeTestRule.onNodeWithTag(WelcomeTestTags.EMAIL).performTextInput(User1.EMAIL)
-        composeTestRule.onNodeWithTag(WelcomeTestTags.PASSWORD).performTextInput(User1.PASSWORD)
-        composeTestRule.onNodeWithTag(WelcomeTestTags.BUTTON).performClick()
+        signInWithUser(composeTestRule, User1.EMAIL, User1.PASSWORD)
 
         composeTestRule.waitUntil (5000) {
             composeTestRule.onNodeWithTag(HomeTestTags.SCREEN).isDisplayed()

@@ -1,5 +1,11 @@
 package com.android.unio.ui.end2end
 
+import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.junit4.ComposeContentTestRule
+import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performTextInput
+import com.android.unio.model.strings.test_tags.WelcomeTestTags
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.firestore
@@ -18,8 +24,11 @@ open class EndToEndTest : FirebaseEmulatorFunctions {
         useEmulators()
     }
 
-    override fun signIn() {
-
+    override fun signInWithUser(composeTestRule : ComposeContentTestRule, email: String, password: String) {
+        composeTestRule.onNodeWithTag(WelcomeTestTags.SCREEN).assertIsDisplayed()
+        composeTestRule.onNodeWithTag(WelcomeTestTags.EMAIL).performTextInput(email)
+        composeTestRule.onNodeWithTag(WelcomeTestTags.PASSWORD).performTextInput(password)
+        composeTestRule.onNodeWithTag(WelcomeTestTags.BUTTON).performClick()
     }
 
     override fun verifyEmulatorsAreRunning() {
@@ -80,6 +89,15 @@ open class EndToEndTest : FirebaseEmulatorFunctions {
         const val ROOT = "http://$HOST:$PORT"
         const val OOB_URL = "$ROOT/emulator/v1/projects/unio-1b8ee/oobCodes"
         const val ACCOUNTS_URL = "$ROOT/emulator/v1/projects/unio-1b8ee/accounts"
+    }
+
+    object UnverifiedUser{
+        const val EMAIL = "example@gmail.com"
+        const val PWD = "123456"
+
+        const val FIRST_NAME = "John"
+        const val LAST_NAME = "Doe"
+        const val BIOGRAPHY = "I am a software engineer"
     }
 
     //This user's email is already verified

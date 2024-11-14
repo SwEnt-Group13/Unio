@@ -18,7 +18,6 @@ import com.android.unio.model.strings.test_tags.EmailVerificationTestTags
 import com.android.unio.model.strings.test_tags.HomeTestTags
 import com.android.unio.model.strings.test_tags.InterestsOverlayTestTags
 import com.android.unio.model.strings.test_tags.UserProfileTestTags
-import com.android.unio.model.strings.test_tags.WelcomeTestTags
 import com.android.unio.ui.assertDisplayComponentInScroll
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
@@ -40,11 +39,7 @@ class UserAccountCreationTest : EndToEndTest() {
   @Test
   fun testUserCanLoginAndCreateAnAccount() {
     /** Create an account on the welcome screen */
-    composeTestRule.onNodeWithTag(WelcomeTestTags.SCREEN).assertIsDisplayed()
-    composeTestRule.onNodeWithTag(WelcomeTestTags.EMAIL).performTextInput(EMAIL)
-    composeTestRule.onNodeWithTag(WelcomeTestTags.PASSWORD).performTextInput(PWD)
-
-    composeTestRule.onNodeWithTag(WelcomeTestTags.BUTTON).performClick()
+    signInWithUser(composeTestRule, UnverifiedUser.EMAIL, UnverifiedUser.PWD)
 
     Thread.sleep(5000)
 
@@ -67,13 +62,13 @@ class UserAccountCreationTest : EndToEndTest() {
     /** Fill in the account details */
     composeTestRule
         .onNodeWithTag(AccountDetailsTestTags.FIRST_NAME_TEXT_FIELD)
-        .performTextInput(FIRST_NAME)
+        .performTextInput(UnverifiedUser.FIRST_NAME)
     composeTestRule
         .onNodeWithTag(AccountDetailsTestTags.LAST_NAME_TEXT_FIELD)
-        .performTextInput(LAST_NAME)
+        .performTextInput(UnverifiedUser.FIRST_NAME)
     composeTestRule
         .onNodeWithTag(AccountDetailsTestTags.BIOGRAPHY_TEXT_FIELD)
-        .performTextInput(BIOGRAPHY)
+        .performTextInput(UnverifiedUser.BIOGRAPHY)
     assertDisplayComponentInScroll(
         composeTestRule.onNodeWithTag(AccountDetailsTestTags.INTERESTS_BUTTON))
     composeTestRule.onNodeWithTag(AccountDetailsTestTags.INTERESTS_BUTTON).performClick()
@@ -118,8 +113,8 @@ class UserAccountCreationTest : EndToEndTest() {
 
     composeTestRule
         .onNodeWithTag(UserProfileTestTags.NAME)
-        .assertTextContains("$FIRST_NAME $LAST_NAME")
-    composeTestRule.onNodeWithTag(UserProfileTestTags.BIOGRAPHY).assertTextContains(BIOGRAPHY)
+        .assertTextContains("${UnverifiedUser.FIRST_NAME} ${UnverifiedUser.LAST_NAME}")
+    composeTestRule.onNodeWithTag(UserProfileTestTags.BIOGRAPHY).assertTextContains(UnverifiedUser.BIOGRAPHY)
     composeTestRule.onAllNodesWithTag(UserProfileTestTags.INTEREST).assertCountEquals(3)
   }
 
@@ -146,15 +141,6 @@ class UserAccountCreationTest : EndToEndTest() {
     val request = Request.Builder().url(url.replace("127.0.0.1", "10.0.2.2")).build()
 
     client.newCall(request).execute()
-  }
-
-  companion object {
-    const val EMAIL = "ishinzqyR6S@gmail.com"
-    const val PWD = "123456"
-
-    const val FIRST_NAME = "John"
-    const val LAST_NAME = "Doe"
-    const val BIOGRAPHY = "I am a software engineer"
   }
 
   @After
