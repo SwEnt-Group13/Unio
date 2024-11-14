@@ -1,13 +1,14 @@
 package com.android.unio.model.association
 
 import com.android.unio.model.firestore.FirestorePaths.ASSOCIATION_PATH
+import com.android.unio.model.firestore.performFirestoreOperation
 import com.android.unio.model.firestore.transform.hydrate
 import com.android.unio.model.firestore.transform.serialize
-import com.google.android.gms.tasks.Task
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.QuerySnapshot
 import javax.inject.Inject
 
 class AssociationRepositoryFirestore @Inject constructor(private val db: FirebaseFirestore) :
@@ -29,18 +30,19 @@ class AssociationRepositoryFirestore @Inject constructor(private val db: Firebas
       onSuccess: (List<Association>) -> Unit,
       onFailure: (Exception) -> Unit
   ) {
-    performFirestoreOperation(
-        db.collection(ASSOCIATION_PATH).get(),
-        onSuccess = { result ->
-          val associations = mutableListOf<Association>()
-          for (document in result) {
-            val association = hydrate(document.data)
+    db.collection(ASSOCIATION_PATH)
+        .get()
+        .performFirestoreOperation<QuerySnapshot>(
+            onSuccess = { result ->
+              val associations = mutableListOf<Association>()
+              for (document in result) {
+                val association = hydrate(document.data)
 
-            associations.add(association)
-          }
-          onSuccess(associations)
-        },
-        onFailure = { exception -> onFailure(exception) })
+                associations.add(association)
+              }
+              onSuccess(associations)
+            },
+            onFailure = { exception -> onFailure(exception) })
   }
 
   override fun getAssociationsByCategory(
@@ -48,18 +50,20 @@ class AssociationRepositoryFirestore @Inject constructor(private val db: Firebas
       onSuccess: (List<Association>) -> Unit,
       onFailure: (Exception) -> Unit
   ) {
-    performFirestoreOperation(
-        db.collection(ASSOCIATION_PATH).whereEqualTo("category", category).get(),
-        onSuccess = { result ->
-          val associations = mutableListOf<Association>()
-          for (document in result) {
-            val association = hydrate(document.data)
+    db.collection(ASSOCIATION_PATH)
+        .whereEqualTo("category", category)
+        .get()
+        .performFirestoreOperation(
+            onSuccess = { result ->
+              val associations = mutableListOf<Association>()
+              for (document in result) {
+                val association = hydrate(document.data)
 
-            associations.add(association)
-          }
-          onSuccess(associations)
-        },
-        { exception -> onFailure(exception) })
+                associations.add(association)
+              }
+              onSuccess(associations)
+            },
+            onFailure = { exception -> onFailure(exception) })
   }
 
   override fun getAssociationWithId(
@@ -67,10 +71,11 @@ class AssociationRepositoryFirestore @Inject constructor(private val db: Firebas
       onSuccess: (Association) -> Unit,
       onFailure: (Exception) -> Unit
   ) {
-    performFirestoreOperation(
-        getAssociationRef(id).get(),
-        onSuccess = { document -> onSuccess(hydrate(document.data)) },
-        onFailure = { exception -> onFailure(exception) })
+    getAssociationRef(id)
+        .get()
+        .performFirestoreOperation(
+            onSuccess = { document -> onSuccess(hydrate(document.data)) },
+            onFailure = { exception -> onFailure(exception) })
   }
 
   override fun saveAssociation(
@@ -78,10 +83,9 @@ class AssociationRepositoryFirestore @Inject constructor(private val db: Firebas
       onSuccess: () -> Unit,
       onFailure: (Exception) -> Unit
   ) {
-    performFirestoreOperation(
-        getAssociationRef(association.uid).set(serialize(association)),
-        onSuccess = { onSuccess() },
-        onFailure)
+    getAssociationRef(association.uid)
+        .set(serialize(association))
+        .performFirestoreOperation(onSuccess = { onSuccess() }, onFailure = onFailure)
   }
 
   override fun deleteAssociationById(
@@ -89,31 +93,14 @@ class AssociationRepositoryFirestore @Inject constructor(private val db: Firebas
       onSuccess: () -> Unit,
       onFailure: (Exception) -> Unit
   ) {
-    performFirestoreOperation(
-        getAssociationRef(associationId).delete(), onSuccess = { onSuccess() }, onFailure)
+    getAssociationRef(associationId)
+        .delete()
+        .performFirestoreOperation(onSuccess = { onSuccess() }, onFailure = onFailure)
   }
 
-  // TODO extract this to a util
-  /** Performs a Firestore operation and calls the appropriate callback based on the result. */
-  private fun <T> performFirestoreOperation(
-      task: Task<T>,
-      onSuccess: (T) -> Unit,
-      onFailure: (Exception) -> Unit
-  ) {
-    task.addOnCompleteListener { taskResult ->
-      if (taskResult.isSuccessful) {
-        val result = taskResult.result
-        if (result != null) {
-          onSuccess(result)
-        } else {
-          onSuccess(result)
-        }
-      } else {
-        val exception = taskResult.exception
-        exception?.let { onFailure(it) }
-      }
-    }
-  }
-
+  /**
+   * Companion object for hydrating [Association] objects from Firestore documents. DO NOT REMOVE
+   * THIS OBJECT.
+   */
   companion object
 }
