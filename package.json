@@ -4,8 +4,15 @@
   "description": "The world's largest campus life platform.",
   "main": "",
   "scripts": {
-    "test": "./gradlew connectedCheck"
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "@firebase/rules-unit-testing": "^4.0.0"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
+  }
 }
