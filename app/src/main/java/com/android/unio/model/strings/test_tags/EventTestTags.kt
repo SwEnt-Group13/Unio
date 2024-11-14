@@ -47,7 +47,7 @@ object EventDetailsTestTags {
   const val PLACES_REMAINING_TEXT = "placesRemainingText"
   const val PRICE_TEXT = "priceText"
   const val DESCRIPTION = "eventDescription"
-  const val LOCATION = "eventLocation"
+  const val LOCATION_ADDRESS = "eventLocation"
   const val MAP_BUTTON = "mapButton"
   const val SIGN_UP_BUTTON = "signUpButton"
 }

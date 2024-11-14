@@ -314,7 +314,7 @@ fun EventDetailsBody(event: Event, context: Context) {
                     Text(
                         event.location.name,
                         modifier =
-                            Modifier.testTag(EventDetailsTestTags.LOCATION).padding(end = 5.dp))
+                            Modifier.testTag(EventDetailsTestTags.LOCATION_ADDRESS).padding(end = 5.dp))
                     Icon(
                         Icons.Outlined.LocationOn,
                         contentDescription =
