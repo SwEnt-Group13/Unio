@@ -28,10 +28,7 @@ import io.mockk.unmockkAll
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.json.JSONObject
-import org.junit.After
-import org.junit.Before
 import org.junit.Rule
-import org.junit.Test
 
 @LargeTest
 @HiltAndroidTest
@@ -39,7 +36,7 @@ class UserAccountCreationTest {
   @get:Rule val composeTestRule = createAndroidComposeRule<MainActivity>()
   @get:Rule val hiltRule = HiltAndroidRule(this)
 
-//  @Before
+  //  @Before
   fun setUp() {
     /** Verify that the emulators are running */
     EmulatorUtils.verifyEmulatorsAreRunning()
@@ -52,7 +49,7 @@ class UserAccountCreationTest {
     EmulatorUtils.flushFirestoreDatabase()
   }
 
-//  @Test
+  //  @Test
   fun testUserCanLoginAndCreateAnAccount() {
     /** Create an account on the welcome screen */
     composeTestRule.onNodeWithTag(WelcomeTestTags.SCREEN).assertIsDisplayed()
@@ -172,7 +169,7 @@ class UserAccountCreationTest {
     const val BIOGRAPHY = "I am a software engineer"
   }
 
-//  @After
+  //  @After
   fun tearDown() {
     clearAllMocks()
     unmockkAll()
