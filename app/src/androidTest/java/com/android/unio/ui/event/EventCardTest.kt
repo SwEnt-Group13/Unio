@@ -15,7 +15,14 @@ import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
 import com.google.firebase.Timestamp
 import io.mockk.MockKAnnotations
+import io.mockk.clearAllMocks
+import io.mockk.every
+import io.mockk.impl.annotations.MockK
+import io.mockk.spyk
+import io.mockk.unmockkAll
 import java.util.Date
+import javax.inject.Inject
+import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -193,5 +200,11 @@ class EventCardTest {
     composeTestRule
         .onNodeWithTag(EventCardTestTags.EVENT_DATE, useUnmergedTree = true)
         .assertExists()
+  }
+
+  @After
+  fun tearDown() {
+    clearAllMocks()
+    unmockkAll()
   }
 }

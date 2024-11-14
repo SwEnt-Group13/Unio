@@ -17,6 +17,9 @@ import com.android.unio.model.association.Association
 import com.android.unio.model.event.Event
 import com.android.unio.model.strings.test_tags.EventDetailsTestTags
 import com.android.unio.ui.navigation.NavigationAction
+import io.mockk.clearAllMocks
+import io.mockk.unmockkAll
+import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -146,5 +149,11 @@ class EventDetailsTest {
     assertDisplayComponentInScroll(composeTestRule.onNodeWithText(event.title))
     assertDisplayComponentInScroll(composeTestRule.onNodeWithText(event.description))
     assertDisplayComponentInScroll(composeTestRule.onNodeWithText(event.location.name))
+  }
+
+  @After
+  fun tearDown() {
+    clearAllMocks()
+    unmockkAll()
   }
 }
