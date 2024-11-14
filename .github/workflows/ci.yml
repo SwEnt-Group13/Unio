@@ -6,7 +6,7 @@ on:
   push:
     branches:
       - main
-      - branch-fixcoverage
+#      - branch-fixcoverage
 
   pull_request:
     types:
@@ -132,9 +132,9 @@ jobs:
 #        run: echo './gradlew connectedCheck --build-cache' > run_tests.sh
 
       # Grant execute permissions for shell script
-      - name: Grant execute permission for shell script
-        run: |
-          chmod +x ./run_tests.sh
+#      - name: Grant execute permission for shell script
+#        run: |
+#          chmod +x ./run_tests.sh
 
       # Run connected tests on the emulator
       - name: Run connected tests
@@ -149,16 +149,17 @@ jobs:
           force-avd-creation: false
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
-          script: firebase emulators:exec ./run_tests.sh
+          script: ./gradlew connectedCheck --build-cache
+#          script: firebase emulators:exec ./run_tests.sh
 
       # This step generates the coverage report which will be uploaded to sonar
-#      - name: Generate Coverage Report
-#        run: |
-#          ./gradlew jacocoTestReport
+      - name: Generate Coverage Report
+        run: |
+          ./gradlew jacocoTestReport
 
       # Upload the various reports to sonar
-#      - name: Upload report to SonarCloud
-#        env:
-#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-#        run: ./gradlew sonar --parallel --build-cache
+      - name: Upload report to SonarCloud
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: ./gradlew sonar --parallel --build-cache
