@@ -125,7 +125,6 @@ class UserAccountCreationTest {
     composeTestRule.onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW + "2").performClick()
     composeTestRule
         .onNodeWithTag(InterestsOverlayTestTags.SAVE_BUTTON)
-        .performScrollTo()
         .assertIsDisplayed()
     composeTestRule.onNodeWithTag(InterestsOverlayTestTags.SAVE_BUTTON).performClick()
 
