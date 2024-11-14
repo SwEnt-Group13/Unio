@@ -9,6 +9,7 @@ import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextInput
 import androidx.test.filters.LargeTest
 import com.android.unio.model.strings.test_tags.AccountDetailsTestTags
@@ -102,12 +103,18 @@ class UserAccountCreationTest {
     composeTestRule
         .onNodeWithTag(AccountDetailsTestTags.BIOGRAPHY_TEXT_FIELD)
         .performTextInput(BIOGRAPHY)
+    composeTestRule.onNodeWithTag(AccountDetailsTestTags.INTERESTS_BUTTON).performScrollTo().assertIsDisplayed()
     composeTestRule.onNodeWithTag(AccountDetailsTestTags.INTERESTS_BUTTON).performClick()
+    composeTestRule.onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW + "0").performScrollTo().assertIsDisplayed()
     composeTestRule.onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW + "0").performClick()
+    composeTestRule.onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW + "1").performScrollTo().assertIsDisplayed()
     composeTestRule.onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW + "1").performClick()
+    composeTestRule.onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW + "2").performScrollTo().assertIsDisplayed()
     composeTestRule.onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW + "2").performClick()
+    composeTestRule.onNodeWithTag(InterestsOverlayTestTags.SAVE_BUTTON).performScrollTo().assertIsDisplayed()
     composeTestRule.onNodeWithTag(InterestsOverlayTestTags.SAVE_BUTTON).performClick()
 
+    composeTestRule.onNodeWithTag(AccountDetailsTestTags.CONTINUE_BUTTON).performScrollTo().assertIsDisplayed()
     composeTestRule.onNodeWithTag(AccountDetailsTestTags.CONTINUE_BUTTON).performClick()
 
     // Wait until "HomeScreen" is displayed

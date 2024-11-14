@@ -134,7 +134,6 @@ fun AccountDetails(
       userViewModel.addUser(
           newUser,
           onSuccess = {
-            assert(false) { "We are navigating to the home screen" }
             Toast.makeText(
                     context,
                     context.getString(R.string.account_details_created_successfully),

@@ -111,7 +111,6 @@ class UserViewModel @Inject constructor(private val repository: UserRepository) 
         user,
         onSuccess = onSuccess,
         onFailure = {
-          assert(false) { "Failed to add user and we are not navigating home" }
           Log.e("UserViewModel", "Failed to add user", it)
         })
     _user.value = user
