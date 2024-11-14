@@ -165,7 +165,7 @@ fun TopBar(
     eventViewModel: EventViewModel,
     paddingValues: PaddingValues
 ) {
-
+  val nbOfTabs = 2
   val context = LocalContext.current
 
   Column(
@@ -174,9 +174,12 @@ fun TopBar(
           Modifier.padding(paddingValues).padding(top = 20.dp, bottom = 50.dp).fillMaxSize()) {
         var searchQuery by remember { mutableStateOf("") }
 
-        val list = listOf("All", "Following")
+        val list =
+            listOf(
+                context.getString(R.string.home_tab_all),
+                context.getString(R.string.home_tab_following))
         val scope = rememberCoroutineScope()
-        val pagerState = rememberPagerState(initialPage = 0) { 2 }
+        val pagerState = rememberPagerState(initialPage = 0) { nbOfTabs }
 
         val sizeList = remember { mutableStateMapOf<Int, Pair<Float, Float>>() }
 
@@ -184,11 +187,14 @@ fun TopBar(
           derivedStateOf { pagerState.currentPageOffsetFraction + pagerState.currentPage.dp.value }
         }
         val colorScheme = MaterialTheme.colorScheme
+
+        // Tab Menu at the top of the page
         TabRow(
             selectedTabIndex = pagerState.currentPage,
             contentColor = Color(0xFF362C28),
             divider = {},
             indicator = {
+              // method that draws the indicator bar below the tab menu
               Box(
                   modifier =
                       Modifier.fillMaxSize().drawBehind {
@@ -210,12 +216,14 @@ fun TopBar(
                             strokeWidth = Stroke.DefaultMiter)
                       })
             }) {
+              val tabTestTags = listOf(HomeTestTags.TAB_ALL, HomeTestTags.TAB_FOLLOWING)
               list.forEachIndexed { index, str ->
                 Tab(
                     selected = index == pagerState.currentPage,
+                    // animate pager if click on tab
                     onClick = { scope.launch { pagerState.animateScrollToPage(index) } },
                     modifier =
-                        Modifier.onSizeChanged {
+                        Modifier.testTag(tabTestTags[index]).onSizeChanged {
                           sizeList[index] = Pair(it.width.toFloat(), it.height.toFloat())
                         },
                     selectedContentColor = colorScheme.primary) {
@@ -239,6 +247,7 @@ fun TopBar(
                   modifier = Modifier.testTag(HomeTestTags.SEARCH_BAR_INPUT),
                   query = searchQuery,
                   onQueryChange = {
+                    // Search when query changes
                     searchQuery = it
                     searchViewModel.debouncedSearch(it, SearchViewModel.SearchType.EVENT)
                   },
@@ -263,7 +272,7 @@ fun TopBar(
             expanded = false,
             onExpandedChange = {},
             modifier = Modifier.padding(horizontal = 16.dp).testTag(HomeTestTags.SEARCH_BAR)) {}
-
+        // Pager Menu
         HorizontalPager(
             state = pagerState, modifier = Modifier.fillMaxWidth().padding(top = 15.dp)) {
               HomeContent(

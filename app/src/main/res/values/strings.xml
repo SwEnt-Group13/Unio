@@ -167,6 +167,8 @@
     <!-- Home Screen Strings -->
     <string name="home_content_description_map_button">Map button</string>
     <string name="home_content_description_search_icon">Search icon</string>
+    <string name="home_tab_all" translatable="false">All</string>
+    <string name="home_tab_following">All</string>
 
     /**
     * package: map
