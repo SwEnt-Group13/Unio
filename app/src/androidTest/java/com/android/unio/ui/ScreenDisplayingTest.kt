@@ -1,12 +1,11 @@
 package com.android.unio.ui
 
-import android.app.Instrumentation
 import android.content.Context
 import android.location.Location
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
-import androidx.test.platform.app.InstrumentationRegistry
+import androidx.test.rule.GrantPermissionRule
 import com.android.unio.mocks.association.MockAssociation
 import com.android.unio.mocks.event.MockEvent
 import com.android.unio.mocks.user.MockUser
@@ -91,9 +90,8 @@ class ScreenDisplayingTest {
   @MockK private lateinit var eventRepository: EventRepositoryFirestore
   private lateinit var eventViewModel: EventViewModel
 
-  // Mocking the mapViewModel and it's dependencies
+  // Mocking the mapViewModel and its dependencies
   private lateinit var locationTask: Task<Location>
-  private lateinit var instrumentation: Instrumentation
   private lateinit var context: Context
   private lateinit var mapViewModel: MapViewModel
   private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
@@ -112,6 +110,12 @@ class ScreenDisplayingTest {
   @MockK private lateinit var mockFirebaseUser: zzac
 
   @get:Rule val composeTestRule = createComposeRule()
+
+  @get:Rule
+  val permissionRule =
+      GrantPermissionRule.grant(
+          android.Manifest.permission.ACCESS_FINE_LOCATION,
+          android.Manifest.permission.ACCESS_COARSE_LOCATION)
 
   @get:Rule val hiltRule = HiltAndroidRule(this)
 
@@ -142,14 +146,7 @@ class ScreenDisplayingTest {
     eventViewModel.loadEvents()
     eventViewModel.selectEvent(events.first().uid)
 
-    // Mocking the location permission checks
-    instrumentation = InstrumentationRegistry.getInstrumentation()
-    instrumentation.uiAutomation.executeShellCommand(
-        "pm grant ${InstrumentationRegistry.getInstrumentation().targetContext.packageName} android.permission.ACCESS_FINE_LOCATION")
-    instrumentation.uiAutomation.executeShellCommand(
-        "pm grant ${InstrumentationRegistry.getInstrumentation().targetContext.packageName} android.permission.ACCESS_COARSE_LOCATION")
-
-    // Mocking the mapViewModel and it's dependencies
+    // Mocking the mapViewModel and its dependencies
     fusedLocationProviderClient = mock()
     locationTask = mock()
     context = mock()
@@ -183,7 +180,7 @@ class ScreenDisplayingTest {
           onSuccess(emptyList())
         }
 
-    // Mocking the Firebase.auth object and it's behaviour
+    // Mocking the Firebase.auth object and its behaviour
     mockkStatic(FirebaseAuth::class)
     every { Firebase.auth } returns firebaseAuth
     every { firebaseAuth.currentUser } returns mockFirebaseUser
