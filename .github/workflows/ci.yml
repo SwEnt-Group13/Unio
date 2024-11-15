@@ -102,10 +102,6 @@ jobs:
       - name: Install Firebase Emulator dependencies
         run: npm install
 
-      # Start Firebase Emulator Suite in the background
-      - name: Start Firebase Emulator Suite
-        run: firebase emulators:start --only firestore,storage --project demo &
-
       - name: Create shell file for Node tests
         run: echo 'npm run test' > run_node_tests.sh
 
