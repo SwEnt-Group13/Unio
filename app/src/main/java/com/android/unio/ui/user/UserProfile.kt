@@ -115,7 +115,7 @@ fun UserProfileScreenScaffold(
         TopAppBar(
             title = { Text(context.getString(R.string.user_profile_your_profile_text)) },
             actions = {
-              IconButton(onClick = { showSheet = true }) {
+              IconButton(onClick = { showSheet = true }, modifier = Modifier.testTag(UserProfileTestTags.SETTINGS)) {
                 Icon(
                     Icons.Outlined.MoreVert,
                     contentDescription =
@@ -303,7 +303,7 @@ fun UserProfileBottomSheet(
               Text(context.getString(R.string.user_profile_bottom_sheet_settings))
             }
         TextButton(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().testTag(UserProfileTestTags.SIGN_OUT),
             onClick = {
               Firebase.auth.signOut()
               scope.launch {
