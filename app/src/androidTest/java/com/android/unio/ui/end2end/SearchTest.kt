@@ -11,8 +11,11 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import androidx.test.filters.LargeTest
 import com.android.unio.MainActivity
+import com.android.unio.model.strings.test_tags.AssociationProfileTestTags
+import com.android.unio.model.strings.test_tags.BottomNavBarTestTags
 import com.android.unio.model.strings.test_tags.EventCardTestTags
 import com.android.unio.model.strings.test_tags.EventDetailsTestTags
+import com.android.unio.model.strings.test_tags.ExploreContentTestTags
 import com.android.unio.model.strings.test_tags.HomeTestTags
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
@@ -34,12 +37,12 @@ class SearchTest : EndToEndTest() {
       composeTestRule.onNodeWithTag(HomeTestTags.SCREEN).isDisplayed()
     }
 
-    Thread.sleep(20000)
     composeTestRule.onNodeWithTag(HomeTestTags.SEARCH_BAR_INPUT).assertIsDisplayed()
-    composeTestRule.onNodeWithTag(HomeTestTags.SEARCH_BAR_INPUT).performTextInput("Weekend")
+    composeTestRule.onNodeWithTag(HomeTestTags.SEARCH_BAR_INPUT).performTextInput(
+      EVENT_SEARCH_INPUT)
 
     // Wait for "server's" response to get the event
-    Thread.sleep(5000)
+    Thread.sleep(2000)
     composeTestRule.onAllNodesWithTag(EventCardTestTags.EVENT_ITEM).assertCountEquals(1)
 
     composeTestRule.onNodeWithTag(EventCardTestTags.EVENT_ITEM).performClick()
@@ -48,6 +51,48 @@ class SearchTest : EndToEndTest() {
       composeTestRule.onNodeWithTag(EventDetailsTestTags.SCREEN).isDisplayed()
     }
 
-    composeTestRule.onNodeWithTag(EventDetailsTestTags.TITLE).assertTextEquals("WeekEndSki IC")
+    composeTestRule.onNodeWithTag(EventDetailsTestTags.TITLE).assertTextEquals(EXPECTED_EVENT_NAME)
+  }
+
+  @Test
+  fun testSearchDiplaysCorrectResultsForAssociations(){
+    signInWithUser(composeTestRule, User1.EMAIL, User1.PASSWORD)
+
+    composeTestRule.waitUntil (5000) {
+      composeTestRule.onNodeWithTag(HomeTestTags.SCREEN).isDisplayed()
+    }
+
+    composeTestRule.onNodeWithTag(BottomNavBarTestTags.EXPLORE).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(BottomNavBarTestTags.EXPLORE).performClick()
+
+    composeTestRule.waitUntil (5000) {
+      composeTestRule.onNodeWithTag(ExploreContentTestTags.TITLE_TEXT).isDisplayed()
+    }
+
+    composeTestRule.onNodeWithTag(ExploreContentTestTags.SEARCH_BAR_INPUT).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(ExploreContentTestTags.SEARCH_BAR_INPUT).performTextInput(
+      ASSOCIATION_SEARCH_INPUT)
+
+    //Wait for the server's response to get the association
+    composeTestRule.waitUntil (5000) {
+      composeTestRule.onNodeWithTag(ExploreContentTestTags.ASSOCIATION_EXPLORE_RESULT + EXPECTED_ASSOCIATION_NAME).isDisplayed()
+    }
+
+    composeTestRule.onNodeWithTag(ExploreContentTestTags.ASSOCIATION_EXPLORE_RESULT + EXPECTED_ASSOCIATION_NAME).performClick()
+
+    composeTestRule.waitUntil (5000) {
+      composeTestRule.onNodeWithTag(AssociationProfileTestTags.SCREEN).isDisplayed()
+    }
+
+    composeTestRule.onNodeWithTag(AssociationProfileTestTags.TITLE).assertTextEquals(
+      EXPECTED_ASSOCIATION_NAME)
+  }
+
+
+  private companion object{
+    const val EVENT_SEARCH_INPUT = "Weekend"
+    const val ASSOCIATION_SEARCH_INPUT = "music"
+    const val EXPECTED_EVENT_NAME = "WeekEndSki IC"
+    const val EXPECTED_ASSOCIATION_NAME = "Musical"
   }
 }
