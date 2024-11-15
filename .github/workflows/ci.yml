@@ -116,7 +116,7 @@ jobs:
 
       # Create shell script for connected tests
       - name: Create shell file
-        run: echo './gradlew connectedCheck --build-cache' > run_tests.sh
+        run: echo './gradlew connectedCheck --parallel --build-cache' > run_tests.sh
 
       # Grant execute permissions for shell script
       - name: Grant execute permission for shell script
@@ -133,7 +133,7 @@ jobs:
           force-avd-creation: false
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
-          script: firebase emulators:exec ./run_tests.sh
+          script: firebase emulators:exec --import=firebase/emulator-data ./run_tests.sh
 
       # Create shell script for Node tests
       - name: Create shell file
