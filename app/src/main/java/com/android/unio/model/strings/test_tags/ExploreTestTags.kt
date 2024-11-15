@@ -24,6 +24,6 @@ object ExploreContentTestTags {
   const val ASSOCIATION_ITEM = "associationItem_"
   const val ASSOCIATION_NAME_TEXT = "associationName_"
 
-  //Result items from search bar
+  // Result items from search bar
   const val ASSOCIATION_EXPLORE_RESULT = "AssociationExploreResult_"
 }

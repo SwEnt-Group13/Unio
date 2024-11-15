@@ -115,12 +115,14 @@ fun UserProfileScreenScaffold(
         TopAppBar(
             title = { Text(context.getString(R.string.user_profile_your_profile_text)) },
             actions = {
-              IconButton(onClick = { showSheet = true }, modifier = Modifier.testTag(UserProfileTestTags.SETTINGS)) {
-                Icon(
-                    Icons.Outlined.MoreVert,
-                    contentDescription =
-                        context.getString(R.string.user_profile_content_description_more))
-              }
+              IconButton(
+                  onClick = { showSheet = true },
+                  modifier = Modifier.testTag(UserProfileTestTags.SETTINGS)) {
+                    Icon(
+                        Icons.Outlined.MoreVert,
+                        contentDescription =
+                            context.getString(R.string.user_profile_content_description_more))
+                  }
             })
       },
       bottomBar = {

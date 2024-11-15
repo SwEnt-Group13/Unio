@@ -24,9 +24,9 @@ open class EndToEndTest : FirebaseEmulatorFunctions {
     verifyEmulatorsAreRunning()
 
     /** Connect Firebase to the emulators */
-    try{
+    try {
       useEmulators()
-    }catch (e : Exception){
+    } catch (e: Exception) {
       Log.e("End To End test", e.message!!)
     }
   }
@@ -47,7 +47,6 @@ open class EndToEndTest : FirebaseEmulatorFunctions {
     composeTestRule.onNodeWithTag(BottomNavBarTestTags.MY_PROFILE).performClick()
     composeTestRule.onNodeWithTag(UserProfileTestTags.SETTINGS).performClick()
     composeTestRule.onNodeWithTag(UserProfileTestTags.SIGN_OUT).performClick()
-
   }
 
   override fun verifyEmulatorsAreRunning() {

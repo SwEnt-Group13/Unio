@@ -38,8 +38,9 @@ class SearchTest : EndToEndTest() {
     }
 
     composeTestRule.onNodeWithTag(HomeTestTags.SEARCH_BAR_INPUT).assertIsDisplayed()
-    composeTestRule.onNodeWithTag(HomeTestTags.SEARCH_BAR_INPUT).performTextInput(
-      EVENT_SEARCH_INPUT)
+    composeTestRule
+        .onNodeWithTag(HomeTestTags.SEARCH_BAR_INPUT)
+        .performTextInput(EVENT_SEARCH_INPUT)
 
     // Wait for "server's" response to get the event
     Thread.sleep(2000)
@@ -59,45 +60,52 @@ class SearchTest : EndToEndTest() {
   }
 
   @Test
-  fun testSearchDiplaysCorrectResultsForAssociations(){
+  fun testSearchDiplaysCorrectResultsForAssociations() {
     signInWithUser(composeTestRule, User1.EMAIL, User1.PASSWORD)
 
-    composeTestRule.waitUntil (5000) {
+    composeTestRule.waitUntil(5000) {
       composeTestRule.onNodeWithTag(HomeTestTags.SCREEN).isDisplayed()
     }
 
     composeTestRule.onNodeWithTag(BottomNavBarTestTags.EXPLORE).assertIsDisplayed()
     composeTestRule.onNodeWithTag(BottomNavBarTestTags.EXPLORE).performClick()
 
-    composeTestRule.waitUntil (5000) {
+    composeTestRule.waitUntil(5000) {
       composeTestRule.onNodeWithTag(ExploreContentTestTags.TITLE_TEXT).isDisplayed()
     }
 
     composeTestRule.onNodeWithTag(ExploreContentTestTags.SEARCH_BAR_INPUT).assertIsDisplayed()
-    composeTestRule.onNodeWithTag(ExploreContentTestTags.SEARCH_BAR_INPUT).performTextInput(
-      ASSOCIATION_SEARCH_INPUT)
+    composeTestRule
+        .onNodeWithTag(ExploreContentTestTags.SEARCH_BAR_INPUT)
+        .performTextInput(ASSOCIATION_SEARCH_INPUT)
 
-    //Wait for the server's response to get the association
-    composeTestRule.waitUntil (5000) {
-      composeTestRule.onNodeWithTag(ExploreContentTestTags.ASSOCIATION_EXPLORE_RESULT + EXPECTED_ASSOCIATION_NAME).isDisplayed()
+    // Wait for the server's response to get the association
+    composeTestRule.waitUntil(5000) {
+      composeTestRule
+          .onNodeWithTag(
+              ExploreContentTestTags.ASSOCIATION_EXPLORE_RESULT + EXPECTED_ASSOCIATION_NAME)
+          .isDisplayed()
     }
 
-    composeTestRule.onNodeWithTag(ExploreContentTestTags.ASSOCIATION_EXPLORE_RESULT + EXPECTED_ASSOCIATION_NAME).performClick()
+    composeTestRule
+        .onNodeWithTag(
+            ExploreContentTestTags.ASSOCIATION_EXPLORE_RESULT + EXPECTED_ASSOCIATION_NAME)
+        .performClick()
 
-    composeTestRule.waitUntil (5000) {
+    composeTestRule.waitUntil(5000) {
       composeTestRule.onNodeWithTag(AssociationProfileTestTags.SCREEN).isDisplayed()
     }
 
-    composeTestRule.onNodeWithTag(AssociationProfileTestTags.TITLE).assertTextEquals(
-      EXPECTED_ASSOCIATION_NAME)
+    composeTestRule
+        .onNodeWithTag(AssociationProfileTestTags.TITLE)
+        .assertTextEquals(EXPECTED_ASSOCIATION_NAME)
 
     composeTestRule.onNodeWithTag(AssociationProfileTestTags.GO_BACK_BUTTON).performClick()
 
     signOutWithUser(composeTestRule)
   }
 
-
-  private companion object{
+  private companion object {
     const val EVENT_SEARCH_INPUT = "Weekend"
     const val ASSOCIATION_SEARCH_INPUT = "music"
     const val EXPECTED_EVENT_NAME = "WeekEndSki IC"
