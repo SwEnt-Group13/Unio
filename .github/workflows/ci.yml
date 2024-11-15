@@ -104,16 +104,16 @@ jobs:
           ./gradlew ktfmtCheck
 
       # Create shell script for Node tests
-      - name: Create shell file
-        run: echo 'npm run test' > run_node_tests.sh
+#      - name: Create shell file
+#        run: echo 'npm run test' > run_node_tests.sh
 
       # Grant execute permissions for the shell file
-      - name: Grant execute permission for the shell file
-        run: chmod +x run_node_tests.sh
+#      - name: Grant execute permission for the shell file
+#        run: chmod +x run_node_tests.sh
 
       # Run
       - name: Run Node tests with Firestore and Storage emulators
-        run: firebase emulators:exec --only firestore,storage ./run_node_tests.sh
+        run: firebase emulators:exec --only firestore,storage 'npm run test'
 
       # This step runs gradle commands to build the application
       - name: Assemble
@@ -128,13 +128,13 @@ jobs:
           ./gradlew check --parallel --build-cache
 
       # Create shell script for connected tests
-      - name: Create shell file
-        run: echo './gradlew connectedCheck --parallel --build-cache' > run_tests.sh
+#      - name: Create shell file
+#        run: echo './gradlew connectedCheck --parallel --build-cache' > run_tests.sh
 
       # Grant execute permissions for shell script
-      - name: Grant execute permission for shell script
-        run: |
-          chmod +x ./run_tests.sh
+#      - name: Grant execute permission for shell script
+#        run: |
+#          chmod +x ./run_tests.sh
 
       # Run connected tests on the emulator
       - name: Run connected tests
@@ -146,19 +146,7 @@ jobs:
           force-avd-creation: false
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
-          script: firebase emulators:exec --import=firebase/emulator-data ./run_tests.sh
-
-      # Create shell script for Node tests
-      - name: Create shell file
-        run: echo 'npm run test' > run_node_tests.sh
-
-      # Grant execute permissions for the shell file
-      - name: Grant execute permission for the shell file
-        run: chmod +x run_node_tests.sh
-
-      # Run
-      - name: Run Node tests with Firestore and Storage emulators
-        run: firebase emulators:exec --only firestore,storage ./run_node_tests.sh
+          script: firebase emulators:exec --import=firebase/emulator-data './gradlew connectedCheck --parallel --build-cache'
 
       # This step generates the coverage report which will be uploaded to sonar
       - name: Generate Coverage Report
