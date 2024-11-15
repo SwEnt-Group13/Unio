@@ -74,7 +74,7 @@ class SearchTest : EndToEndTest() {
       composeTestRule.onNodeWithTag(ExploreContentTestTags.TITLE_TEXT).isDisplayed()
     }
 
-    composeTestRule.onNodeWithTag(ExploreContentTestTags.SEARCH_BAR_INPUT).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(ExploreContentTestTags.SEARCH_BAR).assertIsDisplayed()
     composeTestRule
         .onNodeWithTag(ExploreContentTestTags.SEARCH_BAR_INPUT)
         .performTextInput(ASSOCIATION_SEARCH_INPUT)
