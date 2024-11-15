@@ -141,6 +141,9 @@ jobs:
         run: |
           ./gradlew jacocoTestReport
 
+      - name: List Jacoco Execution Data Files
+        run: ls -R build/outputs/code_coverage
+
       # Upload the coverage report to the artifacts
       - name: Upload Jacoco Test Report
         uses: actions/upload-artifact@v4
