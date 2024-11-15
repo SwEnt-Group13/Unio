@@ -28,7 +28,7 @@ class WelcomeTest {
 
   @Before
   fun setUp() {
-    MockKAnnotations.init(this)
+    MockKAnnotations.init(this, relaxed=true)
 
     userViewModel = UserViewModel(userRepository)
   }

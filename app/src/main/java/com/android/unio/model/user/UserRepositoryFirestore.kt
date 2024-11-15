@@ -1,5 +1,6 @@
 package com.android.unio.model.user
 
+import android.util.Log
 import com.android.unio.model.firestore.FirestorePaths.USER_PATH
 import com.android.unio.model.firestore.transform.hydrate
 import com.android.unio.model.firestore.transform.serialize
@@ -49,6 +50,7 @@ class UserRepositoryFirestore @Inject constructor(private val db: FirebaseFirest
   }
 
   override fun updateUser(user: User, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+      Log.d("AAA", "j'essaie d'update le user wesh")
     getUserRef(user.uid)
         .set(serialize(user))
         .addOnSuccessListener { document -> onSuccess() }
