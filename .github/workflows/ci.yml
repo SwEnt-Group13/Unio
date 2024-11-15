@@ -107,17 +107,9 @@ jobs:
       - name: Install dependencies for the firebase emulator suite
         run: npm install
 
-      # Create shell script for Node tests
-      - name: Create shell file
-        run: echo 'npm run test' > run_node_tests.sh
-
-      # Grant execute permissions for the shell file
-      - name: Grant execute permission for the shell file
-        run: chmod +x run_node_tests.sh
-
       # Run
       - name: Run Node tests with Firestore and Storage emulators
-        run: firebase emulators:exec --only firestore,storage ./run_node_tests.sh
+        run: firebase emulators:exec --only firestore,storage 'npm run test'
 # END OF NEW PART
 
       # This step runs gradle commands to build the application
@@ -142,7 +134,7 @@ jobs:
           force-avd-creation: false
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
-          script: firebase emulators:exec './gradle connectedCheck --parallel --build-cache'
+          script: firebase emulators:exec --import=firebase/emulator-data './gradlew connectedCheck --parallel --build-cache'
 
       # This step generates the coverage report which will be uploaded to sonar
       - name: Generate Coverage Report
