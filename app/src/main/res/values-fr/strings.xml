@@ -188,6 +188,7 @@
     <string name="home_tab_following">Suivis</string>
     <string name="map_event_go_back_button">Retour</string>
     <string name="map_event_title">Carte d\'évènements</string>
+    <string name="map_content_description_center_on_user">Centrer sur l\'utilisateur</string>
 
     /**
     * package: saved

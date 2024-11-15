@@ -1,5 +1,6 @@
 package com.android.unio.model.hilt.module
 
+import android.content.Context
 import com.android.unio.model.association.AssociationRepository
 import com.android.unio.model.association.AssociationRepositoryFirestore
 import com.android.unio.model.event.EventRepository
@@ -10,6 +11,8 @@ import com.android.unio.model.image.ImageRepository
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.user.UserRepository
 import com.android.unio.model.user.UserRepositoryFirestore
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -19,6 +22,7 @@ import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 
 @Module
@@ -88,4 +92,16 @@ abstract class ConcurrentAssociationUserModule {
 object FirebaseStorageModule {
 
   @Provides fun provideFirebaseStorage(): FirebaseStorage = FirebaseStorage.getInstance()
+}
+
+@Module
+@InstallIn(SingletonComponent::class)
+object LocationModule {
+
+  @Provides
+  fun provideFusedLocationProviderClient(
+      @ApplicationContext context: Context
+  ): FusedLocationProviderClient {
+    return LocationServices.getFusedLocationProviderClient(context)
+  }
 }
