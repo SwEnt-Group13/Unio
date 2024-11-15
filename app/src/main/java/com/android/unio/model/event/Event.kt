@@ -47,7 +47,8 @@ data class Event(
     val price: Double = 0.0,
     val date: Timestamp = Timestamp(Date()),
     val location: Location = Location(),
-    val types: List<EventType> = mutableListOf(EventType.OTHER)
+    val types: List<EventType> = mutableListOf(EventType.OTHER),
+    val placesRemaining: Int = -1
 ) {
   companion object
 }

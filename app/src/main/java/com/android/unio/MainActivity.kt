@@ -25,6 +25,7 @@ import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.authentication.AuthViewModel
 import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
+import com.android.unio.model.map.MapViewModel
 import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.association.AssociationProfileScreen
@@ -80,6 +81,7 @@ fun UnioApp(imageRepository: ImageRepositoryFirebaseStorage) {
   val searchViewModel = hiltViewModel<SearchViewModel>()
   val authViewModel = hiltViewModel<AuthViewModel>()
   val eventViewModel = hiltViewModel<EventViewModel>()
+  val mapViewModel = hiltViewModel<MapViewModel>()
 
   // Observe the authentication state
   val authState by authViewModel.authState.collectAsState()
@@ -115,7 +117,9 @@ fun UnioApp(imageRepository: ImageRepositoryFirebaseStorage) {
             eventViewModel = eventViewModel,
             userViewModel = userViewModel)
       }
-      composable(Screen.MAP) { MapScreen(navigationActions, eventViewModel, userViewModel) }
+      composable(Screen.MAP) {
+        MapScreen(navigationActions, eventViewModel, userViewModel, mapViewModel)
+      }
     }
     navigation(startDestination = Screen.EXPLORE, route = Route.EXPLORE) {
       composable(Screen.EXPLORE) {

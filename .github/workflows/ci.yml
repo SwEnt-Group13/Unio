@@ -128,20 +128,17 @@ jobs:
           ./gradlew check --parallel --build-cache
 
       # Create shell script for connected tests
-#      - name: Create shell file
-#        run: echo './gradlew connectedCheck --build-cache' > run_tests.sh
+      - name: Create shell file
+        run: echo './gradlew connectedCheck --parallel --build-cache' > run_tests.sh
 
       # Grant execute permissions for shell script
-#      - name: Grant execute permission for shell script
-#        run: |
-#          chmod +x ./run_tests.sh
+      - name: Grant execute permission for shell script
+        run: |
+          chmod +x ./run_tests.sh
 
       # Run connected tests on the emulator
       - name: Run connected tests
         uses: reactivecircus/android-emulator-runner@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
           api-level: 34
           target: google_apis
@@ -149,8 +146,19 @@ jobs:
           force-avd-creation: false
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
-          script: ./gradlew connectedCheck --build-cache
-#          script: firebase emulators:exec ./run_tests.sh
+          script: firebase emulators:exec --import=firebase/emulator-data ./run_tests.sh
+
+      # Create shell script for Node tests
+      - name: Create shell file
+        run: echo 'npm run test' > run_node_tests.sh
+
+      # Grant execute permissions for the shell file
+      - name: Grant execute permission for the shell file
+        run: chmod +x run_node_tests.sh
+
+      # Run
+      - name: Run Node tests with Firestore and Storage emulators
+        run: firebase emulators:exec --only firestore,storage ./run_node_tests.sh
 
       # This step generates the coverage report which will be uploaded to sonar
       - name: Generate Coverage Report
