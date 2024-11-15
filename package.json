@@ -4,7 +4,8 @@
   "description": "The world's largest campus life platform.",
   "main": "",
   "scripts": {
-    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
+    "emulators": "firebase emulators:start --import=./firebase/emulator-data"
   },
   "author": "",
   "license": "ISC",

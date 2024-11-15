@@ -357,3 +357,25 @@ configurations.forEach { configuration ->
   // This fixes the "Internal error in Cloud Firestore" issue
   configuration.exclude("com.google.protobuf", "protobuf-lite")
 }
+
+tasks.register("startFirebaseEmulators") {
+    val command = "firebase emulators:start --import=./firebase/emulator-data"
+    doLast {
+        val os = System.getProperty("os.name").toLowerCase()
+        if (os.contains("win")) {
+            ProcessBuilder("cmd", "/c", "start", "cmd", "/k", command).start()
+        } else if (os.contains("nix") || os.contains("nux") || os.contains("bsd")) {
+            ProcessBuilder(
+                "sh",
+                "-c",
+                """
+                x-terminal-emulator -e '${command}' ||
+                gnome-terminal -- bash -c '${command}; exec bash' ||
+                konsole -e '${command}'
+                """.trimIndent()
+            ).start()
+        } else {
+            throw GradleException("Unsupported operating system: $os")
+        }
+    }
+}
