@@ -59,6 +59,7 @@ import java.util.concurrent.TimeUnit
 val EPFL_COORDINATES = LatLng(46.518831258, 6.559331096)
 const val APPROXIMATE_CIRCLE_RADIUS = 30.0
 const val APPROXIMATE_CIRCLE_OUTLINE_WIDTH = 2f
+const val INITIAL_ZOOM_LEVEL = 15f
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -121,13 +122,14 @@ fun MapScreen(
       }
     }
     cameraPositionState.position =
-        CameraPosition.fromLatLngZoom(userLocation ?: EPFL_COORDINATES, 10f)
+        CameraPosition.fromLatLngZoom(userLocation ?: EPFL_COORDINATES, INITIAL_ZOOM_LEVEL)
   }
 
   // Center map on the user's location initially if available
   LaunchedEffect(userLocation) {
     if (userLocation != null && !initialCentered) {
-      cameraPositionState.position = CameraPosition.fromLatLngZoom(userLocation!!, 15f)
+      cameraPositionState.position =
+          CameraPosition.fromLatLngZoom(userLocation!!, INITIAL_ZOOM_LEVEL)
       initialCentered = true
     }
   }
