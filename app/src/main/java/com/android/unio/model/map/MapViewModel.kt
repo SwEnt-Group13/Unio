@@ -8,15 +8,17 @@ import androidx.lifecycle.ViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.maps.model.LatLng
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import javax.inject.Inject
 
 @HiltViewModel
 class MapViewModel
 @Inject
-constructor(private val fusedLocationClient: FusedLocationProviderClient) : ViewModel() {
+constructor(
+  private val fusedLocationClient: FusedLocationProviderClient
+) : ViewModel() {
 
   /** State flow that holds the user's location. */
   private val _userLocation = MutableStateFlow<LatLng?>(null)
@@ -37,12 +39,12 @@ constructor(private val fusedLocationClient: FusedLocationProviderClient) : View
     }
   }
 
-  fun hasLocationPermissions(context: Context): Boolean {
-    return ContextCompat.checkSelfPermission(
-        context, android.Manifest.permission.ACCESS_FINE_LOCATION) ==
-        PackageManager.PERMISSION_GRANTED ||
-        ContextCompat.checkSelfPermission(
-            context, android.Manifest.permission.ACCESS_COARSE_LOCATION) ==
-            PackageManager.PERMISSION_GRANTED
-  }
+    fun hasLocationPermissions(context: Context): Boolean {
+        return ContextCompat.checkSelfPermission(
+            context, android.Manifest.permission.ACCESS_FINE_LOCATION) ==
+                PackageManager.PERMISSION_GRANTED ||
+                ContextCompat.checkSelfPermission(
+                    context, android.Manifest.permission.ACCESS_COARSE_LOCATION) ==
+                PackageManager.PERMISSION_GRANTED
+    }
 }

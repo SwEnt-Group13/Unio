@@ -26,81 +26,86 @@ import org.robolectric.Shadows.shadowOf
 @RunWith(RobolectricTestRunner::class)
 class MapViewModelTest {
 
-  @MockK private lateinit var context: Context
-  @MockK private lateinit var fusedLocationClient: FusedLocationProviderClient
-  @MockK private lateinit var locationTask: Task<Location>
+    @MockK private lateinit var context: Context
+    @MockK private lateinit var fusedLocationClient: FusedLocationProviderClient
+    @MockK private lateinit var locationTask: Task<Location>
 
-  private lateinit var mapViewModel: MapViewModel
+    private lateinit var mapViewModel: MapViewModel
 
-  @Before
-  fun setUp() {
-    MockKAnnotations.init(this, relaxed = true)
+    @Before
+    fun setUp() {
+        MockKAnnotations.init(this, relaxed = true)
 
-    every {
-      ContextCompat.checkSelfPermission(context, android.Manifest.permission.ACCESS_FINE_LOCATION)
-    } returns PackageManager.PERMISSION_GRANTED
+        every {
+            ContextCompat.checkSelfPermission(
+                context,
+                android.Manifest.permission.ACCESS_FINE_LOCATION
+            )
+        } returns PackageManager.PERMISSION_GRANTED
 
-    every {
-      ContextCompat.checkSelfPermission(context, android.Manifest.permission.ACCESS_COARSE_LOCATION)
-    } returns PackageManager.PERMISSION_GRANTED
+        every {
+            ContextCompat.checkSelfPermission(
+                context,
+                android.Manifest.permission.ACCESS_COARSE_LOCATION
+            )
+        } returns PackageManager.PERMISSION_GRANTED
 
-    // This is fine to do because the fusedLocationClient is a mock
-    mapViewModel = MapViewModel(fusedLocationClient)
-  }
+        // This is fine to do because the fusedLocationClient is a mock
+        mapViewModel = MapViewModel(fusedLocationClient)
+    }
 
-  @Test
-  fun testFetchUserLocationWithLocationPermissionGrantedAndLocationReturned() = runTest {
-    val mockLatLng = LatLng(46.518831258, 6.559331096)
-    val mockLocation =
-        Location("mockProvider").apply {
-          latitude = mockLatLng.latitude
-          longitude = mockLatLng.longitude
+    @Test
+    fun testFetchUserLocationWithLocationPermissionGrantedAndLocationReturned() = runTest {
+        val mockLatLng = LatLng(46.518831258, 6.559331096)
+        val mockLocation = Location("mockProvider").apply {
+            latitude = mockLatLng.latitude
+            longitude = mockLatLng.longitude
         }
 
-    every { fusedLocationClient.lastLocation } returns locationTask
-    every { locationTask.addOnSuccessListener(any()) } answers
-        {
-          (it.invocation.args[0] as OnSuccessListener<Location?>).onSuccess(mockLocation)
-          locationTask
+        every { fusedLocationClient.lastLocation } returns locationTask
+        every { locationTask.addOnSuccessListener(any()) } answers {
+            (it.invocation.args[0] as OnSuccessListener<Location?>).onSuccess(mockLocation)
+            locationTask
         }
 
-    mapViewModel.fetchUserLocation(context)
+        mapViewModel.fetchUserLocation(context)
 
-    // Required for the location Task to complete
-    shadowOf(Looper.getMainLooper()).idle()
+        // Required for the location Task to complete
+        shadowOf(Looper.getMainLooper()).idle()
 
-    val result = mapViewModel.userLocation.first()
-    assertEquals(mockLatLng, result)
-  }
+        val result = mapViewModel.userLocation.first()
+        assertEquals(mockLatLng, result)
+    }
 
-  @Test
-  fun testFetchUserLocationWithSecurityExceptionThrown() = runTest {
-    every { fusedLocationClient.lastLocation } returns locationTask
-    every { locationTask.addOnFailureListener(any()) } answers
-        {
-          (it.invocation.args[0] as OnFailureListener).onFailure(
-              SecurityException("Security exception"))
-          locationTask
+    @Test
+    fun testFetchUserLocationWithSecurityExceptionThrown() = runTest {
+        every { fusedLocationClient.lastLocation } returns locationTask
+        every { locationTask.addOnFailureListener(any()) } answers {
+            (it.invocation.args[0] as OnFailureListener).onFailure(SecurityException("Security exception"))
+            locationTask
         }
 
-    mapViewModel.fetchUserLocation(context)
+        mapViewModel.fetchUserLocation(context)
 
-    // Required for the location Task to complete
-    shadowOf(Looper.getMainLooper()).idle()
+        // Required for the location Task to complete
+        shadowOf(Looper.getMainLooper()).idle()
 
-    val result = mapViewModel.userLocation.first()
-    assertNull(result)
-  }
+        val result = mapViewModel.userLocation.first()
+        assertNull(result)
+    }
 
-  @Test
-  fun testFetchUserLocationWithLocationPermissionDenied() = runTest {
-    every {
-      ContextCompat.checkSelfPermission(context, android.Manifest.permission.ACCESS_FINE_LOCATION)
-    } returns PackageManager.PERMISSION_DENIED
+    @Test
+    fun testFetchUserLocationWithLocationPermissionDenied() = runTest {
+        every {
+            ContextCompat.checkSelfPermission(
+                context,
+                android.Manifest.permission.ACCESS_FINE_LOCATION
+            )
+        } returns PackageManager.PERMISSION_DENIED
 
-    mapViewModel.fetchUserLocation(context)
+        mapViewModel.fetchUserLocation(context)
 
-    val result = mapViewModel.userLocation.first()
-    assertEquals(null, result)
-  }
+        val result = mapViewModel.userLocation.first()
+        assertEquals(null, result)
+    }
 }
