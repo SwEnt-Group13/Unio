@@ -65,7 +65,7 @@ class UserAccountCreationTest : EndToEndTest() {
         .performTextInput(UnverifiedUser.FIRST_NAME)
     composeTestRule
         .onNodeWithTag(AccountDetailsTestTags.LAST_NAME_TEXT_FIELD)
-        .performTextInput(UnverifiedUser.FIRST_NAME)
+        .performTextInput(UnverifiedUser.LAST_NAME)
     composeTestRule
         .onNodeWithTag(AccountDetailsTestTags.BIOGRAPHY_TEXT_FIELD)
         .performTextInput(UnverifiedUser.BIOGRAPHY)
