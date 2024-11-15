@@ -50,6 +50,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
@@ -57,12 +58,13 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
+import androidx.core.net.toUri
 import com.android.unio.R
 import com.android.unio.model.strings.test_tags.UserProfileTestTags
 import com.android.unio.model.user.User
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.association.AssociationSmall
+import com.android.unio.ui.image.AsyncImageWrapper
 import com.android.unio.ui.navigation.BottomNavigationMenu
 import com.android.unio.ui.navigation.LIST_TOP_LEVEL_DESTINATION
 import com.android.unio.ui.navigation.NavigationAction
@@ -171,17 +173,15 @@ fun UserProfileScreenContent(navigationAction: NavigationAction, user: User) {
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxWidth(0.7f).padding(24.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)) {
-          Box(modifier = Modifier.size(100.dp)) {
-            AsyncImage(
-                model = user.profilePicture,
+          Box(modifier = Modifier.size(100.dp).clip(CircleShape)) {
+            AsyncImageWrapper(
+                imageUri = user.profilePicture.toUri(),
                 contentDescription =
                     context.getString(R.string.user_profile_content_description_pfp),
                 contentScale = ContentScale.Crop,
                 modifier =
-                    Modifier.size(100.dp)
-                        .clip(CircleShape)
-                        .background(Color.Gray)
-                        .testTag(UserProfileTestTags.PROFILE_PICTURE))
+                    Modifier.background(Color.Gray).testTag(UserProfileTestTags.PROFILE_PICTURE),
+                filterQuality = FilterQuality.Medium)
           }
 
           // Display the user's name and biography.

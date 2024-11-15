@@ -1,22 +1,21 @@
 package com.android.unio.ui.event
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
@@ -34,6 +33,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarDuration
@@ -53,19 +53,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
-import coil.compose.AsyncImage
 import com.android.unio.R
+import com.android.unio.model.association.Association
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventUtils.formatTimestamp
 import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.strings.test_tags.EventDetailsTestTags
 import com.android.unio.model.user.UserViewModel
+import com.android.unio.ui.image.AsyncImageWrapper
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.theme.AppTypography
 import java.text.SimpleDateFormat
@@ -94,6 +95,7 @@ fun EventScreen(
 ) {
 
   val event by eventViewModel.selectedEvent.collectAsState()
+
   val user by userViewModel.user.collectAsState()
 
   if (event == null || user == null) {
@@ -101,6 +103,7 @@ fun EventScreen(
     Toast.makeText(LocalContext.current, "An error occurred.", Toast.LENGTH_SHORT).show()
     return
   }
+  val associations by event!!.organisers.list.collectAsState()
 
   var isSaved by remember { mutableStateOf(user!!.savedEvents.contains(event!!.uid)) }
 
@@ -113,7 +116,7 @@ fun EventScreen(
     userViewModel.updateUserDebounced(user!!)
   }
 
-  EventScreenScaffold(navigationAction, event!!, isSaved, onClickSaveButton)
+  EventScreenScaffold(navigationAction, event!!, associations, isSaved, onClickSaveButton)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -121,6 +124,7 @@ fun EventScreen(
 fun EventScreenScaffold(
     navigationAction: NavigationAction,
     event: Event,
+    associations: List<Association>,
     isSaved: Boolean,
     onClickSaveButton: () -> Unit
 ) {
@@ -180,138 +184,163 @@ fun EventScreenScaffold(
                   }
             })
       },
-      content = { padding -> EventScreenContent(event, padding) })
+      content = { padding -> EventScreenContent(event, associations, padding) })
 }
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun EventScreenContent(event: Event, padding: PaddingValues) {
+fun EventScreenContent(event: Event, associations: List<Association>, padding: PaddingValues) {
   val context = LocalContext.current
   Column(
       modifier =
           Modifier.testTag(EventDetailsTestTags.DETAILS_PAGE)
               .verticalScroll(rememberScrollState())
-              .padding(padding)) {
-        AsyncImage(
-            event.image.toUri(),
-            context.getString(R.string.event_image_description),
-            placeholder = painterResource(R.drawable.no_picture_found),
-            modifier = Modifier.fillMaxSize().testTag(EventDetailsTestTags.DETAILS_IMAGE))
+              .padding(padding)
+              .fillMaxSize()) {
+        Column(verticalArrangement = Arrangement.Center, modifier = Modifier.height(200.dp)) {
+          AsyncImageWrapper(
+              imageUri = event.image.toUri(),
+              contentDescription = context.getString(R.string.event_image_description),
+              modifier = Modifier.fillMaxWidth().testTag(EventDetailsTestTags.DETAILS_IMAGE),
+              contentScale = ContentScale.Crop)
+        }
 
-        Column(
+        EventInformationCard(event, associations, context)
+
+        EventDetailsBody(event, context)
+      }
+}
+
+@Composable
+fun EventInformationCard(event: Event, associations: List<Association>, context: Context) {
+  Column(
+      modifier =
+          Modifier.testTag(EventDetailsTestTags.DETAILS_INFORMATION_CARD)
+              .background(MaterialTheme.colorScheme.primary)
+              .padding(12.dp)
+              .fillMaxSize(),
+      horizontalAlignment = Alignment.CenterHorizontally) {
+        Text(
+            event.title,
             modifier =
-                Modifier.testTag(EventDetailsTestTags.DETAILS_INFORMATION_CARD)
-                    .background(MaterialTheme.colorScheme.primary)
-                    .align(Alignment.CenterHorizontally)
-                    .padding(12.dp)
-                    .fillMaxWidth()) {
-              Text(
-                  event.title,
-                  modifier =
-                      Modifier.testTag(EventDetailsTestTags.TITLE)
-                          .align(Alignment.CenterHorizontally),
-                  style = AppTypography.headlineLarge,
-                  color = MaterialTheme.colorScheme.onPrimary)
+                Modifier.testTag(EventDetailsTestTags.TITLE).align(Alignment.CenterHorizontally),
+            style = AppTypography.displayMedium,
+            color = MaterialTheme.colorScheme.onPrimary)
 
-              Row(modifier = Modifier.align(Alignment.Start)) {
-                val associations by event.organisers.list.collectAsState()
-                for (i in associations.indices) {
-                  Row(
-                      modifier =
-                          Modifier.testTag("${EventDetailsTestTags.ORGANIZING_ASSOCIATION}$i")
-                              .padding(end = 6.dp),
-                      horizontalArrangement = Arrangement.Center) {
-                        AsyncImage(
-                            associations[i].image.toUri(),
-                            context.getString(R.string.event_association_icon_description),
-                            placeholder = painterResource(R.drawable.weskic),
-                            modifier =
-                                Modifier.size(ASSOCIATION_ICON_SIZE)
-                                    .clip(CircleShape)
-                                    .align(Alignment.CenterVertically)
-                                    .testTag("${EventDetailsTestTags.ASSOCIATION_LOGO}$i"),
-                            contentScale = ContentScale.Crop,
-                        )
-
-                        Text(
-                            associations[i].name,
-                            modifier =
-                                Modifier.testTag("${EventDetailsTestTags.ASSOCIATION_NAME}$i")
-                                    .padding(start = 3.dp),
-                            style = AppTypography.bodySmall,
-                            color = MaterialTheme.colorScheme.onPrimary)
-                      }
-                }
-              }
-              Row {
-                Text(
-                    formatTimestamp(event.date, SimpleDateFormat("HH:mm", Locale.getDefault())),
-                    modifier = Modifier.testTag(EventDetailsTestTags.START_HOUR).weight(1f),
-                    color = MaterialTheme.colorScheme.onPrimary)
-                Text(
-                    formatTimestamp(event.date, SimpleDateFormat("dd/MM", Locale.getDefault())),
-                    modifier = Modifier.testTag(EventDetailsTestTags.DATE),
-                    color = MaterialTheme.colorScheme.onPrimary)
-              }
-            }
-        Column(modifier = Modifier.testTag(EventDetailsTestTags.DETAILS_BODY).padding(9.dp)) {
-          Text(
-              "X places remaining",
-              modifier = Modifier.testTag(EventDetailsTestTags.PLACES_REMAINING_TEXT),
-              style = AppTypography.bodyLarge,
-              color = MaterialTheme.colorScheme.secondary)
-          Text(
-              event.description,
-              modifier = Modifier.testTag(EventDetailsTestTags.DESCRIPTION).padding(6.dp),
-              style = AppTypography.bodyMedium)
-
-          Spacer(modifier = Modifier.height(10.dp))
-          Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Bottom) {
-            FlowRow(
-                horizontalArrangement = Arrangement.Center,
-                verticalArrangement = Arrangement.Center,
-                modifier = Modifier.align(Alignment.CenterHorizontally).wrapContentWidth()) {
-                  Text(
-                      event.location.name,
-                      modifier =
-                          Modifier.testTag(EventDetailsTestTags.LOCATION).padding(end = 5.dp))
-                  Button(
-                      onClick = DEBUG_LAMBDA,
-                      modifier = Modifier.testTag(EventDetailsTestTags.MAP_BUTTON).size(48.dp),
-                      shape = CircleShape,
-                      colors =
-                          ButtonDefaults.buttonColors(
-                              containerColor = MaterialTheme.colorScheme.inversePrimary,
-                              contentColor = MaterialTheme.colorScheme.primary),
-                      contentPadding = PaddingValues(0.dp)) {
-                        Icon(
-                            Icons.Outlined.LocationOn,
-                            contentDescription =
-                                context.getString(R.string.event_location_button_description),
-                        )
-                      }
-                }
-            Spacer(modifier = Modifier.height(20.dp))
-            Button(
-                onClick = DEBUG_LAMBDA,
+        Row(modifier = Modifier.align(Alignment.Start)) {
+          for (i in associations.indices) {
+            Row(
                 modifier =
-                    Modifier.testTag(EventDetailsTestTags.SIGN_UP_BUTTON)
-                        .align(Alignment.CenterHorizontally)
-                        .wrapContentWidth()
-                        .height(56.dp),
-                shape = CircleShape,
-                colors =
-                    ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.inversePrimary,
-                        contentColor = MaterialTheme.colorScheme.primary)) {
-                  Icon(
-                      Icons.AutoMirrored.Filled.DirectionsWalk,
+                    Modifier.testTag("${EventDetailsTestTags.ORGANIZING_ASSOCIATION}$i")
+                        .padding(end = 6.dp),
+                horizontalArrangement = Arrangement.Center) {
+                  AsyncImageWrapper(
+                      imageUri = associations[i].image.toUri(),
                       contentDescription =
-                          context.getString(R.string.event_signup_button_description),
-                  )
-                  Text(context.getString(R.string.event_sign_up))
+                          context.getString(R.string.event_association_icon_description),
+                      modifier =
+                          Modifier.size(ASSOCIATION_ICON_SIZE)
+                              .clip(CircleShape)
+                              .align(Alignment.CenterVertically)
+                              .testTag("${EventDetailsTestTags.ASSOCIATION_LOGO}$i"),
+                      placeholderResourceId = R.drawable.adec,
+                      filterQuality = FilterQuality.None)
+
+                  Text(
+                      associations[i].name,
+                      modifier =
+                          Modifier.testTag("${EventDetailsTestTags.ASSOCIATION_NAME}$i")
+                              .padding(start = 3.dp),
+                      style = AppTypography.bodySmall,
+                      color = MaterialTheme.colorScheme.onPrimary)
                 }
           }
         }
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+          Text(
+              formatTimestamp(event.date, SimpleDateFormat("HH:mm", Locale.getDefault())),
+              modifier = Modifier.testTag(EventDetailsTestTags.START_HOUR),
+              color = MaterialTheme.colorScheme.onPrimary)
+          Text(
+              formatTimestamp(event.date, SimpleDateFormat("dd/MM", Locale.getDefault())),
+              modifier = Modifier.testTag(EventDetailsTestTags.DATE),
+              color = MaterialTheme.colorScheme.onPrimary)
+        }
+      }
+}
+
+@Composable
+fun EventDetailsBody(event: Event, context: Context) {
+  Column(
+      modifier = Modifier.testTag(EventDetailsTestTags.DETAILS_BODY).padding(9.dp).fillMaxHeight(),
+      verticalArrangement = Arrangement.spacedBy(30.dp)) {
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+          val priceStr =
+              if (event.price > 0) {
+                "${context.getString(R.string.event_price)}${event.price}.-"
+              } else
+                  "${context.getString(R.string.event_price)} ${context.getString(R.string.event_price_free)}"
+
+          Text(
+              priceStr,
+              modifier = Modifier.testTag(EventDetailsTestTags.PRICE_TEXT),
+              style = AppTypography.bodyLarge,
+              color = MaterialTheme.colorScheme.onPrimaryContainer)
+
+          val placesStr =
+              if (event.placesRemaining >= 0) {
+                "${event.placesRemaining}${context.getString(R.string.event_places_remaining)}"
+              } else ""
+          Text(
+              placesStr,
+              modifier = Modifier.testTag(EventDetailsTestTags.PLACES_REMAINING_TEXT),
+              style = AppTypography.bodyLarge,
+              color = MaterialTheme.colorScheme.onPrimaryContainer)
+        }
+
+        Text(
+            event.description,
+            modifier = Modifier.testTag(EventDetailsTestTags.DESCRIPTION).padding(6.dp),
+            style = AppTypography.bodyMedium)
+        Column(
+            modifier = Modifier.fillMaxSize().padding(top = 30.dp),
+            verticalArrangement = Arrangement.spacedBy(20.dp)) {
+              OutlinedButton(
+                  onClick = DEBUG_LAMBDA,
+                  modifier =
+                      Modifier.testTag(EventDetailsTestTags.MAP_BUTTON)
+                          .align(Alignment.CenterHorizontally)
+                          .wrapContentSize(),
+                  shape = CircleShape) {
+                    Text(
+                        event.location.name,
+                        modifier =
+                            Modifier.testTag(EventDetailsTestTags.LOCATION_ADDRESS)
+                                .padding(end = 5.dp))
+                    Icon(
+                        Icons.Outlined.LocationOn,
+                        contentDescription =
+                            context.getString(R.string.event_location_button_description),
+                    )
+                  }
+
+              Button(
+                  onClick = DEBUG_LAMBDA,
+                  modifier =
+                      Modifier.testTag(EventDetailsTestTags.SIGN_UP_BUTTON)
+                          .align(Alignment.CenterHorizontally)
+                          .height(56.dp),
+                  shape = CircleShape,
+                  colors =
+                      ButtonDefaults.buttonColors(
+                          containerColor = MaterialTheme.colorScheme.inversePrimary,
+                          contentColor = MaterialTheme.colorScheme.primary)) {
+                    Icon(
+                        Icons.AutoMirrored.Filled.DirectionsWalk,
+                        contentDescription =
+                            context.getString(R.string.event_signup_button_description),
+                    )
+                    Text(context.getString(R.string.event_sign_up))
+                  }
+            }
       }
 }

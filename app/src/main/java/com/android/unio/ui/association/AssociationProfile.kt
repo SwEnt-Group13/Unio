@@ -58,7 +58,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
-import coil.compose.AsyncImage
 import com.android.unio.R
 import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationViewModel
@@ -68,6 +67,7 @@ import com.android.unio.model.strings.test_tags.AssociationProfileTestTags
 import com.android.unio.model.user.User
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.event.EventCard
+import com.android.unio.ui.image.AsyncImageWrapper
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
 import com.android.unio.ui.theme.AppTypography
@@ -381,8 +381,8 @@ private fun AssociationMembers(members: List<User>) {
                         Modifier.clip(CircleShape)
                             .size(75.dp)
                             .background(MaterialTheme.colorScheme.surfaceDim)) {
-                      AsyncImage(
-                          model = user.profilePicture,
+                      AsyncImageWrapper(
+                          imageUri = user.profilePicture.toUri(),
                           contentDescription =
                               context.getString(
                                   R.string.association_contact_member_profile_picture),
@@ -517,12 +517,14 @@ private fun AssociationHeader(
   val context = LocalContext.current
   Row {
     Box(modifier = Modifier.testTag(AssociationProfileTestTags.IMAGE_HEADER)) {
-      AsyncImage(
-          model = association.image.toUri(),
+      AsyncImageWrapper(
+          imageUri = association.image.toUri(),
           contentDescription =
               context.getString(R.string.association_content_description_association_image) +
                   association.name,
-          modifier = Modifier.size(124.dp))
+          modifier = Modifier.size(124.dp),
+          placeholderResourceId = R.drawable.adec,
+          contentScale = ContentScale.Crop)
     }
     Column {
       Text(
