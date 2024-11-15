@@ -203,6 +203,7 @@
     <!-- Map Screen Strings -->
     <string name="map_event_go_back_button">Go back</string>
     <string name="map_event_title">Event map</string>
+    <string name="map_content_description_center_on_user">Center on User</string>
 
     /**
     * package: navigation
