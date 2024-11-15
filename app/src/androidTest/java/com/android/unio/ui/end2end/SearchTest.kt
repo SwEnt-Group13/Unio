@@ -52,6 +52,10 @@ class SearchTest : EndToEndTest() {
     }
 
     composeTestRule.onNodeWithTag(EventDetailsTestTags.TITLE).assertTextEquals(EXPECTED_EVENT_NAME)
+
+    composeTestRule.onNodeWithTag(EventDetailsTestTags.GO_BACK_BUTTON).performClick()
+
+    signOutWithUser(composeTestRule)
   }
 
   @Test
@@ -86,6 +90,10 @@ class SearchTest : EndToEndTest() {
 
     composeTestRule.onNodeWithTag(AssociationProfileTestTags.TITLE).assertTextEquals(
       EXPECTED_ASSOCIATION_NAME)
+
+    composeTestRule.onNodeWithTag(AssociationProfileTestTags.GO_BACK_BUTTON).performClick()
+
+    signOutWithUser(composeTestRule)
   }
 
 

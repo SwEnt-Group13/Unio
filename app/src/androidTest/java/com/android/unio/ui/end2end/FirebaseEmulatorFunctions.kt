@@ -35,4 +35,6 @@ interface FirebaseEmulatorFunctions {
    * @param password the password of the user
    */
   fun signInWithUser(composeTestRule: ComposeContentTestRule, email: String, password: String)
+
+  fun signOutWithUser(composeTestRule: ComposeContentTestRule)
 }

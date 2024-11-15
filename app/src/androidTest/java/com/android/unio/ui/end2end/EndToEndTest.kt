@@ -6,6 +6,8 @@ import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
+import com.android.unio.model.strings.test_tags.BottomNavBarTestTags
+import com.android.unio.model.strings.test_tags.UserProfileTestTags
 import com.android.unio.model.strings.test_tags.WelcomeTestTags
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
@@ -38,6 +40,14 @@ open class EndToEndTest : FirebaseEmulatorFunctions {
     composeTestRule.onNodeWithTag(WelcomeTestTags.EMAIL).performTextInput(email)
     composeTestRule.onNodeWithTag(WelcomeTestTags.PASSWORD).performTextInput(password)
     composeTestRule.onNodeWithTag(WelcomeTestTags.BUTTON).performClick()
+  }
+
+  override fun signOutWithUser(composeTestRule: ComposeContentTestRule) {
+    composeTestRule.onNodeWithTag(BottomNavBarTestTags.MY_PROFILE).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(BottomNavBarTestTags.MY_PROFILE).performClick()
+    composeTestRule.onNodeWithTag(UserProfileTestTags.SETTINGS).performClick()
+    composeTestRule.onNodeWithTag(UserProfileTestTags.SIGN_OUT).performClick()
+
   }
 
   override fun verifyEmulatorsAreRunning() {
