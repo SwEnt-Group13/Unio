@@ -1,5 +1,6 @@
 package com.android.unio.ui.end2end
 
+import android.util.Log
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.onNodeWithTag
@@ -21,7 +22,11 @@ open class EndToEndTest : FirebaseEmulatorFunctions {
     verifyEmulatorsAreRunning()
 
     /** Connect Firebase to the emulators */
-    useEmulators()
+    try{
+      useEmulators()
+    }catch (e : Exception){
+      Log.e("End To End test", e.message!!)
+    }
   }
 
   override fun signInWithUser(
@@ -58,8 +63,8 @@ open class EndToEndTest : FirebaseEmulatorFunctions {
   }
 
   override fun useEmulators() {
-    Firebase.firestore.useEmulator("10.0.2.2", 8080)
-    Firebase.auth.useEmulator("10.0.2.2", 9099)
+    Firebase.firestore.useEmulator(Firestore.HOST, 8080)
+    Firebase.auth.useEmulator(Auth.HOST, 9099)
   }
 
   override fun flushAuthenticatedUsers() {
@@ -83,6 +88,7 @@ open class EndToEndTest : FirebaseEmulatorFunctions {
     const val HOST = "10.0.2.2"
     const val PORT = 8080
     const val ROOT = "http://$HOST:$PORT"
+    const val SHORT_ROOT = "$HOST:$PORT"
     const val DATABASE_URL = "$ROOT/emulator/v1/projects/unio-1b8ee/databases/(default)/documents"
   }
 
