@@ -6,61 +6,48 @@ import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
-import com.android.unio.mocks.association.MockAssociation
+import androidx.navigation.NavHostController
 import com.android.unio.mocks.user.MockUser
-import com.android.unio.model.association.Association
 import com.android.unio.model.search.SearchRepository
 import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.strings.test_tags.UserProfileTestTags
 import com.android.unio.ui.navigation.NavigationAction
+import dagger.hilt.android.testing.HiltAndroidRule
+import dagger.hilt.android.testing.HiltAndroidTest
 import io.mockk.MockKAnnotations
 import io.mockk.clearAllMocks
-import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
-import io.mockk.spyk
 import io.mockk.unmockkAll
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.test.TestCoroutineDispatcher
-import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 
+@HiltAndroidTest
 class UserProfileTest {
 
-  private val testDispatcher = TestCoroutineDispatcher()
-
+  @MockK private lateinit var navHostController: NavHostController
   @MockK private lateinit var navigationAction: NavigationAction
 
   @get:Rule val composeTestRule = createComposeRule()
+  @get:Rule val hiltRule = HiltAndroidRule(this)
 
   private val user = MockUser.createMockUser()
 
   private lateinit var searchViewModel: SearchViewModel
-  @MockK(relaxed = true) private lateinit var searchRepository: SearchRepository
+  @MockK private lateinit var searchRepository: SearchRepository
 
   @Before
   fun setUp() {
-    MockKAnnotations.init(this)
+    MockKAnnotations.init(this, relaxed = true)
+    hiltRule.inject()
 
-    // Set the main dispatcher for testing coroutines
-    Dispatchers.setMain(testDispatcher)
+    every { navigationAction.navigateTo(any<String>()) } returns Unit
 
-    // Set up the repository mock behavior for suspend function
-    coEvery { searchRepository.searchAssociations(any()) } returns
-        listOf(MockAssociation.createMockAssociation()) // Replace with actual mocked Association
+    searchViewModel = SearchViewModel(searchRepository)
 
-    // Initialize the view model with the mocked repository
-    searchViewModel = spyk(SearchViewModel(searchRepository))
-
-    // Set the initial value of the associations flow
-    every { searchViewModel.associations } returns
-        flowOf(listOf(MockAssociation.createMockAssociation()))
-            as StateFlow<List<Association>> // Use a list of mocked Association objects
+    navigationAction = NavigationAction(navHostController)
   }
 
   @Test
