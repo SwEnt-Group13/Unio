@@ -6,7 +6,7 @@ on:
   push:
     branches:
       - main
-      - branch-fixcoverage
+#      - branch-fixcoverage
 
   pull_request:
     types:
@@ -128,17 +128,20 @@ jobs:
           ./gradlew check --parallel --build-cache
 
       # Create shell script for connected tests
-      - name: Create shell file
-        run: echo './gradlew connectedCheck --build-cache' > run_tests.sh
+#      - name: Create shell file
+#        run: echo './gradlew connectedCheck --build-cache' > run_tests.sh
 
       # Grant execute permissions for shell script
-      - name: Grant execute permission for shell script
-        run: |
-          chmod +x ./run_tests.sh
+#      - name: Grant execute permission for shell script
+#        run: |
+#          chmod +x ./run_tests.sh
 
       # Run connected tests on the emulator
       - name: Run connected tests
         uses: reactivecircus/android-emulator-runner@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
           api-level: 34
           target: google_apis
@@ -146,7 +149,8 @@ jobs:
           force-avd-creation: false
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
-          script: firebase emulators:exec ./run_tests.sh
+          script: ./gradlew connectedCheck --build-cache
+#          script: firebase emulators:exec ./run_tests.sh
 
       # This step generates the coverage report which will be uploaded to sonar
       - name: Generate Coverage Report
