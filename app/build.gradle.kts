@@ -38,7 +38,6 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "com.android.unio.HiltApplication"
-//        testInstrumentationRunnerArguments["clearPackageData"] = "true"
         vectorDrawables {
             useSupportLibrary = true
         }
