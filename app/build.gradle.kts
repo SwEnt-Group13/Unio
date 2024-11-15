@@ -94,7 +94,7 @@ android {
                 useLegacyPackaging = true
             }
         }
-        execution = "ANDROIDX_TEST_ORCHESTRATOR"
+//        execution = "ANDROIDX_TEST_ORCHESTRATOR"
     }
 
 
