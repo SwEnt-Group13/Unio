@@ -19,15 +19,23 @@ import com.android.unio.model.strings.test_tags.ExploreContentTestTags
 import com.android.unio.model.strings.test_tags.HomeTestTags
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.RuleChain
 
 @LargeTest
 @HiltAndroidTest
 class SearchTest : EndToEndTest() {
+  val composeTestRule = createAndroidComposeRule<MainActivity>()
+  val hiltRule = HiltAndroidRule(this)
+  @get:Rule val rule: RuleChain = RuleChain.outerRule(hiltRule).around(composeTestRule)
 
-  @get:Rule val composeTestRule = createAndroidComposeRule<MainActivity>()
-  @get:Rule val hiltRule = HiltAndroidRule(this)
+  @Before
+  override fun setUp() {
+    hiltRule.inject()
+    super.setUp()
+  }
 
   @Test
   fun testSearchDisplaysCorrectResultsForEvents() {

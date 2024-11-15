@@ -27,14 +27,23 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.json.JSONObject
 import org.junit.After
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.RuleChain
 
 @LargeTest
 @HiltAndroidTest
 class UserAccountCreationTest : EndToEndTest() {
-  @get:Rule val composeTestRule = createAndroidComposeRule<MainActivity>()
-  @get:Rule val hiltRule = HiltAndroidRule(this)
+  val composeTestRule = createAndroidComposeRule<MainActivity>()
+  val hiltRule = HiltAndroidRule(this)
+  @get:Rule val rule: RuleChain = RuleChain.outerRule(hiltRule).around(composeTestRule)
+
+  @Before
+  override fun setUp() {
+    hiltRule.inject()
+    super.setUp()
+  }
 
   @Test
   fun testUserCanLoginAndCreateAnAccount() {
@@ -149,5 +158,7 @@ class UserAccountCreationTest : EndToEndTest() {
   fun tearDown() {
     clearAllMocks()
     unmockkAll()
+    flushAuthenticatedUsers()
+    flushFirestoreDatabase()
   }
 }
