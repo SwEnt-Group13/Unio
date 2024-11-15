@@ -132,17 +132,6 @@ jobs:
           # To run the CI with debug information, add --info
           ./gradlew check --parallel --build-cache
 
-# NEW Part
-      # Create shell script for connected tests
-      - name: Create shell file
-        run: echo './gradlew connectedCheck --parallel --build-cache' > run_tests.sh
-
-      # Grant execute permissions for shell script
-      - name: Grant execute permission for shell script
-        run: |
-          chmod +x ./run_tests.sh
-# END OF NEW PART
-
       # Run connected tests on the emulator
       - name: Run connected tests
         uses: reactivecircus/android-emulator-runner@v2
@@ -153,7 +142,7 @@ jobs:
           force-avd-creation: false
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
-          script: firebase emulators:exec --import=firebase/emulator-data ./run_tests.sh
+          script: firebase emulators:exec './gradle connectedCheck --parallel --build-cache'
 
       # This step generates the coverage report which will be uploaded to sonar
       - name: Generate Coverage Report
@@ -165,7 +154,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: jacoco-test-report
-          path: build/reports/jacoco/test/jacocoTestReport.xml
+          path: build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml
 
       # Upload the various reports to sonar
       - name: Upload report to SonarCloud
