@@ -167,7 +167,7 @@ fun ExploreScreenContent(
                                   expanded = false
                                   associationViewModel.selectAssociation(association.uid)
                                   navigationAction.navigateTo(Screen.ASSOCIATION_PROFILE)
-                                },
+                                }.testTag(ExploreContentTestTags.ASSOCIATION_EXPLORE_RESULT + association.name),
                             headlineContent = { Text(association.name) },
                         )
                       }

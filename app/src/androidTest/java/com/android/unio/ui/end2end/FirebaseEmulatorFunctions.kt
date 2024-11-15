@@ -6,7 +6,8 @@ import org.junit.Before
 interface FirebaseEmulatorFunctions {
 
   /** This method makes sure that the emulators are running and sets the tests to use them */
-  @Before fun setUp()
+  @Before
+  fun setUp()
 
   /**
    * Verify that the local Firebase emulator is running.
