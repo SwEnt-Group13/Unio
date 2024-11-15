@@ -149,9 +149,6 @@ jobs:
           path: build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml
 
       - name: List Jacoco Execution Data Files
-        run: ls -R build/outputs/
-
-      - name: List Jacoco Execution Data Files
         run: ls -R build/reports/
 
       # Upload the various reports to sonar
