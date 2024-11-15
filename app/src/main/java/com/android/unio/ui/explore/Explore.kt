@@ -1,6 +1,5 @@
 package com.android.unio.ui.explore
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -35,10 +34,11 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import com.android.unio.R
 import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationCategory
@@ -46,6 +46,7 @@ import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.strings.test_tags.ExploreContentTestTags
 import com.android.unio.model.strings.test_tags.ExploreTestTags
+import com.android.unio.ui.image.AsyncImageWrapper
 import com.android.unio.ui.navigation.BottomNavigationMenu
 import com.android.unio.ui.navigation.LIST_TOP_LEVEL_DESTINATION
 import com.android.unio.ui.navigation.NavigationAction
@@ -163,10 +164,13 @@ fun ExploreScreenContent(
                         ListItem(
                             modifier =
                                 Modifier.clickable {
-                                  expanded = false
-                                  associationViewModel.selectAssociation(association.uid)
-                                  navigationAction.navigateTo(Screen.ASSOCIATION_PROFILE)
-                                },
+                                      expanded = false
+                                      associationViewModel.selectAssociation(association.uid)
+                                      navigationAction.navigateTo(Screen.ASSOCIATION_PROFILE)
+                                    }
+                                    .testTag(
+                                        ExploreContentTestTags.ASSOCIATION_EXPLORE_RESULT +
+                                            association.name),
                             headlineContent = { Text(association.name) },
                         )
                       }
@@ -233,13 +237,14 @@ fun AssociationItem(association: Association, onClick: () -> Unit) {
           Modifier.clickable(onClick = onClick)
               .testTag(ExploreContentTestTags.ASSOCIATION_ITEM + association.name)) {
         /**
-         * AdEC image is used as the placeholder. Will need to remove it when all images are
-         * available on the Firestore database
+         * AdEC image is used as the placeholder. Will need to add real logos to Firebase Storage.
          */
-        Image(
-            painter = painterResource(id = R.drawable.adec),
+        AsyncImageWrapper(
+            imageUri = association.image.toUri(),
             contentDescription = context.getString(R.string.explore_content_description_image),
-            modifier = Modifier.size(124.dp))
+            modifier = Modifier.size(124.dp),
+            placeholderResourceId = R.drawable.adec,
+            contentScale = ContentScale.Crop)
 
         /**
          * The following code is commented out because all images are not available in the Firestore

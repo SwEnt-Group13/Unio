@@ -117,6 +117,7 @@ class SearchViewModel @Inject constructor(private val repository: SearchReposito
     viewModelScope.launch {
       status.value = Status.LOADING
       val results = repository.searchEvents(query)
+      results.forEach { event -> event.organisers.requestAll() }
       _events.value = results
       status.value = Status.SUCCESS
     }

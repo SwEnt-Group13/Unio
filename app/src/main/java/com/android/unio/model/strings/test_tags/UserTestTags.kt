@@ -10,6 +10,8 @@ object UserProfileTestTags {
   const val INTEREST = "userProfileInterest"
   const val JOINED_ASSOCIATIONS = "userProfileJoinedAssociations"
   const val FOLLOWED_ASSOCIATIONS = "userProfileFollowedAssociations"
+  const val SETTINGS = "userProfileSettings"
+  const val SIGN_OUT = "userProfileSignOut"
 
   // BOTTOM SHEET
   const val BOTTOM_SHEET = "userProfileBottomSheet"

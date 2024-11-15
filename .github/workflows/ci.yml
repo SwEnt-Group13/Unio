@@ -153,7 +153,7 @@ jobs:
           force-avd-creation: false
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
-          script: firebase emulators:exec ./run_tests.sh
+          script: firebase emulators:exec --import=firebase/emulator-data ./run_tests.sh
 
       # This step generates the coverage report which will be uploaded to sonar
       - name: Generate Coverage Report

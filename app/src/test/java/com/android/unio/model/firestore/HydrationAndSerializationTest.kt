@@ -54,14 +54,15 @@ class HydrationAndSerializationTest {
       Event(
           uid = "1",
           title = "Event 1",
+          organisers = Association.firestoreReferenceListWith(listOf("1", "2")),
+          taggedAssociations = Association.firestoreReferenceListWith(listOf("1", "2")),
           image = "https://www.example.com/image.jpg",
           description = "An example event",
           catchyDescription = "An example event",
           price = 0.0,
           date = Timestamp.now(),
           location = Location(latitude = 0.0, longitude = 0.0, name = "Example Location"),
-          organisers = Association.firestoreReferenceListWith(listOf("1", "2")),
-          taggedAssociations = Association.firestoreReferenceListWith(listOf("1", "2")))
+          placesRemaining = -1)
 
   /** Round-trip tests for serialization and hydration of user, association, and event instances. */
   @Test
@@ -137,6 +138,7 @@ class HydrationAndSerializationTest {
         event.location.longitude, (serialized["location"] as Map<String, Any>)["longitude"])
     assertEquals(event.organisers.uids, serialized["organisers"])
     assertEquals(event.taggedAssociations.uids, serialized["taggedAssociations"])
+    assertEquals(event.placesRemaining, serialized["placesRemaining"])
 
     val hydrated = EventRepositoryFirestore.hydrate(serialized)
 
@@ -150,6 +152,7 @@ class HydrationAndSerializationTest {
     assertEquals(event.location, hydrated.location)
     assertEquals(event.organisers.uids, hydrated.organisers.uids)
     assertEquals(event.taggedAssociations.uids, hydrated.taggedAssociations.uids)
+    assertEquals(event.placesRemaining, hydrated.placesRemaining)
   }
 
   /** Test hydration when the map misses fields. */
@@ -203,6 +206,7 @@ class HydrationAndSerializationTest {
     assertEquals(Location(), hydrated.location)
     assertEquals(emptyList<Association>(), hydrated.organisers.list.value)
     assertEquals(emptyList<Association>(), hydrated.taggedAssociations.list.value)
+    assertEquals(-1, hydrated.placesRemaining)
   }
 
   /** Test that serialization includes all data class fields. */

@@ -5,7 +5,7 @@ object EventCardTestTags {
   const val EVENT_IMAGE = "event_EventImage"
   const val EVENT_TITLE = "event_EventTitle"
   const val EVENT_MAIN_TYPE = "event_EventMainType"
-  const val EVENT_CLIC_IMAGE = "event_ClicImage" // This should be factored out later on.
+  const val ASSOCIATION_LOGO = "event_OrganiserImage"
   const val EVENT_LOCATION = "event_EventLocation"
   const val EVENT_DATE = "event_EventDate"
   const val EVENT_TIME = "event_EventTime"
@@ -45,8 +45,9 @@ object EventDetailsTestTags {
   const val DATE = "eventDate"
   const val DETAILS_BODY = "eventDetailsBody"
   const val PLACES_REMAINING_TEXT = "placesRemainingText"
+  const val PRICE_TEXT = "priceText"
   const val DESCRIPTION = "eventDescription"
-  const val LOCATION = "eventLocation"
+  const val LOCATION_ADDRESS = "eventLocation"
   const val MAP_BUTTON = "mapButton"
   const val SIGN_UP_BUTTON = "signUpButton"
 }
