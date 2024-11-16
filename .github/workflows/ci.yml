@@ -135,6 +135,14 @@ jobs:
         run: |
           ./gradlew jacocoTestReport
 
+      # Upload the coverage report to the artifacts
+      - name: Upload Jacoco Test Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: jacoco-test-report
+          path: build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml
+
+
       # Upload the various reports to sonar
       - name: Upload report to SonarCloud
         env:
