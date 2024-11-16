@@ -94,7 +94,6 @@ android {
                 useLegacyPackaging = true
             }
         }
-//        execution = "ANDROIDX_TEST_ORCHESTRATOR"
     }
 
 
@@ -303,11 +302,6 @@ dependencies {
     implementation(libs.androidx.preference.ktx)
     implementation(libs.library)
     implementation(libs.accompanist.permissions)
-
-    // Orchestrator
-    // This is to ensure that all test run independently and remove any leakage
-    androidTestImplementation(libs.androidx.runner)
-    androidTestUtil(libs.androidx.orchestrator)
 }
 
 kapt {
