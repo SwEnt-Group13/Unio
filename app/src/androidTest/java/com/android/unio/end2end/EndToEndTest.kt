@@ -24,8 +24,6 @@ open class EndToEndTest : FirebaseEmulatorFunctions {
 
   @Before
   override fun setUp() {
-    hiltRule.inject()
-
     /** Verify that the emulators are running */
     verifyEmulatorsAreRunning()
 
