@@ -361,9 +361,9 @@ fun runCommand(command: String) {
             "sh",
             "-c",
             """
-                x-terminal-emulator -e '${command}' ||
-                gnome-terminal -- bash -c '${command}; exec bash' ||
-                konsole -e '${command}'
+                x-terminal-emulator -e '$command' ||
+                gnome-terminal -- bash -c '$command; exec bash' ||
+                konsole -e '$command'
                 """.trimIndent()
         ).start()
     } else {
@@ -374,5 +374,11 @@ fun runCommand(command: String) {
 tasks.register("startFirebaseEmulators") {
     doLast {
         runCommand("firebase emulators:start --import=./firebase/emulator-data")
+    }
+}
+
+tasks.register("connectedCheckWithFirebaseEmulators") {
+    doLast {
+        runCommand("firebase emulators:exec --import=./firebase/emulator-data \"gradlew connectedCheck\"")
     }
 }
