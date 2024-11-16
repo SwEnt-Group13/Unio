@@ -3,7 +3,6 @@ package com.android.unio
 import android.app.Application
 import android.content.Context
 import androidx.test.runner.AndroidJUnitRunner
-import dagger.hilt.android.testing.CustomTestApplication
 import dagger.hilt.android.testing.HiltTestApplication
 
 /**
@@ -16,5 +15,3 @@ class HiltApplication : AndroidJUnitRunner() {
     return super.newApplication(cl, HiltTestApplication::class.java.name, context)
   }
 }
-
-
