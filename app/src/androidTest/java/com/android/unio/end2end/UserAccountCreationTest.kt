@@ -1,4 +1,4 @@
-package com.android.unio.ui.end2end
+package com.android.unio.end2end
 
 import android.util.Log
 import androidx.compose.ui.test.assertCountEquals
@@ -19,7 +19,6 @@ import com.android.unio.model.strings.test_tags.HomeTestTags
 import com.android.unio.model.strings.test_tags.InterestsOverlayTestTags
 import com.android.unio.model.strings.test_tags.UserProfileTestTags
 import com.android.unio.ui.assertDisplayComponentInScroll
-import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import io.mockk.clearAllMocks
 import io.mockk.unmockkAll
@@ -27,23 +26,13 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.json.JSONObject
 import org.junit.After
-import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.junit.rules.RuleChain
 
 @LargeTest
 @HiltAndroidTest
 class UserAccountCreationTest : EndToEndTest() {
-  val composeTestRule = createAndroidComposeRule<MainActivity>()
-  val hiltRule = HiltAndroidRule(this)
-  @get:Rule val rule: RuleChain = RuleChain.outerRule(hiltRule).around(composeTestRule)
-
-  @Before
-  override fun setUp() {
-    hiltRule.inject()
-    super.setUp()
-  }
+  @get:Rule val composeTestRule = createAndroidComposeRule<MainActivity>()
 
   @Test
   fun testUserCanLoginAndCreateAnAccount() {
@@ -127,6 +116,8 @@ class UserAccountCreationTest : EndToEndTest() {
         .onNodeWithTag(UserProfileTestTags.BIOGRAPHY)
         .assertTextContains(UnverifiedUser.BIOGRAPHY)
     composeTestRule.onAllNodesWithTag(UserProfileTestTags.INTEREST).assertCountEquals(3)
+
+    signOutWithUser(composeTestRule)
   }
 
   private fun getLatestEmailVerificationUrl(): String {
@@ -158,7 +149,5 @@ class UserAccountCreationTest : EndToEndTest() {
   fun tearDown() {
     clearAllMocks()
     unmockkAll()
-    flushAuthenticatedUsers()
-    flushFirestoreDatabase()
   }
 }

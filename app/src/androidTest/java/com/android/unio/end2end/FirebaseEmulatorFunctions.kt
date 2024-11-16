@@ -1,4 +1,4 @@
-package com.android.unio.ui.end2end
+package com.android.unio.end2end
 
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import org.junit.Before

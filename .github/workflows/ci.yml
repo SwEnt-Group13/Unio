@@ -84,16 +84,6 @@ jobs:
           echo "$GOOGLE_SERVICES" | base64 --decode > ./app/google-services.json
           echo "$LOCAL_PROPERTIES" | base64 --decode > ./local.properties
 
-      - name: Grant execute permission for gradlew
-        run: |
-          chmod +x ./gradlew
-
-      # Check formatting
-      - name: KTFmt Check
-        run: |
-          ./gradlew ktfmtCheck
-
-# NEW PART:
       # Grant execute permission for gradlew
       - name: Grant execute permission for gradlew
         run: |
@@ -107,10 +97,14 @@ jobs:
       - name: Install dependencies for the firebase emulator suite
         run: npm install
 
+      # Check formatting
+      - name: KTFmt Check
+        run: |
+          ./gradlew ktfmtCheck
+
       # Run
       - name: Run Node tests with Firestore and Storage emulators
         run: firebase emulators:exec --only firestore,storage 'npm run test'
-# END OF NEW PART
 
       # This step runs gradle commands to build the application
       - name: Assemble
@@ -140,13 +134,6 @@ jobs:
       - name: Generate Coverage Report
         run: |
           ./gradlew jacocoTestReport
-
-      # Upload the coverage report to the artifacts
-      - name: Upload Jacoco Test Report
-        uses: actions/upload-artifact@v4
-        with:
-          name: jacoco-test-report
-          path: build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml
 
       # Upload the various reports to sonar
       - name: Upload report to SonarCloud
