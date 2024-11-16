@@ -116,6 +116,8 @@ class UserAccountCreationTest : EndToEndTest() {
         .onNodeWithTag(UserProfileTestTags.BIOGRAPHY)
         .assertTextContains(UnverifiedUser.BIOGRAPHY)
     composeTestRule.onAllNodesWithTag(UserProfileTestTags.INTEREST).assertCountEquals(3)
+
+    signOutWithUser(composeTestRule)
   }
 
   private fun getLatestEmailVerificationUrl(): String {
