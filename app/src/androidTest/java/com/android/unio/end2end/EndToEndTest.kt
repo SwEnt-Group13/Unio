@@ -28,11 +28,7 @@ open class EndToEndTest : FirebaseEmulatorFunctions {
     verifyEmulatorsAreRunning()
 
     /** Connect Firebase to the emulators */
-    try {
-      useEmulators()
-    } catch (e: Exception) {
-      Log.e("End To End test", e.message!!)
-    }
+    useEmulators()
   }
 
   override fun signInWithUser(
@@ -76,8 +72,12 @@ open class EndToEndTest : FirebaseEmulatorFunctions {
   }
 
   override fun useEmulators() {
-    Firebase.firestore.useEmulator(Firestore.HOST, 8080)
-    Firebase.auth.useEmulator(Auth.HOST, 9099)
+    try {
+      Firebase.firestore.useEmulator(Firestore.HOST, 8080)
+      Firebase.auth.useEmulator(Auth.HOST, 9099)
+    } catch (e: IllegalStateException) {
+      Log.e("EndToEndTest", e.message!!)
+    }
   }
 
   override fun flushAuthenticatedUsers() {
