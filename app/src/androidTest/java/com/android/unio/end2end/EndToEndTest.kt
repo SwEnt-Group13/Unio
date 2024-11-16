@@ -1,4 +1,4 @@
-package com.android.unio.ui.end2end
+package com.android.unio.end2end
 
 import android.util.Log
 import androidx.compose.ui.test.assertIsDisplayed
@@ -12,11 +12,15 @@ import com.android.unio.model.strings.test_tags.WelcomeTestTags
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.firestore
+import dagger.hilt.android.testing.HiltAndroidRule
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.junit.Before
+import org.junit.Rule
 
 open class EndToEndTest : FirebaseEmulatorFunctions {
+
+  @get:Rule val hiltRule = HiltAndroidRule(this)
 
   @Before
   override fun setUp() {
@@ -24,11 +28,7 @@ open class EndToEndTest : FirebaseEmulatorFunctions {
     verifyEmulatorsAreRunning()
 
     /** Connect Firebase to the emulators */
-    try {
-      useEmulators()
-    } catch (e: Exception) {
-      Log.e("End To End test", e.message!!)
-    }
+    useEmulators()
   }
 
   override fun signInWithUser(
@@ -72,8 +72,12 @@ open class EndToEndTest : FirebaseEmulatorFunctions {
   }
 
   override fun useEmulators() {
-    Firebase.firestore.useEmulator(Firestore.HOST, 8080)
-    Firebase.auth.useEmulator(Auth.HOST, 9099)
+    try {
+      Firebase.firestore.useEmulator(Firestore.HOST, 8080)
+      Firebase.auth.useEmulator(Auth.HOST, 9099)
+    } catch (e: IllegalStateException) {
+      Log.e("EndToEndTest", e.message!!)
+    }
   }
 
   override fun flushAuthenticatedUsers() {

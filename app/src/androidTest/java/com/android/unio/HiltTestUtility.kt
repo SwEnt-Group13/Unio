@@ -15,20 +15,3 @@ class HiltApplication : AndroidJUnitRunner() {
     return super.newApplication(cl, HiltTestApplication::class.java.name, context)
   }
 }
-
-/**
- * This object contains the Hilt modules that will be used to replace the modules in the app for
- * testing. This is useful when we want to replace the actual implementation of a module
- *
- * !!! The objects contained are applied for all tests in the androidTest source set !!!
- */
-object HiltModuleAndroidTest {
-
-  //  @Module
-  //  @TestInstallIn(components = [SingletonComponent::class], replaces = [EventModule::class])
-  //  abstract class EventModuleTest() {
-  //
-  //    @Binds
-  //    abstract fun bindEventRepository(eventRepositoryMock: EventRepositoryMock): EventRepository
-  //  }
-}
