@@ -73,8 +73,8 @@ open class EndToEndTest : FirebaseEmulatorFunctions {
 
   override fun useEmulators() {
     try {
-      Firebase.firestore.useEmulator(Firestore.HOST, 8080)
-      Firebase.auth.useEmulator(Auth.HOST, 9099)
+      Firebase.firestore.useEmulator(Firestore.HOST, Firestore.PORT)
+      Firebase.auth.useEmulator(Auth.HOST, Auth.PORT)
     } catch (e: IllegalStateException) {
       Log.e("EndToEndTest", e.message!!)
     }
