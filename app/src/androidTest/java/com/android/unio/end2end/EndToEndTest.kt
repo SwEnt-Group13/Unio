@@ -1,4 +1,4 @@
-package com.android.unio.ui.end2end
+package com.android.unio.end2end
 
 import android.util.Log
 import androidx.compose.ui.test.assertIsDisplayed
@@ -12,14 +12,20 @@ import com.android.unio.model.strings.test_tags.WelcomeTestTags
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.firestore
+import dagger.hilt.android.testing.HiltAndroidRule
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.junit.Before
+import org.junit.Rule
 
 open class EndToEndTest : FirebaseEmulatorFunctions {
 
+  @get:Rule val hiltRule = HiltAndroidRule(this)
+
   @Before
   override fun setUp() {
+    hiltRule.inject()
+
     /** Verify that the emulators are running */
     verifyEmulatorsAreRunning()
 

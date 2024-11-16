@@ -1,4 +1,4 @@
-package com.android.unio.ui.end2end
+package com.android.unio.end2end
 
 import android.util.Log
 import androidx.compose.ui.test.assertCountEquals
@@ -19,7 +19,6 @@ import com.android.unio.model.strings.test_tags.HomeTestTags
 import com.android.unio.model.strings.test_tags.InterestsOverlayTestTags
 import com.android.unio.model.strings.test_tags.UserProfileTestTags
 import com.android.unio.ui.assertDisplayComponentInScroll
-import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import io.mockk.clearAllMocks
 import io.mockk.unmockkAll
@@ -34,7 +33,6 @@ import org.junit.Test
 @HiltAndroidTest
 class UserAccountCreationTest : EndToEndTest() {
   @get:Rule val composeTestRule = createAndroidComposeRule<MainActivity>()
-  @get:Rule val hiltRule = HiltAndroidRule(this)
 
   @Test
   fun testUserCanLoginAndCreateAnAccount() {

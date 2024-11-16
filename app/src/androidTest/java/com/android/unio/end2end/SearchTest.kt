@@ -1,4 +1,4 @@
-package com.android.unio.ui.end2end
+package com.android.unio.end2end
 
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
@@ -17,7 +17,6 @@ import com.android.unio.model.strings.test_tags.EventCardTestTags
 import com.android.unio.model.strings.test_tags.EventDetailsTestTags
 import com.android.unio.model.strings.test_tags.ExploreContentTestTags
 import com.android.unio.model.strings.test_tags.HomeTestTags
-import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import org.junit.Rule
 import org.junit.Test
@@ -25,9 +24,7 @@ import org.junit.Test
 @LargeTest
 @HiltAndroidTest
 class SearchTest : EndToEndTest() {
-
   @get:Rule val composeTestRule = createAndroidComposeRule<MainActivity>()
-  @get:Rule val hiltRule = HiltAndroidRule(this)
 
   @Test
   fun testSearchDisplaysCorrectResultsForEvents() {
