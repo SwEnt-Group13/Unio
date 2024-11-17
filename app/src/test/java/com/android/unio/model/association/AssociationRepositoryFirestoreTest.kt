@@ -231,6 +231,7 @@ class AssociationRepositoryFirestoreTest {
 
   @Test
   fun testGetAssociationWithId() {
+    `when`(queryDocumentSnapshot1.exists()).thenReturn(true)
     repository.getAssociationWithId(
         association1.uid,
         onSuccess = { association ->
