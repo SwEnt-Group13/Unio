@@ -147,10 +147,11 @@ fun AccountDetails(
   Scaffold { padding ->
     Column(
         modifier =
-            Modifier.padding(padding)
-                .padding(vertical = 20.dp, horizontal = 40.dp)
-                .verticalScroll(scrollState)
-                .testTag(AccountDetailsTestTags.ACCOUNT_DETAILS),
+        Modifier
+            .padding(padding)
+            .padding(vertical = 20.dp, horizontal = 40.dp)
+            .verticalScroll(scrollState)
+            .testTag(AccountDetailsTestTags.ACCOUNT_DETAILS),
         verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.CenterHorizontally) {
           Text(
@@ -158,54 +159,22 @@ fun AccountDetails(
               style = AppTypography.headlineSmall,
               modifier = Modifier.testTag(AccountDetailsTestTags.TITLE_TEXT))
 
-          val isFirstNameError = isErrors.contains(AccountDetailsError.EMPTY_FIRST_NAME)
+
+        NameTextFields(
+            isErrors,
+            firstName,
+            lastName,
+            {firstName = it},
+            {lastName = it}
+        )
+
           OutlinedTextField(
               modifier =
-                  Modifier.padding(4.dp)
-                      .fillMaxWidth()
-                      .testTag(AccountDetailsTestTags.FIRST_NAME_TEXT_FIELD),
-              label = {
-                Text(
-                    context.getString(R.string.account_details_first_name),
-                    modifier = Modifier.testTag(AccountDetailsTestTags.FIRST_NAME_TEXT))
-              },
-              isError = (isFirstNameError),
-              supportingText = {
-                if (isFirstNameError) {
-                  Text(
-                      context.getString(AccountDetailsError.EMPTY_FIRST_NAME.errorMessage),
-                      modifier = Modifier.testTag(AccountDetailsTestTags.FIRST_NAME_ERROR_TEXT))
-                }
-              },
-              onValueChange = { firstName = it },
-              value = firstName)
-          val isLastNameError = isErrors.contains(AccountDetailsError.EMPTY_LAST_NAME)
-          OutlinedTextField(
-              modifier =
-                  Modifier.padding(4.dp)
-                      .fillMaxWidth()
-                      .testTag(AccountDetailsTestTags.LAST_NAME_TEXT_FIELD),
-              label = {
-                Text(
-                    context.getString(R.string.account_details_last_name),
-                    modifier = Modifier.testTag(AccountDetailsTestTags.LAST_NAME_TEXT))
-              },
-              isError = (isLastNameError),
-              supportingText = {
-                if (isLastNameError) {
-                  Text(
-                      context.getString(AccountDetailsError.EMPTY_LAST_NAME.errorMessage),
-                      modifier = Modifier.testTag(AccountDetailsTestTags.LAST_NAME_ERROR_TEXT))
-                }
-              },
-              onValueChange = { lastName = it },
-              value = lastName)
-          OutlinedTextField(
-              modifier =
-                  Modifier.padding(4.dp)
-                      .fillMaxWidth()
-                      .height(200.dp)
-                      .testTag(AccountDetailsTestTags.BIOGRAPHY_TEXT_FIELD),
+              Modifier
+                  .padding(4.dp)
+                  .fillMaxWidth()
+                  .height(200.dp)
+                  .testTag(AccountDetailsTestTags.BIOGRAPHY_TEXT_FIELD),
               label = {
                 Text(
                     context.getString(R.string.account_details_bio),
@@ -215,14 +184,17 @@ fun AccountDetails(
               value = bio)
 
           Row(
-              modifier = Modifier.fillMaxWidth().padding(8.dp),
+              modifier = Modifier
+                  .fillMaxWidth()
+                  .padding(8.dp),
               horizontalArrangement = Arrangement.SpaceEvenly,
               verticalAlignment = Alignment.CenterVertically) {
                 Text(
                     text = context.getString(R.string.account_details_add_profile_picture),
                     modifier =
-                        Modifier.widthIn(max = 140.dp)
-                            .testTag(AccountDetailsTestTags.PROFILE_PICTURE_TEXT),
+                    Modifier
+                        .widthIn(max = 140.dp)
+                        .testTag(AccountDetailsTestTags.PROFILE_PICTURE_TEXT),
                     style = AppTypography.bodyLarge)
 
                 if (profilePictureUri.value == Uri.EMPTY) {
@@ -232,13 +204,16 @@ fun AccountDetails(
                           context.getString(R.string.account_details_content_description_add),
                       tint = primaryLight,
                       modifier =
-                          Modifier.clickable {
-                                pickMedia.launch(
-                                    PickVisualMediaRequest(
-                                        ActivityResultContracts.PickVisualMedia.ImageOnly))
-                              }
-                              .size(100.dp)
-                              .testTag(AccountDetailsTestTags.PROFILE_PICTURE_ICON))
+                      Modifier
+                          .clickable {
+                              pickMedia.launch(
+                                  PickVisualMediaRequest(
+                                      ActivityResultContracts.PickVisualMedia.ImageOnly
+                                  )
+                              )
+                          }
+                          .size(100.dp)
+                          .testTag(AccountDetailsTestTags.PROFILE_PICTURE_ICON))
                 } else {
                   ProfilePictureWithRemoveIcon(
                       profilePictureUri = profilePictureUri.value,
@@ -246,7 +221,9 @@ fun AccountDetails(
                 }
               }
           OutlinedButton(
-              modifier = Modifier.fillMaxWidth().testTag(AccountDetailsTestTags.INTERESTS_BUTTON),
+              modifier = Modifier
+                  .fillMaxWidth()
+                  .testTag(AccountDetailsTestTags.INTERESTS_BUTTON),
               onClick = { showInterestsOverlay = true }) {
                 Icon(
                     Icons.Default.Add,
@@ -262,8 +239,9 @@ fun AccountDetails(
                     onClick = {},
                     selected = pair.second.value,
                     modifier =
-                        Modifier.padding(3.dp)
-                            .testTag(AccountDetailsTestTags.INTERESTS_CHIP + "$index"),
+                    Modifier
+                        .padding(3.dp)
+                        .testTag(AccountDetailsTestTags.INTERESTS_CHIP + "$index"),
                     avatar = {
                       Icon(
                           Icons.Default.Close,
@@ -274,7 +252,9 @@ fun AccountDetails(
             }
           }
           OutlinedButton(
-              modifier = Modifier.fillMaxWidth().testTag(AccountDetailsTestTags.SOCIALS_BUTTON),
+              modifier = Modifier
+                  .fillMaxWidth()
+                  .testTag(AccountDetailsTestTags.SOCIALS_BUTTON),
               onClick = { showSocialsOverlay = true }) {
                 Icon(
                     Icons.Default.Add,
@@ -289,8 +269,9 @@ fun AccountDetails(
                   onClick = {},
                   selected = true,
                   modifier =
-                      Modifier.padding(3.dp)
-                          .testTag(AccountDetailsTestTags.SOCIALS_CHIP + userSocial.social.title),
+                  Modifier
+                      .padding(3.dp)
+                      .testTag(AccountDetailsTestTags.SOCIALS_CHIP + userSocial.social.title),
                   avatar = {
                     Icon(
                         Icons.Default.Close,
@@ -353,6 +334,62 @@ fun AccountDetails(
 }
 
 @Composable
+private fun NameTextFields(
+    isErrors : MutableSet<AccountDetailsError>,
+    firstName: String,
+    lastName: String,
+    onFirstNameChange: (String) -> Unit,
+    onLastNameChange: (String) -> Unit
+){
+    val context = LocalContext.current
+    val isFirstNameError = isErrors.contains(AccountDetailsError.EMPTY_FIRST_NAME)
+    val isLastNameError = isErrors.contains(AccountDetailsError.EMPTY_LAST_NAME)
+
+    OutlinedTextField(
+        modifier =
+        Modifier
+            .padding(4.dp)
+            .fillMaxWidth()
+            .testTag( AccountDetailsTestTags.FIRST_NAME_TEXT_FIELD),
+        label = {
+            Text(
+                context.getString(R.string.account_details_first_name),
+                modifier = Modifier.testTag(AccountDetailsTestTags.FIRST_NAME_TEXT))
+        },
+        isError = (isFirstNameError),
+        supportingText = {
+            if (isFirstNameError) {
+                Text(
+                    context.getString(AccountDetailsError.EMPTY_FIRST_NAME.errorMessage),
+                    modifier = Modifier.testTag(AccountDetailsTestTags.FIRST_NAME_ERROR_TEXT))
+            }
+        },
+        onValueChange =  onFirstNameChange ,
+        value = firstName)
+
+    OutlinedTextField(
+        modifier =
+        Modifier.padding(4.dp)
+            .fillMaxWidth()
+            .testTag(AccountDetailsTestTags.LAST_NAME_TEXT_FIELD),
+        label = {
+            Text(
+                context.getString(R.string.account_details_last_name),
+                modifier = Modifier.testTag(AccountDetailsTestTags.LAST_NAME_TEXT))
+        },
+        isError = (isLastNameError),
+        supportingText = {
+            if (isLastNameError) {
+                Text(
+                    context.getString(AccountDetailsError.EMPTY_LAST_NAME.errorMessage),
+                    modifier = Modifier.testTag(AccountDetailsTestTags.LAST_NAME_ERROR_TEXT))
+            }
+        },
+        onValueChange = onLastNameChange,
+        value = lastName)
+}
+
+@Composable
 private fun ProfilePictureWithRemoveIcon(
     profilePictureUri: Uri,
     onRemove: () -> Unit,
@@ -363,7 +400,9 @@ private fun ProfilePictureWithRemoveIcon(
         imageUri = profilePictureUri,
         contentDescription = context.getString(R.string.account_details_content_description_pfp),
         contentScale = ContentScale.Crop,
-        modifier = Modifier.aspectRatio(1f).clip(CircleShape),
+        modifier = Modifier
+            .aspectRatio(1f)
+            .clip(CircleShape),
         filterQuality = FilterQuality.Medium,
         placeholderResourceId = 0 // to have no placeholder
         )
@@ -372,6 +411,10 @@ private fun ProfilePictureWithRemoveIcon(
         contentDescription =
             context.getString(R.string.account_details_content_description_remove_pfp),
         modifier =
-            Modifier.size(24.dp).align(Alignment.TopEnd).clickable { onRemove() }.padding(4.dp))
+        Modifier
+            .size(24.dp)
+            .align(Alignment.TopEnd)
+            .clickable { onRemove() }
+            .padding(4.dp))
   }
 }
