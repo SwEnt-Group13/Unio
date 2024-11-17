@@ -34,6 +34,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -46,12 +47,16 @@ import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.compose.rememberNavController
 import com.android.unio.R
 import com.android.unio.model.association.Association
 import com.android.unio.model.event.Event
 import com.android.unio.model.firestore.emptyFirestoreReferenceList
 import com.android.unio.model.image.ImageRepository
+import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.strings.test_tags.AccountDetailsTestTags
 import com.android.unio.model.user.AccountDetailsError
 import com.android.unio.model.user.Interest
@@ -68,9 +73,22 @@ import com.android.unio.ui.theme.AppTypography
 import com.android.unio.ui.theme.primaryLight
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
+import com.google.firebase.storage.storage
 import kotlinx.coroutines.flow.MutableStateFlow
 
-@OptIn(ExperimentalLayoutApi::class)
+@Preview
+@Composable
+fun PreviewAccountDetails(){
+    val navController = rememberNavController()
+    val navigationActions = NavigationAction(navController)
+    val userViewModel = hiltViewModel<UserViewModel>()
+
+    val firebaseStorage = Firebase.storage
+    val imageRepository = ImageRepositoryFirebaseStorage(firebaseStorage)
+
+    AccountDetails(navigationAction = navigationActions, userViewModel = userViewModel, imageRepository = imageRepository)
+}
+
 @Composable
 fun AccountDetails(
     navigationAction: NavigationAction,
@@ -220,71 +238,13 @@ fun AccountDetails(
                       onRemove = { profilePictureUri.value = Uri.EMPTY })
                 }
               }
-          OutlinedButton(
-              modifier = Modifier
-                  .fillMaxWidth()
-                  .testTag(AccountDetailsTestTags.INTERESTS_BUTTON),
-              onClick = { showInterestsOverlay = true }) {
-                Icon(
-                    Icons.Default.Add,
-                    contentDescription =
-                        context.getString(R.string.account_details_content_description_add))
-                Text(context.getString(R.string.account_details_add_interests))
-              }
-          FlowRow {
-            interests.forEachIndexed { index, pair ->
-              if (pair.second.value) {
-                InputChip(
-                    label = { Text(pair.first.name) },
-                    onClick = {},
-                    selected = pair.second.value,
-                    modifier =
-                    Modifier
-                        .padding(3.dp)
-                        .testTag(AccountDetailsTestTags.INTERESTS_CHIP + "$index"),
-                    avatar = {
-                      Icon(
-                          Icons.Default.Close,
-                          contentDescription = "Add",
-                          modifier = Modifier.clickable { pair.second.value = !pair.second.value })
-                    })
-              }
-            }
-          }
-          OutlinedButton(
-              modifier = Modifier
-                  .fillMaxWidth()
-                  .testTag(AccountDetailsTestTags.SOCIALS_BUTTON),
-              onClick = { showSocialsOverlay = true }) {
-                Icon(
-                    Icons.Default.Add,
-                    contentDescription =
-                        context.getString(R.string.account_details_content_description_close))
-                Text(context.getString(R.string.account_details_add_socials))
-              }
-          FlowRow(modifier = Modifier.fillMaxWidth()) {
-            socials.forEachIndexed { index, userSocial ->
-              InputChip(
-                  label = { Text(userSocial.social.name) },
-                  onClick = {},
-                  selected = true,
-                  modifier =
-                  Modifier
-                      .padding(3.dp)
-                      .testTag(AccountDetailsTestTags.SOCIALS_CHIP + userSocial.social.title),
-                  avatar = {
-                    Icon(
-                        Icons.Default.Close,
-                        contentDescription =
-                            context.getString(R.string.account_details_content_description_close),
-                        modifier =
-                            Modifier.clickable {
-                              userSocialsFlow.value =
-                                  userSocialsFlow.value.toMutableList().apply { removeAt(index) }
-                            })
-                  })
-            }
-          }
+
+        OverlayButtonsAndFlowRows(
+            interestsFlow,
+            userSocialsFlow,
+            { showInterestsOverlay = true },
+            {showSocialsOverlay = true})
+
           Button(
               modifier = Modifier.testTag(AccountDetailsTestTags.CONTINUE_BUTTON),
               onClick = {
@@ -350,7 +310,7 @@ private fun NameTextFields(
         Modifier
             .padding(4.dp)
             .fillMaxWidth()
-            .testTag( AccountDetailsTestTags.FIRST_NAME_TEXT_FIELD),
+            .testTag(AccountDetailsTestTags.FIRST_NAME_TEXT_FIELD),
         label = {
             Text(
                 context.getString(R.string.account_details_first_name),
@@ -369,7 +329,8 @@ private fun NameTextFields(
 
     OutlinedTextField(
         modifier =
-        Modifier.padding(4.dp)
+        Modifier
+            .padding(4.dp)
             .fillMaxWidth()
             .testTag(AccountDetailsTestTags.LAST_NAME_TEXT_FIELD),
         label = {
@@ -387,6 +348,86 @@ private fun NameTextFields(
         },
         onValueChange = onLastNameChange,
         value = lastName)
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun OverlayButtonsAndFlowRows(
+    interestsFlow:  MutableStateFlow<List<Pair<Interest, MutableState<Boolean>>>>,
+    userSocialFlow:  MutableStateFlow<MutableList<UserSocial>>,
+    onShowInterests: () -> Unit,
+    onShowSocials: () -> Unit
+){
+    val context = LocalContext.current
+
+    val interests by interestsFlow.collectAsState()
+    val socials by userSocialFlow.collectAsState()
+
+    OutlinedButton(
+        modifier = Modifier
+            .fillMaxWidth()
+            .testTag(AccountDetailsTestTags.INTERESTS_BUTTON),
+        onClick = onShowInterests) {
+        Icon(
+            Icons.Default.Add,
+            contentDescription =
+            context.getString(R.string.account_details_content_description_add))
+        Text(context.getString(R.string.account_details_add_interests))
+    }
+    FlowRow {
+        interests.forEachIndexed { index, pair ->
+            if (pair.second.value) {
+                InputChip(
+                    label = { Text(pair.first.name) },
+                    onClick = {},
+                    selected = pair.second.value,
+                    modifier =
+                    Modifier
+                        .padding(3.dp)
+                        .testTag(AccountDetailsTestTags.INTERESTS_CHIP + "$index"),
+                    avatar = {
+                        Icon(
+                            Icons.Default.Close,
+                            contentDescription = "Add",
+                            modifier = Modifier.clickable { pair.second.value = !pair.second.value })
+                    })
+            }
+        }
+    }
+    OutlinedButton(
+        modifier = Modifier
+            .fillMaxWidth()
+            .testTag(AccountDetailsTestTags.SOCIALS_BUTTON),
+        onClick = onShowSocials) {
+        Icon(
+            Icons.Default.Add,
+            contentDescription =
+            context.getString(R.string.account_details_content_description_close))
+        Text(context.getString(R.string.account_details_add_socials))
+    }
+    FlowRow(modifier = Modifier.fillMaxWidth()) {
+        socials.forEachIndexed { index, userSocial ->
+            InputChip(
+                label = { Text(userSocial.social.name) },
+                onClick = {},
+                selected = true,
+                modifier =
+                Modifier
+                    .padding(3.dp)
+                    .testTag(AccountDetailsTestTags.SOCIALS_CHIP + userSocial.social.title),
+                avatar = {
+                    Icon(
+                        Icons.Default.Close,
+                        contentDescription =
+                        context.getString(R.string.account_details_content_description_close),
+                        modifier =
+                        Modifier.clickable {
+                            userSocialFlow.value =
+                                userSocialFlow.value.toMutableList().apply { removeAt(index) }
+                        })
+                })
+        }
+    }
 }
 
 @Composable
