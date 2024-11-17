@@ -366,6 +366,17 @@ fun runCommand(command: String) {
                 konsole -e '$command'
                 """.trimIndent()
         ).start()
+    } else if (os.contains("mac")) {
+        ProcessBuilder(
+            "osascript",
+            "-e",
+            """
+                tell application "Terminal"
+                    do script "firebase emulators:start --import=./firebase/emulator-data"
+                    activate
+                end tell
+                """.trimIndent()
+        ).start()
     } else {
         throw GradleException("Unsupported operating system: $os")
     }
