@@ -226,3 +226,7 @@ val eventTypeNetworking = Color(0xFF009688) // Cyan
 val eventTypeSport = Color(0xFF8BC34A) // Light Green
 val eventTypeTrip = Color(0xFFE91E63) // Pink
 val eventTypeOther = Color.Gray // Default Color
+
+// Colors for the approximate user location circle on the map
+val mapUserLocationCircleFiller = Color(0x2200A0FF)
+val mapUserLocationCircleStroke = Color(0xAA00A0FF)

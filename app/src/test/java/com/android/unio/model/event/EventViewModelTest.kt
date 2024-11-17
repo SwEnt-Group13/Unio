@@ -116,13 +116,4 @@ class EventViewModelTest {
     eventViewModel.selectEvent(testEvents[0].uid)
     assertEquals(testEvents[0], eventViewModel.selectedEvent.value)
   }
-
-  //  @Module
-  //    @InstallIn(SingletonComponent::class)
-  //  abstract class ImageModuleTest{
-  //    @Binds
-  //    abstract fun bindImageRepository(
-  //        imageRepositoryFirebaseStorage: ImageRepositoryFirebaseStorage
-  //    ): ImageRepository
-  //  }
 }
