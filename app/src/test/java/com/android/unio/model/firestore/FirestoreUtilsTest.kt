@@ -3,9 +3,11 @@ package com.android.unio.model.firestore
 import com.google.android.gms.tasks.OnFailureListener
 import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.gms.tasks.Task
+import com.google.firebase.firestore.DocumentSnapshot
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
+import io.mockk.mockk
 import io.mockk.slot
 import junit.framework.TestCase.assertFalse
 import junit.framework.TestCase.assertTrue
@@ -53,7 +55,8 @@ class FirestoreUtilsTest {
 
     every { task.addOnSuccessListener(capture(taskListenerSlot)) } answers
         {
-          taskListenerSlot.captured.onSuccess(null)
+          taskListenerSlot.captured.onSuccess(
+              mockk<DocumentSnapshot>(relaxed = true) { every { exists() } returns false })
           task
         }
     every { task.addOnFailureListener(any<OnFailureListener>()) } returns task
