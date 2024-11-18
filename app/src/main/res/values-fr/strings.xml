@@ -63,8 +63,6 @@
     <string name="social_overlay_description" translatable="true">
         Ceux-ci vont être visibles sur votre page personnelle pour que d\'autres étudiants puissent vous contacter</string>
     <string name="social_overlay_add_social" translatable="true">Ajouter Réseau Social</string>
-    <string name="overlay_save" translatable="true">Sauvegarder</string>
-    <string name="overlay_cancel" translatable="true">Annuler</string>
     <string name="social_overlay_save_changes" translatable="true">Sauvegarder les changements</string>
     <string name="social_overlay_empty_field" translatable="true">L\'entrée est vide</string>
     <string name="social_overlay_invalid_phone_number" translatable="true">Le numéro de téléphone a un format incorrect</string>
@@ -158,6 +156,12 @@
     <string name="event_creation_starttime_label">Heure de début</string>
     <string name="event_creation_endtime_label">Heure de fin</string>
 
+    <!-- Associations Overlay Strings -->
+    <string name="associations_overlay_coauthors_title" translatable="true">Co-organisateurs</string>
+    <string name="associations_overlay_coauthors_description" translatable="true">Choisir quels associations organisent l\'évènement avec vous</string>
+    <string name="associations_overlay_tagged_title" translatable="true">Tag associations</string>
+    <string name="associations_overlay_tagged_description" translatable="true">Choisir quels associations seront présentes a l\'évènement</string>
+    <string name="associations_overlay_search_no_results" translatable="true">Aucun résultat trouvé</string>
     /**
     * package: explore
     */

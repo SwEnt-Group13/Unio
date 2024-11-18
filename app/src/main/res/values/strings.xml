@@ -162,13 +162,11 @@
     <string name="event_creation_endtime_label">End Time</string>
 
     <!-- Associations Overlay Strings -->
-    <string name="associations_overlay_coauthors_title" translatable="false">Coauthors</string>
-    <string name="associations_overlay_coauthors_description" translatable="false">Select coauthors for your event</string>
-    <string name="associations_overlay_tagged_title" translatable="false">Tag associations</string>
-    <string name="associations_overlay_tagged_description" translatable="false">Select which association to tag for your event</string>
-    <string name="associations_overlay_search_no_results" translatable="false">No results found</string>
-
-
+    <string name="associations_overlay_coauthors_title" translatable="true">Coauthors</string>
+    <string name="associations_overlay_coauthors_description" translatable="true">Select coauthors for your event</string>
+    <string name="associations_overlay_tagged_title" translatable="true">Tag associations</string>
+    <string name="associations_overlay_tagged_description" translatable="true">Select which association to tag for your event</string>
+    <string name="associations_overlay_search_no_results" translatable="true">No results found</string>
 
     <!-- Event Details Strings -->
     <string name="event_sign_up" translatable="false">I\'m going.</string>
