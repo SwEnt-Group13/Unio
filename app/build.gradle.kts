@@ -355,28 +355,21 @@ configurations.forEach { configuration ->
 fun runCommand(command: String) {
     val os = System.getProperty("os.name").toLowerCase()
     if (os.contains("win")) {
-        val adjustedCommand = if (command.contains("firebase emulators:exec")) {
-            command.replace("./gradlew", "gradlew") // remove ./ for Windows
-        } else {
-            command // other commands
-        }
+        val adjustedCommand = command
+            .replace("./gradlew", "gradlew") // Windows does not support the ./ prefix
+            .replace("'", "\"") // Windows does not support single quotes
         ProcessBuilder("cmd", "/c", "start", "cmd", "/k", adjustedCommand).start()
-    } else if (os.contains("nix") || os.contains("nux") || os.contains("bsd")) { //for linux, please run "chmod +x gradlew" in cd unio
-        val adjustedCommand = if (command.contains("firebase emulators:exec")) {
-            command.replace("./gradlew", "gradlew") // remove ./ for Linux
-        } else {
-            command // other commands
-        }
+    } else if (os.contains("nix") || os.contains("nux") || os.contains("bsd")) {
         ProcessBuilder(
             "sh",
             "-c",
             """
-                x-terminal-emulator -e '$adjustedCommand' ||
-                gnome-terminal -- bash -c '$adjustedCommand; exec bash' ||
-                konsole -e '$adjustedCommand'
+                x-terminal-emulator -e '$command' ||
+                gnome-terminal -- bash -c '$command; exec bash' ||
+                konsole -e '$command'
                 """.trimIndent()
         ).start()
-    } else if (os.contains("mac")) { //for mac, please run "chmod +x gradlew" in cd unio
+    } else if (os.contains("mac")) {
         ProcessBuilder(
             "osascript",
             "-e",
@@ -400,6 +393,7 @@ tasks.register("startFirebaseEmulators") {
 
 tasks.register("connectedCheckWithFirebaseEmulators") {
     doLast {
+        // For Linux and MacOS, you need to grant execute permissions to gradlew e.g. chmod +x gradlew
         runCommand("firebase emulators:exec --import=./firebase/emulator-data './gradlew connectedCheck'")
     }
 }
