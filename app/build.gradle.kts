@@ -372,7 +372,7 @@ fun runCommand(command: String) {
             "-e",
             """
                 tell application "Terminal"
-                    do script "firebase emulators:start --import=./firebase/emulator-data"
+                    do script "$command"
                     activate
                 end tell
                 """.trimIndent()
