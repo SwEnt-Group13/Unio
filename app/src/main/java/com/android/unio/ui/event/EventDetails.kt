@@ -64,15 +64,17 @@ import com.android.unio.model.association.Association
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventUtils.formatTimestamp
 import com.android.unio.model.event.EventViewModel
+import com.android.unio.model.map.MapViewModel
 import com.android.unio.model.strings.test_tags.EventDetailsTestTags
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.image.AsyncImageWrapper
 import com.android.unio.ui.navigation.NavigationAction
+import com.android.unio.ui.navigation.Screen
 import com.android.unio.ui.theme.AppTypography
-import java.text.SimpleDateFormat
-import java.util.Locale
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 private const val DEBUG_MESSAGE = "<DEBUG> Not implemented yet"
 private val DEBUG_LAMBDA: () -> Unit = {
@@ -91,7 +93,8 @@ private var scope: CoroutineScope? = null
 fun EventScreen(
     navigationAction: NavigationAction,
     eventViewModel: EventViewModel,
-    userViewModel: UserViewModel
+    userViewModel: UserViewModel,
+    mapViewModel: MapViewModel,
 ) {
 
   val event by eventViewModel.selectedEvent.collectAsState()
@@ -116,13 +119,14 @@ fun EventScreen(
     userViewModel.updateUserDebounced(user!!)
   }
 
-  EventScreenScaffold(navigationAction, event!!, associations, isSaved, onClickSaveButton)
+  EventScreenScaffold(navigationAction, mapViewModel, event!!, associations, isSaved, onClickSaveButton)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EventScreenScaffold(
     navigationAction: NavigationAction,
+    mapViewModel: MapViewModel,
     event: Event,
     associations: List<Association>,
     isSaved: Boolean,
@@ -184,11 +188,11 @@ fun EventScreenScaffold(
                   }
             })
       },
-      content = { padding -> EventScreenContent(event, associations, padding) })
+      content = { padding -> EventScreenContent(navigationAction, mapViewModel,event, associations, padding) })
 }
 
 @Composable
-fun EventScreenContent(event: Event, associations: List<Association>, padding: PaddingValues) {
+fun EventScreenContent(navigationAction: NavigationAction, mapViewModel: MapViewModel, event: Event, associations: List<Association>, padding: PaddingValues) {
   val context = LocalContext.current
   Column(
       modifier =
@@ -204,14 +208,14 @@ fun EventScreenContent(event: Event, associations: List<Association>, padding: P
               contentScale = ContentScale.Crop)
         }
 
-        EventInformationCard(event, associations, context)
+        EventInformationCard(mapViewModel,event, associations, context)
 
-        EventDetailsBody(event, context)
+        EventDetailsBody(navigationAction,mapViewModel, event, context)
       }
 }
 
 @Composable
-fun EventInformationCard(event: Event, associations: List<Association>, context: Context) {
+fun EventInformationCard(mapViewModel: MapViewModel, event: Event, associations: List<Association>, context: Context) {
   Column(
       modifier =
           Modifier.testTag(EventDetailsTestTags.DETAILS_INFORMATION_CARD)
@@ -269,7 +273,7 @@ fun EventInformationCard(event: Event, associations: List<Association>, context:
 }
 
 @Composable
-fun EventDetailsBody(event: Event, context: Context) {
+fun EventDetailsBody(navigationAction: NavigationAction, mapViewModel: MapViewModel, event: Event,context: Context) {
   Column(
       modifier = Modifier.testTag(EventDetailsTestTags.DETAILS_BODY).padding(9.dp).fillMaxHeight(),
       verticalArrangement = Arrangement.spacedBy(30.dp)) {
@@ -305,7 +309,10 @@ fun EventDetailsBody(event: Event, context: Context) {
             modifier = Modifier.fillMaxSize().padding(top = 30.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp)) {
               OutlinedButton(
-                  onClick = DEBUG_LAMBDA,
+                  onClick = {
+                      mapViewModel.centerLocation
+                      navigationAction.navigateTo(Screen.MAP)
+                  },
                   modifier =
                       Modifier.testTag(EventDetailsTestTags.MAP_BUTTON)
                           .align(Alignment.CenterHorizontally)

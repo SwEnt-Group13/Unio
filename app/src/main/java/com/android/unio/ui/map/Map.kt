@@ -67,7 +67,7 @@ fun MapScreen(
     navigationAction: NavigationAction,
     eventViewModel: EventViewModel,
     userViewModel: UserViewModel,
-    mapViewModel: MapViewModel
+    mapViewModel: MapViewModel,
 ) {
   val context = LocalContext.current
   val cameraPositionState = rememberCameraPositionState()

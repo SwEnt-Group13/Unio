@@ -8,10 +8,10 @@ import androidx.lifecycle.ViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.maps.model.LatLng
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import javax.inject.Inject
 
 @HiltViewModel
 class MapViewModel
@@ -21,6 +21,9 @@ constructor(private val fusedLocationClient: FusedLocationProviderClient) : View
   /** State flow that holds the user's location. */
   private val _userLocation = MutableStateFlow<LatLng?>(null)
   val userLocation: StateFlow<LatLng?> = _userLocation.asStateFlow()
+
+  private val _centerLocation = MutableStateFlow<LatLng?>(null)
+  val centerLocation: StateFlow<LatLng?> = _centerLocation.asStateFlow()
 
   /** Fetches the user's location and updates the [_userLocation] state flow. */
   fun fetchUserLocation(context: Context) {
