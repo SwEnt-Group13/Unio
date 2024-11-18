@@ -361,7 +361,7 @@ fun runCommand(command: String) {
             command // other commands
         }
         ProcessBuilder("cmd", "/c", "start", "cmd", "/k", adjustedCommand).start()
-    } else if (os.contains("nix") || os.contains("nux") || os.contains("bsd")) {
+    } else if (os.contains("nix") || os.contains("nux") || os.contains("bsd")) { //for linux, please run "chmod +x gradlew" in cd unio
         val adjustedCommand = if (command.contains("firebase emulators:exec")) {
             command.replace("./gradlew", "gradlew") // remove ./ for Linux
         } else {
@@ -376,7 +376,7 @@ fun runCommand(command: String) {
                 konsole -e '$adjustedCommand'
                 """.trimIndent()
         ).start()
-    } else if (os.contains("mac")) {
+    } else if (os.contains("mac")) { //for mac, please run "chmod +x gradlew" in cd unio
         ProcessBuilder(
             "osascript",
             "-e",
