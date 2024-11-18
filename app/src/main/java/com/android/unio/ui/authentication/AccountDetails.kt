@@ -47,12 +47,15 @@ import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.compose.rememberNavController
 import com.android.unio.R
 import com.android.unio.model.association.Association
 import com.android.unio.model.event.Event
 import com.android.unio.model.firestore.emptyFirestoreReferenceList
 import com.android.unio.model.image.ImageRepository
+import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.strings.test_tags.AccountDetailsTestTags
 import com.android.unio.model.user.AccountDetailsError
 import com.android.unio.model.user.Interest
@@ -69,6 +72,7 @@ import com.android.unio.ui.theme.AppTypography
 import com.android.unio.ui.theme.primaryLight
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
+import com.google.firebase.storage.storage
 import kotlinx.coroutines.flow.MutableStateFlow
 
 
@@ -96,14 +100,26 @@ fun AccountDetailsScreen(
                     navigationAction.navigateTo(Screen.HOME)
                 })
         }
+        return@AccountDetailsContent errors
     })
 }
+
+//@Preview
+//@Composable
+//fun preview(){
+//    val navController = rememberNavController()
+//    val navigationActions = NavigationAction(navController)
+//
+//    val imageRepository = ImageRepositoryFirebaseStorage(Firebase.storage)
+//
+//    AccountDetailsContent(navigationAction = navigationActions, imageRepository = imageRepository) { _ -> return@AccountDetailsContent mutableSetOf() }
+//}
 
 @Composable
 fun AccountDetailsContent(
     navigationAction: NavigationAction,
     imageRepository: ImageRepository,
-    onUserCreate: (User) -> Unit
+    onUserCreate: (User) -> MutableSet<AccountDetailsError>
 ) {
   var firstName: String by remember { mutableStateOf("") }
   var lastName: String by remember { mutableStateOf("") }
@@ -150,7 +166,7 @@ fun AccountDetailsContent(
             socials = socials,
             profilePicture = uri)
 
-    onUserCreate(newUser)
+    isErrors = onUserCreate(newUser)
   }
 
   Scaffold { padding ->
@@ -164,16 +180,14 @@ fun AccountDetailsContent(
         verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.CenterHorizontally) {
 
-
-        /* This is the title text */
-          Text(
+         Text(
               text = context.getString(R.string.account_details_title),
               style = AppTypography.headlineSmall,
               modifier = Modifier.testTag(AccountDetailsTestTags.TITLE_TEXT))
 
-        /* These are all the outlined text fields */
         TextFields(
-            isErrors,
+            isErrors.contains(AccountDetailsError.EMPTY_FIRST_NAME),
+            isErrors.contains(AccountDetailsError.EMPTY_LAST_NAME),
             firstName,
             lastName,
             bio,
@@ -241,7 +255,8 @@ fun AccountDetailsContent(
 
 @Composable
 private fun TextFields(
-    isErrors : MutableSet<AccountDetailsError>,
+    isFirstNameError: Boolean,
+    isLastNameError: Boolean,
     firstName: String,
     lastName: String,
     bio: String,
@@ -250,8 +265,6 @@ private fun TextFields(
     onBioChange: (String) -> Unit
 ){
     val context = LocalContext.current
-    val isFirstNameError = isErrors.contains(AccountDetailsError.EMPTY_FIRST_NAME)
-    val isLastNameError = isErrors.contains(AccountDetailsError.EMPTY_LAST_NAME)
 
     OutlinedTextField(
         modifier =
@@ -422,7 +435,7 @@ private fun ProfilePicturePicker(
             .testTag(AccountDetailsTestTags.PROFILE_PICTURE_TEXT),
         style = AppTypography.bodyLarge)
 
-    if (profilePictureUri == Uri.EMPTY) {
+    if (profilePictureUri.value == Uri.EMPTY) {
         Icon(
             imageVector = Icons.Rounded.AccountCircle,
             contentDescription =
