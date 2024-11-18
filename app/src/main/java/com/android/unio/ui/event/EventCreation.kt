@@ -14,6 +14,8 @@ import androidx.compose.foundation.gestures.waitForUpOrCancellation
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -28,6 +30,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -36,6 +39,7 @@ import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.InputChip
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -45,6 +49,7 @@ import androidx.compose.material3.TimeInput
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -63,6 +68,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.android.unio.R
+import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.strings.test_tags.EventCreationTestTags
@@ -73,6 +79,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
+@OptIn(ExperimentalLayoutApi::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun EventCreationScreen(
@@ -138,11 +145,8 @@ fun EventCreationScreen(
                         context.getString(R.string.social_overlay_content_description_add))
                 Text(context.getString(R.string.event_creation_coauthors_label))
               }
-          coauthorsAndBoolean.forEach { (association, selected) ->
-            if (selected.value) {
-              Text(association.name)
-            }
-          }
+
+          AssociationChips(coauthorsAndBoolean)
 
           OutlinedButton(
               modifier = Modifier.fillMaxWidth().testTag(EventCreationTestTags.TAGGED_ASSOCIATIONS),
@@ -153,11 +157,8 @@ fun EventCreationScreen(
                         context.getString(R.string.social_overlay_content_description_add))
                 Text(context.getString(R.string.event_creation_tagged_label))
               }
-          taggedAndBoolean.forEach { (association, selected) ->
-            if (selected.value) {
-              Text(association.name)
-            }
-          }
+
+          AssociationChips(taggedAndBoolean)
 
           OutlinedTextField(
               modifier = Modifier.fillMaxWidth().testTag(EventCreationTestTags.DESCRIPTION),
@@ -219,6 +220,30 @@ fun EventCreationScreen(
                 bodyText = context.getString(R.string.associations_overlay_tagged_description))
           }
         }
+  }
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+fun AssociationChips(
+    associations: List<Pair<Association, MutableState<Boolean>>>,
+) {
+  val context = LocalContext.current
+  FlowRow {
+    associations.forEach { (association, selected) ->
+      if (selected.value) {
+        InputChip(
+            label = { Text(association.name) },
+            onClick = {},
+            selected = selected.value,
+            avatar = {
+              Icon(
+                  Icons.Default.Close,
+                  contentDescription = context.getString(R.string.associations_overlay_remove),
+                  modifier = Modifier.clickable { selected.value = !selected.value })
+            })
+      }
+    }
   }
 }
 

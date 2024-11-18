@@ -162,6 +162,8 @@
     <string name="associations_overlay_tagged_title" translatable="true">Tag associations</string>
     <string name="associations_overlay_tagged_description" translatable="true">Choisir quels associations seront présentes a l\'évènement</string>
     <string name="associations_overlay_search_no_results" translatable="true">Aucun résultat trouvé</string>
+    <string name="associations_overlay_remove" translatable="true">Supprimer</string>
+
     /**
     * package: explore
     */

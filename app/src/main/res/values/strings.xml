@@ -167,6 +167,8 @@
     <string name="associations_overlay_tagged_title" translatable="true">Tag associations</string>
     <string name="associations_overlay_tagged_description" translatable="true">Select which association to tag for your event</string>
     <string name="associations_overlay_search_no_results" translatable="true">No results found</string>
+    <string name="associations_overlay_remove" translatable="true">Remove</string>
+
 
     <!-- Event Details Strings -->
     <string name="event_sign_up" translatable="false">I\'m going.</string>

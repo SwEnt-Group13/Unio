@@ -160,7 +160,7 @@ fun AssociationsOverlay(
 fun AssociationsList(
     associations: List<Pair<Association, MutableState<Boolean>>>,
 ) {
-  LazyColumn(modifier = Modifier.sizeIn(maxHeight = 280.dp)) {
+  LazyColumn(modifier = Modifier.sizeIn(maxHeight = 280.dp), horizontalAlignment = Alignment.End) {
     items(associations) { (copiedCoauthors, selected) ->
       Row(
           horizontalArrangement = Arrangement.SpaceBetween,
