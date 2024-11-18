@@ -89,17 +89,16 @@ class UserAccountCreationTest : EndToEndTest() {
 
     assertDisplayComponentInScroll(
         composeTestRule.onNodeWithTag(AccountDetailsTestTags.CONTINUE_BUTTON))
-    Thread.sleep(5000)
 
     composeTestRule.onNodeWithTag(AccountDetailsTestTags.CONTINUE_BUTTON).performClick()
 
     // Wait until "HomeScreen" is displayed
-    composeTestRule.waitUntil(20000) {
+    composeTestRule.waitUntil(10000) {
       composeTestRule.onNodeWithTag(HomeTestTags.SCREEN).isDisplayed()
     }
 
     // Wait until the bottom nav bar is displayed
-    composeTestRule.waitUntil(20000) {
+    composeTestRule.waitUntil(10000) {
       composeTestRule.onNodeWithTag(BottomNavBarTestTags.MY_PROFILE).isDisplayed()
     }
 

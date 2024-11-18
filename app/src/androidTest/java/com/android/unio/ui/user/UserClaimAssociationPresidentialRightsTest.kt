@@ -39,7 +39,7 @@ class UserClaimAssociationPresidentialRightsScreenTest {
   private lateinit var associationViewModel: AssociationViewModel
   @MockK private lateinit var navigationAction: NavigationAction
 
-  // Test data
+  // test data
   private val testAssociation =
       MockAssociation.createMockAssociation(
           uid = "assoc123", principalEmailAddress = "president@university.edu")
@@ -69,7 +69,6 @@ class UserClaimAssociationPresidentialRightsScreenTest {
           association = testAssociation, user = testUser, navigationAction = navigationAction)
     }
 
-    // Step 1: Verify the presence of the email input field
     composeTestRule.onNodeWithText("Enter the presidential email address:").assertIsDisplayed()
 
     composeTestRule.onNodeWithText("Verify Email").performClick()
@@ -82,7 +81,7 @@ class UserClaimAssociationPresidentialRightsScreenTest {
           association = testAssociation, user = testUser, navigationAction = navigationAction)
     }
 
-    // Click the back button
+    // click the back button
     composeTestRule.onNodeWithTag("goBackButton").performClick()
   }
 }

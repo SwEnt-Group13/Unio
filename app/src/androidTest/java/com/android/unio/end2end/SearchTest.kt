@@ -60,7 +60,7 @@ class SearchTest : EndToEndTest() {
   fun testSearchDiplaysCorrectResultsForAssociations() {
     signInWithUser(composeTestRule, User1.EMAIL, User1.PASSWORD)
 
-    composeTestRule.waitUntil(20000) {
+    composeTestRule.waitUntil(5000) {
       composeTestRule.onNodeWithTag(HomeTestTags.SCREEN).isDisplayed()
     }
 
@@ -77,7 +77,7 @@ class SearchTest : EndToEndTest() {
         .performTextInput(ASSOCIATION_SEARCH_INPUT)
 
     // Wait for the server's response to get the association
-    composeTestRule.waitUntil(5000) {
+    composeTestRule.waitUntil(10000) {
       composeTestRule
           .onNodeWithTag(
               ExploreContentTestTags.ASSOCIATION_EXPLORE_RESULT + EXPECTED_ASSOCIATION_NAME)

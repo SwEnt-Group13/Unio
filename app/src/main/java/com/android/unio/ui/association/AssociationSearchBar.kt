@@ -92,9 +92,12 @@ fun AssociationSearchBar(
                   ListItem(
                       modifier =
                           Modifier.clickable {
-                            expanded = false
-                            onAssociationSelected(association)
-                          },
+                                expanded = false
+                                onAssociationSelected(association)
+                              }
+                              .testTag(
+                                  ExploreContentTestTags.ASSOCIATION_EXPLORE_RESULT +
+                                      association.name),
                       headlineContent = { Text(association.name) },
                   )
                 }
