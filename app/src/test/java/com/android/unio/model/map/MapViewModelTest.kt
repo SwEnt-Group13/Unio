@@ -114,20 +114,24 @@ class MapViewModelTest {
   @Test
   fun testStartLocationUpdatesWithPermissionsGranted() = runTest {
     val mockLatLng = LatLng(46.518831258, 6.559331096)
-    val mockLocation = Location("mockProvider").apply {
-      latitude = mockLatLng.latitude
-      longitude = mockLatLng.longitude
-    }
+    val mockLocation =
+        Location("mockProvider").apply {
+          latitude = mockLatLng.latitude
+          longitude = mockLatLng.longitude
+        }
 
     val locationCallbackSlot = slot<LocationCallback>()
     val locationResult = LocationResult.create(listOf(mockLocation))
     val taskMock: Task<Void> = mockk()
 
-    every { fusedLocationClient.requestLocationUpdates(any(), capture(locationCallbackSlot), any()) } returns taskMock
-    every { taskMock.addOnSuccessListener(any()) } answers {
-      (it.invocation.args[0] as OnSuccessListener<Void>).onSuccess(null)
-      taskMock
-    }
+    every {
+      fusedLocationClient.requestLocationUpdates(any(), capture(locationCallbackSlot), any())
+    } returns taskMock
+    every { taskMock.addOnSuccessListener(any()) } answers
+        {
+          (it.invocation.args[0] as OnSuccessListener<Void>).onSuccess(null)
+          taskMock
+        }
 
     mapViewModel.startLocationUpdates(context)
 
@@ -159,19 +163,17 @@ class MapViewModelTest {
 
   @Test
   fun testStartLocationUpdatesWithSecurityExceptionThrown() = runTest {
-    val locationRequest = LocationRequest.Builder(10000)
-      .setMinUpdateIntervalMillis(5000)
-      .setPriority(Priority.PRIORITY_BALANCED_POWER_ACCURACY)
-      .build()
+    val locationRequest =
+        LocationRequest.Builder(10000)
+            .setMinUpdateIntervalMillis(5000)
+            .setPriority(Priority.PRIORITY_BALANCED_POWER_ACCURACY)
+            .build()
 
     val locationCallback = mockk<LocationCallback>(relaxed = true)
 
     every {
       fusedLocationClient.requestLocationUpdates(
-        locationRequest,
-        locationCallback,
-        Looper.getMainLooper()
-      )
+          locationRequest, locationCallback, Looper.getMainLooper())
     } throws SecurityException("Security exception!")
 
     mapViewModel.startLocationUpdates(context)
@@ -182,18 +184,16 @@ class MapViewModelTest {
 
   @Test
   fun testStopLocationUpdates() = runTest {
-    val locationRequest = LocationRequest.Builder(10000)
-      .setMinUpdateIntervalMillis(5000)
-      .setPriority(Priority.PRIORITY_BALANCED_POWER_ACCURACY)
-      .build()
+    val locationRequest =
+        LocationRequest.Builder(10000)
+            .setMinUpdateIntervalMillis(5000)
+            .setPriority(Priority.PRIORITY_BALANCED_POWER_ACCURACY)
+            .build()
 
     val locationCallbackSlot = slot<LocationCallback>()
     every {
       fusedLocationClient.requestLocationUpdates(
-        locationRequest,
-        capture(locationCallbackSlot),
-        Looper.getMainLooper()
-      )
+          locationRequest, capture(locationCallbackSlot), Looper.getMainLooper())
     } returns mockk()
 
     every { fusedLocationClient.removeLocationUpdates(any<LocationCallback>()) } returns mockk()

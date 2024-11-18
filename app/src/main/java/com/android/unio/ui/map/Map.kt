@@ -135,11 +135,7 @@ fun MapScreen(
     }
   }
 
-    DisposableEffect(Unit) {
-        onDispose {
-            mapViewModel.stopLocationUpdates()
-        }
-    }
+  DisposableEffect(Unit) { onDispose { mapViewModel.stopLocationUpdates() } }
 
   Scaffold(
       modifier = Modifier.testTag(MapTestTags.SCREEN),

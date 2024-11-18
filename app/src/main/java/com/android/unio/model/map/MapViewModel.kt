@@ -46,33 +46,34 @@ constructor(private val fusedLocationClient: FusedLocationProviderClient) : View
 
   fun startLocationUpdates(context: Context) {
     if (hasLocationPermissions(context)) {
-      val locationRequest = LocationRequest.Builder(10000)
-        .setMinUpdateIntervalMillis(5000)
-        .setPriority(Priority.PRIORITY_BALANCED_POWER_ACCURACY)
-        .build()
+      val locationRequest =
+          LocationRequest.Builder(10000)
+              .setMinUpdateIntervalMillis(5000)
+              .setPriority(Priority.PRIORITY_BALANCED_POWER_ACCURACY)
+              .build()
 
-      locationCallback = object: LocationCallback() {
-        override fun onLocationResult(locationResult: LocationResult) {
-          locationResult.lastLocation?.let {
-            _userLocation.value = LatLng(it.latitude, it.longitude)
+      locationCallback =
+          object : LocationCallback() {
+            override fun onLocationResult(locationResult: LocationResult) {
+              locationResult.lastLocation?.let {
+                _userLocation.value = LatLng(it.latitude, it.longitude)
+              }
+            }
           }
-        }
-      }
 
       try {
-        fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback!!, Looper.getMainLooper())
+        fusedLocationClient.requestLocationUpdates(
+            locationRequest, locationCallback!!, Looper.getMainLooper())
       } catch (e: SecurityException) {
         Log.e("MapViewModel", "Permission for location access was revoked: ${e.localizedMessage}")
       }
     } else {
-        Log.e("MapViewModel", "Location permission is not granted.")
+      Log.e("MapViewModel", "Location permission is not granted.")
     }
   }
 
   fun stopLocationUpdates() {
-    locationCallback?.let {
-      fusedLocationClient.removeLocationUpdates(it)
-    }
+    locationCallback?.let { fusedLocationClient.removeLocationUpdates(it) }
   }
 
   fun hasLocationPermissions(context: Context): Boolean {
