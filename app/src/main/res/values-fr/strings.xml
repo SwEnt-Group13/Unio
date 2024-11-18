@@ -55,16 +55,16 @@
     <!-- Interests Overlay Strings -->
     <string name="interest_overlay_title" translatable="true">Vos intérêts</string>
     <string name="interest_overlay_description" translatable="true">Choisissez autant d\'intérêts qui semblent vous correspondre</string>
-    <string name="interest_overlay_cancel" translatable="true">Annuler</string>
-    <string name="interest_overlay_save" translatable="true">Sauvegarder</string>
+    <string name="overlay_cancel" translatable="true">Annuler</string>
+    <string name="overlay_save" translatable="true">Sauvegarder</string>
 
     <!-- Social Overlay Strings -->
     <string name="social_overlay_title" translatable="true">Vos réseaux sociaux</string>
     <string name="social_overlay_description" translatable="true">
         Ceux-ci vont être visibles sur votre page personnelle pour que d\'autres étudiants puissent vous contacter</string>
     <string name="social_overlay_add_social" translatable="true">Ajouter Réseau Social</string>
-    <string name="social_overlay_save" translatable="true">Sauvegarder</string>
-    <string name="social_overlay_cancel" translatable="true">Annuler</string>
+    <string name="overlay_save" translatable="true">Sauvegarder</string>
+    <string name="overlay_cancel" translatable="true">Annuler</string>
     <string name="social_overlay_save_changes" translatable="true">Sauvegarder les changements</string>
     <string name="social_overlay_empty_field" translatable="true">L\'entrée est vide</string>
     <string name="social_overlay_invalid_phone_number" translatable="true">Le numéro de téléphone a un format incorrect</string>
@@ -164,7 +164,7 @@
 
     <!-- Explore Screen Strings -->
     <string name="explore_content_screen_title">Explorez nos Associations</string>
-    <string name="explore_search_placeholder">Recherche</string>
+    <string name="search_placeholder">Recherche</string>
     <string name="explore_search_error_message">Une erreur s\'est produite lors de la recherche</string>
     <string name="explore_search_no_results">Aucun résultat trouvé</string>
     <string name="explore_content_description_search_icon">Icône de recherche</string>

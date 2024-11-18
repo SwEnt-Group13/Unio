@@ -117,7 +117,7 @@ fun InterestOverlay(
                               modifier =
                                   Modifier.padding(5.dp)
                                       .testTag(InterestsOverlayTestTags.CANCEL_BUTTON)) {
-                                Text(context.getString(R.string.interest_overlay_cancel))
+                                Text(context.getString(R.string.overlay_cancel))
                               }
 
                           Button(
@@ -125,7 +125,7 @@ fun InterestOverlay(
                               modifier =
                                   Modifier.padding(5.dp)
                                       .testTag(InterestsOverlayTestTags.SAVE_BUTTON)) {
-                                Text(context.getString(R.string.interest_overlay_save))
+                                Text(context.getString(R.string.overlay_save))
                               }
                         }
                   }
