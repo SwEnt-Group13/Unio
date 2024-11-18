@@ -122,13 +122,6 @@ fun AccountDetailsContent(
 
   val profilePictureUri = remember { mutableStateOf<Uri>(Uri.EMPTY) }
 
-  val pickMedia =
-      rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
-        if (uri != null) {
-          profilePictureUri.value = uri
-        }
-      }
-
   val context = LocalContext.current
 
   var showInterestsOverlay by remember { mutableStateOf(false) }
@@ -172,12 +165,13 @@ fun AccountDetailsContent(
         horizontalAlignment = Alignment.CenterHorizontally) {
 
 
+        /* This is the title text */
           Text(
               text = context.getString(R.string.account_details_title),
               style = AppTypography.headlineSmall,
               modifier = Modifier.testTag(AccountDetailsTestTags.TITLE_TEXT))
 
-
+        /* These are all the outlined text fields */
         TextFields(
             isErrors,
             firstName,
@@ -188,43 +182,9 @@ fun AccountDetailsContent(
             {bio = it}
         )
 
-          Row(
-              modifier = Modifier
-                  .fillMaxWidth()
-                  .padding(8.dp),
-              horizontalArrangement = Arrangement.SpaceEvenly,
-              verticalAlignment = Alignment.CenterVertically) {
-                Text(
-                    text = context.getString(R.string.account_details_add_profile_picture),
-                    modifier =
-                    Modifier
-                        .widthIn(max = 140.dp)
-                        .testTag(AccountDetailsTestTags.PROFILE_PICTURE_TEXT),
-                    style = AppTypography.bodyLarge)
+        ProfilePicturePicker(profilePictureUri, {profilePictureUri.value = Uri.EMPTY})
 
-                if (profilePictureUri.value == Uri.EMPTY) {
-                  Icon(
-                      imageVector = Icons.Rounded.AccountCircle,
-                      contentDescription =
-                          context.getString(R.string.account_details_content_description_add),
-                      tint = primaryLight,
-                      modifier =
-                      Modifier
-                          .clickable {
-                              pickMedia.launch(
-                                  PickVisualMediaRequest(
-                                      ActivityResultContracts.PickVisualMedia.ImageOnly
-                                  )
-                              )
-                          }
-                          .size(100.dp)
-                          .testTag(AccountDetailsTestTags.PROFILE_PICTURE_ICON))
-                } else {
-                  ProfilePictureWithRemoveIcon(
-                      profilePictureUri = profilePictureUri.value,
-                      onRemove = { profilePictureUri.value = Uri.EMPTY })
-                }
-              }
+
 
         OverlayButtonsAndFlowRows(
             interestsFlow,
@@ -432,6 +392,61 @@ private fun OverlayButtonsAndFlowRows(
                 })
         }
     }
+}
+
+@Composable
+private fun ProfilePicturePicker(
+    profilePictureUri: MutableState<Uri>,
+    onProfilePictureUriChange: () -> Unit,
+
+){
+    val context = LocalContext.current
+    val pickMedia =
+        rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+            if (uri != null) {
+                profilePictureUri.value = uri
+            }
+        }
+
+    Row(
+    modifier = Modifier
+        .fillMaxWidth()
+        .padding(8.dp),
+    horizontalArrangement = Arrangement.SpaceEvenly,
+    verticalAlignment = Alignment.CenterVertically) {
+    Text(
+        text = context.getString(R.string.account_details_add_profile_picture),
+        modifier =
+        Modifier
+            .widthIn(max = 140.dp)
+            .testTag(AccountDetailsTestTags.PROFILE_PICTURE_TEXT),
+        style = AppTypography.bodyLarge)
+
+    if (profilePictureUri == Uri.EMPTY) {
+        Icon(
+            imageVector = Icons.Rounded.AccountCircle,
+            contentDescription =
+            context.getString(R.string.account_details_content_description_add),
+            tint = primaryLight,
+            modifier =
+            Modifier
+                .clickable {
+                    pickMedia.launch(
+                        PickVisualMediaRequest(
+                            ActivityResultContracts.PickVisualMedia.ImageOnly
+                        )
+                    )
+                }
+                .size(100.dp)
+                .testTag(AccountDetailsTestTags.PROFILE_PICTURE_ICON))
+    } else {
+        ProfilePictureWithRemoveIcon(
+            profilePictureUri = profilePictureUri.value,
+            onRemove = onProfilePictureUriChange)
+    }
+}
+
+
 }
 
 @Composable
