@@ -5,7 +5,6 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.android.unio.model.event.Event
 import com.google.firebase.Firebase
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.auth
@@ -23,8 +22,8 @@ class UserViewModel @Inject constructor(private val userRepository: UserReposito
   private val _user = MutableStateFlow<User?>(null)
   val user: StateFlow<User?> = _user.asStateFlow()
 
-  private val _followedEventUID = MutableStateFlow(emptyList<String>())
-  val followedEventUID: StateFlow<List<String>> = _followedEventUID.asStateFlow()
+  private val _followedAssociations = MutableStateFlow(emptyList<String>())
+  val followedAssociations: StateFlow<List<String>> = _followedAssociations.asStateFlow()
 
   private val _refreshState = mutableStateOf(false)
   val refreshState: State<Boolean> = _refreshState
@@ -70,7 +69,7 @@ class UserViewModel @Inject constructor(private val userRepository: UserReposito
         uid,
         onSuccess = { fetchedUser ->
           _user.value = fetchedUser
-          _followedEventUID.value =  getFollowedAssociationsEventUID()
+          _followedAssociations.value = getFollowedAssociationsEventUID()
           if (fetchReferences) {
             _user.value?.let {
               var first = true

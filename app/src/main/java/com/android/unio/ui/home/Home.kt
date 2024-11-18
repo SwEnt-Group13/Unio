@@ -114,15 +114,14 @@ fun HomeContent(
 ) {
 
   val context = LocalContext.current
-    val followedAsso by userViewModel.followedEventUID.collectAsState()
-    val allEvent by eventViewModel.events.collectAsState()
-    val events: List<Event> = if (isOnFollowScreen) {
-      allEvent.filter {
-          followedAsso.any { uid -> it.organisers.contains( uid) }
+  val followedAsso by userViewModel.followedAssociations.collectAsState()
+  val allEvent by eventViewModel.events.collectAsState()
+  val events: List<Event> =
+      if (isOnFollowScreen) {
+        allEvent.filter { followedAsso.any { uid -> it.organisers.contains(uid) } }
+      } else {
+        allEvent
       }
-    } else {
-      allEvent
-    }
 
   // Event List
   if (searchQuery.isNotEmpty() &&

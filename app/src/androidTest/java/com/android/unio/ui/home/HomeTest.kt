@@ -1,11 +1,14 @@
 package com.android.unio.ui.home
 
 import androidx.compose.ui.test.assertHasClickAction
+import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.unit.ExperimentalUnitApi
+import com.android.unio.mocks.association.MockAssociation
+import com.android.unio.mocks.event.MockEvent
 import com.android.unio.mocks.user.MockUser
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventRepository
@@ -33,6 +36,7 @@ import io.mockk.unmockkAll
 import io.mockk.verify
 import javax.inject.Inject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.After
 import org.junit.Before
@@ -58,14 +62,19 @@ class HomeTest {
   @MockK private lateinit var navigationAction: NavigationAction
   @MockK private lateinit var imageRepository: ImageRepositoryFirebaseStorage
 
+  private lateinit var eventViewModel: EventViewModel
   private lateinit var searchViewModel: SearchViewModel
   @MockK(relaxed = true) private lateinit var searchRepository: SearchRepository
+
+  private lateinit var eventList: List<Event>
+  private lateinit var eventListFollowed: List<Event>
 
   @Before
   fun setUp() {
     MockKAnnotations.init(this)
     hiltRule.inject()
     searchViewModel = spyk(SearchViewModel(searchRepository))
+    eventViewModel = EventViewModel(mockEventRepository, imageRepository)
     every { navigationAction.navigateTo(any(TopLevelDestination::class)) } returns Unit
     every { navigationAction.navigateTo(any(String::class)) } returns Unit
 
@@ -79,6 +88,20 @@ class HomeTest {
         }
     userViewModel.addUser(user, {})
     every { userRepository.init(any()) } just runs
+
+    val asso = MockAssociation.createMockAssociation()
+
+    eventList =
+        listOf(MockEvent.createMockEvent(organisers = listOf(asso)), MockEvent.createMockEvent())
+
+    val eventField = eventViewModel.javaClass.getDeclaredField("_events")
+    eventField.isAccessible = true
+    eventField.set(eventViewModel, MutableStateFlow(eventList))
+
+    val followedAssociationField = userViewModel.javaClass.getDeclaredField("_followedAssociations")
+    followedAssociationField.isAccessible = true
+    followedAssociationField.set(userViewModel, MutableStateFlow(asso))
+    eventListFollowed = asso.let { eventList.filter { event -> event.organisers.contains(it.uid) } }
   }
 
   /**
@@ -102,6 +125,19 @@ class HomeTest {
     }
     composeTestRule.onNodeWithTag(HomeTestTags.EMPTY_EVENT_PROMPT).assertExists()
     composeTestRule.onNodeWithText("No events available.").assertExists()
+  }
+
+  @Test
+  fun testEventListFollowed() {
+    composeTestRule.setContent {
+      HomeScreen(navigationAction, eventViewModel, userViewModel, searchViewModel)
+    }
+    composeTestRule.onNodeWithTag(HomeTestTags.TAB_FOLLOWING).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(HomeTestTags.TAB_FOLLOWING).performClick()
+
+    eventListFollowed.forEach { event ->
+      composeTestRule.onNodeWithText(event.title).assertExists()
+    }
   }
 
   /**
