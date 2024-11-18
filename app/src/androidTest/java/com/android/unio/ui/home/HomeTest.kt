@@ -2,6 +2,7 @@ package com.android.unio.ui.home
 
 import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
@@ -12,6 +13,7 @@ import com.android.unio.mocks.event.MockEvent
 import com.android.unio.mocks.user.MockUser
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventRepository
+import com.android.unio.model.event.EventRepositoryFirestore
 import com.android.unio.model.event.EventRepositoryMock
 import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
@@ -20,6 +22,7 @@ import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.strings.test_tags.HomeTestTags
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserViewModel
+import com.android.unio.ui.assertDisplayComponentInScroll
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
 import com.android.unio.ui.navigation.TopLevelDestination
@@ -34,7 +37,6 @@ import io.mockk.runs
 import io.mockk.spyk
 import io.mockk.unmockkAll
 import io.mockk.verify
-import javax.inject.Inject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runBlockingTest
@@ -57,7 +59,7 @@ class HomeTest {
   private lateinit var userViewModel: UserViewModel
 
   // Mock event repository to provide test data.
-  @Inject lateinit var mockEventRepository: EventRepository
+  @MockK private lateinit var eventRepository: EventRepositoryFirestore
   @MockK private lateinit var userRepository: UserRepositoryFirestore
   @MockK private lateinit var navigationAction: NavigationAction
   @MockK private lateinit var imageRepository: ImageRepositoryFirebaseStorage
@@ -74,11 +76,11 @@ class HomeTest {
     MockKAnnotations.init(this)
     hiltRule.inject()
     searchViewModel = spyk(SearchViewModel(searchRepository))
-    eventViewModel = EventViewModel(mockEventRepository, imageRepository)
     every { navigationAction.navigateTo(any(TopLevelDestination::class)) } returns Unit
     every { navigationAction.navigateTo(any(String::class)) } returns Unit
 
     every { userRepository.init(any()) } just runs
+    every { eventRepository.init(any()) } just runs
     userViewModel = spyk(UserViewModel(userRepository))
     val user = MockUser.createMockUser()
     every { userRepository.updateUser(user, any(), any()) } answers
@@ -88,15 +90,21 @@ class HomeTest {
         }
     userViewModel.addUser(user, {})
     every { userRepository.init(any()) } just runs
+    every { eventRepository.getEvents(any(), any()) } answers {
+      val onSuccess = args[0] as (List<Event>) -> Unit
+      onSuccess(eventList)
+    }
+    eventViewModel = spyk(EventViewModel(eventRepository, imageRepository))
+
 
     val asso = MockAssociation.createMockAssociation()
 
     eventList =
         listOf(MockEvent.createMockEvent(organisers = listOf(asso)), MockEvent.createMockEvent())
 
-    val eventField = eventViewModel.javaClass.getDeclaredField("_events")
-    eventField.isAccessible = true
-    eventField.set(eventViewModel, MutableStateFlow(eventList))
+//    val eventField = eventViewModel.javaClass.getDeclaredField("_events")
+//    eventField.isAccessible = true
+//    eventField.set(eventViewModel, MutableStateFlow(eventList))
 
     val followedAssociationField = userViewModel.javaClass.getDeclaredField("_followedAssociations")
     followedAssociationField.isAccessible = true
@@ -128,6 +136,24 @@ class HomeTest {
   }
 
   @Test
+  fun testEventListAll(){
+    composeTestRule.setContent {
+      HomeScreen(navigationAction, eventViewModel, userViewModel, searchViewModel)
+    }
+    composeTestRule.onNodeWithTag(HomeTestTags.TAB_ALL).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(HomeTestTags.TAB_ALL).performClick()
+
+    eventList.forEach { event ->
+      assertDisplayComponentInScroll(composeTestRule.onNodeWithText(event.title))
+    }
+  }
+
+
+  /**
+   * Test the UI of the following screen. Asserts that the 'Following' tab is displayed and that the
+   * list of events displayed is the same as the list of events followed by the user.
+   */
+  @Test
   fun testEventListFollowed() {
     composeTestRule.setContent {
       HomeScreen(navigationAction, eventViewModel, userViewModel, searchViewModel)
@@ -136,7 +162,11 @@ class HomeTest {
     composeTestRule.onNodeWithTag(HomeTestTags.TAB_FOLLOWING).performClick()
 
     eventListFollowed.forEach { event ->
-      composeTestRule.onNodeWithText(event.title).assertExists()
+      assertDisplayComponentInScroll(composeTestRule.onNodeWithText(event.title))
+    }
+    val theNegative = eventList.filter { !eventListFollowed.contains(it) }
+    theNegative.forEach { event ->
+      composeTestRule.onNodeWithText(event.title).assertIsNotDisplayed()
     }
   }
 
@@ -147,7 +177,7 @@ class HomeTest {
   @Test
   fun testMapButton() {
     composeTestRule.setContent {
-      val eventViewModel = EventViewModel(mockEventRepository, imageRepository)
+      val eventViewModel = EventViewModel(eventRepository, imageRepository)
       HomeScreen(navigationAction, eventViewModel, userViewModel, searchViewModel)
     }
     composeTestRule.onNodeWithTag(HomeTestTags.MAP_BUTTON).assertExists()
@@ -165,7 +195,7 @@ class HomeTest {
   @Test
   fun testClickFollowingAndAdd() = runBlockingTest {
     composeTestRule.setContent {
-      val eventViewModel = EventViewModel(mockEventRepository, imageRepository)
+      val eventViewModel = EventViewModel(eventRepository, imageRepository)
       HomeScreen(navigationAction, eventViewModel, userViewModel, searchViewModel)
     }
 
