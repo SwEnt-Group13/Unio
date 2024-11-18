@@ -50,7 +50,7 @@ class UserRepositoryFirestore @Inject constructor(private val db: FirebaseFirest
   }
 
   override fun updateUser(user: User, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
-      Log.d("AAA", "j'essaie d'update le user wesh")
+    Log.d("AAA", "j'essaie d'update le user wesh")
     getUserRef(user.uid)
         .set(serialize(user))
         .addOnSuccessListener { document -> onSuccess() }
