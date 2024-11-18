@@ -29,7 +29,7 @@ class WelcomeTest {
 
   @Before
   fun setUp() {
-    MockKAnnotations.init(this, relaxed=true)
+    MockKAnnotations.init(this, relaxed = true)
 
     // Call first callback when init is called
     every { userRepository.init(any()) } answers { firstArg<() -> Unit>().invoke() }

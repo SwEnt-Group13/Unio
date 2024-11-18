@@ -13,7 +13,6 @@ import androidx.test.filters.LargeTest
 import com.android.unio.MainActivity
 import com.android.unio.model.strings.test_tags.AssociationProfileTestTags
 import com.android.unio.model.strings.test_tags.BottomNavBarTestTags
-import com.android.unio.model.strings.test_tags.EmailVerificationTestTags
 import com.android.unio.model.strings.test_tags.EventCardTestTags
 import com.android.unio.model.strings.test_tags.EventDetailsTestTags
 import com.android.unio.model.strings.test_tags.ExploreContentTestTags
@@ -60,11 +59,6 @@ class SearchTest : EndToEndTest() {
   @Test
   fun testSearchDiplaysCorrectResultsForAssociations() {
     signInWithUser(composeTestRule, User1.EMAIL, User1.PASSWORD)
-
-    composeTestRule.waitUntil(10000) {
-      true
-    }
-    composeTestRule.onNodeWithTag(EmailVerificationTestTags.REFRESH).performClick()
 
     composeTestRule.waitUntil(20000) {
       composeTestRule.onNodeWithTag(HomeTestTags.SCREEN).isDisplayed()
