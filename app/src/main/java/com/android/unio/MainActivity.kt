@@ -47,8 +47,8 @@ import com.android.unio.ui.theme.AppTheme
 import com.android.unio.ui.user.UserProfileScreen
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.HiltAndroidApp
-import javax.inject.Inject
 import me.zhanghai.compose.preference.ProvidePreferenceLocals
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -115,7 +115,8 @@ fun UnioApp(imageRepository: ImageRepositoryFirebaseStorage) {
         EventScreen(
             navigationAction = navigationActions,
             eventViewModel = eventViewModel,
-            userViewModel = userViewModel)
+            userViewModel = userViewModel,
+          mapViewModel)
       }
       composable(Screen.MAP) {
         MapScreen(navigationActions, eventViewModel, userViewModel, mapViewModel)

@@ -69,104 +69,122 @@ fun MapScreen(
     userViewModel: UserViewModel,
     mapViewModel: MapViewModel,
 ) {
-  val context = LocalContext.current
-  val cameraPositionState = rememberCameraPositionState()
-  val userLocation by mapViewModel.userLocation.collectAsState()
-  var initialCentered by remember { mutableStateOf(false) }
-  var isMyLocationEnabled by remember { mutableStateOf(false) }
-  var showApproximateCircle by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+    val cameraPositionState = rememberCameraPositionState()
+    val centerLocation by mapViewModel.centerLocation.collectAsState()
+    val userLocation by mapViewModel.userLocation.collectAsState()
+    var initialCentered by remember { mutableStateOf(false) }
+    var isMyLocationEnabled by remember { mutableStateOf(false) }
+    var showApproximateCircle by remember { mutableStateOf(false) }
 
-  val permissionLauncher =
-      rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
-          permissions ->
-        when {
-          permissions.getOrDefault(Manifest.permission.ACCESS_FINE_LOCATION, false) -> {
-            mapViewModel.fetchUserLocation(context)
-            isMyLocationEnabled = true
-            showApproximateCircle = false
-          }
-          permissions.getOrDefault(Manifest.permission.ACCESS_COARSE_LOCATION, false) -> {
-            mapViewModel.fetchUserLocation(context)
-            isMyLocationEnabled = false
-            showApproximateCircle = true
-          }
-          else -> {
-            Log.e("MapScreen", "Location permission is not granted.")
-          }
-        }
-      }
+    val permissionLauncher =
+        rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
+            when {
+                permissions.getOrDefault(Manifest.permission.ACCESS_FINE_LOCATION, false) -> {
+                    mapViewModel.fetchUserLocation(context)
+                    isMyLocationEnabled = true
+                    showApproximateCircle = false
+                }
 
-  /** Request location permissions. */
-  fun requestPermissions() {
-    permissionLauncher.launch(
-        arrayOf(
-            Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION))
-  }
+                permissions.getOrDefault(Manifest.permission.ACCESS_COARSE_LOCATION, false) -> {
+                    mapViewModel.fetchUserLocation(context)
+                    isMyLocationEnabled = false
+                    showApproximateCircle = true
+                }
 
-  // Check what permissions are already granted
-  LaunchedEffect(Unit) {
-    when (PackageManager.PERMISSION_GRANTED) {
-      ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) -> {
-        isMyLocationEnabled = true
-        showApproximateCircle = false
-        mapViewModel.fetchUserLocation(context)
-      }
-      ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) -> {
-        isMyLocationEnabled = false
-        showApproximateCircle = true
-        requestPermissions()
-        mapViewModel.fetchUserLocation(context)
-      }
-      else -> {
-        requestPermissions()
-      }
-    }
-    cameraPositionState.position =
-        CameraPosition.fromLatLngZoom(userLocation ?: EPFL_COORDINATES, INITIAL_ZOOM_LEVEL)
-  }
-
-  // Center map on the user's location initially if available
-  LaunchedEffect(userLocation) {
-    if (userLocation != null && !initialCentered) {
-      cameraPositionState.position =
-          CameraPosition.fromLatLngZoom(userLocation!!, INITIAL_ZOOM_LEVEL)
-      initialCentered = true
-    }
-  }
-
-  Scaffold(
-      modifier = Modifier.testTag(MapTestTags.SCREEN),
-      topBar = {
-        TopAppBar(
-            title = {
-              Text(
-                  context.getString(R.string.map_event_title),
-                  modifier = Modifier.testTag(MapTestTags.TITLE))
-            },
-            navigationIcon = {
-              IconButton(
-                  onClick = { navigationAction.goBack() },
-                  modifier = Modifier.testTag(MapTestTags.GO_BACK_BUTTON)) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
-                        contentDescription = context.getString(R.string.map_event_go_back_button))
-                  }
-            })
-      },
-      floatingActionButton = {
-        FloatingActionButton(
-            modifier = Modifier.padding(bottom = 80.dp).testTag(MapTestTags.CENTER_ON_USER_FAB),
-            onClick = {
-              userLocation?.let {
-                cameraPositionState.position = CameraPosition.fromLatLngZoom(it, 15f)
-              }
-            }) {
-              Icon(
-                  Icons.Default.MyLocation,
-                  contentDescription =
-                      context.getString(R.string.map_content_description_center_on_user))
+                else -> {
+                    Log.e("MapScreen", "Location permission is not granted.")
+                }
             }
-      }) { pd ->
+        }
+
+    /** Request location permissions. */
+    fun requestPermissions() {
+        permissionLauncher.launch(
+            arrayOf(
+                Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION
+            )
+        )
+    }
+
+    // Check what permissions are already granted
+    LaunchedEffect(Unit) {
+        when (PackageManager.PERMISSION_GRANTED) {
+            ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) -> {
+                isMyLocationEnabled = true
+                showApproximateCircle = false
+                mapViewModel.fetchUserLocation(context)
+            }
+
+            ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) -> {
+                isMyLocationEnabled = false
+                showApproximateCircle = true
+                requestPermissions()
+                mapViewModel.fetchUserLocation(context)
+            }
+
+            else -> {
+                requestPermissions()
+            }
+        }
+        cameraPositionState.position =
+            CameraPosition.fromLatLngZoom(centerLocation ?: EPFL_COORDINATES, INITIAL_ZOOM_LEVEL)
+    }
+
+    // Center map on the center location initially if available
+    LaunchedEffect(centerLocation) {
+        if (userLocation != null && !initialCentered) {
+            cameraPositionState.position =
+                CameraPosition.fromLatLngZoom(centerLocation!!, INITIAL_ZOOM_LEVEL)
+            initialCentered = true
+        }
+    }
+
+    Scaffold(
+        modifier = Modifier.testTag(MapTestTags.SCREEN),
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        context.getString(R.string.map_event_title),
+                        modifier = Modifier.testTag(MapTestTags.TITLE)
+                    )
+                },
+                navigationIcon = {
+                    IconButton(
+                        onClick = { navigationAction.goBack() },
+                        modifier = Modifier.testTag(MapTestTags.GO_BACK_BUTTON)
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
+                            contentDescription = context.getString(R.string.map_event_go_back_button)
+                        )
+                    }
+                })
+        },
+        floatingActionButton = {
+            FloatingActionButton(
+                modifier = Modifier
+                    .padding(bottom = 80.dp)
+                    .testTag(MapTestTags.CENTER_ON_USER_FAB),
+                onClick = {
+                    userLocation?.let {
+                        cameraPositionState.position = CameraPosition.fromLatLngZoom(it, 15f)
+                    }
+                }) {
+                Icon(
+                    Icons.Default.MyLocation,
+                    contentDescription =
+                    context.getString(R.string.map_content_description_center_on_user)
+                )
+            }
+        }) { pd ->
         EventMap(
             pd,
             eventViewModel,
@@ -174,8 +192,9 @@ fun MapScreen(
             cameraPositionState,
             isMyLocationEnabled,
             showApproximateCircle,
-            userLocation)
-      }
+            userLocation
+        )
+    }
 }
 
 @Composable
@@ -188,33 +207,37 @@ fun EventMap(
     showApproximateCircle: Boolean,
     userLocation: LatLng?
 ) {
-  val events = eventViewModel.events.collectAsState()
+    val events = eventViewModel.events.collectAsState()
 
-  val user by userViewModel.user.collectAsState()
-  val savedEvents by user!!.savedEvents.list.collectAsState()
-  LaunchedEffect(user) { user?.savedEvents?.requestAll() }
+    val user by userViewModel.user.collectAsState()
+    val savedEvents by user!!.savedEvents.list.collectAsState()
+    LaunchedEffect(user) { user?.savedEvents?.requestAll() }
 
-  GoogleMap(
-      modifier = Modifier.padding(pd).testTag(MapTestTags.GOOGLE_MAPS),
-      cameraPositionState = cameraPositionState,
-      properties = MapProperties(isMyLocationEnabled = isMyLocatonEnabled),
-      uiSettings = MapUiSettings(myLocationButtonEnabled = false)) {
+    GoogleMap(
+        modifier = Modifier
+            .padding(pd)
+            .testTag(MapTestTags.GOOGLE_MAPS),
+        cameraPositionState = cameraPositionState,
+        properties = MapProperties(isMyLocationEnabled = isMyLocatonEnabled),
+        uiSettings = MapUiSettings(myLocationButtonEnabled = false)
+    ) {
         // Display the user's approximate location if only coarse location is available
         if (showApproximateCircle && userLocation != null) {
-          Circle(
-              center = userLocation,
-              radius = APPROXIMATE_CIRCLE_RADIUS,
-              fillColor = mapUserLocationCircleFiller,
-              strokeColor = mapUserLocationCircleStroke,
-              strokeWidth = APPROXIMATE_CIRCLE_OUTLINE_WIDTH,
-              tag = MapTestTags.LOCATION_APPROXIMATE_CIRCLE)
+            Circle(
+                center = userLocation,
+                radius = APPROXIMATE_CIRCLE_RADIUS,
+                fillColor = mapUserLocationCircleFiller,
+                strokeColor = mapUserLocationCircleStroke,
+                strokeWidth = APPROXIMATE_CIRCLE_OUTLINE_WIDTH,
+                tag = MapTestTags.LOCATION_APPROXIMATE_CIRCLE
+            )
         }
 
         // Display saved events
         savedEvents.forEach { event ->
-          if (event.date.toDate() > Calendar.getInstance().time) {
-            DisplayEventMarker(event, R.drawable.favorite_pinpoint)
-          }
+            if (event.date.toDate() > Calendar.getInstance().time) {
+                DisplayEventMarker(event, R.drawable.favorite_pinpoint)
+            }
         }
 
         // Display all events (should refactor to the ones that are soon to happen when more events
@@ -222,11 +245,11 @@ fun EventMap(
         events.value
             .filterNot { event -> savedEvents.any { it.uid == event.uid } }
             .forEach { event ->
-              if (event.date.toDate() > Calendar.getInstance().time) {
-                DisplayEventMarker(event, null)
-              }
+                if (event.date.toDate() > Calendar.getInstance().time) {
+                    DisplayEventMarker(event, null)
+                }
             }
-      }
+    }
 }
 
 /**
@@ -238,24 +261,26 @@ fun EventMap(
  */
 @Composable
 fun DisplayEventMarker(event: Event, customIconResId: Int?) {
-  val timer = timeUntilEvent(event.date)
-  event.location.let { location ->
-    val pinPointIcon =
-        if (customIconResId != null) {
-          val bitmap = BitmapFactory.decodeResource(LocalContext.current.resources, customIconResId)
-          val scaledBitmap = Bitmap.createScaledBitmap(bitmap, 96, 96, false)
-          BitmapDescriptorFactory.fromBitmap(scaledBitmap)
-        } else {
-          BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)
-        }
+    val timer = timeUntilEvent(event.date)
+    event.location.let { location ->
+        val pinPointIcon =
+            if (customIconResId != null) {
+                val bitmap =
+                    BitmapFactory.decodeResource(LocalContext.current.resources, customIconResId)
+                val scaledBitmap = Bitmap.createScaledBitmap(bitmap, 96, 96, false)
+                BitmapDescriptorFactory.fromBitmap(scaledBitmap)
+            } else {
+                BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)
+            }
 
-    Marker(
-        contentDescription = "Event: ${event.title}",
-        state = MarkerState(position = LatLng(location.latitude, location.longitude)),
-        title = event.title,
-        snippet = "$timer - ${event.description}",
-        icon = pinPointIcon)
-  }
+        Marker(
+            contentDescription = "Event: ${event.title}",
+            state = MarkerState(position = LatLng(location.latitude, location.longitude)),
+            title = event.title,
+            snippet = "$timer - ${event.description}",
+            icon = pinPointIcon
+        )
+    }
 }
 
 /**
@@ -265,12 +290,12 @@ fun DisplayEventMarker(event: Event, customIconResId: Int?) {
  * @return a string giving information about the time until the event occurs
  */
 fun timeUntilEvent(eventTimestamp: Timestamp): String {
-  val currentTime = Timestamp.now()
-  val timeDifference = eventTimestamp.seconds - currentTime.seconds
+    val currentTime = Timestamp.now()
+    val timeDifference = eventTimestamp.seconds - currentTime.seconds
 
-  if (timeDifference < 0) return MapStrings.EVENT_ALREADY_OCCURED
+    if (timeDifference < 0) return MapStrings.EVENT_ALREADY_OCCURED
 
-  val days = TimeUnit.SECONDS.toDays(timeDifference)
-  val hours = TimeUnit.SECONDS.toHours(timeDifference) % 24
-  return if (days > 0) "In $days days, $hours hours" else "In $hours hours"
+    val days = TimeUnit.SECONDS.toDays(timeDifference)
+    val hours = TimeUnit.SECONDS.toHours(timeDifference) % 24
+    return if (days > 0) "In $days days, $hours hours" else "In $hours hours"
 }

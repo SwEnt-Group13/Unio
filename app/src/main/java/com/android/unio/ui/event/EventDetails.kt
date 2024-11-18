@@ -310,7 +310,7 @@ fun EventDetailsBody(navigationAction: NavigationAction, mapViewModel: MapViewMo
             verticalArrangement = Arrangement.spacedBy(20.dp)) {
               OutlinedButton(
                   onClick = {
-                      mapViewModel.centerLocation
+                      mapViewModel.setCenterLocation(event.location)
                       navigationAction.navigateTo(Screen.MAP)
                   },
                   modifier =
