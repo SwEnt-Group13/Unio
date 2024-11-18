@@ -109,11 +109,15 @@ fun HomeContent(
     searchResults: List<Event>,
     userViewModel: UserViewModel,
     eventViewModel: EventViewModel,
+    isOnFollowScreen: Boolean,
     paddingValues: PaddingValues
 ) {
 
   val context = LocalContext.current
-  val events by eventViewModel.events.collectAsState()
+    val followedEvents by userViewModel.followedEvent.collectAsState()
+    val allEvent by eventViewModel.events.collectAsState()
+    val events: List<Event> = if (isOnFollowScreen) followedEvents else allEvent
+
   // Event List
   if (searchQuery.isNotEmpty() &&
       (searchState == SearchViewModel.Status.SUCCESS ||
@@ -292,6 +296,7 @@ fun TopBar(
                   searchResults,
                   userViewModel,
                   eventViewModel,
+                  pagerState.currentPage == 1,
                   paddingValues)
             }
       }

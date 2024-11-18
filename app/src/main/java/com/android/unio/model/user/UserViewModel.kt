@@ -5,6 +5,8 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.android.unio.model.association.Association
+import com.android.unio.model.event.Event
 import com.google.firebase.Firebase
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.auth
@@ -21,6 +23,9 @@ import kotlinx.coroutines.launch
 class UserViewModel @Inject constructor(private val repository: UserRepository) : ViewModel() {
   private val _user = MutableStateFlow<User?>(null)
   val user: StateFlow<User?> = _user.asStateFlow()
+
+  private val _followedEvent = MutableStateFlow(getFollowedAssociationsEvent())
+  val followedEvent: StateFlow<List<Event>> = _followedEvent.asStateFlow()
 
   private val _refreshState = mutableStateOf(false)
   val refreshState: State<Boolean> = _refreshState
@@ -145,6 +150,11 @@ class UserViewModel @Inject constructor(private val repository: UserRepository) 
     } else {
       Log.w("UserViewModel", "Event not found in savedEvents")
     }
+  }
+
+  fun getFollowedAssociationsEvent(): List<Event> {
+    val followedAsso = _user.value?.followedAssociations?.list?.value ?: emptyList()
+    return followedAsso.flatMap { it.events.list.value }
   }
 
   fun isEventSavedForCurrentUser(eventUid: String): Boolean {
