@@ -27,6 +27,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.AccessTime
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -35,6 +36,7 @@ import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -43,6 +45,7 @@ import androidx.compose.material3.TimeInput
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -60,7 +63,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.android.unio.R
+import com.android.unio.model.association.AssociationViewModel
+import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.strings.test_tags.EventCreationTestTags
+import com.android.unio.ui.event.overlay.CoauthorsOverlay
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.theme.AppTypography
 import java.text.SimpleDateFormat
@@ -69,16 +75,26 @@ import java.util.Locale
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun EventCreationScreen(navigationAction: NavigationAction) {
+fun EventCreationScreen(
+    navigationAction: NavigationAction,
+    searchViewModel: SearchViewModel,
+    associationViewModel: AssociationViewModel
+) {
   val context = LocalContext.current
   var name by remember { mutableStateOf("") }
   var shortDescription by remember { mutableStateOf("") }
   var longDescription by remember { mutableStateOf("") }
   val scrollState = rememberScrollState()
+  var showCoauthorsOverlay by remember { mutableStateOf(false) }
+  var showTaggedOverlay by remember { mutableStateOf(false) }
+
+  // TODO check if this recomposes correctly
+  var coauthorsAndBoolean =
+      associationViewModel.associations.collectAsState().value.map { it to mutableStateOf(false) }
 
   Scaffold(
-      modifier = Modifier.testTag(EventCreationTestTags.SCREEN),
-      content = { padding ->
+      modifier = Modifier.testTag(EventCreationTestTags.SCREEN))
+  { padding ->
         Column(
             modifier =
                 Modifier.padding(padding).padding(20.dp).fillMaxWidth().verticalScroll(scrollState),
@@ -117,33 +133,21 @@ fun EventCreationScreen(navigationAction: NavigationAction) {
 
               BannerImagePicker()
 
-              OutlinedTextField(
-                  modifier =
-                      Modifier.fillMaxWidth().testTag(EventCreationTestTags.COAUTHORS).clickable {
-                        Toast.makeText(
-                                context, "Coauthors are not implemented yet", Toast.LENGTH_SHORT)
-                            .show()
-                      },
-                  value = "",
-                  readOnly = true,
-                  onValueChange = {},
-                  label = { Text(context.getString(R.string.event_creation_coauthors_label)) })
+              OutlinedButton(
+                  modifier = Modifier.fillMaxWidth().testTag(EventCreationTestTags.COAUTHORS),
+                  onClick = { showCoauthorsOverlay = true }) {
+                    Icon(Icons.Default.Add, contentDescription = "ADD TEXT")
+                    Text(context.getString(R.string.event_creation_coauthors_label))
+                  }
+            coauthorsAndBoolean.forEach{ (association, selected) -> if (selected.value) { Text(association.name) } }
 
-              OutlinedTextField(
+              OutlinedButton(
                   modifier =
-                      Modifier.fillMaxWidth()
-                          .testTag(EventCreationTestTags.TAGGED_ASSOCIATIONS)
-                          .clickable {
-                            Toast.makeText(
-                                    context,
-                                    "Tagged Associations are not implemented yet",
-                                    Toast.LENGTH_SHORT)
-                                .show()
-                          },
-                  value = "",
-                  readOnly = true,
-                  onValueChange = {},
-                  label = { Text(context.getString(R.string.event_creation_tagged_label)) })
+                      Modifier.fillMaxWidth().testTag(EventCreationTestTags.TAGGED_ASSOCIATIONS),
+                  onClick = { showTaggedOverlay = true }) {
+                    Icon(Icons.Default.Add, contentDescription = "ADD TEXT")
+                    Text(context.getString(R.string.event_creation_tagged_label))
+                  }
 
               OutlinedTextField(
                   modifier = Modifier.fillMaxWidth().testTag(EventCreationTestTags.DESCRIPTION),
@@ -179,8 +183,19 @@ fun EventCreationScreen(navigationAction: NavigationAction) {
                   onClick = { navigationAction.goBack() }) {
                     Text(context.getString(R.string.event_creation_save_button))
                   }
+
+              if (showCoauthorsOverlay) {
+                CoauthorsOverlay(
+                    onDismiss = { showCoauthorsOverlay = false },
+                    onSave = { coauthors ->
+                      coauthorsAndBoolean = coauthors
+                      showCoauthorsOverlay = false
+                    },
+                    coauthors = coauthorsAndBoolean,
+                    searchViewModel = searchViewModel)
+              }
             }
-      })
+      }
 }
 
 @Composable

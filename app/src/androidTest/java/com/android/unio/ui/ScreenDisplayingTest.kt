@@ -170,8 +170,8 @@ class ScreenDisplayingTest {
     userViewModel = UserViewModel(userRepository)
     userViewModel.getUserByUid("1", false)
 
-    val associations = MockAssociation.createAllMockAssociations(size = 2)
     searchViewModel = spyk(SearchViewModel(searchRepository))
+    val associations = MockAssociation.createAllMockAssociations(size = 2)
 
     every { associationViewModel.findAssociationById(any()) } returns associations.first()
     every { associationViewModel.getEventsForAssociation(any(), any()) } answers
@@ -247,7 +247,9 @@ class ScreenDisplayingTest {
 
   @Test
   fun testEventCreationDisplayed() {
-    composeTestRule.setContent { EventCreationScreen(navigationAction) }
+    composeTestRule.setContent {
+      EventCreationScreen(navigationAction, searchViewModel, associationViewModel)
+    }
     composeTestRule.onNodeWithTag(EventCreationTestTags.SCREEN).assertIsDisplayed()
   }
 

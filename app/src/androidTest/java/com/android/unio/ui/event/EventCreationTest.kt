@@ -6,7 +6,12 @@ import androidx.compose.ui.test.isNotDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performScrollTo
+import com.android.unio.mocks.association.MockAssociation
 import com.android.unio.mocks.user.MockUser
+import com.android.unio.model.association.AssociationViewModel
+import com.android.unio.model.event.Event
+import com.android.unio.model.search.SearchRepository
+import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.strings.test_tags.EventCreationTestTags
 import com.android.unio.ui.navigation.NavigationAction
 import com.google.firebase.Firebase
@@ -19,6 +24,7 @@ import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockkStatic
+import io.mockk.spyk
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -36,6 +42,11 @@ class EventCreationTest {
   @get:Rule val composeTestRule = createComposeRule()
   @get:Rule val hiltRule = HiltAndroidRule(this)
 
+  private lateinit var searchViewModel: SearchViewModel
+  @MockK(relaxed = true) private lateinit var searchRepository: SearchRepository
+
+  private lateinit var associationViewModel: AssociationViewModel
+
   @Before
   fun setUp() {
     MockKAnnotations.init(this, relaxed = true)
@@ -44,11 +55,24 @@ class EventCreationTest {
     mockkStatic(FirebaseAuth::class)
     every { Firebase.auth } returns firebaseAuth
     every { firebaseAuth.currentUser } returns mockFirebaseUser
+
+    searchViewModel = spyk(SearchViewModel(searchRepository))
+
+    val associations = MockAssociation.createAllMockAssociations(size = 2)
+
+    every { associationViewModel.findAssociationById(any()) } returns associations.first()
+    every { associationViewModel.getEventsForAssociation(any(), any()) } answers
+        {
+          val onSuccess = args[1] as (List<Event>) -> Unit
+          onSuccess(emptyList())
+        }
   }
 
   @Test
   fun testEventCreationTagsDisplayed() {
-    composeTestRule.setContent { EventCreationScreen(navigationAction) }
+    composeTestRule.setContent {
+      EventCreationScreen(navigationAction, searchViewModel, associationViewModel)
+    }
 
     composeTestRule.waitForIdle()
 
