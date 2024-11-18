@@ -355,15 +355,25 @@ configurations.forEach { configuration ->
 fun runCommand(command: String) {
     val os = System.getProperty("os.name").toLowerCase()
     if (os.contains("win")) {
-        ProcessBuilder("cmd", "/c", "start", "cmd", "/k", command).start()
+        val adjustedCommand = if (command.contains("firebase emulators:exec")) {
+            command.replace("./gradlew", "gradlew") // remove ./ for Windows
+        } else {
+            command // other commands
+        }
+        ProcessBuilder("cmd", "/c", "start", "cmd", "/k", adjustedCommand).start()
     } else if (os.contains("nix") || os.contains("nux") || os.contains("bsd")) {
+        val adjustedCommand = if (command.contains("firebase emulators:exec")) {
+            command.replace("./gradlew", "gradlew") // remove ./ for Linux
+        } else {
+            command // other commands
+        }
         ProcessBuilder(
             "sh",
             "-c",
             """
-                x-terminal-emulator -e '$command' ||
-                gnome-terminal -- bash -c '$command; exec bash' ||
-                konsole -e '$command'
+                x-terminal-emulator -e '$adjustedCommand' ||
+                gnome-terminal -- bash -c '$adjustedCommand; exec bash' ||
+                konsole -e '$adjustedCommand'
                 """.trimIndent()
         ).start()
     } else if (os.contains("mac")) {
@@ -372,7 +382,7 @@ fun runCommand(command: String) {
             "-e",
             """
                 tell application "Terminal"
-                    do script "$command"
+                    do script "cd ${project.rootDir} && $command"
                     activate
                 end tell
                 """.trimIndent()
@@ -390,6 +400,6 @@ tasks.register("startFirebaseEmulators") {
 
 tasks.register("connectedCheckWithFirebaseEmulators") {
     doLast {
-        runCommand("firebase emulators:exec --import=./firebase/emulator-data \"gradlew connectedCheck\"")
+        runCommand("firebase emulators:exec --import=./firebase/emulator-data './gradlew connectedCheck'")
     }
 }
