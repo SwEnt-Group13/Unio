@@ -47,16 +47,12 @@ import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.compose.rememberNavController
 import com.android.unio.R
 import com.android.unio.model.association.Association
 import com.android.unio.model.event.Event
 import com.android.unio.model.firestore.emptyFirestoreReferenceList
 import com.android.unio.model.image.ImageRepository
-import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.strings.test_tags.AccountDetailsTestTags
 import com.android.unio.model.user.AccountDetailsError
 import com.android.unio.model.user.Interest
@@ -73,27 +69,41 @@ import com.android.unio.ui.theme.AppTypography
 import com.android.unio.ui.theme.primaryLight
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
-import com.google.firebase.storage.storage
 import kotlinx.coroutines.flow.MutableStateFlow
 
-@Preview
-@Composable
-fun PreviewAccountDetails(){
-    val navController = rememberNavController()
-    val navigationActions = NavigationAction(navController)
-    val userViewModel = hiltViewModel<UserViewModel>()
-
-    val firebaseStorage = Firebase.storage
-    val imageRepository = ImageRepositoryFirebaseStorage(firebaseStorage)
-
-    AccountDetails(navigationAction = navigationActions, userViewModel = userViewModel, imageRepository = imageRepository)
-}
 
 @Composable
-fun AccountDetails(
+fun AccountDetailsScreen(
     navigationAction: NavigationAction,
     userViewModel: UserViewModel,
     imageRepository: ImageRepository
+){
+
+    val context = LocalContext.current
+
+    AccountDetailsContent(navigationAction, imageRepository,
+    onUserCreate = { user ->
+        val errors = checkNewUser(user)
+        if (errors.isEmpty()) {
+            userViewModel.addUser(
+                user,
+                onSuccess = {
+                    Toast.makeText(
+                        context,
+                        context.getString(R.string.account_details_created_successfully),
+                        Toast.LENGTH_SHORT)
+                        .show()
+                    navigationAction.navigateTo(Screen.HOME)
+                })
+        }
+    })
+}
+
+@Composable
+fun AccountDetailsContent(
+    navigationAction: NavigationAction,
+    imageRepository: ImageRepository,
+    onUserCreate: (User) -> Unit
 ) {
   var firstName: String by remember { mutableStateOf("") }
   var lastName: String by remember { mutableStateOf("") }
@@ -147,19 +157,7 @@ fun AccountDetails(
             socials = socials,
             profilePicture = uri)
 
-    isErrors = checkNewUser(newUser)
-    if (isErrors.isEmpty()) {
-      userViewModel.addUser(
-          newUser,
-          onSuccess = {
-            Toast.makeText(
-                    context,
-                    context.getString(R.string.account_details_created_successfully),
-                    Toast.LENGTH_SHORT)
-                .show()
-            navigationAction.navigateTo(Screen.HOME)
-          })
-    }
+    onUserCreate(newUser)
   }
 
   Scaffold { padding ->
@@ -172,34 +170,23 @@ fun AccountDetails(
             .testTag(AccountDetailsTestTags.ACCOUNT_DETAILS),
         verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.CenterHorizontally) {
+
+
           Text(
               text = context.getString(R.string.account_details_title),
               style = AppTypography.headlineSmall,
               modifier = Modifier.testTag(AccountDetailsTestTags.TITLE_TEXT))
 
 
-        NameTextFields(
+        TextFields(
             isErrors,
             firstName,
             lastName,
+            bio,
             {firstName = it},
-            {lastName = it}
+            {lastName = it},
+            {bio = it}
         )
-
-          OutlinedTextField(
-              modifier =
-              Modifier
-                  .padding(4.dp)
-                  .fillMaxWidth()
-                  .height(200.dp)
-                  .testTag(AccountDetailsTestTags.BIOGRAPHY_TEXT_FIELD),
-              label = {
-                Text(
-                    context.getString(R.string.account_details_bio),
-                    modifier = Modifier.testTag(AccountDetailsTestTags.BIOGRAPHY_TEXT))
-              },
-              onValueChange = { bio = it },
-              value = bio)
 
           Row(
               modifier = Modifier
@@ -252,7 +239,6 @@ fun AccountDetails(
                   createUser("")
                 } else {
                   val inputStream = context.contentResolver.openInputStream(profilePictureUri.value)
-
                   imageRepository.uploadImage(
                       inputStream!!,
                       "images/users/${userId}",
@@ -294,12 +280,14 @@ fun AccountDetails(
 }
 
 @Composable
-private fun NameTextFields(
+private fun TextFields(
     isErrors : MutableSet<AccountDetailsError>,
     firstName: String,
     lastName: String,
+    bio: String,
     onFirstNameChange: (String) -> Unit,
-    onLastNameChange: (String) -> Unit
+    onLastNameChange: (String) -> Unit,
+    onBioChange: (String) -> Unit
 ){
     val context = LocalContext.current
     val isFirstNameError = isErrors.contains(AccountDetailsError.EMPTY_FIRST_NAME)
@@ -324,7 +312,7 @@ private fun NameTextFields(
                     modifier = Modifier.testTag(AccountDetailsTestTags.FIRST_NAME_ERROR_TEXT))
             }
         },
-        onValueChange =  onFirstNameChange ,
+        onValueChange =  onFirstNameChange,
         value = firstName)
 
     OutlinedTextField(
@@ -348,6 +336,22 @@ private fun NameTextFields(
         },
         onValueChange = onLastNameChange,
         value = lastName)
+
+
+    OutlinedTextField(
+        modifier =
+        Modifier
+            .padding(4.dp)
+            .fillMaxWidth()
+            .height(200.dp)
+            .testTag(AccountDetailsTestTags.BIOGRAPHY_TEXT_FIELD),
+        label = {
+            Text(
+                context.getString(R.string.account_details_bio),
+                modifier = Modifier.testTag(AccountDetailsTestTags.BIOGRAPHY_TEXT))
+        },
+        onValueChange = onBioChange,
+        value = bio)
 }
 
 @OptIn(ExperimentalLayoutApi::class)

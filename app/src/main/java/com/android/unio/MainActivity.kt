@@ -30,7 +30,7 @@ import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.association.AssociationProfileScreen
 import com.android.unio.ui.association.EditAssociationScreen
-import com.android.unio.ui.authentication.AccountDetails
+import com.android.unio.ui.authentication.AccountDetailsScreen
 import com.android.unio.ui.authentication.EmailVerificationScreen
 import com.android.unio.ui.authentication.WelcomeScreen
 import com.android.unio.ui.event.EventCreationScreen
@@ -104,7 +104,7 @@ fun UnioApp(imageRepository: ImageRepositoryFirebaseStorage) {
         EmailVerificationScreen(navigationActions, userViewModel)
       }
       composable(Screen.ACCOUNT_DETAILS) {
-        AccountDetails(navigationActions, userViewModel, imageRepository)
+        AccountDetailsScreen(navigationActions, userViewModel, imageRepository)
       }
     }
     navigation(startDestination = Screen.HOME, route = Route.HOME) {

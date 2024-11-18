@@ -74,7 +74,7 @@ class AccountDetailsTest {
     navigationAction = mock(NavigationAction::class.java)
     `when`(navigationAction.getCurrentRoute()).thenReturn(Screen.ACCOUNT_DETAILS)
 
-    composeTestRule.setContent { AccountDetails(navigationAction, userViewModel, imageRepository) }
+    composeTestRule.setContent { AccountDetailsScreen(navigationAction, userViewModel, imageRepository) }
   }
 
   @Test
