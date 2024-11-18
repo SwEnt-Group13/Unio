@@ -20,6 +20,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -81,12 +82,12 @@ fun MapScreen(
           permissions ->
         when {
           permissions.getOrDefault(Manifest.permission.ACCESS_FINE_LOCATION, false) -> {
-            mapViewModel.fetchUserLocation(context)
+            mapViewModel.startLocationUpdates(context)
             isMyLocationEnabled = true
             showApproximateCircle = false
           }
           permissions.getOrDefault(Manifest.permission.ACCESS_COARSE_LOCATION, false) -> {
-            mapViewModel.fetchUserLocation(context)
+            mapViewModel.startLocationUpdates(context)
             isMyLocationEnabled = false
             showApproximateCircle = true
           }
@@ -109,13 +110,13 @@ fun MapScreen(
       ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) -> {
         isMyLocationEnabled = true
         showApproximateCircle = false
-        mapViewModel.fetchUserLocation(context)
+        mapViewModel.startLocationUpdates(context)
       }
       ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) -> {
         isMyLocationEnabled = false
         showApproximateCircle = true
         requestPermissions()
-        mapViewModel.fetchUserLocation(context)
+        mapViewModel.startLocationUpdates(context)
       }
       else -> {
         requestPermissions()
@@ -133,6 +134,12 @@ fun MapScreen(
       initialCentered = true
     }
   }
+
+    DisposableEffect(Unit) {
+        onDispose {
+            mapViewModel.stopLocationUpdates()
+        }
+    }
 
   Scaffold(
       modifier = Modifier.testTag(MapTestTags.SCREEN),
