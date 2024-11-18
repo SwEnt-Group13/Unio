@@ -66,7 +66,7 @@ import com.android.unio.R
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.strings.test_tags.EventCreationTestTags
-import com.android.unio.ui.event.overlay.CoauthorsOverlay
+import com.android.unio.ui.event.overlay.AssociationsOverlay
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.theme.AppTypography
 import java.text.SimpleDateFormat
@@ -92,110 +92,134 @@ fun EventCreationScreen(
   var coauthorsAndBoolean =
       associationViewModel.associations.collectAsState().value.map { it to mutableStateOf(false) }
 
-  Scaffold(
-      modifier = Modifier.testTag(EventCreationTestTags.SCREEN))
-  { padding ->
-        Column(
-            modifier =
-                Modifier.padding(padding).padding(20.dp).fillMaxWidth().verticalScroll(scrollState),
-            verticalArrangement = Arrangement.spacedBy(6.dp),
-            horizontalAlignment = CenterHorizontally) {
-              Row(
-                  modifier = Modifier.fillMaxWidth(),
-                  verticalAlignment = Alignment.CenterVertically,
-                  horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                    IconButton(onClick = { navigationAction.goBack() }) {
-                      Icon(
-                          Icons.AutoMirrored.Filled.ArrowBack,
-                          contentDescription =
-                              context.getString(R.string.event_creation_cancel_button))
-                    }
-                    Text(
-                        context.getString(R.string.event_creation_title),
-                        style = AppTypography.headlineSmall,
-                        modifier = Modifier.testTag(EventCreationTestTags.TITLE))
-                  }
-
-              OutlinedTextField(
-                  modifier = Modifier.fillMaxWidth().testTag(EventCreationTestTags.EVENT_TITLE),
-                  value = name,
-                  onValueChange = { name = it },
-                  label = { Text(context.getString(R.string.event_creation_name_label)) })
-
-              OutlinedTextField(
-                  modifier =
-                      Modifier.fillMaxWidth().testTag(EventCreationTestTags.SHORT_DESCRIPTION),
-                  value = shortDescription,
-                  onValueChange = { shortDescription = it },
-                  label = {
-                    Text(context.getString(R.string.event_creation_short_description_label))
-                  })
-
-              BannerImagePicker()
-
-              OutlinedButton(
-                  modifier = Modifier.fillMaxWidth().testTag(EventCreationTestTags.COAUTHORS),
-                  onClick = { showCoauthorsOverlay = true }) {
-                    Icon(Icons.Default.Add, contentDescription = "ADD TEXT")
-                    Text(context.getString(R.string.event_creation_coauthors_label))
-                  }
-            coauthorsAndBoolean.forEach{ (association, selected) -> if (selected.value) { Text(association.name) } }
-
-              OutlinedButton(
-                  modifier =
-                      Modifier.fillMaxWidth().testTag(EventCreationTestTags.TAGGED_ASSOCIATIONS),
-                  onClick = { showTaggedOverlay = true }) {
-                    Icon(Icons.Default.Add, contentDescription = "ADD TEXT")
-                    Text(context.getString(R.string.event_creation_tagged_label))
-                  }
-
-              OutlinedTextField(
-                  modifier = Modifier.fillMaxWidth().testTag(EventCreationTestTags.DESCRIPTION),
-                  value = longDescription,
-                  onValueChange = { longDescription = it },
-                  label = { Text(context.getString(R.string.event_creation_description_label)) })
-
-              DateAndTimePicker(
-                  context.getString(R.string.event_creation_startdate_label),
-                  context.getString(R.string.event_creation_starttime_label),
-                  modifier = Modifier.testTag(EventCreationTestTags.START_TIME))
-
-              DateAndTimePicker(
-                  context.getString(R.string.event_creation_enddate_label),
-                  context.getString(R.string.event_creation_endtime_label),
-                  modifier = Modifier.testTag(EventCreationTestTags.END_TIME))
-
-              OutlinedTextField(
-                  modifier =
-                      Modifier.fillMaxWidth().testTag(EventCreationTestTags.LOCATION).clickable {
-                        Toast.makeText(
-                                context, "Location is not implemented yet", Toast.LENGTH_SHORT)
-                            .show()
-                      },
-                  value = "",
-                  onValueChange = {},
-                  label = { Text(context.getString(R.string.event_creation_location_label)) })
-
-              Spacer(modifier = Modifier.width(10.dp))
-
-              Button(
-                  modifier = Modifier.testTag(EventCreationTestTags.SAVE_BUTTON),
-                  onClick = { navigationAction.goBack() }) {
-                    Text(context.getString(R.string.event_creation_save_button))
-                  }
-
-              if (showCoauthorsOverlay) {
-                CoauthorsOverlay(
-                    onDismiss = { showCoauthorsOverlay = false },
-                    onSave = { coauthors ->
-                      coauthorsAndBoolean = coauthors
-                      showCoauthorsOverlay = false
-                    },
-                    coauthors = coauthorsAndBoolean,
-                    searchViewModel = searchViewModel)
+  var taggedAndBoolean =
+      associationViewModel.associations.collectAsState().value.map { it to mutableStateOf(false) }
+  Scaffold(modifier = Modifier.testTag(EventCreationTestTags.SCREEN)) { padding ->
+    Column(
+        modifier =
+            Modifier.padding(padding).padding(20.dp).fillMaxWidth().verticalScroll(scrollState),
+        verticalArrangement = Arrangement.spacedBy(6.dp),
+        horizontalAlignment = CenterHorizontally) {
+          Row(
+              modifier = Modifier.fillMaxWidth(),
+              verticalAlignment = Alignment.CenterVertically,
+              horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                IconButton(onClick = { navigationAction.goBack() }) {
+                  Icon(
+                      Icons.AutoMirrored.Filled.ArrowBack,
+                      contentDescription = context.getString(R.string.event_creation_cancel_button))
+                }
+                Text(
+                    context.getString(R.string.event_creation_title),
+                    style = AppTypography.headlineSmall,
+                    modifier = Modifier.testTag(EventCreationTestTags.TITLE))
               }
+
+          OutlinedTextField(
+              modifier = Modifier.fillMaxWidth().testTag(EventCreationTestTags.EVENT_TITLE),
+              value = name,
+              onValueChange = { name = it },
+              label = { Text(context.getString(R.string.event_creation_name_label)) })
+
+          OutlinedTextField(
+              modifier = Modifier.fillMaxWidth().testTag(EventCreationTestTags.SHORT_DESCRIPTION),
+              value = shortDescription,
+              onValueChange = { shortDescription = it },
+              label = { Text(context.getString(R.string.event_creation_short_description_label)) })
+
+          BannerImagePicker()
+
+          OutlinedButton(
+              modifier = Modifier.fillMaxWidth().testTag(EventCreationTestTags.COAUTHORS),
+              onClick = { showCoauthorsOverlay = true }) {
+                Icon(
+                    Icons.Default.Add,
+                    contentDescription =
+                        context.getString(R.string.social_overlay_content_description_add))
+                Text(context.getString(R.string.event_creation_coauthors_label))
+              }
+          coauthorsAndBoolean.forEach { (association, selected) ->
+            if (selected.value) {
+              Text(association.name)
             }
-      }
+          }
+
+          OutlinedButton(
+              modifier = Modifier.fillMaxWidth().testTag(EventCreationTestTags.TAGGED_ASSOCIATIONS),
+              onClick = { showTaggedOverlay = true }) {
+                Icon(
+                    Icons.Default.Add,
+                    contentDescription =
+                        context.getString(R.string.social_overlay_content_description_add))
+                Text(context.getString(R.string.event_creation_tagged_label))
+              }
+          taggedAndBoolean.forEach { (association, selected) ->
+            if (selected.value) {
+              Text(association.name)
+            }
+          }
+
+          OutlinedTextField(
+              modifier = Modifier.fillMaxWidth().testTag(EventCreationTestTags.DESCRIPTION),
+              value = longDescription,
+              onValueChange = { longDescription = it },
+              label = { Text(context.getString(R.string.event_creation_description_label)) })
+
+          DateAndTimePicker(
+              context.getString(R.string.event_creation_startdate_label),
+              context.getString(R.string.event_creation_starttime_label),
+              modifier = Modifier.testTag(EventCreationTestTags.START_TIME))
+
+          DateAndTimePicker(
+              context.getString(R.string.event_creation_enddate_label),
+              context.getString(R.string.event_creation_endtime_label),
+              modifier = Modifier.testTag(EventCreationTestTags.END_TIME))
+
+          OutlinedTextField(
+              modifier =
+                  Modifier.fillMaxWidth().testTag(EventCreationTestTags.LOCATION).clickable {
+                    Toast.makeText(context, "Location is not implemented yet", Toast.LENGTH_SHORT)
+                        .show()
+                  },
+              value = "",
+              onValueChange = {},
+              label = { Text(context.getString(R.string.event_creation_location_label)) })
+
+          Spacer(modifier = Modifier.width(10.dp))
+
+          Button(
+              modifier = Modifier.testTag(EventCreationTestTags.SAVE_BUTTON),
+              onClick = { navigationAction.goBack() }) {
+                Text(context.getString(R.string.event_creation_save_button))
+              }
+
+          if (showCoauthorsOverlay) {
+            AssociationsOverlay(
+                onDismiss = { showCoauthorsOverlay = false },
+                onSave = { coauthors ->
+                  coauthorsAndBoolean = coauthors
+                  showCoauthorsOverlay = false
+                },
+                associations = coauthorsAndBoolean,
+                searchViewModel = searchViewModel,
+                headerText = context.getString(R.string.associations_overlay_coauthors_title),
+                bodyText = context.getString(R.string.associations_overlay_coauthors_description))
+          }
+
+          if (showTaggedOverlay) {
+            AssociationsOverlay(
+                onDismiss = { showTaggedOverlay = false },
+                onSave = { tagged ->
+                  taggedAndBoolean = tagged
+                  showTaggedOverlay = false
+                },
+                associations = taggedAndBoolean,
+                searchViewModel = searchViewModel,
+                headerText = context.getString(R.string.associations_overlay_tagged_title),
+                bodyText = context.getString(R.string.associations_overlay_tagged_description))
+          }
+        }
+  }
 }
 
 @Composable
