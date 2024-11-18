@@ -133,16 +133,23 @@ fun MapScreen(
                 requestPermissions()
             }
         }
+        // this line seems to not do anything !
         cameraPositionState.position =
-            CameraPosition.fromLatLngZoom(centerLocation ?: EPFL_COORDINATES, INITIAL_ZOOM_LEVEL)
+          CameraPosition.fromLatLngZoom(userLocation ?: EPFL_COORDINATES, INITIAL_ZOOM_LEVEL)
     }
 
     // Center map on the center location initially if available
-    LaunchedEffect(centerLocation) {
-        if (userLocation != null && !initialCentered) {
+    LaunchedEffect(userLocation) {
+        if (userLocation != null && centerLocation == null) {
+            cameraPositionState.position =
+                CameraPosition.fromLatLngZoom(userLocation!!, INITIAL_ZOOM_LEVEL)
+            initialCentered = true
+        } else if (centerLocation != null) {
             cameraPositionState.position =
                 CameraPosition.fromLatLngZoom(centerLocation!!, INITIAL_ZOOM_LEVEL)
-            initialCentered = true
+        } else {
+            cameraPositionState.position =
+                CameraPosition.fromLatLngZoom(EPFL_COORDINATES, INITIAL_ZOOM_LEVEL)
         }
     }
 
@@ -158,7 +165,9 @@ fun MapScreen(
                 },
                 navigationIcon = {
                     IconButton(
-                        onClick = { navigationAction.goBack() },
+                        onClick = {
+                            mapViewModel.setCenterLocation(null)
+                            navigationAction.goBack() },
                         modifier = Modifier.testTag(MapTestTags.GO_BACK_BUTTON)
                     ) {
                         Icon(

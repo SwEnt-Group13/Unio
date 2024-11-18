@@ -29,8 +29,13 @@ constructor(private val fusedLocationClient: FusedLocationProviderClient) : View
    * Sets a center location for the map given a location
    * @param location the location to center the map on.
    */
-  fun setCenterLocation(location: Location) {
-    _centerLocation.value = LatLng(location.latitude, location.longitude)
+  fun setCenterLocation(location: Location?) {
+    if (location != null) {
+      _centerLocation.value = LatLng(location.latitude, location.longitude)
+    } else {
+      _centerLocation.value = null
+    }
+
   }
 
   /** Fetches the user's location and updates the [_userLocation] state flow. */
