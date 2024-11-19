@@ -283,12 +283,12 @@ fun EventDate(event: Event) {
           color = MaterialTheme.colorScheme.onPrimary)
     } else {
       Text(
-          "$formattedStartDateHour - $formattedStartDateDay",
+          "$formattedStartDateDay - $formattedStartDateHour",
           modifier = Modifier.testTag(EventDetailsTestTags.START_HOUR),
           color = MaterialTheme.colorScheme.onPrimary)
 
       Text(
-          "$formattedEndDateHour - $formattedEndDateDay",
+          "$formattedEndDateDay - $formattedEndDateHour",
           modifier = Modifier.testTag(EventDetailsTestTags.DATE),
           color = MaterialTheme.colorScheme.onPrimary)
     }
