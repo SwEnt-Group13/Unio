@@ -98,7 +98,8 @@ open class EndToEndTest : FirebaseEmulatorFunctions {
 
   /* Constant URLs used by the local emulator */
   object Firestore {
-    const val HOST = "10.0.2.2"
+//    const val HOST = "10.0.2.2"
+    const val HOST = "128.179.201.248"
     const val PORT = 8080
     const val ROOT = "http://$HOST:$PORT"
     const val SHORT_ROOT = "$HOST:$PORT"
@@ -106,7 +107,8 @@ open class EndToEndTest : FirebaseEmulatorFunctions {
   }
 
   object Auth {
-    const val HOST = "10.0.2.2"
+//    const val HOST = "10.0.2.2"
+    const val HOST = "128.179.201.248"
     const val PORT = 9099
     const val ROOT = "http://$HOST:$PORT"
     const val OOB_URL = "$ROOT/emulator/v1/projects/unio-1b8ee/oobCodes"
