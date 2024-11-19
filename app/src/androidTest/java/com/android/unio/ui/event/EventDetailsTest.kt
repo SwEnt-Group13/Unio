@@ -20,6 +20,8 @@ import com.android.unio.model.strings.test_tags.EventDetailsTestTags
 import com.android.unio.ui.navigation.NavigationAction
 import io.mockk.clearAllMocks
 import io.mockk.unmockkAll
+import java.text.SimpleDateFormat
+import java.util.Locale
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -27,8 +29,6 @@ import org.junit.Test
 import org.mockito.MockitoAnnotations
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
-import java.text.SimpleDateFormat
-import java.util.Locale
 
 class EventDetailsTest {
   private lateinit var navHostController: NavHostController
@@ -65,9 +65,9 @@ class EventDetailsTest {
     composeTestRule.waitForIdle()
 
     val formattedStartDateDay =
-      formatTimestamp(events[0].startDate, SimpleDateFormat("dd/MM", Locale.getDefault()))
+        formatTimestamp(events[0].startDate, SimpleDateFormat("dd/MM", Locale.getDefault()))
     val formattedEndDateDay =
-      formatTimestamp(events[0].endDate, SimpleDateFormat("dd/MM", Locale.getDefault()))
+        formatTimestamp(events[0].endDate, SimpleDateFormat("dd/MM", Locale.getDefault()))
 
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag(EventDetailsTestTags.SCREEN, true))
     assertDisplayComponentInScroll(

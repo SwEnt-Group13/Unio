@@ -13,7 +13,8 @@ import com.android.unio.R
 import com.android.unio.mocks.association.MockAssociation
 import com.android.unio.mocks.event.MockEvent
 import com.android.unio.mocks.user.MockUser
-import com.android.unio.model.event.EventRepository
+import com.android.unio.model.event.Event
+import com.android.unio.model.event.EventRepositoryFirestore
 import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.hilt.module.FirebaseModule
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
@@ -138,7 +139,9 @@ class HomeTest {
   fun testEmptyEventList() {
     var text = ""
     composeTestRule.setContent {
-      val eventViewModel = EventViewModel(mockEventRepository, imageRepository)
+      val context = LocalContext.current
+      text = context.getString(R.string.event_no_events_available)
+      val eventViewModel = EventViewModel(eventRepository, imageRepository)
       HomeScreen(navigationAction, eventViewModel, userViewModel, searchViewModel)
     }
     composeTestRule.onNodeWithTag(HomeTestTags.EMPTY_EVENT_PROMPT).assertExists()
