@@ -255,17 +255,44 @@ fun EventInformationCard(event: Event, associations: List<Association>, context:
                 }
           }
         }
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-          Text(
-              formatTimestamp(event.startDate, SimpleDateFormat("HH:mm", Locale.getDefault())),
-              modifier = Modifier.testTag(EventDetailsTestTags.START_HOUR),
-              color = MaterialTheme.colorScheme.onPrimary)
-          Text(
-              formatTimestamp(event.startDate, SimpleDateFormat("dd/MM", Locale.getDefault())),
-              modifier = Modifier.testTag(EventDetailsTestTags.DATE),
-              color = MaterialTheme.colorScheme.onPrimary)
-        }
+        EventDate(event)
       }
+}
+
+@Composable
+fun EventDate(event: Event) {
+  Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+    val formattedStartDateDay =
+        formatTimestamp(event.startDate, SimpleDateFormat("dd/MM", Locale.getDefault()))
+    val formattedEndDateDay =
+        formatTimestamp(event.endDate, SimpleDateFormat("dd/MM", Locale.getDefault()))
+    val formattedStartDateHour =
+        formatTimestamp(event.startDate, SimpleDateFormat("HH:mm", Locale.getDefault()))
+    val formattedEndDateHour =
+        formatTimestamp(event.endDate, SimpleDateFormat("HH:mm", Locale.getDefault()))
+    if (formattedStartDateDay == formattedEndDateDay) {
+      // event starts and ends on the same day
+      Text(
+          "$formattedStartDateHour - $formattedEndDateHour",
+          modifier = Modifier.testTag(EventDetailsTestTags.START_HOUR),
+          color = MaterialTheme.colorScheme.onPrimary)
+
+      Text(
+          formattedStartDateDay,
+          modifier = Modifier.testTag(EventDetailsTestTags.DATE),
+          color = MaterialTheme.colorScheme.onPrimary)
+    } else {
+      Text(
+          "$formattedStartDateHour - $formattedStartDateDay",
+          modifier = Modifier.testTag(EventDetailsTestTags.START_HOUR),
+          color = MaterialTheme.colorScheme.onPrimary)
+
+      Text(
+          "$formattedEndDateHour - $formattedEndDateDay",
+          modifier = Modifier.testTag(EventDetailsTestTags.DATE),
+          color = MaterialTheme.colorScheme.onPrimary)
+    }
+  }
 }
 
 @Composable
