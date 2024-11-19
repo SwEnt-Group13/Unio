@@ -1,13 +1,9 @@
 package com.android.unio.model.search
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.android.unio.model.association.Association
-import com.android.unio.model.association.AssociationRepository
 import com.android.unio.model.event.Event
-import com.android.unio.model.event.EventRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.Job
