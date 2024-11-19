@@ -7,9 +7,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.unit.ExperimentalUnitApi
 import com.android.unio.mocks.user.MockUser
-import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventRepository
-import com.android.unio.model.event.EventRepositoryMock
 import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.search.SearchRepository
@@ -88,16 +86,7 @@ class HomeTest {
   @Test
   fun testEmptyEventList() {
     composeTestRule.setContent {
-      val emptyEventRepository =
-          object : EventRepositoryMock() {
-            override fun getEvents(
-                onSuccess: (List<Event>) -> Unit,
-                onFailure: (Exception) -> Unit
-            ) {
-              onSuccess(emptyList())
-            }
-          }
-      val eventViewModel = EventViewModel(emptyEventRepository, imageRepository)
+      val eventViewModel = EventViewModel(mockEventRepository, imageRepository)
       HomeScreen(navigationAction, eventViewModel, userViewModel, searchViewModel)
     }
     composeTestRule.onNodeWithTag(HomeTestTags.EMPTY_EVENT_PROMPT).assertExists()
