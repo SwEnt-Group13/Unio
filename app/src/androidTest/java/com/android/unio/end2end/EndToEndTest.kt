@@ -100,6 +100,7 @@ open class EndToEndTest : FirebaseEmulatorFunctions {
 
   /* Constant URLs used by the local emulator */
   object Firestore {
+    const val HOST = "10.0.2.2"
     const val PORT = 8080
     const val ROOT = "http://$HOST:$PORT"
 
@@ -107,6 +108,7 @@ open class EndToEndTest : FirebaseEmulatorFunctions {
   }
 
   object Auth {
+    const val HOST = "10.0.2.2"
     const val PORT = 9099
     const val ROOT = "http://$HOST:$PORT"
 
