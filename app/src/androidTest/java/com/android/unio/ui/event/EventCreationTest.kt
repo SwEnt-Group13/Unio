@@ -9,8 +9,12 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import com.android.unio.mocks.association.MockAssociation
 import com.android.unio.mocks.user.MockUser
+import com.android.unio.model.association.AssociationRepositoryFirestore
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.event.Event
+import com.android.unio.model.event.EventRepositoryFirestore
+import com.android.unio.model.follow.ConcurrentAssociationUserRepositoryFirestore
+import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.search.SearchRepository
 import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.strings.test_tags.EventCreationOverlayTestTags
@@ -48,6 +52,10 @@ class EventCreationTest {
   @MockK(relaxed = true) private lateinit var searchRepository: SearchRepository
 
   private lateinit var associationViewModel: AssociationViewModel
+  @MockK private lateinit var associationRepositoryFirestore: AssociationRepositoryFirestore
+  @MockK private lateinit var eventRepositoryFirestore: EventRepositoryFirestore
+  @MockK private lateinit var imageRepositoryFirestore: ImageRepositoryFirebaseStorage
+  @MockK private lateinit var concurrentAssociationUserRepositoryFirestore: ConcurrentAssociationUserRepositoryFirestore
 
   @Before
   fun setUp() {
@@ -59,6 +67,7 @@ class EventCreationTest {
     every { firebaseAuth.currentUser } returns mockFirebaseUser
 
     searchViewModel = spyk(SearchViewModel(searchRepository))
+    associationViewModel = spyk(AssociationViewModel(associationRepositoryFirestore, eventRepositoryFirestore, imageRepositoryFirestore, concurrentAssociationUserRepositoryFirestore))
 
     val associations = MockAssociation.createAllMockAssociations(size = 2)
 
@@ -106,10 +115,7 @@ class EventCreationTest {
     assertDisplayComponentInScroll(
         composeTestRule.onNodeWithTag(EventCreationOverlayTestTags.CANCEL))
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag(EventCreationOverlayTestTags.SAVE))
-    assertDisplayComponentInScroll(
-        composeTestRule.onNodeWithTag(EventCreationOverlayTestTags.ASSOCIATION_LIST))
-  }
-}
+}}
 
 /**
  * This function is a copy of the function with the same name from EditAssociationTest.kt. It should

@@ -29,7 +29,7 @@ fun addNewUserSocial(composeTestRule: ComposeContentTestRule, username: String, 
   composeTestRule.onNodeWithTag(SocialsOverlayTestTags.PROMPT_TEXT_FIELD).performTextInput(username)
   composeTestRule.onNodeWithTag(SocialsOverlayTestTags.PROMPT_DROP_BOX).performClick()
   composeTestRule
-      .onNodeWithTag(SocialsOverlayTestTags.PROMPT_DROP_BOX_ITEM + "$platform")
+      .onNodeWithTag(SocialsOverlayTestTags.PROMPT_DROP_BOX_ITEM + platform)
       .performClick()
   composeTestRule.onNodeWithTag(SocialsOverlayTestTags.PROMPT_SAVE_BUTTON).performClick()
 }
