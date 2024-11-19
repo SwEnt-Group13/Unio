@@ -40,7 +40,7 @@ open class EventRepositoryMock @Inject constructor() : EventRepository {
                       "The Summer Festival features live music, food stalls, and various activities for all ages.",
                   catchyDescription = "Come to the best event of the Coaching IC!",
                   price = 0.0,
-                  date = Timestamp(Date(2024 - 1900, 6, 20)), // July 20, 2024
+                  startDate = Timestamp(Date(2024 - 1900, 6, 20)), // July 20, 2024
                   location = Location(0.0, 0.0, "USA"),
                   types = listOf(EventType.TRIP),
                   placesRemaining = -1),
@@ -54,7 +54,7 @@ open class EventRepositoryMock @Inject constructor() : EventRepository {
                       "An evening of networking with industry leaders and innovators. Don't miss out!",
                   catchyDescription = "There never enough beersssssss!",
                   price = 10.0,
-                  date = Timestamp(Date(2024 - 1900, 4, 15)), // May 15, 2024
+                  startDate = Timestamp(Date(2024 - 1900, 4, 15)), // May 15, 2024
                   location = Location(1.0, 1.0, "USA"),
                   types = listOf(EventType.OTHER),
                   placesRemaining = -1),
@@ -68,7 +68,7 @@ open class EventRepositoryMock @Inject constructor() : EventRepository {
                       "Learn Kotlin from scratch with real-world examples and expert guidance.",
                   catchyDescription = "Don't miss the chant de section!",
                   price = 0.0,
-                  date = Timestamp(Date(2024 - 1900, 2, 10)), // March 10, 2024
+                  startDate = Timestamp(Date(2024 - 1900, 2, 10)), // March 10, 2024
                   location = Location(2.0, 2.0, "USA"),
                   types = listOf(EventType.OTHER),
                   placesRemaining = -1),
@@ -82,7 +82,7 @@ open class EventRepositoryMock @Inject constructor() : EventRepository {
                       "Join us for an unforgettable evening featuring local artists and musicians.",
                   catchyDescription = "Venez, il y a des gens sympa!",
                   price = 0.0,
-                  date = Timestamp(Date(2024 - 1900, 8, 25)), // September 25, 2024
+                  startDate = Timestamp(Date(2024 - 1900, 8, 25)), // September 25, 2024
                   location = Location(3.0, 3.0, "USA"),
                   types = listOf(EventType.OTHER),
                   placesRemaining = -1),
@@ -96,7 +96,7 @@ open class EventRepositoryMock @Inject constructor() : EventRepository {
                       "Participate in various sports activities and enjoy food and entertainment.",
                   catchyDescription = "Pick the best one!",
                   price = 5.0,
-                  date = Timestamp(Date(2024 - 1900, 5, 5)), // June 5, 2024
+                  startDate = Timestamp(Date(2024 - 1900, 5, 5)), // June 5, 2024
                   location = Location(4.0, 4.0, "USA"),
                   types = listOf(EventType.SPORT),
                   placesRemaining = -1),
@@ -110,7 +110,7 @@ open class EventRepositoryMock @Inject constructor() : EventRepository {
                       "A workshop dedicated to teaching strategies for successful social media marketing.",
                   catchyDescription = "Best concert everrrrr!",
                   price = 15.0,
-                  date = Timestamp(Date(2024 - 1900, 7, 30)), // August 30, 2024
+                  startDate = Timestamp(Date(2024 - 1900, 7, 30)), // August 30, 2024
                   location = Location(5.0, 5.0, "USA"),
                   types = listOf(EventType.OTHER),
                   placesRemaining = -1),
@@ -124,7 +124,7 @@ open class EventRepositoryMock @Inject constructor() : EventRepository {
                       "An evening of music with local artists. Bring your instruments or just enjoy the show!",
                   catchyDescription = "Support local talent in this open jam session!",
                   price = 0.0,
-                  date = Timestamp(Date(2024 - 1900, 3, 12)), // April 12, 2024
+                  startDate = Timestamp(Date(2024 - 1900, 3, 12)), // April 12, 2024
                   location = Location(6.0, 6.0, "USA"),
                   types = listOf(EventType.JAM),
                   placesRemaining = -1))
@@ -161,7 +161,8 @@ open class EventRepositoryMock @Inject constructor() : EventRepository {
       onFailure: (Exception) -> Unit
   ) {
     // Filter mock events by date range
-    getEvents({ events -> onSuccess(events.filter { it.date in startDate..endDate }) }, onFailure)
+    getEvents(
+        { events -> onSuccess(events.filter { it.startDate in startDate..endDate }) }, onFailure)
   }
 
   // Mock implementation to generate a new UID

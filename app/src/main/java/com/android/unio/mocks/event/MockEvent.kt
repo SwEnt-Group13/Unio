@@ -107,7 +107,7 @@ class MockEvent {
           description = description,
           catchyDescription = catchyDescription,
           price = price,
-          date = date,
+          startDate = date,
           location = location,
           types = types,
           placesRemaining = -1)

@@ -423,7 +423,7 @@ private fun AssociationEvents(
         context.getString(R.string.association_upcoming_events),
         modifier = Modifier.testTag(AssociationProfileTestTags.EVENT_TITLE),
         style = AppTypography.headlineMedium)
-    events.sortedBy { it.date }
+    events.sortedBy { it.startDate }
     val first = events.first()
     Column(modifier = Modifier, horizontalAlignment = Alignment.CenterHorizontally) {
       if (isSeeMoreClicked) {

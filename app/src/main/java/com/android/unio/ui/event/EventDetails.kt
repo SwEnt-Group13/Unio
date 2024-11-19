@@ -257,11 +257,11 @@ fun EventInformationCard(event: Event, associations: List<Association>, context:
         }
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
           Text(
-              formatTimestamp(event.date, SimpleDateFormat("HH:mm", Locale.getDefault())),
+              formatTimestamp(event.startDate, SimpleDateFormat("HH:mm", Locale.getDefault())),
               modifier = Modifier.testTag(EventDetailsTestTags.START_HOUR),
               color = MaterialTheme.colorScheme.onPrimary)
           Text(
-              formatTimestamp(event.date, SimpleDateFormat("dd/MM", Locale.getDefault())),
+              formatTimestamp(event.startDate, SimpleDateFormat("dd/MM", Locale.getDefault())),
               modifier = Modifier.testTag(EventDetailsTestTags.DATE),
               color = MaterialTheme.colorScheme.onPrimary)
         }

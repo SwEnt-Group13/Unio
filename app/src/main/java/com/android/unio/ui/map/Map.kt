@@ -212,7 +212,7 @@ fun EventMap(
 
         // Display saved events
         savedEvents.forEach { event ->
-          if (event.date.toDate() > Calendar.getInstance().time) {
+          if (event.startDate.toDate() > Calendar.getInstance().time) {
             DisplayEventMarker(event, R.drawable.favorite_pinpoint)
           }
         }
@@ -222,7 +222,7 @@ fun EventMap(
         events.value
             .filterNot { event -> savedEvents.any { it.uid == event.uid } }
             .forEach { event ->
-              if (event.date.toDate() > Calendar.getInstance().time) {
+              if (event.startDate.toDate() > Calendar.getInstance().time) {
                 DisplayEventMarker(event, null)
               }
             }
@@ -238,7 +238,7 @@ fun EventMap(
  */
 @Composable
 fun DisplayEventMarker(event: Event, customIconResId: Int?) {
-  val timer = timeUntilEvent(event.date)
+  val timer = timeUntilEvent(event.startDate)
   event.location.let { location ->
     val pinPointIcon =
         if (customIconResId != null) {

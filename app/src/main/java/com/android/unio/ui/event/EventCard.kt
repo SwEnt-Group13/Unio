@@ -230,7 +230,9 @@ fun EventCardScaffold(
                 modifier =
                     Modifier.padding(vertical = 1.dp, horizontal = 0.dp)
                         .testTag(EventCardTestTags.EVENT_DATE),
-                text = formatTimestamp(event.date, SimpleDateFormat("dd/MM", Locale.getDefault())),
+                text =
+                    formatTimestamp(
+                        event.startDate, SimpleDateFormat("dd/MM", Locale.getDefault())),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurface)
 
@@ -248,7 +250,9 @@ fun EventCardScaffold(
 
             Text(
                 modifier = Modifier.testTag(EventCardTestTags.EVENT_TIME).wrapContentWidth(),
-                text = formatTimestamp(event.date, SimpleDateFormat("HH:mm", Locale.getDefault())),
+                text =
+                    formatTimestamp(
+                        event.startDate, SimpleDateFormat("HH:mm", Locale.getDefault())),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurface)
           }
