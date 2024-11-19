@@ -133,7 +133,9 @@ fun UnioApp(imageRepository: ImageRepositoryFirebaseStorage) {
       composable(Screen.EDIT_ASSOCIATION) {
         EditAssociationScreen(associationViewModel, navigationActions)
       }
-      composable(Screen.EVENT_CREATION) { EventCreationScreen(navigationActions) }
+      composable(Screen.EVENT_CREATION) {
+        EventCreationScreen(navigationActions, searchViewModel, associationViewModel)
+      }
     }
     navigation(startDestination = Screen.SAVED, route = Route.SAVED) {
       composable(Screen.SAVED) { SavedScreen(navigationActions) }

@@ -210,9 +210,7 @@ fun TopBar(
                   onSearch = {},
                   expanded = false,
                   onExpandedChange = {},
-                  placeholder = {
-                    Text(text = context.getString(R.string.explore_search_placeholder))
-                  },
+                  placeholder = { Text(text = context.getString(R.string.search_placeholder)) },
                   trailingIcon = {
                     if (searchState == SearchViewModel.Status.LOADING) {
                       CircularProgressIndicator()
