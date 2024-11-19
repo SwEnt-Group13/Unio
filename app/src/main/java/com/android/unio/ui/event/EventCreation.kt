@@ -79,7 +79,6 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun EventCreationScreen(
     navigationAction: NavigationAction,
@@ -94,7 +93,6 @@ fun EventCreationScreen(
   var showCoauthorsOverlay by remember { mutableStateOf(false) }
   var showTaggedOverlay by remember { mutableStateOf(false) }
 
-  // TODO check if this recomposes correctly
   var coauthorsAndBoolean =
       associationViewModel.associations.collectAsState().value.map { it to mutableStateOf(false) }
 
@@ -224,7 +222,7 @@ fun EventCreationScreen(
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun AssociationChips(
+private fun AssociationChips(
     associations: List<Pair<Association, MutableState<Boolean>>>,
 ) {
   val context = LocalContext.current
@@ -247,7 +245,7 @@ fun AssociationChips(
 }
 
 @Composable
-fun BannerImagePicker() {
+private fun BannerImagePicker() {
   val context = LocalContext.current
   var eventBanner by remember { mutableStateOf(Uri.EMPTY) }
 
@@ -288,7 +286,7 @@ fun BannerImagePicker() {
 }
 
 @Composable
-fun DateAndTimePicker(dateString: String, timeString: String, modifier: Modifier) {
+private fun DateAndTimePicker(dateString: String, timeString: String, modifier: Modifier) {
   var isDatePickerVisible by remember { mutableStateOf(false) }
   var isTimePickerVisible by remember { mutableStateOf(false) }
   var selectedDate by remember { mutableStateOf<Long?>(null) }
@@ -362,7 +360,7 @@ fun DateAndTimePicker(dateString: String, timeString: String, modifier: Modifier
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DatePickerModal(onDateSelected: (Long?) -> Unit, onDismiss: () -> Unit) {
+private fun DatePickerModal(onDateSelected: (Long?) -> Unit, onDismiss: () -> Unit) {
   val datePickerState = rememberDatePickerState()
   val context = LocalContext.current
 
@@ -407,7 +405,7 @@ fun TimePickerModal(onTimeSelected: (Long?) -> Unit, onDismiss: () -> Unit) {
  * exist in the Material3 library.
  */
 @Composable
-fun TimePickerDialog(
+private fun TimePickerDialog(
     onDismiss: () -> Unit,
     onConfirm: () -> Unit,
     content: @Composable () -> Unit
