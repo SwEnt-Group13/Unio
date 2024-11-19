@@ -59,12 +59,10 @@ constructor(private val repository: EventRepository, private val imageRepository
         })
   }
 
-    /**
-     * Sets the list of events to be displayed.
-     */
-    private fun setEvents(events: List<Event>) {
-        _events.value = events
-    }
+  /** Sets the list of events to be displayed. */
+  private fun setEvents(events: List<Event>) {
+    _events.value = events
+  }
 
   /**
    * Selects an event given its id.
