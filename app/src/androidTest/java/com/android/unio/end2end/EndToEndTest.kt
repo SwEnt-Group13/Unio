@@ -133,4 +133,10 @@ open class EndToEndTest : FirebaseEmulatorFunctions {
     const val EMAIL = "example2@gmail.com"
     const val PASSWORD = "helloWorld123"
   }
+
+  object Admin { // to use only if you need specific bypass (otherwise the tests would have no
+                 // sense)
+    const val EMAIL = "admin@admin.com"
+    const val PASSWORD = "adminadmin9"
+  }
 }
