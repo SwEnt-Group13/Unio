@@ -135,7 +135,7 @@ open class EndToEndTest : FirebaseEmulatorFunctions {
   }
 
   object Admin { // to use only if you need specific bypass (otherwise the tests would have no
-                 // sense)
+    // sense)
     const val EMAIL = "admin@admin.com"
     const val PASSWORD = "adminadmin9"
   }

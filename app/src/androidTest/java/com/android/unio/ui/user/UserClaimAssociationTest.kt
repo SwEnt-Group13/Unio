@@ -72,7 +72,8 @@ class UserClaimAssociationTest {
 
     assertDisplayComponent(composeTestRule.onNodeWithTag(UserClaimAssociationTestTags.SCREEN))
     assertDisplayComponent(composeTestRule.onNodeWithTag(UserClaimAssociationTestTags.BACK_BUTTON))
-    assertDisplayComponent(composeTestRule.onNodeWithTag(UserClaimAssociationTestTags.NEW_ASSOCIATION_BUTTON))
+    assertDisplayComponent(
+        composeTestRule.onNodeWithTag(UserClaimAssociationTestTags.NEW_ASSOCIATION_BUTTON))
   }
 
   @Test
