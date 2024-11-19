@@ -15,6 +15,7 @@ import com.android.unio.model.follow.ConcurrentAssociationUserRepositoryFirestor
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.search.SearchRepository
 import com.android.unio.model.search.SearchViewModel
+import com.android.unio.model.strings.test_tags.UserClaimAssociationTestTags
 import com.android.unio.ui.navigation.NavigationAction
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
@@ -69,9 +70,9 @@ class UserClaimAssociationTest {
       UserClaimAssociationScreen(associationViewModel, navigationAction, searchViewModel)
     }
 
-    assertDisplayComponent(composeTestRule.onNodeWithTag("AssociationProfileTitle"))
-    assertDisplayComponent(composeTestRule.onNodeWithTag("goBackButton"))
-    assertDisplayComponent(composeTestRule.onNodeWithTag("createNewAssociationButton"))
+    assertDisplayComponent(composeTestRule.onNodeWithTag(UserClaimAssociationTestTags.SCREEN))
+    assertDisplayComponent(composeTestRule.onNodeWithTag(UserClaimAssociationTestTags.BACK_BUTTON))
+    assertDisplayComponent(composeTestRule.onNodeWithTag(UserClaimAssociationTestTags.NEW_ASSOCIATION_BUTTON))
   }
 
   @Test
@@ -80,7 +81,7 @@ class UserClaimAssociationTest {
       UserClaimAssociationScreen(associationViewModel, navigationAction, searchViewModel)
     }
 
-    composeTestRule.onNodeWithTag("goBackButton").performClick()
+    composeTestRule.onNodeWithTag(UserClaimAssociationTestTags.BACK_BUTTON).performClick()
   }
 
   @Test
@@ -91,7 +92,7 @@ class UserClaimAssociationTest {
       UserClaimAssociationScreen(associationViewModel, navigationAction, searchViewModel)
     }
 
-    val button = composeTestRule.onNodeWithTag("createNewAssociationButton")
+    val button = composeTestRule.onNodeWithTag(UserClaimAssociationTestTags.NEW_ASSOCIATION_BUTTON)
     button.performClick()
   }
 

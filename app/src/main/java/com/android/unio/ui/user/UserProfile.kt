@@ -261,7 +261,7 @@ fun UserProfileScreenContent(
 
             Button(
                 onClick = { navigationAction.navigateTo(Screen.CLAIM_ASSOCIATION_RIGHTS) },
-                modifier = Modifier.testTag("claimButton")) {
+                modifier = Modifier.testTag(UserProfileTestTags.CLAIMING_BUTTON)) {
                   Text("Claim Association")
                 }
           }
