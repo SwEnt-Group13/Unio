@@ -217,19 +217,14 @@ fun EventScreenContent(
               contentScale = ContentScale.Crop)
         }
 
-        EventInformationCard(mapViewModel, event, associations, context)
+        EventInformationCard(event, associations, context)
 
         EventDetailsBody(navigationAction, mapViewModel, event, context)
       }
 }
 
 @Composable
-fun EventInformationCard(
-    mapViewModel: MapViewModel,
-    event: Event,
-    associations: List<Association>,
-    context: Context
-) {
+fun EventInformationCard(event: Event, associations: List<Association>, context: Context) {
   Column(
       modifier =
           Modifier.testTag(EventDetailsTestTags.DETAILS_INFORMATION_CARD)
