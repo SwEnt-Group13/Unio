@@ -127,27 +127,4 @@ class SearchViewModel @Inject constructor(private val repository: SearchReposito
     super.onCleared()
     repository.closeSession()
   }
-
-  /**
-   * Factory for creating a [SearchViewModel] with a constructor that takes a [SearchRepository].
-   */
-  companion object {
-    fun provideFactory(
-        context: Context,
-        associationRepository: AssociationRepository,
-        eventRepository: EventRepository
-    ): ViewModelProvider.Factory {
-      val appContext = context.applicationContext
-      return object : ViewModelProvider.Factory {
-        @Suppress("UNCHECKED_CAST")
-        override fun <T : ViewModel> create(modelClass: Class<T>): T {
-          if (modelClass.isAssignableFrom(SearchViewModel::class.java)) {
-            val repository = SearchRepository(appContext, associationRepository, eventRepository)
-            return SearchViewModel(repository) as T
-          }
-          throw IllegalArgumentException("Unknown ViewModel class")
-        }
-      }
-    }
-  }
 }
