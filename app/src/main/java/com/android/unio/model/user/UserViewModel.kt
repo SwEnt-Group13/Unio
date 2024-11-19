@@ -165,7 +165,7 @@ class UserViewModel @Inject constructor(private val userRepository: UserReposito
     _followedAssociations.value = associations
   }
 
-  private fun setSomeoneElseUser(user: User) {
+  fun setSomeoneElseUser(user: User) {
     _selectedSomeoneElseUser.value = user
   }
 

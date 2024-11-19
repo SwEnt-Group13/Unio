@@ -44,6 +44,7 @@ import com.android.unio.ui.navigation.Screen
 import com.android.unio.ui.saved.SavedScreen
 import com.android.unio.ui.settings.SettingsScreen
 import com.android.unio.ui.theme.AppTheme
+import com.android.unio.ui.user.SomeoneElseUserProfileScreen
 import com.android.unio.ui.user.UserProfileScreen
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.HiltAndroidApp
@@ -133,6 +134,9 @@ fun UnioApp(imageRepository: ImageRepositoryFirebaseStorage) {
         EditAssociationScreen(associationViewModel, navigationActions)
       }
       composable(Screen.EVENT_CREATION) { EventCreationScreen(navigationActions) }
+      composable(Screen.SOMEONE_ELSE_PROFILE) {
+        SomeoneElseUserProfileScreen(navigationActions, userViewModel)
+      }
     }
     navigation(startDestination = Screen.SAVED, route = Route.SAVED) {
       composable(Screen.SAVED) { SavedScreen(navigationActions) }

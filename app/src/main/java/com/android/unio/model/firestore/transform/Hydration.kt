@@ -19,7 +19,6 @@ fun AssociationRepositoryFirestore.Companion.hydrate(data: Map<String, Any>?): A
   val category = data?.get(Association::category.name)
   val memberUids = data?.get(Association::members.name) as? List<String> ?: emptyList()
   val members = User.firestoreReferenceListWith(memberUids)
-
   val events =
       Event.firestoreReferenceListWith(
           data?.get(Association::events.name) as? List<String> ?: emptyList())
