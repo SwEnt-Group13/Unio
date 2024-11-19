@@ -8,10 +8,10 @@ import androidx.lifecycle.ViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.maps.model.LatLng
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import javax.inject.Inject
 
 @HiltViewModel
 class MapViewModel
@@ -27,6 +27,7 @@ constructor(private val fusedLocationClient: FusedLocationProviderClient) : View
 
   /**
    * Sets a center location for the map given a location
+   *
    * @param location the location to center the map on.
    */
   fun setCenterLocation(location: Location?) {
@@ -35,7 +36,6 @@ constructor(private val fusedLocationClient: FusedLocationProviderClient) : View
     } else {
       _centerLocation.value = null
     }
-
   }
 
   /** Fetches the user's location and updates the [_userLocation] state flow. */

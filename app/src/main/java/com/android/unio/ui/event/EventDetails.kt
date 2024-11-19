@@ -71,10 +71,10 @@ import com.android.unio.ui.image.AsyncImageWrapper
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
 import com.android.unio.ui.theme.AppTypography
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Locale
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 private const val DEBUG_MESSAGE = "<DEBUG> Not implemented yet"
 private val DEBUG_LAMBDA: () -> Unit = {
@@ -119,7 +119,8 @@ fun EventScreen(
     userViewModel.updateUserDebounced(user!!)
   }
 
-  EventScreenScaffold(navigationAction, mapViewModel, event!!, associations, isSaved, onClickSaveButton)
+  EventScreenScaffold(
+      navigationAction, mapViewModel, event!!, associations, isSaved, onClickSaveButton)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -188,11 +189,19 @@ fun EventScreenScaffold(
                   }
             })
       },
-      content = { padding -> EventScreenContent(navigationAction, mapViewModel,event, associations, padding) })
+      content = { padding ->
+        EventScreenContent(navigationAction, mapViewModel, event, associations, padding)
+      })
 }
 
 @Composable
-fun EventScreenContent(navigationAction: NavigationAction, mapViewModel: MapViewModel, event: Event, associations: List<Association>, padding: PaddingValues) {
+fun EventScreenContent(
+    navigationAction: NavigationAction,
+    mapViewModel: MapViewModel,
+    event: Event,
+    associations: List<Association>,
+    padding: PaddingValues
+) {
   val context = LocalContext.current
   Column(
       modifier =
@@ -208,14 +217,19 @@ fun EventScreenContent(navigationAction: NavigationAction, mapViewModel: MapView
               contentScale = ContentScale.Crop)
         }
 
-        EventInformationCard(mapViewModel,event, associations, context)
+        EventInformationCard(mapViewModel, event, associations, context)
 
-        EventDetailsBody(navigationAction,mapViewModel, event, context)
+        EventDetailsBody(navigationAction, mapViewModel, event, context)
       }
 }
 
 @Composable
-fun EventInformationCard(mapViewModel: MapViewModel, event: Event, associations: List<Association>, context: Context) {
+fun EventInformationCard(
+    mapViewModel: MapViewModel,
+    event: Event,
+    associations: List<Association>,
+    context: Context
+) {
   Column(
       modifier =
           Modifier.testTag(EventDetailsTestTags.DETAILS_INFORMATION_CARD)
@@ -273,7 +287,12 @@ fun EventInformationCard(mapViewModel: MapViewModel, event: Event, associations:
 }
 
 @Composable
-fun EventDetailsBody(navigationAction: NavigationAction, mapViewModel: MapViewModel, event: Event,context: Context) {
+fun EventDetailsBody(
+    navigationAction: NavigationAction,
+    mapViewModel: MapViewModel,
+    event: Event,
+    context: Context
+) {
   Column(
       modifier = Modifier.testTag(EventDetailsTestTags.DETAILS_BODY).padding(9.dp).fillMaxHeight(),
       verticalArrangement = Arrangement.spacedBy(30.dp)) {
@@ -310,8 +329,8 @@ fun EventDetailsBody(navigationAction: NavigationAction, mapViewModel: MapViewMo
             verticalArrangement = Arrangement.spacedBy(20.dp)) {
               OutlinedButton(
                   onClick = {
-                      mapViewModel.setCenterLocation(event.location)
-                      navigationAction.navigateTo(Screen.MAP)
+                    mapViewModel.setCenterLocation(event.location)
+                    navigationAction.navigateTo(Screen.MAP)
                   },
                   modifier =
                       Modifier.testTag(EventDetailsTestTags.MAP_BUTTON)
