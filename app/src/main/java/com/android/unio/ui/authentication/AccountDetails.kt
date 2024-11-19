@@ -79,46 +79,42 @@ fun AccountDetailsScreen(
 ) {
 
   val context = LocalContext.current
-    val userId = Firebase.auth.currentUser?.uid
+  val userId = Firebase.auth.currentUser?.uid
 
-
-
-    AccountDetailsContent(
+  AccountDetailsContent(
       navigationAction,
-      onCreateUser = { profilePictureUri, createUser  ->
-          if (profilePictureUri.value == Uri.EMPTY) {
-              createUser("" ,userId!!)
-          } else {
-              val inputStream = context.contentResolver.openInputStream(profilePictureUri.value)
-              imageRepository.uploadImage(
-                  inputStream!!,
-                  "images/users/${userId}",
-                  onSuccess = { createUser("images/users/${userId}" , userId!!)},
-                  onFailure = { exception ->
-                      Log.e("AccountDetails", "Error uploading image: $exception")
-                      Toast.makeText(
-                          context,
-                          context.getString(R.string.account_details_image_upload_error),
-                          Toast.LENGTH_SHORT)
-                          .show()
-                  })
-          }
-      },
-
-      onUploadUser = { user ->
-          userViewModel.addUser(
-              user,
-              onSuccess = {
+      onCreateUser = { profilePictureUri, createUser ->
+        if (profilePictureUri.value == Uri.EMPTY) {
+          createUser("", userId!!)
+        } else {
+          val inputStream = context.contentResolver.openInputStream(profilePictureUri.value)
+          imageRepository.uploadImage(
+              inputStream!!,
+              "images/users/${userId}",
+              onSuccess = { createUser("images/users/${userId}", userId!!) },
+              onFailure = { exception ->
+                Log.e("AccountDetails", "Error uploading image: $exception")
                 Toast.makeText(
                         context,
-                        context.getString(R.string.account_details_created_successfully),
+                        context.getString(R.string.account_details_image_upload_error),
                         Toast.LENGTH_SHORT)
                     .show()
-                navigationAction.navigateTo(Screen.HOME)
               })
-    })
+        }
+      },
+      onUploadUser = { user ->
+        userViewModel.addUser(
+            user,
+            onSuccess = {
+              Toast.makeText(
+                      context,
+                      context.getString(R.string.account_details_created_successfully),
+                      Toast.LENGTH_SHORT)
+                  .show()
+              navigationAction.navigateTo(Screen.HOME)
+            })
+      })
 }
-
 
 // @Preview
 // @Composable
@@ -182,9 +178,9 @@ fun AccountDetailsContent(
             profilePicture = uri)
 
     isErrors = checkNewUser(newUser)
-      if (isErrors.isEmpty()) {
-        onUploadUser(newUser)
-      }
+    if (isErrors.isEmpty()) {
+      onUploadUser(newUser)
+    }
   }
 
   Scaffold { padding ->
@@ -222,12 +218,12 @@ fun AccountDetailsContent(
               modifier = Modifier.testTag(AccountDetailsTestTags.CONTINUE_BUTTON),
               /**
                * The [onCreateUser] function is called with the [profilePictureUri] and [createUser]
-               * lambda function as parameters.
-               * [createUser] calls upon another lambda that uploads the user if all the required fields are filled.
-               * This method hierarchy is necessary due to the fact that uploadImage needs to know if the URI is empty or not before creating the User.
+               * lambda function as parameters. [createUser] calls upon another lambda that uploads
+               * the user if all the required fields are filled. This method hierarchy is necessary
+               * due to the fact that uploading an image needs to know if the URI is empty or not
+               * before creating the User.
                */
-              onClick = { onCreateUser(profilePictureUri, createUser) })
-              {
+              onClick = { onCreateUser(profilePictureUri, createUser) }) {
                 Text(context.getString(R.string.account_details_continue))
               }
         }
@@ -265,8 +261,8 @@ private fun TextFields(
     onBioChange: (String) -> Unit
 ) {
   val context = LocalContext.current
-    val isFirstNameError = isErrors.contains(AccountDetailsError.EMPTY_FIRST_NAME)
-    val isLastNameError = isErrors.contains(AccountDetailsError.EMPTY_LAST_NAME)
+  val isFirstNameError = isErrors.contains(AccountDetailsError.EMPTY_FIRST_NAME)
+  val isLastNameError = isErrors.contains(AccountDetailsError.EMPTY_LAST_NAME)
 
   OutlinedTextField(
       modifier =
