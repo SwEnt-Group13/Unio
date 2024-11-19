@@ -1,6 +1,5 @@
 package com.android.unio.ui.event
 
-import android.annotation.SuppressLint
 import android.net.Uri
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
