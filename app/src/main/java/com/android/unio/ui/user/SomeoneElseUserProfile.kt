@@ -1,20 +1,22 @@
 package com.android.unio.ui.user
 
-import android.annotation.SuppressLint
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
+import android.util.Log
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.testTag
-import com.android.unio.R
-import com.android.unio.model.strings.test_tags.SomeoneElseUserProfileTestTags
+import com.android.unio.model.user.UserViewModel
+import com.android.unio.ui.navigation.NavigationAction
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun SomeoneElseUserProfileScreen() {
-  val context = LocalContext.current
-  Scaffold(modifier = Modifier.testTag(SomeoneElseUserProfileTestTags.SCREEN)) {
-    Text(context.getString(R.string.someone_else_user_profile_screen_title))
-  }
+fun SomeoneElseUserProfileScreen(navigationAction: NavigationAction, userViewModel: UserViewModel) {
+    val user by userViewModel.selectedSomeoneElseUser.collectAsState()
+    if (user == null) {
+        Log.e("SomeoneElseUserProfile", "No user selected")
+    }else{
+        UserProfileScreenScaffold(
+            user!!, navigationAction, false
+        ) { userViewModel.refreshSomeoneElseUser() }
+    }
+
 }

@@ -22,6 +22,9 @@ class UserViewModel @Inject constructor(private val userRepository: UserReposito
   private val _user = MutableStateFlow<User?>(null)
   val user: StateFlow<User?> = _user.asStateFlow()
 
+  private val _selectedSomeoneElseUser = MutableStateFlow<User?>(null)
+  val selectedSomeoneElseUser: StateFlow<User?> = _selectedSomeoneElseUser.asStateFlow()
+
   private val _followedAssociations = MutableStateFlow(emptyList<String>())
   val followedAssociations: StateFlow<List<String>> = _followedAssociations.asStateFlow()
 
@@ -97,6 +100,10 @@ class UserViewModel @Inject constructor(private val userRepository: UserReposito
     _user.value?.let { getUserByUid(it.uid, true) }
   }
 
+  fun refreshSomeoneElseUser() {
+    _selectedSomeoneElseUser.value?.let { getUserByUid(it.uid, true) }
+  }
+
   fun updateUser(user: User) {
     userRepository.updateUser(
         user,
@@ -156,6 +163,10 @@ class UserViewModel @Inject constructor(private val userRepository: UserReposito
 
   private fun setFollowedAssociations(associations: List<String>) {
     _followedAssociations.value = associations
+  }
+
+  private fun setSomeoneElseUser(user: User) {
+    _selectedSomeoneElseUser.value = user
   }
 
   fun isEventSavedForCurrentUser(eventUid: String): Boolean {
