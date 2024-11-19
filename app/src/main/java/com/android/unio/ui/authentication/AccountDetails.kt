@@ -116,18 +116,6 @@ fun AccountDetailsScreen(
       })
 }
 
-// @Preview
-// @Composable
-// fun preview(){
-//    val navController = rememberNavController()
-//    val navigationActions = NavigationAction(navController)
-//
-//    val imageRepository = ImageRepositoryFirebaseStorage(Firebase.storage)
-//
-//    AccountDetailsContent(navigationAction = navigationActions, imageRepository = imageRepository)
-// { _ -> return@AccountDetailsContent mutableSetOf() }
-// }
-
 @Composable
 fun AccountDetailsContent(
     navigationAction: NavigationAction,
