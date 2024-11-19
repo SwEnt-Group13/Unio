@@ -126,16 +126,19 @@ fun MapScreen(
 
   // Center map on the center location initially if available
   LaunchedEffect(userLocation) {
-    if (userLocation != null && centerLocation == null) {
-      cameraPositionState.position =
-          CameraPosition.fromLatLngZoom(userLocation!!, INITIAL_ZOOM_LEVEL)
+    if (!initialCentered) {
+
+      if (centerLocation != null) {
+        cameraPositionState.position =
+            CameraPosition.fromLatLngZoom(centerLocation!!, INITIAL_ZOOM_LEVEL)
+      } else if (userLocation != null) {
+        cameraPositionState.position =
+            CameraPosition.fromLatLngZoom(userLocation!!, INITIAL_ZOOM_LEVEL)
+      } else {
+        cameraPositionState.position =
+            CameraPosition.fromLatLngZoom(EPFL_COORDINATES, INITIAL_ZOOM_LEVEL)
+      }
       initialCentered = true
-    } else if (centerLocation != null) {
-      cameraPositionState.position =
-          CameraPosition.fromLatLngZoom(centerLocation!!, INITIAL_ZOOM_LEVEL)
-    } else {
-      cameraPositionState.position =
-          CameraPosition.fromLatLngZoom(EPFL_COORDINATES, INITIAL_ZOOM_LEVEL)
     }
   }
 
