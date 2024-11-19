@@ -15,6 +15,7 @@ import com.android.unio.mocks.association.MockAssociation
 import com.android.unio.mocks.event.MockEvent
 import com.android.unio.model.association.Association
 import com.android.unio.model.event.Event
+import com.android.unio.model.event.EventUtils.formatTimestamp
 import com.android.unio.model.strings.test_tags.EventDetailsTestTags
 import com.android.unio.ui.navigation.NavigationAction
 import io.mockk.clearAllMocks
@@ -26,6 +27,8 @@ import org.junit.Test
 import org.mockito.MockitoAnnotations
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class EventDetailsTest {
   private lateinit var navHostController: NavHostController
@@ -61,6 +64,11 @@ class EventDetailsTest {
     setEventScreen()
     composeTestRule.waitForIdle()
 
+    val formattedStartDateDay =
+      formatTimestamp(events[0].startDate, SimpleDateFormat("dd/MM", Locale.getDefault()))
+    val formattedEndDateDay =
+      formatTimestamp(events[0].endDate, SimpleDateFormat("dd/MM", Locale.getDefault()))
+
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag(EventDetailsTestTags.SCREEN, true))
     assertDisplayComponentInScroll(
         composeTestRule.onNodeWithTag(EventDetailsTestTags.GO_BACK_BUTTON))
@@ -83,8 +91,15 @@ class EventDetailsTest {
         composeTestRule.onNodeWithTag("${EventDetailsTestTags.ASSOCIATION_LOGO}1"))
     assertDisplayComponentInScroll(
         composeTestRule.onNodeWithTag("${EventDetailsTestTags.ASSOCIATION_NAME}1"))
-    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag(EventDetailsTestTags.START_HOUR))
-    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag(EventDetailsTestTags.DATE))
+
+    if (formattedStartDateDay == formattedEndDateDay) {
+      assertDisplayComponentInScroll(composeTestRule.onNodeWithTag(EventDetailsTestTags.HOUR))
+      assertDisplayComponentInScroll(composeTestRule.onNodeWithTag(EventDetailsTestTags.START_DATE))
+    } else {
+      assertDisplayComponentInScroll(composeTestRule.onNodeWithTag(EventDetailsTestTags.START_DATE))
+      assertDisplayComponentInScroll(composeTestRule.onNodeWithTag(EventDetailsTestTags.END_DATE))
+    }
+
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag(EventDetailsTestTags.DETAILS_BODY))
 
     composeTestRule.onNodeWithTag(EventDetailsTestTags.PLACES_REMAINING_TEXT).assertExists()

@@ -274,22 +274,22 @@ fun EventDate(event: Event) {
       // event starts and ends on the same day
       Text(
           "$formattedStartDateHour - $formattedEndDateHour",
-          modifier = Modifier.testTag(EventDetailsTestTags.START_HOUR),
+          modifier = Modifier.testTag(EventDetailsTestTags.HOUR),
           color = MaterialTheme.colorScheme.onPrimary)
 
       Text(
           formattedStartDateDay,
-          modifier = Modifier.testTag(EventDetailsTestTags.DATE),
+          modifier = Modifier.testTag(EventDetailsTestTags.START_DATE),
           color = MaterialTheme.colorScheme.onPrimary)
     } else {
       Text(
           "$formattedStartDateDay - $formattedStartDateHour",
-          modifier = Modifier.testTag(EventDetailsTestTags.START_HOUR),
+          modifier = Modifier.testTag(EventDetailsTestTags.START_DATE),
           color = MaterialTheme.colorScheme.onPrimary)
 
       Text(
           "$formattedEndDateDay - $formattedEndDateHour",
-          modifier = Modifier.testTag(EventDetailsTestTags.DATE),
+          modifier = Modifier.testTag(EventDetailsTestTags.END_DATE),
           color = MaterialTheme.colorScheme.onPrimary)
     }
   }
