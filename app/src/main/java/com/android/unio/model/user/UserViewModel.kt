@@ -69,7 +69,7 @@ class UserViewModel @Inject constructor(private val userRepository: UserReposito
         uid,
         onSuccess = { fetchedUser ->
           _user.value = fetchedUser
-          _followedAssociations.value = getFollowedAssociationsEventUID()
+          setFollowedAssociations(getFollowedAssociationsEventUID())
           if (fetchReferences) {
             _user.value?.let {
               var first = true
@@ -152,6 +152,10 @@ class UserViewModel @Inject constructor(private val userRepository: UserReposito
   fun getFollowedAssociationsEventUID(): List<String> {
     val followedAsso = _user.value?.followedAssociations?.uids ?: emptyList()
     return followedAsso
+  }
+
+  private fun setFollowedAssociations(associations: List<String>) {
+    _followedAssociations.value = associations
   }
 
   fun isEventSavedForCurrentUser(eventUid: String): Boolean {
