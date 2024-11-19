@@ -73,7 +73,7 @@ fun MapScreen(
   val cameraPositionState = rememberCameraPositionState()
   val centerLocation by mapViewModel.centerLocation.collectAsState()
   val userLocation by mapViewModel.userLocation.collectAsState()
-  var initialCentered by remember { mutableStateOf(false) }
+  var initialCentered = false
   var isMyLocationEnabled by remember { mutableStateOf(false) }
   var showApproximateCircle by remember { mutableStateOf(false) }
 
