@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import com.android.unio.R
 import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationViewModel
+import com.android.unio.model.strings.test_tags.UserClaimAssociationPresidentialRightsTestTags
 import com.android.unio.model.user.User
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.navigation.NavigationAction
@@ -72,6 +73,7 @@ fun UserClaimAssociationPresidentialRightsScreenScaffold(
   var showErrorMessage by remember { mutableStateOf(false) }
 
   Scaffold(
+      modifier = Modifier.testTag(UserClaimAssociationPresidentialRightsTestTags.SCREEN),
       topBar = {
         TopAppBar(
             title = {
@@ -113,7 +115,9 @@ fun UserClaimAssociationPresidentialRightsScreenScaffold(
                   onValueChange = { email = it },
                   placeholder = { Text("Email address") },
                   isError = showErrorMessage,
-                  modifier = Modifier.padding(vertical = 8.dp))
+                  modifier =
+                      Modifier.padding(vertical = 8.dp)
+                          .testTag(UserClaimAssociationPresidentialRightsTestTags.EMAIL_ADDRESS))
               Spacer(modifier = Modifier.height(8.dp))
 
               // if the email is incorrect
@@ -175,7 +179,10 @@ fun UserClaimAssociationPresidentialRightsScreenScaffold(
                           "Association does not exist or has no principalEmailAddress")
                     }
                   },
-                  modifier = Modifier.padding(vertical = 8.dp)) {
+                  modifier =
+                      Modifier.padding(vertical = 8.dp)
+                          .testTag(
+                              UserClaimAssociationPresidentialRightsTestTags.VERIFY_EMAIL_BUTTON)) {
                     Text("Verify Email")
                   }
             } else {
@@ -185,7 +192,9 @@ fun UserClaimAssociationPresidentialRightsScreenScaffold(
                   value = verificationCode,
                   onValueChange = { verificationCode = it },
                   placeholder = { Text("Verification code") },
-                  modifier = Modifier.padding(vertical = 8.dp))
+                  modifier =
+                      Modifier.padding(vertical = 8.dp)
+                          .testTag(UserClaimAssociationPresidentialRightsTestTags.CODE))
               Spacer(modifier = Modifier.height(8.dp))
 
               val coroutineScope = rememberCoroutineScope()
@@ -267,7 +276,10 @@ fun UserClaimAssociationPresidentialRightsScreenScaffold(
                           .show()
                     }
                   },
-                  modifier = Modifier.padding(vertical = 8.dp)) {
+                  modifier =
+                      Modifier.padding(vertical = 8.dp)
+                          .testTag(
+                              UserClaimAssociationPresidentialRightsTestTags.SUBMIT_CODE_BUTTON)) {
                     Text("Submit Code")
                   }
             }
@@ -287,7 +299,7 @@ private fun verifyCode(
       .getHttpsCallable("verifyCode")
       .call(hashMapOf("associationUid" to associationUid, "code" to code, "userUid" to userUid))
       .continueWith { task ->
-        val result = task.result?.data as String
+        val result = task.result?.getData() as String
         result
       }
 }
@@ -302,7 +314,7 @@ private fun sendVerificationEmail(
       .getHttpsCallable("sendVerificationEmail")
       .call(hashMapOf("email" to userEmail, "associationUid" to associationUid))
       .continueWith { task ->
-        val result = task.result?.data as String
+        val result = task.result?.getData() as String
         result
       }
 }

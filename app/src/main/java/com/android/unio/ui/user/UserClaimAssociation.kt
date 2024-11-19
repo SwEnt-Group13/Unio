@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import com.android.unio.R
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.search.SearchViewModel
+import com.android.unio.model.strings.test_tags.UserClaimAssociationTestTags
 import com.android.unio.ui.association.AssociationSearchBar
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
@@ -39,15 +40,14 @@ fun UserClaimAssociationScreen(
 ) {
   val context = LocalContext.current
   Scaffold(
+      modifier = Modifier.testTag(UserClaimAssociationTestTags.SCREEN),
       topBar = {
         TopAppBar(
-            title = {
-              Text(text = "Go Back", modifier = Modifier.testTag("AssociationProfileTitle"))
-            },
+            title = {},
             navigationIcon = {
               IconButton(
                   onClick = { navigationAction.goBack() },
-                  modifier = Modifier.testTag("goBackButton")) {
+                  modifier = Modifier.testTag(UserClaimAssociationTestTags.BACK_BUTTON)) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
                         contentDescription = context.getString(R.string.association_go_back))
@@ -78,7 +78,7 @@ fun UserClaimAssociationScreen(
                 onClick = {
                   Toast.makeText(context, "Not implemented yet", Toast.LENGTH_SHORT).show()
                 },
-                modifier = Modifier.testTag("createNewAssociationButton")) {
+                modifier = Modifier.testTag(UserClaimAssociationTestTags.NEW_ASSOCIATION_BUTTON)) {
                   Text("Create association")
                 }
             Spacer(modifier = Modifier.height(6.dp))
