@@ -115,7 +115,8 @@ fun UnioApp(imageRepository: ImageRepositoryFirebaseStorage) {
         EventScreen(
             navigationAction = navigationActions,
             eventViewModel = eventViewModel,
-            userViewModel = userViewModel)
+            userViewModel = userViewModel,
+            mapViewModel = mapViewModel)
       }
       composable(Screen.MAP) {
         MapScreen(navigationActions, eventViewModel, userViewModel, mapViewModel)

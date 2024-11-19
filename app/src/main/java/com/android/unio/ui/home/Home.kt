@@ -66,7 +66,7 @@ fun HomeScreen(
     navigationAction: NavigationAction,
     eventViewModel: EventViewModel,
     userViewModel: UserViewModel,
-    searchViewModel: SearchViewModel
+    searchViewModel: SearchViewModel,
 ) {
   val context = LocalContext.current
 
