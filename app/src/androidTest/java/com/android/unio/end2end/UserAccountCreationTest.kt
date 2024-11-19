@@ -140,7 +140,7 @@ class UserAccountCreationTest : EndToEndTest() {
   private fun verifyEmail(url: String) {
     val client = OkHttpClient()
 
-    val request = Request.Builder().url(url.replace("127.0.0.1", "128.179.201.248")).build()
+    val request = Request.Builder().url(url.replace("127.0.0.1", "10.0.2.2")).build()
 
     client.newCall(request).execute()
   }
