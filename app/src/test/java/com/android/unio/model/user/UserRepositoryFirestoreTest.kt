@@ -310,6 +310,7 @@ class UserRepositoryFirestoreTest {
 
   @Test
   fun testGetUserWithId() {
+    `when`(queryDocumentSnapshot1.exists()).thenReturn(true)
     repository.getUserWithId(
         id = user1.uid,
         onSuccess = { user ->
