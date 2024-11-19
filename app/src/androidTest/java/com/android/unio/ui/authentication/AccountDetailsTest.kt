@@ -163,7 +163,7 @@ class AccountDetailsTest {
         .performScrollTo()
         .assertIsDisplayed()
     composeTestRule
-        .onNodeWithTag(AccountDetailsTestTags.SOCIALS_CHIP + "Instagram")
+        .onNodeWithTag(AccountDetailsTestTags.SOCIALS_CHIP + "Instagram", true)
         .performScrollTo()
         .assertIsDisplayed()
   }
