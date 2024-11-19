@@ -55,7 +55,9 @@ class EventCreationTest {
   @MockK private lateinit var associationRepositoryFirestore: AssociationRepositoryFirestore
   @MockK private lateinit var eventRepositoryFirestore: EventRepositoryFirestore
   @MockK private lateinit var imageRepositoryFirestore: ImageRepositoryFirebaseStorage
-  @MockK private lateinit var concurrentAssociationUserRepositoryFirestore: ConcurrentAssociationUserRepositoryFirestore
+  @MockK
+  private lateinit var concurrentAssociationUserRepositoryFirestore:
+      ConcurrentAssociationUserRepositoryFirestore
 
   @Before
   fun setUp() {
@@ -67,7 +69,13 @@ class EventCreationTest {
     every { firebaseAuth.currentUser } returns mockFirebaseUser
 
     searchViewModel = spyk(SearchViewModel(searchRepository))
-    associationViewModel = spyk(AssociationViewModel(associationRepositoryFirestore, eventRepositoryFirestore, imageRepositoryFirestore, concurrentAssociationUserRepositoryFirestore))
+    associationViewModel =
+        spyk(
+            AssociationViewModel(
+                associationRepositoryFirestore,
+                eventRepositoryFirestore,
+                imageRepositoryFirestore,
+                concurrentAssociationUserRepositoryFirestore))
 
     val associations = MockAssociation.createAllMockAssociations(size = 2)
 
@@ -115,7 +123,8 @@ class EventCreationTest {
     assertDisplayComponentInScroll(
         composeTestRule.onNodeWithTag(EventCreationOverlayTestTags.CANCEL))
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag(EventCreationOverlayTestTags.SAVE))
-}}
+  }
+}
 
 /**
  * This function is a copy of the function with the same name from EditAssociationTest.kt. It should
