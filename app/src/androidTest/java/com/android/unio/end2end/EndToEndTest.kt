@@ -62,19 +62,17 @@ open class EndToEndTest : FirebaseEmulatorFunctions {
               }
 
               override fun onResponse(call: okhttp3.Call, response: okhttp3.Response) {
-                if (response.body == null) {
+                if (response.body == null || !response.body!!.string().contains("Ok")) {
                   throw Exception("Firebase Emulators are not running.")
                 }
-                val data = response.body!!.string()
-                assert(data.contains("Ok")) { "Firebase Emulators are not running." }
               }
             })
   }
 
   override fun useEmulators() {
     try {
-      Firebase.firestore.useEmulator(Firestore.HOST, 8080)
-      Firebase.auth.useEmulator(Auth.HOST, 9099)
+      Firebase.firestore.useEmulator(HOST, Firestore.PORT)
+      Firebase.auth.useEmulator(HOST, Auth.PORT)
     } catch (e: IllegalStateException) {
       Log.e("EndToEndTest", e.message!!)
     }
@@ -96,13 +94,17 @@ open class EndToEndTest : FirebaseEmulatorFunctions {
     client.newCall(request).execute()
   }
 
+  companion object {
+    const val HOST = "10.0.2.2"
+  }
+
   /* Constant URLs used by the local emulator */
   object Firestore {
 //    const val HOST = "10.0.2.2"
     const val HOST = "128.179.201.248"
     const val PORT = 8080
     const val ROOT = "http://$HOST:$PORT"
-    const val SHORT_ROOT = "$HOST:$PORT"
+
     const val DATABASE_URL = "$ROOT/emulator/v1/projects/unio-1b8ee/databases/(default)/documents"
   }
 
@@ -111,6 +113,7 @@ open class EndToEndTest : FirebaseEmulatorFunctions {
     const val HOST = "128.179.201.248"
     const val PORT = 9099
     const val ROOT = "http://$HOST:$PORT"
+
     const val OOB_URL = "$ROOT/emulator/v1/projects/unio-1b8ee/oobCodes"
     const val ACCOUNTS_URL = "$ROOT/emulator/v1/projects/unio-1b8ee/accounts"
   }
