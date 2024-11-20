@@ -8,19 +8,16 @@ import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -42,9 +39,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.FilterQuality
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
@@ -63,7 +57,7 @@ import com.android.unio.model.user.UserViewModel
 import com.android.unio.model.user.checkNewUser
 import com.android.unio.ui.authentication.overlay.InterestOverlay
 import com.android.unio.ui.authentication.overlay.SocialOverlay
-import com.android.unio.ui.image.AsyncImageWrapper
+import com.android.unio.ui.components.ProfilePictureWithRemoveIcon
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
 import com.android.unio.ui.theme.AppTypography
@@ -182,10 +176,11 @@ fun AccountDetailsContent(
   Scaffold { padding ->
     Column(
         modifier =
-            Modifier.padding(padding)
-                .padding(vertical = 20.dp, horizontal = 40.dp)
-                .verticalScroll(scrollState)
-                .testTag(AccountDetailsTestTags.ACCOUNT_DETAILS),
+        Modifier
+            .padding(padding)
+            .padding(vertical = 20.dp, horizontal = 40.dp)
+            .verticalScroll(scrollState)
+            .testTag(AccountDetailsTestTags.ACCOUNT_DETAILS),
         verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.CenterHorizontally) {
           Text(
@@ -204,11 +199,9 @@ fun AccountDetailsContent(
 
           ProfilePicturePicker(profilePictureUri, { profilePictureUri.value = Uri.EMPTY })
 
-          OverlayButtonsAndFlowRows(
-              interestsFlow,
-              userSocialsFlow,
-              { showInterestsOverlay = true },
-              { showSocialsOverlay = true })
+          InterestButtonAndFlowRow(interestsFlow, { showInterestsOverlay = true })
+
+        SocialButtonAndFlowRow(userSocialsFlow, { showSocialsOverlay = true })
 
           Button(
               modifier = Modifier.testTag(AccountDetailsTestTags.CONTINUE_BUTTON),
@@ -255,9 +248,10 @@ private fun TextFields(
 
   OutlinedTextField(
       modifier =
-          Modifier.padding(4.dp)
-              .fillMaxWidth()
-              .testTag(AccountDetailsTestTags.FIRST_NAME_TEXT_FIELD),
+      Modifier
+          .padding(4.dp)
+          .fillMaxWidth()
+          .testTag(AccountDetailsTestTags.FIRST_NAME_TEXT_FIELD),
       label = {
         Text(
             context.getString(R.string.account_details_first_name),
@@ -276,9 +270,10 @@ private fun TextFields(
 
   OutlinedTextField(
       modifier =
-          Modifier.padding(4.dp)
-              .fillMaxWidth()
-              .testTag(AccountDetailsTestTags.LAST_NAME_TEXT_FIELD),
+      Modifier
+          .padding(4.dp)
+          .fillMaxWidth()
+          .testTag(AccountDetailsTestTags.LAST_NAME_TEXT_FIELD),
       label = {
         Text(
             context.getString(R.string.account_details_last_name),
@@ -297,10 +292,11 @@ private fun TextFields(
 
   OutlinedTextField(
       modifier =
-          Modifier.padding(4.dp)
-              .fillMaxWidth()
-              .height(200.dp)
-              .testTag(AccountDetailsTestTags.BIOGRAPHY_TEXT_FIELD),
+      Modifier
+          .padding(4.dp)
+          .fillMaxWidth()
+          .height(200.dp)
+          .testTag(AccountDetailsTestTags.BIOGRAPHY_TEXT_FIELD),
       label = {
         Text(
             context.getString(R.string.account_details_bio),
@@ -312,19 +308,18 @@ private fun TextFields(
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun OverlayButtonsAndFlowRows(
+private fun InterestButtonAndFlowRow(
     interestsFlow: MutableStateFlow<List<Pair<Interest, MutableState<Boolean>>>>,
-    userSocialFlow: MutableStateFlow<MutableList<UserSocial>>,
     onShowInterests: () -> Unit,
-    onShowSocials: () -> Unit
 ) {
   val context = LocalContext.current
 
   val interests by interestsFlow.collectAsState()
-  val socials by userSocialFlow.collectAsState()
 
   OutlinedButton(
-      modifier = Modifier.fillMaxWidth().testTag(AccountDetailsTestTags.INTERESTS_BUTTON),
+      modifier = Modifier
+          .fillMaxWidth()
+          .testTag(AccountDetailsTestTags.INTERESTS_BUTTON),
       onClick = onShowInterests) {
         Icon(
             Icons.Default.Add,
@@ -340,7 +335,9 @@ private fun OverlayButtonsAndFlowRows(
             onClick = {},
             selected = pair.second.value,
             modifier =
-                Modifier.padding(3.dp).testTag(AccountDetailsTestTags.INTERESTS_CHIP + "$index"),
+            Modifier
+                .padding(3.dp)
+                .testTag(AccountDetailsTestTags.INTERESTS_CHIP + "$index"),
             avatar = {
               Icon(
                   Icons.Default.Close,
@@ -350,37 +347,53 @@ private fun OverlayButtonsAndFlowRows(
       }
     }
   }
-  OutlinedButton(
-      modifier = Modifier.fillMaxWidth().testTag(AccountDetailsTestTags.SOCIALS_BUTTON),
-      onClick = onShowSocials) {
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun SocialButtonAndFlowRow(
+    userSocialFlow: MutableStateFlow<MutableList<UserSocial>>,
+    onShowSocials: () -> Unit
+){
+
+    val context = LocalContext.current
+    val socials by userSocialFlow.collectAsState()
+
+
+    OutlinedButton(
+        modifier = Modifier
+            .fillMaxWidth()
+            .testTag(AccountDetailsTestTags.SOCIALS_BUTTON),
+        onClick = onShowSocials) {
         Icon(
             Icons.Default.Add,
             contentDescription =
-                context.getString(R.string.account_details_content_description_close))
+            context.getString(R.string.account_details_content_description_close))
         Text(context.getString(R.string.account_details_add_socials))
-      }
-  FlowRow(modifier = Modifier.fillMaxWidth()) {
-    socials.forEachIndexed { index, userSocial ->
-      InputChip(
-          label = { Text(userSocial.social.name) },
-          onClick = {},
-          selected = true,
-          modifier =
-              Modifier.padding(3.dp)
-                  .testTag(AccountDetailsTestTags.SOCIALS_CHIP + userSocial.social.title),
-          avatar = {
-            Icon(
-                Icons.Default.Close,
-                contentDescription =
-                    context.getString(R.string.account_details_content_description_close),
-                modifier =
-                    Modifier.clickable {
-                      userSocialFlow.value =
-                          userSocialFlow.value.toMutableList().apply { removeAt(index) }
-                    })
-          })
     }
-  }
+    FlowRow(modifier = Modifier.fillMaxWidth()) {
+        socials.forEachIndexed { index, userSocial ->
+            InputChip(
+                label = { Text(userSocial.social.name) },
+                onClick = {},
+                selected = true,
+                modifier =
+                Modifier
+                    .padding(3.dp)
+                    .testTag(AccountDetailsTestTags.SOCIALS_CHIP + userSocial.social.title),
+                avatar = {
+                    Icon(
+                        Icons.Default.Close,
+                        contentDescription =
+                        context.getString(R.string.account_details_content_description_close),
+                        modifier =
+                        Modifier.clickable {
+                            userSocialFlow.value =
+                                userSocialFlow.value.toMutableList().apply { removeAt(index) }
+                        })
+                })
+        }
+    }
 }
 
 @Composable
@@ -397,13 +410,17 @@ private fun ProfilePicturePicker(
       }
 
   Row(
-      modifier = Modifier.fillMaxWidth().padding(8.dp),
+      modifier = Modifier
+          .fillMaxWidth()
+          .padding(8.dp),
       horizontalArrangement = Arrangement.SpaceEvenly,
       verticalAlignment = Alignment.CenterVertically) {
         Text(
             text = context.getString(R.string.account_details_add_profile_picture),
             modifier =
-                Modifier.widthIn(max = 140.dp).testTag(AccountDetailsTestTags.PROFILE_PICTURE_TEXT),
+            Modifier
+                .widthIn(max = 140.dp)
+                .testTag(AccountDetailsTestTags.PROFILE_PICTURE_TEXT),
             style = AppTypography.bodyLarge)
 
         if (profilePictureUri.value == Uri.EMPTY) {
@@ -413,40 +430,19 @@ private fun ProfilePicturePicker(
                   context.getString(R.string.account_details_content_description_add),
               tint = primaryLight,
               modifier =
-                  Modifier.clickable {
-                        pickMedia.launch(
-                            PickVisualMediaRequest(
-                                ActivityResultContracts.PickVisualMedia.ImageOnly))
-                      }
-                      .size(100.dp)
-                      .testTag(AccountDetailsTestTags.PROFILE_PICTURE_ICON))
+              Modifier
+                  .clickable {
+                      pickMedia.launch(
+                          PickVisualMediaRequest(
+                              ActivityResultContracts.PickVisualMedia.ImageOnly
+                          )
+                      )
+                  }
+                  .size(100.dp)
+                  .testTag(AccountDetailsTestTags.PROFILE_PICTURE_ICON))
         } else {
           ProfilePictureWithRemoveIcon(
               profilePictureUri = profilePictureUri.value, onRemove = onProfilePictureUriChange)
         }
       }
-}
-
-@Composable
-private fun ProfilePictureWithRemoveIcon(
-    profilePictureUri: Uri,
-    onRemove: () -> Unit,
-) {
-  val context = LocalContext.current
-  Box(modifier = Modifier.size(100.dp)) {
-    AsyncImageWrapper(
-        imageUri = profilePictureUri,
-        contentDescription = context.getString(R.string.account_details_content_description_pfp),
-        contentScale = ContentScale.Crop,
-        modifier = Modifier.aspectRatio(1f).clip(CircleShape),
-        filterQuality = FilterQuality.Medium,
-        placeholderResourceId = 0 // to have no placeholder
-        )
-    Icon(
-        imageVector = Icons.Default.Close,
-        contentDescription =
-            context.getString(R.string.account_details_content_description_remove_pfp),
-        modifier =
-            Modifier.size(24.dp).align(Alignment.TopEnd).clickable { onRemove() }.padding(4.dp))
-  }
 }
