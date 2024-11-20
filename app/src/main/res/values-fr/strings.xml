@@ -200,6 +200,13 @@
     * package: saved
     */
 
+    <!-- Saved Screen Strings -->
+    <string name="saved_screen_title">Evènements sauvegardés</string>
+    <string name="saved_screen_no_events">Aucun évènements sauvegardé</string>
+    <string name="saved_screen_today">Aujourd\'hui</string>
+    <string name="saved_screen_upcoming">Bientôt</string>
+
+
     /**
     * package: settings
     */
