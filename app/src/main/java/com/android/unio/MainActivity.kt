@@ -46,10 +46,11 @@ import com.android.unio.ui.settings.SettingsScreen
 import com.android.unio.ui.theme.AppTheme
 import com.android.unio.ui.user.SomeoneElseUserProfileScreen
 import com.android.unio.ui.user.UserProfileScreen
+import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.HiltAndroidApp
-import javax.inject.Inject
 import me.zhanghai.compose.preference.ProvidePreferenceLocals
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -71,8 +72,20 @@ class MainActivity : ComponentActivity() {
 
 @HiltAndroidApp class UnioApplication : Application()
 
+
 @Composable
 fun UnioApp(imageRepository: ImageRepositoryFirebaseStorage) {
+
+ val firebaseMessaging = FirebaseMessaging.getInstance()
+    firebaseMessaging.token.addOnCompleteListener { task ->
+        if (task.isSuccessful) {
+            val token = task.result
+            println("Token: $token")
+            // Send token to server
+        } else {
+            println("Failed to get token")
+        }
+    }
   val navController = rememberNavController()
 
   val navigationActions = NavigationAction(navController)
