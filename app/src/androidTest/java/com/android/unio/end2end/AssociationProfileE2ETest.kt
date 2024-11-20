@@ -26,7 +26,7 @@ class AssociationProfileE2ETest : EndToEndTest() {
 
   @Test
   fun testAssociationProfileCanGoToSomeoneElseUserProfile() {
-    if(Firebase.auth.currentUser == null) {
+    if (Firebase.auth.currentUser == null) {
       signInWithUser(composeTestRule, User1.EMAIL, User1.PASSWORD)
     }
 

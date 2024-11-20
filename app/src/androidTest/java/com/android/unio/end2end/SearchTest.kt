@@ -30,7 +30,7 @@ class SearchTest : EndToEndTest() {
 
   @Test
   fun testSearchDisplaysCorrectResultsForEvents() {
-    if(Firebase.auth.currentUser == null) {
+    if (Firebase.auth.currentUser == null) {
       signInWithUser(composeTestRule, User1.EMAIL, User1.PASSWORD)
     }
 
