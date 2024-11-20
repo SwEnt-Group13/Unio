@@ -61,16 +61,16 @@ class EventDetailsTest {
     mapViewModel = MapViewModel(fusedLocationProviderClient)
   }
 
-  private fun setEventScreen() {
+  private fun setEventScreen(event: Event) {
 
     composeTestRule.setContent {
-      EventScreenScaffold(navigationAction, mapViewModel, events[0], associations, true) {}
+      EventScreenScaffold(navigationAction, mapViewModel, event, associations, true) {}
     }
   }
 
   @Test
   fun testEventDetailsDisplayComponent() {
-    setEventScreen()
+    setEventScreen(events[1])
     composeTestRule.waitForIdle()
 
     val formattedStartDateDay =
@@ -132,7 +132,7 @@ class EventDetailsTest {
 
   @Test
   fun testButtonBehavior() {
-    setEventScreen()
+    setEventScreen(events[0])
     // Share button
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag(EventDetailsTestTags.SHARE_BUTTON))
     composeTestRule.onNodeWithTag(EventDetailsTestTags.SHARE_BUTTON).performClick()
@@ -162,7 +162,7 @@ class EventDetailsTest {
 
   @Test
   fun testGoBackButton() {
-    setEventScreen()
+    setEventScreen(events[0])
     composeTestRule.onNodeWithTag(EventDetailsTestTags.GO_BACK_BUTTON).performClick()
     verify { navigationAction.goBack() }
   }
@@ -170,7 +170,7 @@ class EventDetailsTest {
   @Test
   fun testEventDetailsData() {
     val event = events[0]
-    setEventScreen()
+    setEventScreen(event)
     assertDisplayComponentInScroll(composeTestRule.onNodeWithText(event.title))
     assertDisplayComponentInScroll(composeTestRule.onNodeWithText(event.description))
     assertDisplayComponentInScroll(composeTestRule.onNodeWithText(event.location.name))
