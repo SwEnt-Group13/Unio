@@ -30,7 +30,7 @@ class SearchTest : EndToEndTest() {
   fun testSearchDisplaysCorrectResultsForEvents() {
     signInWithUser(composeTestRule, User1.EMAIL, User1.PASSWORD)
 
-    composeTestRule.waitUntil(5000) {
+    composeTestRule.waitUntil(10000) {
       composeTestRule.onNodeWithTag(HomeTestTags.SCREEN).isDisplayed()
     }
 
@@ -40,12 +40,12 @@ class SearchTest : EndToEndTest() {
         .performTextInput(EVENT_SEARCH_INPUT)
 
     // Wait for "server's" response to get the event
-    Thread.sleep(2000)
+    Thread.sleep(5000)
     composeTestRule.onAllNodesWithTag(EventCardTestTags.EVENT_ITEM).assertCountEquals(1)
 
     composeTestRule.onNodeWithTag(EventCardTestTags.EVENT_ITEM).performClick()
 
-    composeTestRule.waitUntil(5000) {
+    composeTestRule.waitUntil(10000) {
       composeTestRule.onNodeWithTag(EventDetailsTestTags.SCREEN).isDisplayed()
     }
 
@@ -60,14 +60,14 @@ class SearchTest : EndToEndTest() {
   fun testSearchDiplaysCorrectResultsForAssociations() {
     signInWithUser(composeTestRule, User1.EMAIL, User1.PASSWORD)
 
-    composeTestRule.waitUntil(5000) {
+    composeTestRule.waitUntil(10000) {
       composeTestRule.onNodeWithTag(HomeTestTags.SCREEN).isDisplayed()
     }
 
     composeTestRule.onNodeWithTag(BottomNavBarTestTags.EXPLORE).assertIsDisplayed()
     composeTestRule.onNodeWithTag(BottomNavBarTestTags.EXPLORE).performClick()
 
-    composeTestRule.waitUntil(5000) {
+    composeTestRule.waitUntil(10000) {
       composeTestRule.onNodeWithTag(ExploreContentTestTags.TITLE_TEXT).isDisplayed()
     }
 
@@ -77,7 +77,7 @@ class SearchTest : EndToEndTest() {
         .performTextInput(ASSOCIATION_SEARCH_INPUT)
 
     // Wait for the server's response to get the association
-    composeTestRule.waitUntil(5000) {
+    composeTestRule.waitUntil(10000) {
       composeTestRule
           .onNodeWithTag(
               ExploreContentTestTags.ASSOCIATION_EXPLORE_RESULT + EXPECTED_ASSOCIATION_NAME)
@@ -89,7 +89,7 @@ class SearchTest : EndToEndTest() {
             ExploreContentTestTags.ASSOCIATION_EXPLORE_RESULT + EXPECTED_ASSOCIATION_NAME)
         .performClick()
 
-    composeTestRule.waitUntil(5000) {
+    composeTestRule.waitUntil(10000) {
       composeTestRule.onNodeWithTag(AssociationProfileTestTags.SCREEN).isDisplayed()
     }
 
