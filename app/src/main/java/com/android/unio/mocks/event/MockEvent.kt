@@ -94,7 +94,8 @@ class MockEvent {
         description: String = "This is a sample event description.",
         catchyDescription: String = "Catchy tagline!",
         price: Double = 20.0,
-        date: Timestamp = Timestamp(Date(System.currentTimeMillis() + 86400001)),
+        startDate: Timestamp = Timestamp(Date(System.currentTimeMillis() + 86400001)),
+        endDate: Timestamp = Timestamp(Date(System.currentTimeMillis() + 86400002)),
         location: Location = MockLocation.createMockLocation(),
         types: List<EventType> = listOf(EventType.TRIP)
     ): Event {
@@ -107,7 +108,8 @@ class MockEvent {
           description = description,
           catchyDescription = catchyDescription,
           price = price,
-          startDate = date,
+          startDate = startDate,
+          endDate = endDate,
           location = location,
           types = types,
           placesRemaining = -1)

@@ -61,6 +61,7 @@ class HydrationAndSerializationTest {
           catchyDescription = "An example event",
           price = 0.0,
           startDate = Timestamp.now(),
+          endDate = Timestamp.now(),
           location = Location(latitude = 0.0, longitude = 0.0, name = "Example Location"),
           placesRemaining = -1)
 
@@ -150,6 +151,7 @@ class HydrationAndSerializationTest {
     assertEquals(event.catchyDescription, hydrated.catchyDescription)
     assertEquals(event.price, hydrated.price)
     assertEquals(event.startDate, hydrated.startDate)
+    assertEquals(event.endDate, hydrated.endDate)
     assertEquals(event.location, hydrated.location)
     assertEquals(event.organisers.uids, hydrated.organisers.uids)
     assertEquals(event.taggedAssociations.uids, hydrated.taggedAssociations.uids)

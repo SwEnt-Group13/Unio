@@ -32,7 +32,8 @@ import java.util.Date
  * @property description event description
  * @property catchyDescription event catchy description
  * @property price event price
- * @property startDate event date
+ * @property startDate event start date
+ * @property endDate event end date
  * @property location event location
  * @property types list of event types
  */
