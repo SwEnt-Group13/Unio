@@ -50,9 +50,9 @@ class EventCreationTest {
   @get:Rule val composeTestRule = createComposeRule()
   @get:Rule val hiltRule = HiltAndroidRule(this)
 
-    val events = listOf(MockEvent.createMockEvent())
-    @MockK private lateinit var eventRepository: EventRepositoryFirestore
-    private lateinit var eventViewModel: EventViewModel
+  val events = listOf(MockEvent.createMockEvent())
+  @MockK private lateinit var eventRepository: EventRepositoryFirestore
+  private lateinit var eventViewModel: EventViewModel
 
   private lateinit var searchViewModel: SearchViewModel
   @MockK(relaxed = true) private lateinit var searchRepository: SearchRepository
@@ -74,12 +74,12 @@ class EventCreationTest {
     every { Firebase.auth } returns firebaseAuth
     every { firebaseAuth.currentUser } returns mockFirebaseUser
 
-      every { eventRepository.getEvents(any(), any()) } answers
-              {
-                  val onSuccess = args[0] as (List<Event>) -> Unit
-                  onSuccess(events)
-              }
-      eventViewModel = EventViewModel(eventRepository, imageRepositoryFirestore)
+    every { eventRepository.getEvents(any(), any()) } answers
+        {
+          val onSuccess = args[0] as (List<Event>) -> Unit
+          onSuccess(events)
+        }
+    eventViewModel = EventViewModel(eventRepository, imageRepositoryFirestore)
 
     searchViewModel = spyk(SearchViewModel(searchRepository))
     associationViewModel =
