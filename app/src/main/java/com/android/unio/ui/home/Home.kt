@@ -114,11 +114,11 @@ fun HomeContent(
 ) {
 
   val context = LocalContext.current
-  val followedAsso by userViewModel.followedAssociations.collectAsState()
+  val followedAssociations by userViewModel.followedAssociations.collectAsState()
   val allEvent by eventViewModel.events.collectAsState()
   val events: List<Event> =
       if (isOnFollowScreen) {
-        allEvent.filter { followedAsso.any { uid -> it.organisers.contains(uid) } }
+        allEvent.filter { followedAssociations.any { uid -> it.organisers.contains(uid) } }
       } else {
         allEvent
       }
@@ -291,16 +291,31 @@ fun TopBar(
             }
         // Pager Menu
         HorizontalPager(
-            state = pagerState, modifier = Modifier.fillMaxWidth().padding(top = 15.dp)) {
-              HomeContent(
-                  navigationAction,
-                  searchQuery,
-                  searchState,
-                  searchResults,
-                  userViewModel,
-                  eventViewModel,
-                  pagerState.currentPage == 1,
-                  paddingValues)
+            state = pagerState, modifier = Modifier.fillMaxWidth().padding(top = 15.dp)) { page ->
+              when (page) {
+                0 -> {
+                  HomeContent(
+                      navigationAction,
+                      searchQuery,
+                      searchState,
+                      searchResults,
+                      userViewModel,
+                      eventViewModel,
+                      false,
+                      paddingValues)
+                }
+                1 -> {
+                  HomeContent(
+                      navigationAction,
+                      searchQuery,
+                      searchState,
+                      searchResults,
+                      userViewModel,
+                      eventViewModel,
+                      true,
+                      paddingValues)
+                }
+              }
             }
       }
 }
