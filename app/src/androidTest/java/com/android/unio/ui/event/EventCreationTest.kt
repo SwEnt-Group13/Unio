@@ -19,6 +19,7 @@ import com.android.unio.model.search.SearchRepository
 import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.strings.test_tags.EventCreationOverlayTestTags
 import com.android.unio.model.strings.test_tags.EventCreationTestTags
+import com.android.unio.ui.assertDisplayComponentInScroll
 import com.android.unio.ui.navigation.NavigationAction
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
@@ -124,15 +125,4 @@ class EventCreationTest {
         composeTestRule.onNodeWithTag(EventCreationOverlayTestTags.CANCEL))
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag(EventCreationOverlayTestTags.SAVE))
   }
-}
-
-/**
- * This function is a copy of the function with the same name from EditAssociationTest.kt. It should
- * be extracted to a common file in a future PR.
- */
-private fun assertDisplayComponentInScroll(compose: SemanticsNodeInteraction) {
-  if (compose.isNotDisplayed()) {
-    compose.performScrollTo()
-  }
-  compose.assertIsDisplayed()
 }
