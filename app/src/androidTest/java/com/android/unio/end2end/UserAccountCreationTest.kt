@@ -53,7 +53,7 @@ class UserAccountCreationTest : EndToEndTest() {
     }
     composeTestRule.onNodeWithTag(EmailVerificationTestTags.REFRESH).performClick()
 
-    composeTestRule.waitUntil(100000) {
+    composeTestRule.waitUntil(10000) {
       composeTestRule.onNodeWithTag(EmailVerificationTestTags.CONTINUE).isDisplayed()
     }
     composeTestRule.onNodeWithTag(EmailVerificationTestTags.CONTINUE).performClick()
