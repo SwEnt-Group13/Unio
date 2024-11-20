@@ -37,7 +37,8 @@ class EventCardTest {
       MockEvent.createMockEvent(
           uid = "sample_event_123",
           location = MockLocation.createMockLocation(name = "Sample Location"),
-          date = Timestamp(Date(2024 - 1900, 6, 20)),
+          startDate = Timestamp(Date(2025 - 1900, 6, 20)),
+          endDate = Timestamp(Date(2025 - 1900, 6, 20)),
           catchyDescription = "This is a catchy description.")
   private val associations =
       listOf(
@@ -172,8 +173,11 @@ class EventCardTest {
   }
 
   @Test
-  fun testEventCardWithPastDate() {
-    val event = MockEvent.createMockEvent(date = MockEvent.Companion.EdgeCaseDate.PAST.value)
+  fun testEventCardWithPastStartAndEndDate() {
+    val event =
+        MockEvent.createMockEvent(
+            startDate = MockEvent.Companion.EdgeCaseDate.PAST.value,
+            endDate = MockEvent.Companion.EdgeCaseDate.PAST.value)
     setEventScreen(event)
     composeTestRule
         .onNodeWithTag(EventCardTestTags.EVENT_DATE, useUnmergedTree = true)
@@ -181,8 +185,8 @@ class EventCardTest {
   }
 
   @Test
-  fun testEventCardWithTodayDate() {
-    val event = MockEvent.createMockEvent(date = MockEvent.Companion.EdgeCaseDate.TODAY.value)
+  fun testEventCardWithTodayStartDate() {
+    val event = MockEvent.createMockEvent(startDate = MockEvent.Companion.EdgeCaseDate.TODAY.value)
     setEventScreen(event)
     composeTestRule
         .onNodeWithTag(EventCardTestTags.EVENT_DATE, useUnmergedTree = true)
@@ -190,8 +194,8 @@ class EventCardTest {
   }
 
   @Test
-  fun testEventCardWithFutureDate() {
-    val event = MockEvent.createMockEvent(date = MockEvent.Companion.EdgeCaseDate.FUTURE.value)
+  fun testEventCardWithFutureStartDate() {
+    val event = MockEvent.createMockEvent(startDate = MockEvent.Companion.EdgeCaseDate.FUTURE.value)
     setEventScreen(event)
     composeTestRule
         .onNodeWithTag(EventCardTestTags.EVENT_DATE, useUnmergedTree = true)

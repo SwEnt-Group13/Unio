@@ -15,16 +15,22 @@ import com.android.unio.mocks.association.MockAssociation
 import com.android.unio.mocks.event.MockEvent
 import com.android.unio.model.association.Association
 import com.android.unio.model.event.Event
+import com.android.unio.model.event.EventUtils.formatTimestamp
 import com.android.unio.model.map.MapViewModel
+import com.android.unio.model.strings.FormatStrings.DAY_MONTH_FORMAT
 import com.android.unio.model.strings.test_tags.EventDetailsTestTags
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
 import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.firebase.Timestamp
 import io.mockk.MockKAnnotations
 import io.mockk.clearAllMocks
 import io.mockk.impl.annotations.MockK
 import io.mockk.unmockkAll
 import io.mockk.verify
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -46,7 +52,16 @@ class EventDetailsTest {
   @Before
   fun setUp() {
     MockKAnnotations.init(this, relaxed = true)
-    events = listOf(MockEvent.createMockEvent(uid = "a"), MockEvent.createMockEvent(uid = "b"))
+    events =
+        listOf(
+            MockEvent.createMockEvent(
+                uid = "a",
+                startDate = Timestamp(Date(2024 - 1900, 6, 20)),
+                endDate = Timestamp(Date(2024 - 1900, 6, 21))),
+            MockEvent.createMockEvent(
+                uid = "b",
+                startDate = Timestamp(Date(2025 - 1900, 6, 20)),
+                endDate = Timestamp(Date(2025 - 1900, 6, 20))))
     associations =
         listOf(
             MockAssociation.createMockAssociation(uid = "c"),
@@ -57,17 +72,23 @@ class EventDetailsTest {
     mapViewModel = MapViewModel(fusedLocationProviderClient)
   }
 
-  private fun setEventScreen() {
+  private fun setEventScreen(event: Event) {
 
     composeTestRule.setContent {
-      EventScreenScaffold(navigationAction, mapViewModel, events[0], associations, true) {}
+      EventScreenScaffold(navigationAction, mapViewModel, event, associations, true) {}
     }
   }
 
   @Test
   fun testEventDetailsDisplayComponent() {
-    setEventScreen()
+    val event = events[1]
+    setEventScreen(event)
     composeTestRule.waitForIdle()
+
+    val formattedStartDateDay =
+        formatTimestamp(event.startDate, SimpleDateFormat(DAY_MONTH_FORMAT, Locale.getDefault()))
+    val formattedEndDateDay =
+        formatTimestamp(event.endDate, SimpleDateFormat(DAY_MONTH_FORMAT, Locale.getDefault()))
 
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag(EventDetailsTestTags.SCREEN, true))
     assertDisplayComponentInScroll(
@@ -91,8 +112,15 @@ class EventDetailsTest {
         composeTestRule.onNodeWithTag("${EventDetailsTestTags.ASSOCIATION_LOGO}1"))
     assertDisplayComponentInScroll(
         composeTestRule.onNodeWithTag("${EventDetailsTestTags.ASSOCIATION_NAME}1"))
-    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag(EventDetailsTestTags.START_HOUR))
-    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag(EventDetailsTestTags.DATE))
+
+    if (formattedStartDateDay == formattedEndDateDay) {
+      assertDisplayComponentInScroll(composeTestRule.onNodeWithTag(EventDetailsTestTags.HOUR))
+      assertDisplayComponentInScroll(composeTestRule.onNodeWithTag(EventDetailsTestTags.START_DATE))
+    } else {
+      assertDisplayComponentInScroll(composeTestRule.onNodeWithTag(EventDetailsTestTags.START_DATE))
+      assertDisplayComponentInScroll(composeTestRule.onNodeWithTag(EventDetailsTestTags.END_DATE))
+    }
+
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag(EventDetailsTestTags.DETAILS_BODY))
 
     composeTestRule.onNodeWithTag(EventDetailsTestTags.PLACES_REMAINING_TEXT).assertExists()
@@ -100,7 +128,7 @@ class EventDetailsTest {
     assertDisplayComponentInScroll(
         composeTestRule
             .onNodeWithTag(EventDetailsTestTags.LOCATION_ADDRESS, true)
-            .assertTextEquals(events[0].location.name))
+            .assertTextEquals(event.location.name))
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag(EventDetailsTestTags.MAP_BUTTON))
     assertDisplayComponentInScroll(
         composeTestRule.onNodeWithTag(EventDetailsTestTags.SIGN_UP_BUTTON))
@@ -115,7 +143,7 @@ class EventDetailsTest {
 
   @Test
   fun testButtonBehavior() {
-    setEventScreen()
+    setEventScreen(events[0])
     // Share button
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag(EventDetailsTestTags.SHARE_BUTTON))
     composeTestRule.onNodeWithTag(EventDetailsTestTags.SHARE_BUTTON).performClick()
@@ -145,18 +173,19 @@ class EventDetailsTest {
 
   @Test
   fun testGoBackButton() {
-    setEventScreen()
+    setEventScreen(events[0])
     composeTestRule.onNodeWithTag(EventDetailsTestTags.GO_BACK_BUTTON).performClick()
     verify { navigationAction.goBack() }
   }
 
   @Test
   fun testEventDetailsData() {
-    val event = events[0]
-    setEventScreen()
+    val event = events[1]
+    setEventScreen(event)
     assertDisplayComponentInScroll(composeTestRule.onNodeWithText(event.title))
     assertDisplayComponentInScroll(composeTestRule.onNodeWithText(event.description))
     assertDisplayComponentInScroll(composeTestRule.onNodeWithText(event.location.name))
+    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag(EventDetailsTestTags.START_DATE))
   }
 
   @After
