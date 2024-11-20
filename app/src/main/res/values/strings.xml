@@ -61,15 +61,13 @@
     <!-- Interest Overlay Strings -->
     <string name="interest_overlay_title" translatable="true">Your interests</string>
     <string name="interest_overlay_description" translatable="true">Choose as many interests as you feel apply to you</string>
-    <string name="interest_overlay_cancel" translatable="true">Cancel</string>
-    <string name="interest_overlay_save" translatable="true">Save</string>
+    <string name="overlay_cancel" translatable="true">Cancel</string>
+    <string name="overlay_save" translatable="true">Save</string>
 
     <!-- Social Overlay Strings -->
     <string name="social_overlay_title" translatable="true">Your social media</string>
     <string name="social_overlay_description" translatable="true">These will be displayed on your profile to allow other students to contact you</string>
     <string name="social_overlay_add_social" translatable="true">Add social</string>
-    <string name="social_overlay_save" translatable="true">Save</string>
-    <string name="social_overlay_cancel" translatable="true">Cancel</string>
     <string name="social_overlay_save_changes" translatable="true">Save changes</string>
     <string name="social_overlay_empty_field" translatable="true">The input is empty or blank</string>
     <string name="social_overlay_invalid_phone_number" translatable="true">The phone number has wrong format</string>
@@ -163,6 +161,15 @@
     <string name="event_creation_starttime_label">Start Time</string>
     <string name="event_creation_endtime_label">End Time</string>
 
+    <!-- Associations Overlay Strings -->
+    <string name="associations_overlay_coauthors_title" translatable="true">Coauthors</string>
+    <string name="associations_overlay_coauthors_description" translatable="true">Select coauthors for your event</string>
+    <string name="associations_overlay_tagged_title" translatable="true">Tag associations</string>
+    <string name="associations_overlay_tagged_description" translatable="true">Select which association to tag for your event</string>
+    <string name="associations_overlay_search_no_results" translatable="true">No results found</string>
+    <string name="associations_overlay_remove" translatable="true">Remove</string>
+
+
     <!-- Event Details Strings -->
     <string name="event_sign_up" translatable="false">I\'m going.</string>
     <string name="event_not_found" translatable="false">ERROR : event not found.</string>
@@ -178,7 +185,7 @@
 
     <!-- Explore Screen Strings -->
     <string name="explore_content_screen_title">Explore our Associations</string>
-    <string name="explore_search_placeholder">Search</string>
+    <string name="search_placeholder">Search</string>
     <string name="explore_search_error_message">An error occurred while searching</string>
     <string name="explore_search_no_results">No results found</string>
     <string name="explore_content_description_search_icon">Search icon</string>

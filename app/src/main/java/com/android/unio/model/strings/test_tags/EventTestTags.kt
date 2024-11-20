@@ -27,6 +27,16 @@ object EventCreationTestTags {
   const val END_TIME = "eventCreationEndTime"
 }
 
+object EventCreationOverlayTestTags {
+  const val SCREEN = "eventCreationOverlayScreen"
+  const val TITLE = "eventCreationOverlayTitle"
+  const val BODY = "eventCreationOverlayBody"
+  const val SEARCH_BAR_INPUT = "eventCreationOverlaySearchBarInput"
+  const val CANCEL = "eventCreationOverlayCancel"
+  const val SAVE = "eventCreationOverlaySave"
+  const val ASSOCIATION_LIST = "eventCreationOverlayAssociationList"
+}
+
 object EventDetailsTestTags {
   const val SCREEN = "eventScreen"
   const val SNACKBAR_HOST = "snackbarHost"
