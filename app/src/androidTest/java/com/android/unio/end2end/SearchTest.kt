@@ -17,6 +17,8 @@ import com.android.unio.model.strings.test_tags.EventCardTestTags
 import com.android.unio.model.strings.test_tags.EventDetailsTestTags
 import com.android.unio.model.strings.test_tags.ExploreContentTestTags
 import com.android.unio.model.strings.test_tags.HomeTestTags
+import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
 import dagger.hilt.android.testing.HiltAndroidTest
 import org.junit.Rule
 import org.junit.Test
@@ -28,7 +30,9 @@ class SearchTest : EndToEndTest() {
 
   @Test
   fun testSearchDisplaysCorrectResultsForEvents() {
-    signInWithUser(composeTestRule, User1.EMAIL, User1.PASSWORD)
+    if(Firebase.auth.currentUser == null) {
+      signInWithUser(composeTestRule, User1.EMAIL, User1.PASSWORD)
+    }
 
     composeTestRule.waitUntil(5000) {
       composeTestRule.onNodeWithTag(HomeTestTags.SCREEN).isDisplayed()

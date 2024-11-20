@@ -13,6 +13,8 @@ import com.android.unio.model.strings.test_tags.ExploreTestTags
 import com.android.unio.model.strings.test_tags.HomeTestTags
 import com.android.unio.model.strings.test_tags.SomeoneElseUserProfileTestTags
 import com.android.unio.ui.assertDisplayComponentInScroll
+import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
 import dagger.hilt.android.testing.HiltAndroidTest
 import org.junit.Rule
 import org.junit.Test
@@ -24,7 +26,9 @@ class AssociationProfileE2ETest : EndToEndTest() {
 
   @Test
   fun testAssociationProfileCanGoToSomeoneElseUserProfile() {
-    signInWithUser(composeTestRule, User1.EMAIL, User1.PASSWORD)
+    if(Firebase.auth.currentUser == null) {
+      signInWithUser(composeTestRule, User1.EMAIL, User1.PASSWORD)
+    }
 
     composeTestRule.waitUntil(10000) {
       composeTestRule.onNodeWithTag(HomeTestTags.SCREEN).isDisplayed()
