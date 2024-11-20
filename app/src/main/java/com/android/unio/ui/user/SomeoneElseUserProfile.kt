@@ -35,9 +35,6 @@ fun SomeoneElseUserProfileScreen(navigationAction: NavigationAction, userViewMod
   if (user == null) {
     Log.e("SomeoneElseUserProfile", "No user selected")
   } else {
-    //    UserProfileScreenScaffold(user!!, navigationAction, false) {
-    //      userViewModel.refreshSomeoneElseUser()
-    //    }
     Scaffold(
         modifier = Modifier.testTag(SomeoneElseUserProfileTestTags.SCREEN),
         topBar = {
