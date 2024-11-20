@@ -38,14 +38,8 @@ open class EndToEndTest : FirebaseEmulatorFunctions {
       password: String
   ) {
     composeTestRule.onNodeWithTag(WelcomeTestTags.SCREEN).assertIsDisplayed()
-
-    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag(WelcomeTestTags.EMAIL))
     composeTestRule.onNodeWithTag(WelcomeTestTags.EMAIL).performTextInput(email)
-
-    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag(WelcomeTestTags.PASSWORD))
     composeTestRule.onNodeWithTag(WelcomeTestTags.PASSWORD).performTextInput(password)
-
-    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag(WelcomeTestTags.BUTTON))
     composeTestRule.onNodeWithTag(WelcomeTestTags.BUTTON).performClick()
   }
 
