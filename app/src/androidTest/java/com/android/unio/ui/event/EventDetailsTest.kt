@@ -15,44 +15,52 @@ import com.android.unio.mocks.association.MockAssociation
 import com.android.unio.mocks.event.MockEvent
 import com.android.unio.model.association.Association
 import com.android.unio.model.event.Event
+import com.android.unio.model.map.MapViewModel
 import com.android.unio.model.strings.test_tags.EventDetailsTestTags
 import com.android.unio.ui.navigation.NavigationAction
+import com.android.unio.ui.navigation.Screen
+import com.google.android.gms.location.FusedLocationProviderClient
+import io.mockk.MockKAnnotations
 import io.mockk.clearAllMocks
+import io.mockk.impl.annotations.MockK
 import io.mockk.unmockkAll
+import io.mockk.verify
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.mockito.MockitoAnnotations
-import org.mockito.kotlin.mock
-import org.mockito.kotlin.verify
+import org.mockito.Mockito.mock
 
 class EventDetailsTest {
-  private lateinit var navHostController: NavHostController
+  @MockK private lateinit var navHostController: NavHostController
   private lateinit var navigationAction: NavigationAction
 
   private lateinit var events: List<Event>
   private lateinit var associations: List<Association>
 
+  private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+  private lateinit var mapViewModel: MapViewModel
+
   @get:Rule val composeTestRule = createComposeRule()
 
   @Before
   fun setUp() {
-    MockitoAnnotations.openMocks(this)
+    MockKAnnotations.init(this, relaxed = true)
     events = listOf(MockEvent.createMockEvent(uid = "a"), MockEvent.createMockEvent(uid = "b"))
     associations =
         listOf(
             MockAssociation.createMockAssociation(uid = "c"),
             MockAssociation.createMockAssociation(uid = "d"))
 
-    navHostController = mock { NavHostController::class.java }
     navigationAction = NavigationAction(navHostController)
+    fusedLocationProviderClient = mock()
+    mapViewModel = MapViewModel(fusedLocationProviderClient)
   }
 
   private fun setEventScreen() {
 
     composeTestRule.setContent {
-      EventScreenScaffold(navigationAction, events[0], associations, true) {}
+      EventScreenScaffold(navigationAction, mapViewModel, events[0], associations, true) {}
     }
   }
 
@@ -120,7 +128,7 @@ class EventDetailsTest {
     // Location button
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag(EventDetailsTestTags.MAP_BUTTON))
     composeTestRule.onNodeWithTag(EventDetailsTestTags.MAP_BUTTON).performClick()
-    assertSnackBarIsDisplayed()
+    verify { navigationAction.navigateTo(Screen.MAP) }
 
     // Sign-up button
     assertDisplayComponentInScroll(
@@ -139,7 +147,7 @@ class EventDetailsTest {
   fun testGoBackButton() {
     setEventScreen()
     composeTestRule.onNodeWithTag(EventDetailsTestTags.GO_BACK_BUTTON).performClick()
-    verify(navHostController).popBackStack()
+    verify { navigationAction.goBack() }
   }
 
   @Test

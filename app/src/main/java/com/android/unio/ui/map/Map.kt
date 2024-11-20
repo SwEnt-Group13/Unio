@@ -67,12 +67,13 @@ fun MapScreen(
     navigationAction: NavigationAction,
     eventViewModel: EventViewModel,
     userViewModel: UserViewModel,
-    mapViewModel: MapViewModel
+    mapViewModel: MapViewModel,
 ) {
   val context = LocalContext.current
   val cameraPositionState = rememberCameraPositionState()
+  val centerLocation by mapViewModel.centerLocation.collectAsState()
   val userLocation by mapViewModel.userLocation.collectAsState()
-  var initialCentered by remember { mutableStateOf(false) }
+  var initialCentered = false
   var isMyLocationEnabled by remember { mutableStateOf(false) }
   var showApproximateCircle by remember { mutableStateOf(false) }
 
@@ -121,15 +122,22 @@ fun MapScreen(
         requestPermissions()
       }
     }
-    cameraPositionState.position =
-        CameraPosition.fromLatLngZoom(userLocation ?: EPFL_COORDINATES, INITIAL_ZOOM_LEVEL)
   }
 
-  // Center map on the user's location initially if available
+  // Center map on the center location initially if available
   LaunchedEffect(userLocation) {
-    if (userLocation != null && !initialCentered) {
-      cameraPositionState.position =
-          CameraPosition.fromLatLngZoom(userLocation!!, INITIAL_ZOOM_LEVEL)
+    if (!initialCentered) {
+
+      if (centerLocation != null) {
+        cameraPositionState.position =
+            CameraPosition.fromLatLngZoom(centerLocation!!, INITIAL_ZOOM_LEVEL)
+      } else if (userLocation != null) {
+        cameraPositionState.position =
+            CameraPosition.fromLatLngZoom(userLocation!!, INITIAL_ZOOM_LEVEL)
+      } else {
+        cameraPositionState.position =
+            CameraPosition.fromLatLngZoom(EPFL_COORDINATES, INITIAL_ZOOM_LEVEL)
+      }
       initialCentered = true
     }
   }
@@ -145,7 +153,10 @@ fun MapScreen(
             },
             navigationIcon = {
               IconButton(
-                  onClick = { navigationAction.goBack() },
+                  onClick = {
+                    mapViewModel.setCenterLocation(null)
+                    navigationAction.goBack()
+                  },
                   modifier = Modifier.testTag(MapTestTags.GO_BACK_BUTTON)) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
