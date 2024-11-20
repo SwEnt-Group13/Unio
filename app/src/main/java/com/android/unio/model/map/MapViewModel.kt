@@ -18,6 +18,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
+const val REFRESH_INTERVAL_MILLIS: Long = 10000
+const val MIN_REFRESH_INTERVAL_MILLIS: Long = 5000
+
 @HiltViewModel
 class MapViewModel
 @Inject
@@ -63,8 +66,8 @@ constructor(private val fusedLocationClient: FusedLocationProviderClient) : View
   fun startLocationUpdates(context: Context) {
     if (hasLocationPermissions(context)) {
       val locationRequest =
-          LocationRequest.Builder(10000)
-              .setMinUpdateIntervalMillis(5000)
+          LocationRequest.Builder(REFRESH_INTERVAL_MILLIS)
+              .setMinUpdateIntervalMillis(MIN_REFRESH_INTERVAL_MILLIS)
               .setPriority(Priority.PRIORITY_BALANCED_POWER_ACCURACY)
               .build()
 
