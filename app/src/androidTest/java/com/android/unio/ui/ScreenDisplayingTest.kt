@@ -36,7 +36,7 @@ import com.android.unio.model.user.User
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.association.AssociationProfileScaffold
-import com.android.unio.ui.authentication.AccountDetails
+import com.android.unio.ui.authentication.AccountDetailsScreen
 import com.android.unio.ui.authentication.EmailVerificationScreen
 import com.android.unio.ui.authentication.WelcomeScreen
 import com.android.unio.ui.event.EventCreationScreen
@@ -202,7 +202,7 @@ class ScreenDisplayingTest {
   @Test
   fun testAccountDetailsDisplayed() {
     composeTestRule.setContent {
-      AccountDetails(navigationAction, userViewModel, imageRepositoryFirestore)
+      AccountDetailsScreen(navigationAction, userViewModel, imageRepositoryFirestore)
     }
     composeTestRule.onNodeWithTag(AccountDetailsTestTags.ACCOUNT_DETAILS).assertIsDisplayed()
   }
