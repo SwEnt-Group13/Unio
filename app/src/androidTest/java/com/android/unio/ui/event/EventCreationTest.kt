@@ -5,8 +5,19 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.isNotDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
+import com.android.unio.mocks.association.MockAssociation
 import com.android.unio.mocks.user.MockUser
+import com.android.unio.model.association.AssociationRepositoryFirestore
+import com.android.unio.model.association.AssociationViewModel
+import com.android.unio.model.event.Event
+import com.android.unio.model.event.EventRepositoryFirestore
+import com.android.unio.model.follow.ConcurrentAssociationUserRepositoryFirestore
+import com.android.unio.model.image.ImageRepositoryFirebaseStorage
+import com.android.unio.model.search.SearchRepository
+import com.android.unio.model.search.SearchViewModel
+import com.android.unio.model.strings.test_tags.EventCreationOverlayTestTags
 import com.android.unio.model.strings.test_tags.EventCreationTestTags
 import com.android.unio.ui.navigation.NavigationAction
 import com.google.firebase.Firebase
@@ -19,6 +30,7 @@ import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockkStatic
+import io.mockk.spyk
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -36,6 +48,17 @@ class EventCreationTest {
   @get:Rule val composeTestRule = createComposeRule()
   @get:Rule val hiltRule = HiltAndroidRule(this)
 
+  private lateinit var searchViewModel: SearchViewModel
+  @MockK(relaxed = true) private lateinit var searchRepository: SearchRepository
+
+  private lateinit var associationViewModel: AssociationViewModel
+  @MockK private lateinit var associationRepositoryFirestore: AssociationRepositoryFirestore
+  @MockK private lateinit var eventRepositoryFirestore: EventRepositoryFirestore
+  @MockK private lateinit var imageRepositoryFirestore: ImageRepositoryFirebaseStorage
+  @MockK
+  private lateinit var concurrentAssociationUserRepositoryFirestore:
+      ConcurrentAssociationUserRepositoryFirestore
+
   @Before
   fun setUp() {
     MockKAnnotations.init(this, relaxed = true)
@@ -44,11 +67,31 @@ class EventCreationTest {
     mockkStatic(FirebaseAuth::class)
     every { Firebase.auth } returns firebaseAuth
     every { firebaseAuth.currentUser } returns mockFirebaseUser
+
+    searchViewModel = spyk(SearchViewModel(searchRepository))
+    associationViewModel =
+        spyk(
+            AssociationViewModel(
+                associationRepositoryFirestore,
+                eventRepositoryFirestore,
+                imageRepositoryFirestore,
+                concurrentAssociationUserRepositoryFirestore))
+
+    val associations = MockAssociation.createAllMockAssociations(size = 2)
+
+    every { associationViewModel.findAssociationById(any()) } returns associations.first()
+    every { associationViewModel.getEventsForAssociation(any(), any()) } answers
+        {
+          val onSuccess = args[1] as (List<Event>) -> Unit
+          onSuccess(emptyList())
+        }
   }
 
   @Test
   fun testEventCreationTagsDisplayed() {
-    composeTestRule.setContent { EventCreationScreen(navigationAction) }
+    composeTestRule.setContent {
+      EventCreationScreen(navigationAction, searchViewModel, associationViewModel)
+    }
 
     composeTestRule.waitForIdle()
 
@@ -58,13 +101,28 @@ class EventCreationTest {
     assertDisplayComponentInScroll(
         composeTestRule.onNodeWithTag(EventCreationTestTags.SHORT_DESCRIPTION))
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag(EventCreationTestTags.COAUTHORS))
-    assertDisplayComponentInScroll(
-        composeTestRule.onNodeWithTag(EventCreationTestTags.TAGGED_ASSOCIATIONS))
+
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag(EventCreationTestTags.DESCRIPTION))
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag(EventCreationTestTags.LOCATION))
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag(EventCreationTestTags.SAVE_BUTTON))
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag(EventCreationTestTags.END_TIME))
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag(EventCreationTestTags.START_TIME))
+    assertDisplayComponentInScroll(
+        composeTestRule.onNodeWithTag(EventCreationTestTags.TAGGED_ASSOCIATIONS))
+
+    composeTestRule.onNodeWithTag(EventCreationTestTags.TAGGED_ASSOCIATIONS).performClick()
+    composeTestRule.waitForIdle()
+
+    assertDisplayComponentInScroll(
+        composeTestRule.onNodeWithTag(EventCreationOverlayTestTags.SCREEN))
+    assertDisplayComponentInScroll(
+        composeTestRule.onNodeWithTag(EventCreationOverlayTestTags.TITLE))
+    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag(EventCreationOverlayTestTags.BODY))
+    assertDisplayComponentInScroll(
+        composeTestRule.onNodeWithTag(EventCreationOverlayTestTags.SEARCH_BAR_INPUT))
+    assertDisplayComponentInScroll(
+        composeTestRule.onNodeWithTag(EventCreationOverlayTestTags.CANCEL))
+    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag(EventCreationOverlayTestTags.SAVE))
   }
 }
 

@@ -2,6 +2,7 @@ package com.android.unio.model.user
 
 import android.util.Log
 import com.android.unio.model.firestore.FirestorePaths.USER_PATH
+import com.android.unio.model.firestore.performFirestoreOperation
 import com.android.unio.model.firestore.transform.hydrate
 import com.android.unio.model.firestore.transform.serialize
 import com.google.firebase.Firebase
@@ -28,11 +29,12 @@ class UserRepositoryFirestore @Inject constructor(private val db: FirebaseFirest
   override fun getUsers(onSuccess: (List<User>) -> Unit, onFailure: (Exception) -> Unit) {
     db.collection(USER_PATH)
         .get()
-        .addOnSuccessListener { result ->
-          val users = result.map { hydrate(it.data) }
-          onSuccess(users)
-        }
-        .addOnFailureListener { exception -> onFailure(exception) }
+        .performFirestoreOperation(
+            onSuccess = { result ->
+              val users = result.map { hydrate(it.data) }
+              onSuccess(users)
+            },
+            onFailure = onFailure)
   }
 
   override fun getUserWithId(
@@ -42,19 +44,19 @@ class UserRepositoryFirestore @Inject constructor(private val db: FirebaseFirest
   ) {
     getUserRef(id)
         .get()
-        .addOnSuccessListener { document ->
-          val user = hydrate(document.data)
-          onSuccess(user)
-        }
-        .addOnFailureListener { exception -> onFailure(exception) }
+        .performFirestoreOperation(
+            onSuccess = { document ->
+              val user = hydrate(document.data)
+              onSuccess(user)
+            },
+            onFailure = onFailure)
   }
 
   override fun updateUser(user: User, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
     Log.d("AAA", "j'essaie d'update le user wesh")
     getUserRef(user.uid)
         .set(serialize(user))
-        .addOnSuccessListener { document -> onSuccess() }
-        .addOnFailureListener { exception -> onFailure(exception) }
+        .performFirestoreOperation(onSuccess = { onSuccess() }, onFailure = onFailure)
   }
 
   // Note: the following line is needed to add external methods to the companion object

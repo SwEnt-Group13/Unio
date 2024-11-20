@@ -138,7 +138,6 @@ class AssociationRepositoryFirestoreTest {
             "adminUid" to association1.adminUid)
 
     `when`(queryDocumentSnapshot1.data).thenReturn(map1)
-    `when`(queryDocumentSnapshot2.data).thenReturn(map2)
 
     repository = AssociationRepositoryFirestore(db)
   }
@@ -177,6 +176,8 @@ class AssociationRepositoryFirestoreTest {
 
   @Test
   fun testGetAssociations() {
+    `when`(queryDocumentSnapshot2.data).thenReturn(map2)
+
     repository.getAssociations(
         onSuccess = { associations ->
           assertEquals(2, associations.size)
@@ -198,7 +199,7 @@ class AssociationRepositoryFirestoreTest {
   @Test
   fun testGetAssociationsWithMissingFields() {
     // Only set the ID for the second association, leaving the other fields as null
-    `when`(queryDocumentSnapshot2.id).thenReturn(association2.uid)
+    `when`(queryDocumentSnapshot2.data).thenReturn(mapOf("uid" to association2.uid))
 
     repository.getAssociations(
         onSuccess = { associations ->
@@ -236,6 +237,7 @@ class AssociationRepositoryFirestoreTest {
 
   @Test
   fun testGetAssociationWithId() {
+    `when`(queryDocumentSnapshot1.exists()).thenReturn(true)
     repository.getAssociationWithId(
         association1.uid,
         onSuccess = { association ->
@@ -250,6 +252,7 @@ class AssociationRepositoryFirestoreTest {
 
   @Test
   fun testGetAssociationsByCategory() {
+    `when`(queryDocumentSnapshot2.data).thenReturn(map2)
     `when`(associationCollectionReference.whereEqualTo(eq("category"), any()))
         .thenReturn(associationCollectionReference)
     repository.getAssociationsByCategory(

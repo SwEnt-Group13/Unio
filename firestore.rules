@@ -47,6 +47,7 @@ service cloud.firestore {
       }
 
       allow get: if isVerified();
+      allow list: if isVerified();
       allow delete: if isOwner();
       allow create: if isOwner() && validate();
       allow update: if isOwner() && validateJoinedAssociations() && validate();

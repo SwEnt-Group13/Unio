@@ -7,7 +7,9 @@ import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performTextInput
+import com.android.unio.mocks.user.MockUser
 import com.android.unio.model.strings.test_tags.WelcomeTestTags
+import com.android.unio.model.user.User
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserViewModel
 import io.mockk.MockKAnnotations
@@ -24,6 +26,8 @@ class WelcomeTest {
 
   @get:Rule val composeTestRule = createComposeRule()
 
+  val user = MockUser.createMockUser()
+
   private lateinit var userViewModel: UserViewModel
   @MockK private lateinit var userRepository: UserRepositoryFirestore
 
@@ -33,6 +37,11 @@ class WelcomeTest {
 
     // Call first callback when init is called
     every { userRepository.init(any()) } answers { firstArg<() -> Unit>().invoke() }
+    every { userRepository.getUserWithId(any(), any(), any()) } answers
+        {
+          val onSuccess = args[1] as (User) -> Unit
+          onSuccess(user)
+        }
 
     userViewModel = UserViewModel(userRepository)
   }

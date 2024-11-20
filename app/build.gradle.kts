@@ -353,24 +353,48 @@ configurations.forEach { configuration ->
   configuration.exclude("com.google.protobuf", "protobuf-lite")
 }
 
-tasks.register("startFirebaseEmulators") {
-    val command = "firebase emulators:start --import=./firebase/emulator-data"
-    doLast {
-        val os = System.getProperty("os.name").toLowerCase()
-        if (os.contains("win")) {
-            ProcessBuilder("cmd", "/c", "start", "cmd", "/k", command).start()
-        } else if (os.contains("nix") || os.contains("nux") || os.contains("bsd")) {
-            ProcessBuilder(
-                "sh",
-                "-c",
-                """
-                x-terminal-emulator -e '${command}' ||
-                gnome-terminal -- bash -c '${command}; exec bash' ||
-                konsole -e '${command}'
+fun runCommand(command: String) {
+    val os = System.getProperty("os.name").toLowerCase()
+    if (os.contains("win")) {
+        val adjustedCommand = command
+            .replace("./gradlew", "gradlew") // Windows does not support the ./ prefix
+            .replace("'", "\"") // Windows does not support single quotes
+        ProcessBuilder("cmd", "/c", "start", "cmd", "/k", adjustedCommand).start()
+    } else if (os.contains("nix") || os.contains("nux") || os.contains("bsd")) {
+        ProcessBuilder(
+            "sh",
+            "-c",
+            """
+                x-terminal-emulator -e '$command' ||
+                gnome-terminal -- bash -c '$command; exec bash' ||
+                konsole -e '$command'
                 """.trimIndent()
-            ).start()
-        } else {
-            throw GradleException("Unsupported operating system: $os")
-        }
+        ).start()
+    } else if (os.contains("mac")) {
+        ProcessBuilder(
+            "osascript",
+            "-e",
+            """
+                tell application "Terminal"
+                    do script "cd ${project.rootDir} && $command"
+                    activate
+                end tell
+                """.trimIndent()
+        ).start()
+    } else {
+        throw GradleException("Unsupported operating system: $os")
+    }
+}
+
+tasks.register("startFirebaseEmulators") {
+    doLast {
+        runCommand("firebase emulators:start --import=./firebase/emulator-data")
+    }
+}
+
+tasks.register("connectedCheckWithFirebaseEmulators") {
+    doLast {
+        // For Linux and MacOS, you need to grant execute permissions to gradlew e.g. chmod +x gradlew
+        runCommand("firebase emulators:exec --import=./firebase/emulator-data './gradlew connectedCheck'")
     }
 }

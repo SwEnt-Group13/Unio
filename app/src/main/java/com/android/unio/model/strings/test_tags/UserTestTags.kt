@@ -20,6 +20,7 @@ object UserProfileTestTags {
 
 object SomeoneElseUserProfileTestTags {
   const val SCREEN = "someoneElseUserProfileScreen"
+  const val NAME = "someoneElseUserProfileName"
 }
 
 object UserClaimAssociationTestTags {

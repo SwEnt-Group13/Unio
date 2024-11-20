@@ -20,6 +20,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -67,12 +68,13 @@ fun MapScreen(
     navigationAction: NavigationAction,
     eventViewModel: EventViewModel,
     userViewModel: UserViewModel,
-    mapViewModel: MapViewModel
+    mapViewModel: MapViewModel,
 ) {
   val context = LocalContext.current
   val cameraPositionState = rememberCameraPositionState()
+  val centerLocation by mapViewModel.centerLocation.collectAsState()
   val userLocation by mapViewModel.userLocation.collectAsState()
-  var initialCentered by remember { mutableStateOf(false) }
+  var initialCentered = false
   var isMyLocationEnabled by remember { mutableStateOf(false) }
   var showApproximateCircle by remember { mutableStateOf(false) }
 
@@ -81,12 +83,12 @@ fun MapScreen(
           permissions ->
         when {
           permissions.getOrDefault(Manifest.permission.ACCESS_FINE_LOCATION, false) -> {
-            mapViewModel.fetchUserLocation(context)
+            mapViewModel.startLocationUpdates(context)
             isMyLocationEnabled = true
             showApproximateCircle = false
           }
           permissions.getOrDefault(Manifest.permission.ACCESS_COARSE_LOCATION, false) -> {
-            mapViewModel.fetchUserLocation(context)
+            mapViewModel.startLocationUpdates(context)
             isMyLocationEnabled = false
             showApproximateCircle = true
           }
@@ -109,30 +111,39 @@ fun MapScreen(
       ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) -> {
         isMyLocationEnabled = true
         showApproximateCircle = false
-        mapViewModel.fetchUserLocation(context)
+        mapViewModel.startLocationUpdates(context)
       }
       ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) -> {
         isMyLocationEnabled = false
         showApproximateCircle = true
         requestPermissions()
-        mapViewModel.fetchUserLocation(context)
+        mapViewModel.startLocationUpdates(context)
       }
       else -> {
         requestPermissions()
       }
     }
-    cameraPositionState.position =
-        CameraPosition.fromLatLngZoom(userLocation ?: EPFL_COORDINATES, INITIAL_ZOOM_LEVEL)
   }
 
-  // Center map on the user's location initially if available
+  // Center map on the center location initially if available
   LaunchedEffect(userLocation) {
-    if (userLocation != null && !initialCentered) {
-      cameraPositionState.position =
-          CameraPosition.fromLatLngZoom(userLocation!!, INITIAL_ZOOM_LEVEL)
+    if (!initialCentered) {
+
+      if (centerLocation != null) {
+        cameraPositionState.position =
+            CameraPosition.fromLatLngZoom(centerLocation!!, INITIAL_ZOOM_LEVEL)
+      } else if (userLocation != null) {
+        cameraPositionState.position =
+            CameraPosition.fromLatLngZoom(userLocation!!, INITIAL_ZOOM_LEVEL)
+      } else {
+        cameraPositionState.position =
+            CameraPosition.fromLatLngZoom(EPFL_COORDINATES, INITIAL_ZOOM_LEVEL)
+      }
       initialCentered = true
     }
   }
+
+  DisposableEffect(Unit) { onDispose { mapViewModel.stopLocationUpdates() } }
 
   Scaffold(
       modifier = Modifier.testTag(MapTestTags.SCREEN),
@@ -145,7 +156,10 @@ fun MapScreen(
             },
             navigationIcon = {
               IconButton(
-                  onClick = { navigationAction.goBack() },
+                  onClick = {
+                    mapViewModel.setCenterLocation(null)
+                    navigationAction.goBack()
+                  },
                   modifier = Modifier.testTag(MapTestTags.GO_BACK_BUTTON)) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
