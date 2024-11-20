@@ -1,6 +1,5 @@
 package com.android.unio.ui.event
 
-import android.annotation.SuppressLint
 import android.net.Uri
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -14,6 +13,8 @@ import androidx.compose.foundation.gestures.waitForUpOrCancellation
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -27,6 +28,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.AccessTime
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -35,6 +38,8 @@ import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.InputChip
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -43,6 +48,8 @@ import androidx.compose.material3.TimeInput
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -60,131 +67,186 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.android.unio.R
+import com.android.unio.model.association.Association
+import com.android.unio.model.association.AssociationViewModel
+import com.android.unio.model.search.SearchViewModel
+import com.android.unio.model.strings.FormatStrings.DAY_MONTH_YEAR_FORMAT
+import com.android.unio.model.strings.FormatStrings.HOUR_MINUTE_FORMAT
 import com.android.unio.model.strings.test_tags.EventCreationTestTags
+import com.android.unio.ui.event.overlay.AssociationsOverlay
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.theme.AppTypography
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun EventCreationScreen(navigationAction: NavigationAction) {
+fun EventCreationScreen(
+    navigationAction: NavigationAction,
+    searchViewModel: SearchViewModel,
+    associationViewModel: AssociationViewModel
+) {
   val context = LocalContext.current
   var name by remember { mutableStateOf("") }
   var shortDescription by remember { mutableStateOf("") }
   var longDescription by remember { mutableStateOf("") }
   val scrollState = rememberScrollState()
+  var showCoauthorsOverlay by remember { mutableStateOf(false) }
+  var showTaggedOverlay by remember { mutableStateOf(false) }
 
-  Scaffold(
-      modifier = Modifier.testTag(EventCreationTestTags.SCREEN),
-      content = { padding ->
-        Column(
-            modifier =
-                Modifier.padding(padding).padding(20.dp).fillMaxWidth().verticalScroll(scrollState),
-            verticalArrangement = Arrangement.spacedBy(6.dp),
-            horizontalAlignment = CenterHorizontally) {
-              Row(
-                  modifier = Modifier.fillMaxWidth(),
-                  verticalAlignment = Alignment.CenterVertically,
-                  horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                    IconButton(onClick = { navigationAction.goBack() }) {
-                      Icon(
-                          Icons.AutoMirrored.Filled.ArrowBack,
-                          contentDescription =
-                              context.getString(R.string.event_creation_cancel_button))
-                    }
-                    Text(
-                        context.getString(R.string.event_creation_title),
-                        style = AppTypography.headlineSmall,
-                        modifier = Modifier.testTag(EventCreationTestTags.TITLE))
-                  }
+  var coauthorsAndBoolean =
+      associationViewModel.associations.collectAsState().value.map { it to mutableStateOf(false) }
 
-              OutlinedTextField(
-                  modifier = Modifier.fillMaxWidth().testTag(EventCreationTestTags.EVENT_TITLE),
-                  value = name,
-                  onValueChange = { name = it },
-                  label = { Text(context.getString(R.string.event_creation_name_label)) })
+  var taggedAndBoolean =
+      associationViewModel.associations.collectAsState().value.map { it to mutableStateOf(false) }
+  Scaffold(modifier = Modifier.testTag(EventCreationTestTags.SCREEN)) { padding ->
+    Column(
+        modifier =
+            Modifier.padding(padding).padding(20.dp).fillMaxWidth().verticalScroll(scrollState),
+        verticalArrangement = Arrangement.spacedBy(6.dp),
+        horizontalAlignment = CenterHorizontally) {
+          Row(
+              modifier = Modifier.fillMaxWidth(),
+              verticalAlignment = Alignment.CenterVertically,
+              horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                IconButton(onClick = { navigationAction.goBack() }) {
+                  Icon(
+                      Icons.AutoMirrored.Filled.ArrowBack,
+                      contentDescription = context.getString(R.string.event_creation_cancel_button))
+                }
+                Text(
+                    context.getString(R.string.event_creation_title),
+                    style = AppTypography.headlineSmall,
+                    modifier = Modifier.testTag(EventCreationTestTags.TITLE))
+              }
 
-              OutlinedTextField(
-                  modifier =
-                      Modifier.fillMaxWidth().testTag(EventCreationTestTags.SHORT_DESCRIPTION),
-                  value = shortDescription,
-                  onValueChange = { shortDescription = it },
-                  label = {
-                    Text(context.getString(R.string.event_creation_short_description_label))
-                  })
+          OutlinedTextField(
+              modifier = Modifier.fillMaxWidth().testTag(EventCreationTestTags.EVENT_TITLE),
+              value = name,
+              onValueChange = { name = it },
+              label = { Text(context.getString(R.string.event_creation_name_label)) })
 
-              BannerImagePicker()
+          OutlinedTextField(
+              modifier = Modifier.fillMaxWidth().testTag(EventCreationTestTags.SHORT_DESCRIPTION),
+              value = shortDescription,
+              onValueChange = { shortDescription = it },
+              label = { Text(context.getString(R.string.event_creation_short_description_label)) })
 
-              OutlinedTextField(
-                  modifier =
-                      Modifier.fillMaxWidth().testTag(EventCreationTestTags.COAUTHORS).clickable {
-                        Toast.makeText(
-                                context, "Coauthors are not implemented yet", Toast.LENGTH_SHORT)
-                            .show()
-                      },
-                  value = "",
-                  readOnly = true,
-                  onValueChange = {},
-                  label = { Text(context.getString(R.string.event_creation_coauthors_label)) })
+          BannerImagePicker()
 
-              OutlinedTextField(
-                  modifier =
-                      Modifier.fillMaxWidth()
-                          .testTag(EventCreationTestTags.TAGGED_ASSOCIATIONS)
-                          .clickable {
-                            Toast.makeText(
-                                    context,
-                                    "Tagged Associations are not implemented yet",
-                                    Toast.LENGTH_SHORT)
-                                .show()
-                          },
-                  value = "",
-                  readOnly = true,
-                  onValueChange = {},
-                  label = { Text(context.getString(R.string.event_creation_tagged_label)) })
+          OutlinedButton(
+              modifier = Modifier.fillMaxWidth().testTag(EventCreationTestTags.COAUTHORS),
+              onClick = { showCoauthorsOverlay = true }) {
+                Icon(
+                    Icons.Default.Add,
+                    contentDescription =
+                        context.getString(R.string.social_overlay_content_description_add))
+                Text(context.getString(R.string.event_creation_coauthors_label))
+              }
 
-              OutlinedTextField(
-                  modifier = Modifier.fillMaxWidth().testTag(EventCreationTestTags.DESCRIPTION),
-                  value = longDescription,
-                  onValueChange = { longDescription = it },
-                  label = { Text(context.getString(R.string.event_creation_description_label)) })
+          AssociationChips(coauthorsAndBoolean)
 
-              DateAndTimePicker(
-                  context.getString(R.string.event_creation_startdate_label),
-                  context.getString(R.string.event_creation_starttime_label),
-                  modifier = Modifier.testTag(EventCreationTestTags.START_TIME))
+          OutlinedButton(
+              modifier = Modifier.fillMaxWidth().testTag(EventCreationTestTags.TAGGED_ASSOCIATIONS),
+              onClick = { showTaggedOverlay = true }) {
+                Icon(
+                    Icons.Default.Add,
+                    contentDescription =
+                        context.getString(R.string.social_overlay_content_description_add))
+                Text(context.getString(R.string.event_creation_tagged_label))
+              }
 
-              DateAndTimePicker(
-                  context.getString(R.string.event_creation_enddate_label),
-                  context.getString(R.string.event_creation_endtime_label),
-                  modifier = Modifier.testTag(EventCreationTestTags.END_TIME))
+          AssociationChips(taggedAndBoolean)
 
-              OutlinedTextField(
-                  modifier =
-                      Modifier.fillMaxWidth().testTag(EventCreationTestTags.LOCATION).clickable {
-                        Toast.makeText(
-                                context, "Location is not implemented yet", Toast.LENGTH_SHORT)
-                            .show()
-                      },
-                  value = "",
-                  onValueChange = {},
-                  label = { Text(context.getString(R.string.event_creation_location_label)) })
+          OutlinedTextField(
+              modifier = Modifier.fillMaxWidth().testTag(EventCreationTestTags.DESCRIPTION),
+              value = longDescription,
+              onValueChange = { longDescription = it },
+              label = { Text(context.getString(R.string.event_creation_description_label)) })
 
-              Spacer(modifier = Modifier.width(10.dp))
+          DateAndTimePicker(
+              context.getString(R.string.event_creation_startdate_label),
+              context.getString(R.string.event_creation_starttime_label),
+              modifier = Modifier.testTag(EventCreationTestTags.START_TIME))
 
-              Button(
-                  modifier = Modifier.testTag(EventCreationTestTags.SAVE_BUTTON),
-                  onClick = { navigationAction.goBack() }) {
-                    Text(context.getString(R.string.event_creation_save_button))
-                  }
-            }
-      })
+          DateAndTimePicker(
+              context.getString(R.string.event_creation_enddate_label),
+              context.getString(R.string.event_creation_endtime_label),
+              modifier = Modifier.testTag(EventCreationTestTags.END_TIME))
+
+          OutlinedTextField(
+              modifier =
+                  Modifier.fillMaxWidth().testTag(EventCreationTestTags.LOCATION).clickable {
+                    Toast.makeText(context, "Location is not implemented yet", Toast.LENGTH_SHORT)
+                        .show()
+                  },
+              value = "",
+              onValueChange = {},
+              label = { Text(context.getString(R.string.event_creation_location_label)) })
+
+          Spacer(modifier = Modifier.width(10.dp))
+
+          Button(
+              modifier = Modifier.testTag(EventCreationTestTags.SAVE_BUTTON),
+              onClick = { navigationAction.goBack() }) {
+                Text(context.getString(R.string.event_creation_save_button))
+              }
+
+          if (showCoauthorsOverlay) {
+            AssociationsOverlay(
+                onDismiss = { showCoauthorsOverlay = false },
+                onSave = { coauthors ->
+                  coauthorsAndBoolean = coauthors
+                  showCoauthorsOverlay = false
+                },
+                associations = coauthorsAndBoolean,
+                searchViewModel = searchViewModel,
+                headerText = context.getString(R.string.associations_overlay_coauthors_title),
+                bodyText = context.getString(R.string.associations_overlay_coauthors_description))
+          }
+
+          if (showTaggedOverlay) {
+            AssociationsOverlay(
+                onDismiss = { showTaggedOverlay = false },
+                onSave = { tagged ->
+                  taggedAndBoolean = tagged
+                  showTaggedOverlay = false
+                },
+                associations = taggedAndBoolean,
+                searchViewModel = searchViewModel,
+                headerText = context.getString(R.string.associations_overlay_tagged_title),
+                bodyText = context.getString(R.string.associations_overlay_tagged_description))
+          }
+        }
+  }
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun AssociationChips(
+    associations: List<Pair<Association, MutableState<Boolean>>>,
+) {
+  val context = LocalContext.current
+  FlowRow {
+    associations.forEach { (association, selected) ->
+      if (selected.value) {
+        InputChip(
+            label = { Text(association.name) },
+            onClick = {},
+            selected = selected.value,
+            avatar = {
+              Icon(
+                  Icons.Default.Close,
+                  contentDescription = context.getString(R.string.associations_overlay_remove),
+                  modifier = Modifier.clickable { selected.value = !selected.value })
+            })
+      }
+    }
+  }
 }
 
 @Composable
-fun BannerImagePicker() {
+private fun BannerImagePicker() {
   val context = LocalContext.current
   var eventBanner by remember { mutableStateOf(Uri.EMPTY) }
 
@@ -225,7 +287,7 @@ fun BannerImagePicker() {
 }
 
 @Composable
-fun DateAndTimePicker(dateString: String, timeString: String, modifier: Modifier) {
+private fun DateAndTimePicker(dateString: String, timeString: String, modifier: Modifier) {
   var isDatePickerVisible by remember { mutableStateOf(false) }
   var isTimePickerVisible by remember { mutableStateOf(false) }
   var selectedDate by remember { mutableStateOf<Long?>(null) }
@@ -299,7 +361,7 @@ fun DateAndTimePicker(dateString: String, timeString: String, modifier: Modifier
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DatePickerModal(onDateSelected: (Long?) -> Unit, onDismiss: () -> Unit) {
+private fun DatePickerModal(onDateSelected: (Long?) -> Unit, onDismiss: () -> Unit) {
   val datePickerState = rememberDatePickerState()
   val context = LocalContext.current
 
@@ -344,7 +406,7 @@ fun TimePickerModal(onTimeSelected: (Long?) -> Unit, onDismiss: () -> Unit) {
  * exist in the Material3 library.
  */
 @Composable
-fun TimePickerDialog(
+private fun TimePickerDialog(
     onDismiss: () -> Unit,
     onConfirm: () -> Unit,
     content: @Composable () -> Unit
@@ -366,11 +428,11 @@ fun TimePickerDialog(
 }
 
 fun convertMillisToDate(millis: Long): String {
-  val formatter = SimpleDateFormat("dd/MM/yy", Locale.getDefault())
+  val formatter = SimpleDateFormat(DAY_MONTH_YEAR_FORMAT, Locale.getDefault())
   return formatter.format(Date(millis))
 }
 
 fun convertMillisToTime(millis: Long): String {
-  val formatter = SimpleDateFormat("HH:mm", Locale.getDefault())
+  val formatter = SimpleDateFormat(HOUR_MINUTE_FORMAT, Locale.getDefault())
   return formatter.format(Date(millis))
 }

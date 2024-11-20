@@ -27,6 +27,16 @@ object EventCreationTestTags {
   const val END_TIME = "eventCreationEndTime"
 }
 
+object EventCreationOverlayTestTags {
+  const val SCREEN = "eventCreationOverlayScreen"
+  const val TITLE = "eventCreationOverlayTitle"
+  const val BODY = "eventCreationOverlayBody"
+  const val SEARCH_BAR_INPUT = "eventCreationOverlaySearchBarInput"
+  const val CANCEL = "eventCreationOverlayCancel"
+  const val SAVE = "eventCreationOverlaySave"
+  const val ASSOCIATION_LIST = "eventCreationOverlayAssociationList"
+}
+
 object EventDetailsTestTags {
   const val SCREEN = "eventScreen"
   const val SNACKBAR_HOST = "snackbarHost"
@@ -41,8 +51,9 @@ object EventDetailsTestTags {
   const val ORGANIZING_ASSOCIATION = "eventOrganisingAssociation"
   const val ASSOCIATION_LOGO = "associationLogo"
   const val ASSOCIATION_NAME = "associationName"
-  const val START_HOUR = "eventStartHour"
-  const val DATE = "eventDate"
+  const val HOUR = "eventHour"
+  const val START_DATE = "eventStartDate"
+  const val END_DATE = "eventEndDate"
   const val DETAILS_BODY = "eventDetailsBody"
   const val PLACES_REMAINING_TEXT = "placesRemainingText"
   const val PRICE_TEXT = "priceText"

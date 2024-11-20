@@ -32,7 +32,8 @@ import java.util.Date
  * @property description event description
  * @property catchyDescription event catchy description
  * @property price event price
- * @property date event date
+ * @property startDate event start date
+ * @property endDate event end date
  * @property location event location
  * @property types list of event types
  */
@@ -45,7 +46,8 @@ data class Event(
     val description: String = "",
     val catchyDescription: String = "",
     val price: Double = 0.0,
-    val date: Timestamp = Timestamp(Date()),
+    val startDate: Timestamp = Timestamp(Date()),
+    val endDate: Timestamp = Timestamp(Date()),
     val location: Location = Location(),
     val types: List<EventType> = mutableListOf(EventType.OTHER),
     val placesRemaining: Int = -1

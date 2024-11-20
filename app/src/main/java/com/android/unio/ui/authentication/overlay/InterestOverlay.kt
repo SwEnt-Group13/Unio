@@ -10,13 +10,13 @@ import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.OutlinedButton
-import androidx.compose.material.Surface
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -100,7 +100,7 @@ fun InterestOverlay(
                               modifier =
                                   Modifier.padding(5.dp)
                                       .testTag(InterestsOverlayTestTags.CANCEL_BUTTON)) {
-                                Text(context.getString(R.string.interest_overlay_cancel))
+                                Text(context.getString(R.string.overlay_cancel))
                               }
 
                           Button(
@@ -108,7 +108,7 @@ fun InterestOverlay(
                               modifier =
                                   Modifier.padding(5.dp)
                                       .testTag(InterestsOverlayTestTags.SAVE_BUTTON)) {
-                                Text(context.getString(R.string.interest_overlay_save))
+                                Text(context.getString(R.string.overlay_save))
                               }
                         }
                   }

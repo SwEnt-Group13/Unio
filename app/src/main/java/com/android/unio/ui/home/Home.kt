@@ -66,7 +66,7 @@ fun HomeScreen(
     navigationAction: NavigationAction,
     eventViewModel: EventViewModel,
     userViewModel: UserViewModel,
-    searchViewModel: SearchViewModel
+    searchViewModel: SearchViewModel,
 ) {
   val context = LocalContext.current
 
@@ -109,11 +109,20 @@ fun HomeContent(
     searchResults: List<Event>,
     userViewModel: UserViewModel,
     eventViewModel: EventViewModel,
+    isOnFollowScreen: Boolean,
     paddingValues: PaddingValues
 ) {
 
   val context = LocalContext.current
-  val events by eventViewModel.events.collectAsState()
+  val followedAssociations by userViewModel.followedAssociations.collectAsState()
+  val allEvent by eventViewModel.events.collectAsState()
+  val events: List<Event> =
+      if (isOnFollowScreen) {
+        allEvent.filter { followedAssociations.any { uid -> it.organisers.contains(uid) } }
+      } else {
+        allEvent
+      }
+
   // Event List
   if (searchQuery.isNotEmpty() &&
       (searchState == SearchViewModel.Status.SUCCESS ||
@@ -188,6 +197,36 @@ fun TopBar(
         }
         val colorScheme = MaterialTheme.colorScheme
 
+        DockedSearchBar(
+            inputField = {
+              SearchBarDefaults.InputField(
+                  modifier = Modifier.testTag(HomeTestTags.SEARCH_BAR_INPUT),
+                  query = searchQuery,
+                  onQueryChange = {
+                    // Search when query changes
+                    searchQuery = it
+                    searchViewModel.debouncedSearch(it, SearchViewModel.SearchType.EVENT)
+                  },
+                  onSearch = {},
+                  expanded = false,
+                  onExpandedChange = {},
+                  placeholder = { Text(text = context.getString(R.string.search_placeholder)) },
+                  trailingIcon = {
+                    if (searchState == SearchViewModel.Status.LOADING) {
+                      CircularProgressIndicator()
+                    } else {
+                      Icon(
+                          Icons.Default.Search,
+                          contentDescription =
+                              context.getString(R.string.home_content_description_search_icon))
+                    }
+                  },
+              )
+            },
+            expanded = false,
+            onExpandedChange = {},
+            modifier = Modifier.padding(horizontal = 16.dp).testTag(HomeTestTags.SEARCH_BAR)) {}
+
         // Tab Menu at the top of the page
         TabRow(
             selectedTabIndex = pagerState.currentPage,
@@ -250,41 +289,9 @@ fun TopBar(
                     }
               }
             }
-
-        DockedSearchBar(
-            inputField = {
-              SearchBarDefaults.InputField(
-                  modifier = Modifier.testTag(HomeTestTags.SEARCH_BAR_INPUT),
-                  query = searchQuery,
-                  onQueryChange = {
-                    // Search when query changes
-                    searchQuery = it
-                    searchViewModel.debouncedSearch(it, SearchViewModel.SearchType.EVENT)
-                  },
-                  onSearch = {},
-                  expanded = false,
-                  onExpandedChange = {},
-                  placeholder = {
-                    Text(text = context.getString(R.string.explore_search_placeholder))
-                  },
-                  trailingIcon = {
-                    if (searchState == SearchViewModel.Status.LOADING) {
-                      CircularProgressIndicator()
-                    } else {
-                      Icon(
-                          Icons.Default.Search,
-                          contentDescription =
-                              context.getString(R.string.home_content_description_search_icon))
-                    }
-                  },
-              )
-            },
-            expanded = false,
-            onExpandedChange = {},
-            modifier = Modifier.padding(horizontal = 16.dp).testTag(HomeTestTags.SEARCH_BAR)) {}
         // Pager Menu
         HorizontalPager(
-            state = pagerState, modifier = Modifier.fillMaxWidth().padding(top = 15.dp)) {
+            state = pagerState, modifier = Modifier.fillMaxWidth().padding(top = 15.dp)) { page ->
               HomeContent(
                   navigationAction,
                   searchQuery,
@@ -292,6 +299,7 @@ fun TopBar(
                   searchResults,
                   userViewModel,
                   eventViewModel,
+                  page == 1,
                   paddingValues)
             }
       }
