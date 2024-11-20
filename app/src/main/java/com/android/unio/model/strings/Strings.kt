@@ -33,6 +33,12 @@ object FirestorePathsStrings {
   const val EVENT_PATH = "events"
 }
 
+object StoragePathsStings{
+  const val USER_IMAGES = "images/users/"
+  const val ASSOCIATION_IMAGES = "images/associations"
+
+}
+
 object MapStrings {
   const val EVENT_ALREADY_OCCURED = "Event has already occurred"
 }

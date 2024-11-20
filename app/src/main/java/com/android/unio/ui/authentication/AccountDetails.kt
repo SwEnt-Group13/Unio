@@ -53,6 +53,7 @@ import com.android.unio.model.association.Association
 import com.android.unio.model.event.Event
 import com.android.unio.model.firestore.emptyFirestoreReferenceList
 import com.android.unio.model.image.ImageRepository
+import com.android.unio.model.strings.StoragePathsStings
 import com.android.unio.model.strings.test_tags.AccountDetailsTestTags
 import com.android.unio.model.user.AccountDetailsError
 import com.android.unio.model.user.Interest
@@ -90,8 +91,8 @@ fun AccountDetailsScreen(
           val inputStream = context.contentResolver.openInputStream(profilePictureUri.value)
           imageRepository.uploadImage(
               inputStream!!,
-              "images/users/${userId}",
-              onSuccess = { createUser("images/users/${userId}", userId!!) },
+              StoragePathsStings.USER_IMAGES + userId,
+              onSuccess = { createUser(StoragePathsStings.USER_IMAGES + userId, userId!!) },
               onFailure = { exception ->
                 Log.e("AccountDetails", "Error uploading image: $exception")
                 Toast.makeText(
@@ -116,6 +117,13 @@ fun AccountDetailsScreen(
       })
 }
 
+/**
+ * The [onCreateUser] function is called with the [profilePictureUri] and [createUser]
+ * lambda function as parameters. [createUser] calls upon another lambda that uploads
+ * the user if all the required fields are filled. This method hierarchy is necessary
+ * due to the fact that uploading an image needs to know if the URI is empty or not
+ * before creating the User.
+ */
 @Composable
 fun AccountDetailsContent(
     navigationAction: NavigationAction,
@@ -150,6 +158,7 @@ fun AccountDetailsContent(
     return
   }
 
+    //the uri here is the path from the firebase/users to the location of the image in the storage
   val createUser: (String, String) -> Unit = { uri, userId ->
     val newUser =
         User(
@@ -204,13 +213,6 @@ fun AccountDetailsContent(
 
           Button(
               modifier = Modifier.testTag(AccountDetailsTestTags.CONTINUE_BUTTON),
-              /**
-               * The [onCreateUser] function is called with the [profilePictureUri] and [createUser]
-               * lambda function as parameters. [createUser] calls upon another lambda that uploads
-               * the user if all the required fields are filled. This method hierarchy is necessary
-               * due to the fact that uploading an image needs to know if the URI is empty or not
-               * before creating the User.
-               */
               onClick = { onCreateUser(profilePictureUri, createUser) }) {
                 Text(context.getString(R.string.account_details_continue))
               }
