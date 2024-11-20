@@ -33,10 +33,9 @@ object FirestorePathsStrings {
   const val EVENT_PATH = "events"
 }
 
-object StoragePathsStings{
+object StoragePathsStings {
   const val USER_IMAGES = "images/users/"
   const val ASSOCIATION_IMAGES = "images/associations"
-
 }
 
 object MapStrings {

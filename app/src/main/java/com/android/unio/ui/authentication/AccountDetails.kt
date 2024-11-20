@@ -118,11 +118,10 @@ fun AccountDetailsScreen(
 }
 
 /**
- * The [onCreateUser] function is called with the [profilePictureUri] and [createUser]
- * lambda function as parameters. [createUser] calls upon another lambda that uploads
- * the user if all the required fields are filled. This method hierarchy is necessary
- * due to the fact that uploading an image needs to know if the URI is empty or not
- * before creating the User.
+ * The [onCreateUser] function is called with the [profilePictureUri] and [createUser] lambda
+ * function as parameters. [createUser] calls upon another lambda that uploads the user if all the
+ * required fields are filled. This method hierarchy is necessary due to the fact that uploading an
+ * image needs to know if the URI is empty or not before creating the User.
  */
 @Composable
 fun AccountDetailsContent(
@@ -158,7 +157,7 @@ fun AccountDetailsContent(
     return
   }
 
-    //the uri here is the path from the firebase/users to the location of the image in the storage
+  // the uri here is the path from the firebase/users to the location of the image in the storage
   val createUser: (String, String) -> Unit = { uri, userId ->
     val newUser =
         User(
