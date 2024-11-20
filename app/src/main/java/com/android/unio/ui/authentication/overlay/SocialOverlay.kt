@@ -197,7 +197,7 @@ private fun SocialOverlayBottomButtons(onAddSocial: () -> Unit, onSave: () -> Un
         onClick = onSave,
         modifier = Modifier.padding(8.dp).testTag(SocialsOverlayTestTags.SAVE_BUTTON),
         shape = RoundedCornerShape(16.dp)) {
-          Text(context.getString(R.string.social_overlay_save))
+          Text(context.getString(R.string.overlay_save))
         }
   }
 }
@@ -271,7 +271,7 @@ fun SocialPrompt(
                           modifier = Modifier.testTag(SocialsOverlayTestTags.PROMPT_CANCEL_BUTTON),
                           onClick = onDismiss,
                           shape = RoundedCornerShape(16.dp)) {
-                            Text(context.getString(R.string.social_overlay_cancel))
+                            Text(context.getString(R.string.overlay_cancel))
                           }
                       Button(
                           modifier = Modifier.testTag(SocialsOverlayTestTags.PROMPT_SAVE_BUTTON),
