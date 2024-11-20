@@ -85,6 +85,7 @@ class FirestoreReferenceList<T>(
         .addOnSuccessListener { result ->
           val items = result.documents.map { hydrate(it.data) }
           _list.value = items
+
           onSuccess()
         }
         .addOnFailureListener { exception ->

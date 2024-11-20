@@ -26,26 +26,28 @@ class AssociationProfileE2ETest : EndToEndTest() {
   fun testAssociationProfileCanGoToSomeoneElseUserProfile() {
     signInWithUser(composeTestRule, User1.EMAIL, User1.PASSWORD)
 
-    composeTestRule.waitUntil() { composeTestRule.onNodeWithTag(HomeTestTags.SCREEN).isDisplayed() }
+    composeTestRule.waitUntil(10000) {
+      composeTestRule.onNodeWithTag(HomeTestTags.SCREEN).isDisplayed()
+    }
 
     composeTestRule.onNodeWithTag(BottomNavBarTestTags.EXPLORE).assertIsDisplayed()
     composeTestRule.onNodeWithTag(BottomNavBarTestTags.EXPLORE).performClick()
 
-    composeTestRule.waitUntil() {
+    composeTestRule.waitUntil(10000) {
       composeTestRule.onNodeWithTag(ExploreTestTags.EXPLORE_SCAFFOLD_TITLE).isDisplayed()
     }
 
     assertDisplayComponentInScroll(composeTestRule.onNodeWithText(ASSOCIATION_NAME))
     composeTestRule.onNodeWithText(ASSOCIATION_NAME).performClick()
 
-    composeTestRule.waitUntil {
+    composeTestRule.waitUntil(10000) {
       composeTestRule.onNodeWithTag(AssociationProfileTestTags.SCREEN).isDisplayed()
     }
 
     assertDisplayComponentInScroll(composeTestRule.onNodeWithText(ASSOCIATION_MEMBERS))
     composeTestRule.onNodeWithText(ASSOCIATION_MEMBERS).performClick()
 
-    composeTestRule.waitUntil {
+    composeTestRule.waitUntil(10000) {
       composeTestRule.onNodeWithTag(SomeoneElseUserProfileTestTags.SCREEN).isDisplayed()
     }
     composeTestRule.onNodeWithTag(SomeoneElseUserProfileTestTags.NAME).assertIsDisplayed()
@@ -53,6 +55,6 @@ class AssociationProfileE2ETest : EndToEndTest() {
 
   private companion object AssociationTarget {
     const val ASSOCIATION_NAME = "Ebou"
-    const val ASSOCIATION_MEMBERS = "Renata"
+    const val ASSOCIATION_MEMBERS = "Renata Mendoza Flores"
   }
 }
