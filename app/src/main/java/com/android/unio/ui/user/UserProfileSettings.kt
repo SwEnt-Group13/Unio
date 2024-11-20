@@ -5,16 +5,20 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -28,16 +32,28 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
 import com.android.unio.R
 import com.android.unio.mocks.user.MockUser
+import com.android.unio.model.image.ImageRepository
 import com.android.unio.model.strings.test_tags.AccountDetailsTestTags
 import com.android.unio.model.user.AccountDetailsError
+import com.android.unio.model.user.Interest
 import com.android.unio.model.user.User
+import com.android.unio.model.user.UserViewModel
+import com.android.unio.ui.authentication.overlay.InterestOverlay
+import com.android.unio.ui.authentication.overlay.SocialOverlay
+import com.android.unio.ui.components.InterestButtonAndFlowRow
 import com.android.unio.ui.components.ProfilePictureWithRemoveIcon
+import com.android.unio.ui.components.SocialButtonAndFlowRow
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.theme.AppTheme
+import kotlinx.coroutines.flow.MutableStateFlow
 import me.zhanghai.compose.preference.ProvidePreferenceLocals
 
 @Composable
-fun UserProfileSettingsScreen(){
+fun UserProfileSettingsScreen(
+    userViewModel: UserViewModel,
+    imageRepository: ImageRepository,
+    navigationAction: NavigationAction
+){
 
 }
 
@@ -71,7 +87,22 @@ fun UserProfileSettingsScreenContent(
     var isErrors by remember { mutableStateOf(mutableSetOf<AccountDetailsError>()) }
 
 
+    val userInterestsFlow =
+        remember { MutableStateFlow(Interest.entries.map {it to mutableStateOf(user.interests.contains(it)) } ) }
+
+    val userSocialsFlow =
+        remember { MutableStateFlow(user.socials.toMutableList()) }
+
+    val interests by userInterestsFlow.collectAsState()
+    val socials by userSocialsFlow.collectAsState()
+
+
     val profilePictureUri = remember { mutableStateOf<Uri>(Uri.parse(user.profilePicture)) }
+
+    var showInterestsOverlay by remember { mutableStateOf(false) }
+    var showSocialsOverlay by remember { mutableStateOf(false) }
+
+    val scrollState = rememberScrollState()
 
 
     Scaffold(
@@ -96,7 +127,8 @@ fun UserProfileSettingsScreenContent(
             modifier = Modifier
                 .padding(padding)
                 .fillMaxWidth()
-                .padding(40.dp),
+                .padding(40.dp)
+                .verticalScroll(scrollState),
             horizontalAlignment = Alignment.CenterHorizontally
         ){
             ProfilePictureWithRemoveIcon(
@@ -113,8 +145,48 @@ fun UserProfileSettingsScreenContent(
                 onBioChange = {bio = it},
             )
 
+            InterestButtonAndFlowRow(
+                interestsFlow = userInterestsFlow,
+                onShowInterests = { showInterestsOverlay = true },
+                buttonTestTag = "" ,
+                chipTestTag = ""
+            )
 
 
+            SocialButtonAndFlowRow(
+                userSocialFlow = userSocialsFlow,
+                onShowSocials = { showSocialsOverlay = true },
+                buttonTestTag = "",
+                chipTestTag = ""
+            )
+
+            Button(
+                onClick = { /*TODO*/ },
+            ) {
+                Text("Save Changes")
+            }
+
+
+        }
+
+        if (showInterestsOverlay) {
+            InterestOverlay(
+                onDismiss = { showInterestsOverlay = false },
+                onSave = { newInterests ->
+                    userInterestsFlow.value = newInterests
+                    showInterestsOverlay = false
+                },
+                interests = interests)
+        }
+
+        if (showSocialsOverlay) {
+            SocialOverlay(
+                onDismiss = { showSocialsOverlay = false },
+                onSave = { newUserSocials ->
+                    userSocialsFlow.value = newUserSocials
+                    showSocialsOverlay = false
+                },
+                userSocials = socials)
         }
     }
 
