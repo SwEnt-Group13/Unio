@@ -91,9 +91,8 @@ class ClaimAdminRightsTest : EndToEndTest() {
           .isDisplayed()
     }
 
-    Thread.sleep(
-        8000) // wait a few seconds according to
-              // https://firebase.google.com/docs/emulator-suite/connect_firestore#how_the_emulator_differs_from_production
+    Thread.sleep(8000) // wait a few seconds according to
+    // https://firebase.google.com/docs/emulator-suite/connect_firestore#how_the_emulator_differs_from_production
 
     var finalCode = ""
 
