@@ -53,7 +53,7 @@ import com.android.unio.model.association.Association
 import com.android.unio.model.event.Event
 import com.android.unio.model.firestore.emptyFirestoreReferenceList
 import com.android.unio.model.image.ImageRepository
-import com.android.unio.model.strings.StoragePathsStings
+import com.android.unio.model.strings.StoragePathsStrings
 import com.android.unio.model.strings.test_tags.AccountDetailsTestTags
 import com.android.unio.model.user.AccountDetailsError
 import com.android.unio.model.user.Interest
@@ -91,8 +91,8 @@ fun AccountDetailsScreen(
           val inputStream = context.contentResolver.openInputStream(profilePictureUri.value)
           imageRepository.uploadImage(
               inputStream!!,
-              StoragePathsStings.USER_IMAGES + userId,
-              onSuccess = { createUser(StoragePathsStings.USER_IMAGES + userId, userId!!) },
+              StoragePathsStrings.USER_IMAGES + userId,
+              onSuccess = { createUser(StoragePathsStrings.USER_IMAGES + userId, userId!!) },
               onFailure = { exception ->
                 Log.e("AccountDetails", "Error uploading image: $exception")
                 Toast.makeText(
