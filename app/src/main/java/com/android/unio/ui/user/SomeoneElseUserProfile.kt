@@ -9,7 +9,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
-import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -24,7 +23,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import com.android.unio.R
 import com.android.unio.model.strings.test_tags.SomeoneElseUserProfileTestTags
-import com.android.unio.model.strings.test_tags.UserProfileTestTags
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.navigation.NavigationAction
 
@@ -32,43 +30,38 @@ import com.android.unio.ui.navigation.NavigationAction
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SomeoneElseUserProfileScreen(navigationAction: NavigationAction, userViewModel: UserViewModel) {
-    val context = LocalContext.current
-    val user by userViewModel.selectedSomeoneElseUser.collectAsState()
-    if (user == null) {
-        Log.e("SomeoneElseUserProfile", "No user selected")
-    } else {
-//    UserProfileScreenScaffold(user!!, navigationAction, false) {
-//      userViewModel.refreshSomeoneElseUser()
-//    }
-        Scaffold(modifier = Modifier.testTag(UserProfileTestTags.SCREEN),
-            topBar = {
-                TopAppBar(
-                    title = {
-                        Text(
-                            text = user!!.firstName + " " + user!!.lastName,
-                            modifier = Modifier.testTag(SomeoneElseUserProfileTestTags.NAME)
-                        )
-                    },
-                    navigationIcon = {
-                        IconButton(
-                            onClick = { navigationAction.goBack() },
-                            content = {
-                                Icon(
-                                    imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
-                                    contentDescription = context.getString(R.string.association_go_back)
-                                )
-                            }
-                        )
+  val context = LocalContext.current
+  val user by userViewModel.selectedSomeoneElseUser.collectAsState()
+  if (user == null) {
+    Log.e("SomeoneElseUserProfile", "No user selected")
+  } else {
+    //    UserProfileScreenScaffold(user!!, navigationAction, false) {
+    //      userViewModel.refreshSomeoneElseUser()
+    //    }
+    Scaffold(
+        modifier = Modifier.testTag(SomeoneElseUserProfileTestTags.SCREEN),
+        topBar = {
+          TopAppBar(
+              title = {
+                Text(
+                    text = user!!.firstName + " " + user!!.lastName,
+                    modifier = Modifier.testTag(SomeoneElseUserProfileTestTags.NAME))
+              },
+              navigationIcon = {
+                IconButton(
+                    onClick = { navigationAction.goBack() },
+                    content = {
+                      Icon(
+                          imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
+                          contentDescription = context.getString(R.string.association_go_back))
                     })
-            }) {padding ->
-            Box(
-                modifier =
-                Modifier.padding(padding)
-                    .fillMaxHeight()
-                    .verticalScroll(rememberScrollState())
-            ) {
+              })
+        }) { padding ->
+          Box(
+              modifier =
+                  Modifier.padding(padding).fillMaxHeight().verticalScroll(rememberScrollState())) {
                 UserProfileScreenContent(navigationAction, user!!)
-            }
+              }
         }
-    }
+  }
 }

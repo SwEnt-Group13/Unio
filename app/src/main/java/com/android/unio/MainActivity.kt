@@ -134,19 +134,22 @@ fun UnioApp(imageRepository: ImageRepositoryFirebaseStorage) {
       composable(Screen.EDIT_ASSOCIATION) {
         EditAssociationScreen(associationViewModel, navigationActions)
       }
-      composable(Screen.EVENT_CREATION) { EventCreationScreen(navigationActions) }
-      composable(Screen.SOMEONE_ELSE_PROFILE) {
-        SomeoneElseUserProfileScreen(navigationActions, userViewModel)
       composable(Screen.EVENT_CREATION) {
         EventCreationScreen(navigationActions, searchViewModel, associationViewModel)
       }
-    }
-    navigation(startDestination = Screen.SAVED, route = Route.SAVED) {
-      composable(Screen.SAVED) { SavedScreen(navigationActions) }
-    }
-    navigation(startDestination = Screen.MY_PROFILE, route = Route.MY_PROFILE) {
-      composable(Screen.MY_PROFILE) { UserProfileScreen(userViewModel, navigationActions) }
-      composable(Screen.SETTINGS) { SettingsScreen(navigationActions) }
+      composable(Screen.SOMEONE_ELSE_PROFILE) {
+        SomeoneElseUserProfileScreen(navigationActions, userViewModel)
+        composable(Screen.EVENT_CREATION) {
+          EventCreationScreen(navigationActions, searchViewModel, associationViewModel)
+        }
+      }
+      navigation(startDestination = Screen.SAVED, route = Route.SAVED) {
+        composable(Screen.SAVED) { SavedScreen(navigationActions) }
+      }
+      navigation(startDestination = Screen.MY_PROFILE, route = Route.MY_PROFILE) {
+        composable(Screen.MY_PROFILE) { UserProfileScreen(userViewModel, navigationActions) }
+        composable(Screen.SETTINGS) { SettingsScreen(navigationActions) }
+      }
     }
   }
 }
