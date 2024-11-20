@@ -73,7 +73,6 @@ class FirestoreReferenceList<T>(
   /** Requests all documents from Firestore and updates the list. */
   override fun requestAll(onSuccess: () -> Unit) {
     _list.value = emptyList()
-
     if (_uids.isEmpty()) {
       onSuccess()
       return
@@ -86,6 +85,7 @@ class FirestoreReferenceList<T>(
         .addOnSuccessListener { result ->
           val items = result.documents.map { hydrate(it.data) }
           _list.value = items
+
           onSuccess()
         }
         .addOnFailureListener { exception ->
