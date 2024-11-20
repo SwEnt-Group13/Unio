@@ -69,6 +69,7 @@ import coil.compose.rememberAsyncImagePainter
 import com.android.unio.R
 import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationViewModel
+import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.strings.FormatStrings.DAY_MONTH_YEAR_FORMAT
 import com.android.unio.model.strings.FormatStrings.HOUR_MINUTE_FORMAT
@@ -84,15 +85,17 @@ import java.util.Locale
 fun EventCreationScreen(
     navigationAction: NavigationAction,
     searchViewModel: SearchViewModel,
-    associationViewModel: AssociationViewModel
+    associationViewModel: AssociationViewModel,
+    eventViewModel: EventViewModel
 ) {
   val context = LocalContext.current
-  var name by remember { mutableStateOf("") }
-  var shortDescription by remember { mutableStateOf("") }
-  var longDescription by remember { mutableStateOf("") }
   val scrollState = rememberScrollState()
   var showCoauthorsOverlay by remember { mutableStateOf(false) }
   var showTaggedOverlay by remember { mutableStateOf(false) }
+
+  var name by remember { mutableStateOf("") }
+  var shortDescription by remember { mutableStateOf("") }
+  var longDescription by remember { mutableStateOf("") }
 
   var coauthorsAndBoolean =
       associationViewModel.associations.collectAsState().value.map { it to mutableStateOf(false) }
@@ -188,7 +191,9 @@ fun EventCreationScreen(
 
           Button(
               modifier = Modifier.testTag(EventCreationTestTags.SAVE_BUTTON),
-              onClick = { navigationAction.goBack() }) {
+              onClick = {
+
+              }) {
                 Text(context.getString(R.string.event_creation_save_button))
               }
 
