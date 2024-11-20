@@ -39,21 +39,23 @@ class UserAccountCreationTest : EndToEndTest() {
     /** Create an account on the welcome screen */
     signInWithUser(composeTestRule, UnverifiedUser.EMAIL, UnverifiedUser.PWD)
 
-    Thread.sleep(5000)
+    Thread.sleep(10000)
 
     /** Verify the email */
     val emailVerificationUrl = getLatestEmailVerificationUrl()
     verifyEmail(emailVerificationUrl)
 
     // This sleep is required to wait for the email verification to complete
-    Thread.sleep(5000)
 
     /** Refresh the email verification and continue */
-    composeTestRule.onNodeWithTag(EmailVerificationTestTags.SCREEN).assertIsDisplayed()
+    composeTestRule.waitUntil(10000) {
+      composeTestRule.onNodeWithTag(EmailVerificationTestTags.SCREEN).isDisplayed()
+    }
     composeTestRule.onNodeWithTag(EmailVerificationTestTags.REFRESH).performClick()
 
-    Thread.sleep(5000)
-
+    composeTestRule.waitUntil(10000) {
+      composeTestRule.onNodeWithTag(EmailVerificationTestTags.CONTINUE).isDisplayed()
+    }
     composeTestRule.onNodeWithTag(EmailVerificationTestTags.CONTINUE).performClick()
     composeTestRule.onNodeWithTag(AccountDetailsTestTags.TITLE_TEXT).assertExists()
 
