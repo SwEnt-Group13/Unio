@@ -70,6 +70,8 @@ import com.android.unio.R
 import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.search.SearchViewModel
+import com.android.unio.model.strings.FormatStrings.DAY_MONTH_YEAR_FORMAT
+import com.android.unio.model.strings.FormatStrings.HOUR_MINUTE_FORMAT
 import com.android.unio.model.strings.test_tags.EventCreationTestTags
 import com.android.unio.ui.event.overlay.AssociationsOverlay
 import com.android.unio.ui.navigation.NavigationAction
@@ -426,11 +428,11 @@ private fun TimePickerDialog(
 }
 
 fun convertMillisToDate(millis: Long): String {
-  val formatter = SimpleDateFormat("dd/MM/yy", Locale.getDefault())
+  val formatter = SimpleDateFormat(DAY_MONTH_YEAR_FORMAT, Locale.getDefault())
   return formatter.format(Date(millis))
 }
 
 fun convertMillisToTime(millis: Long): String {
-  val formatter = SimpleDateFormat("HH:mm", Locale.getDefault())
+  val formatter = SimpleDateFormat(HOUR_MINUTE_FORMAT, Locale.getDefault())
   return formatter.format(Date(millis))
 }

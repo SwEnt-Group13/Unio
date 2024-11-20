@@ -36,3 +36,9 @@ object FirestorePathsStrings {
 object MapStrings {
   const val EVENT_ALREADY_OCCURED = "Event has already occurred"
 }
+
+object FormatStrings {
+  const val DAY_MONTH_FORMAT = "dd/MM"
+  const val HOUR_MINUTE_FORMAT = "HH:mm"
+  const val DAY_MONTH_YEAR_FORMAT = "dd/MM/yy"
+}

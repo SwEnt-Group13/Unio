@@ -19,7 +19,6 @@ fun AssociationRepositoryFirestore.Companion.hydrate(data: Map<String, Any>?): A
   val category = data?.get(Association::category.name)
   val memberUids = data?.get(Association::members.name) as? List<String> ?: emptyList()
   val members = User.firestoreReferenceListWith(memberUids)
-
   val events =
       Event.firestoreReferenceListWith(
           data?.get(Association::events.name) as? List<String> ?: emptyList())
@@ -95,7 +94,8 @@ fun EventRepositoryFirestore.Companion.hydrate(data: Map<String, Any>?): Event {
       description = data?.get(Event::description.name) as? String ?: "",
       catchyDescription = data?.get(Event::catchyDescription.name) as? String ?: "",
       price = data?.get(Event::price.name) as? Double ?: 0.0,
-      date = data?.get(Event::date.name) as? Timestamp ?: Timestamp(0, 0),
+      startDate = data?.get(Event::startDate.name) as? Timestamp ?: Timestamp(0, 0),
+      endDate = data?.get(Event::endDate.name) as? Timestamp ?: Timestamp(0, 0),
       location =
           Location(
               latitude = location.get(Location::latitude.name) as? Double ?: 0.0,

@@ -285,7 +285,10 @@ class ScreenDisplayingTest {
 
   @Test
   fun testSomeoneElseUserProfileDisplayed() {
-    composeTestRule.setContent { SomeoneElseUserProfileScreen() }
+    composeTestRule.setContent {
+      userViewModel.setSomeoneElseUser(user)
+      SomeoneElseUserProfileScreen(navigationAction, userViewModel)
+    }
     composeTestRule.onNodeWithTag(SomeoneElseUserProfileTestTags.SCREEN).assertIsDisplayed()
   }
 

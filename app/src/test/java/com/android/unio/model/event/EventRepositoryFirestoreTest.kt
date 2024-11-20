@@ -70,7 +70,10 @@ class EventRepositoryFirestoreTest {
   private lateinit var repository: EventRepositoryFirestore
   private val event1 =
       MockEvent.createMockEvent(
-          uid = "1", title = "Balelec", date = Timestamp(GregorianCalendar(2004, 7, 1).time))
+          uid = "1",
+          title = "Balelec",
+          startDate = Timestamp(GregorianCalendar(2004, 7, 1).time),
+          endDate = Timestamp(GregorianCalendar(2005, 7, 1).time))
   private val defaultEvent =
       MockEvent.createMockEvent(
           uid = "", title = "Default Event") // This will simulate the default event
@@ -78,7 +81,8 @@ class EventRepositoryFirestoreTest {
       MockEvent.createMockEvent(
           uid = "3",
           title = "Tremplin Sysmic",
-          date = Timestamp(GregorianCalendar(2008, 7, 1).time))
+          startDate = Timestamp(GregorianCalendar(2004, 7, 1).time),
+          endDate = Timestamp(GregorianCalendar(2005, 7, 1).time))
 
   @Before
   fun setUp() {

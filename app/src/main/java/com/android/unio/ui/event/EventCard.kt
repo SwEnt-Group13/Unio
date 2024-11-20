@@ -46,6 +46,8 @@ import com.android.unio.model.event.EventType
 import com.android.unio.model.event.EventUtils.addAlphaToColor
 import com.android.unio.model.event.EventUtils.formatTimestamp
 import com.android.unio.model.event.EventViewModel
+import com.android.unio.model.strings.FormatStrings.DAY_MONTH_FORMAT
+import com.android.unio.model.strings.FormatStrings.HOUR_MINUTE_FORMAT
 import com.android.unio.model.strings.test_tags.EventCardTestTags
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.image.AsyncImageWrapper
@@ -230,7 +232,9 @@ fun EventCardScaffold(
                 modifier =
                     Modifier.padding(vertical = 1.dp, horizontal = 0.dp)
                         .testTag(EventCardTestTags.EVENT_DATE),
-                text = formatTimestamp(event.date, SimpleDateFormat("dd/MM", Locale.getDefault())),
+                text =
+                    formatTimestamp(
+                        event.startDate, SimpleDateFormat(DAY_MONTH_FORMAT, Locale.getDefault())),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurface)
 
@@ -248,7 +252,9 @@ fun EventCardScaffold(
 
             Text(
                 modifier = Modifier.testTag(EventCardTestTags.EVENT_TIME).wrapContentWidth(),
-                text = formatTimestamp(event.date, SimpleDateFormat("HH:mm", Locale.getDefault())),
+                text =
+                    formatTimestamp(
+                        event.startDate, SimpleDateFormat(HOUR_MINUTE_FORMAT, Locale.getDefault())),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurface)
           }

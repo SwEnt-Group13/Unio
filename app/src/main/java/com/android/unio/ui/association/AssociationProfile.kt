@@ -276,7 +276,7 @@ private fun AssociationProfileContent(
         AssociationHeader(associationViewModel, userViewModel, user!!)
         AssociationDescription(association)
         AssociationEvents(navigationAction, association, userViewModel, eventViewModel)
-        AssociationMembers(members)
+        AssociationMembers(navigationAction, members, userViewModel)
         AssociationRecruitment(association)
       }
 }
@@ -347,7 +347,11 @@ private fun AssociationRecruitment(association: Association) {
  */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun AssociationMembers(members: List<User>) {
+private fun AssociationMembers(
+    navigationAction: NavigationAction,
+    members: List<User>,
+    userViewModel: UserViewModel
+) {
   val context = LocalContext.current
 
   if (members.isEmpty()) {
@@ -368,10 +372,8 @@ private fun AssociationMembers(members: List<User>) {
                   Modifier.background(
                           MaterialTheme.colorScheme.secondaryContainer, RoundedCornerShape(8.dp))
                       .clickable {
-                        scope!!.launch {
-                          testSnackbar!!.showSnackbar(
-                              message = DEBUG_MESSAGE, duration = SnackbarDuration.Short)
-                        }
+                        userViewModel.setSomeoneElseUser(user)
+                        navigationAction.navigateTo(Screen.SOMEONE_ELSE_PROFILE)
                       }
                       .padding(16.dp),
               verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -423,7 +425,7 @@ private fun AssociationEvents(
         context.getString(R.string.association_upcoming_events),
         modifier = Modifier.testTag(AssociationProfileTestTags.EVENT_TITLE),
         style = AppTypography.headlineMedium)
-    events.sortedBy { it.date }
+    events.sortedBy { it.startDate }
     val first = events.first()
     Column(modifier = Modifier, horizontalAlignment = Alignment.CenterHorizontally) {
       if (isSeeMoreClicked) {
