@@ -93,6 +93,8 @@ fun SocialOverlay(
                       .sizeIn(maxHeight = 400.dp)
                       .testTag(SocialsOverlayTestTags.COLUMN),
                   verticalArrangement = Arrangement.SpaceBetween) {
+
+                    //Text fields for the title and description
                     Text(
                         text = context.getString(R.string.social_overlay_title),
                         style = AppTypography.headlineSmall,
@@ -113,7 +115,9 @@ fun SocialOverlay(
                               verticalArrangement = Arrangement.Center,
                               horizontalAlignment = Alignment.CenterHorizontally) {
                                 copiedUserSocials.forEachIndexed { index, userSocial ->
-                                    SocialOverlaySocialsFlowRow(
+
+                                    //The row for each added socials (empty if no socials are added)
+                                    SocialsOverlaySocialRow(
                                         userSocial,
                                         onRemoveSocial = {
                                             copiedUserSocialsFlow.value =
@@ -129,8 +133,9 @@ fun SocialOverlay(
                                                 SocialsOverlayTestTags.DIVIDER + "$index"))
                                     }
                                 }
-                              SocialOverlayBottomButtons(onAddSocial = { showAddSocialPrompt = true }, onSave = { onSave(copiedUserSocials) })
 
+                              //The bottom row buttons (Add and Save)
+                              SocialOverlayBottomButtons(onAddSocial = { showAddSocialPrompt = true }, onSave = { onSave(copiedUserSocials) })
                               }
                         }
                   }
@@ -148,11 +153,10 @@ fun SocialOverlay(
 }
 
 @Composable
-private fun SocialOverlaySocialsFlowRow(
+private fun SocialsOverlaySocialRow(
     userSocial: UserSocial,
     onRemoveSocial: () -> Unit,
-)
-{
+) {
     val context = LocalContext.current
 
     Row(
@@ -334,8 +338,7 @@ private fun SocialsPromptDropDownMenu(
     selectedSocial: Social,
     socialsList: List<Social>,
     onSwitchSelectedSocial: (Int) -> Unit,
-)
-{
+){
     var isExpanded by remember { mutableStateOf(false) }
 
     ExposedDropdownMenuBox(

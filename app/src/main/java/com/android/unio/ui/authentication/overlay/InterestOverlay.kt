@@ -59,6 +59,8 @@ fun InterestOverlay(
                           .sizeIn(maxHeight = 400.dp)
                           .testTag(InterestsOverlayTestTags.COLUMN),
                   verticalArrangement = Arrangement.SpaceBetween) {
+
+                    //Text fields for the title and description of the Interest Overlay
                     Text(
                         text = context.getString(R.string.interest_overlay_title),
                         style = AppTypography.headlineSmall,
@@ -73,31 +75,10 @@ fun InterestOverlay(
                         modifier = Modifier.sizeIn(maxHeight = 250.dp), color = Color.Transparent) {
                           Column(modifier = Modifier.verticalScroll(scrollState)) {
                             copiedInterests.forEachIndexed { index, pair ->
-                              Row(
-                                  horizontalArrangement = Arrangement.SpaceBetween,
-                                  verticalAlignment = Alignment.CenterVertically,
-                                  modifier =
-                                      Modifier.padding(5.dp)
-                                          .fillMaxWidth()
-                                          .testTag(
-                                              InterestsOverlayTestTags.CLICKABLE_ROW + "$index")
-                                          .clickable { pair.second.value = !pair.second.value }) {
-                                    Text(
-                                        text = pair.first.name,
-                                        style = AppTypography.bodyMedium,
-                                        modifier =
-                                            Modifier.padding(start = 5.dp)
-                                                .testTag(
-                                                    InterestsOverlayTestTags.TEXT +
-                                                        pair.first.name))
-                                    Checkbox(
-                                        checked = pair.second.value,
-                                        onCheckedChange = { pair.second.value = it },
-                                        modifier =
-                                            Modifier.testTag(
-                                                InterestsOverlayTestTags.CHECKBOX +
-                                                    pair.first.name))
-                                  }
+
+                                //The row for each interest
+                                InterestsOverlayInterestRow(index, pair)
+
                               if (index != copiedInterests.size - 1) {
                                 HorizontalDivider(
                                     modifier =
@@ -107,6 +88,8 @@ fun InterestOverlay(
                             }
                           }
                         }
+
+                    //Buttons for saving and cancelling the changes
                     Row(
                         modifier = Modifier.fillMaxWidth().padding(8.dp),
                         verticalAlignment = Alignment.CenterVertically,
@@ -131,4 +114,36 @@ fun InterestOverlay(
                   }
             }
       }
+}
+
+@Composable
+private fun InterestsOverlayInterestRow(
+    index: Int,
+    pair: Pair<Interest, MutableState<Boolean>>,
+){
+    Row(
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
+        modifier =
+        Modifier.padding(5.dp)
+            .fillMaxWidth()
+            .testTag(
+                InterestsOverlayTestTags.CLICKABLE_ROW + "$index")
+            .clickable { pair.second.value = !pair.second.value }) {
+        Text(
+            text = pair.first.name,
+            style = AppTypography.bodyMedium,
+            modifier =
+            Modifier.padding(start = 5.dp)
+                .testTag(
+                    InterestsOverlayTestTags.TEXT +
+                            pair.first.name))
+        Checkbox(
+            checked = pair.second.value,
+            onCheckedChange = { pair.second.value = it },
+            modifier =
+            Modifier.testTag(
+                InterestsOverlayTestTags.CHECKBOX +
+                        pair.first.name))
+    }
 }
