@@ -1,12 +1,10 @@
 package com.android.unio.ui.event
 
 import android.net.Uri
-import android.os.Build
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.awaitEachGesture
@@ -87,7 +85,6 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun EventCreationScreen(
     navigationAction: NavigationAction,
