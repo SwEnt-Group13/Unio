@@ -1,7 +1,7 @@
 package com.android.unio.end2end
 
 import android.util.Log
-import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.isDisplayed
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
@@ -37,14 +37,18 @@ open class EndToEndTest : FirebaseEmulatorFunctions {
       email: String,
       password: String
   ) {
-    composeTestRule.onNodeWithTag(WelcomeTestTags.SCREEN).assertIsDisplayed()
+    composeTestRule.waitUntil(10000) {
+      composeTestRule.onNodeWithTag(WelcomeTestTags.SCREEN).isDisplayed()
+    }
     composeTestRule.onNodeWithTag(WelcomeTestTags.EMAIL).performTextInput(email)
     composeTestRule.onNodeWithTag(WelcomeTestTags.PASSWORD).performTextInput(password)
     composeTestRule.onNodeWithTag(WelcomeTestTags.BUTTON).performClick()
   }
 
   override fun signOutWithUser(composeTestRule: ComposeContentTestRule) {
-    composeTestRule.onNodeWithTag(BottomNavBarTestTags.MY_PROFILE).assertIsDisplayed()
+    composeTestRule.waitUntil(10000) {
+      composeTestRule.onNodeWithTag(BottomNavBarTestTags.MY_PROFILE).isDisplayed()
+    }
     composeTestRule.onNodeWithTag(BottomNavBarTestTags.MY_PROFILE).performClick()
     composeTestRule.onNodeWithTag(UserProfileTestTags.SETTINGS).performClick()
     composeTestRule.onNodeWithTag(UserProfileTestTags.SIGN_OUT).performClick()

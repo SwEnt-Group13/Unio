@@ -151,7 +151,7 @@ fun UserProfileScreenScaffold(
                       .pullRefresh(pullRefreshState)
                       .fillMaxHeight()
                       .verticalScroll(rememberScrollState())) {
-                UserProfileScreenContent(navigationAction, user, searchViewModel)
+                UserProfileScreenContent(navigationAction, user)
               }
         }
       }
@@ -171,7 +171,6 @@ fun UserProfileScreenScaffold(
 fun UserProfileScreenContent(
     navigationAction: NavigationAction,
     user: User,
-    searchViewModel: SearchViewModel
 ) {
 
   val context = LocalContext.current

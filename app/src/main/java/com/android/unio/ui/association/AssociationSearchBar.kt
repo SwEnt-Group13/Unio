@@ -47,7 +47,7 @@ fun AssociationSearchBar(
             onExpandedChange = { expanded = it },
             placeholder = {
               Text(
-                  text = context.getString(R.string.explore_search_placeholder),
+                  text = context.getString(R.string.search_placeholder),
                   style = AppTypography.bodyLarge,
                   modifier = Modifier.testTag(ExploreContentTestTags.SEARCH_BAR_PLACEHOLDER))
             },

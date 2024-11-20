@@ -21,6 +21,7 @@ object UserProfileTestTags {
 object SomeoneElseUserProfileTestTags {
   const val SCREEN = "someoneElseUserProfileScreen"
   const val NAME = "someoneElseUserProfileName"
+  const val GO_BACK = "someoneElseUserProfileGoBack"
 }
 
 object UserClaimAssociationTestTags {
