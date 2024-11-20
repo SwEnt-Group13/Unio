@@ -5,6 +5,7 @@ import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Looper
 import androidx.core.content.ContextCompat
+import com.android.unio.mocks.map.MockLocation
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
@@ -203,5 +204,13 @@ class MapViewModelTest {
     mapViewModel.stopLocationUpdates()
 
     verify { fusedLocationClient.removeLocationUpdates(locationCallbackSlot.captured) }
+  }
+
+  @Test
+  fun testSetCenterLocation() {
+    val location = MockLocation.createMockLocation(latitude = 10.0, longitude = 34.7)
+    mapViewModel.setCenterLocation(location)
+    assertEquals(location.latitude, mapViewModel.centerLocation.value?.latitude)
+    assertEquals(location.longitude, mapViewModel.centerLocation.value?.longitude)
   }
 }
