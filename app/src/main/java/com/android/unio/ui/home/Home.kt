@@ -292,30 +292,15 @@ fun TopBar(
         // Pager Menu
         HorizontalPager(
             state = pagerState, modifier = Modifier.fillMaxWidth().padding(top = 15.dp)) { page ->
-              when (page) {
-                0 -> {
-                  HomeContent(
-                      navigationAction,
-                      searchQuery,
-                      searchState,
-                      searchResults,
-                      userViewModel,
-                      eventViewModel,
-                      false,
-                      paddingValues)
-                }
-                1 -> {
-                  HomeContent(
-                      navigationAction,
-                      searchQuery,
-                      searchState,
-                      searchResults,
-                      userViewModel,
-                      eventViewModel,
-                      true,
-                      paddingValues)
-                }
-              }
+              HomeContent(
+                  navigationAction,
+                  searchQuery,
+                  searchState,
+                  searchResults,
+                  userViewModel,
+                  eventViewModel,
+                  page == 1,
+                  paddingValues)
             }
       }
 }
