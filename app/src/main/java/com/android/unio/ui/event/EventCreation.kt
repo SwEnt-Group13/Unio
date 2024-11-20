@@ -1,10 +1,12 @@
 package com.android.unio.ui.event
 
 import android.net.Uri
+import android.os.Build
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.awaitEachGesture
@@ -69,7 +71,10 @@ import coil.compose.rememberAsyncImagePainter
 import com.android.unio.R
 import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationViewModel
+import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventViewModel
+import com.android.unio.model.firestore.firestoreReferenceListWith
+import com.android.unio.model.map.Location
 import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.strings.FormatStrings.DAY_MONTH_YEAR_FORMAT
 import com.android.unio.model.strings.FormatStrings.HOUR_MINUTE_FORMAT
@@ -77,10 +82,12 @@ import com.android.unio.model.strings.test_tags.EventCreationTestTags
 import com.android.unio.ui.event.overlay.AssociationsOverlay
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.theme.AppTypography
+import com.google.firebase.Timestamp
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun EventCreationScreen(
     navigationAction: NavigationAction,
@@ -102,7 +109,13 @@ fun EventCreationScreen(
 
   var taggedAndBoolean =
       associationViewModel.associations.collectAsState().value.map { it to mutableStateOf(false) }
-  Scaffold(modifier = Modifier.testTag(EventCreationTestTags.SCREEN)) { padding ->
+
+  var startTimestamp by remember { mutableStateOf(Timestamp.now()) }
+  var endTimestamp by remember { mutableStateOf(Timestamp.now()) }
+
+    val eventBannerUri = remember { mutableStateOf<Uri>(Uri.EMPTY) }
+
+    Scaffold(modifier = Modifier.testTag(EventCreationTestTags.SCREEN)) { padding ->
     Column(
         modifier =
             Modifier.padding(padding).padding(20.dp).fillMaxWidth().verticalScroll(scrollState),
@@ -135,7 +148,7 @@ fun EventCreationScreen(
               onValueChange = { shortDescription = it },
               label = { Text(context.getString(R.string.event_creation_short_description_label)) })
 
-          BannerImagePicker()
+          BannerImagePicker(eventBannerUri)
 
           OutlinedButton(
               modifier = Modifier.fillMaxWidth().testTag(EventCreationTestTags.COAUTHORS),
@@ -170,14 +183,18 @@ fun EventCreationScreen(
           DateAndTimePicker(
               context.getString(R.string.event_creation_startdate_label),
               context.getString(R.string.event_creation_starttime_label),
-              modifier = Modifier.testTag(EventCreationTestTags.START_TIME))
+              modifier = Modifier.testTag(EventCreationTestTags.START_TIME)
+          ) { startTimestamp = it }
 
-          DateAndTimePicker(
+        DateAndTimePicker(
               context.getString(R.string.event_creation_enddate_label),
               context.getString(R.string.event_creation_endtime_label),
-              modifier = Modifier.testTag(EventCreationTestTags.END_TIME))
+              modifier = Modifier.testTag(EventCreationTestTags.END_TIME)
+        ) {
+            endTimestamp = it
+        }
 
-          OutlinedTextField(
+        OutlinedTextField(
               modifier =
                   Modifier.fillMaxWidth().testTag(EventCreationTestTags.LOCATION).clickable {
                     Toast.makeText(context, "Location is not implemented yet", Toast.LENGTH_SHORT)
@@ -191,8 +208,38 @@ fun EventCreationScreen(
 
           Button(
               modifier = Modifier.testTag(EventCreationTestTags.SAVE_BUTTON),
+              enabled = name.isNotEmpty()
+                      && shortDescription.isNotEmpty()
+                      && longDescription.isNotEmpty()
+                      && startTimestamp.seconds < endTimestamp.seconds
+                      && eventBannerUri.value != Uri.EMPTY
+                      && coauthorsAndBoolean.any { it.second.value },
               onClick = {
-
+                val inputStream = context.contentResolver.openInputStream(eventBannerUri.value)!!
+                eventViewModel.addEvent(
+                    inputStream,
+                    Event(
+                        uid = "", // This gets overwritten by eventViewModel.addEvent
+                        title = name,
+                        organisers = Association.firestoreReferenceListWith(
+                            coauthorsAndBoolean.filter { it.second.value }
+                            .map { it.first.uid }
+                        ),
+                        taggedAssociations = Association.firestoreReferenceListWith(
+                            taggedAndBoolean.filter { it.second.value }
+                                .map { it.first.uid }
+                        ),
+                        image = eventBannerUri.value.toString(),
+                        description = longDescription,
+                        catchyDescription = shortDescription,
+                        price = 0.0,
+                        startDate = startTimestamp,
+                        endDate = endTimestamp,
+                        location = Location(),
+                    ),
+                    onSuccess = { navigationAction.goBack() },
+                    onFailure = { Toast.makeText(context, "Failed to create event", Toast.LENGTH_SHORT).show() }
+                )
               }) {
                 Text(context.getString(R.string.event_creation_save_button))
               }
@@ -251,14 +298,13 @@ private fun AssociationChips(
 }
 
 @Composable
-private fun BannerImagePicker() {
+private fun BannerImagePicker(eventBannerUri: MutableState<Uri>) {
   val context = LocalContext.current
-  var eventBanner by remember { mutableStateOf(Uri.EMPTY) }
 
   val pickMedia =
       rememberLauncherForActivityResult(
           contract = ActivityResultContracts.PickVisualMedia(),
-          onResult = { uri: Uri? -> uri?.let { eventBanner = it } })
+          onResult = { uri: Uri? -> uri?.let { eventBannerUri.value = it } })
 
   Box(
       modifier =
@@ -270,9 +316,9 @@ private fun BannerImagePicker() {
                     PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
               },
       contentAlignment = Alignment.Center) {
-        if (eventBanner != Uri.EMPTY) {
+        if (eventBannerUri.value != Uri.EMPTY) {
           Image(
-              painter = rememberAsyncImagePainter(eventBanner),
+              painter = rememberAsyncImagePainter(eventBannerUri.value),
               contentDescription =
                   context.getString(R.string.event_creation_selected_image_description),
               modifier = Modifier.fillMaxSize(),
@@ -292,7 +338,11 @@ private fun BannerImagePicker() {
 }
 
 @Composable
-private fun DateAndTimePicker(dateString: String, timeString: String, modifier: Modifier) {
+private fun DateAndTimePicker(dateString: String,
+                              timeString: String,
+                              modifier: Modifier,
+                              onTimestamp: (Timestamp) -> Unit
+                              ) {
   var isDatePickerVisible by remember { mutableStateOf(false) }
   var isTimePickerVisible by remember { mutableStateOf(false) }
   var selectedDate by remember { mutableStateOf<Long?>(null) }
@@ -362,6 +412,10 @@ private fun DateAndTimePicker(dateString: String, timeString: String, modifier: 
         },
         onDismiss = { isTimePickerVisible = false })
   }
+
+    if (selectedDate != null && selectedTime != null) {
+        onTimestamp(Timestamp(Date(selectedDate!! + selectedTime!!)))
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

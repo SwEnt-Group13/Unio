@@ -90,12 +90,12 @@ constructor(private val repository: EventRepository, private val imageRepository
       onSuccess: () -> Unit,
       onFailure: (Exception) -> Unit
   ) {
+    event.uid = repository.getNewUid() // Generate a new UID for the event
     imageRepository.uploadImage(
         inputStream,
         "images/events/${event.uid}",
         { uri ->
           event.image = uri
-          event.uid = repository.getNewUid()
           repository.addEvent(event, onSuccess, onFailure)
         },
         { e -> Log.e("ImageRepository", "Failed to store image: $e") })
