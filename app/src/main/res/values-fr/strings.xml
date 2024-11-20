@@ -233,6 +233,31 @@
     <string name="user_profile_bottom_sheet_settings">Paramètres</string>
     <string name="user_profile_bottom_sheet_sign_out">Se déconnecter</string>
 
+    <!-- UserClaimAssociation Strings -->
+    <string name="user_claim_association_association_go_back">Retour</string>
+    <string name="user_claim_association_association_see_more">Voir plus</string>
+    <string name="user_claim_association_you_can_either">Vous pouvez soit</string>
+    <string name="user_claim_association_create_new_association">Créer une nouvelle association</string>
+    <string name="user_claim_association_not_implemented_yet">Pas encore implémenté</string>
+    <string name="user_claim_association_create_association">Créer une association</string>
+    <string name="user_claim_association_claim_president_rights">Réclamer les droits de président pour une association existante</string>
+
+    <!-- UserClaimAssociationPresidentialRights Strings -->
+    <string name="user_claim_association_presidential_rights_claim_presidential_rights">Réclamer les droits présidentiels</string>
+    <string name="user_claim_association_presidential_rights_enter_presidential_email">Entrez l\'adresse email présidentielle :</string>
+    <string name="user_claim_association_presidential_rights_email_address">Adresse e-mail</string>
+    <string name="user_claim_association_presidential_rights_incorrect_email_error">Adresse e-mail incorrecte. Veuillez réessayer.</string>
+    <string name="user_claim_association_presidential_rights_enter_verification_code">Entrez le code envoyé à %1$s :</string>
+    <string name="user_claim_association_presidential_rights_verification_code">Code de vérification</string>
+    <string name="user_claim_association_presidential_rights_submit_code">Soumettre le code</string>
+    <string name="user_claim_association_presidential_rights_go_back">Retour</string>
+    <string name="user_claim_association_presidential_rights_see_more">Voir plus</string>
+    <string name="user_claim_association_presidential_rights_unexpected_error">Une erreur inattendue s\'est produite</string>
+    <string name="user_claim_association_presidential_rights_verified_successfully">Vérifié avec succès !</string>
+    <string name="user_claim_association_presidential_rights_wrong_code_error">Code incorrect, veuillez réessayer</string>
+    <string name="user_claim_association_presidential_rights_verification_request_not_found">Demande de vérification introuvable</string>
+    <string name="user_claim_association_presidential_rights_service_unavailable">Service indisponible. Veuillez réessayer plus tard</string>
+
     /**
     * Other
     */

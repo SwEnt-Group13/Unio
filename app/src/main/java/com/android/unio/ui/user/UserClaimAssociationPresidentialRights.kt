@@ -77,7 +77,11 @@ fun UserClaimAssociationPresidentialRightsScreenScaffold(
       topBar = {
         TopAppBar(
             title = {
-              Text(text = "Go Back", modifier = Modifier.testTag("AssociationProfileTitle"))
+              Text(
+                  text =
+                      context.getString(
+                          R.string.user_claim_association_presidential_rights_go_back),
+                  modifier = Modifier.testTag("AssociationProfileTitle"))
             },
             navigationIcon = {
               IconButton(
@@ -103,17 +107,27 @@ fun UserClaimAssociationPresidentialRightsScreenScaffold(
             modifier = Modifier.padding(padding),
         ) {
           Column(modifier = Modifier.padding(16.dp)) {
-            Text("Claim Presidential Rights", style = AppTypography.headlineSmall)
+            Text(
+                context.getString(
+                    R.string.user_claim_association_presidential_rights_claim_presidential_rights),
+                style = AppTypography.headlineSmall)
 
             Spacer(modifier = Modifier.height(16.dp))
 
             // Step 1 ->>> Ask for the presidential email address if it hasn't been verified
             if (!isEmailVerified) {
-              Text("Enter the presidential email address:", style = AppTypography.bodySmall)
+              Text(
+                  context.getString(
+                      R.string.user_claim_association_presidential_rights_enter_presidential_email),
+                  style = AppTypography.bodySmall)
               TextField(
                   value = email,
                   onValueChange = { email = it },
-                  placeholder = { Text("Email address") },
+                  placeholder = {
+                    Text(
+                        context.getString(
+                            R.string.user_claim_association_presidential_rights_email_address))
+                  },
                   isError = showErrorMessage,
                   modifier =
                       Modifier.padding(vertical = 8.dp)
@@ -123,7 +137,10 @@ fun UserClaimAssociationPresidentialRightsScreenScaffold(
               // if the email is incorrect
               if (showErrorMessage) {
                 Text(
-                    text = "Incorrect email address. Please try again.",
+                    text =
+                        context.getString(
+                            R.string
+                                .user_claim_association_presidential_rights_incorrect_email_error),
                     color = androidx.compose.ui.graphics.Color.Red,
                     style = AppTypography.bodySmall)
               }
@@ -152,7 +169,12 @@ fun UserClaimAssociationPresidentialRightsScreenScaffold(
                                           "Error Code: $code, Details: $details",
                                           e)
                                     } else {
-                                      Log.e("CloudFunctionError", "Unexpected error occurred", e)
+                                      Log.e(
+                                          "CloudFunctionError",
+                                          context.getString(
+                                              R.string
+                                                  .user_claim_association_presidential_rights_unexpected_error),
+                                          e)
                                     }
                                   } else {
                                     Log.d("CloudFunction", "OK")
@@ -161,10 +183,6 @@ fun UserClaimAssociationPresidentialRightsScreenScaffold(
                           }
                         } else {
                           // email does not match principalEmailAddress
-                          Log.d("emailVerification", email)
-                          Log.d("emailVerification", association!!.principalEmailAddress)
-                          Log.d("emailVerification", association!!.uid)
-                          Log.d("emailVerification", association!!.description)
                           showErrorMessage = true
                         }
                       } else {
@@ -191,7 +209,12 @@ fun UserClaimAssociationPresidentialRightsScreenScaffold(
               TextField(
                   value = verificationCode,
                   onValueChange = { verificationCode = it },
-                  placeholder = { Text("Verification code") },
+                  placeholder = {
+                    Text(
+                        context.getString(
+                            R.string
+                                .user_claim_association_presidential_rights_enter_verification_code))
+                  },
                   modifier =
                       Modifier.padding(vertical = 8.dp)
                           .testTag(UserClaimAssociationPresidentialRightsTestTags.CODE))
@@ -220,44 +243,57 @@ fun UserClaimAssociationPresidentialRightsScreenScaffold(
                                       FirebaseFunctionsException.Code.INVALID_ARGUMENT -> {
                                         Toast.makeText(
                                                 context,
-                                                "Wrong code, please try again",
+                                                context.getString(
+                                                    R.string
+                                                        .user_claim_association_presidential_rights_wrong_code_error),
                                                 Toast.LENGTH_SHORT)
                                             .show()
                                       }
                                       FirebaseFunctionsException.Code.NOT_FOUND -> {
                                         Toast.makeText(
                                                 context,
-                                                "Verification request not found",
+                                                context.getString(
+                                                    R.string
+                                                        .user_claim_association_presidential_rights_verification_request_not_found),
                                                 Toast.LENGTH_SHORT)
                                             .show()
                                       }
                                       FirebaseFunctionsException.Code.UNAVAILABLE -> {
                                         Toast.makeText(
                                                 context,
-                                                "Service unavailable. Please try later",
+                                                context.getString(
+                                                    R.string
+                                                        .user_claim_association_presidential_rights_service_unavailable),
                                                 Toast.LENGTH_SHORT)
                                             .show()
                                       }
                                       else -> {
                                         Toast.makeText(
                                                 context,
-                                                "Unexpected error occurred",
+                                                context.getString(
+                                                    R.string
+                                                        .user_claim_association_presidential_rights_unexpected_error),
                                                 Toast.LENGTH_SHORT)
                                             .show()
                                       }
                                     }
                                   } else {
-                                    Log.e("CloudFunctionError", "Unexpected error occurred", e)
                                     Toast.makeText(
                                             context,
-                                            "Unexpected error occurred",
+                                            context.getString(
+                                                R.string
+                                                    .user_claim_association_presidential_rights_unexpected_error),
                                             Toast.LENGTH_SHORT)
                                         .show()
                                   }
                                 } else {
                                   Log.d("CloudFunction", "OK")
                                   Toast.makeText(
-                                          context, "Verified successfully!", Toast.LENGTH_SHORT)
+                                          context,
+                                          context.getString(
+                                              R.string
+                                                  .user_claim_association_presidential_rights_verified_successfully),
+                                          Toast.LENGTH_SHORT)
                                       .show()
                                   navigationAction.navigateTo(Screen.MY_PROFILE)
                                 }
@@ -265,14 +301,24 @@ fun UserClaimAssociationPresidentialRightsScreenScaffold(
                         }
                       } else {
                         Log.e("UserError", "User does not exist or has no uid")
-                        Toast.makeText(context, "Unexpected error occurred", Toast.LENGTH_SHORT)
+                        Toast.makeText(
+                                context,
+                                context.getString(
+                                    R.string
+                                        .user_claim_association_presidential_rights_unexpected_error),
+                                Toast.LENGTH_SHORT)
                             .show()
                       }
                     } else {
                       Log.e(
                           "AssociationError",
                           "Association does not exist or has no principalEmailAddress")
-                      Toast.makeText(context, "Unexpected error occurred", Toast.LENGTH_SHORT)
+                      Toast.makeText(
+                              context,
+                              context.getString(
+                                  R.string
+                                      .user_claim_association_presidential_rights_unexpected_error),
+                              Toast.LENGTH_SHORT)
                           .show()
                     }
                   },
@@ -280,7 +326,9 @@ fun UserClaimAssociationPresidentialRightsScreenScaffold(
                       Modifier.padding(vertical = 8.dp)
                           .testTag(
                               UserClaimAssociationPresidentialRightsTestTags.SUBMIT_CODE_BUTTON)) {
-                    Text("Submit Code")
+                    Text(
+                        context.getString(
+                            R.string.user_claim_association_presidential_rights_submit_code))
                   }
             }
           }
@@ -288,6 +336,10 @@ fun UserClaimAssociationPresidentialRightsScreenScaffold(
       })
 }
 
+/**
+ * This function verify if the code given is the right one & update admin rights for the user
+ * accordingly It also respects the timing of 10 minutes of validity of a given code
+ */
 private fun verifyCode(
     functions: FirebaseFunctions,
     associationUid: String,
@@ -304,6 +356,10 @@ private fun verifyCode(
       }
 }
 
+/**
+ * This function send the verification email with my email for the moment (all the sensitive
+ * information is hold in github secrets) with a random 6-digit code
+ */
 private fun sendVerificationEmail(
     functions: FirebaseFunctions,
     userEmail: String,

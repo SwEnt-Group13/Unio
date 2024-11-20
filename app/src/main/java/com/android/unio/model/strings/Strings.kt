@@ -47,3 +47,7 @@ object FormatStrings {
   const val HOUR_MINUTE_FORMAT = "HH:mm"
   const val DAY_MONTH_YEAR_FORMAT = "dd/MM/yy"
 }
+
+object EmulatorsStrings {
+  const val HOST_IP = "10.0.2.2"
+}

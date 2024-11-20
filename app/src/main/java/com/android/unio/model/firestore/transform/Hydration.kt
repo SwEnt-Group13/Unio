@@ -23,13 +23,6 @@ fun AssociationRepositoryFirestore.Companion.hydrate(data: Map<String, Any>?): A
       Event.firestoreReferenceListWith(
           data?.get(Association::events.name) as? List<String> ?: emptyList())
 
-  val parentAssociations =
-      Association.firestoreReferenceListWith(
-          data?.get("parentAssociations") as? List<String> ?: emptyList())
-  val childAssociations =
-      Association.firestoreReferenceListWith(
-          data?.get("childAssociations") as? List<String> ?: emptyList())
-
   return Association(
       uid = data?.get(Association::uid.name) as? String ?: "",
       url = data?.get(Association::url.name) as? String ?: "",

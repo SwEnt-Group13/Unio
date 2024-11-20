@@ -81,7 +81,7 @@ class SearchTest : EndToEndTest() {
         .performTextInput(ASSOCIATION_SEARCH_INPUT)
 
     // Wait for the server's response to get the association
-    composeTestRule.waitUntil(10000) {
+    composeTestRule.waitUntil(5000) {
       composeTestRule
           .onNodeWithTag(
               ExploreContentTestTags.ASSOCIATION_EXPLORE_RESULT + EXPECTED_ASSOCIATION_NAME)

@@ -21,10 +21,6 @@ const db = getFirestore();
 
 const email = defineString('EMAIL')
 const password = defineString('PASSWORD')
-console.log("ok")
-console.log(password.value())
-
-console.log("Nodemailer is loaded:", nodemailer); // Log this to verify
 
 const transporter = nodemailer.createTransport({
   service: 'gmail', 
@@ -34,9 +30,8 @@ const transporter = nodemailer.createTransport({
   },
 });
 
+// this function send the email with a random 6-digit code
 exports.sendVerificationEmail = onRequest(async (req, res) => {
-  console.log(req.body)
-  console.log(req.body.data?.uid)
 
   const email = req.body.data?.email;
   const associationUid = req.body.data?.associationUid;
@@ -64,11 +59,11 @@ exports.sendVerificationEmail = onRequest(async (req, res) => {
     await transporter.sendMail(mailOptions);
     res.json({ data: `Association with ID ${associationUid}, bloublou` });
   } catch (error) {
-    console.error('Error sending email:', error);
     res.status(500).json({ message: "Email not sent", error: error.message });
   }
 });
 
+// verifies that the code given by the user is the same that the one sent, and if so update admin rights for this association to the user
 exports.verifyCode = onRequest(async (req, res) => {
   try {
     const code = req.body.data?.code;
@@ -101,14 +96,12 @@ exports.verifyCode = onRequest(async (req, res) => {
     }
   } catch (error) {
     // General catch-all error handler for unexpected issues
-    console.error("Error verifying code:", error);
     return res.status(500).json({ message: "server-error", error: "An unexpected error occurred." });
   }
 });
 
 /* PROOF OF CONCEPT, need to upgrade to Blaze plan according to "https://firebase.google.com/docs/functions/schedule-functions?gen=2nd"
 exports.cleanupExpiredCodes = onSchedule("every day 18:05", async (event) => {
-  console.log("okokok")
   const expiredTime = Timestamp.now().seconds - 600; // 10 minutes in seconds
   const expiredDocs = await db.collection('emailVerifications')
     .where('timestamp', '<', expiredTime)

@@ -27,6 +27,7 @@ import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.map.MapViewModel
 import com.android.unio.model.search.SearchViewModel
+import com.android.unio.model.strings.EmulatorsStrings
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.association.AssociationProfileScreen
 import com.android.unio.ui.association.EditAssociationScreen
@@ -80,10 +81,10 @@ class MainActivity : ComponentActivity() {
 
 private fun useEmulator(useEmulator: Boolean) {
   if (useEmulator) {
-    Firebase.functions.useEmulator("10.0.2.2", 5001)
-    Firebase.auth.useEmulator("10.0.2.2", 9099)
-    Firebase.firestore.useEmulator("10.0.2.2", 8080)
-    Firebase.storage.useEmulator("10.0.2.2", 9199)
+    Firebase.functions.useEmulator(EmulatorsStrings.HOST_IP, 5001)
+    Firebase.auth.useEmulator(EmulatorsStrings.HOST_IP, 9099)
+    Firebase.firestore.useEmulator(EmulatorsStrings.HOST_IP, 8080)
+    Firebase.storage.useEmulator(EmulatorsStrings.HOST_IP, 9199)
   }
 }
 

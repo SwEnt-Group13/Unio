@@ -1,6 +1,5 @@
 package com.android.unio.end2end
 
-import android.util.Log
 import androidx.compose.ui.test.isDisplayed
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.onNodeWithTag
@@ -75,13 +74,9 @@ open class EndToEndTest : FirebaseEmulatorFunctions {
   }
 
   override fun useEmulators() {
-    try {
-      Firebase.firestore.useEmulator(HOST, Firestore.PORT)
-      Firebase.auth.useEmulator(HOST, Auth.PORT)
-      Firebase.functions.useEmulator(HOST, Functions.PORT)
-    } catch (e: IllegalStateException) {
-      Log.e("EndToEndTest", e.message!!)
-    }
+    Firebase.firestore.useEmulator(HOST, Firestore.PORT)
+    Firebase.auth.useEmulator(HOST, Auth.PORT)
+    Firebase.functions.useEmulator(HOST, Functions.PORT)
   }
 
   override fun flushAuthenticatedUsers() {

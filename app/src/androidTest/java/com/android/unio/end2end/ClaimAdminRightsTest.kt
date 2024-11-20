@@ -1,6 +1,5 @@
 package com.android.unio.end2end
 
-import android.util.Log
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.isDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
@@ -20,6 +19,10 @@ import dagger.hilt.android.testing.HiltAndroidTest
 import org.junit.Rule
 import org.junit.Test
 
+/**
+ * The goal of this e2e test is to complete a whole action of claiming one association's
+ * presidential rights
+ */
 @LargeTest
 @HiltAndroidTest
 class ClaimAdminRightsTest : EndToEndTest() {
@@ -96,29 +99,25 @@ class ClaimAdminRightsTest : EndToEndTest() {
 
     var finalCode = ""
 
+    // In order not to catch a real email, we will just check what code is updated in the database
+    // with admin access
     Firebase.firestore
         .collection("emailVerifications")
         .document(EXPECTED_ASSOCIATION_UID)
         .get()
         .addOnSuccessListener { document ->
-          Log.d("ClaimHEYHEY", "hehe")
           if (document != null && document.exists()) {
             val code: String? = document.getString("code")
-            Log.d("ClaimHEYHEY", "houhou $code") // Retrieve the "code" field as a String
             if (code != null) {
               finalCode = code
-              Log.d("ClaimHEYHEY", "hehddd")
             } else {
-              Log.d("ClaimHEYHEY", "error")
               throw IllegalStateException("Code field is missing in the document")
             }
           } else {
-            Log.d("ClaimHEYHEY", "error2")
             throw IllegalStateException("Document does not exist")
           }
         }
         .addOnFailureListener { exception ->
-          Log.d("ClaimHEYHEY", "error3")
           throw IllegalStateException("Failed to fetch verification code: ${exception.message}")
         }
 
@@ -129,7 +128,6 @@ class ClaimAdminRightsTest : EndToEndTest() {
     composeTestRule
         .onNodeWithTag(UserClaimAssociationPresidentialRightsTestTags.CODE)
         .performTextInput(finalCode)
-    Log.d("ClaimHEYHEY", "houhou $finalCode")
 
     composeTestRule
         .onNodeWithTag(UserClaimAssociationPresidentialRightsTestTags.SUBMIT_CODE_BUTTON)

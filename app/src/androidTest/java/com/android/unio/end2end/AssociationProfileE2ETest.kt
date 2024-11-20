@@ -66,6 +66,8 @@ class AssociationProfileE2ETest : EndToEndTest() {
 
     composeTestRule.onNodeWithTag(AssociationProfileTestTags.GO_BACK_BUTTON).performClick()
 
+    // had to go back mutliple times in order to sign out (because we need to be in of a the
+    // principal screens to sign out)
     signOutWithUser(composeTestRule)
   }
 

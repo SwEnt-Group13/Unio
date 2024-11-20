@@ -50,7 +50,8 @@ fun UserClaimAssociationScreen(
                   modifier = Modifier.testTag(UserClaimAssociationTestTags.BACK_BUTTON)) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
-                        contentDescription = context.getString(R.string.association_go_back))
+                        contentDescription =
+                            context.getString(R.string.user_claim_association_association_go_back))
                   }
             },
             actions = {
@@ -58,7 +59,8 @@ fun UserClaimAssociationScreen(
                 IconButton(onClick = {}) {
                   Icon(
                       Icons.Outlined.MoreVert,
-                      contentDescription = context.getString(R.string.association_see_more))
+                      contentDescription =
+                          context.getString(R.string.user_claim_association_association_see_more))
                 }
               }
             })
@@ -68,23 +70,31 @@ fun UserClaimAssociationScreen(
             modifier = Modifier.padding(padding),
         ) {
           Column(modifier = Modifier.padding(16.dp)) {
-            Text("You can either", style = AppTypography.headlineSmall)
+            Text(
+                context.getString(R.string.user_claim_association_you_can_either),
+                style = AppTypography.headlineSmall)
             Spacer(modifier = Modifier.height(6.dp))
 
-            Text("Create a new association", style = AppTypography.bodySmall)
+            Text(
+                context.getString(R.string.user_claim_association_create_new_association),
+                style = AppTypography.bodySmall)
             Spacer(modifier = Modifier.height(6.dp))
 
             Button(
                 onClick = {
-                  Toast.makeText(context, "Not implemented yet", Toast.LENGTH_SHORT).show()
+                  Toast.makeText(
+                          context,
+                          context.getString(R.string.user_claim_association_not_implemented_yet),
+                          Toast.LENGTH_SHORT)
+                      .show()
                 },
                 modifier = Modifier.testTag(UserClaimAssociationTestTags.NEW_ASSOCIATION_BUTTON)) {
-                  Text("Create association")
+                  Text(context.getString(R.string.user_claim_association_create_association))
                 }
             Spacer(modifier = Modifier.height(6.dp))
 
             Text(
-                "Claim president rights for an existing association",
+                context.getString(R.string.user_claim_association_claim_president_rights),
                 style = AppTypography.bodySmall)
             Spacer(modifier = Modifier.height(6.dp))
 

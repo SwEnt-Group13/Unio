@@ -267,6 +267,32 @@
     <!-- SomeoneElseUserProfile Strings -->
     <string name="someone_else_user_profile_screen_title" translatable="false">Someone else user profile screen</string>
 
+    <!-- UserClaimAssociation Strings -->
+    <string name="user_claim_association_association_go_back">Go back</string>
+    <string name="user_claim_association_association_see_more">See more</string>
+    <string name="user_claim_association_you_can_either">You can either</string>
+    <string name="user_claim_association_create_new_association">Create a new association</string>
+    <string name="user_claim_association_not_implemented_yet">Not implemented yet</string>
+    <string name="user_claim_association_create_association">Create association</string>
+    <string name="user_claim_association_claim_president_rights">Claim president rights for an existing association</string>
+
+    <!-- UserClaimAssociationPresidentialRights Strings -->
+    <string name="user_claim_association_presidential_rights_claim_presidential_rights">Claim Presidential Rights</string>
+    <string name="user_claim_association_presidential_rights_enter_presidential_email">Enter the presidential email address:</string>
+    <string name="user_claim_association_presidential_rights_email_address">Email address</string>
+    <string name="user_claim_association_presidential_rights_incorrect_email_error">Incorrect email address. Please try again.</string>
+    <string name="user_claim_association_presidential_rights_enter_verification_code">Enter the code sent to %1$s:</string>
+    <string name="user_claim_association_presidential_rights_verification_code">Verification code</string>
+    <string name="user_claim_association_presidential_rights_submit_code">Submit Code</string>
+    <string name="user_claim_association_presidential_rights_go_back">Go back</string>
+    <string name="user_claim_association_presidential_rights_see_more">See more</string>
+    <string name="user_claim_association_presidential_rights_unexpected_error">Unexpected error occurred</string>
+    <string name="user_claim_association_presidential_rights_verified_successfully">Verified successfully!</string>
+    <string name="user_claim_association_presidential_rights_wrong_code_error">Wrong code, please try again</string>
+    <string name="user_claim_association_presidential_rights_verification_request_not_found">Verification request not found</string>
+    <string name="user_claim_association_presidential_rights_service_unavailable">Service unavailable. Please try later</string>
+
+
     /**
     * Other
     */
