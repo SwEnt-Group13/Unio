@@ -91,6 +91,10 @@ class ClaimAdminRightsTest : EndToEndTest() {
           .isDisplayed()
     }
 
+    Thread.sleep(
+        8000) // wait a few seconds according to
+              // https://firebase.google.com/docs/emulator-suite/connect_firestore#how_the_emulator_differs_from_production
+
     var finalCode = ""
 
     Firebase.firestore
@@ -119,14 +123,14 @@ class ClaimAdminRightsTest : EndToEndTest() {
           throw IllegalStateException("Failed to fetch verification code: ${exception.message}")
         }
 
-    Thread.sleep(2000)
+    composeTestRule.waitUntil(30000) {
+      finalCode.isNotEmpty()
+    } // otherwise it directly goes to the rest of the code
 
     composeTestRule
         .onNodeWithTag(UserClaimAssociationPresidentialRightsTestTags.CODE)
         .performTextInput(finalCode)
     Log.d("ClaimHEYHEY", "houhou $finalCode")
-
-    Thread.sleep(4000)
 
     composeTestRule
         .onNodeWithTag(UserClaimAssociationPresidentialRightsTestTags.SUBMIT_CODE_BUTTON)

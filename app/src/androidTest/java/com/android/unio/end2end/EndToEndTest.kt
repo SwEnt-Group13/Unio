@@ -12,6 +12,7 @@ import com.android.unio.model.strings.test_tags.WelcomeTestTags
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.firestore
+import com.google.firebase.functions.functions
 import dagger.hilt.android.testing.HiltAndroidRule
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -75,6 +76,7 @@ open class EndToEndTest : FirebaseEmulatorFunctions {
     try {
       Firebase.firestore.useEmulator(Firestore.HOST, 8080)
       Firebase.auth.useEmulator(Auth.HOST, 9099)
+      Firebase.functions.useEmulator(Functions.HOST, Functions.PORT)
     } catch (e: IllegalStateException) {
       Log.e("EndToEndTest", e.message!!)
     }
@@ -111,6 +113,12 @@ open class EndToEndTest : FirebaseEmulatorFunctions {
     const val ROOT = "http://$HOST:$PORT"
     const val OOB_URL = "$ROOT/emulator/v1/projects/unio-1b8ee/oobCodes"
     const val ACCOUNTS_URL = "$ROOT/emulator/v1/projects/unio-1b8ee/accounts"
+  }
+
+  object Functions {
+    const val HOST = "10.0.2.2"
+    const val PORT = 5001
+    const val ROOT = "http://$HOST:$PORT"
   }
 
   object UnverifiedUser {
