@@ -16,8 +16,8 @@ import com.android.unio.mocks.event.MockEvent
 import com.android.unio.model.association.Association
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventUtils.formatTimestamp
-import com.android.unio.model.strings.FormatStrings.DAY_MONTH_FORMAT
 import com.android.unio.model.map.MapViewModel
+import com.android.unio.model.strings.FormatStrings.DAY_MONTH_FORMAT
 import com.android.unio.model.strings.test_tags.EventDetailsTestTags
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
@@ -26,9 +26,9 @@ import io.mockk.MockKAnnotations
 import io.mockk.clearAllMocks
 import io.mockk.impl.annotations.MockK
 import io.mockk.unmockkAll
+import io.mockk.verify
 import java.text.SimpleDateFormat
 import java.util.Locale
-import io.mockk.verify
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule

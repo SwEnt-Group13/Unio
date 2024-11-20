@@ -67,11 +67,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.android.unio.R
-import com.android.unio.model.strings.FormatStrings.DAY_MONTH_YEAR_FORMAT
-import com.android.unio.model.strings.FormatStrings.HOUR_MINUTE_FORMAT
 import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.search.SearchViewModel
+import com.android.unio.model.strings.FormatStrings.DAY_MONTH_YEAR_FORMAT
+import com.android.unio.model.strings.FormatStrings.HOUR_MINUTE_FORMAT
 import com.android.unio.model.strings.test_tags.EventCreationTestTags
 import com.android.unio.ui.event.overlay.AssociationsOverlay
 import com.android.unio.ui.navigation.NavigationAction
