@@ -113,9 +113,9 @@ fun EventCreationScreen(
   var startTimestamp by remember { mutableStateOf(Timestamp.now()) }
   var endTimestamp by remember { mutableStateOf(Timestamp.now()) }
 
-    val eventBannerUri = remember { mutableStateOf<Uri>(Uri.EMPTY) }
+  val eventBannerUri = remember { mutableStateOf<Uri>(Uri.EMPTY) }
 
-    Scaffold(modifier = Modifier.testTag(EventCreationTestTags.SCREEN)) { padding ->
+  Scaffold(modifier = Modifier.testTag(EventCreationTestTags.SCREEN)) { padding ->
     Column(
         modifier =
             Modifier.padding(padding).padding(20.dp).fillMaxWidth().verticalScroll(scrollState),
@@ -183,18 +183,18 @@ fun EventCreationScreen(
           DateAndTimePicker(
               context.getString(R.string.event_creation_startdate_label),
               context.getString(R.string.event_creation_starttime_label),
-              modifier = Modifier.testTag(EventCreationTestTags.START_TIME)
-          ) { startTimestamp = it }
+              modifier = Modifier.testTag(EventCreationTestTags.START_TIME)) {
+                startTimestamp = it
+              }
 
-        DateAndTimePicker(
+          DateAndTimePicker(
               context.getString(R.string.event_creation_enddate_label),
               context.getString(R.string.event_creation_endtime_label),
-              modifier = Modifier.testTag(EventCreationTestTags.END_TIME)
-        ) {
-            endTimestamp = it
-        }
+              modifier = Modifier.testTag(EventCreationTestTags.END_TIME)) {
+                endTimestamp = it
+              }
 
-        OutlinedTextField(
+          OutlinedTextField(
               modifier =
                   Modifier.fillMaxWidth().testTag(EventCreationTestTags.LOCATION).clickable {
                     Toast.makeText(context, "Location is not implemented yet", Toast.LENGTH_SHORT)
@@ -208,12 +208,13 @@ fun EventCreationScreen(
 
           Button(
               modifier = Modifier.testTag(EventCreationTestTags.SAVE_BUTTON),
-              enabled = name.isNotEmpty()
-                      && shortDescription.isNotEmpty()
-                      && longDescription.isNotEmpty()
-                      && startTimestamp.seconds < endTimestamp.seconds
-                      && eventBannerUri.value != Uri.EMPTY
-                      && coauthorsAndBoolean.any { it.second.value },
+              enabled =
+                  name.isNotEmpty() &&
+                      shortDescription.isNotEmpty() &&
+                      longDescription.isNotEmpty() &&
+                      startTimestamp.seconds < endTimestamp.seconds &&
+                      eventBannerUri.value != Uri.EMPTY &&
+                      coauthorsAndBoolean.any { it.second.value },
               onClick = {
                 val inputStream = context.contentResolver.openInputStream(eventBannerUri.value)!!
                 eventViewModel.addEvent(
@@ -221,14 +222,16 @@ fun EventCreationScreen(
                     Event(
                         uid = "", // This gets overwritten by eventViewModel.addEvent
                         title = name,
-                        organisers = Association.firestoreReferenceListWith(
-                            coauthorsAndBoolean.filter { it.second.value }
-                            .map { it.first.uid }
-                        ),
-                        taggedAssociations = Association.firestoreReferenceListWith(
-                            taggedAndBoolean.filter { it.second.value }
-                                .map { it.first.uid }
-                        ),
+                        organisers =
+                            Association.firestoreReferenceListWith(
+                                (coauthorsAndBoolean
+                                        .filter { it.second.value }
+                                        .map { it.first.uid } +
+                                        associationViewModel.selectedAssociation.value!!.uid)
+                                    .distinct()),
+                        taggedAssociations =
+                            Association.firestoreReferenceListWith(
+                                taggedAndBoolean.filter { it.second.value }.map { it.first.uid }),
                         image = eventBannerUri.value.toString(),
                         description = longDescription,
                         catchyDescription = shortDescription,
@@ -238,8 +241,9 @@ fun EventCreationScreen(
                         location = Location(),
                     ),
                     onSuccess = { navigationAction.goBack() },
-                    onFailure = { Toast.makeText(context, "Failed to create event", Toast.LENGTH_SHORT).show() }
-                )
+                    onFailure = {
+                      Toast.makeText(context, "Failed to create event", Toast.LENGTH_SHORT).show()
+                    })
               }) {
                 Text(context.getString(R.string.event_creation_save_button))
               }
@@ -338,11 +342,12 @@ private fun BannerImagePicker(eventBannerUri: MutableState<Uri>) {
 }
 
 @Composable
-private fun DateAndTimePicker(dateString: String,
-                              timeString: String,
-                              modifier: Modifier,
-                              onTimestamp: (Timestamp) -> Unit
-                              ) {
+private fun DateAndTimePicker(
+    dateString: String,
+    timeString: String,
+    modifier: Modifier,
+    onTimestamp: (Timestamp) -> Unit
+) {
   var isDatePickerVisible by remember { mutableStateOf(false) }
   var isTimePickerVisible by remember { mutableStateOf(false) }
   var selectedDate by remember { mutableStateOf<Long?>(null) }
@@ -413,9 +418,9 @@ private fun DateAndTimePicker(dateString: String,
         onDismiss = { isTimePickerVisible = false })
   }
 
-    if (selectedDate != null && selectedTime != null) {
-        onTimestamp(Timestamp(Date(selectedDate!! + selectedTime!!)))
-    }
+  if (selectedDate != null && selectedTime != null) {
+    onTimestamp(Timestamp(Date(selectedDate!! + selectedTime!!)))
+  }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
