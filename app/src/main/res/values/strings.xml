@@ -228,7 +228,7 @@
     */
 
     <!-- Saved Screen Strings -->
-    <string name="saved_screen_title" translatable="false">Saved screen</string>
+    <string name="saved_screen_title" translatable="false">Saved Events</string>
 
     /**
     * package: settings
