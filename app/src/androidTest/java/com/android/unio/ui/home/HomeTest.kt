@@ -141,9 +141,7 @@ class HomeTest {
     composeTestRule.setContent {
       val context = LocalContext.current
       text = context.getString(R.string.event_no_events_available)
-      val field = eventViewModel.javaClass.getDeclaredMethod("setEvents", List::class.java)
-      field.isAccessible = true
-      field.invoke(eventViewModel, emptyList<Event>())
+      val eventViewModel = EventViewModel(eventRepository, imageRepository)
       HomeScreen(navigationAction, eventViewModel, userViewModel, searchViewModel)
     }
     composeTestRule.onNodeWithTag(HomeTestTags.EMPTY_EVENT_PROMPT).assertExists()

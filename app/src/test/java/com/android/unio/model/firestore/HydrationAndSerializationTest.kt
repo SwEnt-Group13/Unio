@@ -62,7 +62,8 @@ class HydrationAndSerializationTest {
           description = "An example event",
           catchyDescription = "An example event",
           price = 0.0,
-          date = Timestamp.now(),
+          startDate = Timestamp.now(),
+          endDate = Timestamp.now(),
           location = Location(latitude = 0.0, longitude = 0.0, name = "Example Location"),
           placesRemaining = -1)
 
@@ -133,7 +134,8 @@ class HydrationAndSerializationTest {
     assertEquals(event.description, serialized["description"])
     assertEquals(event.catchyDescription, serialized["catchyDescription"])
     assertEquals(event.price, serialized["price"])
-    assertEquals(event.date, serialized["date"])
+    assertEquals(event.startDate, serialized["startDate"])
+    assertEquals(event.endDate, serialized["endDate"])
     assertEquals(event.location.name, (serialized["location"] as Map<String, Any>)["name"])
     assertEquals(event.location.latitude, (serialized["location"] as Map<String, Any>)["latitude"])
     assertEquals(
@@ -150,7 +152,8 @@ class HydrationAndSerializationTest {
     assertEquals(event.description, hydrated.description)
     assertEquals(event.catchyDescription, hydrated.catchyDescription)
     assertEquals(event.price, hydrated.price)
-    assertEquals(event.date, hydrated.date)
+    assertEquals(event.startDate, hydrated.startDate)
+    assertEquals(event.endDate, hydrated.endDate)
     assertEquals(event.location, hydrated.location)
     assertEquals(event.organisers.uids, hydrated.organisers.uids)
     assertEquals(event.taggedAssociations.uids, hydrated.taggedAssociations.uids)
@@ -204,7 +207,8 @@ class HydrationAndSerializationTest {
     assertEquals("", hydrated.description)
     assertEquals("", hydrated.catchyDescription)
     assertEquals(0.0, hydrated.price)
-    assertEquals(Timestamp(0, 0), hydrated.date)
+    assertEquals(Timestamp(0, 0), hydrated.startDate)
+    assertEquals(Timestamp(0, 0), hydrated.endDate)
     assertEquals(Location(), hydrated.location)
     assertEquals(emptyList<Association>(), hydrated.organisers.list.value)
     assertEquals(emptyList<Association>(), hydrated.taggedAssociations.list.value)

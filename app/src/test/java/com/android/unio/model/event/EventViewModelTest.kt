@@ -43,12 +43,14 @@ class EventViewModelTest {
               uid = "1",
               title = "Balelec",
               price = 40.5,
-              date = Timestamp(GregorianCalendar(2004, 7, 1).time)),
+              startDate = Timestamp(GregorianCalendar(2004, 7, 1).time),
+              endDate = Timestamp(GregorianCalendar(2005, 7, 1).time)),
           MockEvent.createMockEvent(
               uid = "2",
               title = "Tremplin Sysmic",
               price = 40.5,
-              date = Timestamp(GregorianCalendar(2008, 7, 1).time)))
+              startDate = Timestamp(GregorianCalendar(2004, 7, 1).time),
+              endDate = Timestamp(GregorianCalendar(2005, 7, 1).time)))
 
   @Before
   fun setUp() {

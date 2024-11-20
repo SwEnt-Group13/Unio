@@ -54,7 +54,8 @@ fun EventRepositoryFirestore.Companion.serialize(event: Event): Map<String, Any>
       Event::description.name to event.description,
       Event::catchyDescription.name to event.catchyDescription,
       Event::price.name to event.price,
-      Event::date.name to event.date,
+      Event::startDate.name to event.startDate,
+      Event::endDate.name to event.endDate,
       Event::location.name to
           mapOf(
               Location::latitude.name to event.location.latitude,

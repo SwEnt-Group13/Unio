@@ -112,7 +112,7 @@ class SearchRepositoryTest {
           image = "https://imageurl.jpg",
           description = "Plus grand festival du monde (non contractuel)",
           price = 40.5,
-          date = Timestamp(GregorianCalendar(2004, 7, 1).time),
+          startDate = Timestamp(GregorianCalendar(2004, 7, 1).time),
           location = Location(1.2345, 2.3455, "Somewhere"),
           placesRemaining = -1)
   private val event2 =
@@ -124,7 +124,7 @@ class SearchRepositoryTest {
           image = "https://imageurl.jpg",
           description = "Plus grand festival du monde (non contractuel)",
           price = 40.5,
-          date = Timestamp(GregorianCalendar(2008, 7, 1).time),
+          startDate = Timestamp(GregorianCalendar(2008, 7, 1).time),
           location = Location(1.2345, 2.3455, "Somewhere"),
           placesRemaining = -1)
 
