@@ -22,12 +22,14 @@ import com.android.unio.model.strings.test_tags.EventDetailsTestTags
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
 import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.firebase.Timestamp
 import io.mockk.MockKAnnotations
 import io.mockk.clearAllMocks
 import io.mockk.impl.annotations.MockK
 import io.mockk.unmockkAll
 import io.mockk.verify
 import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.Locale
 import org.junit.After
 import org.junit.Before
@@ -50,7 +52,16 @@ class EventDetailsTest {
   @Before
   fun setUp() {
     MockKAnnotations.init(this, relaxed = true)
-    events = listOf(MockEvent.createMockEvent(uid = "a"), MockEvent.createMockEvent(uid = "b"))
+    events =
+        listOf(
+            MockEvent.createMockEvent(
+                uid = "a",
+                startDate = Timestamp(Date(2024 - 1900, 6, 20)),
+                endDate = Timestamp(Date(2024 - 1900, 6, 21))),
+            MockEvent.createMockEvent(
+                uid = "b",
+                startDate = Timestamp(Date(2025 - 1900, 6, 20)),
+                endDate = Timestamp(Date(2025 - 1900, 6, 20))))
     associations =
         listOf(
             MockAssociation.createMockAssociation(uid = "c"),
@@ -70,14 +81,14 @@ class EventDetailsTest {
 
   @Test
   fun testEventDetailsDisplayComponent() {
-    setEventScreen(events[1])
+    val event = events[1]
+    setEventScreen(event)
     composeTestRule.waitForIdle()
 
     val formattedStartDateDay =
-        formatTimestamp(
-            events[0].startDate, SimpleDateFormat(DAY_MONTH_FORMAT, Locale.getDefault()))
+        formatTimestamp(event.startDate, SimpleDateFormat(DAY_MONTH_FORMAT, Locale.getDefault()))
     val formattedEndDateDay =
-        formatTimestamp(events[0].endDate, SimpleDateFormat(DAY_MONTH_FORMAT, Locale.getDefault()))
+        formatTimestamp(event.endDate, SimpleDateFormat(DAY_MONTH_FORMAT, Locale.getDefault()))
 
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag(EventDetailsTestTags.SCREEN, true))
     assertDisplayComponentInScroll(
@@ -117,7 +128,7 @@ class EventDetailsTest {
     assertDisplayComponentInScroll(
         composeTestRule
             .onNodeWithTag(EventDetailsTestTags.LOCATION_ADDRESS, true)
-            .assertTextEquals(events[0].location.name))
+            .assertTextEquals(event.location.name))
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag(EventDetailsTestTags.MAP_BUTTON))
     assertDisplayComponentInScroll(
         composeTestRule.onNodeWithTag(EventDetailsTestTags.SIGN_UP_BUTTON))
@@ -169,11 +180,12 @@ class EventDetailsTest {
 
   @Test
   fun testEventDetailsData() {
-    val event = events[0]
+    val event = events[1]
     setEventScreen(event)
     assertDisplayComponentInScroll(composeTestRule.onNodeWithText(event.title))
     assertDisplayComponentInScroll(composeTestRule.onNodeWithText(event.description))
     assertDisplayComponentInScroll(composeTestRule.onNodeWithText(event.location.name))
+    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag(EventDetailsTestTags.START_DATE))
   }
 
   @After
