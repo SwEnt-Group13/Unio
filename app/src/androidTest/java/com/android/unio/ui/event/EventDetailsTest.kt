@@ -16,6 +16,7 @@ import com.android.unio.mocks.event.MockEvent
 import com.android.unio.model.association.Association
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventUtils.formatTimestamp
+import com.android.unio.model.strings.FormatStrings.DAY_MONTH_FORMAT
 import com.android.unio.model.strings.test_tags.EventDetailsTestTags
 import com.android.unio.ui.navigation.NavigationAction
 import io.mockk.clearAllMocks
@@ -65,9 +66,10 @@ class EventDetailsTest {
     composeTestRule.waitForIdle()
 
     val formattedStartDateDay =
-        formatTimestamp(events[0].startDate, SimpleDateFormat("dd/MM", Locale.getDefault()))
+        formatTimestamp(
+            events[0].startDate, SimpleDateFormat(DAY_MONTH_FORMAT, Locale.getDefault()))
     val formattedEndDateDay =
-        formatTimestamp(events[0].endDate, SimpleDateFormat("dd/MM", Locale.getDefault()))
+        formatTimestamp(events[0].endDate, SimpleDateFormat(DAY_MONTH_FORMAT, Locale.getDefault()))
 
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag(EventDetailsTestTags.SCREEN, true))
     assertDisplayComponentInScroll(

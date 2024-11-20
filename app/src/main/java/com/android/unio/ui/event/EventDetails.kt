@@ -64,6 +64,8 @@ import com.android.unio.model.association.Association
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventUtils.formatTimestamp
 import com.android.unio.model.event.EventViewModel
+import com.android.unio.model.strings.FormatStrings.DAY_MONTH_FORMAT
+import com.android.unio.model.strings.FormatStrings.HOUR_MINUTE_FORMAT
 import com.android.unio.model.strings.test_tags.EventDetailsTestTags
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.image.AsyncImageWrapper
@@ -263,13 +265,13 @@ fun EventInformationCard(event: Event, associations: List<Association>, context:
 fun EventDate(event: Event) {
   Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
     val formattedStartDateDay =
-        formatTimestamp(event.startDate, SimpleDateFormat("dd/MM", Locale.getDefault()))
+        formatTimestamp(event.startDate, SimpleDateFormat(DAY_MONTH_FORMAT, Locale.getDefault()))
     val formattedEndDateDay =
-        formatTimestamp(event.endDate, SimpleDateFormat("dd/MM", Locale.getDefault()))
+        formatTimestamp(event.endDate, SimpleDateFormat(DAY_MONTH_FORMAT, Locale.getDefault()))
     val formattedStartDateHour =
-        formatTimestamp(event.startDate, SimpleDateFormat("HH:mm", Locale.getDefault()))
+        formatTimestamp(event.startDate, SimpleDateFormat(HOUR_MINUTE_FORMAT, Locale.getDefault()))
     val formattedEndDateHour =
-        formatTimestamp(event.endDate, SimpleDateFormat("HH:mm", Locale.getDefault()))
+        formatTimestamp(event.endDate, SimpleDateFormat(HOUR_MINUTE_FORMAT, Locale.getDefault()))
     if (formattedStartDateDay == formattedEndDateDay) {
       // event starts and ends on the same day
       Text(
