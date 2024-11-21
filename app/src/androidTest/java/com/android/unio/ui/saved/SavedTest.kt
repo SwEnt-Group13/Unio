@@ -48,12 +48,8 @@ class SavedTest {
   @MockK private lateinit var imageRepository: ImageRepositoryFirebaseStorage
 
   private lateinit var eventViewModel: EventViewModel
-  private lateinit var searchViewModel: SearchViewModel
-
-  @MockK private lateinit var searchRepository: SearchRepository
 
   private lateinit var eventList: List<Event>
-  private lateinit var eventListFollowed: List<Event>
 
   @Before
   fun setUp() {
@@ -90,12 +86,12 @@ class SavedTest {
     val eventField = eventViewModel.javaClass.getDeclaredMethod("setEvents", List::class.java)
     eventField.isAccessible = true
     eventField.invoke(eventViewModel, eventList)
-
-    every { userViewModel.isEventSavedForCurrentUser(any()) } returns true
   }
 
   @Test
   fun testSavedScreenWithSavedEvents() {
+    every { userViewModel.isEventSavedForCurrentUser(any()) } returns true
+
     composeTestRule.setContent { SavedScreen(navigationAction, eventViewModel, userViewModel) }
 
     composeTestRule.waitForIdle()
