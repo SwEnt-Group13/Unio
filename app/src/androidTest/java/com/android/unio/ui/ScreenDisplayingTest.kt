@@ -278,7 +278,7 @@ class ScreenDisplayingTest {
   @Test
   fun testUserProfileDisplayed() {
     composeTestRule.setContent {
-      UserProfileScreenScaffold(MockUser.createMockUser(), navigationAction, false) {}
+      UserProfileScreenScaffold(MockUser.createMockUser(), navigationAction, false, {}, {})
     }
     composeTestRule.onNodeWithTag(UserProfileTestTags.SCREEN).assertIsDisplayed()
   }
@@ -287,7 +287,7 @@ class ScreenDisplayingTest {
   fun testSomeoneElseUserProfileDisplayed() {
     composeTestRule.setContent {
       userViewModel.setSomeoneElseUser(user)
-      SomeoneElseUserProfileScreen(navigationAction, userViewModel)
+      SomeoneElseUserProfileScreen(navigationAction, userViewModel, associationViewModel)
     }
     composeTestRule.onNodeWithTag(SomeoneElseUserProfileTestTags.SCREEN).assertIsDisplayed()
   }
