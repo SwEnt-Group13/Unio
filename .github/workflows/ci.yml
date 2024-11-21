@@ -143,10 +143,6 @@ jobs:
           disable-animations: true
           script: firebase emulators:exec --import=firebase/emulator-data './gradlew connectedCheck --parallel --build-cache'
 
-      # Delete the custom .env file to avoid leaving sensitive data
-      - name: Delete .env.unio-1b8ee file
-        run: rm -f functions/.env.unio-1b8ee
-
       # This step generates the coverage report which will be uploaded to sonar
       - name: Generate Coverage Report
         run: |

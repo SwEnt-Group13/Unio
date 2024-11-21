@@ -53,8 +53,8 @@ fun UserClaimAssociationPresidentialRightsScreen(
   association?.let {
     user?.let { it1 ->
       UserClaimAssociationPresidentialRightsScreenScaffold(navigationAction, it, it1)
-    }
-  }
+    } ?: Log.e("YourTag", "User is null")
+  } ?: Log.e("YourTag", "Association is null")
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -177,7 +177,7 @@ fun UserClaimAssociationPresidentialRightsScreenScaffold(
                                           e)
                                     }
                                   } else {
-                                    Log.d("CloudFunction", "OK")
+                                    // it works !
                                   }
                                 }
                           }

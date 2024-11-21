@@ -143,7 +143,7 @@ class ClaimAdminRightsTest : EndToEndTest() {
   private companion object {
     const val ASSOCIATION_SEARCH_INPUT = "music"
     const val EXPECTED_ASSOCIATION_NAME = "Musical"
-    const val PRESIDENTIAL_EMAIL_ADDRESS = "aurelien.domenget@icloud.com"
+    const val PRESIDENTIAL_EMAIL_ADDRESS = "mock.mock@icloud.com"
     const val EXPECTED_ASSOCIATION_UID = "P0eaFO5qG9y9lK46x8nf"
   }
 }

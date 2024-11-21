@@ -2,13 +2,11 @@ package com.android.unio.ui.user
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
-import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -53,16 +51,6 @@ fun UserClaimAssociationScreen(
                         contentDescription =
                             context.getString(R.string.user_claim_association_association_go_back))
                   }
-            },
-            actions = {
-              Row {
-                IconButton(onClick = {}) {
-                  Icon(
-                      Icons.Outlined.MoreVert,
-                      contentDescription =
-                          context.getString(R.string.user_claim_association_association_see_more))
-                }
-              }
             })
       },
       content = { padding ->
