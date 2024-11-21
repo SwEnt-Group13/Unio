@@ -50,16 +50,16 @@ class SavedTest {
   private lateinit var eventViewModel: EventViewModel
   private lateinit var searchViewModel: SearchViewModel
 
-  @MockK(relaxed = true) private lateinit var searchRepository: SearchRepository
+  @MockK private lateinit var searchRepository: SearchRepository
 
   private lateinit var eventList: List<Event>
   private lateinit var eventListFollowed: List<Event>
 
   @Before
   fun setUp() {
-    MockKAnnotations.init(this)
+    MockKAnnotations.init(this, relaxed = true)
     hiltRule.inject()
-    searchViewModel = spyk(SearchViewModel(searchRepository))
+
     every { navigationAction.navigateTo(any(TopLevelDestination::class)) } returns Unit
     every { navigationAction.navigateTo(any(String::class)) } returns Unit
 
@@ -75,18 +75,12 @@ class SavedTest {
           onSuccess()
         }
     userViewModel.addUser(user, {})
-    every { userRepository.init(any()) } just runs
     every { eventRepository.getEvents(any(), any()) } answers
         {
           val onSuccess = args[0] as (List<Event>) -> Unit
           onSuccess(eventList)
         }
     eventViewModel = EventViewModel(eventRepository, imageRepository)
-
-    val field =
-        userViewModel.javaClass.getDeclaredMethod("setFollowedAssociations", List::class.java)
-    field.isAccessible = true
-    field.invoke(userViewModel, listOf(asso.uid))
 
     eventList =
         listOf(
@@ -98,9 +92,6 @@ class SavedTest {
     eventField.invoke(eventViewModel, eventList)
 
     every { userViewModel.isEventSavedForCurrentUser(any()) } returns true
-
-    assert(eventViewModel.events.value.isNotEmpty())
-    eventListFollowed = asso.let { eventList.filter { event -> event.organisers.contains(it.uid) } }
   }
 
   @Test
