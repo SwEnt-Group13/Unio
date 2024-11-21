@@ -37,6 +37,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import androidx.navigation.compose.rememberNavController
 import com.android.unio.R
 import com.android.unio.mocks.user.MockUser
@@ -79,21 +80,6 @@ fun UserProfileSettingsScreen(
         println("DEBUG, NOT SUPPOSED TO BE HERE THEY MUST HAVE THE SAME UID")
     }
 
-    var profilePicture: Uri
-    imageRepository.getImageUrl(
-        user!!.profilePicture,
-        onSuccess = {string ->
-            profilePicture = Uri.parse(string)
-        },
-        onFailure = {
-            Toast.makeText(
-                context,
-                context.getString(R.string.account_details_image_upload_error),
-                Toast.LENGTH_SHORT)
-                .show()
-        }
-    )
-
     UserProfileSettingsScreenContent(
         user = user!!,
         onDiscardChanges = { navigationAction.goBack() },
@@ -105,7 +91,7 @@ fun UserProfileSettingsScreen(
                 imageRepository.uploadImage(
                     inputStream!!,
                     StoragePathsStrings.USER_IMAGES + userId,
-                    onSuccess = { createUser(StoragePathsStrings.USER_IMAGES + userId) },
+                    onSuccess = {imageUrl -> createUser(imageUrl) },
                     onFailure = { exception ->
                         Log.e("AccountDetails", "Error uploading image: $exception")
                         Toast.makeText(
@@ -144,7 +130,8 @@ fun PreviewAccountSettings(
 
     val mockUser = MockUser.createMockUser()
 
-    ProvidePreferenceLocals { AppTheme { UserProfileSettingsScreenContent(mockUser, {},
+    ProvidePreferenceLocals { AppTheme { UserProfileSettingsScreenContent(mockUser,
+        {},
         onModifyUser =  { uri, method -> println() },
         onUploadUser = {user -> println() }) } }
 
@@ -178,7 +165,8 @@ fun UserProfileSettingsScreenContent(
     val socials by userSocialsFlow.collectAsState()
 
 
-    val profilePictureUri = remember { mutableStateOf<Uri>(Uri.parse(user.profilePicture)) }
+    //This is the local uri of the new profile picture stored locally
+    val profilePictureUri = remember { mutableStateOf<Uri>(user.profilePicture.toUri()) }
 
     var showInterestsOverlay by remember { mutableStateOf(false) }
     var showSocialsOverlay by remember { mutableStateOf(false) }

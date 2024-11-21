@@ -79,7 +79,7 @@ fun AccountDetailsScreen(
           imageRepository.uploadImage(
               inputStream!!,
               StoragePathsStrings.USER_IMAGES + userId,
-              onSuccess = { createUser(StoragePathsStrings.USER_IMAGES + userId, userId!!) },
+              onSuccess = { imageUrl -> createUser(imageUrl, userId!!) },
               onFailure = { exception ->
                 Log.e("AccountDetails", "Error uploading image: $exception")
                 Toast.makeText(
