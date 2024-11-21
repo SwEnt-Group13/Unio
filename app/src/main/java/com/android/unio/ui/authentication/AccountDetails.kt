@@ -9,6 +9,8 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -18,9 +20,13 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.rounded.AccountCircle
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
+import androidx.compose.material3.InputChip
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -51,9 +57,7 @@ import com.android.unio.model.user.UserViewModel
 import com.android.unio.model.user.checkNewUser
 import com.android.unio.ui.authentication.overlay.InterestOverlay
 import com.android.unio.ui.authentication.overlay.SocialOverlay
-import com.android.unio.ui.components.InterestButtonAndFlowRow
 import com.android.unio.ui.components.ProfilePictureWithRemoveIcon
-import com.android.unio.ui.components.SocialButtonAndFlowRow
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
 import com.android.unio.ui.theme.AppTypography
@@ -196,14 +200,10 @@ fun AccountDetailsContent(
           ProfilePicturePicker(profilePictureUri, { profilePictureUri.value = Uri.EMPTY })
 
           InterestButtonAndFlowRow(userInterestsFlow,
-              { showInterestsOverlay = true },
-              AccountDetailsTestTags.INTERESTS_BUTTON,
-              AccountDetailsTestTags.INTERESTS_CHIP)
+              { showInterestsOverlay = true })
 
             SocialButtonAndFlowRow(userSocialsFlow,
-                { showSocialsOverlay = true },
-                AccountDetailsTestTags.SOCIALS_BUTTON,
-                AccountDetailsTestTags.SOCIALS_CHIP)
+                { showSocialsOverlay = true })
 
           Button(
               modifier = Modifier.testTag(AccountDetailsTestTags.CONTINUE_BUTTON),
@@ -309,95 +309,95 @@ private fun UserTextFields(
 }
 
 
-//@OptIn(ExperimentalLayoutApi::class)
-//@Composable
-//private fun InterestButtonAndFlowRow(
-//    interestsFlow: MutableStateFlow<List<Pair<Interest, MutableState<Boolean>>>>,
-//    onShowInterests: () -> Unit,
-//) {
-//  val context = LocalContext.current
-//
-//  val interests by interestsFlow.collectAsState()
-//
-//  OutlinedButton(
-//      modifier = Modifier
-//          .fillMaxWidth()
-//          .testTag(AccountDetailsTestTags.INTERESTS_BUTTON),
-//      onClick = onShowInterests) {
-//        Icon(
-//            Icons.Default.Add,
-//            contentDescription =
-//                context.getString(R.string.account_details_content_description_add))
-//        Text(context.getString(R.string.account_details_add_interests))
-//      }
-//  FlowRow {
-//    interests.forEachIndexed { index, pair ->
-//      if (pair.second.value) {
-//        InputChip(
-//            label = { Text(pair.first.name) },
-//            onClick = {},
-//            selected = pair.second.value,
-//            modifier =
-//            Modifier
-//                .padding(3.dp)
-//                .testTag(AccountDetailsTestTags.INTERESTS_CHIP + "$index"),
-//            avatar = {
-//              Icon(
-//                  Icons.Default.Close,
-//                  contentDescription = "Add",
-//                  modifier = Modifier.clickable { pair.second.value = !pair.second.value })
-//            })
-//      }
-//    }
-//  }
-//}
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun InterestButtonAndFlowRow(
+    interestsFlow: MutableStateFlow<List<Pair<Interest, MutableState<Boolean>>>>,
+    onShowInterests: () -> Unit,
+) {
+  val context = LocalContext.current
 
-//@OptIn(ExperimentalLayoutApi::class)
-//@Composable
-//private fun SocialButtonAndFlowRow(
-//    userSocialFlow: MutableStateFlow<MutableList<UserSocial>>,
-//    onShowSocials: () -> Unit
-//){
-//
-//    val context = LocalContext.current
-//    val socials by userSocialFlow.collectAsState()
-//
-//
-//    OutlinedButton(
-//        modifier = Modifier
-//            .fillMaxWidth()
-//            .testTag(AccountDetailsTestTags.SOCIALS_BUTTON),
-//        onClick = onShowSocials) {
-//        Icon(
-//            Icons.Default.Add,
-//            contentDescription =
-//            context.getString(R.string.account_details_content_description_close))
-//        Text(context.getString(R.string.account_details_add_socials))
-//    }
-//    FlowRow(modifier = Modifier.fillMaxWidth()) {
-//        socials.forEachIndexed { index, userSocial ->
-//            InputChip(
-//                label = { Text(userSocial.social.name) },
-//                onClick = {},
-//                selected = true,
-//                modifier =
-//                Modifier
-//                    .padding(3.dp)
-//                    .testTag(AccountDetailsTestTags.SOCIALS_CHIP + userSocial.social.title),
-//                avatar = {
-//                    Icon(
-//                        Icons.Default.Close,
-//                        contentDescription =
-//                        context.getString(R.string.account_details_content_description_close),
-//                        modifier =
-//                        Modifier.clickable {
-//                            userSocialFlow.value =
-//                                userSocialFlow.value.toMutableList().apply { removeAt(index) }
-//                        })
-//                })
-//        }
-//    }
-//}
+  val interests by interestsFlow.collectAsState()
+
+  OutlinedButton(
+      modifier = Modifier
+          .fillMaxWidth()
+          .testTag(AccountDetailsTestTags.INTERESTS_BUTTON),
+      onClick = onShowInterests) {
+        Icon(
+            Icons.Default.Add,
+            contentDescription =
+                context.getString(R.string.account_details_content_description_add))
+        Text(context.getString(R.string.account_details_add_interests))
+      }
+  FlowRow {
+    interests.forEachIndexed { index, pair ->
+      if (pair.second.value) {
+        InputChip(
+            label = { Text(pair.first.name) },
+            onClick = {},
+            selected = pair.second.value,
+            modifier =
+            Modifier
+                .padding(3.dp)
+                .testTag(AccountDetailsTestTags.INTERESTS_CHIP + "$index"),
+            avatar = {
+              Icon(
+                  Icons.Default.Close,
+                  contentDescription = "Add",
+                  modifier = Modifier.clickable { pair.second.value = !pair.second.value })
+            })
+      }
+    }
+  }
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun SocialButtonAndFlowRow(
+    userSocialFlow: MutableStateFlow<MutableList<UserSocial>>,
+    onShowSocials: () -> Unit
+){
+
+    val context = LocalContext.current
+    val socials by userSocialFlow.collectAsState()
+
+
+    OutlinedButton(
+        modifier = Modifier
+            .fillMaxWidth()
+            .testTag(AccountDetailsTestTags.SOCIALS_BUTTON),
+        onClick = onShowSocials) {
+        Icon(
+            Icons.Default.Add,
+            contentDescription =
+            context.getString(R.string.account_details_content_description_close))
+        Text(context.getString(R.string.account_details_add_socials))
+    }
+    FlowRow(modifier = Modifier.fillMaxWidth()) {
+        socials.forEachIndexed { index, userSocial ->
+            InputChip(
+                label = { Text(userSocial.social.name) },
+                onClick = {},
+                selected = true,
+                modifier =
+                Modifier
+                    .padding(3.dp)
+                    .testTag(AccountDetailsTestTags.SOCIALS_CHIP + userSocial.social.title),
+                avatar = {
+                    Icon(
+                        Icons.Default.Close,
+                        contentDescription =
+                        context.getString(R.string.account_details_content_description_close),
+                        modifier =
+                        Modifier.clickable {
+                            userSocialFlow.value =
+                                userSocialFlow.value.toMutableList().apply { removeAt(index) }
+                        })
+                })
+        }
+    }
+}
 
 @Composable
 private fun ProfilePicturePicker(
