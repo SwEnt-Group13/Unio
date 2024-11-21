@@ -44,24 +44,19 @@ constructor(private val repository: EventRepository, private val imageRepository
   }
 
   /**
-   * Loads the list of events from the repository asynchronously using coroutines and updates the
+   * Loads the list of events from the repository and updates the
    * internal [MutableStateFlow].
    */
   fun loadEvents() {
     repository.getEvents(
         onSuccess = { eventList ->
           eventList.forEach { event -> event.organisers.requestAll() }
-          setEvents(eventList)
+          _events.value = eventList
         },
         onFailure = { exception ->
           Log.e("EventViewModel", "An error occurred while loading events: $exception")
           _events.value = emptyList()
         })
-  }
-
-  /** Sets the list of events to be displayed. */
-  private fun setEvents(events: List<Event>) {
-    _events.value = events
   }
 
   /**
