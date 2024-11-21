@@ -155,6 +155,9 @@
     <string name="event_creation_enddate_label">Date de fin</string>
     <string name="event_creation_starttime_label">Heure de début</string>
     <string name="event_creation_endtime_label">Heure de fin</string>
+    <string name="event_creation_end_before_start">L\'heure de fin doit être avant celle de début</string>
+    <string name="event_creation_end_equals_start">L\'heure de fin ne peut pas être l\'heure de début</string>
+    <string name="event_creation_failed">Echec lors de la création</string>
 
     <!-- Associations Overlay Strings -->
     <string name="associations_overlay_coauthors_title" translatable="true">Co-organisateurs</string>

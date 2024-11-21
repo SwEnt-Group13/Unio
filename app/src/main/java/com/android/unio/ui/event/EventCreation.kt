@@ -195,14 +195,14 @@ fun EventCreationScreen(
           if (startTimestamp != null && endTimestamp != null) {
             if (startTimestamp!! > endTimestamp!!) {
               Text(
-                  text = "Event cannot start after it ends",
-                  modifier = Modifier.testTag("NoEventBeforeEnd"),
+                  text = context.getString(R.string.event_creation_end_before_start),
+                  modifier = Modifier.testTag(EventCreationTestTags.ERROR_TEXT1),
                   color = MaterialTheme.colorScheme.error)
             }
             if (startTimestamp!! == endTimestamp!!) {
               Text(
-                  text = "Event cannot start and end at the same time",
-                  modifier = Modifier.testTag("NoEventSameTime"),
+                  text = context.getString(R.string.event_creation_end_equals_start),
+                  modifier = Modifier.testTag(EventCreationTestTags.ERROR_TEXT2),
                   color = MaterialTheme.colorScheme.error)
             }
           }
@@ -231,12 +231,6 @@ fun EventCreationScreen(
                       eventBannerUri.value != Uri.EMPTY,
               onClick = {
                 val inputStream = context.contentResolver.openInputStream(eventBannerUri.value)!!
-
-                val test =
-                    (coauthorsAndBoolean.filter { it.second.value }.map { it.first.uid } +
-                            associationViewModel.selectedAssociation.value!!.uid)
-                        .distinct()
-                Log.d("EventCreationScreen", "Associations: $test")
                 eventViewModel.addEvent(
                     inputStream,
                     Event(
@@ -262,7 +256,7 @@ fun EventCreationScreen(
                     ),
                     onSuccess = { navigationAction.goBack() },
                     onFailure = {
-                      Toast.makeText(context, "Failed to create event", Toast.LENGTH_SHORT).show()
+                      Toast.makeText(context, context.getString(R.string.event_creation_failed), Toast.LENGTH_SHORT).show()
                     })
               }) {
                 Text(context.getString(R.string.event_creation_save_button))
