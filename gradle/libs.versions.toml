@@ -102,6 +102,7 @@ composeMaterial = "1.4.0"
 core = "1.46.0"
 playServicesLocation = "21.3.0"
 firebaseMessagingKtx = "24.1.0"
+workRuntimeKtx = "2.9.1"
 
 
 [libraries]
@@ -114,6 +115,7 @@ androidx-hilt-navigation-fragment = { module = "androidx.hilt:hilt-navigation-fr
 androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "materialIconsExtended" }
 androidx-ui-test-manifest-v100 = { module = "androidx.compose.ui:ui-test-manifest", version.ref = "uiTestManifestVersion" }
 androidx-preference-ktx = { module = "androidx.preference:preference-ktx", version.ref = "preferenceKtx" }
+androidx-work-runtime-ktx = { module = "androidx.work:work-runtime-ktx" }
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilCompose" }
 compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
 compose-material3 = { group = "androidx.compose.material3", name = "material3" }
@@ -205,6 +207,7 @@ androidx-compose-material = { group = "androidx.wear.compose", name = "compose-m
 core = { group = "com.google.ar", name = "core", version.ref = "core" }
 play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServicesLocation" }
 firebase-messaging-ktx = { group = "com.google.firebase", name = "firebase-messaging-ktx", version.ref = "firebaseMessagingKtx" }
+work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "workRuntimeKtx" }
 
 
 

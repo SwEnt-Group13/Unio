@@ -1,11 +1,18 @@
 package com.android.unio
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Application
 import android.content.pm.ActivityInfo
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -16,6 +23,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -26,6 +35,7 @@ import com.android.unio.model.authentication.AuthViewModel
 import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.map.MapViewModel
+import com.android.unio.model.notification.MyWorker
 import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.association.AssociationProfileScreen
@@ -46,7 +56,6 @@ import com.android.unio.ui.settings.SettingsScreen
 import com.android.unio.ui.theme.AppTheme
 import com.android.unio.ui.user.SomeoneElseUserProfileScreen
 import com.android.unio.ui.user.UserProfileScreen
-import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.HiltAndroidApp
 import me.zhanghai.compose.preference.ProvidePreferenceLocals
@@ -57,6 +66,7 @@ class MainActivity : ComponentActivity() {
 
   @Inject lateinit var imageRepository: ImageRepositoryFirebaseStorage
 
+  @RequiresApi(Build.VERSION_CODES.TIRAMISU)
   @SuppressLint("SourceLockedOrientationActivity")
   override fun onCreate(savedInstanceState: Bundle?) {
     requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
@@ -67,25 +77,17 @@ class MainActivity : ComponentActivity() {
         ProvidePreferenceLocals { AppTheme { UnioApp(imageRepository) } }
       }
     }
+
   }
 }
 
 @HiltAndroidApp class UnioApplication : Application()
 
 
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun UnioApp(imageRepository: ImageRepositoryFirebaseStorage) {
 
- val firebaseMessaging = FirebaseMessaging.getInstance()
-    firebaseMessaging.token.addOnCompleteListener { task ->
-        if (task.isSuccessful) {
-            val token = task.result
-            println("Token: $token")
-            // Send token to server
-        } else {
-            println("Failed to get token")
-        }
-    }
   val navController = rememberNavController()
 
   val navigationActions = NavigationAction(navController)
@@ -100,6 +102,31 @@ fun UnioApp(imageRepository: ImageRepositoryFirebaseStorage) {
   // Observe the authentication state
   val authState by authViewModel.authState.collectAsState()
   var previousAuthState by rememberSaveable { mutableStateOf<String?>(null) }
+  val context = LocalContext.current
+  var isNotificationsEnabled = false
+  val permissionLauncher =
+    rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) {
+        permission ->
+      when {
+        permission -> {
+          isNotificationsEnabled = true
+          MyWorker.schedule(context)
+        }
+        else -> {
+          Log.e("ONCH", "Notification permission is not granted.")
+        }
+      }
+    }
+  LaunchedEffect(Unit) {
+    when (PackageManager.PERMISSION_GRANTED) {
+      ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) -> {
+        isNotificationsEnabled = true
+      }
+      else -> {
+        permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+      }
+    }
+  }
 
   LaunchedEffect(authState) {
     authState?.let { screen ->
