@@ -1,7 +1,6 @@
 package com.android.unio.end2end
 
-import android.util.Log
-import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.isDisplayed
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
@@ -12,6 +11,7 @@ import com.android.unio.model.strings.test_tags.WelcomeTestTags
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.firestore
+import com.google.firebase.functions.functions
 import dagger.hilt.android.testing.HiltAndroidRule
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -36,14 +36,18 @@ open class EndToEndTest : FirebaseEmulatorFunctions {
       email: String,
       password: String
   ) {
-    composeTestRule.onNodeWithTag(WelcomeTestTags.SCREEN).assertIsDisplayed()
+    composeTestRule.waitUntil(10000) {
+      composeTestRule.onNodeWithTag(WelcomeTestTags.SCREEN).isDisplayed()
+    }
     composeTestRule.onNodeWithTag(WelcomeTestTags.EMAIL).performTextInput(email)
     composeTestRule.onNodeWithTag(WelcomeTestTags.PASSWORD).performTextInput(password)
     composeTestRule.onNodeWithTag(WelcomeTestTags.BUTTON).performClick()
   }
 
   override fun signOutWithUser(composeTestRule: ComposeContentTestRule) {
-    composeTestRule.onNodeWithTag(BottomNavBarTestTags.MY_PROFILE).assertIsDisplayed()
+    composeTestRule.waitUntil(10000) {
+      composeTestRule.onNodeWithTag(BottomNavBarTestTags.MY_PROFILE).isDisplayed()
+    }
     composeTestRule.onNodeWithTag(BottomNavBarTestTags.MY_PROFILE).performClick()
     composeTestRule.onNodeWithTag(UserProfileTestTags.SETTINGS).performClick()
     composeTestRule.onNodeWithTag(UserProfileTestTags.SIGN_OUT).performClick()
@@ -73,8 +77,10 @@ open class EndToEndTest : FirebaseEmulatorFunctions {
     try {
       Firebase.firestore.useEmulator(HOST, Firestore.PORT)
       Firebase.auth.useEmulator(HOST, Auth.PORT)
+      Firebase.functions.useEmulator(HOST, Functions.PORT)
+      println("Firebase emulators configured successfully.")
     } catch (e: IllegalStateException) {
-      Log.e("EndToEndTest", e.message!!)
+      // Firebase emulators have already been initialized. Skipping configuration.
     }
   }
 
@@ -114,6 +120,11 @@ open class EndToEndTest : FirebaseEmulatorFunctions {
     const val ACCOUNTS_URL = "$ROOT/emulator/v1/projects/unio-1b8ee/accounts"
   }
 
+  object Functions {
+    const val PORT = 5001
+    const val ROOT = "http://$HOST:$PORT"
+  }
+
   object UnverifiedUser {
     const val EMAIL = "example@gmail.com"
     const val PWD = "123456"
@@ -133,5 +144,11 @@ open class EndToEndTest : FirebaseEmulatorFunctions {
   object User2 {
     const val EMAIL = "example2@gmail.com"
     const val PASSWORD = "helloWorld123"
+  }
+
+  object Admin { // to use only if you need specific bypass (otherwise the tests would have no
+    // sense)
+    const val EMAIL = "admin@admin.com"
+    const val PASSWORD = "adminadmin9"
   }
 }

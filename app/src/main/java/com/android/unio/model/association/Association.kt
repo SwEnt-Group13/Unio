@@ -37,7 +37,9 @@ data class Association(
     val followersCount: Int,
     val members: ReferenceList<User>,
     var image: String,
-    val events: ReferenceList<Event>
+    val events: ReferenceList<Event>,
+    val principalEmailAddress: String,
+    val adminUid: String
 ) : UniquelyIdentifiable {
   companion object
 }

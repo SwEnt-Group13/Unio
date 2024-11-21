@@ -16,17 +16,6 @@ object AssociationStrings {
   const val UNKNOWN = "Unknown"
 }
 
-object EventTypeStrings {
-  const val FESTIVAL = "festival"
-  const val APERITIF = "aperitif"
-  const val NIGHT_PARTY = "night party"
-  const val JAM = "jam"
-  const val NETWORKING = "networking"
-  const val SPORT = "sport"
-  const val TRIP = "trip"
-  const val OTHER = "other"
-}
-
 object FirestorePathsStrings {
   const val ASSOCIATION_PATH = "associations"
   const val USER_PATH = "users"

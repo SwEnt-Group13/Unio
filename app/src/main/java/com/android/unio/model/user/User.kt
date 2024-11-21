@@ -64,6 +64,7 @@ data class User(
 ) : UniquelyIdentifiable {
   companion object
 }
+
 /**
  * @param errorMessage: The error message is a pointer to the string resource. This enables us to
  *   have error messages in different languages.

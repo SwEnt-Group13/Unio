@@ -49,6 +49,7 @@
     <string name="category_explanation">Select the category that best fits the association\'s purpose.</string>
     <string name="description_explanation">Provide a brief description of the association, including its main activities and goals.</string>
     <string name="url_explanation">Provide the URL of the association\'s webpage or online presence.</string>
+    <string name="principal_email_address_explanation">Provide the email address of the presidency of your association; ex : presidents@association.com</string>
     <string name="cancel_button_text">Cancel</string>
     <string name="save_button_text">Save</string>
     <string name="category_button_text">Select Category</string>
@@ -228,7 +229,11 @@
     */
 
     <!-- Saved Screen Strings -->
-    <string name="saved_screen_title" translatable="false">Saved screen</string>
+    <string name="saved_screen_title">Saved Events</string>
+    <string name="saved_screen_no_events">No saved events.</string>
+    <string name="saved_screen_today">Today</string>
+    <string name="saved_screen_upcoming">Upcoming</string>
+
 
     /**
     * package: settings
@@ -265,6 +270,32 @@
 
     <!-- SomeoneElseUserProfile Strings -->
     <string name="someone_else_user_profile_screen_title" translatable="false">Someone else user profile screen</string>
+
+    <!-- UserClaimAssociation Strings -->
+    <string name="user_claim_association_association_go_back">Go back</string>
+    <string name="user_claim_association_association_see_more">See more</string>
+    <string name="user_claim_association_you_can_either">You can either</string>
+    <string name="user_claim_association_create_new_association">Create a new association</string>
+    <string name="user_claim_association_not_implemented_yet">Not implemented yet</string>
+    <string name="user_claim_association_create_association">Create association</string>
+    <string name="user_claim_association_claim_president_rights">Claim president rights for an existing association</string>
+
+    <!-- UserClaimAssociationPresidentialRights Strings -->
+    <string name="user_claim_association_presidential_rights_claim_presidential_rights">Claim Presidential Rights</string>
+    <string name="user_claim_association_presidential_rights_enter_presidential_email">Enter the presidential email address:</string>
+    <string name="user_claim_association_presidential_rights_email_address">Email address</string>
+    <string name="user_claim_association_presidential_rights_incorrect_email_error">Incorrect email address. Please try again.</string>
+    <string name="user_claim_association_presidential_rights_enter_verification_code">Enter the code sent :</string>
+    <string name="user_claim_association_presidential_rights_verification_code">Verification code</string>
+    <string name="user_claim_association_presidential_rights_submit_code">Submit Code</string>
+    <string name="user_claim_association_presidential_rights_go_back">Go back</string>
+    <string name="user_claim_association_presidential_rights_see_more">See more</string>
+    <string name="user_claim_association_presidential_rights_unexpected_error">Unexpected error occurred</string>
+    <string name="user_claim_association_presidential_rights_verified_successfully">Verified successfully!</string>
+    <string name="user_claim_association_presidential_rights_wrong_code_error">Wrong code, please try again</string>
+    <string name="user_claim_association_presidential_rights_verification_request_not_found">Verification request not found</string>
+    <string name="user_claim_association_presidential_rights_service_unavailable">Service unavailable. Please try later</string>
+
 
     /**
     * Other

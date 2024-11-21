@@ -265,7 +265,7 @@ class ScreenDisplayingTest {
 
   @Test
   fun testSavedDisplayed() {
-    composeTestRule.setContent { SavedScreen(navigationAction) }
+    composeTestRule.setContent { SavedScreen(navigationAction, eventViewModel, userViewModel) }
     composeTestRule.onNodeWithTag(SavedTestTags.SCREEN).assertIsDisplayed()
   }
 
@@ -278,7 +278,7 @@ class ScreenDisplayingTest {
   @Test
   fun testUserProfileDisplayed() {
     composeTestRule.setContent {
-      UserProfileScreenScaffold(MockUser.createMockUser(), navigationAction, false, {}, {})
+      UserProfileScreenScaffold(MockUser.createMockUser(), navigationAction, false, {}, {}, searchViewModel)
     }
     composeTestRule.onNodeWithTag(UserProfileTestTags.SCREEN).assertIsDisplayed()
   }
