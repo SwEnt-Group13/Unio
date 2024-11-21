@@ -147,7 +147,9 @@ fun UnioApp(imageRepository: ImageRepositoryFirebaseStorage) {
         composable(Screen.SAVED) { SavedScreen(navigationActions) }
       }
       navigation(startDestination = Screen.MY_PROFILE, route = Route.MY_PROFILE) {
-        composable(Screen.MY_PROFILE) { UserProfileScreen(userViewModel, navigationActions) }
+        composable(Screen.MY_PROFILE) {
+          UserProfileScreen(userViewModel, associationViewModel, navigationActions)
+        }
         composable(Screen.SETTINGS) { SettingsScreen(navigationActions) }
       }
     }

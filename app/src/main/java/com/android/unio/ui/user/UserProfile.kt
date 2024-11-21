@@ -60,6 +60,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import com.android.unio.R
+import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.strings.test_tags.UserProfileTestTags
 import com.android.unio.model.user.User
 import com.android.unio.model.user.UserViewModel
@@ -76,7 +77,11 @@ import com.google.firebase.auth.auth
 import kotlinx.coroutines.launch
 
 @Composable
-fun UserProfileScreen(userViewModel: UserViewModel, navigationAction: NavigationAction) {
+fun UserProfileScreen(
+    userViewModel: UserViewModel,
+    associationViewModel: AssociationViewModel,
+    navigationAction: NavigationAction
+) {
 
   val context = LocalContext.current
   val user by userViewModel.user.collectAsState()
@@ -93,7 +98,15 @@ fun UserProfileScreen(userViewModel: UserViewModel, navigationAction: Navigation
 
   val refreshState by userViewModel.refreshState
 
-  UserProfileScreenScaffold(user!!, navigationAction, refreshState) { userViewModel.refreshUser() }
+  UserProfileScreenScaffold(
+      user!!,
+      navigationAction,
+      refreshState,
+      onRefresh = { userViewModel.refreshUser() },
+      onAssociationClick = {
+        associationViewModel.selectAssociation(it)
+        navigationAction.navigateTo(Screen.ASSOCIATION_PROFILE)
+      })
 }
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
@@ -102,7 +115,8 @@ fun UserProfileScreenScaffold(
     user: User,
     navigationAction: NavigationAction,
     refreshState: Boolean,
-    onRefresh: () -> Unit
+    onRefresh: () -> Unit,
+    onAssociationClick: (String) -> Unit
 ) {
   val context = LocalContext.current
   val pullRefreshState = rememberPullRefreshState(refreshing = refreshState, onRefresh = onRefresh)
@@ -142,7 +156,7 @@ fun UserProfileScreenScaffold(
                       .pullRefresh(pullRefreshState)
                       .fillMaxHeight()
                       .verticalScroll(rememberScrollState())) {
-                UserProfileScreenContent(navigationAction, user)
+                UserProfileScreenContent(user, onAssociationClick)
               }
         }
       }
@@ -159,7 +173,7 @@ fun UserProfileScreenScaffold(
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun UserProfileScreenContent(navigationAction: NavigationAction, user: User) {
+fun UserProfileScreenContent(user: User, onAssociationClick: (String) -> Unit) {
 
   val context = LocalContext.current
 
@@ -239,9 +253,7 @@ fun UserProfileScreenContent(navigationAction: NavigationAction, user: User) {
                 modifier = Modifier.fillMaxWidth().testTag(UserProfileTestTags.JOINED_ASSOCIATIONS),
                 verticalArrangement = Arrangement.spacedBy(4.dp),
             ) {
-              joinedAssociations.map {
-                AssociationSmall(it) { navigationAction.navigateTo(Screen.ASSOCIATION_PROFILE) }
-              }
+              joinedAssociations.map { AssociationSmall(it) { onAssociationClick(it.uid) } }
             }
           }
 
@@ -256,9 +268,7 @@ fun UserProfileScreenContent(navigationAction: NavigationAction, user: User) {
                 modifier = Modifier.testTag(UserProfileTestTags.FOLLOWED_ASSOCIATIONS),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-              followedAssociations.map {
-                AssociationSmall(it) { navigationAction.navigateTo(Screen.ASSOCIATION_PROFILE) }
-              }
+              followedAssociations.map { AssociationSmall(it) { onAssociationClick(it.uid) } }
             }
           }
         }
