@@ -4,6 +4,7 @@ import com.android.unio.R
 import com.android.unio.model.association.Association
 import com.android.unio.model.event.Event
 import com.android.unio.model.firestore.ReferenceList
+import com.android.unio.model.firestore.UniquelyIdentifiable
 
 /** @param title: The title is a pointer to the string resource. */
 enum class Interest(val title: Int) {
@@ -49,7 +50,7 @@ data class UserSocial(val social: Social, val content: String) {
  * @param profilePicture The URL to the profile picture in Firebase storage.
  */
 data class User(
-    val uid: String,
+    override val uid: String,
     val email: String,
     val firstName: String,
     val lastName: String,
@@ -60,7 +61,7 @@ data class User(
     val interests: List<Interest>,
     val socials: List<UserSocial>,
     val profilePicture: String,
-) {
+) : UniquelyIdentifiable {
 
   fun isFollowAssociation(association: Association): Boolean {
     return followedAssociations.contains(association.uid)

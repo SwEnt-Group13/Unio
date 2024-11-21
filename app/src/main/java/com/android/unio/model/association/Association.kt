@@ -7,6 +7,7 @@ import androidx.appsearch.annotation.Document.StringProperty
 import androidx.appsearch.app.AppSearchSchema.StringPropertyConfig
 import com.android.unio.model.event.Event
 import com.android.unio.model.firestore.ReferenceList
+import com.android.unio.model.firestore.UniquelyIdentifiable
 import com.android.unio.model.strings.AssociationStrings
 import com.android.unio.model.user.User
 
@@ -27,7 +28,7 @@ import com.android.unio.model.user.User
  * @property events list of association events
  */
 data class Association(
-    val uid: String,
+    override val uid: String,
     val url: String,
     val name: String,
     val fullName: String,
@@ -37,7 +38,7 @@ data class Association(
     val members: ReferenceList<User>,
     var image: String,
     val events: ReferenceList<Event>
-) {
+) : UniquelyIdentifiable {
   companion object
 }
 
