@@ -5,13 +5,14 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Icon
+import androidx.compose.material3.InputChip
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -52,23 +53,32 @@ fun ProfilePictureWithRemoveIcon(
 
 
 @Composable
-fun IconWithRemoveButton(
+fun SocialInputChip(
     userSocial: UserSocial,
     onRemove: () -> Unit,
     testTag: String
 ){
     val context = LocalContext.current
-    Box(modifier = Modifier.size(50.dp).padding(8.dp)) {
-        Image(
-            modifier = Modifier.fillMaxSize(),
-            painter = painterResource(userSocial.social.icon),
-            contentDescription = userSocial.social.title,
-            contentScale = ContentScale.Fit)
-        Icon(
-            imageVector = Icons.Default.Close,
-            contentDescription =
-            context.getString(R.string.user_settings_content_description_remove_social),
-            modifier =
-            Modifier.align(Alignment.TopEnd).clickable { onRemove() }.testTag(testTag))
-    }
+
+    InputChip(
+        label = { Text(userSocial.social.title) },
+        onClick = {},
+        selected = true,
+        modifier =
+        Modifier
+            .testTag(testTag + userSocial.social.title),
+        avatar = {
+            Image(
+                modifier = Modifier.size(24.dp),
+                painter = painterResource(userSocial.social.icon),
+                contentDescription = userSocial.social.title)
+        },
+        trailingIcon = {
+            Icon(
+                Icons.Default.Close,
+                contentDescription =
+                context.getString(R.string.account_details_content_description_close),
+                modifier =
+                Modifier.clickable {onRemove()})
+        })
 }

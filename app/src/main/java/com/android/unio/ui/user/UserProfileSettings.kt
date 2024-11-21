@@ -49,8 +49,8 @@ import com.android.unio.model.user.UserSocial
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.authentication.overlay.InterestOverlay
 import com.android.unio.ui.authentication.overlay.SocialOverlay
-import com.android.unio.ui.components.IconWithRemoveButton
 import com.android.unio.ui.components.ProfilePictureWithRemoveIcon
+import com.android.unio.ui.components.SocialInputChip
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.theme.AppTheme
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -215,7 +215,6 @@ private fun EditUserTextFields(
         modifier =
         Modifier
             .padding(4.dp)
-            .fillMaxWidth()
             .testTag(UserSettingsTestTags.FIRST_NAME_TEXT_FIELD),
         label = {
             Text(
@@ -237,7 +236,6 @@ private fun EditUserTextFields(
         modifier =
         Modifier
             .padding(4.dp)
-            .fillMaxWidth()
             .testTag(UserSettingsTestTags.LAST_NAME_TEXT_FIELD),
         label = {
             Text(
@@ -325,6 +323,13 @@ private fun SocialButtonAndFlowRow(
     val context = LocalContext.current
     val socials by userSocialFlow.collectAsState()
 
+    FlowRow(modifier = Modifier.fillMaxWidth().padding(3.dp)) {
+        socials.forEachIndexed { index, userSocial ->
+            SocialInputChip(userSocial, onRemove = {userSocialFlow.value =
+                userSocialFlow.value.toMutableList().apply { removeAt(index) }},
+                testTag = UserSettingsTestTags.SOCIALS_CHIP)
+        }
+    }
 
     OutlinedButton(
         modifier = Modifier
@@ -335,34 +340,7 @@ private fun SocialButtonAndFlowRow(
             Icons.Default.Add,
             contentDescription =
             context.getString(R.string.account_details_content_description_close))
-        Text(context.getString(R.string.account_details_add_socials))
+        Text(context.getString(R.string.user_settings_edit_socials))
     }
 
-    FlowRow(modifier = Modifier.fillMaxWidth()) {
-        socials.forEachIndexed { index, userSocial ->
-            IconWithRemoveButton(userSocial = userSocial,
-                onRemove = { userSocialFlow.value = userSocialFlow.value.toMutableList().apply { removeAt(index) } },
-                testTag = UserSettingsTestTags.SOCIALS_CHIP)
-
-//            InputChip(
-//                label = { Text(userSocial.social.name) },
-//                onClick = {},
-//                selected = true,
-//                modifier =
-//                Modifier
-//                    .padding(3.dp)
-//                    .testTag(chipTestTag + userSocial.social.title),
-//                avatar = {
-//                    Icon(
-//                        Icons.Default.Close,
-//                        contentDescription =
-//                        context.getString(R.string.account_details_content_description_close),
-//                        modifier =
-//                        Modifier.clickable {
-//                            userSocialFlow.value =
-//                                userSocialFlow.value.toMutableList().apply { removeAt(index) }
-//                        })
-//                })
-        }
-    }
 }
