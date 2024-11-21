@@ -1,6 +1,7 @@
 package com.android.unio.ui.event
 
 import android.net.Uri
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
@@ -191,11 +192,19 @@ fun EventCreationScreen(
               modifier = Modifier.testTag(EventCreationTestTags.END_TIME)) {
                 endTimestamp = it
               }
-          if (startTimestamp != null && endTimestamp != null && startTimestamp!! > endTimestamp!!) {
-            Text(
-                text = "Event cannot start after it ends",
-                modifier = Modifier.testTag("NoEventBeforeEnd"),
-                color = MaterialTheme.colorScheme.error)
+          if (startTimestamp != null && endTimestamp != null) {
+            if (startTimestamp!! > endTimestamp!!) {
+              Text(
+                  text = "Event cannot start after it ends",
+                  modifier = Modifier.testTag("NoEventBeforeEnd"),
+                  color = MaterialTheme.colorScheme.error)
+            }
+            if (startTimestamp!! == endTimestamp!!) {
+              Text(
+                  text = "Event cannot start and end at the same time",
+                  modifier = Modifier.testTag("NoEventSameTime"),
+                  color = MaterialTheme.colorScheme.error)
+            }
           }
 
           OutlinedTextField(
@@ -222,6 +231,12 @@ fun EventCreationScreen(
                       eventBannerUri.value != Uri.EMPTY,
               onClick = {
                 val inputStream = context.contentResolver.openInputStream(eventBannerUri.value)!!
+
+                val test =
+                    (coauthorsAndBoolean.filter { it.second.value }.map { it.first.uid } +
+                            associationViewModel.selectedAssociation.value!!.uid)
+                        .distinct()
+                Log.d("EventCreationScreen", "Associations: $test")
                 eventViewModel.addEvent(
                     inputStream,
                     Event(
