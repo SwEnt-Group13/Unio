@@ -7,8 +7,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
@@ -16,7 +14,9 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -33,7 +33,7 @@ import androidx.navigation.compose.rememberNavController
 import com.android.unio.R
 import com.android.unio.mocks.user.MockUser
 import com.android.unio.model.image.ImageRepository
-import com.android.unio.model.strings.test_tags.AccountDetailsTestTags
+import com.android.unio.model.strings.test_tags.UserSettingsTestTags
 import com.android.unio.model.user.AccountDetailsError
 import com.android.unio.model.user.Interest
 import com.android.unio.model.user.User
@@ -148,16 +148,16 @@ fun UserProfileSettingsScreenContent(
             InterestButtonAndFlowRow(
                 interestsFlow = userInterestsFlow,
                 onShowInterests = { showInterestsOverlay = true },
-                buttonTestTag = "" ,
-                chipTestTag = ""
+                buttonTestTag = UserSettingsTestTags.INTERESTS_BUTTON ,
+                chipTestTag = UserSettingsTestTags.INTERESTS_CHIP
             )
 
 
             SocialButtonAndFlowRow(
                 userSocialFlow = userSocialsFlow,
                 onShowSocials = { showSocialsOverlay = true },
-                buttonTestTag = "",
-                chipTestTag = ""
+                buttonTestTag = UserSettingsTestTags.SOCIALS_BUTTON,
+                chipTestTag = UserSettingsTestTags.SOCIALS_CHIP
             )
 
             Button(
@@ -211,18 +211,18 @@ private fun EditUserTextFields(
         Modifier
             .padding(4.dp)
             .fillMaxWidth()
-            .testTag(AccountDetailsTestTags.FIRST_NAME_TEXT_FIELD),
+            .testTag(UserSettingsTestTags.FIRST_NAME_TEXT_FIELD),
         label = {
             Text(
                 context.getString(R.string.account_details_first_name),
-                modifier = Modifier.testTag(AccountDetailsTestTags.FIRST_NAME_TEXT))
+                modifier = Modifier.testTag(UserSettingsTestTags.FIRST_NAME_TEXT))
         },
         isError = (isFirstNameError),
         supportingText = {
             if (isFirstNameError) {
                 Text(
                     context.getString(AccountDetailsError.EMPTY_FIRST_NAME.errorMessage),
-                    modifier = Modifier.testTag(AccountDetailsTestTags.FIRST_NAME_ERROR_TEXT))
+                    modifier = Modifier.testTag(UserSettingsTestTags.FIRST_NAME_ERROR_TEXT))
             }
         },
         onValueChange = onFirstNameChange,
@@ -233,18 +233,18 @@ private fun EditUserTextFields(
         Modifier
             .padding(4.dp)
             .fillMaxWidth()
-            .testTag(AccountDetailsTestTags.LAST_NAME_TEXT_FIELD),
+            .testTag(UserSettingsTestTags.LAST_NAME_TEXT_FIELD),
         label = {
             Text(
                 context.getString(R.string.account_details_last_name),
-                modifier = Modifier.testTag(AccountDetailsTestTags.LAST_NAME_TEXT))
+                modifier = Modifier.testTag(UserSettingsTestTags.LAST_NAME_TEXT))
         },
         isError = (isLastNameError),
         supportingText = {
             if (isLastNameError) {
                 Text(
                     context.getString(AccountDetailsError.EMPTY_LAST_NAME.errorMessage),
-                    modifier = Modifier.testTag(AccountDetailsTestTags.LAST_NAME_ERROR_TEXT))
+                    modifier = Modifier.testTag(UserSettingsTestTags.LAST_NAME_ERROR_TEXT))
             }
         },
         onValueChange = onLastNameChange,
@@ -256,11 +256,11 @@ private fun EditUserTextFields(
             .padding(4.dp)
             .fillMaxWidth()
             .height(200.dp)
-            .testTag(AccountDetailsTestTags.BIOGRAPHY_TEXT_FIELD),
+            .testTag(UserSettingsTestTags.BIOGRAPHY_TEXT_FIELD),
         label = {
             Text(
                 context.getString(R.string.account_details_bio),
-                modifier = Modifier.testTag(AccountDetailsTestTags.BIOGRAPHY_TEXT))
+                modifier = Modifier.testTag(UserSettingsTestTags.BIOGRAPHY_TEXT))
         },
         onValueChange = onBioChange,
         value = bio)
