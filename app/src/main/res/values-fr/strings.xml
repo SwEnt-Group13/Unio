@@ -90,6 +90,15 @@
     <string name="account_details_content_description_pfp">Photo de profile</string>
     <string name="account_details_content_description_remove_pfp">Supprimer la photo de profil</string>
 
+    <!-- UserSettings Strings -->
+    <string name="user_settings_content_description_remove_social" translatable="false">Remove User Social</string>
+    <string name="user_settings_first_name" translatable="true">Modifier Prénom</string>
+    <string name="user_settings_last_name" translatable="true">Modifier Nom</string>
+    <string name="user_settings_bio" translatable="true">Modifier Biographie</string>
+    <string name="user_settings_edit_interests" translatable="true">Modifier vos centres d\'intérêts</string>
+    <string name="user_settings_edit_socials" translatable="true">Modifier vos réseaux sociaux</string>
+
+
     <!-- EmailVerification Strings -->
     <string name="email_verification_refresh_failed">Echec de l\'actualisation</string>
     <string name="email_verification_sent_failed">Echec de l\'envoi de l\'email</string>

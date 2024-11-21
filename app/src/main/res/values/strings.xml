@@ -97,6 +97,12 @@
 
     <!-- UserSettings Strings -->
     <string name="user_settings_content_description_remove_social" translatable="false">Remove User Social</string>
+    <string name="user_settings_first_name" translatable="true">Edit First name</string>
+    <string name="user_settings_last_name" translatable="true">Edit Last name</string>
+    <string name="user_settings_bio" translatable="true">Edit Biography</string>
+    <string name="user_settings_edit_interests" translatable="true">Edit your centers of interests</string>
+    <string name="user_settings_edit_socials" translatable="true">Edit your user socials</string>
+
 
 
     <!-- EmailVerification Strings -->
