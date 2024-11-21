@@ -83,7 +83,10 @@ constructor(private val repository: EventRepository, private val imageRepository
     return _events.value.find { it.uid == id }
   }
 
-  /** Add a new event to the repository. It uploads the event image first, then adds the event. */
+  /**
+   * Add a new event to the repository. It uploads the event image first, then adds the event. It
+   * then adds it to the _events stateflow
+   */
   fun addEvent(
       inputStream: InputStream,
       event: Event,
@@ -99,5 +102,6 @@ constructor(private val repository: EventRepository, private val imageRepository
           repository.addEvent(event, onSuccess, onFailure)
         },
         { e -> Log.e("ImageRepository", "Failed to store image: $e") })
+    _events.value += event
   }
 }
