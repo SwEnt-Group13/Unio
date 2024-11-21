@@ -49,7 +49,7 @@ class UserProfileTest {
         .onAllNodesWithTag(UserProfileTestTags.SOCIAL_BUTTON)
         .assertCountEquals(user.socials.size)
     composeTestRule
-        .onAllNodesWithTag(UserProfileTestTags.INTEREST)
+        .onAllNodesWithTag(UserProfileTestTags.INTEREST_CHIP)
         .assertCountEquals(user.interests.size)
   }
 

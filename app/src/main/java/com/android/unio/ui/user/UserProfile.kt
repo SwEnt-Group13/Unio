@@ -212,7 +212,7 @@ fun UserProfileScreenContent(navigationAction: NavigationAction, user: User) {
             user.socials.forEach { userSocial ->
               IconButton(
                   onClick = { uriHandler.openUri(userSocial.getFullUrl()) },
-                  modifier = Modifier.testTag(UserProfileTestTags.SOCIAL_BUTTON)) {
+                  modifier = Modifier.testTag(UserProfileTestTags.SOCIAL_BUTTON + userSocial.social.title)) {
                     Image(
                         modifier = Modifier
                             .size(32.dp)
@@ -234,7 +234,7 @@ fun UserProfileScreenContent(navigationAction: NavigationAction, user: User) {
           ) {
             user.interests.forEach { interest ->
               SuggestionChip(
-                  modifier = Modifier.testTag(UserProfileTestTags.INTEREST),
+                  modifier = Modifier.testTag(UserProfileTestTags.INTEREST_CHIP + interest.title),
                   onClick = {},
                   label = {
                     Text(context.getString(interest.title), style = AppTypography.bodySmall)
@@ -301,7 +301,9 @@ fun UserProfileBottomSheet(
     ) {
       Column(modifier = Modifier) {
         TextButton(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .testTag(UserProfileTestTags.EDITION),
             onClick = {
                 scope.launch {
                     sheetState.hide()

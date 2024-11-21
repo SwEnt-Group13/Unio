@@ -117,7 +117,7 @@ class UserAccountCreationTest : EndToEndTest() {
     composeTestRule
         .onNodeWithTag(UserProfileTestTags.BIOGRAPHY)
         .assertTextContains(UnverifiedUser.BIOGRAPHY)
-    composeTestRule.onAllNodesWithTag(UserProfileTestTags.INTEREST).assertCountEquals(3)
+    composeTestRule.onAllNodesWithTag(UserProfileTestTags.INTEREST_CHIP).assertCountEquals(3)
 
     signOutWithUser(composeTestRule)
   }
