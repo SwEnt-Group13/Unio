@@ -4,7 +4,6 @@ import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -108,18 +107,17 @@ fun HomeScreen(
       modifier = Modifier.testTag(HomeTestTags.SCREEN),
       content = { padding ->
         println(padding)
-        HorizontalPager(
-            state = pagerState,
-            modifier = Modifier.fillMaxWidth().padding(padding)) { page ->
-              HomeContent(
-                  navigationAction,
-                  searchQuery,
-                  searchState,
-                  searchResults,
-                  userViewModel,
-                  eventViewModel,
-                  page == 1)
-            }
+        HorizontalPager(state = pagerState, modifier = Modifier.fillMaxWidth().padding(padding)) {
+            page ->
+          HomeContent(
+              navigationAction,
+              searchQuery,
+              searchState,
+              searchResults,
+              userViewModel,
+              eventViewModel,
+              page == 1)
+        }
       })
 }
 
