@@ -88,8 +88,6 @@ class SavedTest {
 
   @Test
   fun testSavedScreenWithSavedEvents() {
-    every { userViewModel.isEventSavedForCurrentUser(any()) } returns true
-
     composeTestRule.setContent { SavedScreen(navigationAction, eventViewModel, userViewModel) }
 
     composeTestRule.waitForIdle()
@@ -102,8 +100,6 @@ class SavedTest {
 
   @Test
   fun testSavedScreenWithNoSavedEvents() {
-    every { userViewModel.isEventSavedForCurrentUser(any()) } returns false
-
     composeTestRule.setContent { SavedScreen(navigationAction, eventViewModel, userViewModel) }
 
     composeTestRule.waitForIdle()

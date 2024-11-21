@@ -90,6 +90,12 @@ class HomeTest {
     every { navigationAction.navigateTo(any(TopLevelDestination::class)) } returns Unit
     every { navigationAction.navigateTo(any(String::class)) } returns Unit
 
+    every { userRepository.init(any()) } answers
+        {
+          val onSuccess = args[0] as () -> Unit
+          onSuccess()
+        }
+
     userViewModel = spyk(UserViewModel(userRepository))
     val asso = MockAssociation.createMockAssociation()
     val user =
@@ -107,11 +113,6 @@ class HomeTest {
           onSuccess()
         }
     userViewModel.addUser(user, {})
-    every { userRepository.init(any()) } answers
-        {
-          val onSuccess = args[0] as () -> Unit
-          onSuccess()
-        }
 
     every { eventRepository.init(any()) } answers
         {

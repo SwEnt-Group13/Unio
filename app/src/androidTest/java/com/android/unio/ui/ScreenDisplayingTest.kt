@@ -278,7 +278,7 @@ class ScreenDisplayingTest {
   @Test
   fun testUserProfileDisplayed() {
     composeTestRule.setContent {
-      UserProfileScreenScaffold(MockUser.createMockUser(), navigationAction, false, {}, {}, searchViewModel)
+      UserProfileScreenScaffold(MockUser.createMockUser(), navigationAction, false, {}, {})
     }
     composeTestRule.onNodeWithTag(UserProfileTestTags.SCREEN).assertIsDisplayed()
   }
