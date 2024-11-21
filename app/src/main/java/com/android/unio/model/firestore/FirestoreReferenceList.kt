@@ -31,7 +31,7 @@ import kotlinx.coroutines.flow.StateFlow
  * @property collectionPath The path to the Firestore collection.
  * @property hydrate A function that converts a [DocumentSnapshot] to a [T].
  */
-class FirestoreReferenceList<T>(
+class FirestoreReferenceList<T : UniquelyIdentifiable>(
     private val collectionPath: String,
     private val hydrate: (Map<String, Any>?) -> T
 ) : ReferenceList<T> {
@@ -72,7 +72,16 @@ class FirestoreReferenceList<T>(
 
   /** Requests all documents from Firestore and updates the list. */
   override fun requestAll(onSuccess: () -> Unit) {
+    // If the list is already up-to-date, return early.
+    val fetchedUids = _list.value.map { it.uid }
+    if (fetchedUids == _uids) {
+      onSuccess()
+      return
+    }
+
     _list.value = emptyList()
+
+    // If there are no UIDs, return early.
     if (_uids.isEmpty()) {
       onSuccess()
       return
@@ -99,7 +108,7 @@ class FirestoreReferenceList<T>(
 
   companion object {
     /** Creates a [FirestoreReferenceList] from a list of UIDs. */
-    fun <T> fromList(
+    fun <T : UniquelyIdentifiable> fromList(
         list: List<String>,
         collectionPath: String,
         hydrate: (Map<String, Any>?) -> T
@@ -110,7 +119,7 @@ class FirestoreReferenceList<T>(
     }
 
     /** Creates an empty [FirestoreReferenceList]. */
-    fun <T> empty(
+    fun <T : UniquelyIdentifiable> empty(
         collectionPath: String,
         hydrate: (Map<String, Any>?) -> T
     ): FirestoreReferenceList<T> {

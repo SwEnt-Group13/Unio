@@ -14,7 +14,7 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
 import junit.framework.TestCase.assertEquals
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
@@ -35,7 +35,8 @@ class FirestoreReferenceListTest {
   @Mock private lateinit var mockQuerySnapshot: QuerySnapshot
   @Mock private lateinit var mockTask: Task<QuerySnapshot>
   @Mock private lateinit var mockQuery: Query
-  @Mock private lateinit var firestoreReferenceList: FirestoreReferenceList<String>
+  @Mock
+  private lateinit var firestoreReferenceList: FirestoreReferenceList<UniquelyIdentifiableString>
 
   @Before
   fun setup() {
@@ -51,7 +52,9 @@ class FirestoreReferenceListTest {
     `when`(mockQuery.get()).thenReturn(mockTask)
 
     firestoreReferenceList =
-        FirestoreReferenceList(collectionPath) { data -> data?.get("data") as? String ?: "" }
+        FirestoreReferenceList(collectionPath) { data ->
+          UniquelyIdentifiableString(data?.get("data") as? String ?: "")
+        }
   }
 
   @Test
@@ -100,7 +103,7 @@ class FirestoreReferenceListTest {
     firestoreReferenceList.requestAll { assertEquals(2, firestoreReferenceList.list.value.size) }
 
     // Assert that the list was updated correctly
-    assertEquals(listOf("Item1", "Item2"), firestoreReferenceList.list.first())
+    assertEquals(listOf("Item1", "Item2"), firestoreReferenceList.list.value.map { it.uid })
     verify(mockQuery).get()
   }
 
@@ -109,7 +112,7 @@ class FirestoreReferenceListTest {
     val list = listOf("uid1", "uid2")
     val fromList =
         FirestoreReferenceList.fromList(list, collectionPath) { snapshot ->
-          snapshot?.get("data") as? String ?: ""
+          UniquelyIdentifiableString(snapshot?.get("data") as? String ?: "")
         }
 
     assertEquals(0, fromList.list.value.size)
@@ -119,10 +122,12 @@ class FirestoreReferenceListTest {
   fun `test empty creates FirestoreReferenceList without UIDs`() = runTest {
     val emptyList =
         FirestoreReferenceList.empty(collectionPath) { snapshot ->
-          snapshot?.get("data") as? String ?: ""
+          UniquelyIdentifiableString(snapshot?.get("data") as? String ?: "")
         }
 
     // Initial list should be empty
     assertEquals(0, emptyList.list.value.size)
   }
+
+  private class UniquelyIdentifiableString(override val uid: String) : UniquelyIdentifiable
 }
