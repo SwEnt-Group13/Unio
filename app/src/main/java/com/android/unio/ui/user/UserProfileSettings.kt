@@ -1,6 +1,9 @@
 package com.android.unio.ui.user
 
+import android.annotation.SuppressLint
 import android.net.Uri
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -38,28 +41,80 @@ import androidx.navigation.compose.rememberNavController
 import com.android.unio.R
 import com.android.unio.mocks.user.MockUser
 import com.android.unio.model.image.ImageRepository
+import com.android.unio.model.strings.StoragePathsStrings
 import com.android.unio.model.strings.test_tags.UserSettingsTestTags
 import com.android.unio.model.user.AccountDetailsError
 import com.android.unio.model.user.Interest
 import com.android.unio.model.user.User
 import com.android.unio.model.user.UserSocial
 import com.android.unio.model.user.UserViewModel
+import com.android.unio.model.user.checkNewUser
 import com.android.unio.ui.authentication.overlay.InterestOverlay
 import com.android.unio.ui.authentication.overlay.SocialOverlay
 import com.android.unio.ui.components.InterestInputChip
 import com.android.unio.ui.components.ProfilePicturePicker
 import com.android.unio.ui.components.SocialInputChip
 import com.android.unio.ui.navigation.NavigationAction
+import com.android.unio.ui.navigation.Screen
 import com.android.unio.ui.theme.AppTheme
+import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
 import kotlinx.coroutines.flow.MutableStateFlow
 import me.zhanghai.compose.preference.ProvidePreferenceLocals
 
+@SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun UserProfileSettingsScreen(
     userViewModel: UserViewModel,
     imageRepository: ImageRepository,
     navigationAction: NavigationAction
 ){
+
+    val context = LocalContext.current
+    val userId = Firebase.auth.currentUser?.uid
+
+    val user by userViewModel.user.collectAsState()
+
+    if(userId != userViewModel.user.value!!.uid){
+        println("DEBUG, NOT SUPPOSED TO BE HERE THEY MUST HAVE THE SAME UID")
+    }
+
+    UserProfileSettingsScreenContent(
+        user = user!!,
+        navigationAction = navigationAction,
+        onDiscardChanges = { /*TODO*/ },
+        onModifyUser = { profilePictureUri, createUser ->
+            if (profilePictureUri.value == Uri.EMPTY) {
+                createUser("")
+            } else {
+                val inputStream = context.contentResolver.openInputStream(profilePictureUri.value)
+                imageRepository.uploadImage(
+                    inputStream!!,
+                    StoragePathsStrings.USER_IMAGES + userId,
+                    onSuccess = { createUser(StoragePathsStrings.USER_IMAGES + userId) },
+                    onFailure = { exception ->
+                        Log.e("AccountDetails", "Error uploading image: $exception")
+                        Toast.makeText(
+                            context,
+                            context.getString(R.string.account_details_image_upload_error),
+                            Toast.LENGTH_SHORT)
+                            .show()
+                    })
+            }
+        },
+        onUploadUser = { user ->
+            userViewModel.addUser(
+                user,
+                onSuccess = {
+                    Toast.makeText(
+                        context,
+                        context.getString(R.string.account_details_created_successfully),
+                        Toast.LENGTH_SHORT)
+                        .show()
+                    navigationAction.navigateTo(Screen.HOME)
+                })
+        }
+    )
 
 }
 
@@ -75,7 +130,9 @@ fun PreviewAccountSettings(
 
     val mockUser = MockUser.createMockUser()
 
-    ProvidePreferenceLocals { AppTheme { UserProfileSettingsScreenContent(mockUser ,navigationAction) } }
+    ProvidePreferenceLocals { AppTheme { UserProfileSettingsScreenContent(mockUser ,navigationAction, {},
+        onModifyUser =  { uri, method -> println() },
+        onUploadUser = {user -> println() }) } }
 
 }
 
@@ -83,9 +140,14 @@ fun PreviewAccountSettings(
 @Composable
 fun UserProfileSettingsScreenContent(
     user: User,
-    navigationAction: NavigationAction
-
+    navigationAction: NavigationAction,
+    onDiscardChanges: () -> Unit,
+    onModifyUser: (MutableState<Uri>, (String) -> Unit) -> Unit,
+    onUploadUser: (User) -> Unit,
 ){
+
+    val context = LocalContext.current
+
     var firstName : String by remember { mutableStateOf(user.firstName) }
     var lastName : String by remember { mutableStateOf(user.lastName) }
     var bio : String by remember { mutableStateOf(user.biography) }
@@ -110,12 +172,37 @@ fun UserProfileSettingsScreenContent(
 
     val scrollState = rememberScrollState()
 
+    /**
+     * uid, email, followedAssociations, joinedAssociations and savedEvents
+     * will not be modified and simply be copied from the user.
+     */
+    val modifyUser: (String) -> Unit = { uri ->
+        val newUser =
+            User(
+                uid = user.uid,
+                email = user.email,
+                firstName = firstName,
+                lastName = lastName,
+                biography = bio,
+                followedAssociations = user.followedAssociations,
+                joinedAssociations = user.joinedAssociations,
+                savedEvents = user.savedEvents,
+                interests = interests.filter { it.second.value }.map { it.first },
+                socials = socials,
+                profilePicture = uri)
+
+        isErrors = checkNewUser(newUser)
+        if (isErrors.isEmpty()) {
+            onUploadUser(newUser)
+        }
+    }
+
 
     Scaffold(
         modifier = Modifier.fillMaxWidth(),
         topBar = {
             TopAppBar(
-                title = { Text("Discard Changes")/*TODO*/ },
+                title = { Text(context.getString(R.string.user_settings_discard_changes)) },
                 navigationIcon = {
                     IconButton(
                         onClick = {},
@@ -162,10 +249,10 @@ fun UserProfileSettingsScreenContent(
 
 
             Button(
-                onClick = { /*TODO*/ },
+                onClick = { onModifyUser(profilePictureUri, modifyUser) },
                 modifier = Modifier.testTag(UserSettingsTestTags.SAVE_BUTTON)
             ) {
-                Text("Save Changes")
+                Text(context.getString(R.string.user_settings_save_changes))
             }
 
 
@@ -215,7 +302,7 @@ private fun EditUserTextFields(
             .testTag(UserSettingsTestTags.FIRST_NAME_TEXT_FIELD),
         label = {
             Text(
-                context.getString(R.string.account_details_first_name),
+                context.getString(R.string.user_settings_first_name),
                 modifier = Modifier.testTag(UserSettingsTestTags.FIRST_NAME_TEXT))
         },
         isError = (isFirstNameError),
@@ -236,7 +323,7 @@ private fun EditUserTextFields(
             .testTag(UserSettingsTestTags.LAST_NAME_TEXT_FIELD),
         label = {
             Text(
-                context.getString(R.string.account_details_last_name),
+                context.getString(R.string.user_settings_last_name),
                 modifier = Modifier.testTag(UserSettingsTestTags.LAST_NAME_TEXT))
         },
         isError = (isLastNameError),
@@ -259,7 +346,7 @@ private fun EditUserTextFields(
             .testTag(UserSettingsTestTags.BIOGRAPHY_TEXT_FIELD),
         label = {
             Text(
-                context.getString(R.string.account_details_bio),
+                context.getString(R.string.user_settings_bio),
                 modifier = Modifier.testTag(UserSettingsTestTags.BIOGRAPHY_TEXT))
         },
         onValueChange = onBioChange,
