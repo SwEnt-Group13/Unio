@@ -229,7 +229,11 @@
     */
 
     <!-- Saved Screen Strings -->
-    <string name="saved_screen_title" translatable="false">Saved screen</string>
+    <string name="saved_screen_title">Saved Events</string>
+    <string name="saved_screen_no_events">No saved events.</string>
+    <string name="saved_screen_today">Today</string>
+    <string name="saved_screen_upcoming">Upcoming</string>
+
 
     /**
     * package: settings

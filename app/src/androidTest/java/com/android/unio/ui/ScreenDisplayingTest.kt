@@ -265,7 +265,7 @@ class ScreenDisplayingTest {
 
   @Test
   fun testSavedDisplayed() {
-    composeTestRule.setContent { SavedScreen(navigationAction) }
+    composeTestRule.setContent { SavedScreen(navigationAction, eventViewModel, userViewModel) }
     composeTestRule.onNodeWithTag(SavedTestTags.SCREEN).assertIsDisplayed()
   }
 
