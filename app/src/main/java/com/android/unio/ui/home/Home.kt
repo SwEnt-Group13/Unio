@@ -113,14 +113,21 @@ fun HomeContent(
     paddingValues: PaddingValues
 ) {
 
+  val user by userViewModel.user.collectAsState()
+  if (user == null) {
+    Log.e("HomeContent", "User is null")
+    return
+  }
+
   val context = LocalContext.current
-  val followedAssociations by userViewModel.followedAssociations.collectAsState()
-  val allEvent by eventViewModel.events.collectAsState()
+  val allEvents by eventViewModel.events.collectAsState()
   val events: List<Event> =
       if (isOnFollowScreen) {
-        allEvent.filter { followedAssociations.any { uid -> it.organisers.contains(uid) } }
+        allEvents.filter {
+          user!!.followedAssociations.uids.any { uid -> it.organisers.contains(uid) }
+        }
       } else {
-        allEvent
+        allEvents
       }
 
   // Event List
