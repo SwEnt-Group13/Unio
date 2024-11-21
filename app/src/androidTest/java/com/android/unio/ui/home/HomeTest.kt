@@ -39,9 +39,7 @@ import io.mockk.MockKAnnotations
 import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
-import io.mockk.just
 import io.mockk.mockk
-import io.mockk.runs
 import io.mockk.spyk
 import io.mockk.unmockkAll
 import io.mockk.verify
@@ -92,11 +90,16 @@ class HomeTest {
     every { navigationAction.navigateTo(any(TopLevelDestination::class)) } returns Unit
     every { navigationAction.navigateTo(any(String::class)) } returns Unit
 
-    every { userRepository.init(any()) } just runs
-    every { eventRepository.init(any()) } just runs
     userViewModel = spyk(UserViewModel(userRepository))
-    val user = MockUser.createMockUser()
     val asso = MockAssociation.createMockAssociation()
+    val user =
+        MockUser.createMockUser(
+            followedAssociations = listOf(asso),
+        )
+    eventList =
+        listOf(
+            MockEvent.createMockEvent(organisers = listOf(asso)),
+            MockEvent.createMockEvent(title = "I am different"))
 
     every { userRepository.updateUser(user, any(), any()) } answers
         {
@@ -104,30 +107,23 @@ class HomeTest {
           onSuccess()
         }
     userViewModel.addUser(user, {})
-    every { userRepository.init(any()) } just runs
+    every { userRepository.init(any()) } answers
+        {
+          val onSuccess = args[0] as () -> Unit
+          onSuccess()
+        }
+
+    every { eventRepository.init(any()) } answers
+        {
+          val onSuccess = args[0] as () -> Unit
+          onSuccess()
+        }
     every { eventRepository.getEvents(any(), any()) } answers
         {
           val onSuccess = args[0] as (List<Event>) -> Unit
           onSuccess(eventList)
         }
     eventViewModel = EventViewModel(eventRepository, imageRepository)
-
-    val field =
-        userViewModel.javaClass.getDeclaredMethod("setFollowedAssociations", List::class.java)
-    field.isAccessible = true
-    field.invoke(userViewModel, listOf(asso.uid))
-
-    eventList =
-        listOf(
-            MockEvent.createMockEvent(organisers = listOf(asso)),
-            MockEvent.createMockEvent(title = "I am different"))
-
-    val eventField = eventViewModel.javaClass.getDeclaredMethod("setEvents", List::class.java)
-    eventField.isAccessible = true
-    eventField.invoke(eventViewModel, eventList)
-
-    assert(eventViewModel.events.value.isNotEmpty())
-
     eventListFollowed = asso.let { eventList.filter { event -> event.organisers.contains(it.uid) } }
   }
 
@@ -137,6 +133,12 @@ class HomeTest {
    */
   @Test
   fun testEmptyEventList() {
+    every { eventRepository.getEvents(any(), any()) } answers
+        {
+          val onSuccess = args[0] as (List<Event>) -> Unit
+          onSuccess(emptyList())
+        }
+
     var text = ""
     composeTestRule.setContent {
       val context = LocalContext.current
