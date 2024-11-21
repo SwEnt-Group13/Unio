@@ -54,6 +54,7 @@ import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.notification.MyWorker
 import com.android.unio.model.strings.FormatStrings.DAY_MONTH_FORMAT
 import com.android.unio.model.strings.FormatStrings.HOUR_MINUTE_FORMAT
+import com.android.unio.model.strings.NotificationStrings.EVENT_REMINDER_CHANNEL_ID
 import com.android.unio.model.strings.test_tags.EventCardTestTags
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.image.AsyncImageWrapper
@@ -89,12 +90,21 @@ fun EventCard(
     }
     var isSaved by remember { mutableStateOf(user!!.savedEvents.contains(event.uid)) }
 
+    val scheduleNotification = {MyWorker.schedule(
+        context,
+        title = event.title,
+        message = "The event is about to begin :)",
+        icon = R.drawable.other_icon,
+        channelId = EVENT_REMINDER_CHANNEL_ID,
+        notificationId = event.title.hashCode(),
+        timeMillis = 10000)}
+
     val permissionLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { permission ->
             when {
                 permission -> {
                     isNotificationsEnabled = true
-                    MyWorker.schedule(context)
+                    scheduleNotification()
 
                 }
 
@@ -116,15 +126,13 @@ fun EventCard(
             if (!isNotificationsEnabled) {
                 permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
             } else {
-                MyWorker.schedule(context)
+                scheduleNotification()
             }
 
             userViewModel.saveEventForCurrentUser(event.uid) { isSaved = true }
         }
         userViewModel.updateUserDebounced(user!!)
     }
-
-
 
     EventCardScaffold(
         event,
@@ -159,9 +167,11 @@ fun EventCardScaffold(
 
         // Event image section, displays the main event image or a placeholder if the URL is invalid
 
-        Box(modifier = Modifier
-            .fillMaxWidth()
-            .height(100.dp)) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(100.dp)
+        ) {
             AsyncImageWrapper(
                 imageUri = event.image.toUri(),
                 contentDescription =

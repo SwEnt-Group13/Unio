@@ -77,8 +77,6 @@ class MainActivity : ComponentActivity() {
 @HiltAndroidApp
 class UnioApplication : Application()
 
-
-@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun UnioApp(imageRepository: ImageRepositoryFirebaseStorage) {
 

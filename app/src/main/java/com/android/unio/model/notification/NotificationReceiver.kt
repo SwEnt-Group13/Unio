@@ -9,34 +9,38 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Context.NOTIFICATION_SERVICE
 import android.content.Intent
+import android.os.Bundle
 import android.util.Log
 import androidx.core.app.NotificationCompat
+import androidx.core.os.toPersistableBundle
+import androidx.work.Data
 import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
 import androidx.work.Worker
 import androidx.work.WorkerParameters
+import com.android.unio.MainActivity
 import com.android.unio.R
-
 
 class NotificationReceiver() : BroadcastReceiver() {
 
     companion object {
-        fun schedule(context: Context, eventTime: Long, code: Int) {
-            //eventTime - should be in millisecond
+        fun schedule(context: Context, data: Data) {
             //code - unique code will add new job and duplicate code will replace existing job
             val manager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+            val bundle = Bundle(data.keyValueMap.toPersistableBundle())
             val alarmIntent = Intent(context.applicationContext, NotificationReceiver::class.java)
+                .putExtras(bundle)
             //pass intent if extra data is needed
             val pendingIntent = PendingIntent.getBroadcast(
                 context,
-                code,
+                1234,
                 alarmIntent,
-                PendingIntent.FLAG_IMMUTABLE
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )
+            val timeMillis = data.getLong("timeMillis", 1000)
             manager.set(
                 AlarmManager.RTC_WAKEUP,
-                System.currentTimeMillis() + eventTime, pendingIntent
-            )
+                timeMillis, pendingIntent)
         }
     }
 
@@ -49,35 +53,51 @@ class NotificationReceiver() : BroadcastReceiver() {
             Log.w("NotificationReceiver", "Received a null Context")
             return
         }
+        val data = intent.extras ?: return
+        val title = data.getString("title") ?: "Unio"
+        val message = data.getString("message") ?: "An event will occur soon"
+        val icon = data.getInt("icon")
+        val channelId = data.getString("channelId") ?: "0"
+        val notificationId = data.getInt("notificationId")
+        val timeMillis = data.getLong("timeMillis")
+
+
         if ("android.intent.action.BOOT_COMPLETED" == intent.action) {
-            context.let { MyWorker.schedule(it) }
+            context.let { MyWorker.schedule(it, title, message, icon, channelId, notificationId, timeMillis) }
         } else {
             //Trigger notification using NotificationManager
-            val builder = NotificationCompat.Builder(context, "1234")
+            val builder = NotificationCompat.Builder(context, channelId)
 
-
-            val notificationManager: NotificationManager =
+            var notificationManager: NotificationManager =
                 context.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
 
-            var nc = notificationManager.getNotificationChannel("1234")
+            var nc = notificationManager.getNotificationChannel(channelId)
             if (nc == null) {
-                nc = NotificationChannel("1234", "EventReminder", NotificationManager.IMPORTANCE_DEFAULT)
-                nc.description = "Badge Notifications"
+                nc = NotificationChannel(channelId, "EventReminder", NotificationManager.IMPORTANCE_HIGH)
                 nc.enableLights(true)
                 nc.setShowBadge(true)
                 nc.lockscreenVisibility = Notification.VISIBILITY_PUBLIC
 
                 notificationManager.createNotificationChannel(nc)
             }
+            // For now, clicking on the notification makes the app start at MainActivity
+            val activityIntent = Intent(context.applicationContext, MainActivity::class.java)
+            val pendingIntent =
+                PendingIntent.getActivity(
+                    context.applicationContext,
+                    0,
+                    activityIntent,
+                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+                )
             builder.setSmallIcon(R.drawable.other_icon)
-                .setContentTitle(context.getString(R.string.event_no_events_available))
-                .setContentText(context.getString(R.string.home_tab_all))
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                .setChannelId("1234")
+                .setContentTitle(title)
+                .setContentText(message)
+                .setPriority(NotificationCompat.PRIORITY_MAX)
+                .setChannelId(channelId)
+                .setContentIntent(pendingIntent)
 
+            notificationManager = context.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.notify(0, builder.build())
-
-
         }
     }
 }
@@ -85,9 +105,17 @@ class NotificationReceiver() : BroadcastReceiver() {
 class MyWorker(context: Context, params: WorkerParameters) : Worker(context, params) {
 
     companion object {
-        fun schedule(context: Context) {
+        fun schedule(context: Context, title: String, message: String, icon:Int, channelId: String, notificationId:Int, timeMillis: Long) {
             val workManager = WorkManager.getInstance(context)
-            val request = OneTimeWorkRequest.Builder(MyWorker::class.java).build()
+            val data = Data.Builder().putAll(mapOf(
+                "title" to title,
+                "message" to message,
+                "icon" to icon,
+                "channelId" to channelId,
+                "notificationId" to notificationId,
+                "timeMillis" to timeMillis
+            ))
+            val request = OneTimeWorkRequest.Builder(MyWorker::class.java).setInputData(data.build()).build()
             workManager.enqueue(request)
         }
     }
@@ -96,40 +124,7 @@ class MyWorker(context: Context, params: WorkerParameters) : Worker(context, par
     override fun doWork(): Result {
         // Perform your background task here like fetching notification related data (title, description, reminder time)
 
-        NotificationReceiver.schedule(this.applicationContext, 7000, 1234)
+        NotificationReceiver.schedule(this.applicationContext, inputData)
         return Result.success()
     }
 }
-
-/*object NotificationSender {
-    private const val CHANNEL_ID = "YourChannelId"
-    private const val CHANNEL_NAME = "YourChannelName"
-    private const val CHANNEL_DESCRIPTION = "YourChannelDescription"
-
-    fun createNotificationChannel(context: Context) {
-        val channel = NotificationChannel(
-            CHANNEL_ID,
-            CHANNEL_NAME,
-            NotificationManager.IMPORTANCE_DEFAULT
-        ).apply {
-            description = CHANNEL_DESCRIPTION
-        }
-
-        val notificationManager =
-            context.getSystemService(NotificationManager::class.java)
-        notificationManager?.createNotificationChannel(channel)
-        notificationManager?.getNotificationChannel("onch")
-    }
-
-    fun showNotification(context: Context, title: Int, message: Int) {
-        val builder = NotificationCompat.Builder(context, CHANNEL_ID)
-            .setSmallIcon(R.drawable.other_icon)
-            .setContentTitle(context.getString(title))
-            .setContentText(context.getString(message))
-            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-
-        val notificationManager = NotificationManagerCompat.from(context)
-        //notificationManager.notify(notificationId, builder.build())
-    }
-}*/
-
