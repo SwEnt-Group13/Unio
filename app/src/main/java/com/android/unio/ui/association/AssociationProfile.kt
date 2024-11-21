@@ -535,7 +535,9 @@ private fun AssociationHeader(
     onFollow: () -> Unit,
 ) {
   val context = LocalContext.current
-  Row {
+  Row (
+    horizontalArrangement = Arrangement.spacedBy(16.dp),
+  ) {
     Box(modifier = Modifier.testTag(AssociationProfileTestTags.IMAGE_HEADER)) {
       AsyncImageWrapper(
           imageUri = association.image.toUri(),
