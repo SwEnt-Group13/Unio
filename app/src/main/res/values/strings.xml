@@ -102,7 +102,9 @@
     <string name="user_settings_bio" translatable="true">Edit Biography</string>
     <string name="user_settings_edit_interests" translatable="true">Edit your centers of interests</string>
     <string name="user_settings_edit_socials" translatable="true">Edit your user socials</string>
-
+    <string name="user_settings_discard_changes" translatable="true">"Discard Changes"</string>
+    <string name="user_settings_save_changes" translatable="true">Save changes</string>
+    <string name="user_settings_modified_successfully" translatable="true">Changes Successfully modified</string>
 
 
     <!-- EmailVerification Strings -->

@@ -93,7 +93,7 @@ fun UserProfileSettingsScreen(
                     StoragePathsStrings.USER_IMAGES + userId,
                     onSuccess = {imageUrl -> createUser(imageUrl) },
                     onFailure = { exception ->
-                        Log.e("AccountDetails", "Error uploading image: $exception")
+                        Log.e("UserSettings", "Error uploading image: $exception")
                         Toast.makeText(
                             context,
                             context.getString(R.string.account_details_image_upload_error),
@@ -108,7 +108,7 @@ fun UserProfileSettingsScreen(
                 onSuccess = {
                     Toast.makeText(
                         context,
-                        context.getString(R.string.account_details_created_successfully),
+                        context.getString(R.string.user_settings_modified_successfully),
                         Toast.LENGTH_SHORT)
                         .show()
                     navigationAction.navigateTo(Screen.MY_PROFILE)
