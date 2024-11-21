@@ -25,6 +25,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.MaterialTheme.colors
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.AccessTime
@@ -39,6 +40,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.InputChip
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -107,8 +109,8 @@ fun EventCreationScreen(
   var taggedAndBoolean =
       associationViewModel.associations.collectAsState().value.map { it to mutableStateOf(false) }
 
-  var startTimestamp by remember { mutableStateOf(Timestamp.now()) }
-  var endTimestamp by remember { mutableStateOf(Timestamp.now()) }
+  var startTimestamp : Timestamp? by remember { mutableStateOf(null) }
+  var endTimestamp : Timestamp? by remember { mutableStateOf(null) }
 
   val eventBannerUri = remember { mutableStateOf<Uri>(Uri.EMPTY) }
 
@@ -190,6 +192,13 @@ fun EventCreationScreen(
               modifier = Modifier.testTag(EventCreationTestTags.END_TIME)) {
                 endTimestamp = it
               }
+          if (startTimestamp != null && endTimestamp != null && startTimestamp!! > endTimestamp!!) {
+            Text(
+                text = "Event cannot start after it ends",
+                modifier = Modifier.testTag("NoEventBeforeEnd"),
+                color = MaterialTheme.colorScheme.error
+            )
+          }
 
           OutlinedTextField(
               modifier =
@@ -209,9 +218,9 @@ fun EventCreationScreen(
                   name.isNotEmpty() &&
                       shortDescription.isNotEmpty() &&
                       longDescription.isNotEmpty() &&
-                      startTimestamp.seconds < endTimestamp.seconds &&
-                      eventBannerUri.value != Uri.EMPTY &&
-                      coauthorsAndBoolean.any { it.second.value },
+                      startTimestamp != null && endTimestamp != null &&
+                          startTimestamp!! < endTimestamp!! &&
+                      eventBannerUri.value != Uri.EMPTY,
               onClick = {
                 val inputStream = context.contentResolver.openInputStream(eventBannerUri.value)!!
                 eventViewModel.addEvent(
@@ -233,8 +242,8 @@ fun EventCreationScreen(
                         description = longDescription,
                         catchyDescription = shortDescription,
                         price = 0.0,
-                        startDate = startTimestamp,
-                        endDate = endTimestamp,
+                        startDate = startTimestamp!!,
+                        endDate = endTimestamp!!,
                         location = Location(),
                     ),
                     onSuccess = { navigationAction.goBack() },
