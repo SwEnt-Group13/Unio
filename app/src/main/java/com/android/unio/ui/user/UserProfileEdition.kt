@@ -1,6 +1,5 @@
 package com.android.unio.ui.user
 
-import android.annotation.SuppressLint
 import android.net.Uri
 import android.util.Log
 import android.widget.Toast
@@ -35,15 +34,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
-import androidx.navigation.compose.rememberNavController
 import com.android.unio.R
-import com.android.unio.mocks.user.MockUser
 import com.android.unio.model.image.ImageRepository
 import com.android.unio.model.strings.StoragePathsStrings
-import com.android.unio.model.strings.test_tags.UserSettingsTestTags
+import com.android.unio.model.strings.test_tags.UserEditionTestTags
 import com.android.unio.model.user.AccountDetailsError
 import com.android.unio.model.user.Interest
 import com.android.unio.model.user.User
@@ -57,15 +53,13 @@ import com.android.unio.ui.components.ProfilePicturePicker
 import com.android.unio.ui.components.SocialInputChip
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
-import com.android.unio.ui.theme.AppTheme
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import kotlinx.coroutines.flow.MutableStateFlow
-import me.zhanghai.compose.preference.ProvidePreferenceLocals
 
-@SuppressLint("StateFlowValueCalledInComposition")
+//@SuppressLint("StateFlowValueCalledInComposition")
 @Composable
-fun UserProfileSettingsScreen(
+fun UserProfileEdition(
     userViewModel: UserViewModel,
     imageRepository: ImageRepository,
     navigationAction: NavigationAction
@@ -76,11 +70,7 @@ fun UserProfileSettingsScreen(
 
     val user by userViewModel.user.collectAsState()
 
-    if(userId != userViewModel.user.value!!.uid){
-        println("DEBUG, NOT SUPPOSED TO BE HERE THEY MUST HAVE THE SAME UID")
-    }
-
-    UserProfileSettingsScreenContent(
+    UserProfileEditionScreen(
         user = user!!,
         onDiscardChanges = { navigationAction.goBack() },
         onModifyUser = { profilePictureUri, createUser ->
@@ -118,28 +108,9 @@ fun UserProfileSettingsScreen(
 
 }
 
-
-@Preview
-@Composable
-fun PreviewAccountSettings(
-
-){
-    val navController = rememberNavController()
-    val navigationAction = NavigationAction(navController)
-
-
-    val mockUser = MockUser.createMockUser()
-
-    ProvidePreferenceLocals { AppTheme { UserProfileSettingsScreenContent(mockUser,
-        {},
-        onModifyUser =  { uri, method -> println() },
-        onUploadUser = {user -> println() }) } }
-
-}
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun UserProfileSettingsScreenContent(
+fun UserProfileEditionScreen(
     user: User,
     onDiscardChanges: () -> Unit,
     onModifyUser: (MutableState<Uri>, (String) -> Unit) -> Unit,
@@ -203,10 +174,12 @@ fun UserProfileSettingsScreenContent(
         modifier = Modifier.fillMaxWidth(),
         topBar = {
             TopAppBar(
-                title = { Text(context.getString(R.string.user_settings_discard_changes)) },
+                title = { Text(context.getString(R.string.user_settings_discard_changes),
+                    modifier = Modifier.testTag(UserEditionTestTags.DISCARD_TEXT)) },
                 navigationIcon = {
                     IconButton(
                         onClick = onDiscardChanges,
+                        modifier = Modifier.testTag(UserEditionTestTags.DISCARD_BUTTON)
                     ){
                         Icon(
                             Icons.AutoMirrored.Filled.ArrowBack,
@@ -225,7 +198,7 @@ fun UserProfileSettingsScreenContent(
                 .verticalScroll(scrollState),
             horizontalAlignment = Alignment.CenterHorizontally
         ){
-            ProfilePicturePicker(profilePictureUri, { profilePictureUri.value = Uri.EMPTY })
+            ProfilePicturePicker(profilePictureUri, { profilePictureUri.value = Uri.EMPTY }, UserEditionTestTags.PROFILE_PICTURE_ICON)
 
             EditUserTextFields(
                 isErrors = isErrors,
@@ -250,7 +223,7 @@ fun UserProfileSettingsScreenContent(
 
             Button(
                 onClick = { onModifyUser(profilePictureUri, modifyUser) },
-                modifier = Modifier.testTag(UserSettingsTestTags.SAVE_BUTTON)
+                modifier = Modifier.testTag(UserEditionTestTags.SAVE_BUTTON)
             ) {
                 Text(context.getString(R.string.user_settings_save_changes))
             }
@@ -299,18 +272,18 @@ private fun EditUserTextFields(
         modifier =
         Modifier
             .padding(4.dp)
-            .testTag(UserSettingsTestTags.FIRST_NAME_TEXT_FIELD),
+            .testTag(UserEditionTestTags.FIRST_NAME_TEXT_FIELD),
         label = {
             Text(
                 context.getString(R.string.user_settings_first_name),
-                modifier = Modifier.testTag(UserSettingsTestTags.FIRST_NAME_TEXT))
+                modifier = Modifier.testTag(UserEditionTestTags.FIRST_NAME_TEXT))
         },
         isError = (isFirstNameError),
         supportingText = {
             if (isFirstNameError) {
                 Text(
                     context.getString(AccountDetailsError.EMPTY_FIRST_NAME.errorMessage),
-                    modifier = Modifier.testTag(UserSettingsTestTags.FIRST_NAME_ERROR_TEXT))
+                    modifier = Modifier.testTag(UserEditionTestTags.FIRST_NAME_ERROR_TEXT))
             }
         },
         onValueChange = onFirstNameChange,
@@ -320,18 +293,18 @@ private fun EditUserTextFields(
         modifier =
         Modifier
             .padding(4.dp)
-            .testTag(UserSettingsTestTags.LAST_NAME_TEXT_FIELD),
+            .testTag(UserEditionTestTags.LAST_NAME_TEXT_FIELD),
         label = {
             Text(
                 context.getString(R.string.user_settings_last_name),
-                modifier = Modifier.testTag(UserSettingsTestTags.LAST_NAME_TEXT))
+                modifier = Modifier.testTag(UserEditionTestTags.LAST_NAME_TEXT))
         },
         isError = (isLastNameError),
         supportingText = {
             if (isLastNameError) {
                 Text(
                     context.getString(AccountDetailsError.EMPTY_LAST_NAME.errorMessage),
-                    modifier = Modifier.testTag(UserSettingsTestTags.LAST_NAME_ERROR_TEXT))
+                    modifier = Modifier.testTag(UserEditionTestTags.LAST_NAME_ERROR_TEXT))
             }
         },
         onValueChange = onLastNameChange,
@@ -343,11 +316,11 @@ private fun EditUserTextFields(
             .padding(4.dp)
             .fillMaxWidth()
             .height(200.dp)
-            .testTag(UserSettingsTestTags.BIOGRAPHY_TEXT_FIELD),
+            .testTag(UserEditionTestTags.BIOGRAPHY_TEXT_FIELD),
         label = {
             Text(
                 context.getString(R.string.user_settings_bio),
-                modifier = Modifier.testTag(UserSettingsTestTags.BIOGRAPHY_TEXT))
+                modifier = Modifier.testTag(UserEditionTestTags.BIOGRAPHY_TEXT))
         },
         onValueChange = onBioChange,
         value = bio)
@@ -367,7 +340,7 @@ private fun InterestButtonAndFlowRow(
     OutlinedButton(
         modifier = Modifier
             .fillMaxWidth()
-            .testTag(UserSettingsTestTags.INTERESTS_BUTTON),
+            .testTag(UserEditionTestTags.INTERESTS_BUTTON),
         onClick = onShowInterests) {
         Icon(
             Icons.Default.Add,
@@ -378,7 +351,7 @@ private fun InterestButtonAndFlowRow(
     FlowRow {
         interests.forEachIndexed { index, pair ->
             if (pair.second.value) {
-                InterestInputChip(pair,index, testTag = UserSettingsTestTags.INTERESTS_CHIP)
+                InterestInputChip(pair, testTag = UserEditionTestTags.INTERESTS_CHIP + "$index")
             }
         }
     }
@@ -397,7 +370,7 @@ private fun SocialButtonAndFlowRow(
     OutlinedButton(
         modifier = Modifier
             .fillMaxWidth()
-            .testTag(UserSettingsTestTags.SOCIALS_BUTTON),
+            .testTag(UserEditionTestTags.SOCIALS_BUTTON),
         onClick = onShowSocials) {
         Icon(
             Icons.Default.Add,
@@ -412,7 +385,7 @@ private fun SocialButtonAndFlowRow(
         socials.forEachIndexed { index, userSocial ->
             SocialInputChip(userSocial,
                 onRemove = {userSocialFlow.value = userSocialFlow.value.toMutableList().apply { removeAt(index) }},
-                testTag = UserSettingsTestTags.SOCIALS_CHIP)
+                testTag = UserEditionTestTags.SOCIALS_CHIP)
         }
     }
 

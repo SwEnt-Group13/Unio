@@ -46,7 +46,7 @@ import com.android.unio.ui.settings.SettingsScreen
 import com.android.unio.ui.theme.AppTheme
 import com.android.unio.ui.user.SomeoneElseUserProfileScreen
 import com.android.unio.ui.user.UserProfileScreen
-import com.android.unio.ui.user.UserProfileSettingsScreen
+import com.android.unio.ui.user.UserProfileEdition
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.HiltAndroidApp
 import me.zhanghai.compose.preference.ProvidePreferenceLocals
@@ -150,7 +150,7 @@ fun UnioApp(imageRepository: ImageRepositoryFirebaseStorage) {
       navigation(startDestination = Screen.MY_PROFILE, route = Route.MY_PROFILE) {
         composable(Screen.MY_PROFILE) { UserProfileScreen(userViewModel, navigationActions) }
         composable(Screen.SETTINGS) { SettingsScreen(navigationActions) }
-        composable(Screen.EDIT_PROFILE) { UserProfileSettingsScreen(userViewModel, imageRepository, navigationActions) }
+        composable(Screen.EDIT_PROFILE) { UserProfileEdition(userViewModel, imageRepository, navigationActions) }
       }
     }
   }
