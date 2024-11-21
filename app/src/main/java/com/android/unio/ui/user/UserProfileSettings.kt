@@ -79,10 +79,24 @@ fun UserProfileSettingsScreen(
         println("DEBUG, NOT SUPPOSED TO BE HERE THEY MUST HAVE THE SAME UID")
     }
 
+    var profilePicture: Uri
+    imageRepository.getImageUrl(
+        user!!.profilePicture,
+        onSuccess = {string ->
+            profilePicture = Uri.parse(string)
+        },
+        onFailure = {
+            Toast.makeText(
+                context,
+                context.getString(R.string.account_details_image_upload_error),
+                Toast.LENGTH_SHORT)
+                .show()
+        }
+    )
+
     UserProfileSettingsScreenContent(
         user = user!!,
-        navigationAction = navigationAction,
-        onDiscardChanges = { /*TODO*/ },
+        onDiscardChanges = { navigationAction.goBack() },
         onModifyUser = { profilePictureUri, createUser ->
             if (profilePictureUri.value == Uri.EMPTY) {
                 createUser("")
@@ -102,16 +116,16 @@ fun UserProfileSettingsScreen(
                     })
             }
         },
-        onUploadUser = { user ->
+        onUploadUser = { modifiedUser ->
             userViewModel.addUser(
-                user,
+                modifiedUser,
                 onSuccess = {
                     Toast.makeText(
                         context,
                         context.getString(R.string.account_details_created_successfully),
                         Toast.LENGTH_SHORT)
                         .show()
-                    navigationAction.navigateTo(Screen.HOME)
+                    navigationAction.navigateTo(Screen.MY_PROFILE)
                 })
         }
     )
@@ -130,7 +144,7 @@ fun PreviewAccountSettings(
 
     val mockUser = MockUser.createMockUser()
 
-    ProvidePreferenceLocals { AppTheme { UserProfileSettingsScreenContent(mockUser ,navigationAction, {},
+    ProvidePreferenceLocals { AppTheme { UserProfileSettingsScreenContent(mockUser, {},
         onModifyUser =  { uri, method -> println() },
         onUploadUser = {user -> println() }) } }
 
@@ -140,7 +154,6 @@ fun PreviewAccountSettings(
 @Composable
 fun UserProfileSettingsScreenContent(
     user: User,
-    navigationAction: NavigationAction,
     onDiscardChanges: () -> Unit,
     onModifyUser: (MutableState<Uri>, (String) -> Unit) -> Unit,
     onUploadUser: (User) -> Unit,
@@ -205,7 +218,7 @@ fun UserProfileSettingsScreenContent(
                 title = { Text(context.getString(R.string.user_settings_discard_changes)) },
                 navigationIcon = {
                     IconButton(
-                        onClick = {},
+                        onClick = onDiscardChanges,
                     ){
                         Icon(
                             Icons.AutoMirrored.Filled.ArrowBack,
@@ -224,8 +237,7 @@ fun UserProfileSettingsScreenContent(
                 .verticalScroll(scrollState),
             horizontalAlignment = Alignment.CenterHorizontally
         ){
-
-            ProfilePicturePicker(profilePictureUri = profilePictureUri, { profilePictureUri.value = Uri.EMPTY })
+            ProfilePicturePicker(profilePictureUri, { profilePictureUri.value = Uri.EMPTY })
 
             EditUserTextFields(
                 isErrors = isErrors,
