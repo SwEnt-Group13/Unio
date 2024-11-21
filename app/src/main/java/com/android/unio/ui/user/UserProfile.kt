@@ -145,7 +145,7 @@ fun UserProfileScreenScaffold(
       }) { padding ->
         if (refreshState) {
           Box(
-              modifier = Modifier.fillMaxSize().background(Color.White).padding(padding),
+              modifier = Modifier.fillMaxSize().padding(padding),
               contentAlignment = Alignment.Center) {
                 CircularProgressIndicator(modifier = Modifier.width(64.dp))
               }
