@@ -161,6 +161,10 @@
     <string name="event_creation_enddate_label">End Date</string>
     <string name="event_creation_starttime_label">Start Time</string>
     <string name="event_creation_endtime_label">End Time</string>
+    <string name="event_creation_end_before_start">Event cannot start after it ends</string>
+    <string name="event_creation_end_equals_start">Event cannot start and end at the same time</string>
+    <string name="event_creation_failed">Failed to create event</string>
+
 
     <!-- Associations Overlay Strings -->
     <string name="associations_overlay_coauthors_title" translatable="true">Coauthors</string>
