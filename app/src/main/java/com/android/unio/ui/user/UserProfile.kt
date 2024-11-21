@@ -61,7 +61,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import com.android.unio.R
-import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.strings.test_tags.UserProfileTestTags
 import com.android.unio.model.user.User
@@ -82,8 +81,7 @@ import kotlinx.coroutines.launch
 fun UserProfileScreen(
     userViewModel: UserViewModel,
     associationViewModel: AssociationViewModel,
-    navigationAction: NavigationAction,
-    searchViewModel: SearchViewModel
+    navigationAction: NavigationAction
 ) {
 
   val context = LocalContext.current
@@ -105,7 +103,6 @@ fun UserProfileScreen(
       user!!,
       navigationAction,
       refreshState,
-      searchViewModel,
       onRefresh = { userViewModel.refreshUser() },
       onAssociationClick = {
         associationViewModel.selectAssociation(it)
@@ -119,7 +116,6 @@ fun UserProfileScreenScaffold(
     user: User,
     navigationAction: NavigationAction,
     refreshState: Boolean,
-    searchViewModel: SearchViewModel,
     onRefresh: () -> Unit,
     onAssociationClick: (String) -> Unit
 ) {
@@ -161,7 +157,12 @@ fun UserProfileScreenScaffold(
                       .pullRefresh(pullRefreshState)
                       .fillMaxHeight()
                       .verticalScroll(rememberScrollState())) {
-                UserProfileScreenContent(user, onAssociationClick)
+                UserProfileScreenContent(
+                    user,
+                    onAssociationClick,
+                    onClaimAssociationClick = {
+                      navigationAction.navigateTo(Screen.CLAIM_ASSOCIATION_RIGHTS)
+                    })
               }
         }
       }
@@ -178,7 +179,11 @@ fun UserProfileScreenScaffold(
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun UserProfileScreenContent(user: User, onAssociationClick: (String) -> Unit) {
+fun UserProfileScreenContent(
+    user: User,
+    onAssociationClick: (String) -> Unit,
+    onClaimAssociationClick: () -> Unit
+) {
 
   val context = LocalContext.current
 
@@ -264,7 +269,7 @@ fun UserProfileScreenContent(user: User, onAssociationClick: (String) -> Unit) {
             Text("You are not member of any association yet", style = AppTypography.bodySmall)
 
             Button(
-                onClick = { navigationAction.navigateTo(Screen.CLAIM_ASSOCIATION_RIGHTS) },
+                onClick = onClaimAssociationClick,
                 modifier = Modifier.testTag(UserProfileTestTags.CLAIMING_BUTTON)) {
                   Text("Claim Association")
                 }
