@@ -43,10 +43,7 @@ constructor(private val repository: EventRepository, private val imageRepository
     repository.init { loadEvents() }
   }
 
-  /**
-   * Loads the list of events from the repository and updates the
-   * internal [MutableStateFlow].
-   */
+  /** Loads the list of events from the repository and updates the internal [MutableStateFlow]. */
   fun loadEvents() {
     repository.getEvents(
         onSuccess = { eventList ->
