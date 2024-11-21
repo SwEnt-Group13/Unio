@@ -249,7 +249,7 @@ class ScreenDisplayingTest {
   @Test
   fun testEventCreationDisplayed() {
     composeTestRule.setContent {
-      EventCreationScreen(navigationAction, searchViewModel, associationViewModel)
+      EventCreationScreen(navigationAction, searchViewModel, associationViewModel, eventViewModel)
     }
     composeTestRule.onNodeWithTag(EventCreationTestTags.SCREEN).assertIsDisplayed()
   }
