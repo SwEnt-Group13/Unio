@@ -81,6 +81,14 @@ private const val DEBUG_MESSAGE = "<DEBUG> Not implemented yet"
 private var testSnackbar: SnackbarHostState? = null
 private var scope: CoroutineScope? = null
 
+/**
+ * Composable element that contain the association profile screen. It display the association.
+ *
+ * @param navigationAction [NavigationAction] : The navigation actions of the screen
+ * @param associationViewModel [AssociationViewModel] : The association view model
+ * @param userViewModel [UserViewModel] : The user view model
+ * @param eventViewModel [EventViewModel] : The event view model
+ */
 @Composable
 fun AssociationProfileScreen(
     navigationAction: NavigationAction,
@@ -114,10 +122,10 @@ fun AssociationProfileScreen(
  * it contains the top bar, the content given in parameter and the snackbar host used on
  * unimplemented features.
  *
- * @param association [Association] : The association to display
  * @param navigationAction [NavigationAction] : The navigation actions of the screen
  * @param userViewModel [UserViewModel] : The user view model
  * @param eventViewModel [EventViewModel] : The event view model
+ * @param associationViewModel [AssociationViewModel] : The association view model
  * @param onEdit [() -> Unit] : The action to edit the association
  */
 @OptIn(ExperimentalMaterial3Api::class)
@@ -248,7 +256,6 @@ fun AssociationProfileBottomSheet(
  * events...
  *
  * @param navigationAction [NavigationAction] : The navigation actions of the screen
- * @param association [Association] : The association to display
  * @param userViewModel [UserViewModel] : The user view model
  * @param eventViewModel [EventViewModel] : The event view model
  * @param associationViewModel [AssociationViewModel] : The association view model
@@ -260,10 +267,33 @@ private fun AssociationProfileContent(
     eventViewModel: EventViewModel,
     associationViewModel: AssociationViewModel
 ) {
-  val associationState by associationViewModel.selectedAssociation.collectAsState()
-  val association = associationState!!
-  val members by association.members.list.collectAsState()
+  val association by associationViewModel.selectedAssociation.collectAsState()
   val user by userViewModel.user.collectAsState()
+
+  if (association == null || user == null) {
+    Log.e("AssociationProfileContent", "Association or user not found.")
+    return
+  }
+
+  val members by association!!.members.list.collectAsState()
+
+  var isFollowed by remember {
+    mutableStateOf(user!!.followedAssociations.contains(association!!.uid))
+  }
+  var enableButton by remember { mutableStateOf(true) }
+  val onFollow = {
+    enableButton = false
+    associationViewModel.updateFollow(association!!, user!!, isFollowed) {
+      userViewModel.refreshUser()
+      enableButton = true
+    }
+    isFollowed = !isFollowed
+  }
+
+  val onMemberClick = { member: User ->
+    userViewModel.setSomeoneElseUser(member)
+    navigationAction.navigateTo(Screen.SOMEONE_ELSE_PROFILE)
+  }
 
   // Add spacedBy to the horizontalArrangement
   Column(
@@ -273,11 +303,11 @@ private fun AssociationProfileContent(
               .fillMaxWidth()
               .padding(24.dp),
       verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        AssociationHeader(associationViewModel, userViewModel, user!!)
-        AssociationDescription(association)
-        AssociationEvents(navigationAction, association, userViewModel, eventViewModel)
-        AssociationMembers(navigationAction, members, userViewModel)
-        AssociationRecruitment(association)
+        AssociationHeader(association!!, isFollowed, enableButton, onFollow)
+        AssociationDescription(association!!)
+        AssociationEvents(navigationAction, association!!, userViewModel, eventViewModel)
+        AssociationMembers(members, onMemberClick)
+        AssociationRecruitment(association!!)
       }
 }
 
@@ -347,11 +377,7 @@ private fun AssociationRecruitment(association: Association) {
  */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun AssociationMembers(
-    navigationAction: NavigationAction,
-    members: List<User>,
-    userViewModel: UserViewModel
-) {
+private fun AssociationMembers(members: List<User>, onMemberClick: (User) -> Unit) {
   val context = LocalContext.current
 
   if (members.isEmpty()) {
@@ -371,10 +397,7 @@ private fun AssociationMembers(
               modifier =
                   Modifier.background(
                           MaterialTheme.colorScheme.secondaryContainer, RoundedCornerShape(8.dp))
-                      .clickable {
-                        userViewModel.setSomeoneElseUser(user)
-                        navigationAction.navigateTo(Screen.SOMEONE_ELSE_PROFILE)
-                      }
+                      .clickable { onMemberClick(user) }
                       .padding(16.dp),
               verticalArrangement = Arrangement.spacedBy(8.dp),
               horizontalAlignment = Alignment.CenterHorizontally) {
@@ -503,19 +526,14 @@ private fun AssociationDescription(association: Association) {
  *
  * !!! The follow button do not have any action and should be implemented when follow feature is
  * implemented !!!
- *
- * @param association (Association) : The association currently displayed
- * @param context (Context) : The context of the screen
  */
 @Composable
 private fun AssociationHeader(
-    associationViewModel: AssociationViewModel,
-    userViewModel: UserViewModel,
-    user: User
+    association: Association,
+    isFollowed: Boolean,
+    enableButton: Boolean,
+    onFollow: () -> Unit,
 ) {
-  val association = associationViewModel.selectedAssociation.collectAsState().value!!
-  var isFollowed by remember { mutableStateOf(user.isFollowAssociation(association)) }
-  var isButtonEnabled by remember { mutableStateOf(true) }
   val context = LocalContext.current
   Row {
     Box(modifier = Modifier.testTag(AssociationProfileTestTags.IMAGE_HEADER)) {
@@ -541,29 +559,15 @@ private fun AssociationHeader(
               Modifier.padding(bottom = 14.dp).testTag(AssociationProfileTestTags.HEADER_MEMBERS))
       if (isFollowed) {
         OutlinedButton(
-            enabled = isButtonEnabled,
-            onClick = {
-              isButtonEnabled = false
-              associationViewModel.updateFollow(association, user, isFollowed) {
-                userViewModel.refreshUser()
-                isButtonEnabled = true
-              }
-              isFollowed = !isFollowed
-            },
+            enabled = enableButton,
+            onClick = onFollow,
             modifier = Modifier.testTag(AssociationProfileTestTags.FOLLOW_BUTTON)) {
               Text(context.getString(R.string.association_unfollow))
             }
       } else {
         Button(
-            enabled = isButtonEnabled,
-            onClick = {
-              isButtonEnabled = false
-              associationViewModel.updateFollow(association, user, isFollowed) {
-                userViewModel.refreshUser()
-                isButtonEnabled = true
-              }
-              isFollowed = !isFollowed
-            },
+            enabled = enableButton,
+            onClick = onFollow,
             modifier = Modifier.testTag(AssociationProfileTestTags.FOLLOW_BUTTON)) {
               Icon(
                   Icons.Filled.Add,
