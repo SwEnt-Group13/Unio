@@ -25,7 +25,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.MaterialTheme.colors
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.AccessTime
@@ -109,8 +108,8 @@ fun EventCreationScreen(
   var taggedAndBoolean =
       associationViewModel.associations.collectAsState().value.map { it to mutableStateOf(false) }
 
-  var startTimestamp : Timestamp? by remember { mutableStateOf(null) }
-  var endTimestamp : Timestamp? by remember { mutableStateOf(null) }
+  var startTimestamp: Timestamp? by remember { mutableStateOf(null) }
+  var endTimestamp: Timestamp? by remember { mutableStateOf(null) }
 
   val eventBannerUri = remember { mutableStateOf<Uri>(Uri.EMPTY) }
 
@@ -196,8 +195,7 @@ fun EventCreationScreen(
             Text(
                 text = "Event cannot start after it ends",
                 modifier = Modifier.testTag("NoEventBeforeEnd"),
-                color = MaterialTheme.colorScheme.error
-            )
+                color = MaterialTheme.colorScheme.error)
           }
 
           OutlinedTextField(
@@ -218,8 +216,9 @@ fun EventCreationScreen(
                   name.isNotEmpty() &&
                       shortDescription.isNotEmpty() &&
                       longDescription.isNotEmpty() &&
-                      startTimestamp != null && endTimestamp != null &&
-                          startTimestamp!! < endTimestamp!! &&
+                      startTimestamp != null &&
+                      endTimestamp != null &&
+                      startTimestamp!! < endTimestamp!! &&
                       eventBannerUri.value != Uri.EMPTY,
               onClick = {
                 val inputStream = context.contentResolver.openInputStream(eventBannerUri.value)!!
