@@ -138,7 +138,7 @@ fun UnioApp(imageRepository: ImageRepositoryFirebaseStorage) {
         EventCreationScreen(navigationActions, searchViewModel, associationViewModel)
       }
       composable(Screen.SOMEONE_ELSE_PROFILE) {
-        SomeoneElseUserProfileScreen(navigationActions, userViewModel)
+        SomeoneElseUserProfileScreen(navigationActions, userViewModel, associationViewModel)
         composable(Screen.EVENT_CREATION) {
           EventCreationScreen(navigationActions, searchViewModel, associationViewModel)
         }
