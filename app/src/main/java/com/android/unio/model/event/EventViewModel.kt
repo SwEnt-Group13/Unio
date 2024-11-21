@@ -102,6 +102,7 @@ constructor(private val repository: EventRepository, private val imageRepository
           repository.addEvent(event, onSuccess, onFailure)
         },
         { e -> Log.e("ImageRepository", "Failed to store image: $e") })
+    event.organisers.requestAll(onSuccess)
     _events.value += event
   }
 }
