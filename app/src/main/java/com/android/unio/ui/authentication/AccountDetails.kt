@@ -21,11 +21,9 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.rounded.AccountCircle
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
-import androidx.compose.material3.InputChip
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -57,7 +55,9 @@ import com.android.unio.model.user.UserViewModel
 import com.android.unio.model.user.checkNewUser
 import com.android.unio.ui.authentication.overlay.InterestOverlay
 import com.android.unio.ui.authentication.overlay.SocialOverlay
+import com.android.unio.ui.components.InterestInputChip
 import com.android.unio.ui.components.ProfilePictureWithRemoveIcon
+import com.android.unio.ui.components.SocialInputChip
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
 import com.android.unio.ui.theme.AppTypography
@@ -333,20 +333,7 @@ private fun InterestButtonAndFlowRow(
   FlowRow {
     interests.forEachIndexed { index, pair ->
       if (pair.second.value) {
-        InputChip(
-            label = { Text(pair.first.name) },
-            onClick = {},
-            selected = pair.second.value,
-            modifier =
-            Modifier
-                .padding(3.dp)
-                .testTag(AccountDetailsTestTags.INTERESTS_CHIP + "$index"),
-            avatar = {
-              Icon(
-                  Icons.Default.Close,
-                  contentDescription = "Add",
-                  modifier = Modifier.clickable { pair.second.value = !pair.second.value })
-            })
+          InterestInputChip(pair = pair, index = index, testTag = AccountDetailsTestTags.INTERESTS_CHIP)
       }
     }
   }
@@ -376,25 +363,10 @@ private fun SocialButtonAndFlowRow(
     }
     FlowRow(modifier = Modifier.fillMaxWidth()) {
         socials.forEachIndexed { index, userSocial ->
-            InputChip(
-                label = { Text(userSocial.social.name) },
-                onClick = {},
-                selected = true,
-                modifier =
-                Modifier
-                    .padding(3.dp)
-                    .testTag(AccountDetailsTestTags.SOCIALS_CHIP + userSocial.social.title),
-                avatar = {
-                    Icon(
-                        Icons.Default.Close,
-                        contentDescription =
-                        context.getString(R.string.account_details_content_description_close),
-                        modifier =
-                        Modifier.clickable {
-                            userSocialFlow.value =
-                                userSocialFlow.value.toMutableList().apply { removeAt(index) }
-                        })
-                })
+
+            SocialInputChip(userSocial = userSocial, onRemove = { userSocialFlow.value =
+                userSocialFlow.value.toMutableList().apply { removeAt(index) } },
+                testTag = AccountDetailsTestTags.SOCIALS_CHIP)
         }
     }
 }

@@ -14,6 +14,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.InputChip
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -24,6 +25,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.android.unio.R
+import com.android.unio.model.user.Interest
 import com.android.unio.model.user.UserSocial
 import com.android.unio.ui.image.AsyncImageWrapper
 
@@ -51,6 +53,29 @@ fun ProfilePictureWithRemoveIcon(
     }
 }
 
+@Composable
+fun InterestInputChip(
+    pair:  Pair<Interest, MutableState<Boolean>>,
+    index: Int,
+    testTag: String
+){
+    val context = LocalContext.current
+
+    InputChip(
+        label = { Text(context.getString(pair.first.title)) },
+        onClick = {},
+        selected = pair.second.value,
+        modifier =
+        Modifier
+            .padding(3.dp)
+            .testTag(testTag + "$index"),
+        avatar = {
+            Icon(
+                Icons.Default.Close,
+                contentDescription = "Add",
+                modifier = Modifier.clickable { pair.second.value = !pair.second.value })
+        })
+}
 
 @Composable
 fun SocialInputChip(

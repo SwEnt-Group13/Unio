@@ -1,7 +1,6 @@
 package com.android.unio.ui.user
 
 import android.net.Uri
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -13,12 +12,10 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.InputChip
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -49,6 +46,7 @@ import com.android.unio.model.user.UserSocial
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.authentication.overlay.InterestOverlay
 import com.android.unio.ui.authentication.overlay.SocialOverlay
+import com.android.unio.ui.components.InterestInputChip
 import com.android.unio.ui.components.ProfilePictureWithRemoveIcon
 import com.android.unio.ui.components.SocialInputChip
 import com.android.unio.ui.navigation.NavigationAction
@@ -294,20 +292,7 @@ private fun InterestButtonAndFlowRow(
     FlowRow {
         interests.forEachIndexed { index, pair ->
             if (pair.second.value) {
-                InputChip(
-                    label = { Text(pair.first.name) },
-                    onClick = {},
-                    selected = pair.second.value,
-                    modifier =
-                    Modifier
-                        .padding(3.dp)
-                        .testTag(UserSettingsTestTags.INTERESTS_CHIP + "$index"),
-                    avatar = {
-                        Icon(
-                            Icons.Default.Close,
-                            contentDescription = "Add",
-                            modifier = Modifier.clickable { pair.second.value = !pair.second.value })
-                    })
+                InterestInputChip(pair = pair, index = index, testTag = UserSettingsTestTags.INTERESTS_CHIP)
             }
         }
     }
@@ -323,7 +308,9 @@ private fun SocialButtonAndFlowRow(
     val context = LocalContext.current
     val socials by userSocialFlow.collectAsState()
 
-    FlowRow(modifier = Modifier.fillMaxWidth().padding(3.dp)) {
+    FlowRow(modifier = Modifier
+        .fillMaxWidth()
+        .padding(3.dp)) {
         socials.forEachIndexed { index, userSocial ->
             SocialInputChip(userSocial, onRemove = {userSocialFlow.value =
                 userSocialFlow.value.toMutableList().apply { removeAt(index) }},
