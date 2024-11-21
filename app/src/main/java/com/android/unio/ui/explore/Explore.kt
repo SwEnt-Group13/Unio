@@ -2,7 +2,6 @@ package com.android.unio.ui.explore
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -13,17 +12,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.DockedSearchBar
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.ListItem
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -46,6 +36,7 @@ import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.strings.test_tags.ExploreContentTestTags
 import com.android.unio.model.strings.test_tags.ExploreTestTags
+import com.android.unio.ui.association.AssociationSearchBar
 import com.android.unio.ui.image.AsyncImageWrapper
 import com.android.unio.ui.navigation.BottomNavigationMenu
 import com.android.unio.ui.navigation.LIST_TOP_LEVEL_DESTINATION
@@ -104,81 +95,12 @@ fun ExploreScreenContent(
                     .align(Alignment.CenterHorizontally)
                     .testTag(ExploreContentTestTags.TITLE_TEXT))
 
-        DockedSearchBar(
-            inputField = {
-              SearchBarDefaults.InputField(
-                  modifier = Modifier.testTag(ExploreContentTestTags.SEARCH_BAR_INPUT),
-                  query = searchQuery,
-                  onQueryChange = {
-                    searchQuery = it
-                    searchViewModel.debouncedSearch(it, SearchViewModel.SearchType.ASSOCIATION)
-                  },
-                  onSearch = {},
-                  expanded = expanded,
-                  onExpandedChange = { expanded = it },
-                  placeholder = {
-                    Text(
-                        text = context.getString(R.string.search_placeholder),
-                        style = AppTypography.bodyLarge,
-                        modifier = Modifier.testTag(ExploreContentTestTags.SEARCH_BAR_PLACEHOLDER))
-                  },
-                  trailingIcon = {
-                    Icon(
-                        Icons.Default.Search,
-                        contentDescription =
-                            context.getString(R.string.explore_content_description_search_icon),
-                        modifier = Modifier.testTag(ExploreContentTestTags.SEARCH_TRAILING_ICON))
-                  },
-              )
-            },
-            expanded = expanded,
-            onExpandedChange = { expanded = it },
-            modifier =
-                Modifier.padding(horizontal = 16.dp).testTag(ExploreContentTestTags.SEARCH_BAR)) {
-              when (searchState) {
-                SearchViewModel.Status.ERROR -> {
-                  Box(
-                      modifier = Modifier.fillMaxWidth().padding(16.dp),
-                      contentAlignment = Alignment.Center) {
-                        Text(context.getString(R.string.explore_search_error_message))
-                      }
-                }
-                SearchViewModel.Status.LOADING -> {
-                  Box(
-                      modifier = Modifier.fillMaxWidth().padding(16.dp),
-                      contentAlignment = Alignment.Center) {
-                        LinearProgressIndicator()
-                      }
-                }
-                SearchViewModel.Status.IDLE -> {}
-                SearchViewModel.Status.SUCCESS -> {
-                  if (assocationResults.isEmpty()) {
-                    Box(
-                        modifier = Modifier.fillMaxWidth().padding(16.dp),
-                        contentAlignment = Alignment.Center) {
-                          Text(context.getString(R.string.explore_search_no_results))
-                        }
-                  } else {
-                    Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
-                      assocationResults.forEach { association ->
-                        ListItem(
-                            modifier =
-                                Modifier.clickable {
-                                      expanded = false
-                                      associationViewModel.selectAssociation(association.uid)
-                                      navigationAction.navigateTo(Screen.ASSOCIATION_PROFILE)
-                                    }
-                                    .testTag(
-                                        ExploreContentTestTags.ASSOCIATION_EXPLORE_RESULT +
-                                            association.name),
-                            headlineContent = { Text(association.name) },
-                        )
-                      }
-                    }
-                  }
-                }
-              }
-            }
+        AssociationSearchBar(
+            searchViewModel = searchViewModel,
+            onAssociationSelected = { association ->
+              associationViewModel.selectAssociation(association.uid)
+              navigationAction.navigateTo(Screen.ASSOCIATION_PROFILE)
+            })
 
         LazyColumn(
             modifier = Modifier.fillMaxSize().testTag(ExploreContentTestTags.CATEGORIES_LIST),

@@ -48,7 +48,9 @@ class HydrationAndSerializationTest {
           members = User.firestoreReferenceListWith(listOf("1", "2")),
           followersCount = 0,
           image = "https://www.example.com/image.jpg",
-          events = Event.firestoreReferenceListWith(listOf("1", "2")))
+          events = Event.firestoreReferenceListWith(listOf("1", "2")),
+          principalEmailAddress = "example@adress.com",
+          adminUid = "1")
 
   private val event =
       Event(

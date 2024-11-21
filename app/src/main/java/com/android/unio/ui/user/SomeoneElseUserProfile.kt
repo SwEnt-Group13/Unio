@@ -46,6 +46,7 @@ fun SomeoneElseUserProfileScreen(navigationAction: NavigationAction, userViewMod
               },
               navigationIcon = {
                 IconButton(
+                    modifier = Modifier.testTag(SomeoneElseUserProfileTestTags.GO_BACK),
                     onClick = { navigationAction.goBack() },
                     content = {
                       Icon(

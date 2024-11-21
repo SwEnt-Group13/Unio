@@ -45,6 +45,8 @@ import com.android.unio.ui.saved.SavedScreen
 import com.android.unio.ui.settings.SettingsScreen
 import com.android.unio.ui.theme.AppTheme
 import com.android.unio.ui.user.SomeoneElseUserProfileScreen
+import com.android.unio.ui.user.UserClaimAssociationPresidentialRightsScreen
+import com.android.unio.ui.user.UserClaimAssociationScreen
 import com.android.unio.ui.user.UserProfileScreen
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.HiltAndroidApp
@@ -143,12 +145,21 @@ fun UnioApp(imageRepository: ImageRepositoryFirebaseStorage) {
           EventCreationScreen(navigationActions, searchViewModel, associationViewModel)
         }
       }
-      navigation(startDestination = Screen.SAVED, route = Route.SAVED) {
-        composable(Screen.SAVED) { SavedScreen(navigationActions, eventViewModel, userViewModel) }
+    }
+    navigation(startDestination = Screen.SAVED, route = Route.SAVED) {
+      composable(Screen.SAVED) { SavedScreen(navigationActions, eventViewModel, userViewModel) }
+    }
+    navigation(startDestination = Screen.MY_PROFILE, route = Route.MY_PROFILE) {
+      composable(Screen.MY_PROFILE) {
+        UserProfileScreen(userViewModel, navigationActions, searchViewModel)
       }
-      navigation(startDestination = Screen.MY_PROFILE, route = Route.MY_PROFILE) {
-        composable(Screen.MY_PROFILE) { UserProfileScreen(userViewModel, navigationActions) }
-        composable(Screen.SETTINGS) { SettingsScreen(navigationActions) }
+      composable(Screen.SETTINGS) { SettingsScreen(navigationActions) }
+      composable(Screen.CLAIM_ASSOCIATION_RIGHTS) {
+        UserClaimAssociationScreen(associationViewModel, navigationActions, searchViewModel)
+      }
+      composable(Screen.CLAIM_ASSOCIATION_PRESIDENTIAL_RIGHTS) {
+        UserClaimAssociationPresidentialRightsScreen(
+            associationViewModel, navigationActions, userViewModel)
       }
     }
   }
