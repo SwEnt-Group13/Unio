@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -16,6 +17,7 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Icon
 import androidx.compose.material3.InputChip
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -30,6 +32,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.android.unio.R
+import com.android.unio.model.strings.test_tags.AccountDetailsTestTags
+import com.android.unio.model.user.AccountDetailsError
 import com.android.unio.model.user.Interest
 import com.android.unio.model.user.UserSocial
 import com.android.unio.ui.image.AsyncImageWrapper
@@ -59,6 +63,7 @@ fun ProfilePictureWithRemoveIcon(
     }
 }
 
+
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun InterestButtonAndFlowRow(
@@ -66,7 +71,6 @@ fun InterestButtonAndFlowRow(
     onShowInterests: () -> Unit,
     buttonTestTag: String,
     chipTestTag: String,
-
 ) {
     val context = LocalContext.current
 
@@ -112,9 +116,6 @@ fun SocialButtonAndFlowRow(
     onShowSocials: () -> Unit,
     buttonTestTag: String,
     chipTestTag: String,
-
-
-
 ){
 
     val context = LocalContext.current

@@ -9,8 +9,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -20,13 +18,9 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.rounded.AccountCircle
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
-import androidx.compose.material3.InputChip
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -131,13 +125,13 @@ fun AccountDetailsContent(
 
   var isErrors by remember { mutableStateOf(mutableSetOf<AccountDetailsError>()) }
 
-  val interestsFlow = remember {
+  val userInterestsFlow = remember {
     MutableStateFlow(Interest.entries.map { it to mutableStateOf(false) }.toList())
   }
 
   val userSocialsFlow = remember { MutableStateFlow(emptyList<UserSocial>().toMutableList()) }
 
-  val interests by interestsFlow.collectAsState()
+  val interests by userInterestsFlow.collectAsState()
   val socials by userSocialsFlow.collectAsState()
 
   val profilePictureUri = remember { mutableStateOf<Uri>(Uri.EMPTY) }
@@ -190,7 +184,7 @@ fun AccountDetailsContent(
               style = AppTypography.headlineSmall,
               modifier = Modifier.testTag(AccountDetailsTestTags.TITLE_TEXT))
 
-          TextFields(
+          UserTextFields(
               isErrors,
               firstName,
               lastName,
@@ -201,7 +195,7 @@ fun AccountDetailsContent(
 
           ProfilePicturePicker(profilePictureUri, { profilePictureUri.value = Uri.EMPTY })
 
-          InterestButtonAndFlowRow(interestsFlow,
+          InterestButtonAndFlowRow(userInterestsFlow,
               { showInterestsOverlay = true },
               AccountDetailsTestTags.INTERESTS_BUTTON,
               AccountDetailsTestTags.INTERESTS_CHIP)
@@ -222,7 +216,7 @@ fun AccountDetailsContent(
       InterestOverlay(
           onDismiss = { showInterestsOverlay = false },
           onSave = { newInterests ->
-            interestsFlow.value = newInterests
+            userInterestsFlow.value = newInterests
             showInterestsOverlay = false
           },
           interests = interests)
@@ -241,7 +235,7 @@ fun AccountDetailsContent(
 }
 
 @Composable
-private fun TextFields(
+private fun UserTextFields(
     isErrors: MutableSet<AccountDetailsError>,
     firstName: String,
     lastName: String,
@@ -250,69 +244,70 @@ private fun TextFields(
     onLastNameChange: (String) -> Unit,
     onBioChange: (String) -> Unit
 ) {
-  val context = LocalContext.current
-  val isFirstNameError = isErrors.contains(AccountDetailsError.EMPTY_FIRST_NAME)
-  val isLastNameError = isErrors.contains(AccountDetailsError.EMPTY_LAST_NAME)
+    val context = LocalContext.current
+    val isFirstNameError = isErrors.contains(AccountDetailsError.EMPTY_FIRST_NAME)
+    val isLastNameError = isErrors.contains(AccountDetailsError.EMPTY_LAST_NAME)
 
-  OutlinedTextField(
-      modifier =
-      Modifier
-          .padding(4.dp)
-          .fillMaxWidth()
-          .testTag(AccountDetailsTestTags.FIRST_NAME_TEXT_FIELD),
-      label = {
-        Text(
-            context.getString(R.string.account_details_first_name),
-            modifier = Modifier.testTag(AccountDetailsTestTags.FIRST_NAME_TEXT))
-      },
-      isError = (isFirstNameError),
-      supportingText = {
-        if (isFirstNameError) {
-          Text(
-              context.getString(AccountDetailsError.EMPTY_FIRST_NAME.errorMessage),
-              modifier = Modifier.testTag(AccountDetailsTestTags.FIRST_NAME_ERROR_TEXT))
-        }
-      },
-      onValueChange = onFirstNameChange,
-      value = firstName)
+    OutlinedTextField(
+        modifier =
+        Modifier
+            .padding(4.dp)
+            .fillMaxWidth()
+            .testTag(AccountDetailsTestTags.FIRST_NAME_TEXT_FIELD),
+        label = {
+            Text(
+                context.getString(R.string.account_details_first_name),
+                modifier = Modifier.testTag(AccountDetailsTestTags.FIRST_NAME_TEXT))
+        },
+        isError = (isFirstNameError),
+        supportingText = {
+            if (isFirstNameError) {
+                Text(
+                    context.getString(AccountDetailsError.EMPTY_FIRST_NAME.errorMessage),
+                    modifier = Modifier.testTag(AccountDetailsTestTags.FIRST_NAME_ERROR_TEXT))
+            }
+        },
+        onValueChange = onFirstNameChange,
+        value = firstName)
 
-  OutlinedTextField(
-      modifier =
-      Modifier
-          .padding(4.dp)
-          .fillMaxWidth()
-          .testTag(AccountDetailsTestTags.LAST_NAME_TEXT_FIELD),
-      label = {
-        Text(
-            context.getString(R.string.account_details_last_name),
-            modifier = Modifier.testTag(AccountDetailsTestTags.LAST_NAME_TEXT))
-      },
-      isError = (isLastNameError),
-      supportingText = {
-        if (isLastNameError) {
-          Text(
-              context.getString(AccountDetailsError.EMPTY_LAST_NAME.errorMessage),
-              modifier = Modifier.testTag(AccountDetailsTestTags.LAST_NAME_ERROR_TEXT))
-        }
-      },
-      onValueChange = onLastNameChange,
-      value = lastName)
+    OutlinedTextField(
+        modifier =
+        Modifier
+            .padding(4.dp)
+            .fillMaxWidth()
+            .testTag(AccountDetailsTestTags.LAST_NAME_TEXT_FIELD),
+        label = {
+            Text(
+                context.getString(R.string.account_details_last_name),
+                modifier = Modifier.testTag(AccountDetailsTestTags.LAST_NAME_TEXT))
+        },
+        isError = (isLastNameError),
+        supportingText = {
+            if (isLastNameError) {
+                Text(
+                    context.getString(AccountDetailsError.EMPTY_LAST_NAME.errorMessage),
+                    modifier = Modifier.testTag(AccountDetailsTestTags.LAST_NAME_ERROR_TEXT))
+            }
+        },
+        onValueChange = onLastNameChange,
+        value = lastName)
 
-  OutlinedTextField(
-      modifier =
-      Modifier
-          .padding(4.dp)
-          .fillMaxWidth()
-          .height(200.dp)
-          .testTag(AccountDetailsTestTags.BIOGRAPHY_TEXT_FIELD),
-      label = {
-        Text(
-            context.getString(R.string.account_details_bio),
-            modifier = Modifier.testTag(AccountDetailsTestTags.BIOGRAPHY_TEXT))
-      },
-      onValueChange = onBioChange,
-      value = bio)
+    OutlinedTextField(
+        modifier =
+        Modifier
+            .padding(4.dp)
+            .fillMaxWidth()
+            .height(200.dp)
+            .testTag(AccountDetailsTestTags.BIOGRAPHY_TEXT_FIELD),
+        label = {
+            Text(
+                context.getString(R.string.account_details_bio),
+                modifier = Modifier.testTag(AccountDetailsTestTags.BIOGRAPHY_TEXT))
+        },
+        onValueChange = onBioChange,
+        value = bio)
 }
+
 
 //@OptIn(ExperimentalLayoutApi::class)
 //@Composable
