@@ -19,8 +19,8 @@ initializeApp();
 
 const db = getFirestore();
 
-const email = defineString('EMAIL')
-const password = defineString('PASSWORD')
+const email = defineString('FUNCTIONS_COMPANY_EMAIL')
+const password = defineString('FUNCTIONS_COMPANY_PASSWORD')
 
 const transporter = nodemailer.createTransport({
   service: 'gmail', 
