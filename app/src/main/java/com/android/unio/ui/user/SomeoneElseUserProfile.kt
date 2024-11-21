@@ -69,6 +69,9 @@ fun SomeoneElseUserProfileScreen(
                     onAssociationClick = {
                       associationViewModel.selectAssociation(it)
                       navigationAction.navigateTo(Screen.ASSOCIATION_PROFILE)
+                    },
+                    onClaimAssociationClick = {
+                      navigationAction.navigateTo(Screen.CLAIM_ASSOCIATION_RIGHTS)
                     })
               }
         }
