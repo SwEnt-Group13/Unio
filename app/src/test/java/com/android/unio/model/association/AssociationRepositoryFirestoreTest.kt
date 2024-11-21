@@ -118,7 +118,9 @@ class AssociationRepositoryFirestoreTest {
             "members" to association1.members.uids,
             "followersCount" to association1.followersCount,
             "image" to association1.image,
-            "events" to association1.events.uids)
+            "events" to association1.events.uids,
+            "principalEmailAddress" to association1.principalEmailAddress,
+            "adminUid" to association1.adminUid)
 
     map2 =
         mapOf(
@@ -131,7 +133,9 @@ class AssociationRepositoryFirestoreTest {
             "members" to association2.members.uids,
             "followersCount" to association2.followersCount,
             "image" to association2.image,
-            "events" to association2.events.uids)
+            "events" to association2.events.uids,
+            "principalEmailAddress" to association1.principalEmailAddress,
+            "adminUid" to association1.adminUid)
 
     `when`(queryDocumentSnapshot1.data).thenReturn(map1)
 
@@ -210,7 +214,9 @@ class AssociationRepositoryFirestoreTest {
                   members = User.emptyFirestoreReferenceList(),
                   followersCount = 0,
                   image = "",
-                  events = Event.emptyFirestoreReferenceList())
+                  events = Event.emptyFirestoreReferenceList(),
+                  principalEmailAddress = "",
+                  adminUid = "1")
 
           assertEquals(2, associations.size)
 

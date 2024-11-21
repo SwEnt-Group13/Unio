@@ -45,8 +45,9 @@ import com.android.unio.ui.saved.SavedScreen
 import com.android.unio.ui.settings.SettingsScreen
 import com.android.unio.ui.theme.AppTheme
 import com.android.unio.ui.user.SomeoneElseUserProfileScreen
+import com.android.unio.ui.user.UserClaimAssociationPresidentialRightsScreen
+import com.android.unio.ui.user.UserClaimAssociationScreen
 import com.android.unio.ui.user.UserProfileScreen
-import com.android.unio.ui.user.UserProfileEdition
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.HiltAndroidApp
 import me.zhanghai.compose.preference.ProvidePreferenceLocals
@@ -130,27 +131,40 @@ fun UnioApp(imageRepository: ImageRepositoryFirebaseStorage) {
       }
       composable(Screen.ASSOCIATION_PROFILE) {
         AssociationProfileScreen(
-            navigationActions, associationViewModel, userViewModel, eventViewModel)
+          navigationActions, associationViewModel, userViewModel, eventViewModel
+        )
       }
       composable(Screen.EDIT_ASSOCIATION) {
         EditAssociationScreen(associationViewModel, navigationActions)
       }
       composable(Screen.EVENT_CREATION) {
-        EventCreationScreen(navigationActions, searchViewModel, associationViewModel)
+        EventCreationScreen(
+          navigationActions, searchViewModel, associationViewModel, eventViewModel
+        )
       }
       composable(Screen.SOMEONE_ELSE_PROFILE) {
         SomeoneElseUserProfileScreen(navigationActions, userViewModel)
         composable(Screen.EVENT_CREATION) {
-          EventCreationScreen(navigationActions, searchViewModel, associationViewModel)
+          EventCreationScreen(
+            navigationActions, searchViewModel, associationViewModel, eventViewModel
+          )
         }
       }
-      navigation(startDestination = Screen.SAVED, route = Route.SAVED) {
-        composable(Screen.SAVED) { SavedScreen(navigationActions) }
+    }
+    navigation(startDestination = Screen.SAVED, route = Route.SAVED) {
+      composable(Screen.SAVED) { SavedScreen(navigationActions, eventViewModel, userViewModel) }
+    }
+    navigation(startDestination = Screen.MY_PROFILE, route = Route.MY_PROFILE) {
+      composable(Screen.MY_PROFILE) {
+        UserProfileScreen(userViewModel, navigationActions, searchViewModel)
       }
-      navigation(startDestination = Screen.MY_PROFILE, route = Route.MY_PROFILE) {
-        composable(Screen.MY_PROFILE) { UserProfileScreen(userViewModel, navigationActions) }
-        composable(Screen.SETTINGS) { SettingsScreen(navigationActions) }
-        composable(Screen.EDIT_PROFILE) { UserProfileEdition(userViewModel, imageRepository, navigationActions) }
+      composable(Screen.SETTINGS) { SettingsScreen(navigationActions) }
+      composable(Screen.CLAIM_ASSOCIATION_RIGHTS) {
+        UserClaimAssociationScreen(associationViewModel, navigationActions, searchViewModel)
+      }
+      composable(Screen.CLAIM_ASSOCIATION_PRESIDENTIAL_RIGHTS) {
+        UserClaimAssociationPresidentialRightsScreen(
+            associationViewModel, navigationActions, userViewModel)
       }
     }
   }

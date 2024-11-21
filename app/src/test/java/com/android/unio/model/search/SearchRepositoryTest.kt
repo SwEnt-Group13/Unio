@@ -83,7 +83,9 @@ class SearchRepositoryTest {
           followersCount = 1,
           members = User.firestoreReferenceListWith(listOf("1", "2")),
           image = "https://www.example.com/image.jpg",
-          events = Event.firestoreReferenceListWith(listOf("1", "2")))
+          events = Event.firestoreReferenceListWith(listOf("1", "2")),
+          principalEmailAddress = "example@adress.com",
+          adminUid = "1")
 
   private val association2 =
       Association(
@@ -97,7 +99,9 @@ class SearchRepositoryTest {
           followersCount = 1,
           members = User.firestoreReferenceListWith(listOf("3", "4")),
           image = "https://www.example.com/image.jpg",
-          events = Event.firestoreReferenceListWith(listOf("3", "4")))
+          events = Event.firestoreReferenceListWith(listOf("3", "4")),
+          principalEmailAddress = "example2@adress.com",
+          adminUid = "2")
 
   private val event1 =
       Event(

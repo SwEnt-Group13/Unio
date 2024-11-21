@@ -97,10 +97,23 @@ jobs:
       - name: Install dependencies for the firebase emulator suite
         run: npm install
 
+      # Navigate to the `functions` directory, install dependencies, then return to root
+      - name: Install dependencies for the Firebase Emulator Suite
+        run: |
+          cd functions
+          npm install
+          cd ..
+
       # Check formatting
       - name: KTFmt Check
         run: |
           ./gradlew ktfmtCheck
+
+      # Create .env file to hold secret credentials
+      - name: Create functions/.env.unio-1b8ee file
+        run: |
+          echo "FUNCTIONS_COMPANY_EMAIL=${{ secrets.FUNCTIONS_COMPANY_EMAIL }}" > functions/.env.unio-1b8ee
+          echo "FUNCTIONS_COMPANY_PASSWORD=${{ secrets.FUNCTIONS_COMPANY_PASSWORD }}" >> functions/.env.unio-1b8ee
 
       # Run
       - name: Run Node tests with Firestore and Storage emulators

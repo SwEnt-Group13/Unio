@@ -13,6 +13,7 @@ object UserProfileTestTags {
   const val EDITION = "userProfileEdit"
   const val SETTINGS = "userProfileSettings"
   const val SIGN_OUT = "userProfileSignOut"
+  const val CLAIMING_BUTTON = "userClaimingButton"
 
   // BOTTOM SHEET
   const val BOTTOM_SHEET = "userProfileBottomSheet"
@@ -21,4 +22,19 @@ object UserProfileTestTags {
 object SomeoneElseUserProfileTestTags {
   const val SCREEN = "someoneElseUserProfileScreen"
   const val NAME = "someoneElseUserProfileName"
+  const val GO_BACK = "someoneElseUserProfileGoBack"
+}
+
+object UserClaimAssociationTestTags {
+  const val SCREEN = "userClaimAssociationScreen"
+  const val BACK_BUTTON = "userClaimAssociationBackButton"
+  const val NEW_ASSOCIATION_BUTTON = "userClaimAssociationCreateNewAssociationButton"
+}
+
+object UserClaimAssociationPresidentialRightsTestTags {
+  const val SCREEN = "userClaimAssociationPresidentialRightsScreen"
+  const val EMAIL_ADDRESS = "userClaimAssociationPresidentialRightsEmailAddressText"
+  const val VERIFY_EMAIL_BUTTON = "userClaimAssociationPresidentialRightsVerifyEmailButton"
+  const val CODE = "userClaimAssociationPresidentialRightsCodeText"
+  const val SUBMIT_CODE_BUTTON = "userClaimAssociationPresidentialRightsSubmitCodeButton"
 }

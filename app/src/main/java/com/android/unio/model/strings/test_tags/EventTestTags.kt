@@ -25,6 +25,8 @@ object EventCreationTestTags {
   const val EVENT_IMAGE = "eventCreationEventImage"
   const val START_TIME = "eventCreationStartTime"
   const val END_TIME = "eventCreationEndTime"
+  const val ERROR_TEXT1 = "eventCreationStartAfterEnd"
+  const val ERROR_TEXT2 = "eventCreationStartEqualsEnd"
 }
 
 object EventCreationOverlayTestTags {

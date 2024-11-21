@@ -1,24 +1,23 @@
 package com.android.unio.ui.event
 
-import androidx.compose.ui.test.SemanticsNodeInteraction
-import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.isNotDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
-import androidx.compose.ui.test.performScrollTo
 import com.android.unio.mocks.association.MockAssociation
+import com.android.unio.mocks.event.MockEvent
 import com.android.unio.mocks.user.MockUser
 import com.android.unio.model.association.AssociationRepositoryFirestore
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventRepositoryFirestore
+import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.follow.ConcurrentAssociationUserRepositoryFirestore
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.search.SearchRepository
 import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.strings.test_tags.EventCreationOverlayTestTags
 import com.android.unio.model.strings.test_tags.EventCreationTestTags
+import com.android.unio.ui.assertDisplayComponentInScroll
 import com.android.unio.ui.navigation.NavigationAction
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
@@ -48,6 +47,10 @@ class EventCreationTest {
   @get:Rule val composeTestRule = createComposeRule()
   @get:Rule val hiltRule = HiltAndroidRule(this)
 
+  val events = listOf(MockEvent.createMockEvent())
+  @MockK private lateinit var eventRepository: EventRepositoryFirestore
+  private lateinit var eventViewModel: EventViewModel
+
   private lateinit var searchViewModel: SearchViewModel
   @MockK(relaxed = true) private lateinit var searchRepository: SearchRepository
 
@@ -67,6 +70,13 @@ class EventCreationTest {
     mockkStatic(FirebaseAuth::class)
     every { Firebase.auth } returns firebaseAuth
     every { firebaseAuth.currentUser } returns mockFirebaseUser
+
+    every { eventRepository.getEvents(any(), any()) } answers
+        {
+          val onSuccess = args[0] as (List<Event>) -> Unit
+          onSuccess(events)
+        }
+    eventViewModel = EventViewModel(eventRepository, imageRepositoryFirestore)
 
     searchViewModel = spyk(SearchViewModel(searchRepository))
     associationViewModel =
@@ -90,7 +100,7 @@ class EventCreationTest {
   @Test
   fun testEventCreationTagsDisplayed() {
     composeTestRule.setContent {
-      EventCreationScreen(navigationAction, searchViewModel, associationViewModel)
+      EventCreationScreen(navigationAction, searchViewModel, associationViewModel, eventViewModel)
     }
 
     composeTestRule.waitForIdle()
@@ -124,15 +134,4 @@ class EventCreationTest {
         composeTestRule.onNodeWithTag(EventCreationOverlayTestTags.CANCEL))
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag(EventCreationOverlayTestTags.SAVE))
   }
-}
-
-/**
- * This function is a copy of the function with the same name from EditAssociationTest.kt. It should
- * be extracted to a common file in a future PR.
- */
-private fun assertDisplayComponentInScroll(compose: SemanticsNodeInteraction) {
-  if (compose.isNotDisplayed()) {
-    compose.performScrollTo()
-  }
-  compose.assertIsDisplayed()
 }
