@@ -1,13 +1,15 @@
 package com.android.unio.mocks.firestore
 
 import com.android.unio.model.firestore.ReferenceList
+import com.android.unio.model.firestore.UniquelyIdentifiable
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
-class MockReferenceList<T>(elements: List<T> = emptyList()) : ReferenceList<T> {
+class MockReferenceList<T : UniquelyIdentifiable>(elements: List<T> = emptyList()) :
+    ReferenceList<T> {
   private val _list = MutableStateFlow(elements)
   override val list: StateFlow<List<T>> = _list
-  override val uids: List<String> = emptyList()
+  override val uids: List<String> = elements.map { it.uid }
 
   override fun add(uid: String) {}
 
@@ -23,3 +25,5 @@ class MockReferenceList<T>(elements: List<T> = emptyList()) : ReferenceList<T> {
     return false
   }
 }
+
+class UniquelyIdentifiableString(override val uid: String) : UniquelyIdentifiable
