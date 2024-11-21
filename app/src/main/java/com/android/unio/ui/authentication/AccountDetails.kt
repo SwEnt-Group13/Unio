@@ -204,7 +204,7 @@ fun AccountDetailsContent(
                     .testTag(AccountDetailsTestTags.PROFILE_PICTURE_TEXT),
                 style = AppTypography.bodyLarge)
 
-            ProfilePicturePicker(profilePictureUri, { profilePictureUri.value = Uri.EMPTY })
+            ProfilePicturePicker(profilePictureUri, { profilePictureUri.value = Uri.EMPTY }, AccountDetailsTestTags.PROFILE_PICTURE_ICON)
         }
 
 
@@ -342,7 +342,7 @@ private fun InterestButtonAndFlowRow(
   FlowRow {
     interests.forEachIndexed { index, pair ->
       if (pair.second.value) {
-          InterestInputChip(pair = pair, index = index, testTag = AccountDetailsTestTags.INTERESTS_CHIP)
+          InterestInputChip(pair = pair, testTag = AccountDetailsTestTags.INTERESTS_CHIP + "$index")
       }
     }
   }

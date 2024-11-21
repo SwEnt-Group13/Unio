@@ -1,9 +1,9 @@
 package com.android.unio.model.strings.test_tags
 
-object UserSettingsTestTags{
+object UserEditionTestTags{
     // TITLE
-    const val USER_SETTINGS = "userSettings"
-    const val TITLE_TEXT = "userSettingsTitleText"
+    const val DISCARD_TEXT = "userSettingsDiscardText"
+    const val DISCARD_BUTTON = "userSettingsDiscardButton"
 
     // FIRST NAME TEXT FIELD
     const val FIRST_NAME_TEXT_FIELD = "userSettingsFirstNameTextField"
@@ -20,7 +20,6 @@ object UserSettingsTestTags{
     const val BIOGRAPHY_TEXT = "userSettingsBioText"
 
     // PROFILE PICTURE
-    const val PROFILE_PICTURE_TEXT = "userSettingsProfilePictureText"
     const val PROFILE_PICTURE_ICON = "userSettingsProfilePictureIcon"
 
     // INTERESTS

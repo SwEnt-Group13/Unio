@@ -62,6 +62,7 @@ private fun ProfilePictureWithRemoveIcon(
 fun ProfilePicturePicker(
     profilePictureUri: MutableState<Uri>,
     onProfilePictureUriChange: () -> Unit,
+    testTag: String
 ) {
     val context = LocalContext.current
     val pickMedia =
@@ -86,17 +87,17 @@ fun ProfilePicturePicker(
                         )
                     )
                 }
-                .size(100.dp)) //AccountDetailsTestTags.PROFILE_PICTURE_ICON
+                .size(100.dp).testTag(testTag))
     } else {
         ProfilePictureWithRemoveIcon(
             profilePictureUri = profilePictureUri.value, onRemove = onProfilePictureUriChange)
     }
 
 }
+
 @Composable
 fun InterestInputChip(
     pair:  Pair<Interest, MutableState<Boolean>>,
-    index: Int,
     testTag: String
 ){
     val context = LocalContext.current
@@ -108,7 +109,7 @@ fun InterestInputChip(
         modifier =
         Modifier
             .padding(3.dp)
-            .testTag(testTag + "$index"),
+            .testTag(testTag),
         avatar = {
             Icon(
                 Icons.Default.Close,
