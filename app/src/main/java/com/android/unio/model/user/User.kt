@@ -62,11 +62,6 @@ data class User(
     val socials: List<UserSocial>,
     val profilePicture: String,
 ) : UniquelyIdentifiable {
-
-  fun isFollowAssociation(association: Association): Boolean {
-    return followedAssociations.contains(association.uid)
-  }
-
   companion object
 }
 /**
