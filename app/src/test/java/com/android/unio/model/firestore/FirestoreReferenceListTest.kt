@@ -1,5 +1,6 @@
 package com.android.unio.model.firestore
 
+import com.android.unio.mocks.firestore.UniquelyIdentifiableString
 import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.gms.tasks.Task
 import com.google.firebase.Firebase
@@ -128,6 +129,4 @@ class FirestoreReferenceListTest {
     // Initial list should be empty
     assertEquals(0, emptyList.list.value.size)
   }
-
-  private class UniquelyIdentifiableString(override val uid: String) : UniquelyIdentifiable
 }
