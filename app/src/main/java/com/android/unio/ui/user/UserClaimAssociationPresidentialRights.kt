@@ -156,8 +156,7 @@ fun UserClaimAssociationPresidentialRightsScreenScaffold(
 
                           // send verification email
                           coroutineScope.launch {
-                            sendVerificationEmail(
-                                    Firebase.functions, user!!.email, association!!.uid)
+                            sendVerificationEmail(Firebase.functions, email, association!!.uid)
                                 .addOnCompleteListener { task ->
                                   if (!task.isSuccessful) {
                                     val e = task.exception
