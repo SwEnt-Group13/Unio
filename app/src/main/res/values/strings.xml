@@ -95,6 +95,10 @@
     <string name="account_details_content_description_pfp">Profile Picture</string>
     <string name="account_details_content_description_remove_pfp">Remove Profile Picture</string>
 
+    <!-- UserSettings Strings -->
+    <string name="user_settings_content_description_remove_social" translatable="false">Remove User Social</string>
+
+
     <!-- EmailVerification Strings -->
     <string name="email_verification_refresh_failed">Failed to refresh</string>
     <string name="email_verification_sent_failed">Failed to send email</string>

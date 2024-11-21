@@ -32,6 +32,6 @@ object UserSettingsTestTags{
     const val SOCIALS_CHIP = "userSettingsSocialChip: "
 
     // SAVE
-    const val CONTINUE_BUTTON = "userSettingsContinueButton"
+    const val SAVE_BUTTON = "userSettingsContinueButton"
 
 }
