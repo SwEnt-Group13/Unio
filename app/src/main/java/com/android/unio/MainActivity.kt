@@ -27,7 +27,6 @@ import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.map.MapViewModel
 import com.android.unio.model.search.SearchViewModel
-import com.android.unio.model.strings.EmulatorsStrings
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.association.AssociationProfileScreen
 import com.android.unio.ui.association.EditAssociationScreen
@@ -49,11 +48,6 @@ import com.android.unio.ui.user.SomeoneElseUserProfileScreen
 import com.android.unio.ui.user.UserClaimAssociationPresidentialRightsScreen
 import com.android.unio.ui.user.UserClaimAssociationScreen
 import com.android.unio.ui.user.UserProfileScreen
-import com.google.firebase.Firebase
-import com.google.firebase.auth.auth
-import com.google.firebase.firestore.firestore
-import com.google.firebase.functions.functions
-import com.google.firebase.storage.storage
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.HiltAndroidApp
 import javax.inject.Inject
@@ -69,22 +63,11 @@ class MainActivity : ComponentActivity() {
     requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
     super.onCreate(savedInstanceState)
 
-    useEmulator(false) // Modify this to launch the project with Firebase Emulators
-
     setContent {
       Surface(modifier = Modifier.fillMaxSize()) {
         ProvidePreferenceLocals { AppTheme { UnioApp(imageRepository) } }
       }
     }
-  }
-}
-
-private fun useEmulator(useEmulator: Boolean) {
-  if (useEmulator) {
-    Firebase.functions.useEmulator(EmulatorsStrings.HOST_IP, 5001)
-    Firebase.auth.useEmulator(EmulatorsStrings.HOST_IP, 9099)
-    Firebase.firestore.useEmulator(EmulatorsStrings.HOST_IP, 8080)
-    Firebase.storage.useEmulator(EmulatorsStrings.HOST_IP, 9199)
   }
 }
 
