@@ -34,19 +34,19 @@ class ClaimAdminRightsTest : EndToEndTest() {
     signInWithUser(composeTestRule, Admin.EMAIL, Admin.PASSWORD)
 
     // Wait until "HomeScreen" is displayed
-    composeTestRule.waitUntil(10000) {
+    composeTestRule.waitUntil(10001) {
       composeTestRule.onNodeWithTag(HomeTestTags.SCREEN).isDisplayed()
     }
 
     // Wait until the bottom nav bar is displayed
-    composeTestRule.waitUntil(10000) {
+    composeTestRule.waitUntil(10002) {
       composeTestRule.onNodeWithTag(BottomNavBarTestTags.MY_PROFILE).isDisplayed()
     }
 
     /** Navigate to the profile screen */
     composeTestRule.onNodeWithTag(BottomNavBarTestTags.MY_PROFILE).performClick()
 
-    composeTestRule.waitUntil(10000) {
+    composeTestRule.waitUntil(10003) {
       composeTestRule.onNodeWithTag(UserProfileTestTags.SCREEN).isDisplayed()
     }
 
@@ -59,7 +59,7 @@ class ClaimAdminRightsTest : EndToEndTest() {
         .performTextInput(ASSOCIATION_SEARCH_INPUT)
 
     // Wait for the server's response to get the association
-    composeTestRule.waitUntil(10000) {
+    composeTestRule.waitUntil(10004) {
       composeTestRule
           .onNodeWithTag(
               ExploreContentTestTags.ASSOCIATION_EXPLORE_RESULT + EXPECTED_ASSOCIATION_NAME)
@@ -71,7 +71,7 @@ class ClaimAdminRightsTest : EndToEndTest() {
             ExploreContentTestTags.ASSOCIATION_EXPLORE_RESULT + EXPECTED_ASSOCIATION_NAME)
         .performClick()
 
-    composeTestRule.waitUntil(5000) {
+    composeTestRule.waitUntil(5005) {
       composeTestRule
           .onNodeWithTag(UserClaimAssociationPresidentialRightsTestTags.SCREEN)
           .isDisplayed()
@@ -88,13 +88,13 @@ class ClaimAdminRightsTest : EndToEndTest() {
         .onNodeWithTag(UserClaimAssociationPresidentialRightsTestTags.VERIFY_EMAIL_BUTTON)
         .performClick()
 
-    composeTestRule.waitUntil(5000) {
+    composeTestRule.waitUntil(5006) {
       composeTestRule
           .onNodeWithTag(UserClaimAssociationPresidentialRightsTestTags.CODE)
           .isDisplayed()
     }
 
-    Thread.sleep(8000) // wait a few seconds according to
+    Thread.sleep(8007) // wait a few seconds according to
     // https://firebase.google.com/docs/emulator-suite/connect_firestore#how_the_emulator_differs_from_production
 
     var finalCode = ""
@@ -121,7 +121,7 @@ class ClaimAdminRightsTest : EndToEndTest() {
           throw IllegalStateException("Failed to fetch verification code: ${exception.message}")
         }
 
-    composeTestRule.waitUntil(30000) {
+    composeTestRule.waitUntil(30008) {
       finalCode.isNotEmpty()
     } // otherwise it directly goes to the rest of the code
 
@@ -133,7 +133,7 @@ class ClaimAdminRightsTest : EndToEndTest() {
         .onNodeWithTag(UserClaimAssociationPresidentialRightsTestTags.SUBMIT_CODE_BUTTON)
         .performClick()
 
-    composeTestRule.waitUntil(10000) {
+    composeTestRule.waitUntil(10009) {
       composeTestRule.onNodeWithTag(UserProfileTestTags.SCREEN).isDisplayed()
     }
 

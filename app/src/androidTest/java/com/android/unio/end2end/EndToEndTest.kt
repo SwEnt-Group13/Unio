@@ -28,7 +28,7 @@ open class EndToEndTest : FirebaseEmulatorFunctions {
     verifyEmulatorsAreRunning()
 
     /** Connect Firebase to the emulators */
-    FirebaseEmulatorManager.useEmulators()
+    useEmulators()
   }
 
   override fun signInWithUser(
@@ -74,25 +74,18 @@ open class EndToEndTest : FirebaseEmulatorFunctions {
   }
 
   override fun useEmulators() {
-    Firebase.firestore.useEmulator(HOST, Firestore.PORT)
-    Firebase.auth.useEmulator(HOST, Auth.PORT)
-    Firebase.functions.useEmulator(HOST, Functions.PORT)
-  }
-
-  object FirebaseEmulatorManager {
-    private var emulatorsConfigured = false
-
-    fun useEmulators() {
-      if (!emulatorsConfigured) {
-        Firebase.firestore.useEmulator(HOST, Firestore.PORT)
-        Firebase.auth.useEmulator(HOST, Auth.PORT)
-        Firebase.functions.useEmulator(HOST, Functions.PORT)
-        emulatorsConfigured = true
+    try {
+      Firebase.firestore.useEmulator(HOST, Firestore.PORT)
+      Firebase.auth.useEmulator(HOST, Auth.PORT)
+      Firebase.functions.useEmulator(HOST, Functions.PORT)
+      println("Firebase emulators configured successfully.")
+    } catch (e: IllegalStateException) {
+      if (e.message?.contains(
+          "Cannot call useEmulator() after instance has already been initialized.") == true) {
+        // Firebase emulators have already been initialized. Skipping configuration.
+      } else {
+        throw e // Re-throw the exception if it's a different IllegalStateException
       }
-    }
-
-    fun reset() {
-      emulatorsConfigured = false
     }
   }
 
