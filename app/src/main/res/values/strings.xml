@@ -281,7 +281,7 @@
     <string name="user_claim_association_presidential_rights_enter_presidential_email">Enter the presidential email address:</string>
     <string name="user_claim_association_presidential_rights_email_address">Email address</string>
     <string name="user_claim_association_presidential_rights_incorrect_email_error">Incorrect email address. Please try again.</string>
-    <string name="user_claim_association_presidential_rights_enter_verification_code">Enter the code sent to %1$s:</string>
+    <string name="user_claim_association_presidential_rights_enter_verification_code">Enter the code sent :</string>
     <string name="user_claim_association_presidential_rights_verification_code">Verification code</string>
     <string name="user_claim_association_presidential_rights_submit_code">Submit Code</string>
     <string name="user_claim_association_presidential_rights_go_back">Go back</string>

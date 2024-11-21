@@ -28,7 +28,7 @@ open class EndToEndTest : FirebaseEmulatorFunctions {
     verifyEmulatorsAreRunning()
 
     /** Connect Firebase to the emulators */
-    useEmulators()
+    FirebaseEmulatorManager.useEmulators()
   }
 
   override fun signInWithUser(
@@ -77,6 +77,23 @@ open class EndToEndTest : FirebaseEmulatorFunctions {
     Firebase.firestore.useEmulator(HOST, Firestore.PORT)
     Firebase.auth.useEmulator(HOST, Auth.PORT)
     Firebase.functions.useEmulator(HOST, Functions.PORT)
+  }
+
+  object FirebaseEmulatorManager {
+    private var emulatorsConfigured = false
+
+    fun useEmulators() {
+      if (!emulatorsConfigured) {
+        Firebase.firestore.useEmulator(HOST, Firestore.PORT)
+        Firebase.auth.useEmulator(HOST, Auth.PORT)
+        Firebase.functions.useEmulator(HOST, Functions.PORT)
+        emulatorsConfigured = true
+      }
+    }
+
+    fun reset() {
+      emulatorsConfigured = false
+    }
   }
 
   override fun flushAuthenticatedUsers() {

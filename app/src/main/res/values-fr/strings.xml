@@ -247,7 +247,7 @@
     <string name="user_claim_association_presidential_rights_enter_presidential_email">Entrez l\'adresse email présidentielle :</string>
     <string name="user_claim_association_presidential_rights_email_address">Adresse e-mail</string>
     <string name="user_claim_association_presidential_rights_incorrect_email_error">Adresse e-mail incorrecte. Veuillez réessayer.</string>
-    <string name="user_claim_association_presidential_rights_enter_verification_code">Entrez le code envoyé à %1$s :</string>
+    <string name="user_claim_association_presidential_rights_enter_verification_code">Entrez le code envoyé :</string>
     <string name="user_claim_association_presidential_rights_verification_code">Code de vérification</string>
     <string name="user_claim_association_presidential_rights_submit_code">Soumettre le code</string>
     <string name="user_claim_association_presidential_rights_go_back">Retour</string>
