@@ -1,7 +1,6 @@
 package com.android.unio.ui.event
 
 import android.net.Uri
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
@@ -256,7 +255,11 @@ fun EventCreationScreen(
                     ),
                     onSuccess = { navigationAction.goBack() },
                     onFailure = {
-                      Toast.makeText(context, context.getString(R.string.event_creation_failed), Toast.LENGTH_SHORT).show()
+                      Toast.makeText(
+                              context,
+                              context.getString(R.string.event_creation_failed),
+                              Toast.LENGTH_SHORT)
+                          .show()
                     })
               }) {
                 Text(context.getString(R.string.event_creation_save_button))
