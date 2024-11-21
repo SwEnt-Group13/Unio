@@ -3,10 +3,6 @@ package com.android.unio.ui.authentication
 import android.net.Uri
 import android.util.Log
 import android.widget.Toast
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.PickVisualMediaRequest
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -15,13 +11,11 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.rounded.AccountCircle
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedButton
@@ -56,12 +50,11 @@ import com.android.unio.model.user.checkNewUser
 import com.android.unio.ui.authentication.overlay.InterestOverlay
 import com.android.unio.ui.authentication.overlay.SocialOverlay
 import com.android.unio.ui.components.InterestInputChip
-import com.android.unio.ui.components.ProfilePictureWithRemoveIcon
+import com.android.unio.ui.components.ProfilePicturePicker
 import com.android.unio.ui.components.SocialInputChip
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
 import com.android.unio.ui.theme.AppTypography
-import com.android.unio.ui.theme.primaryLight
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -197,7 +190,23 @@ fun AccountDetailsContent(
               { lastName = it },
               { bio = it })
 
-          ProfilePicturePicker(profilePictureUri, { profilePictureUri.value = Uri.EMPTY })
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp),
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                text = context.getString(R.string.account_details_add_profile_picture),
+                modifier =
+                Modifier
+                    .widthIn(max = 140.dp)
+                    .testTag(AccountDetailsTestTags.PROFILE_PICTURE_TEXT),
+                style = AppTypography.bodyLarge)
+
+            ProfilePicturePicker(profilePictureUri, { profilePictureUri.value = Uri.EMPTY })
+        }
+
 
           InterestButtonAndFlowRow(userInterestsFlow,
               { showInterestsOverlay = true })
@@ -371,53 +380,4 @@ private fun SocialButtonAndFlowRow(
     }
 }
 
-@Composable
-private fun ProfilePicturePicker(
-    profilePictureUri: MutableState<Uri>,
-    onProfilePictureUriChange: () -> Unit,
-) {
-  val context = LocalContext.current
-  val pickMedia =
-      rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
-        if (uri != null) {
-          profilePictureUri.value = uri
-        }
-      }
 
-  Row(
-      modifier = Modifier
-          .fillMaxWidth()
-          .padding(8.dp),
-      horizontalArrangement = Arrangement.SpaceEvenly,
-      verticalAlignment = Alignment.CenterVertically) {
-        Text(
-            text = context.getString(R.string.account_details_add_profile_picture),
-            modifier =
-            Modifier
-                .widthIn(max = 140.dp)
-                .testTag(AccountDetailsTestTags.PROFILE_PICTURE_TEXT),
-            style = AppTypography.bodyLarge)
-
-        if (profilePictureUri.value == Uri.EMPTY) {
-          Icon(
-              imageVector = Icons.Rounded.AccountCircle,
-              contentDescription =
-                  context.getString(R.string.account_details_content_description_add),
-              tint = primaryLight,
-              modifier =
-              Modifier
-                  .clickable {
-                      pickMedia.launch(
-                          PickVisualMediaRequest(
-                              ActivityResultContracts.PickVisualMedia.ImageOnly
-                          )
-                      )
-                  }
-                  .size(100.dp)
-                  .testTag(AccountDetailsTestTags.PROFILE_PICTURE_ICON))
-        } else {
-          ProfilePictureWithRemoveIcon(
-              profilePictureUri = profilePictureUri.value, onRemove = onProfilePictureUriChange)
-        }
-      }
-}

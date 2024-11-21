@@ -47,7 +47,7 @@ import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.authentication.overlay.InterestOverlay
 import com.android.unio.ui.authentication.overlay.SocialOverlay
 import com.android.unio.ui.components.InterestInputChip
-import com.android.unio.ui.components.ProfilePictureWithRemoveIcon
+import com.android.unio.ui.components.ProfilePicturePicker
 import com.android.unio.ui.components.SocialInputChip
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.theme.AppTheme
@@ -137,9 +137,8 @@ fun UserProfileSettingsScreenContent(
                 .verticalScroll(scrollState),
             horizontalAlignment = Alignment.CenterHorizontally
         ){
-            ProfilePictureWithRemoveIcon(
-                profilePictureUri.value,
-                {profilePictureUri.value = Uri.EMPTY})
+
+            ProfilePicturePicker(profilePictureUri = profilePictureUri, { profilePictureUri.value = Uri.EMPTY })
 
             EditUserTextFields(
                 isErrors = isErrors,
@@ -287,12 +286,12 @@ private fun InterestButtonAndFlowRow(
             Icons.Default.Add,
             contentDescription =
             context.getString(R.string.account_details_content_description_add))
-        Text(context.getString(R.string.account_details_add_interests))
+        Text(context.getString(R.string.user_settings_edit_interests))
     }
     FlowRow {
         interests.forEachIndexed { index, pair ->
             if (pair.second.value) {
-                InterestInputChip(pair = pair, index = index, testTag = UserSettingsTestTags.INTERESTS_CHIP)
+                InterestInputChip(pair,index, testTag = UserSettingsTestTags.INTERESTS_CHIP)
             }
         }
     }
@@ -308,16 +307,6 @@ private fun SocialButtonAndFlowRow(
     val context = LocalContext.current
     val socials by userSocialFlow.collectAsState()
 
-    FlowRow(modifier = Modifier
-        .fillMaxWidth()
-        .padding(3.dp)) {
-        socials.forEachIndexed { index, userSocial ->
-            SocialInputChip(userSocial, onRemove = {userSocialFlow.value =
-                userSocialFlow.value.toMutableList().apply { removeAt(index) }},
-                testTag = UserSettingsTestTags.SOCIALS_CHIP)
-        }
-    }
-
     OutlinedButton(
         modifier = Modifier
             .fillMaxWidth()
@@ -328,6 +317,16 @@ private fun SocialButtonAndFlowRow(
             contentDescription =
             context.getString(R.string.account_details_content_description_close))
         Text(context.getString(R.string.user_settings_edit_socials))
+    }
+
+    FlowRow(modifier = Modifier
+        .fillMaxWidth()
+        .padding(3.dp)) {
+        socials.forEachIndexed { index, userSocial ->
+            SocialInputChip(userSocial,
+                onRemove = {userSocialFlow.value = userSocialFlow.value.toMutableList().apply { removeAt(index) }},
+                testTag = UserSettingsTestTags.SOCIALS_CHIP)
+        }
     }
 
 }
