@@ -41,10 +41,12 @@ import com.android.unio.model.image.ImageRepository
 import com.android.unio.model.strings.StoragePathsStrings
 import com.android.unio.model.strings.test_tags.UserEditionTestTags
 import com.android.unio.model.user.AccountDetailsError
+import com.android.unio.model.user.ImageUriType
 import com.android.unio.model.user.Interest
 import com.android.unio.model.user.User
 import com.android.unio.model.user.UserSocial
 import com.android.unio.model.user.UserViewModel
+import com.android.unio.model.user.checkImageUri
 import com.android.unio.model.user.checkNewUser
 import com.android.unio.ui.authentication.overlay.InterestOverlay
 import com.android.unio.ui.authentication.overlay.SocialOverlay
@@ -52,14 +54,12 @@ import com.android.unio.ui.components.InterestInputChip
 import com.android.unio.ui.components.ProfilePicturePicker
 import com.android.unio.ui.components.SocialInputChip
 import com.android.unio.ui.navigation.NavigationAction
-import com.android.unio.ui.navigation.Screen
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import kotlinx.coroutines.flow.MutableStateFlow
 
-//@SuppressLint("StateFlowValueCalledInComposition")
 @Composable
-fun UserProfileEdition(
+fun UserProfileEditionScreen(
     userViewModel: UserViewModel,
     imageRepository: ImageRepository,
     navigationAction: NavigationAction
@@ -70,26 +70,30 @@ fun UserProfileEdition(
 
     val user by userViewModel.user.collectAsState()
 
-    UserProfileEditionScreen(
+    UserProfileEditionScreenContent(
         user = user!!,
         onDiscardChanges = { navigationAction.goBack() },
         onModifyUser = { profilePictureUri, createUser ->
-            if (profilePictureUri.value == Uri.EMPTY) {
-                createUser("")
-            } else {
-                val inputStream = context.contentResolver.openInputStream(profilePictureUri.value)
-                imageRepository.uploadImage(
-                    inputStream!!,
-                    StoragePathsStrings.USER_IMAGES + userId,
-                    onSuccess = {imageUrl -> createUser(imageUrl) },
-                    onFailure = { exception ->
-                        Log.e("UserSettings", "Error uploading image: $exception")
-                        Toast.makeText(
-                            context,
-                            context.getString(R.string.account_details_image_upload_error),
-                            Toast.LENGTH_SHORT)
-                            .show()
+            val uriType = checkImageUri(profilePictureUri.value.toString())
+
+            when(uriType){
+                ImageUriType.EMPTY -> createUser("") //create a user with an empty URI
+                ImageUriType.REMOTE -> createUser(user!!.profilePicture) //create a user with the same URI
+                ImageUriType.LOCAL -> { //create a user with a new URI and upload the image to storage
+                    val inputStream = context.contentResolver.openInputStream(profilePictureUri.value)
+                    imageRepository.uploadImage(
+                        inputStream!!,
+                        StoragePathsStrings.USER_IMAGES + userId,
+                        onSuccess = {imageUrl -> createUser(imageUrl) },
+                        onFailure = { exception ->
+                            Log.e("UserSettings", "Error uploading image: $exception")
+                            Toast.makeText(
+                                context,
+                                context.getString(R.string.account_details_image_upload_error),
+                                Toast.LENGTH_SHORT)
+                                .show()
                     })
+                }
             }
         },
         onUploadUser = { modifiedUser ->
@@ -101,7 +105,7 @@ fun UserProfileEdition(
                         context.getString(R.string.user_settings_modified_successfully),
                         Toast.LENGTH_SHORT)
                         .show()
-                    navigationAction.navigateTo(Screen.MY_PROFILE)
+                    navigationAction.goBack()
                 })
         }
     )
@@ -110,7 +114,7 @@ fun UserProfileEdition(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun UserProfileEditionScreen(
+fun UserProfileEditionScreenContent(
     user: User,
     onDiscardChanges: () -> Unit,
     onModifyUser: (MutableState<Uri>, (String) -> Unit) -> Unit,
@@ -137,6 +141,9 @@ fun UserProfileEditionScreen(
 
 
     //This is the local uri of the new profile picture stored locally
+    //But if it's the first time entering the page the uri will be the one from firebase
+    //and therefor cannot be opened in a input stream in the onModifyUser function
+    //Hence we must check whether the user has changed his profile picture or not to get a local URI.
     val profilePictureUri = remember { mutableStateOf<Uri>(user.profilePicture.toUri()) }
 
     var showInterestsOverlay by remember { mutableStateOf(false) }
@@ -221,6 +228,7 @@ fun UserProfileEditionScreen(
             )
 
 
+            println("ProfilePicture URI :" + profilePictureUri.value.toString())
             Button(
                 onClick = { onModifyUser(profilePictureUri, modifyUser) },
                 modifier = Modifier.testTag(UserEditionTestTags.SAVE_BUTTON)
