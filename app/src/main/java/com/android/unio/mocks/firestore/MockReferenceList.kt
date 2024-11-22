@@ -22,7 +22,7 @@ class MockReferenceList<T : UniquelyIdentifiable>(elements: List<T> = emptyList(
   }
 
   override fun contains(uid: String): Boolean {
-    return false
+    return uids.contains(uid)
   }
 }
 
