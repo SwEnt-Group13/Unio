@@ -104,9 +104,7 @@ class SavedTest {
 
   @Test
   fun testSavedScreenWithNoSavedEvents() {
-    userViewModel.addUser(MockUser.createMockUser(
-      savedEvents = emptyList()
-    )) {}
+    userViewModel.addUser(MockUser.createMockUser(savedEvents = emptyList())) {}
 
     composeTestRule.setContent { SavedScreen(navigationAction, eventViewModel, userViewModel) }
 
