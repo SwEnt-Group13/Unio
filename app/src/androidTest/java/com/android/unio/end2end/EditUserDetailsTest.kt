@@ -13,6 +13,8 @@ import androidx.test.filters.LargeTest
 import com.android.unio.MainActivity
 import com.android.unio.model.strings.test_tags.BottomNavBarTestTags
 import com.android.unio.model.strings.test_tags.HomeTestTags
+import com.android.unio.model.strings.test_tags.InterestsOverlayTestTags
+import com.android.unio.model.strings.test_tags.SocialsOverlayTestTags
 import com.android.unio.model.strings.test_tags.UserEditionTestTags
 import com.android.unio.model.strings.test_tags.UserProfileTestTags
 import com.android.unio.model.user.Interest
@@ -83,17 +85,34 @@ class EditUserDetailsTest : EndToEndTest() {
     val allInterests: Set<Interest> = Interest.entries.map { it }.toMutableSet()
 
     // Click on all the interests
-    allInterests.forEachIndexed { _, index ->
+    allInterests.forEach { interest ->
       composeTestRule
-          .onNodeWithTag(UserEditionTestTags.INTERESTS_CHIP + "$index")
+          .onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW + interest.name)
           .performScrollTo()
           .performClick()
     }
 
+      composeTestRule.onNodeWithTag(InterestsOverlayTestTags.SAVE_BUTTON).performClick()
+
+      //Return to the edition screen
+      composeTestRule.waitUntil (10000) {
+          composeTestRule.onNodeWithTag(UserEditionTestTags.DISCARD_TEXT).isDisplayed()
+      }
+
+      //Navigate to the user socails overlay
+      composeTestRule.onNodeWithTag(UserEditionTestTags.SOCIALS_BUTTON).performScrollTo().performClick()
+
     // Add some new user socials
     addNewUserSocial(composeTestRule, "evaWat2000", "Facebook")
 
-    composeTestRule.onNodeWithTag(UserEditionTestTags.SAVE_BUTTON).performScrollTo().performClick()
+      composeTestRule.onNodeWithTag(SocialsOverlayTestTags.SAVE_BUTTON).performScrollTo().performClick()
+
+      composeTestRule.waitUntil (10000) {
+          composeTestRule.onNodeWithTag(UserEditionTestTags.SAVE_BUTTON).isDisplayed()
+      }
+
+      composeTestRule.onNodeWithTag(UserEditionTestTags.SAVE_BUTTON).performScrollTo()
+          .performClick()
 
     // Wait until the user profile screen is displayed
     composeTestRule.waitUntil(10000) {
