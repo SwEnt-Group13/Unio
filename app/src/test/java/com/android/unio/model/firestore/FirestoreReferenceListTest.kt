@@ -101,7 +101,7 @@ class FirestoreReferenceListTest {
 
     // Add UIDs and call requestAll
     firestoreReferenceList.addAll(listOf("uid1", "uid2"))
-    firestoreReferenceList.requestAll { assertEquals(2, firestoreReferenceList.list.value.size) }
+    firestoreReferenceList.requestAll({ assertEquals(2, firestoreReferenceList.list.value.size) })
 
     // Assert that the list was updated correctly
     assertEquals(listOf("Item1", "Item2"), firestoreReferenceList.list.value.map { it.uid })

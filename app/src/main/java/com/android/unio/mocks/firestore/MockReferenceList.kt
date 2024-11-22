@@ -17,7 +17,7 @@ class MockReferenceList<T : UniquelyIdentifiable>(elements: List<T> = emptyList(
 
   override fun remove(uid: String) {}
 
-  override fun requestAll(onSuccess: () -> Unit) {
+  override fun requestAll(onSuccess: () -> Unit, lazy: Boolean) {
     onSuccess()
   }
 

@@ -70,11 +70,16 @@ class FirestoreReferenceList<T : UniquelyIdentifiable>(
     _uids.remove(uid)
   }
 
-  /** Requests all documents from Firestore and updates the list. */
-  override fun requestAll(onSuccess: () -> Unit) {
+  /**
+   * Requests all documents from Firestore and updates the list.
+   *
+   * @param onSuccess A lambda that is called when the request is successful.
+   * @param lazy If true, the request will only be made if the list is not up-to-date.
+   */
+  override fun requestAll(onSuccess: () -> Unit, lazy: Boolean) {
     // If the list is already up-to-date, return early.
     val fetchedUids = _list.value.map { it.uid }
-    if (fetchedUids == _uids) {
+    if (lazy && fetchedUids == _uids) {
       onSuccess()
       return
     }
