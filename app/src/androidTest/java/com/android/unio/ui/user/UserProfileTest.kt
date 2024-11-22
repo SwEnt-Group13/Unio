@@ -52,9 +52,7 @@ class UserProfileTest {
 
   @Test
   fun testEverythingIsDisplayed() {
-    composeTestRule.setContent {
-      UserProfileScreenScaffold(user, navigationAction, false, searchViewModel = searchViewModel) {}
-    }
+    composeTestRule.setContent { UserProfileScreenScaffold(user, navigationAction, false, {}, {}) }
 
     composeTestRule.onNodeWithTag(UserProfileTestTags.PROFILE_PICTURE).assertExists()
 

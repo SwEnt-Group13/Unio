@@ -21,8 +21,6 @@ import dagger.hilt.android.testing.HiltAndroidTest
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
-import io.mockk.just
-import io.mockk.runs
 import io.mockk.spyk
 import org.junit.Before
 import org.junit.Rule
@@ -54,41 +52,45 @@ class SavedTest {
     MockKAnnotations.init(this, relaxed = true)
     hiltRule.inject()
 
-    every { navigationAction.navigateTo(any(TopLevelDestination::class)) } returns Unit
-    every { navigationAction.navigateTo(any(String::class)) } returns Unit
-
-    every { userRepository.init(any()) } just runs
-    every { eventRepository.init(any()) } just runs
-    userViewModel = spyk(UserViewModel(userRepository))
-    val user = MockUser.createMockUser()
     val asso = MockAssociation.createMockAssociation()
-
-    every { userRepository.updateUser(user, any(), any()) } answers
-        {
-          val onSuccess = args[1] as () -> Unit
-          onSuccess()
-        }
-    userViewModel.addUser(user, {})
-    every { eventRepository.getEvents(any(), any()) } answers
-        {
-          val onSuccess = args[0] as (List<Event>) -> Unit
-          onSuccess(eventList)
-        }
-    eventViewModel = EventViewModel(eventRepository, imageRepository)
-
     eventList =
         listOf(
             MockEvent.createMockEvent(organisers = listOf(asso)),
             MockEvent.createMockEvent(title = "I am different", startDate = Timestamp.now()))
 
-    val eventField = eventViewModel.javaClass.getDeclaredMethod("setEvents", List::class.java)
-    eventField.isAccessible = true
-    eventField.invoke(eventViewModel, eventList)
+    every { navigationAction.navigateTo(any(TopLevelDestination::class)) } returns Unit
+    every { navigationAction.navigateTo(any(String::class)) } returns Unit
+
+    every { userRepository.updateUser(any(), any(), any()) } answers
+        {
+          val onSuccess = args[1] as () -> Unit
+          onSuccess()
+        }
+    every { userRepository.init(any()) } answers
+        {
+          val onSuccess = args[0] as () -> Unit
+          onSuccess()
+        }
+
+    userViewModel = spyk(UserViewModel(userRepository))
+
+    every { eventRepository.getEvents(any(), any()) } answers
+        {
+          val onSuccess = args[0] as (List<Event>) -> Unit
+          onSuccess(eventList)
+        }
+    every { eventRepository.init(any()) } answers
+        {
+          val onSuccess = args[0] as () -> Unit
+          onSuccess()
+        }
+
+    eventViewModel = EventViewModel(eventRepository, imageRepository)
   }
 
   @Test
   fun testSavedScreenWithSavedEvents() {
-    every { userViewModel.isEventSavedForCurrentUser(any()) } returns true
+    userViewModel.addUser(MockUser.createMockUser(savedEvents = eventList)) {}
 
     composeTestRule.setContent { SavedScreen(navigationAction, eventViewModel, userViewModel) }
 
@@ -102,7 +104,7 @@ class SavedTest {
 
   @Test
   fun testSavedScreenWithNoSavedEvents() {
-    every { userViewModel.isEventSavedForCurrentUser(any()) } returns false
+    userViewModel.addUser(MockUser.createMockUser(savedEvents = emptyList())) {}
 
     composeTestRule.setContent { SavedScreen(navigationAction, eventViewModel, userViewModel) }
 

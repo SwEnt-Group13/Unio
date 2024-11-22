@@ -61,7 +61,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import com.android.unio.R
-import com.android.unio.model.search.SearchViewModel
+import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.strings.test_tags.UserProfileTestTags
 import com.android.unio.model.user.User
 import com.android.unio.model.user.UserViewModel
@@ -80,8 +80,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun UserProfileScreen(
     userViewModel: UserViewModel,
-    navigationAction: NavigationAction,
-    searchViewModel: SearchViewModel
+    associationViewModel: AssociationViewModel,
+    navigationAction: NavigationAction
 ) {
 
   val context = LocalContext.current
@@ -99,9 +99,15 @@ fun UserProfileScreen(
 
   val refreshState by userViewModel.refreshState
 
-  UserProfileScreenScaffold(user!!, navigationAction, refreshState, searchViewModel) {
-    userViewModel.refreshUser()
-  }
+  UserProfileScreenScaffold(
+      user!!,
+      navigationAction,
+      refreshState,
+      onRefresh = { userViewModel.refreshUser() },
+      onAssociationClick = {
+        associationViewModel.selectAssociation(it)
+        navigationAction.navigateTo(Screen.ASSOCIATION_PROFILE)
+      })
 }
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
@@ -110,8 +116,8 @@ fun UserProfileScreenScaffold(
     user: User,
     navigationAction: NavigationAction,
     refreshState: Boolean,
-    searchViewModel: SearchViewModel,
     onRefresh: () -> Unit,
+    onAssociationClick: (String) -> Unit
 ) {
   val context = LocalContext.current
   val pullRefreshState = rememberPullRefreshState(refreshing = refreshState, onRefresh = onRefresh)
@@ -140,7 +146,7 @@ fun UserProfileScreenScaffold(
       }) { padding ->
         if (refreshState) {
           Box(
-              modifier = Modifier.fillMaxSize().background(Color.White).padding(padding),
+              modifier = Modifier.fillMaxSize().padding(padding),
               contentAlignment = Alignment.Center) {
                 CircularProgressIndicator(modifier = Modifier.width(64.dp))
               }
@@ -151,7 +157,12 @@ fun UserProfileScreenScaffold(
                       .pullRefresh(pullRefreshState)
                       .fillMaxHeight()
                       .verticalScroll(rememberScrollState())) {
-                UserProfileScreenContent(navigationAction, user)
+                UserProfileScreenContent(
+                    user,
+                    onAssociationClick,
+                    onClaimAssociationClick = {
+                      navigationAction.navigateTo(Screen.CLAIM_ASSOCIATION_RIGHTS)
+                    })
               }
         }
       }
@@ -169,8 +180,9 @@ fun UserProfileScreenScaffold(
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun UserProfileScreenContent(
-    navigationAction: NavigationAction,
     user: User,
+    onAssociationClick: (String) -> Unit,
+    onClaimAssociationClick: () -> Unit
 ) {
 
   val context = LocalContext.current
@@ -251,15 +263,13 @@ fun UserProfileScreenContent(
                 modifier = Modifier.fillMaxWidth().testTag(UserProfileTestTags.JOINED_ASSOCIATIONS),
                 verticalArrangement = Arrangement.spacedBy(4.dp),
             ) {
-              joinedAssociations.map {
-                AssociationSmall(it) { navigationAction.navigateTo(Screen.ASSOCIATION_PROFILE) }
-              }
+              joinedAssociations.map { AssociationSmall(it) { onAssociationClick(it.uid) } }
             }
           } else {
             Text("You are not member of any association yet", style = AppTypography.bodySmall)
 
             Button(
-                onClick = { navigationAction.navigateTo(Screen.CLAIM_ASSOCIATION_RIGHTS) },
+                onClick = onClaimAssociationClick,
                 modifier = Modifier.testTag(UserProfileTestTags.CLAIMING_BUTTON)) {
                   Text("Claim Association")
                 }
@@ -276,9 +286,7 @@ fun UserProfileScreenContent(
                 modifier = Modifier.testTag(UserProfileTestTags.FOLLOWED_ASSOCIATIONS),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-              followedAssociations.map {
-                AssociationSmall(it) { navigationAction.navigateTo(Screen.ASSOCIATION_PROFILE) }
-              }
+              followedAssociations.map { AssociationSmall(it) { onAssociationClick(it.uid) } }
             }
           }
         }

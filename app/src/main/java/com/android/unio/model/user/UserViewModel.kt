@@ -25,9 +25,6 @@ class UserViewModel @Inject constructor(private val userRepository: UserReposito
   private val _selectedSomeoneElseUser = MutableStateFlow<User?>(null)
   val selectedSomeoneElseUser: StateFlow<User?> = _selectedSomeoneElseUser.asStateFlow()
 
-  private val _followedAssociations = MutableStateFlow(emptyList<String>())
-  val followedAssociations: StateFlow<List<String>> = _followedAssociations.asStateFlow()
-
   private val _refreshState = mutableStateOf(false)
   val refreshState: State<Boolean> = _refreshState
 
@@ -59,10 +56,6 @@ class UserViewModel @Inject constructor(private val userRepository: UserReposito
     }
   }
 
-  fun getUsersByUid(uid: String, onSuccess: (User) -> Unit, onFailure: (Exception) -> Unit) {
-    userRepository.getUserWithId(uid, onSuccess, onFailure)
-  }
-
   fun getUserByUid(uid: String, fetchReferences: Boolean = false) {
     if (uid.isEmpty()) {
       return
@@ -72,7 +65,6 @@ class UserViewModel @Inject constructor(private val userRepository: UserReposito
         uid,
         onSuccess = { fetchedUser ->
           _user.value = fetchedUser
-          setFollowedAssociations(getFollowedAssociationsEventUID())
           if (fetchReferences) {
             _user.value?.let {
               var first = true
@@ -128,50 +120,8 @@ class UserViewModel @Inject constructor(private val userRepository: UserReposito
     _user.value = user
   }
 
-  private fun getCurrentUserOrError(): User? {
-    val currentUser = _user.value
-    if (currentUser == null) {
-      Log.w("UserViewModel", "No user available in _user")
-      return null
-    } else {
-      return currentUser
-    }
-  }
-
-  fun saveEventForCurrentUser(eventUid: String, onSuccess: () -> Unit) {
-    val currentUser = getCurrentUserOrError() ?: return
-
-    currentUser.savedEvents.add(eventUid)
-    onSuccess()
-  }
-
-  fun unSaveEventForCurrentUser(eventUid: String, onSuccess: () -> Unit) {
-    val currentUser = getCurrentUserOrError() ?: return
-
-    if (isEventSavedForCurrentUser(eventUid)) {
-      currentUser.savedEvents.remove(eventUid)
-      onSuccess()
-    } else {
-      Log.w("UserViewModel", "Event not found in savedEvents")
-    }
-  }
-
-  fun getFollowedAssociationsEventUID(): List<String> {
-    val followedAsso = _user.value?.followedAssociations?.uids ?: emptyList()
-    return followedAsso
-  }
-
-  private fun setFollowedAssociations(associations: List<String>) {
-    _followedAssociations.value = associations
-  }
-
   fun setSomeoneElseUser(user: User) {
     _selectedSomeoneElseUser.value = user
-  }
-
-  fun isEventSavedForCurrentUser(eventUid: String): Boolean {
-    val currentUser = getCurrentUserOrError() ?: return false
-    return currentUser.savedEvents.contains(eventUid)
   }
 
   fun setCredential(credential: AuthCredential?) {
