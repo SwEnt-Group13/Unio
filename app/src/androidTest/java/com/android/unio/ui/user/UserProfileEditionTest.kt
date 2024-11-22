@@ -28,127 +28,119 @@ import org.mockito.Mockito.`when`
 
 @HiltAndroidTest
 class UserProfileEditionTest {
-    private lateinit var navigationAction: NavigationAction
+  private lateinit var navigationAction: NavigationAction
 
-    @get:Rule
-    val composeTestRule = createComposeRule()
-    @get:Rule
-    val hiltRule = HiltAndroidRule(this)
+  @get:Rule val composeTestRule = createComposeRule()
+  @get:Rule val hiltRule = HiltAndroidRule(this)
 
-    @Before
-    fun setUp() {
-        MockKAnnotations.init(this, relaxed = true)
+  @Before
+  fun setUp() {
+    MockKAnnotations.init(this, relaxed = true)
 
-        // Mocking the navigationAction object
-        navigationAction = mock(NavigationAction::class.java)
-        `when`(navigationAction.getCurrentRoute()).thenReturn(Screen.EDIT_PROFILE)
+    // Mocking the navigationAction object
+    navigationAction = mock(NavigationAction::class.java)
+    `when`(navigationAction.getCurrentRoute()).thenReturn(Screen.EDIT_PROFILE)
 
-        val user = MockUser.createMockUser(
-            interests = emptyList(),
-            profilePicture = ""
-        )
+    val user = MockUser.createMockUser(interests = emptyList(), profilePicture = "")
 
-        composeTestRule.setContent {
-            UserProfileEditionScreenContent(
-                user,
-                onDiscardChanges = { navigationAction.goBack() },
-                {uri, method -> method("")},
-                {}
-            )
-        }
+    composeTestRule.setContent {
+      UserProfileEditionScreenContent(
+          user, onDiscardChanges = { navigationAction.goBack() }, { uri, method -> method("") }, {})
     }
+  }
 
-    @Test
-    fun testEverythingIsDisplayed() {
-        composeTestRule.onNodeWithTag(UserEditionTestTags.DISCARD_TEXT).assertIsDisplayed()
-        composeTestRule
-            .onNodeWithTag(UserEditionTestTags.FIRST_NAME_TEXT, useUnmergedTree = true)
-            .assertIsDisplayed()
-        composeTestRule
-            .onNodeWithTag(UserEditionTestTags.LAST_NAME_TEXT, useUnmergedTree = true)
-            .assertIsDisplayed()
-        composeTestRule.onNodeWithTag(UserEditionTestTags.BIOGRAPHY_TEXT_FIELD).assertExists()
-        composeTestRule.onNodeWithTag(UserEditionTestTags.PROFILE_PICTURE_ICON).assertExists()
-        composeTestRule.onNodeWithTag(UserEditionTestTags.INTERESTS_BUTTON).assertExists()
-        composeTestRule.onNodeWithTag(UserEditionTestTags.SOCIALS_BUTTON).assertExists()
-        composeTestRule.onNodeWithTag(UserEditionTestTags.SAVE_BUTTON).assertExists()
-    }
+  @Test
+  fun testEverythingIsDisplayed() {
+    composeTestRule.onNodeWithTag(UserEditionTestTags.DISCARD_TEXT).assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag(UserEditionTestTags.FIRST_NAME_TEXT, useUnmergedTree = true)
+        .assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag(UserEditionTestTags.LAST_NAME_TEXT, useUnmergedTree = true)
+        .assertIsDisplayed()
+    composeTestRule.onNodeWithTag(UserEditionTestTags.BIOGRAPHY_TEXT_FIELD).assertExists()
+    composeTestRule.onNodeWithTag(UserEditionTestTags.PROFILE_PICTURE_ICON).assertExists()
+    composeTestRule.onNodeWithTag(UserEditionTestTags.INTERESTS_BUTTON).assertExists()
+    composeTestRule.onNodeWithTag(UserEditionTestTags.SOCIALS_BUTTON).assertExists()
+    composeTestRule.onNodeWithTag(UserEditionTestTags.SAVE_BUTTON).assertExists()
+  }
 
-    @Test
-    fun testInterestsButtonWorksCorrectly() {
-        composeTestRule
-            .onNodeWithTag(UserEditionTestTags.INTERESTS_BUTTON)
-            .performScrollTo()
-            .performClick()
-        composeTestRule.onNodeWithTag(InterestsOverlayTestTags.TITLE_TEXT).assertIsDisplayed()
-    }
+  @Test
+  fun testInterestsButtonWorksCorrectly() {
+    composeTestRule
+        .onNodeWithTag(UserEditionTestTags.INTERESTS_BUTTON)
+        .performScrollTo()
+        .performClick()
+    composeTestRule.onNodeWithTag(InterestsOverlayTestTags.TITLE_TEXT).assertIsDisplayed()
+  }
 
-    @Test
-    fun testSocialsButtonWorksCorrectly() {
-        composeTestRule
-            .onNodeWithTag(UserEditionTestTags.SOCIALS_BUTTON)
-            .performScrollTo()
-            .performClick()
-        composeTestRule.onNodeWithTag(SocialsOverlayTestTags.TITLE_TEXT).assertIsDisplayed()
-    }
+  @Test
+  fun testSocialsButtonWorksCorrectly() {
+    composeTestRule
+        .onNodeWithTag(UserEditionTestTags.SOCIALS_BUTTON)
+        .performScrollTo()
+        .performClick()
+    composeTestRule.onNodeWithTag(SocialsOverlayTestTags.TITLE_TEXT).assertIsDisplayed()
+  }
 
-    @Test
-    fun testAddingInterestsCorrectlyModifiesTheFlowRow() {
-        composeTestRule.onNodeWithTag(UserEditionTestTags.INTERESTS_BUTTON).performScrollTo().performClick()
-        composeTestRule.onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW + "0").performClick()
-        composeTestRule.onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW + "1").performClick()
-        composeTestRule.onNodeWithTag(InterestsOverlayTestTags.SAVE_BUTTON).performClick()
+  @Test
+  fun testAddingInterestsCorrectlyModifiesTheFlowRow() {
+    composeTestRule
+        .onNodeWithTag(UserEditionTestTags.INTERESTS_BUTTON)
+        .performScrollTo()
+        .performClick()
+    composeTestRule.onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW + "0").performClick()
+    composeTestRule.onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW + "1").performClick()
+    composeTestRule.onNodeWithTag(InterestsOverlayTestTags.SAVE_BUTTON).performClick()
 
-        composeTestRule.onNodeWithTag(UserEditionTestTags.INTERESTS_CHIP + "0").assertExists()
-        composeTestRule.onNodeWithTag(UserEditionTestTags.INTERESTS_CHIP + "1").assertExists()
-    }
+    composeTestRule.onNodeWithTag(UserEditionTestTags.INTERESTS_CHIP + "0").assertExists()
+    composeTestRule.onNodeWithTag(UserEditionTestTags.INTERESTS_CHIP + "1").assertExists()
+  }
 
-    @Test
-    fun testAddingSocialsCorrectlyModifiesTheFlowRow() {
-        composeTestRule
-            .onNodeWithTag(UserEditionTestTags.SOCIALS_BUTTON)
-            .performScrollTo()
-            .performClick()
-        addNewUserSocial(composeTestRule, "snap_username", "Snapchat")
-        addNewUserSocial(composeTestRule, "facebook_username", "Facebook")
-        composeTestRule
-            .onNodeWithTag(SocialsOverlayTestTags.SAVE_BUTTON)
-            .performClick()
-        composeTestRule
-            .onNodeWithTag(UserEditionTestTags.SOCIALS_CHIP + "Snapchat", true)
-            .assertExists()
-        composeTestRule
-            .onNodeWithTag(UserEditionTestTags.SOCIALS_CHIP + "Facebook", true)
-            .assertExists()
-    }
+  @Test
+  fun testAddingSocialsCorrectlyModifiesTheFlowRow() {
+    composeTestRule
+        .onNodeWithTag(UserEditionTestTags.SOCIALS_BUTTON)
+        .performScrollTo()
+        .performClick()
+    addNewUserSocial(composeTestRule, "snap_username", "Snapchat")
+    addNewUserSocial(composeTestRule, "facebook_username", "Facebook")
+    composeTestRule.onNodeWithTag(SocialsOverlayTestTags.SAVE_BUTTON).performClick()
+    composeTestRule
+        .onNodeWithTag(UserEditionTestTags.SOCIALS_CHIP + "Snapchat", true)
+        .assertExists()
+    composeTestRule
+        .onNodeWithTag(UserEditionTestTags.SOCIALS_CHIP + "Facebook", true)
+        .assertExists()
+  }
 
-    @Test
-    fun testCorrectlyExitsInterestOverlayScreen() {
-        composeTestRule.onNodeWithTag(UserEditionTestTags.INTERESTS_BUTTON).performScrollTo().performClick()
-        composeTestRule.onNodeWithTag(InterestsOverlayTestTags.SAVE_BUTTON).performClick()
-        composeTestRule.onNodeWithTag(InterestsOverlayTestTags.TITLE_TEXT).assertIsNotDisplayed()
-    }
+  @Test
+  fun testCorrectlyExitsInterestOverlayScreen() {
+    composeTestRule
+        .onNodeWithTag(UserEditionTestTags.INTERESTS_BUTTON)
+        .performScrollTo()
+        .performClick()
+    composeTestRule.onNodeWithTag(InterestsOverlayTestTags.SAVE_BUTTON).performClick()
+    composeTestRule.onNodeWithTag(InterestsOverlayTestTags.TITLE_TEXT).assertIsNotDisplayed()
+  }
 
-    @Test
-    fun testCorrectlyDisplaysErrorWhenFirstNameIsEmpty() {
-        composeTestRule.onNodeWithTag(UserEditionTestTags.FIRST_NAME_TEXT_FIELD).performTextClearance()
-        composeTestRule.onNodeWithTag(UserEditionTestTags.LAST_NAME_TEXT_FIELD).performTextClearance()
+  @Test
+  fun testCorrectlyDisplaysErrorWhenFirstNameIsEmpty() {
+    composeTestRule.onNodeWithTag(UserEditionTestTags.FIRST_NAME_TEXT_FIELD).performTextClearance()
+    composeTestRule.onNodeWithTag(UserEditionTestTags.LAST_NAME_TEXT_FIELD).performTextClearance()
 
-        composeTestRule
-            .onNodeWithTag(UserEditionTestTags.SAVE_BUTTON)
-            .performScrollTo()
-            .performClick()
-        composeTestRule
-            .onNodeWithTag(UserEditionTestTags.FIRST_NAME_ERROR_TEXT, useUnmergedTree = true)
-            .assertIsDisplayed()
-        composeTestRule
-            .onNodeWithTag(UserEditionTestTags.LAST_NAME_ERROR_TEXT, useUnmergedTree = true)
-            .assertIsDisplayed()
-    }
+    composeTestRule.onNodeWithTag(UserEditionTestTags.SAVE_BUTTON).performScrollTo().performClick()
+    composeTestRule
+        .onNodeWithTag(UserEditionTestTags.FIRST_NAME_ERROR_TEXT, useUnmergedTree = true)
+        .assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag(UserEditionTestTags.LAST_NAME_ERROR_TEXT, useUnmergedTree = true)
+        .assertIsDisplayed()
+  }
 
-    @After
-    fun tearDown() {
-        clearAllMocks()
-        unmockkAll()
-    }
+  @After
+  fun tearDown() {
+    clearAllMocks()
+    unmockkAll()
+  }
 }

@@ -140,21 +140,17 @@ fun UserProfileScreenScaffold(
       }) { padding ->
         if (refreshState) {
           Box(
-              modifier = Modifier
-                  .fillMaxSize()
-                  .background(Color.White)
-                  .padding(padding),
+              modifier = Modifier.fillMaxSize().background(Color.White).padding(padding),
               contentAlignment = Alignment.Center) {
                 CircularProgressIndicator(modifier = Modifier.width(64.dp))
               }
         } else {
           Box(
               modifier =
-              Modifier
-                  .padding(padding)
-                  .pullRefresh(pullRefreshState)
-                  .fillMaxHeight()
-                  .verticalScroll(rememberScrollState())) {
+                  Modifier.padding(padding)
+                      .pullRefresh(pullRefreshState)
+                      .fillMaxHeight()
+                      .verticalScroll(rememberScrollState())) {
                 UserProfileScreenContent(navigationAction, user)
               }
         }
@@ -189,22 +185,16 @@ fun UserProfileScreenContent(
   ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier
-            .fillMaxWidth(0.7f)
-            .padding(24.dp),
+        modifier = Modifier.fillMaxWidth(0.7f).padding(24.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)) {
-          Box(modifier = Modifier
-              .size(100.dp)
-              .clip(CircleShape)) {
+          Box(modifier = Modifier.size(100.dp).clip(CircleShape)) {
             AsyncImageWrapper(
                 imageUri = user.profilePicture.toUri(),
                 contentDescription =
                     context.getString(R.string.user_profile_content_description_pfp),
                 contentScale = ContentScale.Crop,
                 modifier =
-                Modifier
-                    .background(Color.Gray)
-                    .testTag(UserProfileTestTags.PROFILE_PICTURE),
+                    Modifier.background(Color.Gray).testTag(UserProfileTestTags.PROFILE_PICTURE),
                 filterQuality = FilterQuality.Medium)
           }
 
@@ -224,11 +214,11 @@ fun UserProfileScreenContent(
             user.socials.forEach { userSocial ->
               IconButton(
                   onClick = { uriHandler.openUri(userSocial.getFullUrl()) },
-                  modifier = Modifier.testTag(UserProfileTestTags.SOCIAL_BUTTON + userSocial.social.title)) {
+                  modifier =
+                      Modifier.testTag(
+                          UserProfileTestTags.SOCIAL_BUTTON + userSocial.social.title)) {
                     Image(
-                        modifier = Modifier
-                            .size(32.dp)
-                            .wrapContentSize(),
+                        modifier = Modifier.size(32.dp).wrapContentSize(),
                         painter = painterResource(userSocial.social.icon),
                         contentDescription = userSocial.social.title,
                         contentScale = ContentScale.Fit)
@@ -260,9 +250,7 @@ fun UserProfileScreenContent(
 
             Text("Joined", style = AppTypography.headlineSmall)
             Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .testTag(UserProfileTestTags.JOINED_ASSOCIATIONS),
+                modifier = Modifier.fillMaxWidth().testTag(UserProfileTestTags.JOINED_ASSOCIATIONS),
                 verticalArrangement = Arrangement.spacedBy(4.dp),
             ) {
               joinedAssociations.map {
@@ -321,15 +309,13 @@ fun UserProfileBottomSheet(
     ) {
       Column(modifier = Modifier) {
         TextButton(
-            modifier = Modifier
-                .fillMaxWidth()
-                .testTag(UserProfileTestTags.EDITION),
+            modifier = Modifier.fillMaxWidth().testTag(UserProfileTestTags.EDITION),
             onClick = {
-                scope.launch {
-                    sheetState.hide()
-                    onClose()
-                    navigationAction.navigateTo(Screen.EDIT_PROFILE)
-                }
+              scope.launch {
+                sheetState.hide()
+                onClose()
+                navigationAction.navigateTo(Screen.EDIT_PROFILE)
+              }
             }) {
               Text(context.getString(R.string.user_profile_bottom_sheet_edit))
             }
@@ -345,9 +331,7 @@ fun UserProfileBottomSheet(
               Text(context.getString(R.string.user_profile_bottom_sheet_settings))
             }
         TextButton(
-            modifier = Modifier
-                .fillMaxWidth()
-                .testTag(UserProfileTestTags.SIGN_OUT),
+            modifier = Modifier.fillMaxWidth().testTag(UserProfileTestTags.SIGN_OUT),
             onClick = {
               Firebase.auth.signOut()
               scope.launch {

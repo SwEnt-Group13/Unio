@@ -92,11 +92,11 @@ enum class AccountDetailsError(val errorMessage: Int) {
 }
 
 /**
- * EMPTY means that the user hasn't chosen a profile picture
- * REMOTE means that the uri is stored in firebase as a URL and therefore the user has not changed the profile picture
- * LOCAL means that teh uri is a local one and the user has chosen a new profile picture.
+ * EMPTY means that the user hasn't chosen a profile picture REMOTE means that the uri is stored in
+ * firebase as a URL and therefore the user has not changed the profile picture LOCAL means that teh
+ * uri is a local one and the user has chosen a new profile picture.
  */
-enum class ImageUriType{
+enum class ImageUriType {
   EMPTY,
   REMOTE,
   LOCAL,
@@ -122,14 +122,14 @@ fun checkNewUser(user: User): MutableSet<AccountDetailsError> {
 }
 
 fun checkImageUri(uri: String): ImageUriType {
-  if(uri.toUri() == Uri.EMPTY){
+  if (uri.toUri() == Uri.EMPTY) {
     return ImageUriType.EMPTY
   }
   val localRegex = Regex("^content://.+")
 
-  return if(localRegex.matches(uri)){
+  return if (localRegex.matches(uri)) {
     ImageUriType.LOCAL
-  }else{
+  } else {
     ImageUriType.REMOTE
   }
 }

@@ -39,23 +39,23 @@ private fun ProfilePictureWithRemoveIcon(
     profilePictureUri: Uri,
     onRemove: () -> Unit,
 ) {
-    val context = LocalContext.current
-    Box(modifier = Modifier.size(100.dp)) {
-        AsyncImageWrapper(
-            imageUri = profilePictureUri,
-            contentDescription = context.getString(R.string.account_details_content_description_pfp),
-            contentScale = ContentScale.Crop,
-            modifier = Modifier.aspectRatio(1f).clip(CircleShape),
-            filterQuality = FilterQuality.Medium,
-            placeholderResourceId = 0 // to have no placeholder
+  val context = LocalContext.current
+  Box(modifier = Modifier.size(100.dp)) {
+    AsyncImageWrapper(
+        imageUri = profilePictureUri,
+        contentDescription = context.getString(R.string.account_details_content_description_pfp),
+        contentScale = ContentScale.Crop,
+        modifier = Modifier.aspectRatio(1f).clip(CircleShape),
+        filterQuality = FilterQuality.Medium,
+        placeholderResourceId = 0 // to have no placeholder
         )
-        Icon(
-            imageVector = Icons.Default.Close,
-            contentDescription =
+    Icon(
+        imageVector = Icons.Default.Close,
+        contentDescription =
             context.getString(R.string.account_details_content_description_remove_pfp),
-            modifier =
+        modifier =
             Modifier.size(24.dp).align(Alignment.TopEnd).clickable { onRemove() }.padding(4.dp))
-    }
+  }
 }
 
 @Composable
@@ -64,87 +64,69 @@ fun ProfilePicturePicker(
     onProfilePictureUriChange: () -> Unit,
     testTag: String
 ) {
-    val context = LocalContext.current
-    val pickMedia =
-        rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
-            if (uri != null) {
-                profilePictureUri.value = uri
-            }
+  val context = LocalContext.current
+  val pickMedia =
+      rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+        if (uri != null) {
+          profilePictureUri.value = uri
         }
+      }
 
-    if (profilePictureUri.value == Uri.EMPTY) {
-        Icon(
-            imageVector = Icons.Rounded.AccountCircle,
-            contentDescription =
-            context.getString(R.string.account_details_content_description_add),
-            tint = primaryLight,
-            modifier =
-            Modifier
-                .clickable {
-                    pickMedia.launch(
-                        PickVisualMediaRequest(
-                            ActivityResultContracts.PickVisualMedia.ImageOnly
-                        )
-                    )
+  if (profilePictureUri.value == Uri.EMPTY) {
+    Icon(
+        imageVector = Icons.Rounded.AccountCircle,
+        contentDescription = context.getString(R.string.account_details_content_description_add),
+        tint = primaryLight,
+        modifier =
+            Modifier.clickable {
+                  pickMedia.launch(
+                      PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
                 }
-                .size(100.dp).testTag(testTag))
-    } else {
-        ProfilePictureWithRemoveIcon(
-            profilePictureUri = profilePictureUri.value, onRemove = onProfilePictureUriChange)
-    }
-
+                .size(100.dp)
+                .testTag(testTag))
+  } else {
+    ProfilePictureWithRemoveIcon(
+        profilePictureUri = profilePictureUri.value, onRemove = onProfilePictureUriChange)
+  }
 }
 
 @Composable
-fun InterestInputChip(
-    pair:  Pair<Interest, MutableState<Boolean>>,
-    testTag: String
-){
-    val context = LocalContext.current
+fun InterestInputChip(pair: Pair<Interest, MutableState<Boolean>>, testTag: String) {
+  val context = LocalContext.current
 
-    InputChip(
-        label = { Text(context.getString(pair.first.title)) },
-        onClick = {},
-        selected = pair.second.value,
-        modifier =
-        Modifier
-            .padding(3.dp)
-            .testTag(testTag),
-        avatar = {
-            Icon(
-                Icons.Default.Close,
-                contentDescription = "Add",
-                modifier = Modifier.clickable { pair.second.value = !pair.second.value })
-        })
+  InputChip(
+      label = { Text(context.getString(pair.first.title)) },
+      onClick = {},
+      selected = pair.second.value,
+      modifier = Modifier.padding(3.dp).testTag(testTag),
+      avatar = {
+        Icon(
+            Icons.Default.Close,
+            contentDescription = "Add",
+            modifier = Modifier.clickable { pair.second.value = !pair.second.value })
+      })
 }
 
 @Composable
-fun SocialInputChip(
-    userSocial: UserSocial,
-    onRemove: () -> Unit,
-    testTag: String
-){
-    val context = LocalContext.current
+fun SocialInputChip(userSocial: UserSocial, onRemove: () -> Unit, testTag: String) {
+  val context = LocalContext.current
 
-    InputChip(
-        label = { Text(userSocial.social.title) },
-        onClick = {},
-        selected = true,
-        modifier =
-        Modifier
-            .testTag(testTag + userSocial.social.title),
-        avatar = {
-            Image(
-                modifier = Modifier.size(24.dp),
-                painter = painterResource(userSocial.social.icon),
-                contentDescription = userSocial.social.title)
-        },
-        trailingIcon = {
-            Icon(
-                Icons.Default.Close,
-                contentDescription =
+  InputChip(
+      label = { Text(userSocial.social.title) },
+      onClick = {},
+      selected = true,
+      modifier = Modifier.testTag(testTag + userSocial.social.title),
+      avatar = {
+        Image(
+            modifier = Modifier.size(24.dp),
+            painter = painterResource(userSocial.social.icon),
+            contentDescription = userSocial.social.title)
+      },
+      trailingIcon = {
+        Icon(
+            Icons.Default.Close,
+            contentDescription =
                 context.getString(R.string.account_details_content_description_close),
-                modifier =
-                Modifier.clickable {onRemove()})
-        })
+            modifier = Modifier.clickable { onRemove() })
+      })
 }

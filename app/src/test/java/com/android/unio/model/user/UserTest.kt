@@ -115,15 +115,15 @@ class UserTest {
     assertEquals(UserSocialError.NONE, checkSocialContent(userSocialCorrectWebsite))
   }
 
-    @Test
-    fun checkNewImageUri(){
-        val emptyString = ""
-        assertEquals(ImageUriType.EMPTY, checkImageUri(emptyString))
+  @Test
+  fun checkNewImageUri() {
+    val emptyString = ""
+    assertEquals(ImageUriType.EMPTY, checkImageUri(emptyString))
 
-        val localUri = "content://media/picker/0/com.android.providers.media.photopicker/media/1000026080"
-        assertEquals(ImageUriType.LOCAL, checkImageUri(localUri))
+    val localUri = "content://mySuperLocalImage"
+    assertEquals(ImageUriType.LOCAL, checkImageUri(localUri))
 
-        val remoteUri = "https://firebasestorage.googleapis.com/v0/b/unio-1b8ee.appspot.com/o/images%2Fusers%2FpOuqcoXRKTTYlTLI4ItUynJDNFM2?alt=media&token=4d47e469-e456-4ff8-9c02-d23042dc2984"
-        assertEquals(ImageUriType.REMOTE, checkImageUri(remoteUri))
-    }
+    val remoteUri = "https://firebasestorage.googleapis.com/blablabla"
+    assertEquals(ImageUriType.REMOTE, checkImageUri(remoteUri))
+  }
 }

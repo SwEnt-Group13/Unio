@@ -51,8 +51,8 @@ import com.android.unio.ui.user.UserProfileEditionScreen
 import com.android.unio.ui.user.UserProfileScreen
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.HiltAndroidApp
-import me.zhanghai.compose.preference.ProvidePreferenceLocals
 import javax.inject.Inject
+import me.zhanghai.compose.preference.ProvidePreferenceLocals
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -132,23 +132,20 @@ fun UnioApp(imageRepository: ImageRepositoryFirebaseStorage) {
       }
       composable(Screen.ASSOCIATION_PROFILE) {
         AssociationProfileScreen(
-          navigationActions, associationViewModel, userViewModel, eventViewModel
-        )
+            navigationActions, associationViewModel, userViewModel, eventViewModel)
       }
       composable(Screen.EDIT_ASSOCIATION) {
         EditAssociationScreen(associationViewModel, navigationActions)
       }
       composable(Screen.EVENT_CREATION) {
         EventCreationScreen(
-          navigationActions, searchViewModel, associationViewModel, eventViewModel
-        )
+            navigationActions, searchViewModel, associationViewModel, eventViewModel)
       }
       composable(Screen.SOMEONE_ELSE_PROFILE) {
         SomeoneElseUserProfileScreen(navigationActions, userViewModel)
         composable(Screen.EVENT_CREATION) {
           EventCreationScreen(
-            navigationActions, searchViewModel, associationViewModel, eventViewModel
-          )
+              navigationActions, searchViewModel, associationViewModel, eventViewModel)
         }
       }
     }
@@ -160,7 +157,7 @@ fun UnioApp(imageRepository: ImageRepositoryFirebaseStorage) {
         UserProfileScreen(userViewModel, navigationActions, searchViewModel)
       }
       composable(Screen.EDIT_PROFILE) {
-        UserProfileEditionScreen(userViewModel, imageRepository , navigationActions )
+        UserProfileEditionScreen(userViewModel, imageRepository, navigationActions)
       }
       composable(Screen.SETTINGS) { SettingsScreen(navigationActions) }
       composable(Screen.CLAIM_ASSOCIATION_RIGHTS) {
