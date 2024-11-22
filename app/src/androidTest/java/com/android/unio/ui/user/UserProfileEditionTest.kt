@@ -49,7 +49,7 @@ class UserProfileEditionTest {
         )
 
         composeTestRule.setContent {
-            UserProfileEditionScreen(
+            UserProfileEditionScreenContent(
                 user,
                 onDiscardChanges = { navigationAction.goBack() },
                 {uri, method -> method("")},
