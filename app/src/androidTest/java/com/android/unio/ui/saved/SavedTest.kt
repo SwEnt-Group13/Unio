@@ -58,12 +58,10 @@ class SavedTest {
             MockEvent.createMockEvent(organisers = listOf(asso)),
             MockEvent.createMockEvent(title = "I am different", startDate = Timestamp.now()))
 
-    val user = MockUser.createMockUser(savedEvents = eventList)
-
     every { navigationAction.navigateTo(any(TopLevelDestination::class)) } returns Unit
     every { navigationAction.navigateTo(any(String::class)) } returns Unit
 
-    every { userRepository.updateUser(user, any(), any()) } answers
+    every { userRepository.updateUser(any(), any(), any()) } answers
         {
           val onSuccess = args[1] as () -> Unit
           onSuccess()
@@ -76,7 +74,6 @@ class SavedTest {
 
     userViewModel = spyk(UserViewModel(userRepository))
 
-    userViewModel.addUser(user, {})
     every { eventRepository.getEvents(any(), any()) } answers
         {
           val onSuccess = args[0] as (List<Event>) -> Unit
@@ -89,14 +86,12 @@ class SavedTest {
         }
 
     eventViewModel = EventViewModel(eventRepository, imageRepository)
-
-    //    val eventField = eventViewModel.javaClass.getDeclaredMethod("setEvents", List::class.java)
-    //    eventField.isAccessible = true
-    //    eventField.invoke(eventViewModel, eventList)
   }
 
   @Test
   fun testSavedScreenWithSavedEvents() {
+    userViewModel.addUser(MockUser.createMockUser(savedEvents = eventList)) {}
+
     composeTestRule.setContent { SavedScreen(navigationAction, eventViewModel, userViewModel) }
 
     composeTestRule.waitForIdle()
@@ -109,6 +104,10 @@ class SavedTest {
 
   @Test
   fun testSavedScreenWithNoSavedEvents() {
+    userViewModel.addUser(MockUser.createMockUser(
+      savedEvents = emptyList()
+    )) {}
+
     composeTestRule.setContent { SavedScreen(navigationAction, eventViewModel, userViewModel) }
 
     composeTestRule.waitForIdle()
