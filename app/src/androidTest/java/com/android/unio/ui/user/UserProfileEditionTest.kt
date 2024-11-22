@@ -89,12 +89,12 @@ class UserProfileEditionTest {
         .onNodeWithTag(UserEditionTestTags.INTERESTS_BUTTON)
         .performScrollTo()
         .performClick()
-    composeTestRule.onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW + "0").performClick()
-    composeTestRule.onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW + "1").performClick()
+    composeTestRule.onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW + "SPORTS").performScrollTo().performClick()
+    composeTestRule.onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW + "GAMING").performScrollTo().performClick()
     composeTestRule.onNodeWithTag(InterestsOverlayTestTags.SAVE_BUTTON).performClick()
 
-    composeTestRule.onNodeWithTag(UserEditionTestTags.INTERESTS_CHIP + "0").assertExists()
-    composeTestRule.onNodeWithTag(UserEditionTestTags.INTERESTS_CHIP + "1").assertExists()
+    composeTestRule.onNodeWithTag(UserEditionTestTags.INTERESTS_CHIP + "SPORTS").assertExists()
+    composeTestRule.onNodeWithTag(UserEditionTestTags.INTERESTS_CHIP + "GAMING").assertExists()
   }
 
   @Test

@@ -330,9 +330,9 @@ private fun InterestButtonAndFlowRow(
         Text(context.getString(R.string.account_details_add_interests))
       }
   FlowRow {
-    interests.forEachIndexed { index, pair ->
+    interests.forEach { pair ->
       if (pair.second.value) {
-        InterestInputChip(pair = pair, testTag = AccountDetailsTestTags.INTERESTS_CHIP + "$index")
+        InterestInputChip(pair = pair, testTag = AccountDetailsTestTags.INTERESTS_CHIP + pair.first.name)
       }
     }
   }

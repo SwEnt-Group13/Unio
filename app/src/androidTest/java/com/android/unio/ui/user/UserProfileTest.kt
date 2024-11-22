@@ -66,12 +66,15 @@ class UserProfileTest {
     composeTestRule.onNodeWithTag(UserProfileTestTags.BIOGRAPHY).assertExists()
     composeTestRule.onNodeWithTag(UserProfileTestTags.BIOGRAPHY).assertTextEquals(user.biography)
 
-    composeTestRule
-        .onAllNodesWithTag(UserProfileTestTags.SOCIAL_BUTTON)
-        .assertCountEquals(user.socials.size)
-    composeTestRule
-        .onAllNodesWithTag(UserProfileTestTags.INTEREST_CHIP)
-        .assertCountEquals(user.interests.size)
+    user.socials.forEach { social ->
+      composeTestRule.onNodeWithTag(UserProfileTestTags.SOCIAL_BUTTON + social.social.title).assertExists()
+    }
+
+    user.interests.forEach { interest ->
+      composeTestRule
+          .onNodeWithTag(UserProfileTestTags.INTEREST_CHIP + interest.name)
+          .assertExists()
+    }
   }
 
   @Test

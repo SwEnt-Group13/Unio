@@ -236,7 +236,7 @@ fun UserProfileScreenContent(
           ) {
             user.interests.forEach { interest ->
               SuggestionChip(
-                  modifier = Modifier.testTag(UserProfileTestTags.INTEREST_CHIP + interest.title),
+                  modifier = Modifier.testTag(UserProfileTestTags.INTEREST_CHIP + interest.name),
                   onClick = {},
                   label = {
                     Text(context.getString(interest.title), style = AppTypography.bodySmall)
