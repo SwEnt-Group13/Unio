@@ -8,7 +8,13 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextInput
+import com.android.unio.model.authentication.unRegisterAllAuthStateListeners
 import com.android.unio.model.strings.test_tags.SocialsOverlayTestTags
+import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
+import io.mockk.clearAllMocks
+import io.mockk.unmockkAll
+import org.junit.After
 
 /*
  * Scrolls to a component if it's not displayed and asserts if it is displayed
@@ -32,4 +38,14 @@ fun addNewUserSocial(composeTestRule: ComposeContentTestRule, username: String, 
       .onNodeWithTag(SocialsOverlayTestTags.PROMPT_DROP_BOX_ITEM + platform)
       .performClick()
   composeTestRule.onNodeWithTag(SocialsOverlayTestTags.PROMPT_SAVE_BUTTON).performClick()
+}
+
+fun clearTest() {
+  Firebase.auth.unRegisterAllAuthStateListeners()
+  unmockkAll()
+  clearAllMocks()
+}
+
+open class TearDown {
+  @After open fun tearDown() = clearTest()
 }
