@@ -1,10 +1,8 @@
 package com.android.unio.ui.user
 
-import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.navigation.NavHostController
 import com.android.unio.mocks.user.MockUser
@@ -65,7 +63,9 @@ class UserProfileTest {
     composeTestRule.onNodeWithTag(UserProfileTestTags.BIOGRAPHY).assertTextEquals(user.biography)
 
     user.socials.forEach { social ->
-      composeTestRule.onNodeWithTag(UserProfileTestTags.SOCIAL_BUTTON + social.social.title).assertExists()
+      composeTestRule
+          .onNodeWithTag(UserProfileTestTags.SOCIAL_BUTTON + social.social.title)
+          .assertExists()
     }
 
     user.interests.forEach { interest ->

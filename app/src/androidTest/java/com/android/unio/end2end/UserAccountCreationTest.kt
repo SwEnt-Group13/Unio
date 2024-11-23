@@ -7,7 +7,6 @@ import androidx.compose.ui.test.isDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
-import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextInput
 import androidx.test.filters.LargeTest
 import com.android.unio.MainActivity
@@ -75,23 +74,17 @@ class UserAccountCreationTest : EndToEndTest() {
     assertDisplayComponentInScroll(
         composeTestRule.onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW + "SPORTS"))
 
-    composeTestRule
-        .onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW + "SPORTS")
-        .performClick()
+    composeTestRule.onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW + "SPORTS").performClick()
 
     assertDisplayComponentInScroll(
         composeTestRule.onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW + "TRAVEL"))
 
-    composeTestRule
-        .onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW + "TRAVEL")
-        .performClick()
+    composeTestRule.onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW + "TRAVEL").performClick()
 
     assertDisplayComponentInScroll(
         composeTestRule.onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW + "FOOD"))
 
-    composeTestRule
-        .onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW + "FOOD")
-        .performClick()
+    composeTestRule.onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW + "FOOD").performClick()
     composeTestRule.onNodeWithTag(InterestsOverlayTestTags.SAVE_BUTTON).assertIsDisplayed()
     composeTestRule.onNodeWithTag(InterestsOverlayTestTags.SAVE_BUTTON).performClick()
 

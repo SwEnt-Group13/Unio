@@ -135,13 +135,13 @@ open class EndToEndTest : FirebaseEmulatorFunctions {
   }
 
   // This user's email is already verified
-  object User1 {
+  object JohnDoe {
     const val EMAIL = "example1@gmail.com"
     const val PASSWORD = "password123"
   }
 
   // This user's email is already verified
-  object User2 {
+  object AliceMurphy {
     const val EMAIL = "example2@gmail.com"
     const val PASSWORD = "helloWorld123"
   }

@@ -33,7 +33,7 @@ class EditUserDetailsTest : EndToEndTest() {
   fun testUserModifiesHisAccountDetails() {
 
     // Sign in with user
-    signInWithUser(composeTestRule, User2.EMAIL, User2.PASSWORD)
+    signInWithUser(composeTestRule, AliceMurphy.EMAIL, AliceMurphy.PASSWORD)
 
     composeTestRule.waitUntil(10000) {
       composeTestRule.onNodeWithTag(HomeTestTags.SCREEN).isDisplayed()
@@ -92,27 +92,28 @@ class EditUserDetailsTest : EndToEndTest() {
           .performClick()
     }
 
-      composeTestRule.onNodeWithTag(InterestsOverlayTestTags.SAVE_BUTTON).performClick()
+    composeTestRule.onNodeWithTag(InterestsOverlayTestTags.SAVE_BUTTON).performClick()
 
-      //Return to the edition screen
-      composeTestRule.waitUntil (10000) {
-          composeTestRule.onNodeWithTag(UserEditionTestTags.DISCARD_TEXT).isDisplayed()
-      }
+    // Return to the edition screen
+    composeTestRule.waitUntil(10000) {
+      composeTestRule.onNodeWithTag(UserEditionTestTags.DISCARD_TEXT).isDisplayed()
+    }
 
-      //Navigate to the user socails overlay
-      composeTestRule.onNodeWithTag(UserEditionTestTags.SOCIALS_BUTTON).performScrollTo().performClick()
+    // Navigate to the user socails overlay
+    composeTestRule
+        .onNodeWithTag(UserEditionTestTags.SOCIALS_BUTTON)
+        .performScrollTo()
+        .performClick()
 
     // Add some new user socials
     addNewUserSocial(composeTestRule, "evaWat2000", "Facebook")
 
-      composeTestRule.onNodeWithTag(SocialsOverlayTestTags.SAVE_BUTTON).performScrollTo().performClick()
+    composeTestRule
+        .onNodeWithTag(SocialsOverlayTestTags.SAVE_BUTTON)
+        .performScrollTo()
+        .performClick()
 
-      composeTestRule.waitUntil (10000) {
-          composeTestRule.onNodeWithTag(UserEditionTestTags.SAVE_BUTTON).isDisplayed()
-      }
-
-      composeTestRule.onNodeWithTag(UserEditionTestTags.SAVE_BUTTON).performScrollTo()
-          .performClick()
+    composeTestRule.onNodeWithTag(UserEditionTestTags.SAVE_BUTTON).performScrollTo().performClick()
 
     // Wait until the user profile screen is displayed
     composeTestRule.waitUntil(10000) {

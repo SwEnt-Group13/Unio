@@ -152,7 +152,7 @@ fun UserProfileEditionScreenContent(
    * uid, email, followedAssociations, joinedAssociations and savedEvents will not be modified and
    * simply be copied from the user.
    */
-  val modifyUser: (String) -> Unit = { uri ->
+  val createUser: (String) -> Unit = { uri ->
     val newUser =
         User(
             uid = user.uid,
@@ -217,7 +217,7 @@ fun UserProfileEditionScreenContent(
               interestsFlow = userInterestsFlow, onShowInterests = { showInterestsOverlay = true })
 
           Button(
-              onClick = { onModifyUser(profilePictureUri, modifyUser) },
+              onClick = { onModifyUser(profilePictureUri, createUser) },
               modifier = Modifier.testTag(UserEditionTestTags.SAVE_BUTTON)) {
                 Text(context.getString(R.string.user_settings_save_changes))
               }

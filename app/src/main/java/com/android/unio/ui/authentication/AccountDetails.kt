@@ -332,7 +332,8 @@ private fun InterestButtonAndFlowRow(
   FlowRow {
     interests.forEach { pair ->
       if (pair.second.value) {
-        InterestInputChip(pair = pair, testTag = AccountDetailsTestTags.INTERESTS_CHIP + pair.first.name)
+        InterestInputChip(
+            pair = pair, testTag = AccountDetailsTestTags.INTERESTS_CHIP + pair.first.name)
       }
     }
   }
