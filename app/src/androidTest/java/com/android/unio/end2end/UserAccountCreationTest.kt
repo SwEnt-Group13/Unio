@@ -12,20 +12,17 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import androidx.test.filters.LargeTest
 import com.android.unio.MainActivity
+import com.android.unio.assertDisplayComponentInScroll
 import com.android.unio.model.strings.test_tags.AccountDetailsTestTags
 import com.android.unio.model.strings.test_tags.BottomNavBarTestTags
 import com.android.unio.model.strings.test_tags.EmailVerificationTestTags
 import com.android.unio.model.strings.test_tags.HomeTestTags
 import com.android.unio.model.strings.test_tags.InterestsOverlayTestTags
 import com.android.unio.model.strings.test_tags.UserProfileTestTags
-import com.android.unio.ui.assertDisplayComponentInScroll
 import dagger.hilt.android.testing.HiltAndroidTest
-import io.mockk.clearAllMocks
-import io.mockk.unmockkAll
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.json.JSONObject
-import org.junit.After
 import org.junit.Rule
 import org.junit.Test
 
@@ -145,11 +142,5 @@ class UserAccountCreationTest : EndToEndTest() {
     val request = Request.Builder().url(url.replace("127.0.0.1", "10.0.2.2")).build()
 
     client.newCall(request).execute()
-  }
-
-  @After
-  fun tearDown() {
-    clearAllMocks()
-    unmockkAll()
   }
 }

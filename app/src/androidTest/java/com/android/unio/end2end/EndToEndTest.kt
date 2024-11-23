@@ -1,10 +1,12 @@
 package com.android.unio.end2end
 
+import android.util.Log
 import androidx.compose.ui.test.isDisplayed
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
+import com.android.unio.clearTest
 import com.android.unio.model.strings.test_tags.BottomNavBarTestTags
 import com.android.unio.model.strings.test_tags.UserProfileTestTags
 import com.android.unio.model.strings.test_tags.WelcomeTestTags
@@ -15,6 +17,7 @@ import com.google.firebase.functions.functions
 import dagger.hilt.android.testing.HiltAndroidRule
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 
@@ -29,6 +32,11 @@ open class EndToEndTest : FirebaseEmulatorFunctions {
 
     /** Connect Firebase to the emulators */
     useEmulators()
+  }
+
+  @After
+  fun tearDown() {
+    clearTest()
   }
 
   override fun signInWithUser(
@@ -78,9 +86,8 @@ open class EndToEndTest : FirebaseEmulatorFunctions {
       Firebase.firestore.useEmulator(HOST, Firestore.PORT)
       Firebase.auth.useEmulator(HOST, Auth.PORT)
       Firebase.functions.useEmulator(HOST, Functions.PORT)
-      println("Firebase emulators configured successfully.")
     } catch (e: IllegalStateException) {
-      // Firebase emulators have already been initialized. Skipping configuration.
+      Log.d("EndToEndTest", "Firebase Emulators are already in use.")
     }
   }
 
