@@ -1,4 +1,4 @@
-package com.android.unio.ui
+package com.android.unio
 
 import androidx.compose.ui.test.SemanticsNodeInteraction
 import androidx.compose.ui.test.assertIsDisplayed
