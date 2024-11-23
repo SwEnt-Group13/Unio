@@ -19,9 +19,12 @@ import com.google.firebase.Timestamp
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import io.mockk.MockKAnnotations
+import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.spyk
+import io.mockk.unmockkAll
+import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -113,5 +116,11 @@ class SavedTest {
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag(SavedTestTags.TITLE))
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag(SavedTestTags.FAB))
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag(SavedTestTags.NO_EVENTS))
+  }
+
+  @After
+  fun tearDown() {
+    clearAllMocks()
+    unmockkAll()
   }
 }

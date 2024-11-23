@@ -16,14 +16,17 @@ import com.android.unio.ui.navigation.NavigationAction
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import io.mockk.MockKAnnotations
+import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
+import io.mockk.unmockkAll
+import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 
 @HiltAndroidTest
-class UserClaimAssociationPresidentialRightsScreenTest {
+class UserClaimAssociationPresidentialRightsTest {
 
   @get:Rule val composeTestRule = createComposeRule()
   @get:Rule val hiltRule = HiltAndroidRule(this)
@@ -83,5 +86,11 @@ class UserClaimAssociationPresidentialRightsScreenTest {
 
     // click the back button
     composeTestRule.onNodeWithTag("goBackButton").performClick()
+  }
+
+  @After
+  fun tearDown() {
+    clearAllMocks()
+    unmockkAll()
   }
 }
