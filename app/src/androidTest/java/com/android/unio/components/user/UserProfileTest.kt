@@ -13,6 +13,8 @@ import com.android.unio.model.search.SearchRepository
 import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.strings.test_tags.UserProfileTestTags
 import com.android.unio.ui.navigation.NavigationAction
+import com.android.unio.ui.user.UserProfileBottomSheet
+import com.android.unio.ui.user.UserProfileScreenScaffold
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import io.mockk.MockKAnnotations

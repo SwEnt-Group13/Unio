@@ -7,6 +7,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.core.net.toUri
 import com.android.unio.TearDown
+import com.android.unio.ui.image.AsyncImageWrapper
 import org.junit.Rule
 import org.junit.Test
 

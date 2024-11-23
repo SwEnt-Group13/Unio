@@ -25,6 +25,7 @@ import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.strings.test_tags.HomeTestTags
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserViewModel
+import com.android.unio.ui.home.HomeScreen
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
 import com.android.unio.ui.navigation.TopLevelDestination

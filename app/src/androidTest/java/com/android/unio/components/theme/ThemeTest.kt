@@ -5,6 +5,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.test.junit4.createComposeRule
 import com.android.unio.TearDown
 import com.android.unio.model.preferences.AppPreferences
+import com.android.unio.ui.theme.AppTheme
+import com.android.unio.ui.theme.primaryDark
+import com.android.unio.ui.theme.primaryLight
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.flow.MutableStateFlow
 import me.zhanghai.compose.preference.MutablePreferences

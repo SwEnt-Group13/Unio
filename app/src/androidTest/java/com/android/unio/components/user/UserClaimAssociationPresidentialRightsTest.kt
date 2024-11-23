@@ -17,6 +17,7 @@ import com.android.unio.model.event.EventRepositoryFirestore
 import com.android.unio.model.follow.ConcurrentAssociationUserRepositoryFirestore
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.ui.navigation.NavigationAction
+import com.android.unio.ui.user.UserClaimAssociationPresidentialRightsScreenScaffold
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import io.mockk.MockKAnnotations

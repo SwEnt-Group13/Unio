@@ -7,6 +7,7 @@ import com.android.unio.TearDown
 import com.android.unio.model.preferences.AppPreferences
 import com.android.unio.model.strings.test_tags.SettingsTestTags
 import com.android.unio.ui.navigation.NavigationAction
+import com.android.unio.ui.settings.SettingsScreen
 import io.mockk.MockKAnnotations
 import io.mockk.impl.annotations.MockK
 import kotlin.reflect.full.memberProperties

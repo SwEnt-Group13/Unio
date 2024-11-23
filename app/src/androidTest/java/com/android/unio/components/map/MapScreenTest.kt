@@ -20,6 +20,7 @@ import com.android.unio.model.strings.test_tags.MapTestTags
 import com.android.unio.model.user.User
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserViewModel
+import com.android.unio.ui.map.MapScreen
 import com.android.unio.ui.navigation.NavigationAction
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.tasks.OnSuccessListener

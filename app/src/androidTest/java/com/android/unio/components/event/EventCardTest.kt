@@ -12,6 +12,7 @@ import com.android.unio.mocks.map.MockLocation
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventType
 import com.android.unio.model.strings.test_tags.EventCardTestTags
+import com.android.unio.ui.event.EventCardScaffold
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
 import com.google.firebase.Timestamp

@@ -10,6 +10,7 @@ import androidx.compose.ui.test.performScrollTo
 import com.android.unio.TearDown
 import com.android.unio.model.strings.test_tags.InterestsOverlayTestTags
 import com.android.unio.model.user.Interest
+import com.android.unio.ui.authentication.overlay.InterestOverlay
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test

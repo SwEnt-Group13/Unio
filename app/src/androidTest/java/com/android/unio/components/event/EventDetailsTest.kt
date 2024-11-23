@@ -19,6 +19,7 @@ import com.android.unio.model.event.EventUtils.formatTimestamp
 import com.android.unio.model.map.MapViewModel
 import com.android.unio.model.strings.FormatStrings.DAY_MONTH_FORMAT
 import com.android.unio.model.strings.test_tags.EventDetailsTestTags
+import com.android.unio.ui.event.EventScreenScaffold
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
 import com.google.android.gms.location.FusedLocationProviderClient

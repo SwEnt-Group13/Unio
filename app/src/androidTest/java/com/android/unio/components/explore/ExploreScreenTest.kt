@@ -19,6 +19,9 @@ import com.android.unio.model.search.SearchRepository
 import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.strings.test_tags.ExploreContentTestTags
 import com.android.unio.model.strings.test_tags.ExploreTestTags
+import com.android.unio.ui.explore.ExploreScreen
+import com.android.unio.ui.explore.getFilteredAssociationsByAlphabeticalOrder
+import com.android.unio.ui.explore.getSortedEntriesAssociationsByCategory
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
 import dagger.hilt.android.testing.HiltAndroidRule
