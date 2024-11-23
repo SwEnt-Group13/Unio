@@ -14,6 +14,7 @@ import androidx.compose.ui.test.performScrollTo
 import androidx.navigation.NavHostController
 import com.android.unio.R
 import com.android.unio.TearDown
+import com.android.unio.assertDisplayComponentInScroll
 import com.android.unio.mocks.association.MockAssociation
 import com.android.unio.mocks.event.MockEvent
 import com.android.unio.model.association.Association
@@ -184,13 +185,6 @@ class AssociationProfileTest : TearDown() {
         composeTestRule.onNodeWithTag(AssociationProfileTestTags.RECRUITMENT_DESCRIPTION))
     assertDisplayComponentInScroll(
         composeTestRule.onNodeWithTag(AssociationProfileTestTags.RECRUITMENT_ROLES))
-  }
-
-  private fun assertDisplayComponentInScroll(compose: SemanticsNodeInteraction) {
-    if (compose.isNotDisplayed()) {
-      compose.performScrollTo()
-    }
-    compose.assertIsDisplayed()
   }
 
   @Test

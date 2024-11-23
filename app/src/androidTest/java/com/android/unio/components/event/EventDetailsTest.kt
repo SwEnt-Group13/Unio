@@ -11,6 +11,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.navigation.NavHostController
+import com.android.unio.assertDisplayComponentInScroll
 import com.android.unio.mocks.association.MockAssociation
 import com.android.unio.mocks.event.MockEvent
 import com.android.unio.model.association.Association
@@ -133,13 +134,6 @@ class EventDetailsTest {
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag(EventDetailsTestTags.MAP_BUTTON))
     assertDisplayComponentInScroll(
         composeTestRule.onNodeWithTag(EventDetailsTestTags.SIGN_UP_BUTTON))
-  }
-
-  private fun assertDisplayComponentInScroll(compose: SemanticsNodeInteraction) {
-    if (compose.isNotDisplayed()) {
-      compose.performScrollTo()
-    }
-    compose.assertIsDisplayed()
   }
 
   @Test
