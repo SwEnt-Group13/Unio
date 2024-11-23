@@ -3,6 +3,7 @@ package com.android.unio.ui
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
+import com.android.unio.TearDown
 import com.android.unio.model.event.EventRepository
 import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
@@ -15,17 +16,14 @@ import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.home.HomeScreen
 import com.android.unio.ui.navigation.NavigationAction
 import io.mockk.MockKAnnotations
-import io.mockk.clearAllMocks
 import io.mockk.impl.annotations.MockK
 import io.mockk.spyk
-import io.mockk.unmockkAll
-import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.mockito.kotlin.mock
 
-class BottomNavigationTest {
+class BottomNavigationTest : TearDown() {
 
   @MockK private lateinit var navigationAction: NavigationAction
 
@@ -61,11 +59,5 @@ class BottomNavigationTest {
   @Test
   fun testBottomNavigationMenuDisplayed() {
     composeTestRule.onNodeWithTag(NavigationActionTestTags.BOTTOM_NAV_MENU).assertIsDisplayed()
-  }
-
-  @After
-  fun tearDown() {
-    clearAllMocks()
-    unmockkAll()
   }
 }

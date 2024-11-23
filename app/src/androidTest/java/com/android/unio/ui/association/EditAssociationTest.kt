@@ -7,6 +7,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performScrollTo
 import androidx.navigation.NavHostController
+import com.android.unio.TearDown
 import com.android.unio.mocks.association.MockAssociation
 import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationRepository
@@ -14,9 +15,6 @@ import com.android.unio.model.strings.test_tags.EditAssociationTestTags
 import com.android.unio.ui.navigation.NavigationAction
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
-import io.mockk.clearAllMocks
-import io.mockk.unmockkAll
-import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -26,7 +24,7 @@ import org.mockito.MockitoAnnotations
 import org.mockito.kotlin.any
 import org.mockito.kotlin.mock
 
-class EditAssociationTest {
+class EditAssociationTest : TearDown() {
 
   private lateinit var navHostController: NavHostController
   private lateinit var navigationAction: NavigationAction
@@ -84,11 +82,5 @@ class EditAssociationTest {
       compose.performScrollTo()
     }
     compose.assertIsDisplayed()
-  }
-
-  @After
-  fun tearDown() {
-    clearAllMocks()
-    unmockkAll()
   }
 }

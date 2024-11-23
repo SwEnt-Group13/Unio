@@ -13,6 +13,7 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.navigation.NavHostController
 import com.android.unio.R
+import com.android.unio.TearDown
 import com.android.unio.mocks.association.MockAssociation
 import com.android.unio.mocks.event.MockEvent
 import com.android.unio.model.association.Association
@@ -32,15 +33,8 @@ import com.android.unio.ui.navigation.NavigationAction
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import io.mockk.MockKAnnotations
-import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
-import io.mockk.just
-import io.mockk.mockk
-import io.mockk.runs
-import io.mockk.spyk
-import io.mockk.unmockkAll
-import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -49,27 +43,22 @@ import org.mockito.Mockito.`when`
 import org.mockito.kotlin.verify
 
 @HiltAndroidTest
-class AssociationProfileTest {
-
-  private lateinit var navigationAction: NavigationAction
-
-  private lateinit var associationRepository: AssociationRepositoryFirestore
-
-  @MockK private lateinit var eventRepository: EventRepositoryFirestore
-  @MockK
-  private lateinit var concurrentAssociationUserRepository:
-      ConcurrentAssociationUserRepositoryFirestore
-
-  private lateinit var eventViewModel: EventViewModel
-
-  @MockK private lateinit var userRepository: UserRepositoryFirestore
-  private lateinit var userViewModel: UserViewModel
-
-  private lateinit var associationViewModel: AssociationViewModel
+class AssociationProfileTest : TearDown() {
 
   private lateinit var associations: List<Association>
   private lateinit var events: List<Event>
 
+  private lateinit var navigationAction: NavigationAction
+  private lateinit var eventViewModel: EventViewModel
+  private lateinit var userViewModel: UserViewModel
+  private lateinit var associationViewModel: AssociationViewModel
+
+  @MockK private lateinit var associationRepository: AssociationRepositoryFirestore
+  @MockK private lateinit var eventRepository: EventRepositoryFirestore
+  @MockK
+  private lateinit var concurrentAssociationUserRepository:
+      ConcurrentAssociationUserRepositoryFirestore
+  @MockK private lateinit var userRepository: UserRepositoryFirestore
   @MockK private lateinit var imageRepository: ImageRepositoryFirebaseStorage
 
   @get:Rule val composeTestRule = createComposeRule()
@@ -88,42 +77,6 @@ class AssociationProfileTest {
 
     events = listOf(MockEvent.createMockEvent(uid = "a"), MockEvent.createMockEvent(uid = "b"))
 
-    navigationAction = NavigationAction(mock(NavHostController::class.java))
-
-    associationRepository = spyk(AssociationRepositoryFirestore(mockk()))
-
-    every { eventRepository.init(any()) } just runs
-
-    every { eventRepository.getEvents(any(), any()) } answers
-        {
-          val onSuccess = args[0] as (List<Event>) -> Unit
-          onSuccess(events)
-        }
-    eventViewModel = EventViewModel(eventRepository, imageRepository)
-    eventViewModel.loadEvents()
-    eventViewModel.selectEvent(events.first().uid)
-
-    every { associationRepository.getAssociations(any(), any()) } answers
-        {
-          val onSuccess = args[0] as (List<Association>) -> Unit
-          onSuccess(associations)
-        }
-
-    every { eventRepository.getEventsOfAssociation(any(), any(), any()) } answers
-        {
-          val onSuccess = args[1] as (List<Event>) -> Unit
-          onSuccess(events)
-        }
-
-    every { userRepository.init(any()) } just runs
-
-    every { concurrentAssociationUserRepository.updateFollow(any(), any(), any(), any()) } answers
-        {
-          val onSuccess = args[2] as () -> Unit
-          onSuccess()
-        }
-
-    userViewModel = UserViewModel(userRepository)
     val user =
         User(
             uid = "1",
@@ -139,6 +92,39 @@ class AssociationProfileTest {
             profilePicture = "",
         )
 
+    navigationAction = NavigationAction(mock(NavHostController::class.java))
+
+    every { eventRepository.init(any()) } answers { (args[0] as () -> Unit).invoke() }
+
+    every { eventRepository.getEvents(any(), any()) } answers
+        {
+          val onSuccess = args[0] as (List<Event>) -> Unit
+          onSuccess(events)
+        }
+    eventViewModel = EventViewModel(eventRepository, imageRepository)
+    eventViewModel.loadEvents()
+    eventViewModel.selectEvent(events.first().uid)
+
+    every { associationRepository.init(any()) } answers { firstArg<() -> Unit>().invoke() }
+    every { associationRepository.getAssociations(any(), any()) } answers
+        {
+          val onSuccess = args[0] as (List<Association>) -> Unit
+          onSuccess(associations)
+        }
+
+    every { eventRepository.getEventsOfAssociation(any(), any(), any()) } answers
+        {
+          val onSuccess = args[1] as (List<Event>) -> Unit
+          onSuccess(events)
+        }
+
+    every { userRepository.init(any()) } answers { (args[0] as () -> Unit).invoke() }
+
+    every { concurrentAssociationUserRepository.updateFollow(any(), any(), any(), any()) } answers
+        {
+          val onSuccess = args[2] as () -> Unit
+          onSuccess()
+        }
     every { userRepository.getUserWithId(any(), any(), any()) } answers
         {
           val onSuccess = args[1] as (User) -> Unit
@@ -149,6 +135,8 @@ class AssociationProfileTest {
           val onSuccess = args[1] as () -> Unit
           onSuccess()
         }
+
+    userViewModel = UserViewModel(userRepository, false)
     userViewModel.addUser(user, {})
 
     associationViewModel =
@@ -299,11 +287,5 @@ class AssociationProfileTest {
     }
 
     composeTestRule.onNodeWithTag(AssociationProfileTestTags.SCREEN).assertIsNotDisplayed()
-  }
-
-  @After
-  fun tearDown() {
-    clearAllMocks()
-    unmockkAll()
   }
 }

@@ -5,6 +5,7 @@ import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
+import com.android.unio.TearDown
 import com.android.unio.mocks.association.MockAssociation
 import com.android.unio.mocks.event.MockEvent
 import com.android.unio.mocks.map.MockLocation
@@ -15,17 +16,14 @@ import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
 import com.google.firebase.Timestamp
 import io.mockk.MockKAnnotations
-import io.mockk.clearAllMocks
-import io.mockk.unmockkAll
 import java.util.Date
-import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.mockito.Mockito.mock
 import org.mockito.kotlin.verify
 
-class EventCardTest {
+class EventCardTest : TearDown() {
 
   @get:Rule val composeTestRule = createComposeRule()
 
@@ -200,11 +198,5 @@ class EventCardTest {
     composeTestRule
         .onNodeWithTag(EventCardTestTags.EVENT_DATE, useUnmergedTree = true)
         .assertExists()
-  }
-
-  @After
-  fun tearDown() {
-    clearAllMocks()
-    unmockkAll()
   }
 }

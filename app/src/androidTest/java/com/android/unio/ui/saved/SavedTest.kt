@@ -2,6 +2,8 @@ package com.android.unio.ui.saved
 
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
+import com.android.unio.TearDown
+import com.android.unio.assertDisplayComponentInScroll
 import com.android.unio.mocks.association.MockAssociation
 import com.android.unio.mocks.event.MockEvent
 import com.android.unio.mocks.user.MockUser
@@ -12,25 +14,21 @@ import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.strings.test_tags.SavedTestTags
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserViewModel
-import com.android.unio.ui.assertDisplayComponentInScroll
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.TopLevelDestination
 import com.google.firebase.Timestamp
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import io.mockk.MockKAnnotations
-import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.spyk
-import io.mockk.unmockkAll
-import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 
 @HiltAndroidTest
-class SavedTest {
+class SavedTest : TearDown() {
   @get:Rule val composeTestRule = createComposeRule()
 
   @get:Rule val hiltRule = HiltAndroidRule(this)
@@ -116,11 +114,5 @@ class SavedTest {
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag(SavedTestTags.TITLE))
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag(SavedTestTags.FAB))
     assertDisplayComponentInScroll(composeTestRule.onNodeWithTag(SavedTestTags.NO_EVENTS))
-  }
-
-  @After
-  fun tearDown() {
-    clearAllMocks()
-    unmockkAll()
   }
 }

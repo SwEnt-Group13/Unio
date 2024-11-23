@@ -8,12 +8,13 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextInput
+import com.android.unio.TearDown
+import com.android.unio.addNewUserSocial
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.strings.test_tags.AccountDetailsTestTags
 import com.android.unio.model.strings.test_tags.InterestsOverlayTestTags
 import com.android.unio.model.strings.test_tags.SocialsOverlayTestTags
 import com.android.unio.model.user.UserViewModel
-import com.android.unio.ui.addNewUserSocial
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
 import com.google.firebase.Firebase
@@ -23,13 +24,10 @@ import com.google.firebase.auth.internal.zzac
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import io.mockk.MockKAnnotations
-import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import io.mockk.mockkStatic
-import io.mockk.unmockkAll
-import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -38,7 +36,7 @@ import org.mockito.Mockito.`when`
 import org.mockito.kotlin.verify
 
 @HiltAndroidTest
-class AccountDetailsTest {
+class AccountDetailsTest : TearDown() {
 
   @MockK private lateinit var firebaseAuth: FirebaseAuth
   private lateinit var navigationAction: NavigationAction
@@ -204,11 +202,5 @@ class AccountDetailsTest {
         .performScrollTo()
         .performClick()
     verify(navigationAction).navigateTo(screen = Screen.HOME)
-  }
-
-  @After
-  fun tearDown() {
-    clearAllMocks()
-    unmockkAll()
   }
 }

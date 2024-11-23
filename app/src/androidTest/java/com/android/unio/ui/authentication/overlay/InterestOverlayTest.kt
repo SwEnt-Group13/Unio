@@ -7,16 +7,14 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
+import com.android.unio.TearDown
 import com.android.unio.model.strings.test_tags.InterestsOverlayTestTags
 import com.android.unio.model.user.Interest
-import io.mockk.clearAllMocks
-import io.mockk.unmockkAll
-import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 
-class InterestOverlayTest {
+class InterestOverlayTest : TearDown() {
   val interests = Interest.entries.map { it to mutableStateOf(false) }.toMutableList()
 
   @get:Rule val composeTestRule = createComposeRule()
@@ -57,11 +55,5 @@ class InterestOverlayTest {
           .onNodeWithTag(InterestsOverlayTestTags.CHECKBOX + pair.first.name)
           .assertIsOn()
     }
-  }
-
-  @After
-  fun tearDown() {
-    clearAllMocks()
-    unmockkAll()
   }
 }

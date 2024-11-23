@@ -3,6 +3,7 @@ package com.android.unio.ui.event
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
+import com.android.unio.assertDisplayComponentInScroll
 import com.android.unio.mocks.association.MockAssociation
 import com.android.unio.mocks.event.MockEvent
 import com.android.unio.mocks.user.MockUser
@@ -17,7 +18,6 @@ import com.android.unio.model.search.SearchRepository
 import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.strings.test_tags.EventCreationOverlayTestTags
 import com.android.unio.model.strings.test_tags.EventCreationTestTags
-import com.android.unio.ui.assertDisplayComponentInScroll
 import com.android.unio.ui.navigation.NavigationAction
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth

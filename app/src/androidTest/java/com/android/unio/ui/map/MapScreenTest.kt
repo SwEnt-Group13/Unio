@@ -10,6 +10,7 @@ import androidx.compose.ui.test.performClick
 import androidx.navigation.NavHostController
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.rule.GrantPermissionRule
+import com.android.unio.TearDown
 import com.android.unio.mocks.user.MockUser
 import com.android.unio.model.event.EventRepositoryFirestore
 import com.android.unio.model.event.EventViewModel
@@ -24,13 +25,10 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.gms.tasks.Task
 import io.mockk.MockKAnnotations
-import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.spyk
-import io.mockk.unmockkAll
 import io.mockk.verify
-import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -40,7 +38,7 @@ import org.mockito.Mockito.`when`
 import org.mockito.kotlin.any
 
 @RunWith(AndroidJUnit4::class)
-class MapScreenTest {
+class MapScreenTest : TearDown() {
   @get:Rule val composeTestRule = createComposeRule()
 
   @get:Rule
@@ -136,11 +134,5 @@ class MapScreenTest {
     assert(mapViewModel.userLocation.value != null)
     assert(mapViewModel.userLocation.value!!.latitude == location.latitude)
     assert(mapViewModel.userLocation.value!!.longitude == location.longitude)
-  }
-
-  @After
-  fun tearDown() {
-    clearAllMocks()
-    unmockkAll()
   }
 }

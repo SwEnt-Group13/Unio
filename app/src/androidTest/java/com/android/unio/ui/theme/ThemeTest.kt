@@ -3,19 +3,17 @@ package com.android.unio.ui.theme
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.test.junit4.createComposeRule
+import com.android.unio.TearDown
 import com.android.unio.model.preferences.AppPreferences
-import io.mockk.clearAllMocks
-import io.mockk.unmockkAll
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.flow.MutableStateFlow
 import me.zhanghai.compose.preference.MutablePreferences
 import me.zhanghai.compose.preference.Preferences
 import me.zhanghai.compose.preference.ProvidePreferenceLocals
-import org.junit.After
 import org.junit.Rule
 import org.junit.Test
 
-class ThemeTest {
+class ThemeTest : TearDown() {
 
   @get:Rule val composeTestRule = createComposeRule()
 
@@ -90,11 +88,5 @@ class ThemeTest {
 
     override fun toMutablePreferences(): MutablePreferences =
         MapMutablePreferences(map.toMutableMap())
-  }
-
-  @After
-  fun tearDown() {
-    clearAllMocks()
-    unmockkAll()
   }
 }

@@ -5,17 +5,15 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
+import com.android.unio.TearDown
+import com.android.unio.addNewUserSocial
 import com.android.unio.model.strings.test_tags.SocialsOverlayTestTags
 import com.android.unio.model.user.UserSocial
-import com.android.unio.ui.addNewUserSocial
-import io.mockk.clearAllMocks
-import io.mockk.unmockkAll
-import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 
-class SocialOverlayTest {
+class SocialOverlayTest : TearDown() {
   private val userSocials = emptyList<UserSocial>().toMutableList()
 
   @get:Rule val composeTestRule = createComposeRule()
@@ -78,11 +76,5 @@ class SocialOverlayTest {
     composeTestRule
         .onNodeWithTag(SocialsOverlayTestTags.PROMPT_ERROR, useUnmergedTree = true)
         .assertIsDisplayed()
-  }
-
-  @After
-  fun tearDown() {
-    clearAllMocks()
-    unmockkAll()
   }
 }

@@ -6,6 +6,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
+import com.android.unio.TearDown
 import com.android.unio.mocks.association.MockAssociation
 import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationCategory
@@ -23,20 +24,17 @@ import com.android.unio.ui.navigation.Screen
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import io.mockk.MockKAnnotations
-import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.spyk
-import io.mockk.unmockkAll
 import io.mockk.verify
-import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 
 @HiltAndroidTest
-class ExploreScreenTest {
+class ExploreScreenTest : TearDown() {
   @MockK private lateinit var navigationAction: NavigationAction
   @MockK private lateinit var associationRepository: AssociationRepositoryFirestore
   private lateinit var searchViewModel: SearchViewModel
@@ -170,11 +168,5 @@ class ExploreScreenTest {
     }
 
     verify(atLeast = 1) { navigationAction.navigateTo(Screen.ASSOCIATION_PROFILE) }
-  }
-
-  @After
-  fun tearDown() {
-    clearAllMocks()
-    unmockkAll()
   }
 }

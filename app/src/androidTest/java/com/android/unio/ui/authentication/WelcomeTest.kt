@@ -7,22 +7,20 @@ import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performTextInput
+import com.android.unio.TearDown
 import com.android.unio.mocks.user.MockUser
 import com.android.unio.model.strings.test_tags.WelcomeTestTags
 import com.android.unio.model.user.User
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserViewModel
 import io.mockk.MockKAnnotations
-import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
-import io.mockk.unmockkAll
-import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 
-class WelcomeTest {
+class WelcomeTest : TearDown() {
 
   @get:Rule val composeTestRule = createComposeRule()
 
@@ -33,7 +31,7 @@ class WelcomeTest {
 
   @Before
   fun setUp() {
-    MockKAnnotations.init(this, relaxed = true)
+    MockKAnnotations.init(this)
 
     // Call first callback when init is called
     every { userRepository.init(any()) } answers { firstArg<() -> Unit>().invoke() }
@@ -43,7 +41,7 @@ class WelcomeTest {
           onSuccess(user)
         }
 
-    userViewModel = UserViewModel(userRepository)
+    userViewModel = UserViewModel(userRepository, false)
   }
 
   @Test
@@ -65,11 +63,5 @@ class WelcomeTest {
     composeTestRule.onNodeWithTag(WelcomeTestTags.PASSWORD).performTextInput("123456")
 
     composeTestRule.onNodeWithTag(WelcomeTestTags.BUTTON).assertIsEnabled()
-  }
-
-  @After
-  fun tearDown() {
-    clearAllMocks()
-    unmockkAll()
   }
 }

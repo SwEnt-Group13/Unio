@@ -10,6 +10,8 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.unit.ExperimentalUnitApi
 import com.android.unio.R
+import com.android.unio.TearDown
+import com.android.unio.assertDisplayComponentInScroll
 import com.android.unio.mocks.association.MockAssociation
 import com.android.unio.mocks.event.MockEvent
 import com.android.unio.mocks.user.MockUser
@@ -23,7 +25,6 @@ import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.strings.test_tags.HomeTestTags
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserViewModel
-import com.android.unio.ui.assertDisplayComponentInScroll
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
 import com.android.unio.ui.navigation.TopLevelDestination
@@ -36,16 +37,13 @@ import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.UninstallModules
 import dagger.hilt.components.SingletonComponent
 import io.mockk.MockKAnnotations
-import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import io.mockk.spyk
-import io.mockk.unmockkAll
 import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
-import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -55,9 +53,9 @@ import org.junit.Test
  * of the Event List UI.
  */
 @HiltAndroidTest
-@ExperimentalUnitApi
 @UninstallModules(FirebaseModule::class)
-class HomeTest {
+@ExperimentalUnitApi
+class HomeTest : TearDown() {
 
   @get:Rule val composeTestRule = createComposeRule()
 
@@ -67,12 +65,9 @@ class HomeTest {
 
   // Mock event repository to provide test data.
   @MockK private lateinit var eventRepository: EventRepositoryFirestore
-
   @MockK private lateinit var userRepository: UserRepositoryFirestore
-
-  @MockK private lateinit var navigationAction: NavigationAction
-
   @MockK private lateinit var imageRepository: ImageRepositoryFirebaseStorage
+  @MockK private lateinit var navigationAction: NavigationAction
 
   private lateinit var eventViewModel: EventViewModel
   private lateinit var searchViewModel: SearchViewModel
@@ -221,12 +216,6 @@ class HomeTest {
     composeTestRule.onNodeWithTag(HomeTestTags.MAP_BUTTON).performClick()
 
     verify { navigationAction.navigateTo(Screen.MAP) }
-  }
-
-  @After
-  fun tearDown() {
-    clearAllMocks()
-    unmockkAll()
   }
 
   @Module

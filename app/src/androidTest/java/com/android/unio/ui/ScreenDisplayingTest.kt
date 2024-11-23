@@ -6,6 +6,7 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.test.rule.GrantPermissionRule
+import com.android.unio.TearDown
 import com.android.unio.mocks.association.MockAssociation
 import com.android.unio.mocks.event.MockEvent
 import com.android.unio.mocks.user.MockUser
@@ -59,15 +60,12 @@ import com.google.firebase.auth.internal.zzac
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import io.mockk.MockKAnnotations
-import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.spyk
-import io.mockk.unmockkAll
 import me.zhanghai.compose.preference.ProvidePreferenceLocals
-import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -76,7 +74,7 @@ import org.mockito.Mockito.`when`
 import org.mockito.kotlin.any
 
 @HiltAndroidTest
-class ScreenDisplayingTest {
+class ScreenDisplayingTest : TearDown() {
   val user = MockUser.createMockUser(uid = "1")
   val events = listOf(MockEvent.createMockEvent())
 
@@ -290,11 +288,5 @@ class ScreenDisplayingTest {
       SomeoneElseUserProfileScreen(navigationAction, userViewModel, associationViewModel)
     }
     composeTestRule.onNodeWithTag(SomeoneElseUserProfileTestTags.SCREEN).assertIsDisplayed()
-  }
-
-  @After
-  fun tearDown() {
-    clearAllMocks()
-    unmockkAll()
   }
 }
