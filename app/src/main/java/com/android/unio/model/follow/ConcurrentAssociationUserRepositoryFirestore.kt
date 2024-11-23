@@ -3,6 +3,7 @@ package com.android.unio.model.follow
 import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationRepository
 import com.android.unio.model.association.AssociationRepositoryFirestore
+import com.android.unio.model.authentication.registerAuthStateListener
 import com.android.unio.model.firestore.transform.serialize
 import com.android.unio.model.user.User
 import com.android.unio.model.user.UserRepository
@@ -21,7 +22,7 @@ constructor(
 ) : ConcurrentAssociationUserRepository {
 
   override fun init(onSuccess: () -> Unit) {
-    Firebase.auth.addAuthStateListener {
+    Firebase.auth.registerAuthStateListener {
       if (it.currentUser != null) {
         onSuccess()
       }

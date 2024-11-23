@@ -1,5 +1,6 @@
 package com.android.unio.model.event
 
+import com.android.unio.model.authentication.registerAuthStateListener
 import com.android.unio.model.firestore.FirestorePaths.EVENT_PATH
 import com.android.unio.model.firestore.performFirestoreOperation
 import com.android.unio.model.firestore.transform.hydrate
@@ -14,7 +15,7 @@ class EventRepositoryFirestore @Inject constructor(private val db: FirebaseFires
     EventRepository {
 
   override fun init(onSuccess: () -> Unit) {
-    Firebase.auth.addAuthStateListener {
+    Firebase.auth.registerAuthStateListener {
       if (it.currentUser != null) {
         onSuccess()
       }

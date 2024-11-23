@@ -31,7 +31,7 @@ constructor(private val firebaseAuth: FirebaseAuth, private val userRepository: 
    * [authState] is updated.
    */
   private fun addAuthStateVerifier() {
-    firebaseAuth.addAuthStateListener { auth ->
+    firebaseAuth.registerAuthStateListener { auth ->
       val user = auth.currentUser
       if (user != null) {
         if (user.isEmailVerified) {

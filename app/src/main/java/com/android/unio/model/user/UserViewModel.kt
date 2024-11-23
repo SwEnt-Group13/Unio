@@ -5,6 +5,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.android.unio.model.authentication.registerAuthStateListener
 import com.google.firebase.Firebase
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.auth
@@ -46,7 +47,7 @@ class UserViewModel @Inject constructor(private val userRepository: UserReposito
 
   init {
     if (initializeWithAuthenticatedUser) {
-      Firebase.auth.addAuthStateListener { auth ->
+      Firebase.auth.registerAuthStateListener { auth ->
         if (auth.currentUser != null) {
           userRepository.init { getUserByUid(auth.currentUser!!.uid, true) }
         }

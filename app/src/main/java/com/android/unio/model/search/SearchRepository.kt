@@ -12,6 +12,7 @@ import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationDocument
 import com.android.unio.model.association.AssociationRepository
 import com.android.unio.model.association.toAssociationDocument
+import com.android.unio.model.authentication.registerAuthStateListener
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventDocument
 import com.android.unio.model.event.EventRepository
@@ -45,7 +46,7 @@ constructor(
    */
   suspend fun init() {
     withContext(Dispatchers.IO) {
-      Firebase.auth.addAuthStateListener {
+      Firebase.auth.registerAuthStateListener {
         if (it.currentUser != null) {
           try {
             val sessionFutures =
