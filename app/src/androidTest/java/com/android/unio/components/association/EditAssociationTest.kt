@@ -67,15 +67,10 @@ class EditAssociationTest : TearDown() {
 
     composeTestRule.waitForIdle()
 
-    assertDisplayComponentInScroll(
-        composeTestRule.onNodeWithTag(EditAssociationTestTags.NAME_TEXT_FIELD))
-    assertDisplayComponentInScroll(
-        composeTestRule.onNodeWithTag(EditAssociationTestTags.FULL_NAME_TEXT_FIELD))
-    assertDisplayComponentInScroll(
-        composeTestRule.onNodeWithTag(EditAssociationTestTags.CATEGORY_BUTTON))
-    assertDisplayComponentInScroll(
-        composeTestRule.onNodeWithTag(EditAssociationTestTags.DESCRIPTION_TEXT_FIELD))
-    assertDisplayComponentInScroll(
-        composeTestRule.onNodeWithTag(EditAssociationTestTags.URL_TEXT_FIELD))
+        composeTestRule.onNodeWithTag(EditAssociationTestTags.NAME_TEXT_FIELD).assertDisplayComponentInScroll()
+        composeTestRule.onNodeWithTag(EditAssociationTestTags.FULL_NAME_TEXT_FIELD).assertDisplayComponentInScroll()
+        composeTestRule.onNodeWithTag(EditAssociationTestTags.CATEGORY_BUTTON).assertDisplayComponentInScroll()
+        composeTestRule.onNodeWithTag(EditAssociationTestTags.DESCRIPTION_TEXT_FIELD).assertDisplayComponentInScroll()
+        composeTestRule.onNodeWithTag(EditAssociationTestTags.URL_TEXT_FIELD).assertDisplayComponentInScroll()
   }
 }

@@ -39,14 +39,14 @@ class AssociationProfileE2ETest : EndToEndTest() {
       composeTestRule.onNodeWithTag(ExploreTestTags.EXPLORE_SCAFFOLD_TITLE).isDisplayed()
     }
 
-    assertDisplayComponentInScroll(composeTestRule.onNodeWithText(ASSOCIATION_NAME))
+    composeTestRule.onNodeWithText(ASSOCIATION_NAME).assertDisplayComponentInScroll()
     composeTestRule.onNodeWithText(ASSOCIATION_NAME).performClick()
 
     composeTestRule.waitUntil(10000) {
       composeTestRule.onNodeWithTag(AssociationProfileTestTags.SCREEN).isDisplayed()
     }
 
-    assertDisplayComponentInScroll(composeTestRule.onNodeWithText(ASSOCIATION_MEMBERS))
+    composeTestRule.onNodeWithText(ASSOCIATION_MEMBERS).assertDisplayComponentInScroll()
     composeTestRule.onNodeWithText(ASSOCIATION_MEMBERS).performClick()
 
     composeTestRule.waitUntil(10000) {

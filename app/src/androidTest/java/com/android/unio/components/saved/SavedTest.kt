@@ -98,10 +98,10 @@ class SavedTest : TearDown() {
 
     composeTestRule.waitForIdle()
 
-    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag(SavedTestTags.TITLE))
-    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag(SavedTestTags.FAB))
-    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag(SavedTestTags.TODAY))
-    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag(SavedTestTags.UPCOMING))
+    composeTestRule.onNodeWithTag(SavedTestTags.TITLE).assertDisplayComponentInScroll()
+    composeTestRule.onNodeWithTag(SavedTestTags.FAB).assertDisplayComponentInScroll()
+    composeTestRule.onNodeWithTag(SavedTestTags.TODAY).assertDisplayComponentInScroll()
+    composeTestRule.onNodeWithTag(SavedTestTags.UPCOMING).assertDisplayComponentInScroll()
   }
 
   @Test
@@ -112,8 +112,8 @@ class SavedTest : TearDown() {
 
     composeTestRule.waitForIdle()
 
-    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag(SavedTestTags.TITLE))
-    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag(SavedTestTags.FAB))
-    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag(SavedTestTags.NO_EVENTS))
+    composeTestRule.onNodeWithTag(SavedTestTags.TITLE).assertDisplayComponentInScroll()
+    composeTestRule.onNodeWithTag(SavedTestTags.FAB).assertDisplayComponentInScroll()
+    composeTestRule.onNodeWithTag(SavedTestTags.NO_EVENTS).assertDisplayComponentInScroll()
   }
 }

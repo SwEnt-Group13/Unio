@@ -66,28 +66,28 @@ class UserAccountCreationTest : EndToEndTest() {
     composeTestRule
         .onNodeWithTag(AccountDetailsTestTags.BIOGRAPHY_TEXT_FIELD)
         .performTextInput(UnverifiedUser.BIOGRAPHY)
-    assertDisplayComponentInScroll(
-        composeTestRule.onNodeWithTag(AccountDetailsTestTags.INTERESTS_BUTTON))
+
+    composeTestRule.onNodeWithTag(AccountDetailsTestTags.INTERESTS_BUTTON).assertDisplayComponentInScroll()
     composeTestRule.onNodeWithTag(AccountDetailsTestTags.INTERESTS_BUTTON).performClick()
-    assertDisplayComponentInScroll(
-        composeTestRule.onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW + "0"))
+
+    composeTestRule.onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW + "0").assertDisplayComponentInScroll()
 
     composeTestRule.onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW + "0").performClick()
 
-    assertDisplayComponentInScroll(
-        composeTestRule.onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW + "1"))
+
+    composeTestRule.onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW + "1").assertDisplayComponentInScroll()
 
     composeTestRule.onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW + "1").performClick()
 
-    assertDisplayComponentInScroll(
-        composeTestRule.onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW + "2"))
+
+    composeTestRule.onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW + "2").assertDisplayComponentInScroll()
 
     composeTestRule.onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW + "2").performClick()
     composeTestRule.onNodeWithTag(InterestsOverlayTestTags.SAVE_BUTTON).assertIsDisplayed()
     composeTestRule.onNodeWithTag(InterestsOverlayTestTags.SAVE_BUTTON).performClick()
 
-    assertDisplayComponentInScroll(
-        composeTestRule.onNodeWithTag(AccountDetailsTestTags.CONTINUE_BUTTON))
+
+    composeTestRule.onNodeWithTag(AccountDetailsTestTags.CONTINUE_BUTTON).assertDisplayComponentInScroll()
 
     composeTestRule.onNodeWithTag(AccountDetailsTestTags.CONTINUE_BUTTON).performClick()
 

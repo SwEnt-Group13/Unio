@@ -160,31 +160,31 @@ class AssociationProfileTest : TearDown() {
     }
     composeTestRule.waitForIdle()
 
-    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag(AssociationProfileTestTags.SCREEN))
-    assertDisplayComponentInScroll(
-        composeTestRule.onNodeWithTag(AssociationProfileTestTags.GO_BACK_BUTTON))
+    composeTestRule.onNodeWithTag(AssociationProfileTestTags.SCREEN).assertDisplayComponentInScroll()
 
-    assertDisplayComponentInScroll(
-        composeTestRule.onNodeWithTag(AssociationProfileTestTags.IMAGE_HEADER))
-    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag(AssociationProfileTestTags.TITLE))
-    assertDisplayComponentInScroll(
-        composeTestRule.onNodeWithTag(AssociationProfileTestTags.SHARE_BUTTON))
-    assertDisplayComponentInScroll(
-        composeTestRule.onNodeWithTag(AssociationProfileTestTags.HEADER_FOLLOWERS))
-    assertDisplayComponentInScroll(
-        composeTestRule.onNodeWithTag(AssociationProfileTestTags.HEADER_MEMBERS))
-    assertDisplayComponentInScroll(
-        composeTestRule.onNodeWithTag(AssociationProfileTestTags.FOLLOW_BUTTON))
-    assertDisplayComponentInScroll(
-        composeTestRule.onNodeWithTag(AssociationProfileTestTags.DESCRIPTION))
-    assertDisplayComponentInScroll(
-        composeTestRule.onNodeWithTag(AssociationProfileTestTags.EVENT_TITLE))
-    assertDisplayComponentInScroll(
-        composeTestRule.onNodeWithTag(AssociationProfileTestTags.CONTACT_MEMBERS_TITLE))
-    assertDisplayComponentInScroll(
-        composeTestRule.onNodeWithTag(AssociationProfileTestTags.RECRUITMENT_DESCRIPTION))
-    assertDisplayComponentInScroll(
-        composeTestRule.onNodeWithTag(AssociationProfileTestTags.RECRUITMENT_ROLES))
+    composeTestRule.onNodeWithTag(AssociationProfileTestTags.GO_BACK_BUTTON).assertDisplayComponentInScroll()
+
+
+    composeTestRule.onNodeWithTag(AssociationProfileTestTags.IMAGE_HEADER).assertDisplayComponentInScroll()
+    composeTestRule.onNodeWithTag(AssociationProfileTestTags.TITLE).assertDisplayComponentInScroll()
+
+    composeTestRule.onNodeWithTag(AssociationProfileTestTags.SHARE_BUTTON).assertDisplayComponentInScroll()
+
+    composeTestRule.onNodeWithTag(AssociationProfileTestTags.HEADER_FOLLOWERS).assertDisplayComponentInScroll()
+
+    composeTestRule.onNodeWithTag(AssociationProfileTestTags.HEADER_MEMBERS).assertDisplayComponentInScroll()
+
+    composeTestRule.onNodeWithTag(AssociationProfileTestTags.FOLLOW_BUTTON).assertDisplayComponentInScroll()
+
+    composeTestRule.onNodeWithTag(AssociationProfileTestTags.DESCRIPTION).assertDisplayComponentInScroll()
+
+    composeTestRule.onNodeWithTag(AssociationProfileTestTags.EVENT_TITLE).assertDisplayComponentInScroll()
+
+    composeTestRule.onNodeWithTag(AssociationProfileTestTags.CONTACT_MEMBERS_TITLE).assertDisplayComponentInScroll()
+
+    composeTestRule.onNodeWithTag(AssociationProfileTestTags.RECRUITMENT_DESCRIPTION).assertDisplayComponentInScroll()
+
+    composeTestRule.onNodeWithTag(AssociationProfileTestTags.RECRUITMENT_ROLES).assertDisplayComponentInScroll()
   }
 
   @Test
@@ -197,8 +197,7 @@ class AssociationProfileTest : TearDown() {
     }
     val currentCount = associationViewModel.selectedAssociation.value!!.followersCount
 
-    assertDisplayComponentInScroll(
-        composeTestRule.onNodeWithTag(AssociationProfileTestTags.FOLLOW_BUTTON))
+    composeTestRule.onNodeWithTag(AssociationProfileTestTags.FOLLOW_BUTTON).assertDisplayComponentInScroll()
     composeTestRule
         .onNodeWithText(context!!.getString(R.string.association_follow))
         .assertIsDisplayed()
@@ -227,18 +226,15 @@ class AssociationProfileTest : TearDown() {
           navigationAction, userViewModel, eventViewModel, associationViewModel) {}
     }
     // Share button
-    assertDisplayComponentInScroll(
-        composeTestRule.onNodeWithTag(AssociationProfileTestTags.SHARE_BUTTON))
+    composeTestRule.onNodeWithTag(AssociationProfileTestTags.SHARE_BUTTON).assertDisplayComponentInScroll()
     composeTestRule.onNodeWithTag(AssociationProfileTestTags.SHARE_BUTTON).performClick()
     assertSnackBarIsDisplayed()
 
     // Roles buttons
-    assertDisplayComponentInScroll(
-        composeTestRule.onNodeWithTag(AssociationProfileTestTags.TREASURER_ROLES))
+    composeTestRule.onNodeWithTag(AssociationProfileTestTags.TREASURER_ROLES).assertDisplayComponentInScroll()
     composeTestRule.onNodeWithTag(AssociationProfileTestTags.TREASURER_ROLES).performClick()
     assertSnackBarIsDisplayed()
-    assertDisplayComponentInScroll(
-        composeTestRule.onNodeWithTag(AssociationProfileTestTags.DESIGNER_ROLES))
+    composeTestRule.onNodeWithTag(AssociationProfileTestTags.DESIGNER_ROLES).assertDisplayComponentInScroll()
     composeTestRule.onNodeWithTag(AssociationProfileTestTags.DESIGNER_ROLES).performClick()
     assertSnackBarIsDisplayed()
   }
@@ -270,8 +266,8 @@ class AssociationProfileTest : TearDown() {
           navigationAction, userViewModel, eventViewModel, associationViewModel) {}
     }
 
-    assertDisplayComponentInScroll(composeTestRule.onNodeWithTag(AssociationProfileTestTags.TITLE))
-    assertDisplayComponentInScroll(composeTestRule.onNodeWithText(this.associations.first().name))
+    composeTestRule.onNodeWithTag(AssociationProfileTestTags.TITLE).assertDisplayComponentInScroll()
+    composeTestRule.onNodeWithText(this.associations.first().name).assertDisplayComponentInScroll()
   }
 
   @Test

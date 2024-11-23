@@ -19,12 +19,11 @@ import org.junit.After
 /*
  * Scrolls to a component if it's not displayed and asserts if it is displayed
  */
-
-fun assertDisplayComponentInScroll(compose: SemanticsNodeInteraction) {
-  if (compose.isNotDisplayed()) {
-    compose.performScrollTo()
+fun SemanticsNodeInteraction.assertDisplayComponentInScroll() {
+  if (this.isNotDisplayed()) {
+    this.performScrollTo()
   }
-  compose.assertIsDisplayed()
+  this.assertIsDisplayed()
 }
 
 /*

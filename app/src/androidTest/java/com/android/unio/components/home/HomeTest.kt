@@ -156,7 +156,7 @@ class HomeTest : TearDown() {
     composeTestRule.onNodeWithTag(HomeTestTags.TAB_ALL).performClick()
 
     eventList.forEach { event ->
-      assertDisplayComponentInScroll(composeTestRule.onNodeWithText(event.title))
+      composeTestRule.onNodeWithText(event.title).assertDisplayComponentInScroll()
     }
   }
 
@@ -173,7 +173,7 @@ class HomeTest : TearDown() {
     composeTestRule.onNodeWithTag(HomeTestTags.TAB_FOLLOWING).performClick()
 
     eventListFollowed.forEach { event ->
-      assertDisplayComponentInScroll(composeTestRule.onNodeWithText(event.title))
+      composeTestRule.onNodeWithText(event.title).assertDisplayComponentInScroll()
     }
     val theNegative = eventList.filter { !eventListFollowed.contains(it) }
     theNegative.forEach { event ->
