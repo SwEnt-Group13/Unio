@@ -8,6 +8,7 @@ import androidx.appsearch.app.AppSearchSchema.StringPropertyConfig
 import androidx.compose.ui.graphics.Color
 import com.android.unio.model.association.Association
 import com.android.unio.model.firestore.ReferenceList
+import com.android.unio.model.firestore.UniquelyIdentifiable
 import com.android.unio.model.map.Location
 import com.android.unio.ui.theme.eventTypeAperitif
 import com.android.unio.ui.theme.eventTypeFestival
@@ -38,7 +39,7 @@ import java.util.Date
  * @property types list of event types
  */
 data class Event(
-    var uid: String = "",
+    override var uid: String = "",
     val title: String = "",
     val organisers: ReferenceList<Association>,
     val taggedAssociations: ReferenceList<Association>,
@@ -51,7 +52,7 @@ data class Event(
     val location: Location = Location(),
     val types: List<EventType> = mutableListOf(EventType.OTHER),
     val placesRemaining: Int = -1
-) {
+) : UniquelyIdentifiable {
   companion object
 }
 

@@ -1,5 +1,6 @@
 package com.android.unio.ui.saved
 
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -41,8 +42,16 @@ fun SavedScreen(
     eventViewModel: EventViewModel,
     userViewModel: UserViewModel
 ) {
+  val user by userViewModel.user.collectAsState()
+
+  if (user == null) {
+    Log.e("SavedScreen", "User is null")
+    return
+  }
+
   val allEvents by eventViewModel.events.collectAsState()
-  val savedEvents = allEvents.filter { userViewModel.isEventSavedForCurrentUser(it.uid) }
+  val savedEvents = allEvents.filter { user!!.savedEvents.contains(it.uid) }
+
   val context = LocalContext.current
 
   val today = remember { Calendar.getInstance().get(Calendar.DAY_OF_YEAR) }

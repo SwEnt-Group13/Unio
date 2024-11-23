@@ -45,7 +45,6 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -110,13 +109,13 @@ fun EventScreen(
   }
   val associations by event!!.organisers.list.collectAsState()
 
-  var isSaved by remember { mutableStateOf(user!!.savedEvents.contains(event!!.uid)) }
+  val isSaved = user!!.savedEvents.contains(event!!.uid)
 
   val onClickSaveButton = {
     if (isSaved) {
-      userViewModel.unSaveEventForCurrentUser(event!!.uid) { isSaved = false }
+      user!!.savedEvents.remove(event!!.uid)
     } else {
-      userViewModel.saveEventForCurrentUser(event!!.uid) { isSaved = true }
+      user!!.savedEvents.add(event!!.uid)
     }
     userViewModel.updateUserDebounced(user!!)
   }
