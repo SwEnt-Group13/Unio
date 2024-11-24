@@ -2,12 +2,10 @@ package com.android.unio.end2end
 
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.isDisplayed
-import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.filters.LargeTest
-import com.android.unio.MainActivity
 import com.android.unio.assertDisplayComponentInScroll
 import com.android.unio.model.strings.test_tags.AssociationProfileTestTags
 import com.android.unio.model.strings.test_tags.BottomNavBarTestTags
@@ -15,15 +13,11 @@ import com.android.unio.model.strings.test_tags.ExploreTestTags
 import com.android.unio.model.strings.test_tags.HomeTestTags
 import com.android.unio.model.strings.test_tags.SomeoneElseUserProfileTestTags
 import dagger.hilt.android.testing.HiltAndroidTest
-import org.junit.Rule
 import org.junit.Test
 
 @LargeTest
 @HiltAndroidTest
 class AssociationProfileE2ETest : EndToEndTest() {
-
-  @get:Rule val composeTestRule = createAndroidComposeRule<MainActivity>()
-
   @Test
   fun testAssociationProfileCanGoToSomeoneElseUserProfile() {
     signInWithUser(composeTestRule, User1.EMAIL, User1.PASSWORD)

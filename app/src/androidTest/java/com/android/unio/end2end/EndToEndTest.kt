@@ -3,9 +3,11 @@ package com.android.unio.end2end
 import android.util.Log
 import androidx.compose.ui.test.isDisplayed
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
+import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
+import com.android.unio.MainActivity
 import com.android.unio.clearTest
 import com.android.unio.model.strings.test_tags.BottomNavBarTestTags
 import com.android.unio.model.strings.test_tags.UserProfileTestTags
@@ -24,6 +26,7 @@ import org.junit.Rule
 open class EndToEndTest : FirebaseEmulatorFunctions {
 
   @get:Rule val hiltRule = HiltAndroidRule(this)
+  @get:Rule val composeTestRule = createAndroidComposeRule<MainActivity>()
 
   @Before
   override fun setUp() {
