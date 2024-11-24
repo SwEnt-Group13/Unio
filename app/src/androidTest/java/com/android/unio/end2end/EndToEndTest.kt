@@ -101,7 +101,12 @@ open class EndToEndTest : FirebaseEmulatorFunctions {
       Firebase.auth.useEmulator(HOST, Auth.PORT)
       Firebase.functions.useEmulator(HOST, Functions.PORT)
     } catch (e: IllegalStateException) {
-      Log.d("EndToEndTest", "Firebase Emulators are already in use.")
+      Log.d("EndToEndTest", "Firebase Emulators are already in use. $e")
+    } finally {
+      val currentHost = Firebase.firestore.firestoreSettings.host
+      if (!currentHost.contains(HOST)) {
+        throw Exception("Failed to connect to Firebase Emulators.")
+      }
     }
   }
 
