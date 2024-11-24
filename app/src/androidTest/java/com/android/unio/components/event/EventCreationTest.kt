@@ -110,33 +110,56 @@ class EventCreationTest {
     composeTestRule.waitForIdle()
 
     composeTestRule.onNodeWithTag(EventCreationTestTags.TITLE).assertDisplayComponentInScroll()
-    composeTestRule.onNodeWithTag(EventCreationTestTags.EVENT_IMAGE).assertDisplayComponentInScroll()
-    composeTestRule.onNodeWithTag(EventCreationTestTags.EVENT_TITLE).assertDisplayComponentInScroll()
+    composeTestRule
+        .onNodeWithTag(EventCreationTestTags.EVENT_IMAGE)
+        .assertDisplayComponentInScroll()
+    composeTestRule
+        .onNodeWithTag(EventCreationTestTags.EVENT_TITLE)
+        .assertDisplayComponentInScroll()
 
-    composeTestRule.onNodeWithTag(EventCreationTestTags.SHORT_DESCRIPTION).assertDisplayComponentInScroll()
+    composeTestRule
+        .onNodeWithTag(EventCreationTestTags.SHORT_DESCRIPTION)
+        .assertDisplayComponentInScroll()
     composeTestRule.onNodeWithTag(EventCreationTestTags.COAUTHORS).assertDisplayComponentInScroll()
 
-    composeTestRule.onNodeWithTag(EventCreationTestTags.DESCRIPTION).assertDisplayComponentInScroll()
+    composeTestRule
+        .onNodeWithTag(EventCreationTestTags.DESCRIPTION)
+        .assertDisplayComponentInScroll()
     composeTestRule.onNodeWithTag(EventCreationTestTags.LOCATION).assertDisplayComponentInScroll()
-    composeTestRule.onNodeWithTag(EventCreationTestTags.SAVE_BUTTON).assertDisplayComponentInScroll()
+    composeTestRule
+        .onNodeWithTag(EventCreationTestTags.SAVE_BUTTON)
+        .assertDisplayComponentInScroll()
     composeTestRule.onNodeWithTag(EventCreationTestTags.END_TIME).assertDisplayComponentInScroll()
     composeTestRule.onNodeWithTag(EventCreationTestTags.START_TIME).assertDisplayComponentInScroll()
 
-    composeTestRule.onNodeWithTag(EventCreationTestTags.TAGGED_ASSOCIATIONS).assertDisplayComponentInScroll()
+    composeTestRule
+        .onNodeWithTag(EventCreationTestTags.TAGGED_ASSOCIATIONS)
+        .assertDisplayComponentInScroll()
 
     composeTestRule.onNodeWithTag(EventCreationTestTags.TAGGED_ASSOCIATIONS).performClick()
     composeTestRule.waitForIdle()
 
+    composeTestRule
+        .onNodeWithTag(EventCreationOverlayTestTags.SCREEN)
+        .assertDisplayComponentInScroll()
 
-    composeTestRule.onNodeWithTag(EventCreationOverlayTestTags.SCREEN).assertDisplayComponentInScroll()
+    composeTestRule
+        .onNodeWithTag(EventCreationOverlayTestTags.TITLE)
+        .assertDisplayComponentInScroll()
+    composeTestRule
+        .onNodeWithTag(EventCreationOverlayTestTags.BODY)
+        .assertDisplayComponentInScroll()
 
-    composeTestRule.onNodeWithTag(EventCreationOverlayTestTags.TITLE).assertDisplayComponentInScroll()
-    composeTestRule.onNodeWithTag(EventCreationOverlayTestTags.BODY).assertDisplayComponentInScroll()
+    composeTestRule
+        .onNodeWithTag(EventCreationOverlayTestTags.SEARCH_BAR_INPUT)
+        .assertDisplayComponentInScroll()
 
-    composeTestRule.onNodeWithTag(EventCreationOverlayTestTags.SEARCH_BAR_INPUT).assertDisplayComponentInScroll()
-
-    composeTestRule.onNodeWithTag(EventCreationOverlayTestTags.CANCEL).assertDisplayComponentInScroll()
-    composeTestRule.onNodeWithTag(EventCreationOverlayTestTags.SAVE).assertDisplayComponentInScroll()
+    composeTestRule
+        .onNodeWithTag(EventCreationOverlayTestTags.CANCEL)
+        .assertDisplayComponentInScroll()
+    composeTestRule
+        .onNodeWithTag(EventCreationOverlayTestTags.SAVE)
+        .assertDisplayComponentInScroll()
   }
 
   @After

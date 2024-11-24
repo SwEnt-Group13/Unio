@@ -5,13 +5,11 @@ import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextContains
 import androidx.compose.ui.test.isDisplayed
-import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import androidx.test.filters.LargeTest
-import com.android.unio.MainActivity
 import com.android.unio.assertDisplayComponentInScroll
 import com.android.unio.model.strings.test_tags.AccountDetailsTestTags
 import com.android.unio.model.strings.test_tags.BottomNavBarTestTags
@@ -23,14 +21,11 @@ import dagger.hilt.android.testing.HiltAndroidTest
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.json.JSONObject
-import org.junit.Rule
 import org.junit.Test
 
 @LargeTest
 @HiltAndroidTest
 class UserAccountCreationTest : EndToEndTest() {
-  @get:Rule val composeTestRule = createAndroidComposeRule<MainActivity>()
-
   @Test
   fun testUserCanLoginAndCreateAnAccount() {
     /** Create an account on the welcome screen */
@@ -67,27 +62,34 @@ class UserAccountCreationTest : EndToEndTest() {
         .onNodeWithTag(AccountDetailsTestTags.BIOGRAPHY_TEXT_FIELD)
         .performTextInput(UnverifiedUser.BIOGRAPHY)
 
-    composeTestRule.onNodeWithTag(AccountDetailsTestTags.INTERESTS_BUTTON).assertDisplayComponentInScroll()
+    composeTestRule
+        .onNodeWithTag(AccountDetailsTestTags.INTERESTS_BUTTON)
+        .assertDisplayComponentInScroll()
     composeTestRule.onNodeWithTag(AccountDetailsTestTags.INTERESTS_BUTTON).performClick()
 
-    composeTestRule.onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW + "0").assertDisplayComponentInScroll()
+    composeTestRule
+        .onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW + "0")
+        .assertDisplayComponentInScroll()
 
     composeTestRule.onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW + "0").performClick()
 
-
-    composeTestRule.onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW + "1").assertDisplayComponentInScroll()
+    composeTestRule
+        .onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW + "1")
+        .assertDisplayComponentInScroll()
 
     composeTestRule.onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW + "1").performClick()
 
-
-    composeTestRule.onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW + "2").assertDisplayComponentInScroll()
+    composeTestRule
+        .onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW + "2")
+        .assertDisplayComponentInScroll()
 
     composeTestRule.onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW + "2").performClick()
     composeTestRule.onNodeWithTag(InterestsOverlayTestTags.SAVE_BUTTON).assertIsDisplayed()
     composeTestRule.onNodeWithTag(InterestsOverlayTestTags.SAVE_BUTTON).performClick()
 
-
-    composeTestRule.onNodeWithTag(AccountDetailsTestTags.CONTINUE_BUTTON).assertDisplayComponentInScroll()
+    composeTestRule
+        .onNodeWithTag(AccountDetailsTestTags.CONTINUE_BUTTON)
+        .assertDisplayComponentInScroll()
 
     composeTestRule.onNodeWithTag(AccountDetailsTestTags.CONTINUE_BUTTON).performClick()
 

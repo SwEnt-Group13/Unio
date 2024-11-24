@@ -1,11 +1,7 @@
 package com.android.unio.components.association
 
-import androidx.compose.ui.test.SemanticsNodeInteraction
-import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.isNotDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
-import androidx.compose.ui.test.performScrollTo
 import androidx.navigation.NavHostController
 import com.android.unio.TearDown
 import com.android.unio.assertDisplayComponentInScroll
@@ -67,10 +63,20 @@ class EditAssociationTest : TearDown() {
 
     composeTestRule.waitForIdle()
 
-        composeTestRule.onNodeWithTag(EditAssociationTestTags.NAME_TEXT_FIELD).assertDisplayComponentInScroll()
-        composeTestRule.onNodeWithTag(EditAssociationTestTags.FULL_NAME_TEXT_FIELD).assertDisplayComponentInScroll()
-        composeTestRule.onNodeWithTag(EditAssociationTestTags.CATEGORY_BUTTON).assertDisplayComponentInScroll()
-        composeTestRule.onNodeWithTag(EditAssociationTestTags.DESCRIPTION_TEXT_FIELD).assertDisplayComponentInScroll()
-        composeTestRule.onNodeWithTag(EditAssociationTestTags.URL_TEXT_FIELD).assertDisplayComponentInScroll()
+    composeTestRule
+        .onNodeWithTag(EditAssociationTestTags.NAME_TEXT_FIELD)
+        .assertDisplayComponentInScroll()
+    composeTestRule
+        .onNodeWithTag(EditAssociationTestTags.FULL_NAME_TEXT_FIELD)
+        .assertDisplayComponentInScroll()
+    composeTestRule
+        .onNodeWithTag(EditAssociationTestTags.CATEGORY_BUTTON)
+        .assertDisplayComponentInScroll()
+    composeTestRule
+        .onNodeWithTag(EditAssociationTestTags.DESCRIPTION_TEXT_FIELD)
+        .assertDisplayComponentInScroll()
+    composeTestRule
+        .onNodeWithTag(EditAssociationTestTags.URL_TEXT_FIELD)
+        .assertDisplayComponentInScroll()
   }
 }
