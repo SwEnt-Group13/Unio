@@ -221,7 +221,7 @@ class HomeTest : TearDown() {
 
   @Module
   @InstallIn(SingletonComponent::class)
-  object FirebaseTestModdule {
+  object FirebaseTestModule {
     @Provides fun provideFirestore(): FirebaseFirestore = mockk()
   }
 }
