@@ -9,6 +9,7 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import com.android.unio.MainActivity
 import com.android.unio.clearTest
+import com.android.unio.model.authentication.currentAuthStateListenerCount
 import com.android.unio.model.strings.test_tags.BottomNavBarTestTags
 import com.android.unio.model.strings.test_tags.UserProfileTestTags
 import com.android.unio.model.strings.test_tags.WelcomeTestTags
@@ -17,6 +18,7 @@ import com.google.firebase.auth.auth
 import com.google.firebase.firestore.firestore
 import com.google.firebase.functions.functions
 import dagger.hilt.android.testing.HiltAndroidRule
+import junit.framework.TestCase.assertEquals
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.junit.After
@@ -24,6 +26,15 @@ import org.junit.Before
 import org.junit.Rule
 
 open class EndToEndTest : FirebaseEmulatorFunctions {
+  init {
+    assertEquals(
+        """There are still listeners attached to the Auth instance. Make sure to remove 
+           them between tests with Firebase.auth.unregisterAllAuthStateListeners().
+        """
+            .trimIndent(),
+        0,
+        Firebase.auth.currentAuthStateListenerCount())
+  }
 
   @get:Rule val hiltRule = HiltAndroidRule(this)
   @get:Rule val composeTestRule = createAndroidComposeRule<MainActivity>()
