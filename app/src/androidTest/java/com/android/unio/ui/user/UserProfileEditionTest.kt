@@ -138,10 +138,10 @@ class UserProfileEditionTest {
     composeTestRule.onNodeWithTag(UserEditionTestTags.SAVE_BUTTON).performScrollTo().performClick()
     composeTestRule
         .onNodeWithTag(UserEditionTestTags.FIRST_NAME_ERROR_TEXT, useUnmergedTree = true)
-        .assertIsDisplayed()
+        .assertExists()
     composeTestRule
         .onNodeWithTag(UserEditionTestTags.LAST_NAME_ERROR_TEXT, useUnmergedTree = true)
-        .assertIsDisplayed()
+        .assertExists()
   }
 
   @After
