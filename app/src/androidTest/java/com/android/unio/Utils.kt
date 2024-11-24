@@ -8,7 +8,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextInput
-import com.android.unio.model.authentication.unRegisterAllAuthStateListeners
+import com.android.unio.model.authentication.unregisterAllAuthStateListeners
 import com.android.unio.model.strings.test_tags.SocialsOverlayTestTags
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
@@ -40,7 +40,7 @@ fun addNewUserSocial(composeTestRule: ComposeContentTestRule, username: String, 
 }
 
 fun clearTest() {
-  Firebase.auth.unRegisterAllAuthStateListeners()
+  Firebase.auth.unregisterAllAuthStateListeners()
   unmockkAll()
   clearAllMocks()
 }
