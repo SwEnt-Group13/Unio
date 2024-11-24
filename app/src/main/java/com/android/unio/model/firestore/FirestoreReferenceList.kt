@@ -139,17 +139,14 @@ class FirestoreReferenceList<T : UniquelyIdentifiable>(
  */
 fun Association.Companion.emptyFirestoreReferenceList(): FirestoreReferenceList<Association> {
   return FirestoreReferenceList.empty(
-      collectionPath = ASSOCIATION_PATH,
-      hydrate = AssociationRepositoryFirestore.Companion::hydrate)
+      ASSOCIATION_PATH, AssociationRepositoryFirestore.Companion::hydrate)
 }
 
 fun Association.Companion.firestoreReferenceListWith(
     uids: List<String>
 ): FirestoreReferenceList<Association> {
   return FirestoreReferenceList.fromList(
-      list = uids,
-      collectionPath = ASSOCIATION_PATH,
-      hydrate = AssociationRepositoryFirestore.Companion::hydrate)
+      uids, ASSOCIATION_PATH, AssociationRepositoryFirestore.Companion::hydrate)
 }
 
 fun User.Companion.emptyFirestoreReferenceList(): FirestoreReferenceList<User> {
