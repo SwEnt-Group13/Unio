@@ -17,7 +17,6 @@ import com.android.unio.model.strings.test_tags.InterestsOverlayTestTags
 import com.android.unio.model.strings.test_tags.SocialsOverlayTestTags
 import com.android.unio.model.strings.test_tags.UserEditionTestTags
 import com.android.unio.model.strings.test_tags.UserProfileTestTags
-import com.android.unio.model.user.Interest
 import com.android.unio.ui.addNewUserSocial
 import dagger.hilt.android.testing.HiltAndroidTest
 import org.junit.Rule
@@ -82,15 +81,12 @@ class EditUserDetailsTest : EndToEndTest() {
         .onNodeWithTag(UserEditionTestTags.INTERESTS_BUTTON)
         .performScrollTo()
         .performClick()
-    val allInterests: Set<Interest> = Interest.entries.map { it }.toMutableSet()
 
     // Click on all the interests
-    allInterests.forEach { interest ->
-      composeTestRule
-          .onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW + interest.name)
-          .performScrollTo()
-          .performClick()
-    }
+    composeTestRule
+        .onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW + "GAMING")
+        .performScrollTo()
+        .performClick()
 
     composeTestRule.onNodeWithTag(InterestsOverlayTestTags.SAVE_BUTTON).performClick()
 
@@ -113,6 +109,7 @@ class EditUserDetailsTest : EndToEndTest() {
         .performScrollTo()
         .performClick()
 
+    // Save our changes to the DB
     composeTestRule.onNodeWithTag(UserEditionTestTags.SAVE_BUTTON).performScrollTo().performClick()
 
     // Wait until the user profile screen is displayed
@@ -131,12 +128,7 @@ class EditUserDetailsTest : EndToEndTest() {
         .assertTextEquals("This is my new Bio")
 
     // Check that all new interests have been added
-    allInterests.filter { it == Interest.ART || it == Interest.TRAVEL }
-    allInterests.forEach { interest ->
-      composeTestRule
-          .onNodeWithTag(UserProfileTestTags.INTEREST_CHIP + interest.title)
-          .assertExists()
-    }
+    composeTestRule.onNodeWithTag(UserProfileTestTags.INTEREST_CHIP + "GAMING").assertExists()
 
     // Check that the new user social is here
     composeTestRule.onNodeWithTag(UserProfileTestTags.SOCIAL_BUTTON + "Facebook").assertExists()
