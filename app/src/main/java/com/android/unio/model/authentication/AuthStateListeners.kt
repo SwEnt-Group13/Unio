@@ -10,11 +10,6 @@ fun FirebaseAuth.registerAuthStateListener(callback: AuthStateListener) {
   this.addAuthStateListener(callback)
 }
 
-fun FirebaseAuth.unregisterAuthStateListener(callback: AuthStateListener) {
-  authStateListeners.remove(callback)
-  this.removeAuthStateListener(callback)
-}
-
 fun FirebaseAuth.unregisterAllAuthStateListeners() {
   authStateListeners.forEach { this.removeAuthStateListener(it) }
   authStateListeners.clear()
