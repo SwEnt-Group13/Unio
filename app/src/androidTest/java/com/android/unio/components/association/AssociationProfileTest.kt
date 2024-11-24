@@ -2,15 +2,12 @@ package com.android.unio.components.association
 
 import android.content.Context
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.test.SemanticsNodeInteraction
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotDisplayed
-import androidx.compose.ui.test.isNotDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import androidx.compose.ui.test.performScrollTo
 import androidx.navigation.NavHostController
 import com.android.unio.R
 import com.android.unio.TearDown
@@ -25,6 +22,7 @@ import com.android.unio.model.event.EventRepositoryFirestore
 import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.firestore.emptyFirestoreReferenceList
 import com.android.unio.model.follow.ConcurrentAssociationUserRepositoryFirestore
+import com.android.unio.model.hilt.module.FirebaseModule
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.strings.test_tags.AssociationProfileTestTags
 import com.android.unio.model.user.User
@@ -33,19 +31,36 @@ import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.association.AssociationProfileScaffold
 import com.android.unio.ui.association.AssociationProfileScreen
 import com.android.unio.ui.navigation.NavigationAction
+import com.google.android.gms.tasks.Task
+import com.google.firebase.Firebase
+import com.google.firebase.firestore.CollectionReference
+import com.google.firebase.firestore.FieldPath
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.QuerySnapshot
+import com.google.firebase.firestore.firestore
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
+import dagger.hilt.android.testing.UninstallModules
+import dagger.hilt.components.SingletonComponent
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
+import io.mockk.mockk
+import io.mockk.mockkStatic
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
+import org.mockito.kotlin.any
 import org.mockito.kotlin.verify
 
 @HiltAndroidTest
+@UninstallModules(FirebaseModule::class)
 class AssociationProfileTest : TearDown() {
 
   private lateinit var associations: List<Association>
@@ -72,6 +87,19 @@ class AssociationProfileTest : TearDown() {
   fun setUp() {
     MockKAnnotations.init(this)
     hiltRule.inject()
+
+    mockkStatic(FirebaseFirestore::class)
+    val db = mockk<FirebaseFirestore>()
+    val collection = mockk<CollectionReference>()
+    val query = mockk<Query>()
+    val task = mock<Task<QuerySnapshot>>()
+
+    every { Firebase.firestore } returns db
+    every { db.collection(any()) } returns collection
+    every { collection.whereIn(any(FieldPath::class), any()) } returns query
+    every { query.get() } returns task
+    `when`(task.addOnSuccessListener(any())).thenReturn(task)
+    `when`(task.addOnFailureListener(any())).thenReturn(task)
 
     associations =
         listOf(
@@ -105,8 +133,6 @@ class AssociationProfileTest : TearDown() {
           onSuccess(events)
         }
     eventViewModel = EventViewModel(eventRepository, imageRepository)
-    eventViewModel.loadEvents()
-    eventViewModel.selectEvent(events.first().uid)
 
     every { associationRepository.init(any()) } answers { firstArg<() -> Unit>().invoke() }
     every { associationRepository.getAssociations(any(), any()) } answers
@@ -160,31 +186,43 @@ class AssociationProfileTest : TearDown() {
     }
     composeTestRule.waitForIdle()
 
-    composeTestRule.onNodeWithTag(AssociationProfileTestTags.SCREEN).assertDisplayComponentInScroll()
-
-    composeTestRule.onNodeWithTag(AssociationProfileTestTags.GO_BACK_BUTTON).assertDisplayComponentInScroll()
-
-
-    composeTestRule.onNodeWithTag(AssociationProfileTestTags.IMAGE_HEADER).assertDisplayComponentInScroll()
+    composeTestRule
+        .onNodeWithTag(AssociationProfileTestTags.SCREEN)
+        .assertDisplayComponentInScroll()
+    composeTestRule
+        .onNodeWithTag(AssociationProfileTestTags.GO_BACK_BUTTON)
+        .assertDisplayComponentInScroll()
+    composeTestRule
+        .onNodeWithTag(AssociationProfileTestTags.IMAGE_HEADER)
+        .assertDisplayComponentInScroll()
     composeTestRule.onNodeWithTag(AssociationProfileTestTags.TITLE).assertDisplayComponentInScroll()
-
-    composeTestRule.onNodeWithTag(AssociationProfileTestTags.SHARE_BUTTON).assertDisplayComponentInScroll()
-
-    composeTestRule.onNodeWithTag(AssociationProfileTestTags.HEADER_FOLLOWERS).assertDisplayComponentInScroll()
-
-    composeTestRule.onNodeWithTag(AssociationProfileTestTags.HEADER_MEMBERS).assertDisplayComponentInScroll()
-
-    composeTestRule.onNodeWithTag(AssociationProfileTestTags.FOLLOW_BUTTON).assertDisplayComponentInScroll()
-
-    composeTestRule.onNodeWithTag(AssociationProfileTestTags.DESCRIPTION).assertDisplayComponentInScroll()
-
-    composeTestRule.onNodeWithTag(AssociationProfileTestTags.EVENT_TITLE).assertDisplayComponentInScroll()
-
-    composeTestRule.onNodeWithTag(AssociationProfileTestTags.CONTACT_MEMBERS_TITLE).assertDisplayComponentInScroll()
-
-    composeTestRule.onNodeWithTag(AssociationProfileTestTags.RECRUITMENT_DESCRIPTION).assertDisplayComponentInScroll()
-
-    composeTestRule.onNodeWithTag(AssociationProfileTestTags.RECRUITMENT_ROLES).assertDisplayComponentInScroll()
+    composeTestRule
+        .onNodeWithTag(AssociationProfileTestTags.SHARE_BUTTON)
+        .assertDisplayComponentInScroll()
+    composeTestRule
+        .onNodeWithTag(AssociationProfileTestTags.HEADER_FOLLOWERS)
+        .assertDisplayComponentInScroll()
+    composeTestRule
+        .onNodeWithTag(AssociationProfileTestTags.HEADER_MEMBERS)
+        .assertDisplayComponentInScroll()
+    composeTestRule
+        .onNodeWithTag(AssociationProfileTestTags.FOLLOW_BUTTON)
+        .assertDisplayComponentInScroll()
+    composeTestRule
+        .onNodeWithTag(AssociationProfileTestTags.DESCRIPTION)
+        .assertDisplayComponentInScroll()
+    composeTestRule
+        .onNodeWithTag(AssociationProfileTestTags.EVENT_TITLE)
+        .assertDisplayComponentInScroll()
+    composeTestRule
+        .onNodeWithTag(AssociationProfileTestTags.CONTACT_MEMBERS_TITLE)
+        .assertDisplayComponentInScroll()
+    composeTestRule
+        .onNodeWithTag(AssociationProfileTestTags.RECRUITMENT_DESCRIPTION)
+        .assertDisplayComponentInScroll()
+    composeTestRule
+        .onNodeWithTag(AssociationProfileTestTags.RECRUITMENT_ROLES)
+        .assertDisplayComponentInScroll()
   }
 
   @Test
@@ -197,7 +235,9 @@ class AssociationProfileTest : TearDown() {
     }
     val currentCount = associationViewModel.selectedAssociation.value!!.followersCount
 
-    composeTestRule.onNodeWithTag(AssociationProfileTestTags.FOLLOW_BUTTON).assertDisplayComponentInScroll()
+    composeTestRule
+        .onNodeWithTag(AssociationProfileTestTags.FOLLOW_BUTTON)
+        .assertDisplayComponentInScroll()
     composeTestRule
         .onNodeWithText(context!!.getString(R.string.association_follow))
         .assertIsDisplayed()
@@ -226,15 +266,21 @@ class AssociationProfileTest : TearDown() {
           navigationAction, userViewModel, eventViewModel, associationViewModel) {}
     }
     // Share button
-    composeTestRule.onNodeWithTag(AssociationProfileTestTags.SHARE_BUTTON).assertDisplayComponentInScroll()
+    composeTestRule
+        .onNodeWithTag(AssociationProfileTestTags.SHARE_BUTTON)
+        .assertDisplayComponentInScroll()
     composeTestRule.onNodeWithTag(AssociationProfileTestTags.SHARE_BUTTON).performClick()
     assertSnackBarIsDisplayed()
 
     // Roles buttons
-    composeTestRule.onNodeWithTag(AssociationProfileTestTags.TREASURER_ROLES).assertDisplayComponentInScroll()
+    composeTestRule
+        .onNodeWithTag(AssociationProfileTestTags.TREASURER_ROLES)
+        .assertDisplayComponentInScroll()
     composeTestRule.onNodeWithTag(AssociationProfileTestTags.TREASURER_ROLES).performClick()
     assertSnackBarIsDisplayed()
-    composeTestRule.onNodeWithTag(AssociationProfileTestTags.DESIGNER_ROLES).assertDisplayComponentInScroll()
+    composeTestRule
+        .onNodeWithTag(AssociationProfileTestTags.DESIGNER_ROLES)
+        .assertDisplayComponentInScroll()
     composeTestRule.onNodeWithTag(AssociationProfileTestTags.DESIGNER_ROLES).performClick()
     assertSnackBarIsDisplayed()
   }
@@ -267,7 +313,7 @@ class AssociationProfileTest : TearDown() {
     }
 
     composeTestRule.onNodeWithTag(AssociationProfileTestTags.TITLE).assertDisplayComponentInScroll()
-    composeTestRule.onNodeWithText(this.associations.first().name).assertDisplayComponentInScroll()
+    composeTestRule.onNodeWithText(associations.first().name).assertDisplayComponentInScroll()
   }
 
   @Test
@@ -279,5 +325,11 @@ class AssociationProfileTest : TearDown() {
     }
 
     composeTestRule.onNodeWithTag(AssociationProfileTestTags.SCREEN).assertIsNotDisplayed()
+  }
+
+  @Module
+  @InstallIn(SingletonComponent::class)
+  object FirebaseTestModule {
+    @Provides fun provideFirestore(): FirebaseFirestore = mockk()
   }
 }
