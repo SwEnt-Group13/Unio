@@ -139,7 +139,7 @@ fun UserProfileEditionScreenContent(
 
   // This is the local uri of the new profile picture stored locally
   // But if it's the first time entering the page the uri will be the one from firebase
-  // and therefor cannot be opened in a input stream in the onModifyUser function
+  // and therefore cannot be opened in a input stream in the onModifyUser function
   // Hence we must check whether the user has changed his profile picture or not to get a local URI.
   val profilePictureUri = remember { mutableStateOf<Uri>(user.profilePicture.toUri()) }
 
