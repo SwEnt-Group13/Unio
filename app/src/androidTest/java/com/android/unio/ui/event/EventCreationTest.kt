@@ -13,6 +13,7 @@ import com.android.unio.model.event.EventRepositoryFirestore
 import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.follow.ConcurrentAssociationUserRepositoryFirestore
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
+import com.android.unio.model.map.PlacesSearchViewModel
 import com.android.unio.model.search.SearchRepository
 import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.strings.test_tags.EventCreationOverlayTestTags
@@ -62,6 +63,8 @@ class EventCreationTest {
   private lateinit var concurrentAssociationUserRepositoryFirestore:
       ConcurrentAssociationUserRepositoryFirestore
 
+  @MockK private lateinit var placesSearchViewModel: PlacesSearchViewModel
+
   @Before
   fun setUp() {
     MockKAnnotations.init(this, relaxed = true)
@@ -100,7 +103,7 @@ class EventCreationTest {
   @Test
   fun testEventCreationTagsDisplayed() {
     composeTestRule.setContent {
-      EventCreationScreen(navigationAction, searchViewModel, associationViewModel, eventViewModel)
+      EventCreationScreen(navigationAction, searchViewModel, associationViewModel, eventViewModel, placesSearchViewModel)
     }
 
     composeTestRule.waitForIdle()

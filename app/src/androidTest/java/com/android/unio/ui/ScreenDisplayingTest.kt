@@ -16,6 +16,7 @@ import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.follow.ConcurrentAssociationUserRepositoryFirestore
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.map.MapViewModel
+import com.android.unio.model.map.PlacesSearchViewModel
 import com.android.unio.model.search.SearchRepository
 import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.strings.test_tags.AccountDetailsTestTags
@@ -89,6 +90,8 @@ class ScreenDisplayingTest {
 
   @MockK private lateinit var eventRepository: EventRepositoryFirestore
   private lateinit var eventViewModel: EventViewModel
+
+  @MockK private lateinit var placesSearchViewModel: PlacesSearchViewModel
 
   // Mocking the mapViewModel and its dependencies
   private lateinit var locationTask: Task<Location>
@@ -249,7 +252,7 @@ class ScreenDisplayingTest {
   @Test
   fun testEventCreationDisplayed() {
     composeTestRule.setContent {
-      EventCreationScreen(navigationAction, searchViewModel, associationViewModel, eventViewModel)
+      EventCreationScreen(navigationAction, searchViewModel, associationViewModel, eventViewModel, placesSearchViewModel)
     }
     composeTestRule.onNodeWithTag(EventCreationTestTags.SCREEN).assertIsDisplayed()
   }
