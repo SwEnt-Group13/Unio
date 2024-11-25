@@ -16,7 +16,7 @@ import org.junit.Rule
 import org.junit.Test
 
 class InterestOverlayTest : TearDown() {
-  val interests = Interest.entries.map { it to mutableStateOf(false) }.toMutableList()
+  private val interests = Interest.entries.map { it to mutableStateOf(false) }.toMutableList()
 
   @get:Rule val composeTestRule = createComposeRule()
 
