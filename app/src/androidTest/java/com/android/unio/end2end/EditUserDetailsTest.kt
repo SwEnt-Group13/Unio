@@ -3,31 +3,25 @@ package com.android.unio.end2end
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.isDisplayed
-import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextClearance
 import androidx.compose.ui.test.performTextInput
 import androidx.test.filters.LargeTest
-import com.android.unio.MainActivity
+import com.android.unio.addNewUserSocial
 import com.android.unio.model.strings.test_tags.BottomNavBarTestTags
 import com.android.unio.model.strings.test_tags.HomeTestTags
 import com.android.unio.model.strings.test_tags.InterestsOverlayTestTags
 import com.android.unio.model.strings.test_tags.SocialsOverlayTestTags
 import com.android.unio.model.strings.test_tags.UserEditionTestTags
 import com.android.unio.model.strings.test_tags.UserProfileTestTags
-import com.android.unio.ui.addNewUserSocial
 import dagger.hilt.android.testing.HiltAndroidTest
-import org.junit.Rule
 import org.junit.Test
 
 @LargeTest
 @HiltAndroidTest
 class EditUserDetailsTest : EndToEndTest() {
-
-  @get:Rule val composeTestRule = createAndroidComposeRule<MainActivity>()
-
   @Test
   fun testUserModifiesHisAccountDetails() {
 

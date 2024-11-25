@@ -45,6 +45,11 @@ import com.google.firebase.auth.auth
 fun EmailVerificationScreen(navigationAction: NavigationAction, userViewModel: UserViewModel) {
 
   val user by remember { mutableStateOf(Firebase.auth.currentUser) }
+  if (user == null) {
+    Log.e("EmailVerificationScreen", "User is null")
+    return
+  }
+
   var success by remember { mutableStateOf(false) }
 
   val context = LocalContext.current
@@ -125,7 +130,8 @@ fun EmailVerificationScreen(navigationAction: NavigationAction, userViewModel: U
                     style = AppTypography.titleLarge)
                 Text(
                     context.getString(R.string.email_verification_email_sent_to) +
-                        (user?.email ?: "") +
+                        " " +
+                        user!!.email +
                         context.getString(R.string.email_verification_email_sent_to_verify),
                     textAlign = TextAlign.Center,
                     modifier = Modifier.fillMaxWidth(0.8f),

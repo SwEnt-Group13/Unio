@@ -106,7 +106,6 @@ fun HomeScreen(
       },
       modifier = Modifier.testTag(HomeTestTags.SCREEN),
       content = { padding ->
-        println(padding)
         HorizontalPager(state = pagerState, modifier = Modifier.fillMaxWidth().padding(padding)) {
             page ->
           HomeContent(

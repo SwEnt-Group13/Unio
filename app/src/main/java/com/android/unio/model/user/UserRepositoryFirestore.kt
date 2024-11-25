@@ -1,5 +1,6 @@
 package com.android.unio.model.user
 
+import com.android.unio.model.authentication.registerAuthStateListener
 import com.android.unio.model.firestore.FirestorePaths.USER_PATH
 import com.android.unio.model.firestore.performFirestoreOperation
 import com.android.unio.model.firestore.transform.hydrate
@@ -14,7 +15,7 @@ class UserRepositoryFirestore @Inject constructor(private val db: FirebaseFirest
     UserRepository {
 
   override fun init(onSuccess: () -> Unit) {
-    Firebase.auth.addAuthStateListener {
+    Firebase.auth.registerAuthStateListener {
       if (it.currentUser != null) {
         onSuccess()
       }
