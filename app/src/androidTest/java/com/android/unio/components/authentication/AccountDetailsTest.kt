@@ -139,12 +139,18 @@ class AccountDetailsTest : TearDown() {
   @Test
   fun testAddingInterestsCorrectlyModifiesTheFlowRow() {
     composeTestRule.onNodeWithTag(AccountDetailsTestTags.INTERESTS_BUTTON).performClick()
-    composeTestRule.onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW + "0").performClick()
-    composeTestRule.onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW + "1").performClick()
+    composeTestRule
+        .onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW + "SPORTS")
+        .performScrollTo()
+        .performClick()
+    composeTestRule
+        .onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW + "GAMING")
+        .performScrollTo()
+        .performClick()
     composeTestRule.onNodeWithTag(InterestsOverlayTestTags.SAVE_BUTTON).performClick()
 
-    composeTestRule.onNodeWithTag(AccountDetailsTestTags.INTERESTS_CHIP + "0").assertExists()
-    composeTestRule.onNodeWithTag(AccountDetailsTestTags.INTERESTS_CHIP + "1").assertExists()
+    composeTestRule.onNodeWithTag(AccountDetailsTestTags.INTERESTS_CHIP + "SPORTS").assertExists()
+    composeTestRule.onNodeWithTag(AccountDetailsTestTags.INTERESTS_CHIP + "GAMING").assertExists()
   }
 
   @Test

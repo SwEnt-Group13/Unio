@@ -1,11 +1,11 @@
 package com.android.unio.end2end
 
 import android.util.Log
-import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextContains
 import androidx.compose.ui.test.isDisplayed
 import androidx.compose.ui.test.onAllNodesWithTag
+import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
@@ -68,22 +68,22 @@ class UserAccountCreationTest : EndToEndTest() {
     composeTestRule.onNodeWithTag(AccountDetailsTestTags.INTERESTS_BUTTON).performClick()
 
     composeTestRule
-        .onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW + "0")
+        .onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW + "SPORTS")
         .assertDisplayComponentInScroll()
 
-    composeTestRule.onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW + "0").performClick()
+    composeTestRule.onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW + "SPORTS").performClick()
 
     composeTestRule
-        .onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW + "1")
+        .onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW + "TRAVEL")
         .assertDisplayComponentInScroll()
 
-    composeTestRule.onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW + "1").performClick()
+    composeTestRule.onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW + "TRAVEL").performClick()
 
     composeTestRule
-        .onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW + "2")
+        .onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW + "FOOD")
         .assertDisplayComponentInScroll()
 
-    composeTestRule.onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW + "2").performClick()
+    composeTestRule.onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW + "FOOD").performClick()
     composeTestRule.onNodeWithTag(InterestsOverlayTestTags.SAVE_BUTTON).assertIsDisplayed()
     composeTestRule.onNodeWithTag(InterestsOverlayTestTags.SAVE_BUTTON).performClick()
 
@@ -116,7 +116,9 @@ class UserAccountCreationTest : EndToEndTest() {
     composeTestRule
         .onNodeWithTag(UserProfileTestTags.BIOGRAPHY)
         .assertTextContains(UnverifiedUser.BIOGRAPHY)
-    composeTestRule.onAllNodesWithTag(UserProfileTestTags.INTEREST).assertCountEquals(3)
+    composeTestRule.onNodeWithTag(UserProfileTestTags.INTEREST_CHIP + "SPORTS").assertExists()
+    composeTestRule.onNodeWithTag(UserProfileTestTags.INTEREST_CHIP + "TRAVEL").assertExists()
+    composeTestRule.onNodeWithTag(UserProfileTestTags.INTEREST_CHIP + "FOOD").assertExists()
 
     signOutWithUser(composeTestRule)
   }

@@ -20,7 +20,7 @@ import org.junit.Test
 class AssociationProfileE2ETest : EndToEndTest() {
   @Test
   fun testAssociationProfileCanGoToSomeoneElseUserProfile() {
-    signInWithUser(composeTestRule, User1.EMAIL, User1.PASSWORD)
+    signInWithUser(composeTestRule, JohnDoe.EMAIL, JohnDoe.PASSWORD)
 
     composeTestRule.waitUntil(10000) {
       composeTestRule.onNodeWithTag(HomeTestTags.SCREEN).isDisplayed()

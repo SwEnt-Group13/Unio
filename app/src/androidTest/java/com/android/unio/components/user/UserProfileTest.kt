@@ -1,10 +1,8 @@
 package com.android.unio.components.user
 
-import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.navigation.NavHostController
 import com.android.unio.TearDown
@@ -64,12 +62,17 @@ class UserProfileTest : TearDown() {
     composeTestRule.onNodeWithTag(UserProfileTestTags.BIOGRAPHY).assertExists()
     composeTestRule.onNodeWithTag(UserProfileTestTags.BIOGRAPHY).assertTextEquals(user.biography)
 
-    composeTestRule
-        .onAllNodesWithTag(UserProfileTestTags.SOCIAL_BUTTON)
-        .assertCountEquals(user.socials.size)
-    composeTestRule
-        .onAllNodesWithTag(UserProfileTestTags.INTEREST)
-        .assertCountEquals(user.interests.size)
+    user.socials.forEach { social ->
+      composeTestRule
+          .onNodeWithTag(UserProfileTestTags.SOCIAL_BUTTON + social.social.title)
+          .assertExists()
+    }
+
+    user.interests.forEach { interest ->
+      composeTestRule
+          .onNodeWithTag(UserProfileTestTags.INTEREST_CHIP + interest.name)
+          .assertExists()
+    }
   }
 
   @Test

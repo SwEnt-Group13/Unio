@@ -77,7 +77,7 @@ fun InterestOverlay(
                             copiedInterests.forEachIndexed { index, pair ->
 
                               // The row for each interest
-                              InterestsOverlayInterestRow(index, pair)
+                              InterestsOverlayInterestRow(pair)
 
                               if (index != copiedInterests.size - 1) {
                                 HorizontalDivider(
@@ -118,7 +118,6 @@ fun InterestOverlay(
 
 @Composable
 private fun InterestsOverlayInterestRow(
-    index: Int,
     pair: Pair<Interest, MutableState<Boolean>>,
 ) {
   Row(
@@ -127,7 +126,7 @@ private fun InterestsOverlayInterestRow(
       modifier =
           Modifier.padding(5.dp)
               .fillMaxWidth()
-              .testTag(InterestsOverlayTestTags.CLICKABLE_ROW + "$index")
+              .testTag(InterestsOverlayTestTags.CLICKABLE_ROW + pair.first.name)
               .clickable { pair.second.value = !pair.second.value }) {
         Text(
             text = pair.first.name,

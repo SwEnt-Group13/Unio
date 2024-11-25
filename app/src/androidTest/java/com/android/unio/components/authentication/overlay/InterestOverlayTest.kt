@@ -47,9 +47,9 @@ class InterestOverlayTest : TearDown() {
 
   @Test
   fun testWhenCheckBoxCheckedInterestStateChanges() {
-    interests.forEachIndexed { index, pair ->
+    interests.forEach { pair ->
       composeTestRule
-          .onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW + "$index")
+          .onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW + pair.first.name)
           .performScrollTo()
           .performClick()
       composeTestRule

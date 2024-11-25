@@ -11,9 +11,12 @@ import io.mockk.mockkStatic
 import junit.framework.TestCase.assertEquals
 import org.junit.Before
 import org.junit.Test
+import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
+import org.robolectric.RobolectricTestRunner
 
+@RunWith(RobolectricTestRunner::class)
 class UserTest {
   private lateinit var db: FirebaseFirestore
   @Mock private lateinit var collectionReference: CollectionReference
@@ -110,5 +113,17 @@ class UserTest {
 
     val userSocialCorrectWebsite = UserSocial(Social.WEBSITE, "https://example.com")
     assertEquals(UserSocialError.NONE, checkSocialContent(userSocialCorrectWebsite))
+  }
+
+  @Test
+  fun checkNewImageUri() {
+    val emptyString = ""
+    assertEquals(ImageUriType.EMPTY, checkImageUri(emptyString))
+
+    val localUri = "content://mySuperLocalImage"
+    assertEquals(ImageUriType.LOCAL, checkImageUri(localUri))
+
+    val remoteUri = "https://firebasestorage.googleapis.com/blablabla"
+    assertEquals(ImageUriType.REMOTE, checkImageUri(remoteUri))
   }
 }
