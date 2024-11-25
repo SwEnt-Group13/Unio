@@ -24,14 +24,11 @@ import com.android.unio.ui.navigation.Screen
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.firebase.Timestamp
 import io.mockk.MockKAnnotations
-import io.mockk.clearAllMocks
 import io.mockk.impl.annotations.MockK
-import io.mockk.unmockkAll
 import io.mockk.verify
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
