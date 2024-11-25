@@ -47,6 +47,7 @@ import com.android.unio.ui.theme.AppTheme
 import com.android.unio.ui.user.SomeoneElseUserProfileScreen
 import com.android.unio.ui.user.UserClaimAssociationPresidentialRightsScreen
 import com.android.unio.ui.user.UserClaimAssociationScreen
+import com.android.unio.ui.user.UserProfileEditionScreen
 import com.android.unio.ui.user.UserProfileScreen
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.HiltAndroidApp
@@ -154,6 +155,9 @@ fun UnioApp(imageRepository: ImageRepositoryFirebaseStorage) {
     navigation(startDestination = Screen.MY_PROFILE, route = Route.MY_PROFILE) {
       composable(Screen.MY_PROFILE) {
         UserProfileScreen(userViewModel, associationViewModel, navigationActions)
+      }
+      composable(Screen.EDIT_PROFILE) {
+        UserProfileEditionScreen(userViewModel, imageRepository, navigationActions)
       }
       composable(Screen.SETTINGS) { SettingsScreen(navigationActions) }
       composable(Screen.CLAIM_ASSOCIATION_RIGHTS) {

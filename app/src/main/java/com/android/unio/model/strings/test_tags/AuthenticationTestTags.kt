@@ -50,7 +50,7 @@ object InterestsOverlayTestTags {
 
   // SAVE
   const val CANCEL_BUTTON = "interestsOverlayCancelButton"
-  const val SAVE_BUTTON = "interestsOverlayContinueButton"
+  const val SAVE_BUTTON = "interestsOverlaySaveButton"
 }
 
 object SocialsOverlayTestTags {

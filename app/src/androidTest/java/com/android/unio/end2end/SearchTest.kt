@@ -31,7 +31,7 @@ class SearchTest : EndToEndTest() {
   @Test
   fun testSearchDisplaysCorrectResultsForEvents() {
     if (Firebase.auth.currentUser == null) {
-      signInWithUser(composeTestRule, User1.EMAIL, User1.PASSWORD)
+      signInWithUser(composeTestRule, JohnDoe.EMAIL, JohnDoe.PASSWORD)
     }
 
     composeTestRule.waitUntil(10000) {
@@ -62,7 +62,7 @@ class SearchTest : EndToEndTest() {
 
   @Test
   fun testSearchDiplaysCorrectResultsForAssociations() {
-    signInWithUser(composeTestRule, User1.EMAIL, User1.PASSWORD)
+    signInWithUser(composeTestRule, JohnDoe.EMAIL, JohnDoe.PASSWORD)
 
     composeTestRule.waitUntil(10000) {
       composeTestRule.onNodeWithTag(HomeTestTags.SCREEN).isDisplayed()

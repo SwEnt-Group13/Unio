@@ -226,7 +226,9 @@ fun UserProfileScreenContent(
             user.socials.forEach { userSocial ->
               IconButton(
                   onClick = { uriHandler.openUri(userSocial.getFullUrl()) },
-                  modifier = Modifier.testTag(UserProfileTestTags.SOCIAL_BUTTON)) {
+                  modifier =
+                      Modifier.testTag(
+                          UserProfileTestTags.SOCIAL_BUTTON + userSocial.social.title)) {
                     Image(
                         modifier = Modifier.size(32.dp).wrapContentSize(),
                         painter = painterResource(userSocial.social.icon),
@@ -246,7 +248,7 @@ fun UserProfileScreenContent(
           ) {
             user.interests.forEach { interest ->
               SuggestionChip(
-                  modifier = Modifier.testTag(UserProfileTestTags.INTEREST),
+                  modifier = Modifier.testTag(UserProfileTestTags.INTEREST_CHIP + interest.name),
                   onClick = {},
                   label = {
                     Text(context.getString(interest.title), style = AppTypography.bodySmall)
@@ -315,9 +317,13 @@ fun UserProfileBottomSheet(
     ) {
       Column(modifier = Modifier) {
         TextButton(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().testTag(UserProfileTestTags.EDITION),
             onClick = {
-              Toast.makeText(context, "Not yet implemented.", Toast.LENGTH_SHORT).show()
+              scope.launch {
+                sheetState.hide()
+                onClose()
+                navigationAction.navigateTo(Screen.EDIT_PROFILE)
+              }
             }) {
               Text(context.getString(R.string.user_profile_bottom_sheet_edit))
             }
