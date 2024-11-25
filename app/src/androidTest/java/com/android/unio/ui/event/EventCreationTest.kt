@@ -103,7 +103,12 @@ class EventCreationTest {
   @Test
   fun testEventCreationTagsDisplayed() {
     composeTestRule.setContent {
-      EventCreationScreen(navigationAction, searchViewModel, associationViewModel, eventViewModel, placesSearchViewModel)
+      EventCreationScreen(
+          navigationAction,
+          searchViewModel,
+          associationViewModel,
+          eventViewModel,
+          placesSearchViewModel)
     }
 
     composeTestRule.waitForIdle()

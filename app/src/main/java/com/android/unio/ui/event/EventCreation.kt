@@ -32,7 +32,6 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Place
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.DatePicker
@@ -117,9 +116,9 @@ fun EventCreationScreen(
 
   val eventBannerUri = remember { mutableStateOf<Uri>(Uri.EMPTY) }
 
-    var locationQuery by remember { mutableStateOf("") }
-    val locationSuggestions by placesSearchViewModel.locationSuggestions.collectAsState()
-    val selectedLocation by placesSearchViewModel.selectedLocation.collectAsState()
+  var locationQuery by remember { mutableStateOf("") }
+  val locationSuggestions by placesSearchViewModel.locationSuggestions.collectAsState()
+  val selectedLocation by placesSearchViewModel.selectedLocation.collectAsState()
 
   Scaffold(modifier = Modifier.testTag(EventCreationTestTags.SCREEN)) { padding ->
     Column(
@@ -218,32 +217,28 @@ fun EventCreationScreen(
               modifier = Modifier.fillMaxWidth().testTag(EventCreationTestTags.LOCATION),
               value = locationQuery,
               onValueChange = {
-                  locationQuery = it
-                  placesSearchViewModel.setQuery(it)
+                locationQuery = it
+                placesSearchViewModel.setQuery(it)
               },
               label = { Text(context.getString(R.string.event_creation_location_label)) },
-              leadingIcon =  {
-                  Icon(Icons.Default.Place, contentDescription = "Search for location")
-              }
-          )
+              leadingIcon = {
+                Icon(Icons.Default.Place, contentDescription = "Search for location")
+              })
 
-        if (locationQuery.isNotEmpty() && selectedLocation != null) {
-            Column(
-                modifier = Modifier.fillMaxWidth().padding(8.dp)
-            ) {
-                locationSuggestions.forEach { prediction ->
-                    Text(
-                        text = prediction.getPrimaryText(null).toString(),
-                        modifier = Modifier
-                            .clickable {
-                                placesSearchViewModel.selectLocation(prediction)
-                                locationQuery = prediction.getSecondaryText(null).toString()
+          if (locationQuery.isNotEmpty() && selectedLocation != null) {
+            Column(modifier = Modifier.fillMaxWidth().padding(8.dp)) {
+              locationSuggestions.forEach { prediction ->
+                Text(
+                    text = prediction.getPrimaryText(null).toString(),
+                    modifier =
+                        Modifier.clickable {
+                              placesSearchViewModel.selectLocation(prediction)
+                              locationQuery = prediction.getSecondaryText(null).toString()
                             }
-                            .padding(8.dp)
-                    )
-                }
+                            .padding(8.dp))
+              }
             }
-        }
+          }
 
           Spacer(modifier = Modifier.width(10.dp))
 

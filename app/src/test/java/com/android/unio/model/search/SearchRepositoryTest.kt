@@ -113,7 +113,7 @@ class SearchRepositoryTest {
           description = "Plus grand festival du monde (non contractuel)",
           price = 40.5,
           startDate = Timestamp(GregorianCalendar(2004, 7, 1).time),
-          location = Location(latitude = 1.2345, longitude =  2.3455, name = "Somewhere"),
+          location = Location(latitude = 1.2345, longitude = 2.3455, name = "Somewhere"),
           placesRemaining = -1)
   private val event2 =
       Event(
@@ -125,7 +125,7 @@ class SearchRepositoryTest {
           description = "Plus grand festival du monde (non contractuel)",
           price = 40.5,
           startDate = Timestamp(GregorianCalendar(2008, 7, 1).time),
-          location = Location(latitude = 1.2345, longitude =  2.3455, name =  "Somewhere"),
+          location = Location(latitude = 1.2345, longitude = 2.3455, name = "Somewhere"),
           placesRemaining = -1)
 
   @Before

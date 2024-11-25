@@ -1,8 +1,6 @@
 package com.android.unio.model.hilt.module
 
 import android.content.Context
-import android.content.pm.PackageManager
-import com.android.unio.BuildConfig
 import com.android.unio.model.association.AssociationRepository
 import com.android.unio.model.association.AssociationRepositoryFirestore
 import com.android.unio.model.event.EventRepository
@@ -128,6 +126,6 @@ abstract class PlacesSearchRepositoryModule {
 
   @Binds
   abstract fun bindPlacesSearchRepository(
-    placesSearchRepositoryClient: PlacesSearchRepositoryClient
+      placesSearchRepositoryClient: PlacesSearchRepositoryClient
   ): PlacesSearchRepository
 }

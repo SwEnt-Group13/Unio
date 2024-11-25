@@ -56,7 +56,7 @@ class MockLocation {
         longitude: Double = EdgeCaseLongitude.TYPICAL.value,
         name: String = EdgeCaseName.TYPICAL.value
     ): Location {
-      return Location(latitude = latitude, longitude =  longitude, name = name)
+      return Location(latitude = latitude, longitude = longitude, name = name)
     }
   }
 }
