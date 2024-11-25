@@ -3,6 +3,7 @@ package com.android.unio.components.event
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
+import com.android.unio.TearDown
 import com.android.unio.assertDisplayComponentInScroll
 import com.android.unio.mocks.association.MockAssociation
 import com.android.unio.mocks.event.MockEvent
@@ -39,7 +40,7 @@ import org.junit.Rule
 import org.junit.Test
 
 @HiltAndroidTest
-class EventCreationTest {
+class EventCreationTest : TearDown() {
   val user = MockUser.createMockUser(uid = "1")
   @MockK lateinit var navigationAction: NavigationAction
   @MockK private lateinit var firebaseAuth: FirebaseAuth

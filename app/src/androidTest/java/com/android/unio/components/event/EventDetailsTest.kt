@@ -8,6 +8,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.navigation.NavHostController
+import com.android.unio.TearDown
 import com.android.unio.assertDisplayComponentInScroll
 import com.android.unio.mocks.association.MockAssociation
 import com.android.unio.mocks.event.MockEvent
@@ -36,7 +37,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.mockito.Mockito.mock
 
-class EventDetailsTest {
+class EventDetailsTest : TearDown() {
   @MockK private lateinit var navHostController: NavHostController
   private lateinit var navigationAction: NavigationAction
 
@@ -209,11 +210,5 @@ class EventDetailsTest {
     composeTestRule.onNodeWithText(event.description).assertDisplayComponentInScroll()
     composeTestRule.onNodeWithText(event.location.name).assertDisplayComponentInScroll()
     composeTestRule.onNodeWithTag(EventDetailsTestTags.START_DATE).assertDisplayComponentInScroll()
-  }
-
-  @After
-  fun tearDown() {
-    clearAllMocks()
-    unmockkAll()
   }
 }
