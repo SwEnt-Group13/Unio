@@ -1,6 +1,8 @@
 package com.android.unio.model.hilt.module
 
 import android.content.Context
+import android.content.pm.PackageManager
+import com.android.unio.BuildConfig
 import com.android.unio.model.association.AssociationRepository
 import com.android.unio.model.association.AssociationRepositoryFirestore
 import com.android.unio.model.event.EventRepository
@@ -9,10 +11,14 @@ import com.android.unio.model.follow.ConcurrentAssociationUserRepository
 import com.android.unio.model.follow.ConcurrentAssociationUserRepositoryFirestore
 import com.android.unio.model.image.ImageRepository
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
+import com.android.unio.model.map.PlacesSearchRepository
+import com.android.unio.model.map.PlacesSearchRepositoryClient
 import com.android.unio.model.user.UserRepository
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.google.android.libraries.places.api.Places
+import com.google.android.libraries.places.api.net.PlacesClient
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -104,4 +110,24 @@ object LocationModule {
   ): FusedLocationProviderClient {
     return LocationServices.getFusedLocationProviderClient(context)
   }
+}
+
+@Module
+@InstallIn(SingletonComponent::class)
+object PlacesModule {
+
+  @Provides
+  fun providePlacesClient(@ApplicationContext context: Context): PlacesClient {
+    return Places.createClient(context)
+  }
+}
+
+@Module
+@InstallIn(SingletonComponent::class)
+abstract class PlacesSearchRepositoryModule {
+
+  @Binds
+  abstract fun bindPlacesSearchRepository(
+    placesSearchRepositoryClient: PlacesSearchRepositoryClient
+  ): PlacesSearchRepository
 }
