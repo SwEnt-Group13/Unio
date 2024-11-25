@@ -1,7 +1,6 @@
 package com.android.unio.components.association
 
 import android.content.Context
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
@@ -9,6 +8,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.navigation.NavHostController
+import androidx.test.core.app.ApplicationProvider
 import com.android.unio.R
 import com.android.unio.TearDown
 import com.android.unio.assertDisplayComponentInScroll
@@ -227,9 +227,8 @@ class AssociationProfileTest : TearDown() {
 
   @Test
   fun testFollowAssociation() {
-    var context: Context? = null
+    val context: Context = ApplicationProvider.getApplicationContext()
     composeTestRule.setContent {
-      context = LocalContext.current
       AssociationProfileScaffold(
           navigationAction, userViewModel, eventViewModel, associationViewModel) {}
     }
@@ -239,7 +238,7 @@ class AssociationProfileTest : TearDown() {
         .onNodeWithTag(AssociationProfileTestTags.FOLLOW_BUTTON)
         .assertDisplayComponentInScroll()
     composeTestRule
-        .onNodeWithText(context!!.getString(R.string.association_follow))
+        .onNodeWithText(context.getString(R.string.association_follow))
         .assertIsDisplayed()
 
     // Follow operation
@@ -247,13 +246,13 @@ class AssociationProfileTest : TearDown() {
     assert(userViewModel.user.value?.followedAssociations!!.contains(associations.first().uid))
     assert(associationViewModel.selectedAssociation.value!!.followersCount == currentCount + 1)
     composeTestRule
-        .onNodeWithText(context!!.getString(R.string.association_unfollow))
+        .onNodeWithText(context.getString(R.string.association_unfollow))
         .assertIsDisplayed()
     composeTestRule.waitForIdle()
     // Unfollow operation
     composeTestRule.onNodeWithTag(AssociationProfileTestTags.FOLLOW_BUTTON).performClick()
     composeTestRule
-        .onNodeWithText(context!!.getString(R.string.association_follow))
+        .onNodeWithText(context.getString(R.string.association_follow))
         .assertIsDisplayed()
     assert(!userViewModel.user.value?.followedAssociations!!.contains(associations.first().uid))
     assert(associationViewModel.selectedAssociation.value!!.followersCount == currentCount)
