@@ -1,6 +1,7 @@
 package com.android.unio.ui.navigation
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.Search
@@ -8,7 +9,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import com.android.unio.model.strings.test_tags.BottomNavBarTestTags
-import com.android.unio.resources.BookmarkIcon
 
 open class NavigationAction(val navController: NavHostController) {
 
@@ -99,7 +99,7 @@ object TopLevelDestinations {
           route = Route.HOME, icon = Icons.Outlined.Home, textId = BottomNavBarTestTags.HOME)
   val SAVED =
       TopLevelDestination(
-          route = Route.SAVED, icon = BookmarkIcon, textId = BottomNavBarTestTags.SAVED)
+          route = Route.SAVED, icon = Icons.Outlined.FavoriteBorder, textId = BottomNavBarTestTags.SAVED)
   val EXPLORE =
       TopLevelDestination(
           route = Route.EXPLORE,
@@ -117,7 +117,7 @@ object Route {
   const val AUTH = "Auth"
   const val EXPLORE = "Explore"
   const val SAVED = "Saved"
-  const val MY_PROFILE = "MyProfile"
+  const val MY_PROFILE = "Profile"
 }
 
 object Screen {
