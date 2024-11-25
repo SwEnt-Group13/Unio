@@ -113,13 +113,12 @@ fun EventCreationScreen(
 
   val eventBannerUri = remember { mutableStateOf<Uri>(Uri.EMPTY) }
 
-    Scaffold(modifier = Modifier.testTag(EventCreationTestTags.SCREEN)) { padding ->
-        Column(
-            modifier =
-                Modifier.padding(padding).padding(20.dp).fillMaxWidth().verticalScroll(scrollState),
-            verticalArrangement = Arrangement.spacedBy(6.dp),
-            horizontalAlignment = CenterHorizontally)
-        {
+  Scaffold(modifier = Modifier.testTag(EventCreationTestTags.SCREEN)) { padding ->
+    Column(
+        modifier =
+            Modifier.padding(padding).padding(20.dp).fillMaxWidth().verticalScroll(scrollState),
+        verticalArrangement = Arrangement.spacedBy(6.dp),
+        horizontalAlignment = CenterHorizontally) {
           Row(
               modifier = Modifier.fillMaxWidth(),
               verticalAlignment = Alignment.CenterVertically,
@@ -267,32 +266,32 @@ fun EventCreationScreen(
               }
         }
 
-        if (showCoauthorsOverlay) {
-            AssociationsOverlay(
-                onDismiss = { showCoauthorsOverlay = false },
-                onSave = { coauthors ->
-                    coauthorsAndBoolean = coauthors
-                    showCoauthorsOverlay = false
-                },
-                associations = coauthorsAndBoolean,
-                searchViewModel = searchViewModel,
-                headerText = context.getString(R.string.associations_overlay_coauthors_title),
-                bodyText = context.getString(R.string.associations_overlay_coauthors_description))
-        }
-
-        if (showTaggedOverlay) {
-            AssociationsOverlay(
-                onDismiss = { showTaggedOverlay = false },
-                onSave = { tagged ->
-                    taggedAndBoolean = tagged
-                    showTaggedOverlay = false
-                },
-                associations = taggedAndBoolean,
-                searchViewModel = searchViewModel,
-                headerText = context.getString(R.string.associations_overlay_tagged_title),
-                bodyText = context.getString(R.string.associations_overlay_tagged_description))
-        }
+    if (showCoauthorsOverlay) {
+      AssociationsOverlay(
+          onDismiss = { showCoauthorsOverlay = false },
+          onSave = { coauthors ->
+            coauthorsAndBoolean = coauthors
+            showCoauthorsOverlay = false
+          },
+          associations = coauthorsAndBoolean,
+          searchViewModel = searchViewModel,
+          headerText = context.getString(R.string.associations_overlay_coauthors_title),
+          bodyText = context.getString(R.string.associations_overlay_coauthors_description))
     }
+
+    if (showTaggedOverlay) {
+      AssociationsOverlay(
+          onDismiss = { showTaggedOverlay = false },
+          onSave = { tagged ->
+            taggedAndBoolean = tagged
+            showTaggedOverlay = false
+          },
+          associations = taggedAndBoolean,
+          searchViewModel = searchViewModel,
+          headerText = context.getString(R.string.associations_overlay_tagged_title),
+          bodyText = context.getString(R.string.associations_overlay_tagged_description))
+    }
+  }
 }
 
 @OptIn(ExperimentalLayoutApi::class)

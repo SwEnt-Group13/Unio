@@ -99,7 +99,9 @@ object TopLevelDestinations {
           route = Route.HOME, icon = Icons.Outlined.Home, textId = BottomNavBarTestTags.HOME)
   val SAVED =
       TopLevelDestination(
-          route = Route.SAVED, icon = Icons.Outlined.FavoriteBorder, textId = BottomNavBarTestTags.SAVED)
+          route = Route.SAVED,
+          icon = Icons.Outlined.FavoriteBorder,
+          textId = BottomNavBarTestTags.SAVED)
   val EXPLORE =
       TopLevelDestination(
           route = Route.EXPLORE,
