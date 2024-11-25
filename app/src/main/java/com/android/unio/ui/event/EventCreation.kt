@@ -31,6 +31,8 @@ import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Place
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.DatePicker
@@ -74,6 +76,7 @@ import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.firestore.firestoreReferenceListWith
 import com.android.unio.model.map.Location
+import com.android.unio.model.map.PlacesSearchViewModel
 import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.strings.FormatStrings.DAY_MONTH_YEAR_FORMAT
 import com.android.unio.model.strings.FormatStrings.HOUR_MINUTE_FORMAT
@@ -91,7 +94,8 @@ fun EventCreationScreen(
     navigationAction: NavigationAction,
     searchViewModel: SearchViewModel,
     associationViewModel: AssociationViewModel,
-    eventViewModel: EventViewModel
+    eventViewModel: EventViewModel,
+    placesSearchViewModel: PlacesSearchViewModel
 ) {
   val context = LocalContext.current
   val scrollState = rememberScrollState()
@@ -112,6 +116,10 @@ fun EventCreationScreen(
   var endTimestamp: Timestamp? by remember { mutableStateOf(null) }
 
   val eventBannerUri = remember { mutableStateOf<Uri>(Uri.EMPTY) }
+
+    var locationQuery by remember { mutableStateOf("") }
+    val locationSuggestions by placesSearchViewModel.locationSuggestions.collectAsState()
+    val selectedLocation by placesSearchViewModel.selectedLocation.collectAsState()
 
   Scaffold(modifier = Modifier.testTag(EventCreationTestTags.SCREEN)) { padding ->
     Column(
@@ -207,14 +215,35 @@ fun EventCreationScreen(
           }
 
           OutlinedTextField(
-              modifier =
-                  Modifier.fillMaxWidth().testTag(EventCreationTestTags.LOCATION).clickable {
-                    Toast.makeText(context, "Location is not implemented yet", Toast.LENGTH_SHORT)
-                        .show()
-                  },
-              value = "",
-              onValueChange = {},
-              label = { Text(context.getString(R.string.event_creation_location_label)) })
+              modifier = Modifier.fillMaxWidth().testTag(EventCreationTestTags.LOCATION),
+              value = locationQuery,
+              onValueChange = {
+                  locationQuery = it
+                  placesSearchViewModel.setQuery(it)
+              },
+              label = { Text(context.getString(R.string.event_creation_location_label)) },
+              leadingIcon =  {
+                  Icon(Icons.Default.Place, contentDescription = "Search for location")
+              }
+          )
+
+        if (locationQuery.isNotEmpty() && selectedLocation != null) {
+            Column(
+                modifier = Modifier.fillMaxWidth().padding(8.dp)
+            ) {
+                locationSuggestions.forEach { prediction ->
+                    Text(
+                        text = prediction.getPrimaryText(null).toString(),
+                        modifier = Modifier
+                            .clickable {
+                                placesSearchViewModel.selectLocation(prediction)
+                                locationQuery = prediction.getSecondaryText(null).toString()
+                            }
+                            .padding(8.dp)
+                    )
+                }
+            }
+        }
 
           Spacer(modifier = Modifier.width(10.dp))
 
