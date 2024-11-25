@@ -130,7 +130,7 @@ fun AssociationsOverlay(
                         if (searchState != SearchViewModel.Status.LOADING &&
                             searchResults.isEmpty()) {
                           Text(context.getString(R.string.associations_overlay_search_no_results),
-                              color = MaterialTheme.colorScheme.onSurface,
+                              color = MaterialTheme.colorScheme.onSurfaceVariant,
                           )
                         } else {
                           AssociationsList(
@@ -177,7 +177,8 @@ fun AssociationsList(
     items(associations) { (copiedCoauthors, selected) ->
       Row(
           horizontalArrangement = Arrangement.SpaceBetween,
-          verticalAlignment = Alignment.CenterVertically) {
+          verticalAlignment = Alignment.CenterVertically,
+          modifier = Modifier.padding(5.dp).fillMaxWidth()) {
             Text(copiedCoauthors.name,
                 color = MaterialTheme.colorScheme.onSurface,
             )
