@@ -18,6 +18,7 @@ import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.SearchBarDefaults
@@ -59,6 +60,8 @@ fun AssociationsOverlay(
   val searchState by searchViewModel.status.collectAsState()
   var searchQuery by remember { mutableStateOf("") }
 
+    // The text in this composable has had its color manually set as the color scheme does not apply
+    // for some reason
   Dialog(onDismissRequest = onDismiss) {
     Card(
         elevation = CardDefaults.cardElevation(8.dp),
@@ -72,10 +75,12 @@ fun AssociationsOverlay(
               horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(
                     headerText,
+                    color = MaterialTheme.colorScheme.onSurface,
                     style = AppTypography.headlineSmall,
                     modifier = Modifier.testTag(EventCreationOverlayTestTags.TITLE))
                 Text(
                     bodyText,
+                    color = MaterialTheme.colorScheme.onSurface,
                     style = AppTypography.bodyMedium,
                     modifier = Modifier.testTag(EventCreationOverlayTestTags.BODY))
                 SearchBar(
@@ -93,7 +98,9 @@ fun AssociationsOverlay(
                           },
                           onSearch = {},
                           placeholder = {
-                            Text(text = context.getString(R.string.search_placeholder))
+                            Text(text = context.getString(R.string.search_placeholder),
+                                color = MaterialTheme.colorScheme.onSurface,
+                            )
                           },
                           trailingIcon = {
                             if (searchState == SearchViewModel.Status.LOADING) {
@@ -122,7 +129,9 @@ fun AssociationsOverlay(
                       } else {
                         if (searchState != SearchViewModel.Status.LOADING &&
                             searchResults.isEmpty()) {
-                          Text(context.getString(R.string.associations_overlay_search_no_results))
+                          Text(context.getString(R.string.associations_overlay_search_no_results),
+                              color = MaterialTheme.colorScheme.onSurface,
+                          )
                         } else {
                           AssociationsList(
                               copiedAssociations.filter {
@@ -142,13 +151,17 @@ fun AssociationsOverlay(
                           onClick = onDismiss,
                           modifier =
                               Modifier.padding(5.dp).testTag(EventCreationOverlayTestTags.CANCEL)) {
-                            Text(context.getString(R.string.overlay_cancel))
+                            Text(context.getString(R.string.overlay_cancel),
+                                color = MaterialTheme.colorScheme.primary,
+                            )
                           }
                       Button(
                           onClick = { onSave(copiedAssociations) },
                           modifier =
                               Modifier.padding(5.dp).testTag(EventCreationOverlayTestTags.SAVE)) {
-                            Text(context.getString(R.string.overlay_save))
+                            Text(context.getString(R.string.overlay_save),
+                                color = MaterialTheme.colorScheme.onPrimary,
+                            )
                           }
                     }
               }
@@ -165,7 +178,9 @@ fun AssociationsList(
       Row(
           horizontalArrangement = Arrangement.SpaceBetween,
           verticalAlignment = Alignment.CenterVertically) {
-            Text(copiedCoauthors.name)
+            Text(copiedCoauthors.name,
+                color = MaterialTheme.colorScheme.onSurface,
+            )
             Checkbox(checked = selected.value, onCheckedChange = { selected.value = it })
           }
     }

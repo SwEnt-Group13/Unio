@@ -1,6 +1,7 @@
 package com.android.unio.ui.event
 
 import android.net.Uri
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
@@ -80,6 +81,7 @@ import com.android.unio.model.strings.FormatStrings.HOUR_MINUTE_FORMAT
 import com.android.unio.model.strings.test_tags.EventCreationTestTags
 import com.android.unio.ui.event.overlay.AssociationsOverlay
 import com.android.unio.ui.navigation.NavigationAction
+import com.android.unio.ui.theme.AppTheme
 import com.android.unio.ui.theme.AppTypography
 import com.google.firebase.Timestamp
 import java.text.SimpleDateFormat
@@ -113,12 +115,13 @@ fun EventCreationScreen(
 
   val eventBannerUri = remember { mutableStateOf<Uri>(Uri.EMPTY) }
 
-  Scaffold(modifier = Modifier.testTag(EventCreationTestTags.SCREEN)) { padding ->
-    Column(
-        modifier =
-            Modifier.padding(padding).padding(20.dp).fillMaxWidth().verticalScroll(scrollState),
-        verticalArrangement = Arrangement.spacedBy(6.dp),
-        horizontalAlignment = CenterHorizontally) {
+    Scaffold(modifier = Modifier.testTag(EventCreationTestTags.SCREEN)) { padding ->
+        Column(
+            modifier =
+                Modifier.padding(padding).padding(20.dp).fillMaxWidth().verticalScroll(scrollState),
+            verticalArrangement = Arrangement.spacedBy(6.dp),
+            horizontalAlignment = CenterHorizontally)
+        {
           Row(
               modifier = Modifier.fillMaxWidth(),
               verticalAlignment = Alignment.CenterVertically,
@@ -264,34 +267,34 @@ fun EventCreationScreen(
               }) {
                 Text(context.getString(R.string.event_creation_save_button))
               }
+        }
 
-          if (showCoauthorsOverlay) {
+        if (showCoauthorsOverlay) {
             AssociationsOverlay(
                 onDismiss = { showCoauthorsOverlay = false },
                 onSave = { coauthors ->
-                  coauthorsAndBoolean = coauthors
-                  showCoauthorsOverlay = false
+                    coauthorsAndBoolean = coauthors
+                    showCoauthorsOverlay = false
                 },
                 associations = coauthorsAndBoolean,
                 searchViewModel = searchViewModel,
                 headerText = context.getString(R.string.associations_overlay_coauthors_title),
                 bodyText = context.getString(R.string.associations_overlay_coauthors_description))
-          }
+        }
 
-          if (showTaggedOverlay) {
+        if (showTaggedOverlay) {
             AssociationsOverlay(
                 onDismiss = { showTaggedOverlay = false },
                 onSave = { tagged ->
-                  taggedAndBoolean = tagged
-                  showTaggedOverlay = false
+                    taggedAndBoolean = tagged
+                    showTaggedOverlay = false
                 },
                 associations = taggedAndBoolean,
                 searchViewModel = searchViewModel,
                 headerText = context.getString(R.string.associations_overlay_tagged_title),
                 bodyText = context.getString(R.string.associations_overlay_tagged_description))
-          }
         }
-  }
+    }
 }
 
 @OptIn(ExperimentalLayoutApi::class)
