@@ -187,6 +187,7 @@ dependencies {
     implementation(libs.core)
     implementation(libs.firebase.functions.ktx)
     implementation(libs.play.services.location)
+    implementation(libs.places)
 
     testImplementation(libs.test.core.ktx)
     debugImplementation(libs.androidx.ui.tooling)

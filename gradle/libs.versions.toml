@@ -102,6 +102,7 @@ composeMaterial = "1.4.0"
 core = "1.46.0"
 firebaseFunctionsKtx = "21.0.0"
 playServicesLocation = "21.3.0"
+places = "4.1.0"
 
 
 [libraries]
@@ -204,6 +205,7 @@ androidx-compose-material = { group = "androidx.wear.compose", name = "compose-m
 core = { group = "com.google.ar", name = "core", version.ref = "core" }
 firebase-functions-ktx = { group = "com.google.firebase", name = "firebase-functions-ktx", version.ref = "firebaseFunctionsKtx" }
 play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServicesLocation" }
+places = { group = "com.google.android.libraries.places", name = "places", version.ref = "places" }
 
 
 
