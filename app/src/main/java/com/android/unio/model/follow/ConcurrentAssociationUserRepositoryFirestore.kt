@@ -1,5 +1,6 @@
 package com.android.unio.model.follow
 
+import android.util.Log
 import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationRepository
 import com.android.unio.model.association.AssociationRepositoryFirestore
@@ -41,8 +42,13 @@ constructor(
 
           batch.set(associationRef, AssociationRepositoryFirestore.serialize(association))
           batch.set(userRef, UserRepositoryFirestore.serialize(user))
+        Log.d("ConcurrentAssociationUserRepositoryFirestore", "updateFollow: walked through ${user.firstName} ${association.name}")
         }
-        .addOnSuccessListener { onSuccess() }
-        .addOnFailureListener { onFailure(it) }
+        .addOnSuccessListener {
+            Log.d("ConcurrentAssociationUserRepositoryFirestore", "updateFollow: success")
+            onSuccess() }
+        .addOnFailureListener {
+            Log.e("ConcurrentAssociationUserRepositoryFirestore", "updateFollow: failed")
+            onFailure(it) }
   }
 }
