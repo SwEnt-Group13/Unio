@@ -51,7 +51,7 @@ import com.android.unio.model.event.EventType
 import com.android.unio.model.event.EventUtils.addAlphaToColor
 import com.android.unio.model.event.EventUtils.formatTimestamp
 import com.android.unio.model.event.EventViewModel
-import com.android.unio.model.notification.MyWorker
+import com.android.unio.model.notification.NotificationWorker
 import com.android.unio.model.strings.FormatStrings.DAY_MONTH_FORMAT
 import com.android.unio.model.strings.FormatStrings.HOUR_MINUTE_FORMAT
 import com.android.unio.model.strings.NotificationStrings.EVENT_REMINDER_CHANNEL_ID
@@ -90,10 +90,10 @@ fun EventCard(
     }
     var isSaved by remember { mutableStateOf(user!!.savedEvents.contains(event.uid)) }
 
-    val scheduleNotification = {MyWorker.schedule(
+    val scheduleNotification = {NotificationWorker.schedule(
         context,
         title = event.title,
-        message = "The event is about to begin :)",
+        message = context.getString(R.string.notification_event_reminder),
         icon = R.drawable.other_icon,
         channelId = EVENT_REMINDER_CHANNEL_ID,
         notificationId = event.title.hashCode(),

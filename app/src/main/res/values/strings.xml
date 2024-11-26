@@ -336,6 +336,7 @@
     <string name="interest_festivals" translatable="true">Festivals</string>
 
     <!-- Notification Strings -->
+    <string name="notification_event_reminder" translatable="true">The event is about to begin :)</string>
 
 
     <!-- Debug/Temporary Strings -->

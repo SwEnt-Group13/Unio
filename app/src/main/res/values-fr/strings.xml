@@ -287,5 +287,9 @@
     <string name="association_recruitment">Recrutement</string>
     <string name="association_contact_member_profile_picture">Photo de profil du membre contactable</string>
 
+
+    <!-- Notification Strings -->
+    <string name="notification_event_reminder" translatable="true">L\'évènement va bientôt commencer :)</string>
+
 </resources>
 

@@ -19,7 +19,6 @@ import androidx.work.WorkManager
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.android.unio.MainActivity
-import com.android.unio.R
 
 class NotificationReceiver() : BroadcastReceiver() {
 
@@ -63,7 +62,7 @@ class NotificationReceiver() : BroadcastReceiver() {
 
 
         if ("android.intent.action.BOOT_COMPLETED" == intent.action) {
-            context.let { MyWorker.schedule(it, title, message, icon, channelId, notificationId, timeMillis) }
+            context.let { NotificationWorker.schedule(it, title, message, icon, channelId, notificationId, timeMillis) }
         } else {
             //Trigger notification using NotificationManager
             val builder = NotificationCompat.Builder(context, channelId)
@@ -89,7 +88,7 @@ class NotificationReceiver() : BroadcastReceiver() {
                     activityIntent,
                     PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
                 )
-            builder.setSmallIcon(R.drawable.other_icon)
+            builder.setSmallIcon(icon)
                 .setContentTitle(title)
                 .setContentText(message)
                 .setPriority(NotificationCompat.PRIORITY_MAX)
@@ -102,7 +101,7 @@ class NotificationReceiver() : BroadcastReceiver() {
     }
 }
 
-class MyWorker(context: Context, params: WorkerParameters) : Worker(context, params) {
+class NotificationWorker(context: Context, params: WorkerParameters) : Worker(context, params) {
 
     companion object {
         fun schedule(context: Context, title: String, message: String, icon:Int, channelId: String, notificationId:Int, timeMillis: Long) {
@@ -115,7 +114,7 @@ class MyWorker(context: Context, params: WorkerParameters) : Worker(context, par
                 "notificationId" to notificationId,
                 "timeMillis" to timeMillis
             ))
-            val request = OneTimeWorkRequest.Builder(MyWorker::class.java).setInputData(data.build()).build()
+            val request = OneTimeWorkRequest.Builder(NotificationWorker::class.java).setInputData(data.build()).build()
             workManager.enqueue(request)
         }
     }
