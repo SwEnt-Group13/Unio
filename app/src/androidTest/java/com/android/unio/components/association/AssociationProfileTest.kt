@@ -1,12 +1,16 @@
 package com.android.unio.components.association
 
 import android.content.Context
+import android.net.ConnectivityManager
+import android.net.Network
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.navigation.NavHostController
 import androidx.test.core.app.ApplicationProvider
 import com.android.unio.R
@@ -79,6 +83,8 @@ class AssociationProfileTest : TearDown() {
   @MockK private lateinit var userRepository: UserRepositoryFirestore
   @MockK private lateinit var imageRepository: ImageRepositoryFirebaseStorage
 
+  @MockK private lateinit var connectivityManager: ConnectivityManager
+
   @get:Rule val composeTestRule = createComposeRule()
 
   @get:Rule val hiltRule = HiltAndroidRule(this)
@@ -89,11 +95,14 @@ class AssociationProfileTest : TearDown() {
     hiltRule.inject()
 
     mockkStatic(FirebaseFirestore::class)
+    mockkStatic(Network::class)
+    mockkStatic(ContextCompat::class)
     val db = mockk<FirebaseFirestore>()
     val collection = mockk<CollectionReference>()
     val query = mockk<Query>()
     val task = mock<Task<QuerySnapshot>>()
 
+    every { getSystemService(any(), ConnectivityManager::class.java) } returns connectivityManager
     every { Firebase.firestore } returns db
     every { db.collection(any()) } returns collection
     every { collection.whereIn(any(FieldPath::class), any()) } returns query
@@ -180,6 +189,8 @@ class AssociationProfileTest : TearDown() {
 
   @Test
   fun testAssociationProfileDisplayComponent() {
+    every { connectivityManager?.activeNetwork } returns mockk<Network>()
+
     composeTestRule.setContent {
       AssociationProfileScaffold(
           navigationAction, userViewModel, eventViewModel, associationViewModel) {}
@@ -227,6 +238,8 @@ class AssociationProfileTest : TearDown() {
 
   @Test
   fun testFollowAssociation() {
+    every { connectivityManager?.activeNetwork } returns mockk<Network>()
+
     val context: Context = ApplicationProvider.getApplicationContext()
     composeTestRule.setContent {
       AssociationProfileScaffold(
@@ -261,10 +274,12 @@ class AssociationProfileTest : TearDown() {
   @Test
   fun testFollowOffline() {
     val context: Context = ApplicationProvider.getApplicationContext()
+    every { connectivityManager?.activeNetwork } returns null
     composeTestRule.setContent {
       AssociationProfileScaffold(
           navigationAction, userViewModel, eventViewModel, associationViewModel) {}
     }
+    // Disable internet connction in the test
 
     val currentCount = associationViewModel.selectedAssociation.value!!.followersCount
 
@@ -282,6 +297,8 @@ class AssociationProfileTest : TearDown() {
 
   @Test
   fun testButtonBehavior() {
+    every { connectivityManager?.activeNetwork } returns mockk<Network>()
+
     composeTestRule.setContent {
       AssociationProfileScaffold(
           navigationAction, userViewModel, eventViewModel, associationViewModel) {}
@@ -314,6 +331,8 @@ class AssociationProfileTest : TearDown() {
 
   @Test
   fun testGoBackButton() {
+    every { connectivityManager?.activeNetwork } returns mockk<Network>()
+
     composeTestRule.setContent {
       AssociationProfileScaffold(
           navigationAction, userViewModel, eventViewModel, associationViewModel) {}
@@ -328,6 +347,8 @@ class AssociationProfileTest : TearDown() {
 
   @Test
   fun testAssociationProfileGoodId() {
+    every { connectivityManager?.activeNetwork } returns mockk<Network>()
+
     composeTestRule.setContent {
       AssociationProfileScaffold(
           navigationAction, userViewModel, eventViewModel, associationViewModel) {}
@@ -339,6 +360,8 @@ class AssociationProfileTest : TearDown() {
 
   @Test
   fun testAssociationProfileNoId() {
+    every { connectivityManager?.activeNetwork } returns mockk<Network>()
+
     associationViewModel.selectAssociation("3")
     composeTestRule.setContent {
       AssociationProfileScreen(
