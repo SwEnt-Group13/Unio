@@ -1,6 +1,5 @@
 package com.android.unio.model.follow
 
-import android.util.Log
 import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationRepository
 import com.android.unio.model.association.AssociationRepositoryFirestore
@@ -43,11 +42,7 @@ constructor(
           batch.set(associationRef, AssociationRepositoryFirestore.serialize(association))
           batch.set(userRef, UserRepositoryFirestore.serialize(user))
         }
-        .addOnSuccessListener {
-          onSuccess()
-        }
-        .addOnFailureListener {
-          onFailure(it)
-        }
+        .addOnSuccessListener { onSuccess() }
+        .addOnFailureListener { onFailure(it) }
   }
 }
