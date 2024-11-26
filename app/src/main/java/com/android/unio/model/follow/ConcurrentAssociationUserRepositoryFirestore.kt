@@ -42,13 +42,12 @@ constructor(
 
           batch.set(associationRef, AssociationRepositoryFirestore.serialize(association))
           batch.set(userRef, UserRepositoryFirestore.serialize(user))
-        Log.d("ConcurrentAssociationUserRepositoryFirestore", "updateFollow: walked through ${user.firstName} ${association.name}")
         }
         .addOnSuccessListener {
-            Log.d("ConcurrentAssociationUserRepositoryFirestore", "updateFollow: success")
-            onSuccess() }
+          onSuccess()
+        }
         .addOnFailureListener {
-            Log.e("ConcurrentAssociationUserRepositoryFirestore", "updateFollow: failed")
-            onFailure(it) }
+          onFailure(it)
+        }
   }
 }
