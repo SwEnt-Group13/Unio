@@ -258,27 +258,27 @@ class AssociationProfileTest : TearDown() {
     assert(associationViewModel.selectedAssociation.value!!.followersCount == currentCount)
   }
 
-    @Test
-    fun testFollowOffline() {
-        val context: Context = ApplicationProvider.getApplicationContext()
-        composeTestRule.setContent {
-            AssociationProfileScaffold(
-                navigationAction, userViewModel, eventViewModel, associationViewModel) {}
-        }
-        
-        val currentCount = associationViewModel.selectedAssociation.value!!.followersCount
-
-        composeTestRule
-            .onNodeWithTag(AssociationProfileTestTags.FOLLOW_BUTTON)
-            .assertDisplayComponentInScroll()
-        composeTestRule
-            .onNodeWithText(context.getString(R.string.association_follow))
-            .assertIsDisplayed()
-
-        composeTestRule.onNodeWithTag(AssociationProfileTestTags.FOLLOW_BUTTON).performClick()
-        assert(!userViewModel.user.value?.followedAssociations!!.contains(associations.first().uid))
-        assert(associationViewModel.selectedAssociation.value!!.followersCount == currentCount)
+  @Test
+  fun testFollowOffline() {
+    val context: Context = ApplicationProvider.getApplicationContext()
+    composeTestRule.setContent {
+      AssociationProfileScaffold(
+          navigationAction, userViewModel, eventViewModel, associationViewModel) {}
     }
+
+    val currentCount = associationViewModel.selectedAssociation.value!!.followersCount
+
+    composeTestRule
+        .onNodeWithTag(AssociationProfileTestTags.FOLLOW_BUTTON)
+        .assertDisplayComponentInScroll()
+    composeTestRule
+        .onNodeWithText(context.getString(R.string.association_follow))
+        .assertIsDisplayed()
+
+    composeTestRule.onNodeWithTag(AssociationProfileTestTags.FOLLOW_BUTTON).performClick()
+    assert(!userViewModel.user.value?.followedAssociations!!.contains(associations.first().uid))
+    assert(associationViewModel.selectedAssociation.value!!.followersCount == currentCount)
+  }
 
   @Test
   fun testButtonBehavior() {
@@ -305,7 +305,6 @@ class AssociationProfileTest : TearDown() {
     composeTestRule.onNodeWithTag(AssociationProfileTestTags.DESIGNER_ROLES).performClick()
     assertSnackBarIsDisplayed()
   }
-
 
   private fun assertSnackBarIsDisplayed() {
     composeTestRule.onNodeWithTag(AssociationProfileTestTags.SNACKBAR_HOST).assertIsDisplayed()
