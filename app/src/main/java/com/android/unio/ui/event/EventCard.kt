@@ -61,8 +61,11 @@ import com.android.unio.ui.image.AsyncImageWrapper
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
 import com.android.unio.ui.theme.AppTypography
+import com.google.firebase.Timestamp
 import java.text.SimpleDateFormat
 import java.util.Locale
+
+const val SECONDS_IN_AN_HOUR = 3600
 
 @Composable
 fun EventCard(
@@ -97,7 +100,7 @@ fun EventCard(
         icon = R.drawable.other_icon,
         channelId = EVENT_REMINDER_CHANNEL_ID,
         notificationId = event.title.hashCode(),
-        timeMillis = 10000)
+        timeMillis = (event.startDate.seconds - 2 * SECONDS_IN_AN_HOUR) * SECONDS_IN_AN_HOUR)
   }
 
   val permissionLauncher =
@@ -119,12 +122,13 @@ fun EventCard(
       // TODO : Unschedule notification.
       isSaved = false
     } else {
-      // Schedule a notification a few hours before the event's startDate
-      println(isNotificationsEnabled)
-      if (!isNotificationsEnabled) {
-        permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-      } else {
-        scheduleNotification()
+      if (event.startDate.seconds - Timestamp.now().seconds < 3 * SECONDS_IN_AN_HOUR) {
+        // Schedule a notification a few hours before the event's startDate
+        if (!isNotificationsEnabled) {
+          permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+        } else {
+          scheduleNotification()
+        }
       }
       user!!.savedEvents.add(event.uid)
     }
