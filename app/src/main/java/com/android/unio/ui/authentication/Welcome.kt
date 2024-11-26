@@ -170,7 +170,8 @@ fun handleAuthentication(email: String, password: String, context: Context) {
   // Check internet connectivity
   val isConnected = checkInternetConnection(context)
   if (!isConnected) {
-    Toast.makeText(context, context.getString(R.string.no_internet_connection), Toast.LENGTH_SHORT).show()
+    Toast.makeText(context, context.getString(R.string.no_internet_connection), Toast.LENGTH_SHORT)
+        .show()
     return
   }
 

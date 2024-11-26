@@ -268,6 +268,7 @@ private fun AssociationProfileContent(
     eventViewModel: EventViewModel,
     associationViewModel: AssociationViewModel
 ) {
+  val context = LocalContext.current
   val association by associationViewModel.selectedAssociation.collectAsState()
   val user by userViewModel.user.collectAsState()
 
@@ -282,13 +283,21 @@ private fun AssociationProfileContent(
     mutableStateOf(user!!.followedAssociations.contains(association!!.uid))
   }
   var enableButton by remember { mutableStateOf(true) }
+  val isConnected = Utils.checkInternetConnection(context)
+
   val onFollow = {
-    enableButton = false
-    associationViewModel.updateFollow(association!!, user!!, isFollowed) {
-      userViewModel.refreshUser()
-      enableButton = true
+    if (isConnected) {
+      enableButton = false
+      associationViewModel.updateFollow(association!!, user!!, isFollowed) {
+        userViewModel.refreshUser()
+        enableButton = true
+      }
+      isFollowed = !isFollowed
+    } else {
+      Toast.makeText(
+              context, context.getString(R.string.no_internet_connection), Toast.LENGTH_SHORT)
+          .show()
     }
-    isFollowed = !isFollowed
   }
 
   val onMemberClick = { member: User ->
@@ -560,32 +569,27 @@ private fun AssociationHeader(
           style = AppTypography.headlineSmall,
           modifier =
               Modifier.padding(bottom = 14.dp).testTag(AssociationProfileTestTags.HEADER_MEMBERS))
-        val isConnected = Utils.checkInternetConnection(context)
-        if(isConnected){
-            if (isFollowed) {
-                OutlinedButton(
-                    enabled = enableButton,
-                    onClick = onFollow,
-                    modifier = Modifier.testTag(AssociationProfileTestTags.FOLLOW_BUTTON)) {
-                    Text(context.getString(R.string.association_unfollow))
-                }
-            } else {
-                Button(
-                    enabled = enableButton,
-                    onClick = onFollow,
-                    modifier = Modifier.testTag(AssociationProfileTestTags.FOLLOW_BUTTON)) {
-                    Icon(
-                        Icons.Filled.Add,
-                        contentDescription =
-                        context.getString(R.string.association_content_description_follow_icon))
-                    Spacer(Modifier.width(2.dp))
-                    Text(context.getString(R.string.association_follow))
-                }
-            }
-        } else {
-            Toast.makeText(context, context.getString(R.string.no_internet_connection), Toast.LENGTH_SHORT).show()
-        }
 
+      if (isFollowed) {
+        OutlinedButton(
+            enabled = enableButton,
+            onClick = onFollow,
+            modifier = Modifier.testTag(AssociationProfileTestTags.FOLLOW_BUTTON)) {
+              Text(context.getString(R.string.association_unfollow))
+            }
+      } else {
+        Button(
+            enabled = enableButton,
+            onClick = onFollow,
+            modifier = Modifier.testTag(AssociationProfileTestTags.FOLLOW_BUTTON)) {
+              Icon(
+                  Icons.Filled.Add,
+                  contentDescription =
+                      context.getString(R.string.association_content_description_follow_icon))
+              Spacer(Modifier.width(2.dp))
+              Text(context.getString(R.string.association_follow))
+            }
+      }
     }
   }
 }
