@@ -102,7 +102,6 @@ object FirebaseMessagingModule {
   @Provides fun provideFirebaseMessaging(): FirebaseMessaging = FirebaseMessaging.getInstance()
 }
 
-
 @Module
 @InstallIn(SingletonComponent::class)
 object LocationModule {

@@ -61,11 +61,11 @@ class MainActivity : ComponentActivity() {
 
   @Inject lateinit var imageRepository: ImageRepositoryFirebaseStorage
 
-    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
-    @SuppressLint("SourceLockedOrientationActivity")
-    override fun onCreate(savedInstanceState: Bundle?) {
-        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-        super.onCreate(savedInstanceState)
+  @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+  @SuppressLint("SourceLockedOrientationActivity")
+  override fun onCreate(savedInstanceState: Bundle?) {
+    requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+    super.onCreate(savedInstanceState)
 
     setContent {
       Surface(modifier = Modifier.fillMaxSize()) {
