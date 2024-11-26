@@ -43,25 +43,17 @@ constructor(private val repository: EventRepository, private val imageRepository
     repository.init { loadEvents() }
   }
 
-  /**
-   * Loads the list of events from the repository asynchronously using coroutines and updates the
-   * internal [MutableStateFlow].
-   */
+  /** Loads the list of events from the repository and updates the internal [MutableStateFlow]. */
   fun loadEvents() {
     repository.getEvents(
         onSuccess = { eventList ->
           eventList.forEach { event -> event.organisers.requestAll() }
-          setEvents(eventList)
+          _events.value = eventList
         },
         onFailure = { exception ->
           Log.e("EventViewModel", "An error occurred while loading events: $exception")
           _events.value = emptyList()
         })
-  }
-
-  /** Sets the list of events to be displayed. */
-  private fun setEvents(events: List<Event>) {
-    _events.value = events
   }
 
   /**
@@ -83,21 +75,26 @@ constructor(private val repository: EventRepository, private val imageRepository
     return _events.value.find { it.uid == id }
   }
 
-  /** Add a new event to the repository. It uploads the event image first, then adds the event. */
+  /**
+   * Add a new event to the repository. It uploads the event image first, then adds the event. It
+   * then adds it to the _events stateflow
+   */
   fun addEvent(
       inputStream: InputStream,
       event: Event,
       onSuccess: () -> Unit,
       onFailure: (Exception) -> Unit
   ) {
+    event.uid = repository.getNewUid() // Generate a new UID for the event
     imageRepository.uploadImage(
         inputStream,
         "images/events/${event.uid}",
         { uri ->
           event.image = uri
-          event.uid = repository.getNewUid()
           repository.addEvent(event, onSuccess, onFailure)
         },
         { e -> Log.e("ImageRepository", "Failed to store image: $e") })
+    event.organisers.requestAll(onSuccess)
+    _events.value += event
   }
 }

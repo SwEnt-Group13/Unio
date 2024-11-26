@@ -1,59 +1,51 @@
 package com.android.unio.end2end
 
 import android.util.Log
-import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextContains
 import androidx.compose.ui.test.isDisplayed
-import androidx.compose.ui.test.junit4.createAndroidComposeRule
-import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import androidx.test.filters.LargeTest
-import com.android.unio.MainActivity
+import com.android.unio.assertDisplayComponentInScroll
 import com.android.unio.model.strings.test_tags.AccountDetailsTestTags
 import com.android.unio.model.strings.test_tags.BottomNavBarTestTags
 import com.android.unio.model.strings.test_tags.EmailVerificationTestTags
 import com.android.unio.model.strings.test_tags.HomeTestTags
 import com.android.unio.model.strings.test_tags.InterestsOverlayTestTags
 import com.android.unio.model.strings.test_tags.UserProfileTestTags
-import com.android.unio.ui.assertDisplayComponentInScroll
 import dagger.hilt.android.testing.HiltAndroidTest
-import io.mockk.clearAllMocks
-import io.mockk.unmockkAll
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.json.JSONObject
-import org.junit.After
-import org.junit.Rule
 import org.junit.Test
 
 @LargeTest
 @HiltAndroidTest
 class UserAccountCreationTest : EndToEndTest() {
-  @get:Rule val composeTestRule = createAndroidComposeRule<MainActivity>()
-
   @Test
   fun testUserCanLoginAndCreateAnAccount() {
     /** Create an account on the welcome screen */
     signInWithUser(composeTestRule, UnverifiedUser.EMAIL, UnverifiedUser.PWD)
 
-    Thread.sleep(5000)
+    Thread.sleep(10000)
 
     /** Verify the email */
     val emailVerificationUrl = getLatestEmailVerificationUrl()
     verifyEmail(emailVerificationUrl)
 
     // This sleep is required to wait for the email verification to complete
-    Thread.sleep(5000)
 
     /** Refresh the email verification and continue */
-    composeTestRule.onNodeWithTag(EmailVerificationTestTags.SCREEN).assertIsDisplayed()
+    composeTestRule.waitUntil(10000) {
+      composeTestRule.onNodeWithTag(EmailVerificationTestTags.SCREEN).isDisplayed()
+    }
     composeTestRule.onNodeWithTag(EmailVerificationTestTags.REFRESH).performClick()
 
-    Thread.sleep(5000)
-
+    composeTestRule.waitUntil(10000) {
+      composeTestRule.onNodeWithTag(EmailVerificationTestTags.CONTINUE).isDisplayed()
+    }
     composeTestRule.onNodeWithTag(EmailVerificationTestTags.CONTINUE).performClick()
     composeTestRule.onNodeWithTag(AccountDetailsTestTags.TITLE_TEXT).assertExists()
 
@@ -67,28 +59,35 @@ class UserAccountCreationTest : EndToEndTest() {
     composeTestRule
         .onNodeWithTag(AccountDetailsTestTags.BIOGRAPHY_TEXT_FIELD)
         .performTextInput(UnverifiedUser.BIOGRAPHY)
-    assertDisplayComponentInScroll(
-        composeTestRule.onNodeWithTag(AccountDetailsTestTags.INTERESTS_BUTTON))
+
+    composeTestRule
+        .onNodeWithTag(AccountDetailsTestTags.INTERESTS_BUTTON)
+        .assertDisplayComponentInScroll()
     composeTestRule.onNodeWithTag(AccountDetailsTestTags.INTERESTS_BUTTON).performClick()
-    assertDisplayComponentInScroll(
-        composeTestRule.onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW + "0"))
 
-    composeTestRule.onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW + "0").performClick()
+    composeTestRule
+        .onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW + "SPORTS")
+        .assertDisplayComponentInScroll()
 
-    assertDisplayComponentInScroll(
-        composeTestRule.onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW + "1"))
+    composeTestRule.onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW + "SPORTS").performClick()
 
-    composeTestRule.onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW + "1").performClick()
+    composeTestRule
+        .onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW + "TRAVEL")
+        .assertDisplayComponentInScroll()
 
-    assertDisplayComponentInScroll(
-        composeTestRule.onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW + "2"))
+    composeTestRule.onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW + "TRAVEL").performClick()
 
-    composeTestRule.onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW + "2").performClick()
+    composeTestRule
+        .onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW + "FOOD")
+        .assertDisplayComponentInScroll()
+
+    composeTestRule.onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW + "FOOD").performClick()
     composeTestRule.onNodeWithTag(InterestsOverlayTestTags.SAVE_BUTTON).assertIsDisplayed()
     composeTestRule.onNodeWithTag(InterestsOverlayTestTags.SAVE_BUTTON).performClick()
 
-    assertDisplayComponentInScroll(
-        composeTestRule.onNodeWithTag(AccountDetailsTestTags.CONTINUE_BUTTON))
+    composeTestRule
+        .onNodeWithTag(AccountDetailsTestTags.CONTINUE_BUTTON)
+        .assertDisplayComponentInScroll()
 
     composeTestRule.onNodeWithTag(AccountDetailsTestTags.CONTINUE_BUTTON).performClick()
 
@@ -115,7 +114,9 @@ class UserAccountCreationTest : EndToEndTest() {
     composeTestRule
         .onNodeWithTag(UserProfileTestTags.BIOGRAPHY)
         .assertTextContains(UnverifiedUser.BIOGRAPHY)
-    composeTestRule.onAllNodesWithTag(UserProfileTestTags.INTEREST).assertCountEquals(3)
+    composeTestRule.onNodeWithTag(UserProfileTestTags.INTEREST_CHIP + "SPORTS").assertExists()
+    composeTestRule.onNodeWithTag(UserProfileTestTags.INTEREST_CHIP + "TRAVEL").assertExists()
+    composeTestRule.onNodeWithTag(UserProfileTestTags.INTEREST_CHIP + "FOOD").assertExists()
 
     signOutWithUser(composeTestRule)
   }
@@ -143,11 +144,5 @@ class UserAccountCreationTest : EndToEndTest() {
     val request = Request.Builder().url(url.replace("127.0.0.1", "10.0.2.2")).build()
 
     client.newCall(request).execute()
-  }
-
-  @After
-  fun tearDown() {
-    clearAllMocks()
-    unmockkAll()
   }
 }

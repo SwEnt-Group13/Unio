@@ -22,14 +22,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import com.android.unio.R
+import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.strings.test_tags.SomeoneElseUserProfileTestTags
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.navigation.NavigationAction
+import com.android.unio.ui.navigation.Screen
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SomeoneElseUserProfileScreen(navigationAction: NavigationAction, userViewModel: UserViewModel) {
+fun SomeoneElseUserProfileScreen(
+    navigationAction: NavigationAction,
+    userViewModel: UserViewModel,
+    associationViewModel: AssociationViewModel
+) {
   val context = LocalContext.current
   val user by userViewModel.selectedSomeoneElseUser.collectAsState()
   if (user == null) {
@@ -46,6 +52,7 @@ fun SomeoneElseUserProfileScreen(navigationAction: NavigationAction, userViewMod
               },
               navigationIcon = {
                 IconButton(
+                    modifier = Modifier.testTag(SomeoneElseUserProfileTestTags.GO_BACK),
                     onClick = { navigationAction.goBack() },
                     content = {
                       Icon(
@@ -57,7 +64,15 @@ fun SomeoneElseUserProfileScreen(navigationAction: NavigationAction, userViewMod
           Box(
               modifier =
                   Modifier.padding(padding).fillMaxHeight().verticalScroll(rememberScrollState())) {
-                UserProfileScreenContent(navigationAction, user!!)
+                UserProfileScreenContent(
+                    user!!,
+                    onAssociationClick = {
+                      associationViewModel.selectAssociation(it)
+                      navigationAction.navigateTo(Screen.ASSOCIATION_PROFILE)
+                    },
+                    onClaimAssociationClick = {
+                      navigationAction.navigateTo(Screen.CLAIM_ASSOCIATION_RIGHTS)
+                    })
               }
         }
   }

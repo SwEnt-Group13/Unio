@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Place
@@ -72,6 +73,10 @@ fun HomeScreen(
 
   val searchResults by searchViewModel.events.collectAsState()
   val searchState by searchViewModel.status.collectAsState()
+  var searchQuery by remember { mutableStateOf("") }
+
+  val nbOfTabs = 2
+  val pagerState = rememberPagerState(initialPage = 0) { nbOfTabs }
 
   Scaffold(
       floatingActionButton = {
@@ -84,20 +89,34 @@ fun HomeScreen(
                       context.getString(R.string.home_content_description_map_button))
             }
       },
+      topBar = {
+        TopBar(
+            searchState = searchState,
+            searchQuery = searchQuery,
+            pagerState = pagerState,
+            onSearch = {
+              // Search when query changes
+              searchQuery = it
+              searchViewModel.debouncedSearch(it, SearchViewModel.SearchType.EVENT)
+            })
+      },
       bottomBar = {
         BottomNavigationMenu(
             { navigationAction.navigateTo(it.route) }, LIST_TOP_LEVEL_DESTINATION, Route.HOME)
       },
       modifier = Modifier.testTag(HomeTestTags.SCREEN),
-      content = { paddingValues ->
-        TopBar(
-            navigationAction,
-            searchState,
-            searchResults,
-            userViewModel,
-            searchViewModel,
-            eventViewModel,
-            paddingValues)
+      content = { padding ->
+        HorizontalPager(state = pagerState, modifier = Modifier.fillMaxWidth().padding(padding)) {
+            page ->
+          HomeContent(
+              navigationAction,
+              searchQuery,
+              searchState,
+              searchResults,
+              userViewModel,
+              eventViewModel,
+              page == 1)
+        }
       })
 }
 
@@ -109,18 +128,24 @@ fun HomeContent(
     searchResults: List<Event>,
     userViewModel: UserViewModel,
     eventViewModel: EventViewModel,
-    isOnFollowScreen: Boolean,
-    paddingValues: PaddingValues
+    isOnFollowScreen: Boolean
 ) {
 
+  val user by userViewModel.user.collectAsState()
+  if (user == null) {
+    Log.e("HomeContent", "User is null")
+    return
+  }
+
   val context = LocalContext.current
-  val followedAssociations by userViewModel.followedAssociations.collectAsState()
-  val allEvent by eventViewModel.events.collectAsState()
+  val allEvents by eventViewModel.events.collectAsState()
   val events: List<Event> =
       if (isOnFollowScreen) {
-        allEvent.filter { followedAssociations.any { uid -> it.organisers.contains(uid) } }
+        allEvents.filter {
+          user!!.followedAssociations.uids.any { uid -> it.organisers.contains(uid) }
+        }
       } else {
-        allEvent
+        allEvents
       }
 
   // Event List
@@ -128,24 +153,20 @@ fun HomeContent(
       (searchState == SearchViewModel.Status.SUCCESS ||
           searchState == SearchViewModel.Status.LOADING)) {
     if (searchResults.isEmpty()) {
-      Box(
-          modifier = Modifier.fillMaxSize().padding(paddingValues),
-          contentAlignment = Alignment.Center) {
-            Text(context.getString(R.string.explore_search_no_results))
-          }
+      Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        Text(context.getString(R.string.explore_search_no_results))
+      }
     } else {
       EventList(navigationAction, searchResults, userViewModel, eventViewModel)
     }
   } else if (events.isNotEmpty()) {
     EventList(navigationAction, events, userViewModel, eventViewModel)
   } else {
-    Box(
-        modifier = Modifier.fillMaxSize().padding(paddingValues),
-        contentAlignment = Alignment.Center) {
-          Text(
-              modifier = Modifier.testTag(HomeTestTags.EMPTY_EVENT_PROMPT),
-              text = context.getString(R.string.event_no_events_available))
-        }
+    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+      Text(
+          modifier = Modifier.testTag(HomeTestTags.EMPTY_EVENT_PROMPT),
+          text = context.getString(R.string.event_no_events_available))
+    }
   }
 }
 
@@ -166,29 +187,21 @@ fun EventList(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopBar(
-    navigationAction: NavigationAction,
     searchState: SearchViewModel.Status,
-    searchResults: List<Event>,
-    userViewModel: UserViewModel,
-    searchViewModel: SearchViewModel,
-    eventViewModel: EventViewModel,
-    paddingValues: PaddingValues
+    searchQuery: String,
+    pagerState: PagerState,
+    onSearch: (String) -> Unit
 ) {
-  val nbOfTabs = 2
   val context = LocalContext.current
 
   Column(
       horizontalAlignment = CenterHorizontally,
-      modifier =
-          Modifier.padding(paddingValues).padding(top = 20.dp, bottom = 50.dp).fillMaxSize()) {
-        var searchQuery by remember { mutableStateOf("") }
-
+      modifier = Modifier.padding(top = 20.dp).fillMaxWidth()) {
         val list =
             listOf(
                 context.getString(R.string.home_tab_all),
                 context.getString(R.string.home_tab_following))
         val scope = rememberCoroutineScope()
-        val pagerState = rememberPagerState(initialPage = 0) { nbOfTabs }
 
         val sizeList = remember { mutableStateMapOf<Int, Pair<Float, Float>>() }
 
@@ -202,11 +215,7 @@ fun TopBar(
               SearchBarDefaults.InputField(
                   modifier = Modifier.testTag(HomeTestTags.SEARCH_BAR_INPUT),
                   query = searchQuery,
-                  onQueryChange = {
-                    // Search when query changes
-                    searchQuery = it
-                    searchViewModel.debouncedSearch(it, SearchViewModel.SearchType.EVENT)
-                  },
+                  onQueryChange = onSearch,
                   onSearch = {},
                   expanded = false,
                   onExpandedChange = {},
@@ -288,19 +297,6 @@ fun TopBar(
                                   .padding(horizontal = 32.dp, vertical = 16.dp))
                     }
               }
-            }
-        // Pager Menu
-        HorizontalPager(
-            state = pagerState, modifier = Modifier.fillMaxWidth().padding(top = 15.dp)) { page ->
-              HomeContent(
-                  navigationAction,
-                  searchQuery,
-                  searchState,
-                  searchResults,
-                  userViewModel,
-                  eventViewModel,
-                  page == 1,
-                  paddingValues)
             }
       }
 }

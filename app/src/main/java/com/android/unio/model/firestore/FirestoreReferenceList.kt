@@ -31,7 +31,7 @@ import kotlinx.coroutines.flow.StateFlow
  * @property collectionPath The path to the Firestore collection.
  * @property hydrate A function that converts a [DocumentSnapshot] to a [T].
  */
-class FirestoreReferenceList<T>(
+class FirestoreReferenceList<T : UniquelyIdentifiable>(
     private val collectionPath: String,
     private val hydrate: (Map<String, Any>?) -> T
 ) : ReferenceList<T> {
@@ -70,9 +70,23 @@ class FirestoreReferenceList<T>(
     _uids.remove(uid)
   }
 
-  /** Requests all documents from Firestore and updates the list. */
-  override fun requestAll(onSuccess: () -> Unit) {
+  /**
+   * Requests all documents from Firestore and updates the list.
+   *
+   * @param onSuccess A lambda that is called when the request is successful.
+   * @param lazy If true, the request will only be made if the list is not up-to-date.
+   */
+  override fun requestAll(onSuccess: () -> Unit, lazy: Boolean) {
+    // If the list is already up-to-date, return early.
+    val fetchedUids = _list.value.map { it.uid }
+    if (lazy && fetchedUids == _uids) {
+      onSuccess()
+      return
+    }
+
     _list.value = emptyList()
+
+    // If there are no UIDs, return early.
     if (_uids.isEmpty()) {
       onSuccess()
       return
@@ -99,7 +113,7 @@ class FirestoreReferenceList<T>(
 
   companion object {
     /** Creates a [FirestoreReferenceList] from a list of UIDs. */
-    fun <T> fromList(
+    fun <T : UniquelyIdentifiable> fromList(
         list: List<String>,
         collectionPath: String,
         hydrate: (Map<String, Any>?) -> T
@@ -110,7 +124,7 @@ class FirestoreReferenceList<T>(
     }
 
     /** Creates an empty [FirestoreReferenceList]. */
-    fun <T> empty(
+    fun <T : UniquelyIdentifiable> empty(
         collectionPath: String,
         hydrate: (Map<String, Any>?) -> T
     ): FirestoreReferenceList<T> {
@@ -125,17 +139,14 @@ class FirestoreReferenceList<T>(
  */
 fun Association.Companion.emptyFirestoreReferenceList(): FirestoreReferenceList<Association> {
   return FirestoreReferenceList.empty(
-      collectionPath = ASSOCIATION_PATH,
-      hydrate = AssociationRepositoryFirestore.Companion::hydrate)
+      ASSOCIATION_PATH, AssociationRepositoryFirestore.Companion::hydrate)
 }
 
 fun Association.Companion.firestoreReferenceListWith(
     uids: List<String>
 ): FirestoreReferenceList<Association> {
   return FirestoreReferenceList.fromList(
-      list = uids,
-      collectionPath = ASSOCIATION_PATH,
-      hydrate = AssociationRepositoryFirestore.Companion::hydrate)
+      uids, ASSOCIATION_PATH, AssociationRepositoryFirestore.Companion::hydrate)
 }
 
 fun User.Companion.emptyFirestoreReferenceList(): FirestoreReferenceList<User> {

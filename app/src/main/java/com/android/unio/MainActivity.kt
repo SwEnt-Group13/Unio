@@ -32,7 +32,7 @@ import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.association.AssociationProfileScreen
 import com.android.unio.ui.association.EditAssociationScreen
-import com.android.unio.ui.authentication.AccountDetails
+import com.android.unio.ui.authentication.AccountDetailsScreen
 import com.android.unio.ui.authentication.EmailVerificationScreen
 import com.android.unio.ui.authentication.WelcomeScreen
 import com.android.unio.ui.event.EventCreationScreen
@@ -47,17 +47,19 @@ import com.android.unio.ui.saved.SavedScreen
 import com.android.unio.ui.settings.SettingsScreen
 import com.android.unio.ui.theme.AppTheme
 import com.android.unio.ui.user.SomeoneElseUserProfileScreen
+import com.android.unio.ui.user.UserClaimAssociationPresidentialRightsScreen
+import com.android.unio.ui.user.UserClaimAssociationScreen
+import com.android.unio.ui.user.UserProfileEditionScreen
 import com.android.unio.ui.user.UserProfileScreen
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.HiltAndroidApp
-import me.zhanghai.compose.preference.ProvidePreferenceLocals
 import javax.inject.Inject
+import me.zhanghai.compose.preference.ProvidePreferenceLocals
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    @Inject
-    lateinit var imageRepository: ImageRepositoryFirebaseStorage
+  @Inject lateinit var imageRepository: ImageRepositoryFirebaseStorage
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     @SuppressLint("SourceLockedOrientationActivity")
@@ -65,105 +67,109 @@ class MainActivity : ComponentActivity() {
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         super.onCreate(savedInstanceState)
 
-        setContent {
-            Surface(modifier = Modifier.fillMaxSize()) {
-                ProvidePreferenceLocals { AppTheme { UnioApp(imageRepository) } }
-            }
-        }
-
+    setContent {
+      Surface(modifier = Modifier.fillMaxSize()) {
+        ProvidePreferenceLocals { AppTheme { UnioApp(imageRepository) } }
+      }
     }
+  }
 }
 
-@HiltAndroidApp
-class UnioApplication : Application()
+@HiltAndroidApp class UnioApplication : Application()
 
 @Composable
 fun UnioApp(imageRepository: ImageRepositoryFirebaseStorage) {
+  val navController = rememberNavController()
 
-    val navController = rememberNavController()
+  val navigationActions = NavigationAction(navController)
 
-    val navigationActions = NavigationAction(navController)
+  val associationViewModel = hiltViewModel<AssociationViewModel>()
+  val userViewModel = hiltViewModel<UserViewModel>()
+  val searchViewModel = hiltViewModel<SearchViewModel>()
+  val authViewModel = hiltViewModel<AuthViewModel>()
+  val eventViewModel = hiltViewModel<EventViewModel>()
+  val mapViewModel = hiltViewModel<MapViewModel>()
 
-    val associationViewModel = hiltViewModel<AssociationViewModel>()
-    val userViewModel = hiltViewModel<UserViewModel>()
-    val searchViewModel = hiltViewModel<SearchViewModel>()
-    val authViewModel = hiltViewModel<AuthViewModel>()
-    val eventViewModel = hiltViewModel<EventViewModel>()
-    val mapViewModel = hiltViewModel<MapViewModel>()
+  // Observe the authentication state
+  val authState by authViewModel.authState.collectAsState()
+  var previousAuthState by rememberSaveable { mutableStateOf<String?>(null) }
 
-    // Observe the authentication state
-    val authState by authViewModel.authState.collectAsState()
-    var previousAuthState by rememberSaveable { mutableStateOf<String?>(null) }
-
-    LaunchedEffect(authState) {
-        authState?.let { screen ->
-            // Only navigate if the screen has changed
-            if (screen != previousAuthState) {
-                navigationActions.navigateTo(screen)
-                previousAuthState = screen
-            }
-        }
+  LaunchedEffect(authState) {
+    authState?.let { screen ->
+      // Only navigate if the screen has changed
+      if (screen != previousAuthState) {
+        navigationActions.navigateTo(screen)
+        previousAuthState = screen
+      }
     }
+  }
 
-    NavHost(navController = navController, startDestination = Route.AUTH) {
-        navigation(startDestination = Screen.WELCOME, route = Route.AUTH) {
-            composable(Screen.WELCOME) { WelcomeScreen(userViewModel) }
-            composable(Screen.EMAIL_VERIFICATION) {
-                EmailVerificationScreen(navigationActions, userViewModel)
-            }
-            composable(Screen.ACCOUNT_DETAILS) {
-                AccountDetails(navigationActions, userViewModel, imageRepository)
-            }
-        }
-        navigation(startDestination = Screen.HOME, route = Route.HOME) {
-            composable(Screen.HOME) {
-                HomeScreen(navigationActions, eventViewModel, userViewModel, searchViewModel)
-            }
-            composable(Screen.EVENT_DETAILS) {
-                EventScreen(
-                    navigationAction = navigationActions,
-                    eventViewModel = eventViewModel,
-                    userViewModel = userViewModel,
-                    mapViewModel = mapViewModel
-                )
-            }
-            composable(Screen.MAP) {
-                MapScreen(navigationActions, eventViewModel, userViewModel, mapViewModel)
-            }
-        }
-        navigation(startDestination = Screen.EXPLORE, route = Route.EXPLORE) {
-            composable(Screen.EXPLORE) {
-                ExploreScreen(navigationActions, associationViewModel, searchViewModel)
-            }
-            composable(Screen.ASSOCIATION_PROFILE) {
-                AssociationProfileScreen(
-                    navigationActions, associationViewModel, userViewModel, eventViewModel
-                )
-            }
-            composable(Screen.EDIT_ASSOCIATION) {
-                EditAssociationScreen(associationViewModel, navigationActions)
-            }
-            composable(Screen.EVENT_CREATION) {
-                EventCreationScreen(navigationActions, searchViewModel, associationViewModel)
-            }
-            composable(Screen.SOMEONE_ELSE_PROFILE) {
-                SomeoneElseUserProfileScreen(navigationActions, userViewModel)
-                composable(Screen.EVENT_CREATION) {
-                    EventCreationScreen(navigationActions, searchViewModel, associationViewModel)
-                }
-            }
-            navigation(startDestination = Screen.SAVED, route = Route.SAVED) {
-                composable(Screen.SAVED) { SavedScreen(navigationActions) }
-            }
-            navigation(startDestination = Screen.MY_PROFILE, route = Route.MY_PROFILE) {
-                composable(Screen.MY_PROFILE) {
-                    UserProfileScreen(
-                        userViewModel,
-                        navigationActions
-                    )
-                }
-                composable(Screen.SETTINGS) { SettingsScreen(navigationActions) }
-            }
-        }
+  NavHost(navController = navController, startDestination = Route.AUTH) {
+    navigation(startDestination = Screen.WELCOME, route = Route.AUTH) {
+      composable(Screen.WELCOME) { WelcomeScreen(userViewModel) }
+      composable(Screen.EMAIL_VERIFICATION) {
+        EmailVerificationScreen(navigationActions, userViewModel)
+      }
+      composable(Screen.ACCOUNT_DETAILS) {
+        AccountDetailsScreen(navigationActions, userViewModel, imageRepository)
+      }
     }
+    navigation(startDestination = Screen.HOME, route = Route.HOME) {
+      composable(Screen.HOME) {
+        HomeScreen(navigationActions, eventViewModel, userViewModel, searchViewModel)
+      }
+      composable(Screen.EVENT_DETAILS) {
+        EventScreen(
+            navigationAction = navigationActions,
+            eventViewModel = eventViewModel,
+            userViewModel = userViewModel,
+            mapViewModel = mapViewModel)
+      }
+      composable(Screen.MAP) {
+        MapScreen(navigationActions, eventViewModel, userViewModel, mapViewModel)
+      }
+    }
+    navigation(startDestination = Screen.EXPLORE, route = Route.EXPLORE) {
+      composable(Screen.EXPLORE) {
+        ExploreScreen(navigationActions, associationViewModel, searchViewModel)
+      }
+      composable(Screen.ASSOCIATION_PROFILE) {
+        AssociationProfileScreen(
+            navigationActions, associationViewModel, userViewModel, eventViewModel)
+      }
+      composable(Screen.EDIT_ASSOCIATION) {
+        EditAssociationScreen(associationViewModel, navigationActions)
+      }
+      composable(Screen.EVENT_CREATION) {
+        EventCreationScreen(
+            navigationActions, searchViewModel, associationViewModel, eventViewModel)
+      }
+      composable(Screen.SOMEONE_ELSE_PROFILE) {
+        SomeoneElseUserProfileScreen(navigationActions, userViewModel, associationViewModel)
+        composable(Screen.EVENT_CREATION) {
+          EventCreationScreen(
+              navigationActions, searchViewModel, associationViewModel, eventViewModel)
+        }
+      }
+    }
+    navigation(startDestination = Screen.SAVED, route = Route.SAVED) {
+      composable(Screen.SAVED) { SavedScreen(navigationActions, eventViewModel, userViewModel) }
+    }
+    navigation(startDestination = Screen.MY_PROFILE, route = Route.MY_PROFILE) {
+      composable(Screen.MY_PROFILE) {
+        UserProfileScreen(userViewModel, associationViewModel, navigationActions)
+      }
+      composable(Screen.EDIT_PROFILE) {
+        UserProfileEditionScreen(userViewModel, imageRepository, navigationActions)
+      }
+      composable(Screen.SETTINGS) { SettingsScreen(navigationActions) }
+      composable(Screen.CLAIM_ASSOCIATION_RIGHTS) {
+        UserClaimAssociationScreen(associationViewModel, navigationActions, searchViewModel)
+      }
+      composable(Screen.CLAIM_ASSOCIATION_PRESIDENTIAL_RIGHTS) {
+        UserClaimAssociationPresidentialRightsScreen(
+            associationViewModel, navigationActions, userViewModel)
+      }
+    }
+  }
 }

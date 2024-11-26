@@ -1,9 +1,12 @@
 package com.android.unio.model.user
 
+import android.net.Uri
+import androidx.core.net.toUri
 import com.android.unio.R
 import com.android.unio.model.association.Association
 import com.android.unio.model.event.Event
 import com.android.unio.model.firestore.ReferenceList
+import com.android.unio.model.firestore.UniquelyIdentifiable
 
 /** @param title: The title is a pointer to the string resource. */
 enum class Interest(val title: Int) {
@@ -49,7 +52,7 @@ data class UserSocial(val social: Social, val content: String) {
  * @param profilePicture The URL to the profile picture in Firebase storage.
  */
 data class User(
-    val uid: String,
+    override val uid: String,
     val email: String,
     val firstName: String,
     val lastName: String,
@@ -60,14 +63,10 @@ data class User(
     val interests: List<Interest>,
     val socials: List<UserSocial>,
     val profilePicture: String,
-) {
-
-  fun isFollowAssociation(association: Association): Boolean {
-    return followedAssociations.contains(association.uid)
-  }
-
+) : UniquelyIdentifiable {
   companion object
 }
+
 /**
  * @param errorMessage: The error message is a pointer to the string resource. This enables us to
  *   have error messages in different languages.
@@ -87,6 +86,18 @@ enum class AccountDetailsError(val errorMessage: Int) {
   EMPTY_FIRST_NAME(R.string.account_details_first_name_error),
   EMPTY_LAST_NAME(R.string.account_details_last_name_error)
 }
+
+/**
+ * EMPTY means that the user hasn't chosen a profile picture REMOTE means that the uri is stored in
+ * firebase as a URL and therefore the user has not changed the profile picture LOCAL means that teh
+ * uri is a local one and the user has chosen a new profile picture.
+ */
+enum class ImageUriType {
+  EMPTY,
+  REMOTE,
+  LOCAL,
+}
+
 // Helper methods
 /**
  * @return NONE: no problem is found
@@ -104,6 +115,19 @@ fun checkNewUser(user: User): MutableSet<AccountDetailsError> {
     errors.add(AccountDetailsError.EMPTY_LAST_NAME)
   }
   return errors
+}
+
+fun checkImageUri(uri: String): ImageUriType {
+  if (uri.toUri() == Uri.EMPTY) {
+    return ImageUriType.EMPTY
+  }
+  val localRegex = Regex("^content://.+")
+
+  return if (localRegex.matches(uri)) {
+    ImageUriType.LOCAL
+  } else {
+    ImageUriType.REMOTE
+  }
 }
 
 fun checkSocialContent(userSocial: UserSocial): UserSocialError {

@@ -129,11 +129,15 @@ object Screen {
   const val EXPLORE = "Explore_Screen"
   const val SAVED = "Saved_Screen"
   const val MY_PROFILE = "MyProfile_Screen"
+  const val EDIT_PROFILE = "Edit_Profile_Screen"
   const val SOMEONE_ELSE_PROFILE = "SomeoneElseProfile_Screen"
   const val SETTINGS = "Settings"
   const val ASSOCIATION_PROFILE = "Association_Profile_Screen"
   const val EDIT_ASSOCIATION = "Edit_Assocation_Screen"
   const val EVENT_DETAILS = "Event_Details_Screen"
+  const val CLAIM_ASSOCIATION_RIGHTS = "User_Claim_Association_Rights_Screen"
+  const val CLAIM_ASSOCIATION_PRESIDENTIAL_RIGHTS =
+      "User_Claim_Association_Presidential_Rights_Screen"
   const val EVENT_CREATION = "Event_Creation_Screen"
   const val EDIT_EVENT = "Edit_Event_Screen"
 

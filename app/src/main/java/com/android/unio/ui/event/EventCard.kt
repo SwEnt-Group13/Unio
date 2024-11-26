@@ -88,7 +88,8 @@ fun EventCard(
         Toast.makeText(context, "An error occurred.", Toast.LENGTH_SHORT).show()
         return
     }
-    var isSaved by remember { mutableStateOf(user!!.savedEvents.contains(event.uid)) }
+
+  var isSaved = user!!.savedEvents.contains(event.uid)
 
     val scheduleNotification = {NotificationWorker.schedule(
         context,
@@ -116,10 +117,10 @@ fun EventCard(
         }
     val onClickSaveButton = {
         if (isSaved) {
-            userViewModel.unSaveEventForCurrentUser(event.uid) {
+            user!!.savedEvents.remove(event.uid)
                 //TODO : Unschedule notification.
                 isSaved = false
-            }
+
         } else {
             // Schedule a notification a few hours before the event's startDate
             println(isNotificationsEnabled)
@@ -128,8 +129,7 @@ fun EventCard(
             } else {
                 scheduleNotification()
             }
-
-            userViewModel.saveEventForCurrentUser(event.uid) { isSaved = true }
+            user!!.savedEvents.add(event.uid)
         }
         userViewModel.updateUserDebounced(user!!)
     }

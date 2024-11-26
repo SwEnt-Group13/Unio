@@ -100,6 +100,7 @@ uiTextGoogleFonts = "1.7.3"
 volley = "1.2.1"
 composeMaterial = "1.4.0"
 core = "1.46.0"
+firebaseFunctionsKtx = "21.0.0"
 playServicesLocation = "21.3.0"
 firebaseMessagingKtx = "24.1.0"
 workRuntimeKtx = "2.9.1"
@@ -205,6 +206,7 @@ androidx-ui-text-google-fonts = { group = "androidx.compose.ui", name = "ui-text
 volley = { group = "com.android.volley", name = "volley", version.ref = "volley" }
 androidx-compose-material = { group = "androidx.wear.compose", name = "compose-material", version.ref = "composeMaterial" }
 core = { group = "com.google.ar", name = "core", version.ref = "core" }
+firebase-functions-ktx = { group = "com.google.firebase", name = "firebase-functions-ktx", version.ref = "firebaseFunctionsKtx" }
 play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServicesLocation" }
 firebase-messaging-ktx = { group = "com.google.firebase", name = "firebase-messaging-ktx", version.ref = "firebaseMessagingKtx" }
 work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "workRuntimeKtx" }

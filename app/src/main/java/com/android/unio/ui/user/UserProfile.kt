@@ -25,6 +25,7 @@ import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -60,6 +61,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import com.android.unio.R
+import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.strings.test_tags.UserProfileTestTags
 import com.android.unio.model.user.User
 import com.android.unio.model.user.UserViewModel
@@ -76,7 +78,11 @@ import com.google.firebase.auth.auth
 import kotlinx.coroutines.launch
 
 @Composable
-fun UserProfileScreen(userViewModel: UserViewModel, navigationAction: NavigationAction) {
+fun UserProfileScreen(
+    userViewModel: UserViewModel,
+    associationViewModel: AssociationViewModel,
+    navigationAction: NavigationAction
+) {
 
   val context = LocalContext.current
   val user by userViewModel.user.collectAsState()
@@ -93,7 +99,15 @@ fun UserProfileScreen(userViewModel: UserViewModel, navigationAction: Navigation
 
   val refreshState by userViewModel.refreshState
 
-  UserProfileScreenScaffold(user!!, navigationAction, refreshState) { userViewModel.refreshUser() }
+  UserProfileScreenScaffold(
+      user!!,
+      navigationAction,
+      refreshState,
+      onRefresh = { userViewModel.refreshUser() },
+      onAssociationClick = {
+        associationViewModel.selectAssociation(it)
+        navigationAction.navigateTo(Screen.ASSOCIATION_PROFILE)
+      })
 }
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
@@ -102,7 +116,8 @@ fun UserProfileScreenScaffold(
     user: User,
     navigationAction: NavigationAction,
     refreshState: Boolean,
-    onRefresh: () -> Unit
+    onRefresh: () -> Unit,
+    onAssociationClick: (String) -> Unit
 ) {
   val context = LocalContext.current
   val pullRefreshState = rememberPullRefreshState(refreshing = refreshState, onRefresh = onRefresh)
@@ -131,7 +146,7 @@ fun UserProfileScreenScaffold(
       }) { padding ->
         if (refreshState) {
           Box(
-              modifier = Modifier.fillMaxSize().background(Color.White).padding(padding),
+              modifier = Modifier.fillMaxSize().padding(padding),
               contentAlignment = Alignment.Center) {
                 CircularProgressIndicator(modifier = Modifier.width(64.dp))
               }
@@ -142,7 +157,12 @@ fun UserProfileScreenScaffold(
                       .pullRefresh(pullRefreshState)
                       .fillMaxHeight()
                       .verticalScroll(rememberScrollState())) {
-                UserProfileScreenContent(navigationAction, user)
+                UserProfileScreenContent(
+                    user,
+                    onAssociationClick,
+                    onClaimAssociationClick = {
+                      navigationAction.navigateTo(Screen.CLAIM_ASSOCIATION_RIGHTS)
+                    })
               }
         }
       }
@@ -159,7 +179,11 @@ fun UserProfileScreenScaffold(
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun UserProfileScreenContent(navigationAction: NavigationAction, user: User) {
+fun UserProfileScreenContent(
+    user: User,
+    onAssociationClick: (String) -> Unit,
+    onClaimAssociationClick: () -> Unit
+) {
 
   val context = LocalContext.current
 
@@ -202,7 +226,9 @@ fun UserProfileScreenContent(navigationAction: NavigationAction, user: User) {
             user.socials.forEach { userSocial ->
               IconButton(
                   onClick = { uriHandler.openUri(userSocial.getFullUrl()) },
-                  modifier = Modifier.testTag(UserProfileTestTags.SOCIAL_BUTTON)) {
+                  modifier =
+                      Modifier.testTag(
+                          UserProfileTestTags.SOCIAL_BUTTON + userSocial.social.title)) {
                     Image(
                         modifier = Modifier.size(32.dp).wrapContentSize(),
                         painter = painterResource(userSocial.social.icon),
@@ -222,7 +248,7 @@ fun UserProfileScreenContent(navigationAction: NavigationAction, user: User) {
           ) {
             user.interests.forEach { interest ->
               SuggestionChip(
-                  modifier = Modifier.testTag(UserProfileTestTags.INTEREST),
+                  modifier = Modifier.testTag(UserProfileTestTags.INTEREST_CHIP + interest.name),
                   onClick = {},
                   label = {
                     Text(context.getString(interest.title), style = AppTypography.bodySmall)
@@ -239,10 +265,16 @@ fun UserProfileScreenContent(navigationAction: NavigationAction, user: User) {
                 modifier = Modifier.fillMaxWidth().testTag(UserProfileTestTags.JOINED_ASSOCIATIONS),
                 verticalArrangement = Arrangement.spacedBy(4.dp),
             ) {
-              joinedAssociations.map {
-                AssociationSmall(it) { navigationAction.navigateTo(Screen.ASSOCIATION_PROFILE) }
-              }
+              joinedAssociations.map { AssociationSmall(it) { onAssociationClick(it.uid) } }
             }
+          } else {
+            Text("You are not member of any association yet", style = AppTypography.bodySmall)
+
+            Button(
+                onClick = onClaimAssociationClick,
+                modifier = Modifier.testTag(UserProfileTestTags.CLAIMING_BUTTON)) {
+                  Text("Claim Association")
+                }
           }
 
           // Display the associations that the user is following.
@@ -256,9 +288,7 @@ fun UserProfileScreenContent(navigationAction: NavigationAction, user: User) {
                 modifier = Modifier.testTag(UserProfileTestTags.FOLLOWED_ASSOCIATIONS),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-              followedAssociations.map {
-                AssociationSmall(it) { navigationAction.navigateTo(Screen.ASSOCIATION_PROFILE) }
-              }
+              followedAssociations.map { AssociationSmall(it) { onAssociationClick(it.uid) } }
             }
           }
         }
@@ -287,9 +317,13 @@ fun UserProfileBottomSheet(
     ) {
       Column(modifier = Modifier) {
         TextButton(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().testTag(UserProfileTestTags.EDITION),
             onClick = {
-              Toast.makeText(context, "Not yet implemented.", Toast.LENGTH_SHORT).show()
+              scope.launch {
+                sheetState.hide()
+                onClose()
+                navigationAction.navigateTo(Screen.EDIT_PROFILE)
+              }
             }) {
               Text(context.getString(R.string.user_profile_bottom_sheet_edit))
             }
