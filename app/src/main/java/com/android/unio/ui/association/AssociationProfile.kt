@@ -287,7 +287,6 @@ private fun AssociationProfileContent(
 
   val onFollow = {
     if (isConnected) {
-      Log.d("AssociationProfileContent", "Follow button clicked.")
       enableButton = false
       associationViewModel.updateFollow(association!!, user!!, isFollowed) {
         userViewModel.refreshUser()
@@ -295,7 +294,6 @@ private fun AssociationProfileContent(
       }
       isFollowed = !isFollowed
     } else {
-      Log.d("AssociationProfileContent", "No internet connection.")
       Toast.makeText(
               context, context.getString(R.string.no_internet_connection), Toast.LENGTH_SHORT)
           .show()
