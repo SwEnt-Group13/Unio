@@ -16,12 +16,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.IconButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -63,7 +63,8 @@ fun EventCard(
     event: Event,
     userViewModel: UserViewModel,
     eventViewModel: EventViewModel,
-    shouldBeEditable: Boolean = false // To be changed in the future once permissions are implemented
+    shouldBeEditable: Boolean =
+        false // To be changed in the future once permissions are implemented
 ) {
   val user by userViewModel.user.collectAsState()
   val associations by event.organisers.list.collectAsState()
@@ -92,12 +93,11 @@ fun EventCard(
         }
         userViewModel.updateUserDebounced(user!!)
       },
-        onClickEditButton = {
-            eventViewModel.selectEvent(event.uid)
-            navigationAction.navigateTo(Screen.EVENT_CREATION) //TODO change to event edit
-        },
-        shouldBeEditable = shouldBeEditable
-  )
+      onClickEditButton = {
+        eventViewModel.selectEvent(event.uid)
+        navigationAction.navigateTo(Screen.EDIT_EVENT)
+      },
+      shouldBeEditable = shouldBeEditable)
 }
 
 @Composable
@@ -137,49 +137,45 @@ fun EventCardScaffold(
 
           // Save button icon on the top right corner of the image, allows the user to save/unsave
           // the event
-            Row(modifier = Modifier.align(Alignment.TopEnd).padding(2.dp), horizontalArrangement = Arrangement.SpaceBetween) {
+          Row(
+              modifier = Modifier.align(Alignment.TopEnd).padding(2.dp),
+              horizontalArrangement = Arrangement.SpaceBetween) {
                 if (shouldBeEditable) {
-                    IconButton(
-                        modifier = Modifier
-                            .size(28.dp)
-                            .clip(RoundedCornerShape(14.dp))
-                            .background(MaterialTheme.colorScheme.inversePrimary)
-                            .padding(4.dp),
-                        onClick = {
-                            onClickEditButton()
-                        }
-
-                    ) {
+                  IconButton(
+                      modifier =
+                          Modifier.size(28.dp)
+                              .clip(RoundedCornerShape(14.dp))
+                              .background(MaterialTheme.colorScheme.inversePrimary)
+                              .padding(4.dp),
+                      onClick = { onClickEditButton() }) {
                         Icon(
                             imageVector = Icons.Outlined.Edit,
                             contentDescription = "editassociation",
-                            tint = Color.White
-                        )
-                    }
+                            tint = Color.White)
+                      }
                 }
                 Spacer(modifier = Modifier.width(2.dp))
 
                 Box(
                     modifier =
-                    Modifier.size(28.dp)
-                        .clip(RoundedCornerShape(14.dp))
-                        .background(MaterialTheme.colorScheme.inversePrimary)
-                        .clickable { onClickSaveButton() }
-                        .padding(4.dp)) {
-                    Icon(
-                        imageVector =
-                        if (isSaved) Icons.Rounded.Favorite else Icons.Rounded.FavoriteBorder,
-                        contentDescription =
-                        if (isSaved)
-                            context.getString(R.string.event_card_content_description_saved_event)
-                        else
-                            context.getString(
-                                R.string.event_card_content_description_not_saved_event
-                            ),
-                        tint = if (isSaved) Color.Red else Color.White
-                    )
-                }
-            }
+                        Modifier.size(28.dp)
+                            .clip(RoundedCornerShape(14.dp))
+                            .background(MaterialTheme.colorScheme.inversePrimary)
+                            .clickable { onClickSaveButton() }
+                            .padding(4.dp)) {
+                      Icon(
+                          imageVector =
+                              if (isSaved) Icons.Rounded.Favorite else Icons.Rounded.FavoriteBorder,
+                          contentDescription =
+                              if (isSaved)
+                                  context.getString(
+                                      R.string.event_card_content_description_saved_event)
+                              else
+                                  context.getString(
+                                      R.string.event_card_content_description_not_saved_event),
+                          tint = if (isSaved) Color.Red else Color.White)
+                    }
+              }
         }
 
         // Event details section, including title, type, location, and time

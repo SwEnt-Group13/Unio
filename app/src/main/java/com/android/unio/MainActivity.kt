@@ -34,6 +34,7 @@ import com.android.unio.ui.authentication.AccountDetailsScreen
 import com.android.unio.ui.authentication.EmailVerificationScreen
 import com.android.unio.ui.authentication.WelcomeScreen
 import com.android.unio.ui.event.EventCreationScreen
+import com.android.unio.ui.event.EventEditScreen
 import com.android.unio.ui.event.EventScreen
 import com.android.unio.ui.explore.ExploreScreen
 import com.android.unio.ui.home.HomeScreen
@@ -147,6 +148,9 @@ fun UnioApp(imageRepository: ImageRepositoryFirebaseStorage) {
           EventCreationScreen(
               navigationActions, searchViewModel, associationViewModel, eventViewModel)
         }
+      }
+      composable(Screen.EDIT_EVENT) {
+        EventEditScreen(navigationActions, searchViewModel, associationViewModel, eventViewModel)
       }
     }
     navigation(startDestination = Screen.SAVED, route = Route.SAVED) {
