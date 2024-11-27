@@ -112,6 +112,7 @@ class NotificationWorker(context: Context, params: WorkerParameters) : Worker(co
         notificationId: Int,
         timeMillis: Long
     ) {
+
       val workManager = WorkManager.getInstance(context)
       val data =
           Data.Builder()
@@ -132,9 +133,6 @@ class NotificationWorker(context: Context, params: WorkerParameters) : Worker(co
   }
 
   override fun doWork(): Result {
-    // Perform your background task here like fetching notification related data (title,
-    // description, reminder time)
-
     NotificationReceiver.schedule(this.applicationContext, inputData)
     return Result.success()
   }

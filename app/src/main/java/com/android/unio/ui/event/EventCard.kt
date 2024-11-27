@@ -112,7 +112,7 @@ fun EventCard(
           }
           else -> {
             isNotificationsEnabled = false
-            Log.e("ONCH", "Notification permission is not granted.")
+            Log.e("EventCard", "Notification permission is not granted.")
           }
         }
       }
@@ -122,14 +122,15 @@ fun EventCard(
       // TODO : Unschedule notification.
       isSaved = false
     } else {
-      if (event.startDate.seconds - Timestamp.now().seconds < 3 * SECONDS_IN_AN_HOUR) {
-        // Schedule a notification a few hours before the event's startDate
+      if (event.startDate.seconds - Timestamp.now().seconds > 3 * SECONDS_IN_AN_HOUR) {
         if (!isNotificationsEnabled) {
           permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
         } else {
           scheduleNotification()
         }
       }
+      // Schedule a notification a few hours before the event's startDate
+
       user!!.savedEvents.add(event.uid)
     }
     userViewModel.updateUserDebounced(user!!)
@@ -189,7 +190,8 @@ fun EventCardScaffold(
                       .background(MaterialTheme.colorScheme.inversePrimary)
                       .align(Alignment.TopEnd)
                       .clickable { onClickSaveButton() }
-                      .padding(4.dp)) {
+                      .padding(4.dp)
+                      .testTag(EventCardTestTags.EVENT_SAVE_BUTTON)) {
                 Icon(
                     imageVector =
                         if (isSaved) Icons.Rounded.Favorite else Icons.Rounded.FavoriteBorder,
