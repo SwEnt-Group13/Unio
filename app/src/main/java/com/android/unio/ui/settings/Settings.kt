@@ -1,6 +1,7 @@
 package com.android.unio.ui.settings
 
 import android.Manifest
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.padding
@@ -55,7 +56,18 @@ fun SettingsScreen(
 ) {
   val context = LocalContext.current
   val email = userViewModel.user.collectAsState().value!!.email
-  val onPasswordChange = { authViewModel.sendEmailResetPassword(email) }
+  val onPasswordChange: (() -> Unit) -> Unit = {
+    authViewModel.sendEmailResetPassword(
+        email,
+        onSuccess = it,
+        onFailure = {
+          Toast.makeText(
+                  context,
+                  context.getString(R.string.settings_reset_password_error),
+                  Toast.LENGTH_SHORT)
+              .show()
+        })
+  }
 
   Scaffold(
       modifier = Modifier.testTag(SettingsTestTags.SCREEN),
@@ -81,7 +93,7 @@ fun SettingsScreen(
  */
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun SettingsContainer(onPasswordChange: () -> Unit) {
+fun SettingsContainer(onPasswordChange: (() -> Unit) -> Unit) {
   val context = LocalContext.current
   val preferences by LocalPreferenceFlow.current.collectAsState()
 
@@ -184,7 +196,8 @@ fun SettingsContainer(onPasswordChange: () -> Unit) {
             }
           })
       preference(
-          modifier = Modifier.testTag("a"),
+          modifier =
+              Modifier.testTag(AppPreferences.RESET_PASSWORD),
           key = AppPreferences.RESET_PASSWORD,
           title = { Text(context.getString(R.string.settings_reset_password)) },
           icon = {
@@ -194,8 +207,9 @@ fun SettingsContainer(onPasswordChange: () -> Unit) {
           },
           summary = { Text(passwordResetSummary) },
           onClick = {
-            onPasswordChange()
-            passwordResetSummary = context.getString(R.string.settings_reset_password_sent)
+            onPasswordChange({
+              passwordResetSummary = context.getString(R.string.settings_reset_password_sent)
+            })
           })
     }
   }
