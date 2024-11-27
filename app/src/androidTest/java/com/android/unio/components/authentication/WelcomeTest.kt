@@ -9,6 +9,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performTextInput
 import com.android.unio.TearDown
 import com.android.unio.mocks.user.MockUser
+import com.android.unio.model.authentication.AuthViewModel
 import com.android.unio.model.strings.test_tags.WelcomeTestTags
 import com.android.unio.model.user.User
 import com.android.unio.model.user.UserRepositoryFirestore
@@ -17,6 +18,7 @@ import com.android.unio.ui.authentication.WelcomeScreen
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
+import io.mockk.mockk
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -28,6 +30,7 @@ class WelcomeTest : TearDown() {
   val user = MockUser.createMockUser()
 
   private lateinit var userViewModel: UserViewModel
+  private lateinit var authViewModel: AuthViewModel
   @MockK private lateinit var userRepository: UserRepositoryFirestore
 
   @Before
@@ -42,12 +45,13 @@ class WelcomeTest : TearDown() {
           onSuccess(user)
         }
 
+    authViewModel = AuthViewModel(mockk(), userRepository)
     userViewModel = UserViewModel(userRepository, false)
   }
 
   @Test
   fun testWelcomeIsDisplayed() {
-    composeTestRule.setContent { WelcomeScreen(userViewModel) }
+    composeTestRule.setContent { WelcomeScreen(userViewModel, authViewModel) }
     composeTestRule.onNodeWithTag(WelcomeTestTags.EMAIL).assertIsDisplayed()
     composeTestRule.onNodeWithTag(WelcomeTestTags.PASSWORD).assertIsDisplayed()
     composeTestRule.onNodeWithTag(WelcomeTestTags.BUTTON).assertIsDisplayed()
@@ -57,7 +61,7 @@ class WelcomeTest : TearDown() {
 
   @Test
   fun testButtonEnables() {
-    composeTestRule.setContent { WelcomeScreen(userViewModel) }
+    composeTestRule.setContent { WelcomeScreen(userViewModel, authViewModel) }
     composeTestRule.onNodeWithTag(WelcomeTestTags.BUTTON).assertIsNotEnabled()
 
     composeTestRule.onNodeWithTag(WelcomeTestTags.EMAIL).performTextInput("john.doe@epfl.ch")
