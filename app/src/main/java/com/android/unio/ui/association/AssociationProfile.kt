@@ -503,8 +503,7 @@ private fun AssociationEventCard(
         event = event,
         userViewModel = userViewModel,
         eventViewModel = eventViewModel,
-        true
-    )
+        true)
   }
 }
 
