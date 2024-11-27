@@ -37,5 +37,4 @@ class ResetPasswordWelcomeTest : EndToEndTest() {
 
     signOutWithUser(composeTestRule)
   }
-
 }

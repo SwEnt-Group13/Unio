@@ -62,5 +62,4 @@ class ResetPasswordSettingsTest : EndToEndTest() {
 
     signOutWithUser(composeTestRule)
   }
-
 }
