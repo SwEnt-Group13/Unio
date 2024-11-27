@@ -70,6 +70,8 @@ class EventViewModelTest {
           onSuccess("url")
         }
 
+    every { associationRepositoryFirestore.getAssociations(any(), any()) } answers {}
+
     eventViewModel = EventViewModel(repository, imageRepository, associationRepositoryFirestore)
   }
 
