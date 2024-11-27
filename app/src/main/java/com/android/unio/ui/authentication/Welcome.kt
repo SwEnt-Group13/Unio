@@ -146,6 +146,13 @@ fun WelcomeScreen(userViewModel: UserViewModel, authViewModel: AuthViewModel) {
 
               TextButton(
                   onClick = {
+                      if(!validEmail) {
+                          Toast.makeText(
+                                  context,
+                                  context.getString(R.string.welcome_toast_enter_valid_email),
+                                  Toast.LENGTH_SHORT)
+                              .show()
+                      } else{
                     authViewModel.sendEmailResetPassword(
                         email,
                         {
@@ -162,7 +169,7 @@ fun WelcomeScreen(userViewModel: UserViewModel, authViewModel: AuthViewModel) {
                                   Toast.LENGTH_SHORT)
                               .show()
                         })
-                  },
+                  }},
                   modifier = Modifier.testTag(WelcomeTestTags.FORGOT_PASSWORD)) {
                     Text(
                         text = context.getString(R.string.welcome_forgot_password),

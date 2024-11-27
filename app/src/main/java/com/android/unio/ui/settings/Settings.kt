@@ -115,9 +115,7 @@ fun SettingsContainer(onPasswordChange: (() -> Unit) -> Unit) {
   val language = preferences.get<String>(AppPreferences.LANGUAGE) ?: AppPreferences.Language.default
   val locale = Locale(language)
   Locale.setDefault(locale)
-
-  var passwordResetSummary: String by remember { mutableStateOf("") }
-
+    
   val configuration = context.resources.configuration
   configuration.setLocale(locale)
   configuration.setLayoutDirection(locale)
@@ -206,10 +204,9 @@ fun SettingsContainer(onPasswordChange: (() -> Unit) -> Unit) {
                 imageVector = Icons.Default.Lock,
                 contentDescription = context.getString(R.string.settings_reset_password))
           },
-          summary = { Text(passwordResetSummary) },
           onClick = {
             onPasswordChange({
-              passwordResetSummary = context.getString(R.string.settings_reset_password_sent)
+              Toast.makeText(context, context.getString(R.string.settings_reset_password_sent), Toast.LENGTH_SHORT).show()
             })
           })
     }
