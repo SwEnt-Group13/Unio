@@ -84,6 +84,7 @@ class EventRepositoryFirestore @Inject constructor(private val db: FirebaseFires
     return db.collection(EVENT_PATH).document().id
   }
 
+  // TODO rename this as it also serves as the updateEvent function
   override fun addEvent(event: Event, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
     if (event.uid.isBlank()) {
       onFailure(IllegalArgumentException("No event id was provided"))

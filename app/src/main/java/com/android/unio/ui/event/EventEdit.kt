@@ -203,8 +203,7 @@ fun EventEditScreen(
                       eventBannerUri.value != Uri.EMPTY,
               onClick = {
                 val inputStream = context.contentResolver.openInputStream(eventBannerUri.value)!!
-                  //TODO remove the event by uid first before adding the new one
-                eventViewModel.addEvent(
+                eventViewModel.updateEvent(
                     inputStream,
                     Event(
                         uid = event.uid,

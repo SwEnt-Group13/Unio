@@ -97,4 +97,45 @@ constructor(private val repository: EventRepository, private val imageRepository
     event.organisers.requestAll(onSuccess)
     _events.value += event
   }
+
+  /**
+   * Update an existing event in the repository. It uploads the event image first, then updates the
+   * event.
+   */
+  fun updateEvent(
+      inputStream: InputStream,
+      event: Event,
+      onSuccess: () -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+    imageRepository.uploadImage(
+        inputStream,
+        "images/events/${event.uid}",
+        { uri ->
+          event.image = uri
+          repository.addEvent(event, onSuccess, onFailure)
+        },
+        { e -> Log.e("ImageRepository", "Failed to store image: $e") })
+    event.organisers.requestAll(onSuccess)
+      // TODO check if this should only be done if the above is successful
+      _events.value = _events.value.filter { it.uid != event.uid } // Remove the outdated event
+      _events.value += event
+  }
+
+    /**
+     * Deletes an event from the repository.
+     *
+     * @param eventId The ID of the event to delete.
+     */
+    fun deleteEvent(eventId: String) {
+        repository.deleteEventById(
+            eventId,
+            onSuccess = {
+                _events.value = _events.value.filter { it.uid != eventId }
+            },
+            onFailure = { exception ->
+                Log.e("EventViewModel", "An error occurred while deleting event: $exception")
+            }
+        )
+    }
 }
