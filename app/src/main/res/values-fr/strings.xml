@@ -241,6 +241,8 @@
     <string name="settings_location_content_description">Réglages de localisation</string>
     <string name="settings_language_title">Language</string>
     <string name="settings_language_content_description">Réglages de Langue</string>
+    <string name="settings_reset_password">Réinitialiser le mot de passe</string>
+    <string name="settings_reset_password_sent">L\'email de modification de mot de passe a bien été envoyé</string>
 
     /**
     * package: user

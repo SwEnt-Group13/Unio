@@ -269,6 +269,8 @@
     <string name="settings_location_content_description" translatable="true">Location Permissions</string>
     <string name="settings_language_title">Language</string>
     <string name="settings_language_content_description">Language Settings</string>
+    <string name="settings_reset_password">Reset Password</string>
+    <string name="settings_reset_password_sent">The password modification email has been sent.</string>
 
     /**
     * package: user
