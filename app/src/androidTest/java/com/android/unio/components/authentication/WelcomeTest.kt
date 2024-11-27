@@ -15,10 +15,18 @@ import com.android.unio.model.user.User
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.authentication.WelcomeScreen
+import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.auth
 import io.mockk.MockKAnnotations
+import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
-import io.mockk.mockk
+import io.mockk.just
+import io.mockk.mockkStatic
+import io.mockk.runs
+import io.mockk.unmockkAll
+import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -32,10 +40,16 @@ class WelcomeTest : TearDown() {
   private lateinit var userViewModel: UserViewModel
   private lateinit var authViewModel: AuthViewModel
   @MockK private lateinit var userRepository: UserRepositoryFirestore
+  @MockK private lateinit var firebaseAuth: FirebaseAuth
 
   @Before
   fun setUp() {
     MockKAnnotations.init(this)
+
+    mockkStatic(FirebaseAuth::class)
+    every { Firebase.auth } returns firebaseAuth
+    every { firebaseAuth.addAuthStateListener(any()) } just runs
+    every { firebaseAuth.removeAuthStateListener(any()) } just runs
 
     // Call first callback when init is called
     every { userRepository.init(any()) } answers { firstArg<() -> Unit>().invoke() }
@@ -45,7 +59,7 @@ class WelcomeTest : TearDown() {
           onSuccess(user)
         }
 
-    authViewModel = AuthViewModel(mockk(), userRepository)
+    authViewModel = AuthViewModel(firebaseAuth, userRepository)
     userViewModel = UserViewModel(userRepository, false)
   }
 
@@ -68,5 +82,11 @@ class WelcomeTest : TearDown() {
     composeTestRule.onNodeWithTag(WelcomeTestTags.PASSWORD).performTextInput("123456")
 
     composeTestRule.onNodeWithTag(WelcomeTestTags.BUTTON).assertIsEnabled()
+  }
+
+  @After
+  override fun tearDown() {
+    unmockkAll()
+    clearAllMocks()
   }
 }
