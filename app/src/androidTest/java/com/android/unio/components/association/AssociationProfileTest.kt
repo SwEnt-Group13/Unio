@@ -132,7 +132,7 @@ class AssociationProfileTest : TearDown() {
           val onSuccess = args[0] as (List<Event>) -> Unit
           onSuccess(events)
         }
-    eventViewModel = EventViewModel(eventRepository, imageRepository)
+    eventViewModel = EventViewModel(eventRepository, imageRepository, associationRepository)
 
     every { associationRepository.init(any()) } answers { firstArg<() -> Unit>().invoke() }
     every { associationRepository.getAssociations(any(), any()) } answers

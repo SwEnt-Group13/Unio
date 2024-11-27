@@ -44,7 +44,6 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -295,10 +294,12 @@ private fun AssociationProfileContent(
     navigationAction.navigateTo(Screen.SOMEONE_ELSE_PROFILE)
   }
 
+  // A debug block that properly fetches the events of the association if they were modified
+  // or created this session as the events are not updated in the association object
   var events by remember { mutableStateOf<List<Event>>(emptyList()) }
-  LaunchedEffect(Unit) {
-    associationViewModel.getEventsForAssociation(association!!, { events = it })
-  }
+  //  LaunchedEffect(Unit) {
+  //    associationViewModel.getEventsForAssociation(association!!, { events = it })
+  //  }
 
   // Add spacedBy to the horizontalArrangement
   Column(
@@ -432,6 +433,7 @@ private fun AssociationMembers(members: List<User>, onMemberClick: (User) -> Uni
  * @param navigationAction (NavigationAction) : The navigation actions of the screen
  * @param association (Association) : The association currently displayed
  * @param userViewModel (UserViewModel) : The user view model
+ * @param eventViewModel (EventViewModel) : The event view model
  */
 @Composable
 private fun AssociationEvents(
@@ -444,6 +446,8 @@ private fun AssociationEvents(
   val context = LocalContext.current
 
   var isSeeMoreClicked by remember { mutableStateOf(false) }
+
+  val events by association.events.list.collectAsState()
 
   // To be changed when we have a functional admin system
   var isAdmin by remember { mutableStateOf(true) }

@@ -81,7 +81,8 @@ class EventCreationTest : TearDown() {
           val onSuccess = args[0] as (List<Event>) -> Unit
           onSuccess(events)
         }
-    eventViewModel = EventViewModel(eventRepository, imageRepositoryFirestore)
+    eventViewModel =
+        EventViewModel(eventRepository, imageRepositoryFirestore, associationRepositoryFirestore)
 
     searchViewModel = spyk(SearchViewModel(searchRepository))
     associationViewModel =

@@ -83,7 +83,8 @@ fun EventEditScreen(
   var coauthorsAndBoolean =
       associationViewModel.associations.collectAsState().value.map {
         it to
-            (if (eventToEdit.organisers.contains(it.uid)) mutableStateOf(true) else mutableStateOf(false))
+            (if (eventToEdit.organisers.contains(it.uid)) mutableStateOf(true)
+            else mutableStateOf(false))
       }
 
   var taggedAndBoolean =

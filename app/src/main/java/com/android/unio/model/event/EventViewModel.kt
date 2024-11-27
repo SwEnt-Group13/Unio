@@ -2,6 +2,7 @@ package com.android.unio.model.event
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
+import com.android.unio.model.association.AssociationRepository
 import com.android.unio.model.image.ImageRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.io.InputStream
@@ -20,8 +21,11 @@ import kotlinx.coroutines.flow.asStateFlow
 @HiltViewModel
 class EventViewModel
 @Inject
-constructor(private val repository: EventRepository, private val imageRepository: ImageRepository) :
-    ViewModel() {
+constructor(
+    private val repository: EventRepository,
+    private val imageRepository: ImageRepository,
+    private val associationRepository: AssociationRepository
+) : ViewModel() {
 
   /**
    * A private mutable state flow that holds the list of events. It is internal to the ViewModel and
@@ -94,6 +98,18 @@ constructor(private val repository: EventRepository, private val imageRepository
           repository.addEvent(event, onSuccess, onFailure)
         },
         { e -> Log.e("ImageRepository", "Failed to store image: $e") })
+    associationRepository.getAssociations(
+        onSuccess = { associationList ->
+          associationList
+              .filter { event.organisers.contains(it.uid) }
+              .forEach {
+                it.events.add(event.uid)
+                associationRepository.saveAssociation(it, {}, {})
+              }
+        },
+        onFailure = { exception ->
+          Log.e("EventViewModel", "An error occurred while loading associations: $exception")
+        })
     event.organisers.requestAll(onSuccess)
     _events.value += event
   }
@@ -121,8 +137,20 @@ constructor(private val repository: EventRepository, private val imageRepository
           repository.addEvent(event, onSuccess, onFailure)
         },
         { e -> Log.e("ImageRepository", "Failed to store image: $e") })
-    event.organisers.requestAll(onSuccess)
     // TODO check if this should only be done if the above is successful
+    associationRepository.getAssociations(
+        onSuccess = { associationList ->
+          associationList
+              .filter { event.organisers.contains(it.uid) }
+              .forEach {
+                it.events.add(event.uid)
+                associationRepository.saveAssociation(it, {}, {})
+              }
+        },
+        onFailure = { exception ->
+          Log.e("EventViewModel", "An error occurred while loading associations: $exception")
+        })
+    event.organisers.requestAll(onSuccess)
     _events.value = _events.value.filter { it.uid != event.uid } // Remove the outdated event
     _events.value += event
   }
@@ -138,6 +166,18 @@ constructor(private val repository: EventRepository, private val imageRepository
     repository.addEvent(event, onSuccess, onFailure)
     event.organisers.requestAll(onSuccess)
     // TODO check if this should only be done if the above is successful
+    associationRepository.getAssociations(
+        onSuccess = { associationList ->
+          associationList
+              .filter { event.organisers.contains(it.uid) }
+              .forEach {
+                it.events.add(event.uid)
+                associationRepository.saveAssociation(it, {}, {})
+              }
+        },
+        onFailure = { exception ->
+          Log.e("EventViewModel", "An error occurred while loading associations: $exception")
+        })
     _events.value = _events.value.filter { it.uid != event.uid } // Remove the outdated event
     _events.value += event
   }

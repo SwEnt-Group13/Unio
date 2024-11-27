@@ -2,6 +2,7 @@ package com.android.unio.model.event
 
 import androidx.test.core.app.ApplicationProvider
 import com.android.unio.mocks.event.MockEvent
+import com.android.unio.model.association.AssociationRepositoryFirestore
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.google.firebase.FirebaseApp
 import com.google.firebase.Timestamp
@@ -34,6 +35,7 @@ class EventViewModelTest {
   @Mock private lateinit var inputStream: InputStream
 
   @MockK lateinit var imageRepository: ImageRepositoryFirebaseStorage
+  @MockK private lateinit var associationRepositoryFirestore: AssociationRepositoryFirestore
 
   private lateinit var eventViewModel: EventViewModel
 
@@ -68,7 +70,7 @@ class EventViewModelTest {
           onSuccess("url")
         }
 
-    eventViewModel = EventViewModel(repository, imageRepository)
+    eventViewModel = EventViewModel(repository, imageRepository, associationRepositoryFirestore)
   }
 
   @Test
