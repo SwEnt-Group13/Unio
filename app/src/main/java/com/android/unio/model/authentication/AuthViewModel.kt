@@ -26,10 +26,12 @@ constructor(private val firebaseAuth: FirebaseAuth, private val userRepository: 
     addAuthStateVerifier()
   }
 
-  fun sendEmailResetPassword(email: String) {
+  fun sendEmailResetPassword(email: String, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
     firebaseAuth.sendPasswordResetEmail(email).addOnCompleteListener { task ->
       if (task.isSuccessful) {
-        Log.d("AuthViewModel", "Email sent.")
+        onSuccess()
+      } else {
+        onFailure(task.exception!!)
       }
     }
   }
