@@ -96,7 +96,7 @@ class MockUser {
             if (eventDependency) {
               emptyList()
             } else {
-              MockEvent.createAllMockEvents(associationDependency = associationDependency)
+              MockEvent.createAllMockEvents(associationDependency = associationDependency, userDependency = true)
             },
         interests: List<Interest> = listOf(Interest.SPORTS),
         socials: List<UserSocial> = listOf(UserSocial(Social.INSTAGRAM, "user123")),

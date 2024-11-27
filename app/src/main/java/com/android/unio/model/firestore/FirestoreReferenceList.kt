@@ -3,6 +3,7 @@ package com.android.unio.model.firestore
 import android.util.Log
 import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationRepositoryFirestore
+import com.android.unio.model.association.Member
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventRepositoryFirestore
 import com.android.unio.model.firestore.FirestorePaths.ASSOCIATION_PATH

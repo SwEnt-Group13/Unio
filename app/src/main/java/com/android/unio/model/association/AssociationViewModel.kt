@@ -51,6 +51,12 @@ constructor(
         })
   }
 
+    // Get the user from a member
+    fun getUserFromMember(member: Member): StateFlow<User?> {
+        member.user.fetch()
+        return member.user.element
+    }
+
   /**
    * Fetches all associations from the repository and updates the [_associations] and
    * [_associationsByCategory] state flows. If the fetch fails, the [_associations] state flow is
@@ -155,7 +161,7 @@ constructor(
     _selectedAssociation.value =
         findAssociationById(associationId).also {
           it?.events?.requestAll()
-          it?.members?.requestAll()
+          //it?.members?.requestAll()
         }
   }
 }

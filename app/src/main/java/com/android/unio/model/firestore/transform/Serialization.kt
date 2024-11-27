@@ -1,7 +1,10 @@
 package com.android.unio.model.firestore.transform
 
+import android.util.Log
 import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationRepositoryFirestore
+import com.android.unio.model.association.Member
+import com.android.unio.model.association.Role
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventRepositoryFirestore
 import com.android.unio.model.map.Location
@@ -10,20 +13,44 @@ import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserSocial
 
 fun AssociationRepositoryFirestore.Companion.serialize(association: Association): Map<String, Any> {
-  return mapOf(
-      Association::uid.name to association.uid,
-      Association::url.name to association.url,
-      Association::name.name to association.name,
-      Association::fullName.name to association.fullName,
-      Association::category.name to association.category.name,
-      Association::description.name to association.description,
-      Association::members.name to association.members.uids,
-      Association::followersCount.name to association.followersCount,
-      Association::image.name to association.image,
-      Association::events.name to association.events.uids,
-      "principalEmailAddress" to association.principalEmailAddress,
-      "adminUid" to association.adminUid)
+    println("I go there")
+    val ok= mapOf(
+        Association::uid.name to association.uid,
+        Association::url.name to association.url,
+        Association::name.name to association.name,
+        Association::fullName.name to association.fullName,
+        Association::category.name to association.category.name,
+        Association::description.name to association.description,
+        Association::members.name to mapUsersToRoles(association.members),
+        Association::roles.name to mapRolesToPermission(association.roles),
+        Association::followersCount.name to association.followersCount,
+        Association::image.name to association.image,
+        Association::events.name to association.events.uids,
+        Association::principalEmailAddress.name to association.principalEmailAddress
+    )
+    println(ok)
+    return ok
 }
+
+fun mapUsersToRoles(members: List<Member>): Map<String, String> {
+    return members.associate { member ->
+        member.user.uid to member.role.uid
+    }
+}
+
+
+fun mapRolesToPermission(roles: List<Role>): Map<String, Map<String, Any>> {
+    return roles.associate { role ->
+        role.uid to mapOf(
+            "displayName" to role.displayName,
+            "permissions" to role.permissions.getGrantedPermissions().map { it.stringName }
+        )
+    }
+}
+
+
+
+
 
 fun UserRepositoryFirestore.Companion.serialize(user: User): Map<String, Any> {
   return mapOf(
