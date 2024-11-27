@@ -123,14 +123,29 @@ constructor(private val repository: EventRepository, private val imageRepository
   }
 
   /**
+   * Update an existing event in the repository. It uploads the event image first, then updates the
+   * event.
+   */
+  fun updateEventWithoutImage(event: Event, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+    repository.addEvent(event, onSuccess, onFailure)
+    event.organisers.requestAll(onSuccess)
+    // TODO check if this should only be done if the above is successful
+    _events.value = _events.value.filter { it.uid != event.uid } // Remove the outdated event
+    _events.value += event
+  }
+
+  /**
    * Deletes an event from the repository.
    *
    * @param eventId The ID of the event to delete.
    */
-  fun deleteEvent(eventId: String) {
+  fun deleteEvent(eventId: String, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
     repository.deleteEventById(
         eventId,
-        onSuccess = { _events.value = _events.value.filter { it.uid != eventId } },
+        onSuccess = {
+          _events.value = _events.value.filter { it.uid != eventId }
+          onSuccess()
+        },
         onFailure = { exception ->
           Log.e("EventViewModel", "An error occurred while deleting event: $exception")
         })

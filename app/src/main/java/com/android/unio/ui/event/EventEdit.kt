@@ -16,6 +16,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -45,6 +46,8 @@ import com.android.unio.model.firestore.firestoreReferenceListWith
 import com.android.unio.model.map.Location
 import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.strings.test_tags.EventCreationTestTags
+import com.android.unio.model.user.ImageUriType
+import com.android.unio.model.user.checkImageUri
 import com.android.unio.ui.event.overlay.AssociationsOverlay
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.theme.AppTypography
@@ -191,52 +194,104 @@ fun EventEditScreen(
 
           Spacer(modifier = Modifier.width(10.dp))
 
-          Button(
-              modifier = Modifier.testTag(EventCreationTestTags.SAVE_BUTTON),
-              enabled =
-                  name.isNotEmpty() &&
-                      shortDescription.isNotEmpty() &&
-                      longDescription.isNotEmpty() &&
-                      startTimestamp != null &&
-                      endTimestamp != null &&
-                      startTimestamp!! < endTimestamp!! &&
-                      eventBannerUri.value != Uri.EMPTY,
-              onClick = {
-                val inputStream = context.contentResolver.openInputStream(eventBannerUri.value)!!
-                eventViewModel.updateEvent(
-                    inputStream,
-                    Event(
-                        uid = event.uid,
-                        title = name,
-                        organisers =
-                            Association.firestoreReferenceListWith(
-                                (coauthorsAndBoolean
-                                        .filter { it.second.value }
-                                        .map { it.first.uid } +
-                                        associationViewModel.selectedAssociation.value!!.uid)
-                                    .distinct()),
-                        taggedAssociations =
-                            Association.firestoreReferenceListWith(
-                                taggedAndBoolean.filter { it.second.value }.map { it.first.uid }),
-                        image = eventBannerUri.value.toString(),
-                        description = longDescription,
-                        catchyDescription = shortDescription,
-                        price = 0.0,
-                        startDate = startTimestamp!!,
-                        endDate = endTimestamp!!,
-                        location = Location(),
-                    ),
-                    onSuccess = { navigationAction.goBack() },
-                    onFailure = {
-                      Toast.makeText(
-                              context,
-                              context.getString(R.string.event_creation_failed),
-                              Toast.LENGTH_SHORT)
-                          .show()
-                    })
-              }) {
-                Text(context.getString(R.string.event_creation_save_button))
+          Row(
+              modifier = Modifier.fillMaxWidth(),
+              horizontalArrangement = Arrangement.SpaceEvenly,
+              verticalAlignment = Alignment.CenterVertically) {
+                Button(
+                    // modifier = Modifier.testTag(EventCreationTestTags.DELETE_BUTTON),
+                    colors =
+                        ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.error),
+                    onClick = {
+                      // TODO add a dialog to confirm deletion
+                      eventViewModel.deleteEvent(
+                          event.uid,
+                          onSuccess = { navigationAction.goBack() },
+                          onFailure = {
+                            Toast.makeText(
+                                    context,
+                                    context.getString(R.string.event_creation_failed),
+                                    Toast.LENGTH_SHORT)
+                                .show()
+                          })
+                    }) {
+                      Text(
+                          "Delete"
+                          // context.getString(R.string.event_creation_delete_button)
+                          )
+                    }
+
+                Button(
+                    modifier = Modifier.testTag(EventCreationTestTags.SAVE_BUTTON),
+                    enabled =
+                        name.isNotEmpty() &&
+                            shortDescription.isNotEmpty() &&
+                            longDescription.isNotEmpty() &&
+                            startTimestamp != null &&
+                            endTimestamp != null &&
+                            startTimestamp!! < endTimestamp!! &&
+                            eventBannerUri.value != Uri.EMPTY,
+                    onClick = {
+                      val updatedEvent =
+                          Event(
+                              uid = event.uid,
+                              title = name,
+                              organisers =
+                                  Association.firestoreReferenceListWith(
+                                      (coauthorsAndBoolean
+                                              .filter { it.second.value }
+                                              .map { it.first.uid } +
+                                              associationViewModel.selectedAssociation.value!!.uid)
+                                          .distinct()),
+                              taggedAssociations =
+                                  Association.firestoreReferenceListWith(
+                                      taggedAndBoolean
+                                          .filter { it.second.value }
+                                          .map { it.first.uid }),
+                              image = eventBannerUri.value.toString(),
+                              description = longDescription,
+                              catchyDescription = shortDescription,
+                              price = 0.0,
+                              startDate = startTimestamp!!,
+                              endDate = endTimestamp!!,
+                              location = Location(),
+                          )
+                      // TODO extract checkImageUri to utils
+                      if (checkImageUri(eventBannerUri.toString()) == ImageUriType.LOCAL) {
+                        val inputStream =
+                            context.contentResolver.openInputStream(eventBannerUri.value)!!
+                        eventViewModel.updateEvent(
+                            inputStream,
+                            updatedEvent,
+                            onSuccess = { navigationAction.goBack() },
+                            onFailure = {
+                              Toast.makeText(
+                                      context,
+                                      context.getString(R.string.event_creation_failed),
+                                      Toast.LENGTH_SHORT)
+                                  .show()
+                            })
+                      } else {
+                        eventViewModel.updateEventWithoutImage(
+                            updatedEvent,
+                            onSuccess = { navigationAction.goBack() },
+                            onFailure = {
+                              Toast.makeText(
+                                      context,
+                                      context.getString(R.string.event_creation_failed),
+                                      Toast.LENGTH_SHORT)
+                                  .show()
+                            })
+                      }
+                    }) {
+                      Text(
+                          "Save"
+                          // context.getString(R.string.event_creation_save_button)
+                          )
+                    }
               }
+          Spacer(modifier = Modifier.width(10.dp))
 
           if (showCoauthorsOverlay) {
             AssociationsOverlay(
