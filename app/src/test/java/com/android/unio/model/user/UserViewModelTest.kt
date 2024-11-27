@@ -1,6 +1,8 @@
 package com.android.unio.model.user
 
-import com.android.unio.model.firestore.MockReferenceList
+import androidx.test.core.app.ApplicationProvider
+import com.android.unio.mocks.user.MockUser
+import com.google.firebase.FirebaseApp
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
@@ -8,24 +10,12 @@ import io.mockk.verify
 import junit.framework.TestCase.assertEquals
 import org.junit.Before
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
 
+@RunWith(RobolectricTestRunner::class)
 class UserViewModelTest {
-  private val user =
-      User(
-          uid = "1",
-          email = "1@gmail.com",
-          firstName = "userFirst",
-          lastName = "userLast",
-          biography = "An example user",
-          followedAssociations = MockReferenceList(listOf()),
-          joinedAssociations = MockReferenceList(listOf()),
-          interests = listOf(Interest.SPORTS, Interest.MUSIC),
-          socials =
-              listOf(
-                  UserSocial(Social.INSTAGRAM, "Instagram"),
-                  UserSocial(Social.WEBSITE, "example.com")),
-          profilePicture = "https://www.example.com/image",
-          hasProvidedAccountDetails = true)
+  private val user = MockUser.createMockUser()
 
   @MockK private lateinit var repository: UserRepository
   private lateinit var userViewModel: UserViewModel
@@ -36,7 +26,11 @@ class UserViewModelTest {
 
     every { repository.init(any()) } returns Unit
 
-    userViewModel = UserViewModel(repository, false)
+    if (FirebaseApp.getApps(ApplicationProvider.getApplicationContext()).isEmpty()) {
+      FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext())
+    }
+
+    userViewModel = UserViewModel(repository)
   }
 
   @Test
@@ -56,5 +50,24 @@ class UserViewModelTest {
 
     // Check that user is set to null
     assertEquals(user, userViewModel.user.value)
+  }
+
+  @Test
+  fun testUpdateUser() {
+    val user = MockUser.createMockUser(uid = "1")
+    every { repository.updateUser(any(), any(), any()) } answers
+        {
+          val onSuccess = it.invocation.args[1] as () -> Unit
+          onSuccess()
+        }
+    every { repository.getUserWithId("1", any(), any()) } answers
+        {
+          val onSuccess = it.invocation.args[1] as (User) -> Unit
+          onSuccess(user)
+        }
+    userViewModel.updateUserDebounced(user, 0)
+
+    verify { repository.updateUser(user, any(), any()) }
+    assertEquals(userViewModel.user.value?.uid, user.uid)
   }
 }

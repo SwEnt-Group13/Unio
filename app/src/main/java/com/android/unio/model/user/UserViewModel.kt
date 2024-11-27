@@ -4,30 +4,56 @@ import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
+import com.android.unio.model.authentication.registerAuthStateListener
 import com.google.firebase.Firebase
+import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.auth
-import com.google.firebase.firestore.firestore
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 
-class UserViewModel(val repository: UserRepository, initializeWithAuthenticatedUser: Boolean) :
-    ViewModel() {
+@HiltViewModel
+class UserViewModel @Inject constructor(private val userRepository: UserRepository) : ViewModel() {
   private val _user = MutableStateFlow<User?>(null)
-  val user: StateFlow<User?> = _user
+  val user: StateFlow<User?> = _user.asStateFlow()
+
+  private val _selectedSomeoneElseUser = MutableStateFlow<User?>(null)
+  val selectedSomeoneElseUser: StateFlow<User?> = _selectedSomeoneElseUser.asStateFlow()
 
   private val _refreshState = mutableStateOf(false)
   val refreshState: State<Boolean> = _refreshState
 
+  private val debounceInterval: Long = 500
+
+  private var updateJob: Job? = null
+  private var initializeWithAuthenticatedUser: Boolean = true
+
+  private var _credential: AuthCredential? = null
+  val credential: AuthCredential?
+    get() = _credential
+
+  constructor(
+      repository: UserRepository,
+      initializeWithAuthenticatedUser: Boolean
+  ) : this(repository) {
+    this.initializeWithAuthenticatedUser = initializeWithAuthenticatedUser
+  }
+
   init {
     if (initializeWithAuthenticatedUser) {
-      Firebase.auth.addAuthStateListener { auth ->
+      Firebase.auth.registerAuthStateListener { auth ->
         if (auth.currentUser != null) {
-          repository.init { getUserByUid(auth.currentUser!!.uid, true) }
+          userRepository.init { getUserByUid(auth.currentUser!!.uid, true) }
         }
       }
     } else {
-      repository.init {}
+      userRepository.init {}
     }
   }
 
@@ -35,14 +61,11 @@ class UserViewModel(val repository: UserRepository, initializeWithAuthenticatedU
     if (uid.isEmpty()) {
       return
     }
-
     _refreshState.value = true
-    _user.value = null
-    repository.getUserWithId(
+    userRepository.getUserWithId(
         uid,
         onSuccess = { fetchedUser ->
           _user.value = fetchedUser
-
           if (fetchReferences) {
             _user.value?.let {
               var first = true
@@ -70,28 +93,39 @@ class UserViewModel(val repository: UserRepository, initializeWithAuthenticatedU
     _user.value?.let { getUserByUid(it.uid, true) }
   }
 
+  fun refreshSomeoneElseUser() {
+    _selectedSomeoneElseUser.value?.let { getUserByUid(it.uid, true) }
+  }
+
   fun updateUser(user: User) {
-    repository.updateUser(
+    userRepository.updateUser(
         user,
         onSuccess = { getUserByUid(user.uid) },
         onFailure = { Log.e("UserViewModel", "Failed to update user", it) })
   }
 
+  fun updateUserDebounced(user: User, interval: Long = debounceInterval) {
+    updateJob?.cancel()
+    updateJob =
+        viewModelScope.launch {
+          delay(interval)
+          updateUser(user)
+        }
+  }
+
   fun addUser(user: User, onSuccess: () -> Unit) {
-    repository.updateUser(
+    userRepository.updateUser(
         user,
         onSuccess = onSuccess,
         onFailure = { Log.e("UserViewModel", "Failed to add user", it) })
     _user.value = user
   }
 
-  companion object {
-    val Factory: ViewModelProvider.Factory =
-        object : ViewModelProvider.Factory {
-          @Suppress("UNCHECKED_CAST")
-          override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return UserViewModel(UserRepositoryFirestore(Firebase.firestore), false) as T
-          }
-        }
+  fun setSomeoneElseUser(user: User) {
+    _selectedSomeoneElseUser.value = user
+  }
+
+  fun setCredential(credential: AuthCredential?) {
+    _credential = credential
   }
 }

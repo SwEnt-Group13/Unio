@@ -1,0 +1,4 @@
+node_modules/
+*.local
+*.log
+.env.unio-1b8ee

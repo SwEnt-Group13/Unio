@@ -1,7 +1,11 @@
 package com.android.unio.model.association
 
+import com.google.firebase.firestore.DocumentReference
+
 interface AssociationRepository {
   fun init(onSuccess: () -> Unit)
+
+  fun getAssociationRef(uid: String): DocumentReference
 
   fun getAssociations(onSuccess: (List<Association>) -> Unit, onFailure: (Exception) -> Unit)
 
@@ -17,13 +21,7 @@ interface AssociationRepository {
       onFailure: (Exception) -> Unit
   )
 
-  fun addAssociation(
-      association: Association,
-      onSuccess: () -> Unit,
-      onFailure: (Exception) -> Unit
-  )
-
-  fun updateAssociation(
+  fun saveAssociation( // handles both add and update
       association: Association,
       onSuccess: () -> Unit,
       onFailure: (Exception) -> Unit

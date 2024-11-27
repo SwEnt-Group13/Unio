@@ -10,6 +10,9 @@ plugins {
     alias(libs.plugins.gms)
     alias(libs.plugins.sonar)
     id("jacoco")
+    id("kotlin-kapt")
+    id("com.google.dagger.hilt.android")
+    kotlin("kapt")
 }
 
 android {
@@ -27,13 +30,14 @@ android {
 
 
     defaultConfig {
+        manifestPlaceholders += mapOf()
         applicationId = "com.android.unio"
-        minSdk = 29
+        minSdk = 30
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "com.android.unio.HiltApplication"
         vectorDrawables {
             useSupportLibrary = true
         }
@@ -63,7 +67,7 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
+        kotlinCompilerExtensionVersion = "1.5.7"
     }
     packaging {
         resources {
@@ -119,6 +123,12 @@ android {
         res.setSrcDirs(emptyList<File>())
         resources.setSrcDirs(emptyList<File>())
     }
+
+  bundle {
+    language {
+      enableSplit = false
+    }
+  }
 }
 
 sonar {
@@ -173,9 +183,12 @@ dependencies {
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.firebase.storage.ktx)
     implementation(libs.androidx.ui.text.google.fonts)
-  implementation(libs.androidx.compose.material)
+    implementation(libs.androidx.compose.material)
+    implementation(libs.core)
+    implementation(libs.firebase.functions.ktx)
+    implementation(libs.play.services.location)
 
-  testImplementation(libs.test.core.ktx)
+    testImplementation(libs.test.core.ktx)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
     implementation(libs.material)
@@ -211,6 +224,7 @@ dependencies {
     globalTestImplementation(libs.kaspresso.compose)
 
     // ----------       Robolectric     ------------
+
 
     // Navigation
     implementation(libs.androidx.navigation.compose)
@@ -260,9 +274,39 @@ dependencies {
     testImplementation(libs.mockk.v193)
 
     implementation(libs.androidx.material.icons.extended)
-    //for AsyncImage
+    // For AsyncImage
     implementation(libs.coil.compose)
 
+    // Hilt : Dependency Injection
+    implementation(libs.hilt.android)
+    implementation(libs.androidx.hilt.navigation.compose)
+    implementation(libs.androidx.hilt.navigation.fragment)
+    kapt(libs.hilt.android.compiler)
+
+    testImplementation(libs.hilt.android.testing)
+    kaptTest(libs.hilt.android.compiler.v2511)
+
+    androidTestImplementation(libs.hilt.android.testing)
+    kaptAndroidTest(libs.hilt.android.compiler.v2511)
+    implementation(libs.androidx.appsearch)
+    implementation(libs.androidx.appsearch.local.storage)
+    kapt(libs.androidx.appsearch.compiler)
+
+    //App search
+    implementation(libs.guava)
+    implementation(libs.kotlinx.coroutines.guava)
+
+    // Kotlin Reflect
+    implementation(kotlin("reflect"))
+
+    // Preferences
+    implementation(libs.androidx.preference.ktx)
+    implementation(libs.library)
+    implementation(libs.accompanist.permissions)
+}
+
+kapt {
+    correctErrorTypes = true
 }
 
 
@@ -301,4 +345,56 @@ tasks.register("jacocoTestReport",JacocoReport::class) {
         include("outputs/unit_test_code_coverage/debugUnitTest/testDebugUnitTest.exec")
         include("outputs/code_coverage/debugAndroidTest/connected/*/coverage.ec")
     })
+}
+
+configurations.forEach { configuration ->
+  // Exclude protobuf-lite from all configurations
+  // This fixes the "Internal error in Cloud Firestore" issue
+  configuration.exclude("com.google.protobuf", "protobuf-lite")
+}
+
+fun runCommand(command: String) {
+    val os = System.getProperty("os.name").toLowerCase()
+    if (os.contains("win")) {
+        val adjustedCommand = command
+            .replace("./gradlew", "gradlew") // Windows does not support the ./ prefix
+            .replace("'", "\"") // Windows does not support single quotes
+        ProcessBuilder("cmd", "/c", "start", "cmd", "/k", adjustedCommand).start()
+    } else if (os.contains("nix") || os.contains("nux") || os.contains("bsd")) {
+        ProcessBuilder(
+            "sh",
+            "-c",
+            """
+                x-terminal-emulator -e '$command' ||
+                gnome-terminal -- bash -c '$command; exec bash' ||
+                konsole -e '$command'
+                """.trimIndent()
+        ).start()
+    } else if (os.contains("mac")) {
+        ProcessBuilder(
+            "osascript",
+            "-e",
+            """
+                tell application "Terminal"
+                    do script "cd ${project.rootDir} && $command"
+                    activate
+                end tell
+                """.trimIndent()
+        ).start()
+    } else {
+        throw GradleException("Unsupported operating system: $os")
+    }
+}
+
+tasks.register("startFirebaseEmulators") {
+    doLast {
+        runCommand("firebase emulators:start --import=./firebase/emulator-data")
+    }
+}
+
+tasks.register("connectedCheckWithFirebaseEmulators") {
+    doLast {
+        // For Linux and MacOS, you need to grant execute permissions to gradlew e.g. chmod +x gradlew
+        runCommand("firebase emulators:exec --import=./firebase/emulator-data './gradlew connectedCheck'")
+    }
 }

@@ -1,9 +1,292 @@
 <?xml version="1.0" encoding="utf-8"?><!-- String values for French language -->
 <!-- example in code : val greeting = getString(R.string.greeting) -->
 <resources>
+    /**
+    * Main activity
+    */
     <!-- App name and activity titles -->
     <string name="app_name">Unio</string>
     <string name="title_activity_main">MainActivity</string>
+
+    /**
+    * package: association
+    */
+
+    <!-- Association Strings -->
+    <string name="association_toast_error" translatable="true">Une erreur est survenue.</string>
+    <string name="association_upcoming_events">Evenement à venir</string>
+    <string name="association_go_back">Retour</string>
+    <string name="association_see_more">Voir plus</string>
+    <string name="association_share">Partager l\'association</string>
+    <string name="association_contact_members">Membres à contacter</string>
+    <string name="association_help_us">
+        Voici comment vous pouvez nous aider. Cliquez sur une fonction pour en savoir plus
+    </string>
+    <string name="association_follower">abonnés</string>
+    <string name="association_member">membres</string>
+    <string name="association_follow">S\'abonner</string>
+    <string name="association_unfollow">Se désabonner</string>
+    <string name="association_join">Rejoindre</string>
+    <string name="association_no_event">Pas d\'événement plannifié pour l\'instant</string>
+    <string name="association_not_found">Erreur : Association introuvable</string>
+    <string name="association_content_description_sharing_icon">Icône de partage d\'association</string>
+    <string name="association_content_description_add_icon">Icône ajouter</string>
+    <string name="association_content_description_user_pfp">Photo de profil de l\'utilisateur</string>
+    <string name="association_content_description_association_image">Image de l\'association </string>
+    <string name="association_content_description_follow_icon">Icône suivre</string>
+    <string name="association_profile_add_event_button">Ajouter un événement</string>
+
+    <!-- EditAssociation strings -->
+    <string name="edit_association_title">Modifier l\'Association</string>
+    <string name="name_explanation">Le nom de l\'association. Il s\'agit généralement d\'un identifiant court ou d\'un acronyme.</string>
+    <string name="full_name_explanation">Le nom complet de l\'association. Il peut s\'agir du nom officiel complet.</string>
+    <string name="category_explanation">Sélectionnez la catégorie qui correspond le mieux à l\'objectif de l\'association.</string>
+    <string name="description_explanation">Fournissez une brève description de l\'association, y compris ses principales activités et objectifs.</string>
+    <string name="url_explanation">Fournissez l\'URL de la page web ou de la présence en ligne de l\'association.</string>
+    <string name="principal_email_address_explanation">Fournissez l\'addresse email de la présidence de l\'association; ex : presidents@association.com</string>
+    <string name="cancel_button_text">Annuler</string>
+    <string name="save_button_text">Enregistrer</string>
+    <string name="category_button_text">Sélectionner la catégorie</string>
+    <string name="save_failed_message">Échec de la sauvegarde de l\'Association</string>
+
+    /**
+    * package: authentication
+    */
+
+    <!-- Interests Overlay Strings -->
+    <string name="interest_overlay_title" translatable="true">Vos intérêts</string>
+    <string name="interest_overlay_description" translatable="true">Choisissez autant d\'intérêts qui semblent vous correspondre</string>
+    <string name="overlay_cancel" translatable="true">Annuler</string>
+    <string name="overlay_save" translatable="true">Sauvegarder</string>
+
+    <!-- Social Overlay Strings -->
+    <string name="social_overlay_title" translatable="true">Vos réseaux sociaux</string>
+    <string name="social_overlay_description" translatable="true">
+        Ceux-ci vont être visibles sur votre page personnelle pour que d\'autres étudiants puissent vous contacter</string>
+    <string name="social_overlay_add_social" translatable="true">Ajouter Réseau Social</string>
+    <string name="social_overlay_save_changes" translatable="true">Sauvegarder les changements</string>
+    <string name="social_overlay_empty_field" translatable="true">L\'entrée est vide</string>
+    <string name="social_overlay_invalid_phone_number" translatable="true">Le numéro de téléphone a un format incorrect</string>
+    <string name="social_overlay_invalid_website" translatable="true">Le cite web n\'est pas encodé avec https</string>
+    <string name="social_overlay_content_description_close" translatable="true">Fermer</string>
+    <string name="social_overlay_content_description_add" translatable="true">Ajouter</string>
+
+    <!-- Account Detail Strings -->
+    <string name="account_details_title" translatable="true">Ajoutez des informations supplémentaires</string>
+    <string name="account_details_first_name" translatable="true">Prénom</string>
+    <string name="account_details_last_name" translatable="true">Nom</string>
+    <string name="account_details_bio" translatable="true">Biographie</string>
+    <string name="account_details_add_profile_picture" translatable="true">Ajoutez peut-être une photo de profil?</string>
+    <string name="account_details_add_interests" translatable="true">Ajoutez des centres d\'intérêts</string>
+    <string name="account_details_add_socials" translatable="true">Ajoutez des liens à d\'autres réseaux sociaux</string>
+    <string name="account_details_continue" translatable="true">Continuer</string>
+    <string name="account_details_first_name_error">Veuillez remplir votre Prénom</string>
+    <string name="account_details_last_name_error">Veuillez remplir votre Nom</string>
+    <string name="account_details_created_successfully">Compte créé avec succès</string>
+    <string name="account_details_image_upload_error">ERREUR: Échec du chargement de l\'image</string>
+    <string name="account_details_content_description_account_circle">Cercle de compte</string>
+    <string name="account_details_content_description_add">Ajouter</string>
+    <string name="account_details_content_description_close">Fermer</string>
+    <string name="account_details_content_description_links_icon">Icône de liens</string>
+    <string name="account_details_content_description_pfp">Photo de profile</string>
+    <string name="account_details_content_description_remove_pfp">Supprimer la photo de profil</string>
+
+    <!-- UserSettings Strings -->
+    <string name="user_settings_content_description_remove_social" translatable="false">Remove User Social</string>
+    <string name="user_settings_first_name" translatable="true">Modifier Prénom</string>
+    <string name="user_settings_last_name" translatable="true">Modifier Nom</string>
+    <string name="user_settings_bio" translatable="true">Modifier Biographie</string>
+    <string name="user_settings_edit_interests" translatable="true">Modifier vos centres d\'intérêts</string>
+    <string name="user_settings_edit_socials" translatable="true">Modifier vos réseaux sociaux</string>
+    <string name="user_settings_discard_changes" translatable="true">Annuler vos modifications</string>
+    <string name="user_settings_save_changes" translatable="true">Sauvegarder vos modifications</string>
+    <string name="user_settings_modified_successfully" translatable="true">Changements correctement modifié</string>
+
+
+
+    <!-- EmailVerification Strings -->
+    <string name="email_verification_refresh_failed">Echec de l\'actualisation</string>
+    <string name="email_verification_sent_failed">Echec de l\'envoi de l\'email</string>
+    <string name="email_verification_verified">Email vérifié!</string>
+    <string name="email_verification_verified_continue">Continuer</string>
+    <string name="email_verification_verify_request">Veuillez vérifier votre email</string>
+    <string name="email_verification_email_sent_to">Nous avons envoyé un email à </string>
+    <string name="email_verification_email_sent_to_verify">. Veuillez vérifier votre email pour continuer.</string>
+    <string name="email_verification_email_resend">Renvoyer l\'email</string>
+    <string name="email_verification_email_refresh">Rafraîchir</string>
+    <string name="email_verification_content_description_go_back">Retourner</string>
+    <string name="email_verification_content_description_refresh">Rafraîchir</string>
+
+    <!-- Welcome Screen Strings -->
+    <string name="welcome_message">La plus grande plateforme de vie universitaire au monde.</string>
+    <string name="welcome_login_signup">Inscrivez-vous ou connectez-vous pour commencer.</string>
+    <string name="welcome_email_enter">Entrez votre adresse email</string>
+    <string name="welcome_email_display">john.doe@epfl.ch</string>
+    <string name="welcome_password_enter">Entrez votre mot de passe</string>
+    <string name="welcome_password_error_correction">Min. 6 charactères and 1 chiffre</string>
+    <string name="welcome_malformed_email_password">Email ou mot de passe mal formé.</string>
+    <string name="welcome_button_continue">Continuer</string>
+    <string name="welcome_toast_invalid_creds">Identifiants invalides</string>
+    <string name="welcome_toast_enter_valid_email">Veuillez entrer une adresse email EPFL valide</string>
+    <string name="welcome_toast_sign_in">Connexion réussie</string>
+    <string name="welcome_toast_verification_sent">Email de vérification envoyé</string>
+    <string name="welcome_toast_verification_sent_failed">Echec de l\'envoi de l\'email de vérification</string>
+    <string name="welcome_toast_account_created">Compte créé avec succès</string>
+    <string name="welcome_content_description_hide_password">Cacher le mot de passe</string>
+    <string name="welcome_content_description_show_password">Montrer le mot de passe</string>
+
+    /**
+    * package: event
+    */
+
+    <!-- Event Card Strings -->
+    <string name="event_event_title">Titre de lévènement</string>
+    <string name="event_catchy_description">Description accrocheuse</string>
+    <string name="event_card_content_description_event_image">Image de l\'évènement</string>
+    <string name="event_card_content_description_saved_event">Sauvegardé</string>
+    <string name="event_card_content_description_not_saved_event">Non sauvegardé</string>
+    <string name="event_card_content_description_association_logo">Logo d\'association</string>
+
+    <!-- Event Creation Strings -->
+    <string name="event_creation_screen">Création d\'un évènement</string>
+    <string name="event_creation_title">Crée un évènement</string>
+    <string name="event_creation_name_label">Nom de l\'évènement</string>
+    <string name="event_creation_short_description_label">Description courte</string>
+    <string name="event_creation_description_label">Description</string>
+    <string name="event_creation_coauthors_label">Associations co-organisatrices</string>
+    <string name="event_creation_tagged_label">Associations participantes</string>
+    <string name="event_creation_location_label">Localisation</string>
+    <string name="event_creation_image_label">Ajouter une bannière</string>
+    <string name="event_creation_save_button">Créer</string>
+    <string name="event_creation_cancel_button">Annuler</string>
+    <string name="event_creation_placeholder_image_description">Image temporaire</string>
+    <string name="event_creation_selected_image_description">Bannière choisie</string>
+    <string name="event_creation_dialog_ok">OK</string>
+    <string name="event_creation_dialog_cancel">Annuler</string>
+    <string name="event_creation_placeholder_time_input">HH:mm</string>
+    <string name="event_creation_placeholder_date_input">dd/MM/yy</string>
+    <string name="event_creation_startdate_label">Date de début</string>
+    <string name="event_creation_enddate_label">Date de fin</string>
+    <string name="event_creation_starttime_label">Heure de début</string>
+    <string name="event_creation_endtime_label">Heure de fin</string>
+    <string name="event_creation_end_before_start">L\'heure de fin doit être avant celle de début</string>
+    <string name="event_creation_end_equals_start">L\'heure de fin ne peut pas être l\'heure de début</string>
+    <string name="event_creation_failed">Echec lors de la création</string>
+
+    <!-- Associations Overlay Strings -->
+    <string name="associations_overlay_coauthors_title" translatable="true">Co-organisateurs</string>
+    <string name="associations_overlay_coauthors_description" translatable="true">Choisir quels associations organisent l\'évènement avec vous</string>
+    <string name="associations_overlay_tagged_title" translatable="true">Tag associations</string>
+    <string name="associations_overlay_tagged_description" translatable="true">Choisir quels associations seront présentes a l\'évènement</string>
+    <string name="associations_overlay_search_no_results" translatable="true">Aucun résultat trouvé</string>
+    <string name="associations_overlay_remove" translatable="true">Supprimer</string>
+
+    /**
+    * package: explore
+    */
+
+    <!-- Explore Screen Strings -->
+    <string name="explore_content_screen_title">Explorez nos Associations</string>
+    <string name="search_placeholder">Recherche</string>
+    <string name="explore_search_error_message">Une erreur s\'est produite lors de la recherche</string>
+    <string name="explore_search_no_results">Aucun résultat trouvé</string>
+    <string name="explore_content_description_search_icon">Icône de recherche</string>
+    <string name="explore_content_description_image">Image d\'association</string>
+    <string name="explore_content_description_async_image">Image asynchrone d\'association</string>
+
+    /**
+    * package: home
+    */
+
+    <!-- Home Screen Strings -->
+    <string name="home_content_description_map_button">Bouton de la carte</string>
+    <string name="home_content_description_search_icon">Icône de recherche</string>
+
+    /**
+    * package: map
+    */
+
+    <!-- Map Screen Strings -->
+    <string name="home_tab_all">Tout</string>
+    <string name="home_tab_following">Suivis</string>
+    <string name="map_event_go_back_button">Retour</string>
+    <string name="map_event_title">Carte d\'évènements</string>
+    <string name="map_content_description_center_on_user">Centrer sur l\'utilisateur</string>
+
+    /**
+    * package: saved
+    */
+
+    <!-- Saved Screen Strings -->
+    <string name="saved_screen_title">Evènements sauvegardés</string>
+    <string name="saved_screen_no_events">Aucun évènement sauvegardé</string>
+    <string name="saved_screen_today">Aujourd\'hui</string>
+    <string name="saved_screen_upcoming">Bientôt</string>
+
+
+    /**
+    * package: settings
+    */
+
+    <!-- Settings Strings -->
+    <string name="settings_title">Réglages</string>
+    <string name="settings_theme_title">Thème</string>
+    <string name="settings_theme_content_description">Réglages de Thème</string>
+    <string name="settings_notifications_title">Notifications</string>
+    <string name="settings_notifications_summary">Activer les notifications</string>
+    <string name="settings_notifications_content_description">Réglages de Notifications</string>
+    <string name="settings_location_title">Activer les permissions de localisation</string>
+    <string name="settings_location_summary_granted">Toutes les permissions de localisation ont été accordées</string>
+    <string name="settings_location_summary_denied">Il manque des permissions de localisation</string>
+    <string name="settings_location_content_description">Réglages de localisation</string>
+    <string name="settings_language_title">Language</string>
+    <string name="settings_language_content_description">Réglages de Langue</string>
+
+    /**
+    * package: user
+    */
+
+    <!-- UserProfile Strings -->
+    <string name="user_profile_toast_error">Une erreur est survenue.</string>
+    <string name="user_profile_your_profile_text">Votre profile</string>
+    <string name="user_profile_content_description_more">Voir plus</string>
+    <string name="user_profile_content_description_pfp">Photo de Profil</string>
+    <string name="user_profile_following_associations_text">Suivis</string>
+    <string name="user_profile_bottom_sheet_edit">Modifier le profil</string>
+    <string name="user_profile_bottom_sheet_settings">Paramètres</string>
+    <string name="user_profile_bottom_sheet_sign_out">Se déconnecter</string>
+
+    <!-- UserClaimAssociation Strings -->
+    <string name="user_claim_association_association_go_back">Retour</string>
+    <string name="user_claim_association_association_see_more">Voir plus</string>
+    <string name="user_claim_association_you_can_either">Vous pouvez soit</string>
+    <string name="user_claim_association_create_new_association">Créer une nouvelle association</string>
+    <string name="user_claim_association_not_implemented_yet">Pas encore implémenté</string>
+    <string name="user_claim_association_create_association">Créer une association</string>
+    <string name="user_claim_association_claim_president_rights">Réclamer les droits de président pour une association existante</string>
+
+    <!-- UserClaimAssociationPresidentialRights Strings -->
+    <string name="user_claim_association_presidential_rights_claim_presidential_rights">Réclamer les droits présidentiels</string>
+    <string name="user_claim_association_presidential_rights_enter_presidential_email">Entrez l\'adresse email présidentielle :</string>
+    <string name="user_claim_association_presidential_rights_email_address">Adresse e-mail</string>
+    <string name="user_claim_association_presidential_rights_incorrect_email_error">Adresse e-mail incorrecte. Veuillez réessayer.</string>
+    <string name="user_claim_association_presidential_rights_enter_verification_code">Entrez le code envoyé :</string>
+    <string name="user_claim_association_presidential_rights_verification_code">Code de vérification</string>
+    <string name="user_claim_association_presidential_rights_submit_code">Soumettre le code</string>
+    <string name="user_claim_association_presidential_rights_go_back">Retour</string>
+    <string name="user_claim_association_presidential_rights_see_more">Voir plus</string>
+    <string name="user_claim_association_presidential_rights_unexpected_error">Une erreur inattendue s\'est produite</string>
+    <string name="user_claim_association_presidential_rights_verified_successfully">Vérifié avec succès !</string>
+    <string name="user_claim_association_presidential_rights_wrong_code_error">Code incorrect, veuillez réessayer</string>
+    <string name="user_claim_association_presidential_rights_verification_request_not_found">Demande de vérification introuvable</string>
+    <string name="user_claim_association_presidential_rights_service_unavailable">Service indisponible. Veuillez réessayer plus tard</string>
+
+    /**
+    * Other
+    */
+
+    <!-- General Strings -->
+    <string name="no_internet_connection">Vous semblez être hors-ligne</string>
 
     <!-- EventListOverview Strings -->
     <string name="event_upcomingEvents">Évènements à venir</string>
@@ -11,14 +294,13 @@
     <string name="event_tab_following">Suivis</string>
     <string name="event_add_event">Ajouter un évènement</string>
     <string name="event_no_events_available">Aucun évènement disponible.</string>
-
-    <!-- Event Card Strings -->
-    <string name="event_event_title">Titre de lévènement</string>
-    <string name="event_catchy_description">Description accrocheuse</string>
+    <string name="event_search_no_results">Aucun évènement trouvé.</string>
 
     <!-- Accessibility and Content Descriptions -->
     <string name="event_map_button_description">Ouvrir la carte pour ajouter un évènement</string>
     <string name="event_image_description">Image de l\'évènement</string>
+    <string name="event_save_button_description">Icone pour sauvegarder un évènement</string>
+    <string name="event_share_button_description">Icone pour partager un évènement</string>
 
     <!-- Event Types Strings from EventType.kt -->
     <string name="event_type_festival">Festival</string>
@@ -41,30 +323,21 @@
     <string name="login_password_label">Et votre mot de passe</string>
     <string name="login_continue_button">Continuer</string>
 
-    <!-- Welcome Screen Strings -->
-    <string name="welcome_message">La plus grande plateforme de vie universitaire au monde !</string>
-    <string name="welcome_login_button">Se connecter</string>
-    <string name="welcome_skip_home_button">Passer à l\'accueil</string>
-
-    <!-- Explore Screen Strings -->
-    <string name="explore_search_placeholder">Recherche</string>
-
-    <!-- Association Strings -->
-    <string name="association_upcoming_events">Evenement à venir</string>
-    <string name="association_go_back">Retour</string>
-    <string name="association_see_more">Voir plus</string>
-    <string name="association_contact_members">Membres à contacter</string>
-    <string name="association_help_us">
-        Voici comment vous pouvez nous aider. Cliquez sur une fonction pour en savoir plus
-    </string>
-    <string name="association_follower">abonnés</string>
-    <string name="association_member">membres</string>
-    <string name="association_follow">S\'abonner</string>
-    <string name="association_join">Rejoindre</string>
-    <string name="association_no_event">Pas d\'événement plannifié pour l\'instant</string>
-
-    <string name="association_not_found">Erreur : Association introuvable</string>
-
+    <!-- Interest  Strings -->
+    <string name="interest_sports" translatable="true">Sport</string>
+    <string name="interest_music" translatable="true">Musique</string>
+    <string name="interest_art" translatable="true">Art</string>
+    <string name="interest_technology" translatable="true">Technologie</string>
+    <string name="interest_science" translatable="true">Science</string>
+    <string name="interest_literature" translatable="true">Littérature</string>
+    <string name="interest_travel" translatable="true">Voyage</string>
+    <string name="interest_food" translatable="true">Nourritue</string>
+    <string name="interest_gaming" translatable="true">Gaming</string>
+    <string name="interest_festivals" translatable="true">Festivals</string>
+    <string name="settings_back_content_description">Retour</string>
+    <string name="association_edit">Modifier l\'Association</string>
+    <string name="association_recruitment">Recrutement</string>
+    <string name="association_contact_member_profile_picture">Photo de profil du membre contactable</string>
 
 </resources>
 

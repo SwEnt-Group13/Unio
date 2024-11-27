@@ -1,7 +1,13 @@
 package com.android.unio.model.association
 
 import androidx.test.core.app.ApplicationProvider
-import com.android.unio.model.firestore.firestoreReferenceListWith
+import com.android.unio.mocks.association.MockAssociation
+import com.android.unio.mocks.event.MockEvent
+import com.android.unio.model.event.Event
+import com.android.unio.model.event.EventRepository
+import com.android.unio.model.firestore.emptyFirestoreReferenceList
+import com.android.unio.model.follow.ConcurrentAssociationUserRepository
+import com.android.unio.model.image.ImageRepository
 import com.android.unio.model.user.User
 import com.google.firebase.Firebase
 import com.google.firebase.FirebaseApp
@@ -25,6 +31,8 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock
+import org.mockito.Mockito.mock
+import org.mockito.Mockito.never
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
 import org.mockito.MockitoAnnotations
@@ -35,15 +43,21 @@ import org.robolectric.RobolectricTestRunner
 @RunWith(RobolectricTestRunner::class)
 class AssociationViewModelTest {
   private lateinit var db: FirebaseFirestore
-  @Mock private lateinit var repository: AssociationRepositoryFirestore
+  @Mock private lateinit var associationRepository: AssociationRepositoryFirestore
   @Mock private lateinit var collectionReference: CollectionReference
   @Mock private lateinit var inputStream: InputStream
+  @Mock private lateinit var eventRepository: EventRepository
+  @Mock private lateinit var imageRepository: ImageRepository
+  @Mock
+  private lateinit var concurrentAssociationUserRepository: ConcurrentAssociationUserRepository
 
   private lateinit var viewModel: AssociationViewModel
 
   @OptIn(ExperimentalCoroutinesApi::class) private val testDispatcher = UnconfinedTestDispatcher()
 
   private lateinit var testAssociations: List<Association>
+
+  private lateinit var user: User
 
   @Before
   fun setUp() {
@@ -59,27 +73,29 @@ class AssociationViewModelTest {
 
     testAssociations =
         listOf(
-            Association(
-                uid = "1",
-                url = "https://acm.org",
-                name = "ACM",
-                fullName = "Association for Computing Machinery",
-                category = AssociationCategory.SCIENCE_TECH,
-                description =
-                    "ACM is the world's largest educational and scientific computing society.",
-                members = User.firestoreReferenceListWith(listOf("1", "2")),
-                image = ""),
-            Association(
-                uid = "2",
-                url = "https://ieee.org",
-                name = "IEEE",
-                fullName = "Institute of Electrical and Electronics Engineers",
-                category = AssociationCategory.SCIENCE_TECH,
-                description = "IEEE is the world's largest technical professional organization.",
-                members = User.firestoreReferenceListWith(listOf("3", "4")),
-                image = ""))
+            MockAssociation.createMockAssociation(uid = "1", name = "ACM"),
+            MockAssociation.createMockAssociation(uid = "2", name = "IEEE"))
 
-    viewModel = AssociationViewModel(repository)
+    viewModel =
+        AssociationViewModel(
+            associationRepository,
+            eventRepository,
+            imageRepository,
+            concurrentAssociationUserRepository)
+
+    user =
+        User(
+            uid = "1",
+            email = "",
+            firstName = "",
+            lastName = "",
+            biography = "",
+            savedEvents = Event.emptyFirestoreReferenceList(),
+            followedAssociations = Association.emptyFirestoreReferenceList(),
+            joinedAssociations = Association.emptyFirestoreReferenceList(),
+            interests = emptyList(),
+            socials = emptyList(),
+            profilePicture = "")
   }
 
   @OptIn(ExperimentalCoroutinesApi::class)
@@ -89,8 +105,40 @@ class AssociationViewModelTest {
   }
 
   @Test
+  fun testUpdateFollowIncrement() {
+    `when`(concurrentAssociationUserRepository.updateFollow(any(), any(), any(), any()))
+        .thenAnswer { invocation ->
+          val onSuccess = invocation.arguments[2] as () -> Unit
+          onSuccess()
+        }
+    val association = MockAssociation.createMockAssociation(uid = "1", name = "ACM")
+    val followCount = association.followersCount
+    viewModel.selectAssociation(association.uid)
+    val updateUser = { user.followedAssociations.add(association.uid) }
+    viewModel.updateFollow(association, user, false, updateUser)
+    assert(user.followedAssociations.contains(association.uid))
+    assert(viewModel.selectedAssociation.value?.followersCount == followCount + 1)
+  }
+
+  @Test
+  fun testUpdateFollowDecrement() {
+    `when`(concurrentAssociationUserRepository.updateFollow(any(), any(), any(), any()))
+        .thenAnswer { invocation ->
+          val onSuccess = invocation.arguments[2] as () -> Unit
+          onSuccess()
+        }
+    val association = MockAssociation.createMockAssociation(uid = "1", name = "ACM")
+    val followCount = association.followersCount
+    viewModel.selectAssociation(association.uid)
+    val updateUser = { user.followedAssociations.remove(association.uid) }
+    viewModel.updateFollow(association, user, true, updateUser)
+    assert(!user.followedAssociations.contains(association.uid))
+    assert(viewModel.selectedAssociation.value?.followersCount == followCount - 1)
+  }
+
+  @Test
   fun testGetAssociations() {
-    `when`(repository.getAssociations(any(), any())).thenAnswer { invocation ->
+    `when`(associationRepository.getAssociations(any(), any())).thenAnswer { invocation ->
       val onSuccess = invocation.arguments[0] as (List<Association>) -> Unit
       onSuccess(testAssociations)
     }
@@ -107,12 +155,12 @@ class AssociationViewModelTest {
     }
 
     // Verify that the repository method was called
-    verify(repository).getAssociations(any(), any())
+    verify(associationRepository).getAssociations(any(), any())
   }
 
   @Test
   fun testGetAssociationsError() {
-    `when`(repository.getAssociations(any(), any())).thenAnswer { invocation ->
+    `when`(associationRepository.getAssociations(any(), any())).thenAnswer { invocation ->
       val onFailure = invocation.arguments[1] as (Exception) -> Unit
       onFailure(Exception("Test exception"))
     }
@@ -121,35 +169,40 @@ class AssociationViewModelTest {
     assert(viewModel.associations.value.isEmpty())
 
     // Verify that the repository method was called
-    verify(repository).getAssociations(any(), any())
+    verify(associationRepository).getAssociations(any(), any())
   }
 
   @Test
   fun testInitFetchesAssociations() {
     // Mock the init method
-    `when`(repository.init(any())).thenAnswer { invocation ->
+    `when`(associationRepository.init(any())).thenAnswer { invocation ->
       val onSuccess = invocation.arguments[0] as () -> Unit
       onSuccess()
     }
 
-    `when`(repository.getAssociations(any(), any())).thenAnswer { invocation ->
+    `when`(associationRepository.getAssociations(any(), any())).thenAnswer { invocation ->
       val onSuccess = invocation.arguments[0] as (List<Association>) -> Unit
       onSuccess(testAssociations)
     }
 
-    val newViewModel = AssociationViewModel(repository)
+    val newViewModel =
+        AssociationViewModel(
+            associationRepository,
+            eventRepository,
+            imageRepository,
+            concurrentAssociationUserRepository)
 
     runBlocking {
       val result = newViewModel.associations.first()
       assertEquals(2, result.size)
     }
 
-    verify(repository).getAssociations(any(), any())
+    verify(associationRepository).getAssociations(any(), any())
   }
 
   @Test
   fun testFindAssociationById() {
-    `when`(repository.getAssociations(any(), any())).thenAnswer { invocation ->
+    `when`(associationRepository.getAssociations(any(), any())).thenAnswer { invocation ->
       val onSuccess = invocation.arguments[0] as (List<Association>) -> Unit
       onSuccess(testAssociations)
     }
@@ -171,16 +224,108 @@ class AssociationViewModelTest {
   }
 
   @Test
-  fun testAddAssociation() {
-    `when`(repository.addAssociation(eq(testAssociations[0]), any(), any())).thenAnswer { invocation
-      ->
-      val onSuccess = invocation.arguments[0] as () -> Unit
+  fun testSaveAssociationWithImageStreamSuccess() {
+    val association = testAssociations[0]
+    val imageUrl = "https://example.com"
+
+    `when`(imageRepository.uploadImage(any(), any(), any(), any())).thenAnswer { invocation ->
+      val onSuccess = invocation.getArgument(2) as (String) -> Unit
+      onSuccess(imageUrl)
+    }
+
+    `when`(associationRepository.saveAssociation(any(), any(), any())).thenAnswer { invocation ->
+      val onSuccess = invocation.getArgument(1) as () -> Unit
       onSuccess()
     }
-    viewModel.addAssociation(
-        inputStream,
-        testAssociations[0],
-        { verify(repository).addAssociation(eq(testAssociations[0]), any(), any()) },
-        {})
+
+    val onSuccess = mock<() -> Unit>()
+    viewModel.saveAssociation(association, inputStream, onSuccess, {})
+
+    verify(imageRepository).uploadImage(eq(inputStream), any(), any(), any())
+    verify(associationRepository)
+        .saveAssociation(eq(association.copy(image = imageUrl)), any(), any())
+    verify(onSuccess).invoke()
+  }
+
+  @Test
+  fun testSaveAssociationWithImageStreamFailure() {
+    val association = testAssociations[0]
+    val failureException = Exception("Upload failed")
+
+    `when`(imageRepository.uploadImage(any(), any(), any(), any())).thenAnswer { invocation ->
+      val onFailure = invocation.getArgument(3) as (Exception) -> Unit
+      onFailure(failureException)
+    }
+
+    val onFailure = mock<(Exception) -> Unit>()
+    viewModel.saveAssociation(association, inputStream, {}, onFailure)
+
+    verify(imageRepository)
+        .uploadImage(eq(inputStream), eq("images/associations/${association.uid}"), any(), any())
+    verify(associationRepository, never()).saveAssociation(any(), any(), any())
+    verify(onFailure).invoke(failureException)
+  }
+
+  @Test
+  fun testSaveAssociationNoImageStreamSuccess() {
+    val association = testAssociations[0]
+
+    `when`(associationRepository.saveAssociation(any(), any(), any())).thenAnswer { invocation ->
+      val onSuccess = invocation.getArgument(1) as () -> Unit
+      onSuccess()
+    }
+
+    val onSuccess = mock<() -> Unit>()
+    viewModel.saveAssociation(association, null, onSuccess, {})
+
+    verify(associationRepository).saveAssociation(eq(association), any(), any())
+    verify(onSuccess).invoke()
+  }
+
+  @Test
+  fun testSaveAssociationNoImageStreamFailure() {
+    val association = testAssociations[0]
+    val failureException = Exception("Save failed")
+
+    `when`(associationRepository.saveAssociation(any(), any(), any())).thenAnswer { invocation ->
+      val onFailure = invocation.getArgument(2) as (Exception) -> Unit
+      onFailure(failureException)
+    }
+
+    val onFailure = mock<(Exception) -> Unit>()
+    viewModel.saveAssociation(association, null, {}, onFailure)
+
+    verify(associationRepository).saveAssociation(eq(association), any(), any())
+    verify(onFailure).invoke(failureException)
+  }
+
+  @Test
+  fun testGetEventsForAssociationSuccess() {
+    val association = MockAssociation.createMockAssociation(uid = "1", name = "ACM")
+    val testEvents =
+        listOf(MockEvent.createMockEvent(organisers = listOf(association), title = "Event 1"))
+    `when`(eventRepository.getEventsOfAssociation(eq("1"), any(), any())).thenAnswer { invocation ->
+      val onSuccess = invocation.arguments[1] as (List<Event>) -> Unit
+      onSuccess(testEvents)
+    }
+
+    viewModel.getEventsForAssociation(association) { events -> assertEquals(testEvents, events) }
+
+    verify(eventRepository).getEventsOfAssociation(eq("1"), any(), any())
+  }
+
+  @Test
+  fun testGetEventsForAssociationFailure() {
+    val association = MockAssociation.createMockAssociation(uid = "1", name = "ACM")
+    `when`(eventRepository.getEventsOfAssociation(eq("1"), any(), any())).thenAnswer { invocation ->
+      val onFailure = invocation.arguments[2] as (Exception) -> Unit
+      onFailure(Exception("Fake exception"))
+    }
+
+    viewModel.getEventsForAssociation(association) { events ->
+      assertEquals(emptyList<Event>(), events)
+    }
+
+    verify(eventRepository).getEventsOfAssociation(eq("1"), any(), any())
   }
 }

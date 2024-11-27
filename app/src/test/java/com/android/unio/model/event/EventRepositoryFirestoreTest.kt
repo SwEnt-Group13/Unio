@@ -1,13 +1,14 @@
 package com.android.unio.model.event
 
-import com.android.unio.model.association.Association
+import android.os.Looper
+import com.android.unio.mocks.event.MockEvent
 import com.android.unio.model.firestore.FirestorePaths.EVENT_PATH
-import com.android.unio.model.firestore.emptyFirestoreReferenceList
-import com.android.unio.model.map.Location
 import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.gms.tasks.Task
 import com.google.firebase.Firebase
 import com.google.firebase.Timestamp
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
@@ -20,14 +21,23 @@ import io.mockk.mockk
 import io.mockk.mockkStatic
 import java.util.GregorianCalendar
 import junit.framework.TestCase.assertEquals
+import junit.framework.TestCase.assertTrue
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertThrows
 import org.junit.Before
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.mockito.ArgumentCaptor
+import org.mockito.Captor
 import org.mockito.Mock
+import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
 import org.mockito.MockitoAnnotations
 import org.mockito.kotlin.any
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.Shadows.shadowOf
 
+@RunWith(RobolectricTestRunner::class)
 class EventRepositoryFirestoreTest {
   private lateinit var db: FirebaseFirestore
 
@@ -52,33 +62,27 @@ class EventRepositoryFirestoreTest {
 
   @Mock private lateinit var voidTask: Task<Void>
 
+  @Mock private lateinit var auth: FirebaseAuth
+  @Mock private lateinit var firebaseUser: FirebaseUser
+  @Captor
+  private lateinit var authStateListenerCaptor: ArgumentCaptor<FirebaseAuth.AuthStateListener>
+
   private lateinit var repository: EventRepositoryFirestore
-  private val defaultEvent =
-      Event(
-          organisers = Association.emptyFirestoreReferenceList(),
-          taggedAssociations = Association.emptyFirestoreReferenceList())
   private val event1 =
-      Event(
+      MockEvent.createMockEvent(
           uid = "1",
           title = "Balelec",
-          organisers = Association.emptyFirestoreReferenceList(),
-          taggedAssociations = Association.emptyFirestoreReferenceList(),
-          image = "https://imageurl.jpg",
-          description = "Plus grand festival du monde (non contractuel)",
-          price = 40.5,
-          date = Timestamp(GregorianCalendar(2004, 7, 1).time),
-          location = Location(1.2345, 2.3455, "Somewhere"))
+          startDate = Timestamp(GregorianCalendar(2004, 7, 1).time),
+          endDate = Timestamp(GregorianCalendar(2005, 7, 1).time))
+  private val defaultEvent =
+      MockEvent.createMockEvent(
+          uid = "", title = "Default Event") // This will simulate the default event
   private val event3 =
-      Event(
+      MockEvent.createMockEvent(
           uid = "3",
           title = "Tremplin Sysmic",
-          organisers = Association.emptyFirestoreReferenceList(),
-          taggedAssociations = Association.emptyFirestoreReferenceList(),
-          image = "https://imageurl.jpg",
-          description = "Plus grand festival du monde (non contractuel)",
-          price = 40.5,
-          date = Timestamp(GregorianCalendar(2008, 7, 1).time),
-          location = Location(1.2345, 2.3455, "Somewhere"))
+          startDate = Timestamp(GregorianCalendar(2004, 7, 1).time),
+          endDate = Timestamp(GregorianCalendar(2005, 7, 1).time))
 
   @Before
   fun setUp() {
@@ -89,6 +93,9 @@ class EventRepositoryFirestoreTest {
     mockkStatic(FirebaseFirestore::class)
     every { Firebase.firestore } returns db
     every { db.collection(EVENT_PATH) } returns collectionReference
+
+    mockkStatic(FirebaseAuth::class)
+    every { FirebaseAuth.getInstance() } returns auth
 
     `when`(collectionReference.get()).thenReturn(getTask)
 
@@ -116,6 +123,38 @@ class EventRepositoryFirestoreTest {
     `when`(map3["uid"]).thenReturn(event3.uid)
 
     repository = EventRepositoryFirestore(db)
+  }
+
+  @Test
+  fun testInitUserAuthenticated() {
+    `when`(auth.currentUser).thenReturn(firebaseUser)
+    var onSuccessCalled = false
+    val onSuccess = { onSuccessCalled = true }
+
+    repository.init(onSuccess)
+
+    verify(auth).addAuthStateListener(authStateListenerCaptor.capture())
+    authStateListenerCaptor.value.onAuthStateChanged(auth)
+
+    shadowOf(Looper.getMainLooper()).idle()
+
+    assertTrue(onSuccessCalled)
+  }
+
+  @Test
+  fun testInitUserNotAuthenticated() {
+    `when`(auth.currentUser).thenReturn(null)
+    var onSuccessCalled = false
+    val onSuccess = { onSuccessCalled = true }
+
+    repository.init(onSuccess)
+
+    verify(auth).addAuthStateListener(authStateListenerCaptor.capture())
+    authStateListenerCaptor.value.onAuthStateChanged(auth)
+
+    shadowOf(Looper.getMainLooper()).idle()
+
+    assertFalse(onSuccessCalled)
   }
 
   /** Asserts that getEvents returns all events */
@@ -188,6 +227,7 @@ class EventRepositoryFirestoreTest {
   @Test
   fun testAddEvent() {
     `when`(collectionReference.document(event1.uid)).thenReturn(documentReference)
+    `when`(voidTask.addOnSuccessListener(any())).thenReturn(voidTask)
     `when`(documentReference.set(any())).thenReturn(voidTask)
     repository.addEvent(event1, {}, { e -> throw e })
   }
@@ -207,6 +247,7 @@ class EventRepositoryFirestoreTest {
   @Test
   fun testDeleteEventById() {
     `when`(collectionReference.document(event1.uid)).thenReturn(documentReference)
+    `when`(voidTask.addOnSuccessListener(any())).thenReturn(voidTask)
     `when`(documentReference.delete()).thenReturn(voidTask)
     repository.deleteEventById(event1.uid, {}, { e -> throw e })
   }

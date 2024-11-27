@@ -1,6 +1,6 @@
 package com.android.unio.ui.user
 
-import android.annotation.SuppressLint
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -25,9 +25,10 @@ import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ModalBottomSheet
@@ -50,6 +51,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
@@ -57,11 +59,14 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import coil.compose.AsyncImage
+import androidx.core.net.toUri
+import com.android.unio.R
+import com.android.unio.model.association.AssociationViewModel
+import com.android.unio.model.strings.test_tags.UserProfileTestTags
 import com.android.unio.model.user.User
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.association.AssociationSmall
+import com.android.unio.ui.image.AsyncImageWrapper
 import com.android.unio.ui.navigation.BottomNavigationMenu
 import com.android.unio.ui.navigation.LIST_TOP_LEVEL_DESTINATION
 import com.android.unio.ui.navigation.NavigationAction
@@ -72,41 +77,76 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun UserProfileScreen(
-    navigationAction: NavigationAction,
-    userViewModel: UserViewModel = viewModel(factory = UserViewModel.Factory)
+    userViewModel: UserViewModel,
+    associationViewModel: AssociationViewModel,
+    navigationAction: NavigationAction
 ) {
 
+  val context = LocalContext.current
   val user by userViewModel.user.collectAsState()
 
+  if (user == null) {
+    Log.e("UserProfileScreen", "User is null.")
+    Toast.makeText(
+            LocalContext.current,
+            context.getString(R.string.user_profile_toast_error),
+            Toast.LENGTH_SHORT)
+        .show()
+    return
+  }
+
   val refreshState by userViewModel.refreshState
-  val pullRefreshState =
-      rememberPullRefreshState(
-          refreshing = refreshState, onRefresh = { userViewModel.refreshUser() })
+
+  UserProfileScreenScaffold(
+      user!!,
+      navigationAction,
+      refreshState,
+      onRefresh = { userViewModel.refreshUser() },
+      onAssociationClick = {
+        associationViewModel.selectAssociation(it)
+        navigationAction.navigateTo(Screen.ASSOCIATION_PROFILE)
+      })
+}
+
+@OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
+@Composable
+fun UserProfileScreenScaffold(
+    user: User,
+    navigationAction: NavigationAction,
+    refreshState: Boolean,
+    onRefresh: () -> Unit,
+    onAssociationClick: (String) -> Unit
+) {
+  val context = LocalContext.current
+  val pullRefreshState = rememberPullRefreshState(refreshing = refreshState, onRefresh = onRefresh)
 
   var showSheet by remember { mutableStateOf(false) }
 
   Scaffold(
-      modifier = Modifier.testTag("UserProfileScreen"),
+      modifier = Modifier.testTag(UserProfileTestTags.SCREEN),
       topBar = {
         TopAppBar(
-            title = { Text("Your Profile") },
+            title = { Text(context.getString(R.string.user_profile_your_profile_text)) },
             actions = {
-              IconButton(onClick = { showSheet = true }) {
-                Icon(Icons.Outlined.MoreVert, contentDescription = "More")
-              }
+              IconButton(
+                  onClick = { showSheet = true },
+                  modifier = Modifier.testTag(UserProfileTestTags.SETTINGS)) {
+                    Icon(
+                        Icons.Outlined.MoreVert,
+                        contentDescription =
+                            context.getString(R.string.user_profile_content_description_more))
+                  }
             })
       },
       bottomBar = {
         BottomNavigationMenu(
             { navigationAction.navigateTo(it.route) }, LIST_TOP_LEVEL_DESTINATION, Route.MY_PROFILE)
       }) { padding ->
-        if (refreshState || user == null) {
+        if (refreshState) {
           Box(
-              modifier = Modifier.fillMaxSize().background(Color.White).padding(padding),
+              modifier = Modifier.fillMaxSize().padding(padding),
               contentAlignment = Alignment.Center) {
                 CircularProgressIndicator(modifier = Modifier.width(64.dp))
               }
@@ -117,7 +157,12 @@ fun UserProfileScreen(
                       .pullRefresh(pullRefreshState)
                       .fillMaxHeight()
                       .verticalScroll(rememberScrollState())) {
-                UserProfileScreenContent(navigationAction, user!!)
+                UserProfileScreenContent(
+                    user,
+                    onAssociationClick,
+                    onClaimAssociationClick = {
+                      navigationAction.navigateTo(Screen.CLAIM_ASSOCIATION_RIGHTS)
+                    })
               }
         }
       }
@@ -129,12 +174,18 @@ fun UserProfileScreen(
         modifier = Modifier.align(Alignment.TopCenter))
   }
 
-  UserProfileBottomSheet(showSheet) { showSheet = false }
+  UserProfileBottomSheet(showSheet, navigationAction) { showSheet = false }
 }
 
-@OptIn(ExperimentalLayoutApi::class, ExperimentalMaterialApi::class)
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun UserProfileScreenContent(navigationAction: NavigationAction, user: User) {
+fun UserProfileScreenContent(
+    user: User,
+    onAssociationClick: (String) -> Unit,
+    onClaimAssociationClick: () -> Unit
+) {
+
+  val context = LocalContext.current
 
   val uriHandler = LocalUriHandler.current
 
@@ -148,32 +199,36 @@ fun UserProfileScreenContent(navigationAction: NavigationAction, user: User) {
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxWidth(0.7f).padding(24.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)) {
-          AsyncImage(
-              model = user.profilePicture,
-              contentDescription = "Profile Picture",
-              modifier =
-                  Modifier.size(100.dp)
-                      .clip(CircleShape)
-                      .background(Color.Gray)
-                      .testTag("UserProfilePicture"))
+          Box(modifier = Modifier.size(100.dp).clip(CircleShape)) {
+            AsyncImageWrapper(
+                imageUri = user.profilePicture.toUri(),
+                contentDescription =
+                    context.getString(R.string.user_profile_content_description_pfp),
+                contentScale = ContentScale.Crop,
+                modifier =
+                    Modifier.background(Color.Gray).testTag(UserProfileTestTags.PROFILE_PICTURE),
+                filterQuality = FilterQuality.Medium)
+          }
 
           // Display the user's name and biography.
           Text(
               user.firstName + " " + user.lastName,
               style = AppTypography.headlineLarge,
-              modifier = Modifier.testTag("UserProfileName"))
+              modifier = Modifier.testTag(UserProfileTestTags.NAME))
           Text(
               user.biography,
               style = AppTypography.bodyMedium,
               textAlign = TextAlign.Center,
-              modifier = Modifier.testTag("UserProfileBiography"))
+              modifier = Modifier.testTag(UserProfileTestTags.BIOGRAPHY))
 
           // Display the user's socials.
           FlowRow(horizontalArrangement = Arrangement.Center) {
             user.socials.forEach { userSocial ->
               IconButton(
                   onClick = { uriHandler.openUri(userSocial.getFullUrl()) },
-                  modifier = Modifier.testTag("UserProfileSocialButton")) {
+                  modifier =
+                      Modifier.testTag(
+                          UserProfileTestTags.SOCIAL_BUTTON + userSocial.social.title)) {
                     Image(
                         modifier = Modifier.size(32.dp).wrapContentSize(),
                         painter = painterResource(userSocial.social.icon),
@@ -193,43 +248,47 @@ fun UserProfileScreenContent(navigationAction: NavigationAction, user: User) {
           ) {
             user.interests.forEach { interest ->
               SuggestionChip(
-                  modifier = Modifier.testTag("UserProfileInterest"),
+                  modifier = Modifier.testTag(UserProfileTestTags.INTEREST_CHIP + interest.name),
                   onClick = {},
-                  label = { Text(interest.title, style = AppTypography.bodySmall) })
+                  label = {
+                    Text(context.getString(interest.title), style = AppTypography.bodySmall)
+                  })
             }
           }
 
           // Display the associations that the user is a member of.
           if (joinedAssociations.isNotEmpty()) {
-            Divider()
+            HorizontalDivider()
 
             Text("Joined", style = AppTypography.headlineSmall)
             Column(
-                modifier = Modifier.fillMaxWidth().testTag("UserProfileJoinedAssociations"),
+                modifier = Modifier.fillMaxWidth().testTag(UserProfileTestTags.JOINED_ASSOCIATIONS),
                 verticalArrangement = Arrangement.spacedBy(4.dp),
             ) {
-              joinedAssociations.map {
-                AssociationSmall(it) {
-                  navigationAction.navigateTo(Screen.withParams(Screen.ASSOCIATION_PROFILE, it.uid))
-                }
-              }
+              joinedAssociations.map { AssociationSmall(it) { onAssociationClick(it.uid) } }
             }
+          } else {
+            Text("You are not member of any association yet", style = AppTypography.bodySmall)
+
+            Button(
+                onClick = onClaimAssociationClick,
+                modifier = Modifier.testTag(UserProfileTestTags.CLAIMING_BUTTON)) {
+                  Text("Claim Association")
+                }
           }
 
           // Display the associations that the user is following.
           if (followedAssociations.isNotEmpty()) {
-            Divider(modifier = Modifier)
+            HorizontalDivider(modifier = Modifier)
 
-            Text("Following", style = AppTypography.headlineSmall)
+            Text(
+                context.getString(R.string.user_profile_following_associations_text),
+                style = AppTypography.headlineSmall)
             Column(
-                modifier = Modifier.testTag("UserProfileFollowedAssociations"),
+                modifier = Modifier.testTag(UserProfileTestTags.FOLLOWED_ASSOCIATIONS),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-              followedAssociations.map {
-                AssociationSmall(it) {
-                  navigationAction.navigateTo(Screen.withParams(Screen.ASSOCIATION_PROFILE, it.uid))
-                }
-              }
+              followedAssociations.map { AssociationSmall(it) { onAssociationClick(it.uid) } }
             }
           }
         }
@@ -238,7 +297,11 @@ fun UserProfileScreenContent(navigationAction: NavigationAction, user: User) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun UserProfileBottomSheet(showSheet: Boolean, onClose: () -> Unit) {
+fun UserProfileBottomSheet(
+    showSheet: Boolean,
+    navigationAction: NavigationAction,
+    onClose: () -> Unit
+) {
 
   val sheetState = rememberModalBottomSheetState()
   val scope = rememberCoroutineScope()
@@ -247,28 +310,36 @@ fun UserProfileBottomSheet(showSheet: Boolean, onClose: () -> Unit) {
 
   if (showSheet) {
     ModalBottomSheet(
-        modifier = Modifier.testTag("UserProfileBottomSheet"),
+        modifier = Modifier.testTag(UserProfileTestTags.BOTTOM_SHEET),
         sheetState = sheetState,
         onDismissRequest = onClose,
         properties = ModalBottomSheetProperties(shouldDismissOnBackPress = true),
     ) {
-      Column(modifier = Modifier.padding(start = 16.dp)) {
+      Column(modifier = Modifier) {
         TextButton(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().testTag(UserProfileTestTags.EDITION),
             onClick = {
-              Toast.makeText(context, "Not yet implemented.", Toast.LENGTH_SHORT).show()
+              scope.launch {
+                sheetState.hide()
+                onClose()
+                navigationAction.navigateTo(Screen.EDIT_PROFILE)
+              }
             }) {
-              Text("Edit Profile")
+              Text(context.getString(R.string.user_profile_bottom_sheet_edit))
             }
         TextButton(
             modifier = Modifier.fillMaxWidth(),
             onClick = {
-              Toast.makeText(context, "Not yet implemented.", Toast.LENGTH_SHORT).show()
+              scope.launch {
+                sheetState.hide()
+                onClose()
+                navigationAction.navigateTo(Screen.SETTINGS)
+              }
             }) {
-              Text("Settings")
+              Text(context.getString(R.string.user_profile_bottom_sheet_settings))
             }
         TextButton(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().testTag(UserProfileTestTags.SIGN_OUT),
             onClick = {
               Firebase.auth.signOut()
               scope.launch {
@@ -276,7 +347,7 @@ fun UserProfileBottomSheet(showSheet: Boolean, onClose: () -> Unit) {
                 onClose()
               }
             }) {
-              Text("Sign Out")
+              Text(context.getString(R.string.user_profile_bottom_sheet_sign_out))
             }
       }
     }

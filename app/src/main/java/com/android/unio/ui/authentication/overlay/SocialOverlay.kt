@@ -26,8 +26,8 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -41,6 +41,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -48,6 +49,8 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import com.android.unio.R
+import com.android.unio.model.strings.test_tags.SocialsOverlayTestTags
 import com.android.unio.model.user.Social
 import com.android.unio.model.user.UserSocial
 import com.android.unio.model.user.UserSocialError
@@ -64,6 +67,8 @@ fun SocialOverlay(
 ) {
   val scrollState = rememberScrollState()
 
+  val context = LocalContext.current
+
   val copiedUserSocialsFlow = remember { MutableStateFlow(userSocials.map { it }.toMutableList()) }
   val copiedUserSocials by copiedUserSocialsFlow.collectAsState()
 
@@ -75,23 +80,27 @@ fun SocialOverlay(
         Card(
             elevation = CardDefaults.cardElevation(8.dp),
             shape = RoundedCornerShape(16.dp),
-            modifier = Modifier.fillMaxWidth().padding(20.dp).testTag("SocialsOverlayCard")) {
+            modifier =
+                Modifier.fillMaxWidth().padding(20.dp).testTag(SocialsOverlayTestTags.CARD)) {
               Column(
                   modifier =
                       Modifier.fillMaxWidth()
                           .padding(15.dp)
                           .sizeIn(maxHeight = 400.dp)
-                          .testTag("SocialsOverlayColumn"),
+                          .testTag(SocialsOverlayTestTags.COLUMN),
                   verticalArrangement = Arrangement.SpaceBetween) {
+
+                    // Text fields for the title and description
                     Text(
-                        text = "Your social media",
+                        text = context.getString(R.string.social_overlay_title),
                         style = AppTypography.headlineSmall,
-                        modifier = Modifier.testTag("SocialOverlayTitle"))
+                        modifier = Modifier.testTag(SocialsOverlayTestTags.TITLE_TEXT))
                     Text(
-                        text =
-                            "These will be displayed on your profile to allow other students to contact you",
+                        text = context.getString(R.string.social_overlay_description),
                         style = AppTypography.bodyMedium,
-                        modifier = Modifier.padding(bottom = 5.dp).testTag("SocialOverlaySubtitle"))
+                        modifier =
+                            Modifier.padding(bottom = 5.dp)
+                                .testTag(SocialsOverlayTestTags.DESCRIPTION_TEXT))
                     Surface(
                         modifier = Modifier.sizeIn(maxHeight = 250.dp), color = Color.Transparent) {
                           Column(
@@ -99,61 +108,28 @@ fun SocialOverlay(
                               verticalArrangement = Arrangement.Center,
                               horizontalAlignment = Alignment.CenterHorizontally) {
                                 copiedUserSocials.forEachIndexed { index, userSocial ->
-                                  Row(
-                                      horizontalArrangement = Arrangement.SpaceBetween,
-                                      verticalAlignment = Alignment.CenterVertically,
-                                      modifier =
-                                          Modifier.padding(5.dp)
-                                              .fillMaxWidth()
-                                              .testTag(
-                                                  "SocialOverlayClickableRow: ${userSocial.social.title}")) {
-                                        Row(verticalAlignment = Alignment.CenterVertically) {
-                                          Image(
-                                              modifier = Modifier.size(16.dp).wrapContentSize(),
-                                              painter = painterResource(userSocial.social.icon),
-                                              contentDescription = userSocial.social.title,
-                                              contentScale = ContentScale.Fit)
-                                          Text(userSocial.social.title)
-                                        }
-                                        Icon(
-                                            Icons.Default.Close,
-                                            contentDescription = "Close",
-                                            modifier =
-                                                Modifier.clickable {
-                                                      copiedUserSocialsFlow.value =
-                                                          copiedUserSocialsFlow.value
-                                                              .toMutableList()
-                                                              .apply { removeAt(index) }
-                                                    }
-                                                    .testTag(
-                                                        "SocialOverlayCloseIcon: ${userSocial.social.title}"))
-                                      }
-                                  if (index != copiedUserSocials.size - 1) {
-                                    Divider(
-                                        modifier = Modifier.testTag("SocialOverlayDivider: $index"))
+
+                                  // The row for each added socials (empty if no socials are added)
+                                  SocialsOverlaySocialRow(
+                                      userSocial,
+                                      onRemoveSocial = {
+                                        copiedUserSocialsFlow.value =
+                                            copiedUserSocialsFlow.value.toMutableList().apply {
+                                              removeAt(index)
+                                            }
+                                      })
+                                  if (index != copiedUserSocialsFlow.value.size - 1) {
+                                    HorizontalDivider(
+                                        modifier =
+                                            Modifier.testTag(
+                                                SocialsOverlayTestTags.DIVIDER + "$index"))
                                   }
                                 }
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.End) {
-                                      OutlinedButton(
-                                          onClick = { showAddSocialPrompt = true },
-                                          modifier =
-                                              Modifier.padding(8.dp)
-                                                  .testTag("SocialOverlayAddButton"),
-                                          shape = RoundedCornerShape(16.dp)) {
-                                            Icon(Icons.Default.Add, contentDescription = "Add")
-                                            Text("Add Social")
-                                          }
-                                      Button(
-                                          onClick = { onSave(copiedUserSocials) },
-                                          modifier =
-                                              Modifier.padding(8.dp)
-                                                  .testTag("SocialOverlaySaveButton"),
-                                          shape = RoundedCornerShape(16.dp)) {
-                                            Text("Save")
-                                          }
-                                    }
+
+                                // The bottom row buttons (Add and Save)
+                                SocialOverlayBottomButtons(
+                                    onAddSocial = { showAddSocialPrompt = true },
+                                    onSave = { onSave(copiedUserSocials) })
                               }
                         }
                   }
@@ -170,15 +146,70 @@ fun SocialOverlay(
   }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
+@Composable
+private fun SocialsOverlaySocialRow(
+    userSocial: UserSocial,
+    onRemoveSocial: () -> Unit,
+) {
+  val context = LocalContext.current
+
+  Row(
+      horizontalArrangement = Arrangement.SpaceBetween,
+      verticalAlignment = Alignment.CenterVertically,
+      modifier =
+          Modifier.padding(5.dp)
+              .fillMaxWidth()
+              .testTag(SocialsOverlayTestTags.CLICKABLE_ROW + userSocial.social.title)) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+          Image(
+              modifier = Modifier.size(16.dp).wrapContentSize(),
+              painter = painterResource(userSocial.social.icon),
+              contentDescription = userSocial.social.title,
+              contentScale = ContentScale.Fit)
+          Text(userSocial.social.title)
+        }
+        Icon(
+            Icons.Default.Close,
+            contentDescription =
+                context.getString(R.string.social_overlay_content_description_close),
+            modifier =
+                Modifier.clickable { onRemoveSocial() }
+                    .testTag(SocialsOverlayTestTags.ICON + userSocial.social.title))
+      }
+}
+
+@Composable
+private fun SocialOverlayBottomButtons(onAddSocial: () -> Unit, onSave: () -> Unit) {
+  val context = LocalContext.current
+
+  Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+    OutlinedButton(
+        onClick = onAddSocial,
+        modifier = Modifier.padding(8.dp).testTag(SocialsOverlayTestTags.ADD_BUTTON),
+        shape = RoundedCornerShape(16.dp)) {
+          Icon(
+              Icons.Default.Add,
+              contentDescription =
+                  context.getString(R.string.social_overlay_content_description_add))
+          Text(context.getString(R.string.social_overlay_add_social))
+        }
+    Button(
+        onClick = onSave,
+        modifier = Modifier.padding(8.dp).testTag(SocialsOverlayTestTags.SAVE_BUTTON),
+        shape = RoundedCornerShape(16.dp)) {
+          Text(context.getString(R.string.overlay_save))
+        }
+  }
+}
+
 @Composable
 fun SocialPrompt(
     onDismiss: () -> Unit,
     onSave: (UserSocial) -> Unit,
 ) {
-  val socialsList = Social.entries.toList()
+  val context = LocalContext.current
 
-  var isExpanded by remember { mutableStateOf(false) }
+  val socialsList = Social.entries.toList()
 
   var selectedSocial by remember { mutableStateOf(socialsList[0]) }
 
@@ -190,37 +221,20 @@ fun SocialPrompt(
     Card(
         elevation = CardDefaults.cardElevation(8.dp),
         shape = RoundedCornerShape(16.dp),
-        modifier = Modifier.fillMaxWidth().padding(20.dp).testTag("SocialPromptCard")) {
+        modifier =
+            Modifier.fillMaxWidth().padding(20.dp).testTag(SocialsOverlayTestTags.PROMPT_CARD)) {
           Column(
               modifier = Modifier.fillMaxWidth().padding(20.dp),
               horizontalAlignment = Alignment.CenterHorizontally,
               verticalArrangement = Arrangement.SpaceBetween) {
-                ExposedDropdownMenuBox(
-                    expanded = isExpanded,
-                    onExpandedChange = { isExpanded = !isExpanded },
-                    modifier = Modifier.padding(10.dp).testTag("SocialPromptDropdownMenuBox")) {
-                      TextField(
-                          value = selectedSocial.title,
-                          onValueChange = {},
-                          readOnly = true,
-                          trailingIcon = {
-                            ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpanded)
-                          })
-                      ExposedDropdownMenu(
-                          expanded = isExpanded, onDismissRequest = { isExpanded = false }) {
-                            socialsList.forEachIndexed { index, social ->
-                              DropdownMenuItem(
-                                  modifier =
-                                      Modifier.testTag(
-                                          "SocialPromptDropdownMenuItem: ${social.title}"),
-                                  text = { Text(social.title) },
-                                  onClick = {
-                                    selectedSocial = socialsList[index]
-                                    isExpanded = false
-                                  })
-                            }
-                          }
-                    }
+
+                // Drop down menu to choose which social to add
+                SocialsPromptDropDownMenu(
+                    selectedSocial,
+                    socialsList,
+                    onSwitchSelectedSocial = { index -> selectedSocial = socialsList[index] })
+
+                // Text field to input the social URL (for example the instagram @)
                 OutlinedTextField(
                     value = socialURL,
                     onValueChange = { socialURL = it },
@@ -241,23 +255,26 @@ fun SocialPrompt(
                     supportingText = {
                       if (isError != UserSocialError.NONE) {
                         Text(
-                            isError.errorMessage,
-                            modifier = Modifier.testTag("SocialPromptErrorText"))
+                            context.getString(isError.errorMessage),
+                            modifier = Modifier.testTag(SocialsOverlayTestTags.PROMPT_ERROR))
                       }
                     },
                     singleLine = true,
-                    modifier = Modifier.padding(10.dp).testTag("SocialPromptTextField"))
+                    modifier =
+                        Modifier.padding(10.dp).testTag(SocialsOverlayTestTags.PROMPT_TEXT_FIELD))
+
+                // Bottom buttons Row (Save and Cancel buttons)
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceEvenly) {
                       OutlinedButton(
-                          modifier = Modifier.testTag("SocialPromptCancelButton"),
+                          modifier = Modifier.testTag(SocialsOverlayTestTags.PROMPT_CANCEL_BUTTON),
                           onClick = onDismiss,
                           shape = RoundedCornerShape(16.dp)) {
-                            Text("Cancel")
+                            Text(context.getString(R.string.overlay_cancel))
                           }
                       Button(
-                          modifier = Modifier.testTag("SocialPromptSaveButton"),
+                          modifier = Modifier.testTag(SocialsOverlayTestTags.PROMPT_SAVE_BUTTON),
                           onClick = {
                             val newUserSocial = UserSocial(selectedSocial, socialURL)
                             isError = checkSocialContent(newUserSocial)
@@ -266,10 +283,43 @@ fun SocialPrompt(
                             }
                           },
                       ) {
-                        Text("Save changes")
+                        Text(context.getString(R.string.social_overlay_save_changes))
                       }
                     }
               }
         }
   }
+}
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+private fun SocialsPromptDropDownMenu(
+    selectedSocial: Social,
+    socialsList: List<Social>,
+    onSwitchSelectedSocial: (Int) -> Unit,
+) {
+  var isExpanded by remember { mutableStateOf(false) }
+
+  ExposedDropdownMenuBox(
+      expanded = isExpanded,
+      onExpandedChange = { isExpanded = !isExpanded },
+      modifier = Modifier.padding(10.dp).testTag(SocialsOverlayTestTags.PROMPT_DROP_BOX)) {
+        TextField(
+            value = selectedSocial.title,
+            onValueChange = {},
+            readOnly = true,
+            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpanded) })
+        ExposedDropdownMenu(expanded = isExpanded, onDismissRequest = { isExpanded = false }) {
+          socialsList.forEachIndexed { index, social ->
+            DropdownMenuItem(
+                modifier =
+                    Modifier.testTag(SocialsOverlayTestTags.PROMPT_DROP_BOX_ITEM + social.title),
+                text = { Text(social.title) },
+                onClick = {
+                  onSwitchSelectedSocial(index)
+                  isExpanded = false
+                })
+          }
+        }
+      }
 }

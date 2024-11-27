@@ -225,30 +225,30 @@ fun AssociationProfileBottomSheet(
     onClose: () -> Unit,
     onEdit: () -> Unit
 ) {
-    val sheetState = rememberModalBottomSheetState()
+  val sheetState = rememberModalBottomSheetState()
 
-    val context = LocalContext.current
+  val context = LocalContext.current
 
-    if (showSheet) {
-        ModalBottomSheet(
-            modifier = Modifier.testTag(AssociationProfileTestTags.BOTTOM_SHEET),
-            sheetState = sheetState,
-            onDismissRequest = onClose,
-            properties = ModalBottomSheetProperties(shouldDismissOnBackPress = true),
-        ) {
-            Column(modifier = Modifier) {
-                Text(
-                    association.uid,
-                    color = MaterialTheme.colorScheme.inversePrimary,
-                    style = MaterialTheme.typography.bodySmall,
-                    modifier = Modifier.align(Alignment.CenterHorizontally))
+  if (showSheet) {
+    ModalBottomSheet(
+        modifier = Modifier.testTag(AssociationProfileTestTags.BOTTOM_SHEET),
+        sheetState = sheetState,
+        onDismissRequest = onClose,
+        properties = ModalBottomSheetProperties(shouldDismissOnBackPress = true),
+    ) {
+      Column(modifier = Modifier) {
+        Text(
+            association.uid,
+            color = MaterialTheme.colorScheme.inversePrimary,
+            style = MaterialTheme.typography.bodySmall,
+            modifier = Modifier.align(Alignment.CenterHorizontally))
 
-                TextButton(modifier = Modifier.fillMaxWidth(), onClick = onEdit) {
-                    Text(context.getString(R.string.association_edit))
-                }
-            }
+        TextButton(modifier = Modifier.fillMaxWidth(), onClick = onEdit) {
+          Text(context.getString(R.string.association_edit))
         }
+      }
     }
+  }
 }
 
 /**
@@ -268,57 +268,57 @@ private fun AssociationProfileContent(
     eventViewModel: EventViewModel,
     associationViewModel: AssociationViewModel
 ) {
-    val context = LocalContext.current
-    val association by associationViewModel.selectedAssociation.collectAsState()
-    val user by userViewModel.user.collectAsState()
+  val context = LocalContext.current
+  val association by associationViewModel.selectedAssociation.collectAsState()
+  val user by userViewModel.user.collectAsState()
 
-    if (association == null || user == null) {
-        Log.e("AssociationProfileContent", "Association or user not found.")
-        return
+  if (association == null || user == null) {
+    Log.e("AssociationProfileContent", "Association or user not found.")
+    return
+  }
+
+  val members by association!!.members.list.collectAsState()
+
+  var isFollowed by remember {
+    mutableStateOf(user!!.followedAssociations.contains(association!!.uid))
+  }
+  var enableButton by remember { mutableStateOf(true) }
+  val isConnected = Utils.checkInternetConnection(context)
+
+  val onFollow = {
+    if (isConnected) {
+      enableButton = false
+      associationViewModel.updateFollow(association!!, user!!, isFollowed) {
+        userViewModel.refreshUser()
+        enableButton = true
+      }
+      isFollowed = !isFollowed
+    } else {
+      Toast.makeText(
+              context, context.getString(R.string.no_internet_connection), Toast.LENGTH_SHORT)
+          .show()
     }
+  }
 
-    val members by association!!.members.list.collectAsState()
+  val onMemberClick = { member: User ->
+    userViewModel.setSomeoneElseUser(member)
+    navigationAction.navigateTo(Screen.SOMEONE_ELSE_PROFILE)
+  }
 
-    var isFollowed by remember {
-        mutableStateOf(user!!.followedAssociations.contains(association!!.uid))
-    }
-    var enableButton by remember { mutableStateOf(true) }
-    val isConnected = Utils.checkInternetConnection(context)
-
-    val onFollow = {
-        if (isConnected) {
-            enableButton = false
-            associationViewModel.updateFollow(association!!, user!!, isFollowed) {
-                userViewModel.refreshUser()
-                enableButton = true
-            }
-            isFollowed = !isFollowed
-        } else {
-            Toast.makeText(
-                context, context.getString(R.string.no_internet_connection), Toast.LENGTH_SHORT)
-                .show()
-        }
-    }
-
-    val onMemberClick = { member: User ->
-        userViewModel.setSomeoneElseUser(member)
-        navigationAction.navigateTo(Screen.SOMEONE_ELSE_PROFILE)
-    }
-
-    // Add spacedBy to the horizontalArrangement
-    Column(
-        modifier =
-        Modifier.testTag(AssociationProfileTestTags.SCREEN)
-            .verticalScroll(rememberScrollState())
-            .fillMaxWidth()
-            .padding(24.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)) {
+  // Add spacedBy to the horizontalArrangement
+  Column(
+      modifier =
+          Modifier.testTag(AssociationProfileTestTags.SCREEN)
+              .verticalScroll(rememberScrollState())
+              .fillMaxWidth()
+              .padding(24.dp),
+      verticalArrangement = Arrangement.spacedBy(16.dp)) {
         AssociationHeader(association!!, isFollowed, enableButton, onFollow)
         AssociationDescription(association!!)
         AssociationEvents(navigationAction, association!!, userViewModel, eventViewModel)
         AssociationMembers(members, onMemberClick)
         AssociationRecruitment(association!!)
-    }
+      }
 }
 
 /**
@@ -376,7 +376,7 @@ private fun AssociationRecruitment(association: Association) {
             Spacer(Modifier.width(2.dp))
             Text("Treasurer")
         }
-    }
+  }
 }
 
 /**
@@ -388,46 +388,46 @@ private fun AssociationRecruitment(association: Association) {
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun AssociationMembers(members: List<User>, onMemberClick: (User) -> Unit) {
-    val context = LocalContext.current
+  val context = LocalContext.current
 
-    if (members.isEmpty()) {
-        return
-    }
+  if (members.isEmpty()) {
+    return
+  }
 
-    Text(
-        context.getString(R.string.association_contact_members),
-        style = AppTypography.headlineMedium,
-        modifier = Modifier.testTag(AssociationProfileTestTags.CONTACT_MEMBERS_TITLE))
-    FlowRow(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally),
-        verticalArrangement = Arrangement.spacedBy(16.dp)) {
+  Text(
+      context.getString(R.string.association_contact_members),
+      style = AppTypography.headlineMedium,
+      modifier = Modifier.testTag(AssociationProfileTestTags.CONTACT_MEMBERS_TITLE))
+  FlowRow(
+      modifier = Modifier.fillMaxWidth(),
+      horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally),
+      verticalArrangement = Arrangement.spacedBy(16.dp)) {
         members.forEach { user ->
-            Column(
-                modifier =
-                Modifier.background(
-                    MaterialTheme.colorScheme.secondaryContainer, RoundedCornerShape(8.dp))
-                    .clickable { onMemberClick(user) }
-                    .padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                horizontalAlignment = Alignment.CenterHorizontally) {
+          Column(
+              modifier =
+                  Modifier.background(
+                          MaterialTheme.colorScheme.secondaryContainer, RoundedCornerShape(8.dp))
+                      .clickable { onMemberClick(user) }
+                      .padding(16.dp),
+              verticalArrangement = Arrangement.spacedBy(8.dp),
+              horizontalAlignment = Alignment.CenterHorizontally) {
                 Box(
                     modifier =
-                    Modifier.clip(CircleShape)
-                        .size(75.dp)
-                        .background(MaterialTheme.colorScheme.surfaceDim)) {
-                    AsyncImageWrapper(
-                        imageUri = user.profilePicture.toUri(),
-                        contentDescription =
-                        context.getString(
-                            R.string.association_contact_member_profile_picture),
-                        modifier = Modifier.fillMaxWidth(),
-                        contentScale = ContentScale.Crop)
-                }
+                        Modifier.clip(CircleShape)
+                            .size(75.dp)
+                            .background(MaterialTheme.colorScheme.surfaceDim)) {
+                      AsyncImageWrapper(
+                          imageUri = user.profilePicture.toUri(),
+                          contentDescription =
+                              context.getString(
+                                  R.string.association_contact_member_profile_picture),
+                          modifier = Modifier.fillMaxWidth(),
+                          contentScale = ContentScale.Crop)
+                    }
                 Text("${user.firstName} ${user.lastName}")
-            }
+              }
         }
-    }
+      }
 }
 
 /**
@@ -445,54 +445,54 @@ private fun AssociationEvents(
     userViewModel: UserViewModel,
     eventViewModel: EventViewModel
 ) {
-    val context = LocalContext.current
+  val context = LocalContext.current
 
-    var isSeeMoreClicked by remember { mutableStateOf(false) }
+  var isSeeMoreClicked by remember { mutableStateOf(false) }
 
-    val events by association.events.list.collectAsState()
+  val events by association.events.list.collectAsState()
 
-    var isAdmin by remember { mutableStateOf(true) }
+  var isAdmin by remember { mutableStateOf(true) }
 
-    if (events.isNotEmpty()) {
-        Text(
-            context.getString(R.string.association_upcoming_events),
-            modifier = Modifier.testTag(AssociationProfileTestTags.EVENT_TITLE),
-            style = AppTypography.headlineMedium)
-        events.sortedBy { it.startDate }
-        val first = events.first()
-        Column(modifier = Modifier, horizontalAlignment = Alignment.CenterHorizontally) {
-            if (isSeeMoreClicked) {
-                events.forEach { event ->
-                    AssociationEventCard(navigationAction, event, userViewModel, eventViewModel)
-                }
-            } else {
-                AssociationEventCard(navigationAction, first, userViewModel, eventViewModel)
-            }
+  if (events.isNotEmpty()) {
+    Text(
+        context.getString(R.string.association_upcoming_events),
+        modifier = Modifier.testTag(AssociationProfileTestTags.EVENT_TITLE),
+        style = AppTypography.headlineMedium)
+    events.sortedBy { it.startDate }
+    val first = events.first()
+    Column(modifier = Modifier, horizontalAlignment = Alignment.CenterHorizontally) {
+      if (isSeeMoreClicked) {
+        events.forEach { event ->
+          AssociationEventCard(navigationAction, event, userViewModel, eventViewModel)
         }
-        if (events.size > 1) {
-            OutlinedButton(
-                onClick = { isSeeMoreClicked = true },
-                modifier = Modifier.testTag(AssociationProfileTestTags.SEE_MORE_BUTTON)) {
-                Icon(
-                    Icons.AutoMirrored.Filled.ArrowForward,
-                    contentDescription = context.getString(R.string.association_see_more))
-                Spacer(Modifier.width(2.dp))
-                Text(context.getString(R.string.association_see_more))
-            }
-        }
+      } else {
+        AssociationEventCard(navigationAction, first, userViewModel, eventViewModel)
+      }
     }
-    if (isAdmin) {
-        Button(
-            onClick = { navigationAction.navigateTo(Screen.EVENT_CREATION) },
-            contentPadding = ButtonDefaults.ButtonWithIconContentPadding) {
+    if (events.size > 1) {
+      OutlinedButton(
+          onClick = { isSeeMoreClicked = true },
+          modifier = Modifier.testTag(AssociationProfileTestTags.SEE_MORE_BUTTON)) {
             Icon(
-                Icons.Filled.Add,
-                contentDescription = context.getString(R.string.association_profile_add_event_button),
-                modifier = Modifier.size(ButtonDefaults.IconSize))
-            Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-            Text(context.getString(R.string.association_profile_add_event_button))
-        }
+                Icons.AutoMirrored.Filled.ArrowForward,
+                contentDescription = context.getString(R.string.association_see_more))
+            Spacer(Modifier.width(2.dp))
+            Text(context.getString(R.string.association_see_more))
+          }
     }
+  }
+  if (isAdmin) {
+    Button(
+        onClick = { navigationAction.navigateTo(Screen.EVENT_CREATION) },
+        contentPadding = ButtonDefaults.ButtonWithIconContentPadding) {
+          Icon(
+              Icons.Filled.Add,
+              contentDescription = context.getString(R.string.association_profile_add_event_button),
+              modifier = Modifier.size(ButtonDefaults.IconSize))
+          Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+          Text(context.getString(R.string.association_profile_add_event_button))
+        }
+  }
 }
 
 /**
@@ -507,13 +507,13 @@ private fun AssociationEventCard(
     userViewModel: UserViewModel,
     eventViewModel: EventViewModel
 ) {
-    Box(modifier = Modifier.testTag(AssociationProfileTestTags.EVENT_CARD + event.uid)) {
-        EventCard(
-            navigationAction = navigationAction,
-            event = event,
-            userViewModel = userViewModel,
-            eventViewModel = eventViewModel)
-    }
+  Box(modifier = Modifier.testTag(AssociationProfileTestTags.EVENT_CARD + event.uid)) {
+    EventCard(
+        navigationAction = navigationAction,
+        event = event,
+        userViewModel = userViewModel,
+        eventViewModel = eventViewModel)
+  }
 }
 
 /**
@@ -523,10 +523,10 @@ private fun AssociationEventCard(
  */
 @Composable
 private fun AssociationDescription(association: Association) {
-    Text(
-        association.description,
-        style = AppTypography.bodyMedium,
-        modifier = Modifier.testTag(AssociationProfileTestTags.DESCRIPTION))
+  Text(
+      association.description,
+      style = AppTypography.bodyMedium,
+      modifier = Modifier.testTag(AssociationProfileTestTags.DESCRIPTION))
 }
 
 /**
@@ -544,52 +544,52 @@ private fun AssociationHeader(
     enableButton: Boolean,
     onFollow: () -> Unit,
 ) {
-    val context = LocalContext.current
-    Row(
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
-    ) {
-        Box(modifier = Modifier.testTag(AssociationProfileTestTags.IMAGE_HEADER)) {
-            AsyncImageWrapper(
-                imageUri = association.image.toUri(),
-                contentDescription =
-                context.getString(R.string.association_content_description_association_image) +
-                        association.name,
-                modifier = Modifier.size(124.dp),
-                placeholderResourceId = R.drawable.adec,
-                contentScale = ContentScale.Crop)
-        }
-        Column {
-            Text(
-                "${association.followersCount} " + context.getString(R.string.association_follower),
-                style = AppTypography.headlineSmall,
-                modifier =
-                Modifier.padding(bottom = 5.dp).testTag(AssociationProfileTestTags.HEADER_FOLLOWERS))
-            Text(
-                "${association.members.uids.size} " + context.getString(R.string.association_member),
-                style = AppTypography.headlineSmall,
-                modifier =
-                Modifier.padding(bottom = 14.dp).testTag(AssociationProfileTestTags.HEADER_MEMBERS))
-
-            if (isFollowed) {
-                OutlinedButton(
-                    enabled = enableButton,
-                    onClick = onFollow,
-                    modifier = Modifier.testTag(AssociationProfileTestTags.FOLLOW_BUTTON)) {
-                    Text(context.getString(R.string.association_unfollow))
-                }
-            } else {
-                Button(
-                    enabled = enableButton,
-                    onClick = onFollow,
-                    modifier = Modifier.testTag(AssociationProfileTestTags.FOLLOW_BUTTON)) {
-                    Icon(
-                        Icons.Filled.Add,
-                        contentDescription =
-                        context.getString(R.string.association_content_description_follow_icon))
-                    Spacer(Modifier.width(2.dp))
-                    Text(context.getString(R.string.association_follow))
-                }
-            }
-        }
+  val context = LocalContext.current
+  Row(
+      horizontalArrangement = Arrangement.spacedBy(16.dp),
+  ) {
+    Box(modifier = Modifier.testTag(AssociationProfileTestTags.IMAGE_HEADER)) {
+      AsyncImageWrapper(
+          imageUri = association.image.toUri(),
+          contentDescription =
+              context.getString(R.string.association_content_description_association_image) +
+                  association.name,
+          modifier = Modifier.size(124.dp),
+          placeholderResourceId = R.drawable.adec,
+          contentScale = ContentScale.Crop)
     }
+    Column {
+      Text(
+          "${association.followersCount} " + context.getString(R.string.association_follower),
+          style = AppTypography.headlineSmall,
+          modifier =
+              Modifier.padding(bottom = 5.dp).testTag(AssociationProfileTestTags.HEADER_FOLLOWERS))
+      Text(
+          "${association.members.uids.size} " + context.getString(R.string.association_member),
+          style = AppTypography.headlineSmall,
+          modifier =
+              Modifier.padding(bottom = 14.dp).testTag(AssociationProfileTestTags.HEADER_MEMBERS))
+
+      if (isFollowed) {
+        OutlinedButton(
+            enabled = enableButton,
+            onClick = onFollow,
+            modifier = Modifier.testTag(AssociationProfileTestTags.FOLLOW_BUTTON)) {
+              Text(context.getString(R.string.association_unfollow))
+            }
+      } else {
+        Button(
+            enabled = enableButton,
+            onClick = onFollow,
+            modifier = Modifier.testTag(AssociationProfileTestTags.FOLLOW_BUTTON)) {
+              Icon(
+                  Icons.Filled.Add,
+                  contentDescription =
+                      context.getString(R.string.association_content_description_follow_icon))
+              Spacer(Modifier.width(2.dp))
+              Text(context.getString(R.string.association_follow))
+            }
+      }
+    }
+  }
 }

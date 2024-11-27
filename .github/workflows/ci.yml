@@ -1,6 +1,7 @@
 name: CI - Test Runner
 
 # Run the workflow when commits are pushed on main or when a PR is modified
+# Version 1.1 modified by Romain Hirschi
 on:
   push:
     branches:
@@ -83,14 +84,40 @@ jobs:
           echo "$GOOGLE_SERVICES" | base64 --decode > ./app/google-services.json
           echo "$LOCAL_PROPERTIES" | base64 --decode > ./local.properties
 
+      # Grant execute permission for gradlew
       - name: Grant execute permission for gradlew
         run: |
           chmod +x ./gradlew
+
+      # Install the firebase emulator suite
+      - name: Install Firebase Emulator Suite
+        run: npm install -g firebase-tools
+
+      # Install dependencies for the firebase emulator suite
+      - name: Install dependencies for the firebase emulator suite
+        run: npm install
+
+      # Navigate to the `functions` directory, install dependencies, then return to root
+      - name: Install dependencies for the Firebase Emulator Suite
+        run: |
+          cd functions
+          npm install
+          cd ..
 
       # Check formatting
       - name: KTFmt Check
         run: |
           ./gradlew ktfmtCheck
+
+      # Create .env file to hold secret credentials
+      - name: Create functions/.env.unio-1b8ee file
+        run: |
+          echo "FUNCTIONS_COMPANY_EMAIL=${{ secrets.FUNCTIONS_COMPANY_EMAIL }}" > functions/.env.unio-1b8ee
+          echo "FUNCTIONS_COMPANY_PASSWORD=${{ secrets.FUNCTIONS_COMPANY_PASSWORD }}" >> functions/.env.unio-1b8ee
+
+      # Run
+      - name: Run Node tests with Firestore and Storage emulators
+        run: firebase emulators:exec --only firestore,storage 'npm run test'
 
       # This step runs gradle commands to build the application
       - name: Assemble
@@ -114,12 +141,20 @@ jobs:
           force-avd-creation: false
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
-          script: ./gradlew connectedCheck --parallel --build-cache
+          script: firebase emulators:exec --import=firebase/emulator-data './gradlew connectedCheck --parallel --build-cache'
 
       # This step generates the coverage report which will be uploaded to sonar
       - name: Generate Coverage Report
         run: |
           ./gradlew jacocoTestReport
+
+      # Upload the coverage report to the artifacts
+      - name: Upload Jacoco Test Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: jacocoTestReport
+          path: build/reports/jacoco/jacocoTestReport/
+
 
       # Upload the various reports to sonar
       - name: Upload report to SonarCloud

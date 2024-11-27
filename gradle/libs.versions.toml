@@ -1,26 +1,42 @@
 [versions]
 # Plugins
+accompanistPermissions = "0.36.0"
 agp = "8.4.2"
+appsearch = "1.1.0-alpha03" # Should be upgraded, but requires Android SDK 35
 coilCompose = "2.2.2"
+firebaseAuthVersion = "22.0.0"
 firebaseBom = "33.3.0"
+firebaseFirestoreVersion = "24.4.0"
 googleServices = "4.4.2"
+hiltAndroid = "2.48"
+hiltAndroidCompiler = "2.48"
+hiltAndroidCompilerVersion = "2.51.1"
+hiltAndroidTesting = "2.51.1"
+hiltNavigationCompose = "1.0.0"
+guava = "33.3.1-android"
 json = "20240303"
-kotlin = "1.9.0"
+kotlin = "1.9.21"
 gms = "4.4.2"
 kotlinxCoroutinesAndroid = "1.7.3"
 kotlinxCoroutinesCore = "1.7.3"
+kotlinxCoroutinesGuava = "1.7.3"
 kotlinxCoroutinesPlayServices = "1.7.3"
 ktfmt = "0.17.0"
 
 # UI Compose
+library = "1.1.1"
 lifecycleLivedataKtx = "2.8.6"
 materialIconsExtended = "1.7.3"
 mockitoAndroid = "5.13.0"
 mockkMockk = "1.9.3"
-mockkVersion = "1.13.7"
+mockkVersion = "1.13.8"
+playServicesAuthVersion = "20.4.1"
+robolectricVersion = "4.10.3"
+preferenceKtx = "1.2.1"
 ui = "1.7.2"
 uiTestJunit4 = "1.7.2"
 uiTestManifest = "1.7.2"
+uiTestManifestVersion = "1.0.0"
 uiTooling = "1.7.2"
 composeBom = "2024.09.02"
 constraintlayout = "2.1.4"
@@ -32,7 +48,7 @@ materialVersion = "1.12.0"
 firebaseAuth = "23.0.0"
 firebaseAuthKtx = "23.0.0"
 firebaseDatabaseKtx = "21.0.0"
-firebaseFirestore = "25.1.0"
+firebaseFirestore = "25.1.1"
 firebaseUiAuth = "8.0.0"
 
 # Google Service and Maps
@@ -81,11 +97,23 @@ androidxCoreKtx = "1.6.1"
 firebaseCommonKtx = "21.0.0"
 firebaseStorageKtx = "21.0.1"
 uiTextGoogleFonts = "1.7.3"
+volley = "1.2.1"
 composeMaterial = "1.4.0"
+core = "1.46.0"
+firebaseFunctionsKtx = "21.0.0"
+playServicesLocation = "21.3.0"
 
 
 [libraries]
+androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
+accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanistPermissions" }
+androidx-appsearch = { module = "androidx.appsearch:appsearch", version.ref = "appsearch" }
+androidx-appsearch-compiler = { module = "androidx.appsearch:appsearch-compiler", version.ref = "appsearch" }
+androidx-appsearch-local-storage = { module = "androidx.appsearch:appsearch-local-storage", version.ref = "appsearch" }
+androidx-hilt-navigation-fragment = { module = "androidx.hilt:hilt-navigation-fragment", version.ref = "hiltNavigationCompose" }
 androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "materialIconsExtended" }
+androidx-ui-test-manifest-v100 = { module = "androidx.compose.ui:ui-test-manifest", version.ref = "uiTestManifestVersion" }
+androidx-preference-ktx = { module = "androidx.preference:preference-ktx", version.ref = "preferenceKtx" }
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilCompose" }
 compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
 compose-material3 = { group = "androidx.compose.material3", name = "material3" }
@@ -97,6 +125,13 @@ compose-activity = { group = "androidx.activity", name = "activity-compose", ver
 compose-viewmodel = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "composeViewModel" }
 compose-test-junit = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 compose-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
+firebase-auth-v2200 = { module = "com.google.firebase:firebase-auth", version.ref = "firebaseAuthVersion" }
+firebase-firestore-v2440 = { module = "com.google.firebase:firebase-firestore", version.ref = "firebaseFirestoreVersion" }
+hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hiltAndroid" }
+hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hiltAndroidCompiler" }
+hilt-android-compiler-v2511 = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hiltAndroidCompilerVersion" }
+hilt-android-testing = { module = "com.google.dagger:hilt-android-testing", version.ref = "hiltAndroidTesting" }
+guava = { module = "com.google.guava:guava", version.ref = "guava" }
 kaspresso-compose = { group = "com.kaspersky.android-components", name = "kaspresso-compose-support", version.ref = "kaspresso" }
 
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activityCompose" }
@@ -138,9 +173,11 @@ kaspresso-allure-support = { module = "com.kaspersky.android-components:kaspress
 kaspresso-compose-support = { module = "com.kaspersky.android-components:kaspresso-compose-support", version.ref = "kaspressoComposeSupport" }
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinxCoroutinesAndroid" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutinesCore" }
+kotlinx-coroutines-guava = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-guava", version.ref = "kotlinxCoroutinesGuava" }
 kotlinx-coroutines-play-services = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-play-services", version.ref = "kotlinxCoroutinesPlayServices" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
+library = { module = "me.zhanghai.compose.preference:library", version.ref = "library" }
 maps-compose = { module = "com.google.maps.android:maps-compose", version.ref = "mapsCompose" }
 maps-compose-utils = { module = "com.google.maps.android:maps-compose-utils", version.ref = "mapsComposeUtils" }
 material = { module = "com.google.android.material:material", version.ref = "materialVersion" }
@@ -155,12 +192,18 @@ mockk-v1130 = { module = "io.mockk:mockk", version.ref = "mockkVersion" }
 mockk-v193 = { module = "io.mockk:mockk", version.ref = "mockkMockk" }
 okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
 play-services-auth = { module = "com.google.android.gms:play-services-auth", version.ref = "playServicesAuth" }
+play-services-auth-v2041 = { module = "com.google.android.gms:play-services-auth", version.ref = "playServicesAuthVersion" }
 play-services-maps = { module = "com.google.android.gms:play-services-maps", version.ref = "playServicesMaps" }
 robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric" }
+robolectric-v4103 = { module = "org.robolectric:robolectric", version.ref = "robolectricVersion" }
 test-core-ktx = { group = "androidx.test", name = "core-ktx", version.ref = "androidxCoreKtx" }
 firebase-storage-ktx = { group = "com.google.firebase", name = "firebase-storage-ktx", version.ref = "firebaseStorageKtx" }
 androidx-ui-text-google-fonts = { group = "androidx.compose.ui", name = "ui-text-google-fonts", version.ref = "uiTextGoogleFonts" }
+volley = { group = "com.android.volley", name = "volley", version.ref = "volley" }
 androidx-compose-material = { group = "androidx.wear.compose", name = "compose-material", version.ref = "composeMaterial" }
+core = { group = "com.google.ar", name = "core", version.ref = "core" }
+firebase-functions-ktx = { group = "com.google.firebase", name = "firebase-functions-ktx", version.ref = "firebaseFunctionsKtx" }
+play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServicesLocation" }
 
 
 

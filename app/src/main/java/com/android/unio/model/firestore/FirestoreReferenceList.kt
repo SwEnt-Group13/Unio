@@ -31,12 +31,16 @@ import kotlinx.coroutines.flow.StateFlow
  * @property collectionPath The path to the Firestore collection.
  * @property hydrate A function that converts a [DocumentSnapshot] to a [T].
  */
-class FirestoreReferenceList<T>(
+class FirestoreReferenceList<T : UniquelyIdentifiable>(
     private val collectionPath: String,
     private val hydrate: (Map<String, Any>?) -> T
 ) : ReferenceList<T> {
   // The internal list of UIDs.
   private val _uids = mutableListOf<String>()
+
+  // The public list of UIDs.
+  override val uids: List<String>
+    get() = _uids
 
   // The internal list of objects.
   private val _list = MutableStateFlow<List<T>>(emptyList())
@@ -62,15 +66,32 @@ class FirestoreReferenceList<T>(
     _uids.addAll(uids)
   }
 
-  /** Requests all documents from Firestore and updates the list. */
-  override fun requestAll(onSuccess: () -> Unit) {
-    if (_uids.isEmpty()) {
-      _list.value = emptyList()
+  override fun remove(uid: String) {
+    _uids.remove(uid)
+  }
+
+  /**
+   * Requests all documents from Firestore and updates the list.
+   *
+   * @param onSuccess A lambda that is called when the request is successful.
+   * @param lazy If true, the request will only be made if the list is not up-to-date.
+   */
+  override fun requestAll(onSuccess: () -> Unit, lazy: Boolean) {
+    // If the list is already up-to-date, return early.
+    val fetchedUids = _list.value.map { it.uid }
+    if (lazy && fetchedUids == _uids) {
       onSuccess()
       return
     }
 
     _list.value = emptyList()
+
+    // If there are no UIDs, return early.
+    if (_uids.isEmpty()) {
+      onSuccess()
+      return
+    }
+
     Firebase.firestore
         .collection(collectionPath)
         .whereIn(FieldPath.documentId(), _uids.filter { it.isNotEmpty() })
@@ -78,6 +99,7 @@ class FirestoreReferenceList<T>(
         .addOnSuccessListener { result ->
           val items = result.documents.map { hydrate(it.data) }
           _list.value = items
+
           onSuccess()
         }
         .addOnFailureListener { exception ->
@@ -85,9 +107,13 @@ class FirestoreReferenceList<T>(
         }
   }
 
+  override fun contains(uid: String): Boolean {
+    return _uids.contains(uid)
+  }
+
   companion object {
     /** Creates a [FirestoreReferenceList] from a list of UIDs. */
-    fun <T> fromList(
+    fun <T : UniquelyIdentifiable> fromList(
         list: List<String>,
         collectionPath: String,
         hydrate: (Map<String, Any>?) -> T
@@ -98,7 +124,7 @@ class FirestoreReferenceList<T>(
     }
 
     /** Creates an empty [FirestoreReferenceList]. */
-    fun <T> empty(
+    fun <T : UniquelyIdentifiable> empty(
         collectionPath: String,
         hydrate: (Map<String, Any>?) -> T
     ): FirestoreReferenceList<T> {
@@ -113,17 +139,14 @@ class FirestoreReferenceList<T>(
  */
 fun Association.Companion.emptyFirestoreReferenceList(): FirestoreReferenceList<Association> {
   return FirestoreReferenceList.empty(
-      collectionPath = ASSOCIATION_PATH,
-      hydrate = AssociationRepositoryFirestore.Companion::hydrate)
+      ASSOCIATION_PATH, AssociationRepositoryFirestore.Companion::hydrate)
 }
 
 fun Association.Companion.firestoreReferenceListWith(
     uids: List<String>
 ): FirestoreReferenceList<Association> {
   return FirestoreReferenceList.fromList(
-      list = uids,
-      collectionPath = ASSOCIATION_PATH,
-      hydrate = AssociationRepositoryFirestore.Companion::hydrate)
+      uids, ASSOCIATION_PATH, AssociationRepositoryFirestore.Companion::hydrate)
 }
 
 fun User.Companion.emptyFirestoreReferenceList(): FirestoreReferenceList<User> {

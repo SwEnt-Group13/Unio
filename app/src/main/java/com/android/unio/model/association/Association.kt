@@ -1,22 +1,34 @@
 package com.android.unio.model.association
 
+import androidx.appsearch.annotation.Document
+import androidx.appsearch.annotation.Document.Id
+import androidx.appsearch.annotation.Document.Namespace
+import androidx.appsearch.annotation.Document.StringProperty
+import androidx.appsearch.app.AppSearchSchema.StringPropertyConfig
+import com.android.unio.model.event.Event
 import com.android.unio.model.firestore.ReferenceList
+import com.android.unio.model.firestore.UniquelyIdentifiable
 import com.android.unio.model.strings.AssociationStrings
 import com.android.unio.model.user.User
 
 /**
- * Association data class Make sure to update the hydration and serialization methods when changing
- * the data class
+ * Association data class
+ *
+ * Make sure to update the hydration and serialization methods when changing the data class
  *
  * @property uid association id
  * @property url association url
  * @property name association acronym
  * @property fullName association full name
+ * @property category association category
  * @property description association description
+ * @property followersCount number of association followers
  * @property members list of association members
+ * @property image association image
+ * @property events list of association events
  */
 data class Association(
-    val uid: String,
+    override val uid: String,
     val url: String,
     val name: String,
     val fullName: String,
@@ -24,8 +36,11 @@ data class Association(
     val description: String,
     val followersCount: Int,
     val members: ReferenceList<User>,
-    var image: String
-) {
+    var image: String,
+    val events: ReferenceList<Event>,
+    val principalEmailAddress: String,
+    val adminUid: String
+) : UniquelyIdentifiable {
   companion object
 }
 
@@ -43,4 +58,21 @@ enum class AssociationCategory(val displayName: String) {
   SPORTS(AssociationStrings.SPORTS),
   GUIDANCE(AssociationStrings.GUIDANCE),
   UNKNOWN(AssociationStrings.UNKNOWN)
+}
+
+@Document
+data class AssociationDocument(
+    @Namespace val namespace: String = "unio",
+    @Id val uid: String,
+    @StringProperty(indexingType = StringPropertyConfig.INDEXING_TYPE_PREFIXES)
+    val name: String = "",
+    @StringProperty(indexingType = StringPropertyConfig.INDEXING_TYPE_PREFIXES)
+    val fullName: String = "",
+    @StringProperty(indexingType = StringPropertyConfig.INDEXING_TYPE_PREFIXES)
+    val description: String = ""
+)
+
+fun Association.toAssociationDocument(): AssociationDocument {
+  return AssociationDocument(
+      uid = this.uid, name = this.name, fullName = this.fullName, description = this.description)
 }

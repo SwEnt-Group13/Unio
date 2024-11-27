@@ -1,7 +1,6 @@
 package com.android.unio.model.user
 
-import com.android.unio.model.association.Association
-import com.android.unio.model.firestore.emptyFirestoreReferenceList
+import com.android.unio.mocks.user.MockUser
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
@@ -12,9 +11,12 @@ import io.mockk.mockkStatic
 import junit.framework.TestCase.assertEquals
 import org.junit.Before
 import org.junit.Test
+import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
+import org.robolectric.RobolectricTestRunner
 
+@RunWith(RobolectricTestRunner::class)
 class UserTest {
   private lateinit var db: FirebaseFirestore
   @Mock private lateinit var collectionReference: CollectionReference
@@ -33,19 +35,18 @@ class UserTest {
   @Test
   fun testUser() {
     val user =
-        User(
-            "1",
-            "john@example.com",
-            "John",
-            "Doe",
-            "An example user",
-            Association.emptyFirestoreReferenceList(),
-            Association.emptyFirestoreReferenceList(),
-            listOf(Interest.SPORTS, Interest.MUSIC),
-            listOf(
-                UserSocial(Social.INSTAGRAM, "Insta"), UserSocial(Social.WEBSITE, "example.com")),
-            "https://www.example.com/image",
-            true)
+        MockUser.createMockUser(
+            uid = "1",
+            email = "john@example.com",
+            firstName = "John",
+            lastName = "Doe",
+            biography = "An example user",
+            interests = listOf(Interest.SPORTS, Interest.MUSIC),
+            socials =
+                listOf(
+                    UserSocial(Social.INSTAGRAM, "Insta"),
+                    UserSocial(Social.WEBSITE, "example.com")),
+            profilePicture = "https://www.example.com/image")
     assertEquals("1", user.uid)
     assertEquals("john@example.com", user.email)
     assertEquals("John", user.firstName)
@@ -60,47 +61,11 @@ class UserTest {
 
   @Test
   fun testCheckNewUser() {
-    val userEmptyFirstName =
-        User(
-            "1",
-            "example@gmail.com",
-            "",
-            "lastName",
-            "biography",
-            Association.emptyFirestoreReferenceList(),
-            Association.emptyFirestoreReferenceList(),
-            listOf(Interest.SPORTS),
-            listOf(UserSocial(Social.INSTAGRAM, "username")),
-            "https://example.com/image",
-            false)
+    val userEmptyFirstName = MockUser.createMockUser(firstName = "")
 
-    val userEmptyLastName =
-        User(
-            "1",
-            "example@gmail.com",
-            "firstName",
-            "",
-            "biography",
-            Association.emptyFirestoreReferenceList(),
-            Association.emptyFirestoreReferenceList(),
-            listOf(Interest.SPORTS),
-            listOf(UserSocial(Social.INSTAGRAM, "username")),
-            "https://example.com/image",
-            false)
+    val userEmptyLastName = MockUser.createMockUser(lastName = "")
 
-    val userEmptyNameAndLastName =
-        User(
-            "1",
-            "example@gmail.com",
-            "",
-            "",
-            "biography",
-            Association.emptyFirestoreReferenceList(),
-            Association.emptyFirestoreReferenceList(),
-            listOf(Interest.SPORTS),
-            listOf(UserSocial(Social.INSTAGRAM, "username")),
-            "https://example.com/image",
-            false)
+    val userEmptyNameAndLastName = MockUser.createMockUser(firstName = "", lastName = "")
     val expectedErrors1 = mutableSetOf(AccountDetailsError.EMPTY_FIRST_NAME)
     val expectedErrors2 = mutableSetOf(AccountDetailsError.EMPTY_LAST_NAME)
     val expectedErrors3 =
@@ -148,5 +113,17 @@ class UserTest {
 
     val userSocialCorrectWebsite = UserSocial(Social.WEBSITE, "https://example.com")
     assertEquals(UserSocialError.NONE, checkSocialContent(userSocialCorrectWebsite))
+  }
+
+  @Test
+  fun checkNewImageUri() {
+    val emptyString = ""
+    assertEquals(ImageUriType.EMPTY, checkImageUri(emptyString))
+
+    val localUri = "content://mySuperLocalImage"
+    assertEquals(ImageUriType.LOCAL, checkImageUri(localUri))
+
+    val remoteUri = "https://firebasestorage.googleapis.com/blablabla"
+    assertEquals(ImageUriType.REMOTE, checkImageUri(remoteUri))
   }
 }

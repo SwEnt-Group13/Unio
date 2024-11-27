@@ -1,21 +1,25 @@
 package com.android.unio.model.user
 
+import android.net.Uri
+import androidx.core.net.toUri
 import com.android.unio.R
 import com.android.unio.model.association.Association
+import com.android.unio.model.event.Event
 import com.android.unio.model.firestore.ReferenceList
-import kotlinx.serialization.json.JsonNull.content
+import com.android.unio.model.firestore.UniquelyIdentifiable
 
-enum class Interest(val title: String) {
-  SPORTS("Sports"),
-  MUSIC("Music"),
-  ART("Art"),
-  TECHNOLOGY("Technology"),
-  SCIENCE("Science"),
-  LITERATURE("Literature"),
-  TRAVEL("Travel"),
-  FOOD("Food"),
-  GAMING("Gaming"),
-  FESTIVALS("Festivals")
+/** @param title: The title is a pointer to the string resource. */
+enum class Interest(val title: Int) {
+  SPORTS(R.string.interest_sports),
+  MUSIC(R.string.interest_music),
+  ART(R.string.interest_art),
+  TECHNOLOGY(R.string.interest_technology),
+  SCIENCE(R.string.interest_science),
+  LITERATURE(R.string.interest_literature),
+  TRAVEL(R.string.interest_travel),
+  FOOD(R.string.interest_food),
+  GAMING(R.string.interest_gaming),
+  FESTIVALS(R.string.interest_festivals),
 }
 
 enum class Social(val title: String, val icon: Int, val url: String) {
@@ -40,41 +44,60 @@ data class UserSocial(val social: Social, val content: String) {
  * @param firstName The first name of the user.
  * @param lastName The last name of the user.
  * @param biography The biography of the user.
+ * @param savedEvents The events that the user has saved.
  * @param followedAssociations The associations that the user is following.
  * @param joinedAssociations The associations that the user is member of.
  * @param interests The interests of the user.
  * @param socials The socials of the user.
  * @param profilePicture The URL to the profile picture in Firebase storage.
- * @param hasProvidedAccountDetails Whether the user has provided account details.
  */
 data class User(
-    val uid: String,
+    override val uid: String,
     val email: String,
     val firstName: String,
     val lastName: String,
     val biography: String,
+    val savedEvents: ReferenceList<Event>,
     val followedAssociations: ReferenceList<Association>,
     val joinedAssociations: ReferenceList<Association>,
     val interests: List<Interest>,
     val socials: List<UserSocial>,
     val profilePicture: String,
-    val hasProvidedAccountDetails: Boolean
-) {
+) : UniquelyIdentifiable {
   companion object
 }
 
-enum class UserSocialError(val errorMessage: String) {
-  EMPTY_FIELD("The input is empty or blank"),
-  INVALID_PHONE_NUMBER("The phone number has wrong format"),
-  INVALID_WEBSITE("The website is not encoded with https"),
-  NONE("")
+/**
+ * @param errorMessage: The error message is a pointer to the string resource. This enables us to
+ *   have error messages in different languages.
+ */
+enum class UserSocialError(val errorMessage: Int) {
+  EMPTY_FIELD(R.string.social_overlay_empty_field),
+  INVALID_PHONE_NUMBER(R.string.social_overlay_invalid_phone_number),
+  INVALID_WEBSITE(R.string.social_overlay_invalid_website),
+  NONE(-1)
 }
 
-enum class AccountDetailsError(val errorMessage: String) {
-  EMPTY_FIRST_NAME("Please fill in your first name"),
-  EMPTY_LAST_NAME("Please fill in your last name"),
-  NONE("")
+/**
+ * @param errorMessage: The error message is a pointer to the string resource, just like for
+ *   UserSocialError.
+ */
+enum class AccountDetailsError(val errorMessage: Int) {
+  EMPTY_FIRST_NAME(R.string.account_details_first_name_error),
+  EMPTY_LAST_NAME(R.string.account_details_last_name_error)
 }
+
+/**
+ * EMPTY means that the user hasn't chosen a profile picture REMOTE means that the uri is stored in
+ * firebase as a URL and therefore the user has not changed the profile picture LOCAL means that teh
+ * uri is a local one and the user has chosen a new profile picture.
+ */
+enum class ImageUriType {
+  EMPTY,
+  REMOTE,
+  LOCAL,
+}
+
 // Helper methods
 /**
  * @return NONE: no problem is found
@@ -92,6 +115,19 @@ fun checkNewUser(user: User): MutableSet<AccountDetailsError> {
     errors.add(AccountDetailsError.EMPTY_LAST_NAME)
   }
   return errors
+}
+
+fun checkImageUri(uri: String): ImageUriType {
+  if (uri.toUri() == Uri.EMPTY) {
+    return ImageUriType.EMPTY
+  }
+  val localRegex = Regex("^content://.+")
+
+  return if (localRegex.matches(uri)) {
+    ImageUriType.LOCAL
+  } else {
+    ImageUriType.REMOTE
+  }
 }
 
 fun checkSocialContent(userSocial: UserSocial): UserSocialError {

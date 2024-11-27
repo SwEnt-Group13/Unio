@@ -13,73 +13,59 @@ import com.android.unio.model.user.Social
 import com.android.unio.model.user.User
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserSocial
-import com.google.firebase.Firebase
 import com.google.firebase.Timestamp
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.firestore
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.mockkStatic
 import junit.framework.TestCase.assertEquals
-import org.junit.Before
+import junit.framework.TestCase.assertTrue
+import kotlin.reflect.full.memberProperties
 import org.junit.Test
-import org.mockito.MockitoAnnotations
 
 class HydrationAndSerializationTest {
-  private lateinit var db: FirebaseFirestore
-  private lateinit var user: User
-  private lateinit var association: Association
-  private lateinit var event: Event
 
-  @Before
-  fun setUp() {
-    MockitoAnnotations.openMocks(this)
+  private val user =
+      User(
+          uid = "1",
+          email = "1@gmail.com",
+          firstName = "userFirst",
+          lastName = "userLast",
+          biography = "An example user",
+          followedAssociations = Association.firestoreReferenceListWith(listOf("1", "2")),
+          savedEvents = Event.firestoreReferenceListWith(listOf("1", "2")),
+          joinedAssociations = Association.firestoreReferenceListWith(listOf("1", "2")),
+          interests = listOf(Interest.SPORTS, Interest.MUSIC),
+          socials =
+              listOf(
+                  UserSocial(Social.INSTAGRAM, "Insta"), UserSocial(Social.WEBSITE, "example.com")),
+          profilePicture = "https://www.example.com/image")
 
-    db = mockk()
-    mockkStatic(FirebaseFirestore::class)
-    every { Firebase.firestore } returns db
+  private val association =
+      Association(
+          uid = "1",
+          url = "https://www.example.com",
+          name = "EX",
+          fullName = "Example Association",
+          category = AssociationCategory.ARTS,
+          description = "An example association",
+          members = User.firestoreReferenceListWith(listOf("1", "2")),
+          followersCount = 0,
+          image = "https://www.example.com/image.jpg",
+          events = Event.firestoreReferenceListWith(listOf("1", "2")),
+          principalEmailAddress = "example@adress.com",
+          adminUid = "1")
 
-    user =
-        User(
-            uid = "1",
-            email = "1@gmail.com",
-            firstName = "userFirst",
-            lastName = "userLast",
-            biography = "An example user",
-            followedAssociations = Association.firestoreReferenceListWith(listOf("1", "2")),
-            joinedAssociations = Association.firestoreReferenceListWith(listOf("1", "2")),
-            interests = listOf(Interest.SPORTS, Interest.MUSIC),
-            socials =
-                listOf(
-                    UserSocial(Social.INSTAGRAM, "Insta"),
-                    UserSocial(Social.WEBSITE, "example.com")),
-            profilePicture = "https://www.example.com/image",
-            hasProvidedAccountDetails = true)
-
-    association =
-        Association(
-            uid = "1",
-            url = "https://www.example.com",
-            name = "EX",
-            fullName = "Example Association",
-            category = AssociationCategory.ARTS,
-            description = "An example association",
-            members = User.firestoreReferenceListWith(listOf("1", "2")),
-            image = "https://www.example.com/image.jpg")
-
-    event =
-        Event(
-            uid = "1",
-            title = "Event 1",
-            image = "https://www.example.com/image.jpg",
-            description = "An example event",
-            catchyDescription = "An example event",
-            price = 0.0,
-            date = Timestamp.now(),
-            location = Location(latitude = 0.0, longitude = 0.0, name = "Example Location"),
-            organisers = Association.firestoreReferenceListWith(listOf("1", "2")),
-            taggedAssociations = Association.firestoreReferenceListWith(listOf("1", "2")))
-  }
+  private val event =
+      Event(
+          uid = "1",
+          title = "Event 1",
+          organisers = Association.firestoreReferenceListWith(listOf("1", "2")),
+          taggedAssociations = Association.firestoreReferenceListWith(listOf("1", "2")),
+          image = "https://www.example.com/image.jpg",
+          description = "An example event",
+          catchyDescription = "An example event",
+          price = 0.0,
+          startDate = Timestamp.now(),
+          endDate = Timestamp.now(),
+          location = Location(latitude = 0.0, longitude = 0.0, name = "Example Location"),
+          placesRemaining = -1)
 
   /** Round-trip tests for serialization and hydration of user, association, and event instances. */
   @Test
@@ -91,14 +77,13 @@ class HydrationAndSerializationTest {
     assertEquals(user.firstName, serialized["firstName"])
     assertEquals(user.lastName, serialized["lastName"])
     assertEquals(user.biography, serialized["biography"])
-    assertEquals(user.followedAssociations.list.value, serialized["followingAssociations"])
-    assertEquals(user.joinedAssociations.list.value, serialized["joinedAssociations"])
+    assertEquals(user.followedAssociations.uids, serialized["followedAssociations"])
+    assertEquals(user.joinedAssociations.uids, serialized["joinedAssociations"])
     assertEquals(user.interests.map { it.name }, serialized["interests"])
     assertEquals(
         user.socials.map { mapOf("social" to it.social.name, "content" to it.content) },
         serialized["socials"])
     assertEquals(user.profilePicture, serialized["profilePicture"])
-    assertEquals(user.hasProvidedAccountDetails, serialized["hasProvidedAccountDetails"])
 
     val hydrated = UserRepositoryFirestore.hydrate(serialized)
 
@@ -107,12 +92,11 @@ class HydrationAndSerializationTest {
     assertEquals(user.firstName, hydrated.firstName)
     assertEquals(user.lastName, hydrated.lastName)
     assertEquals(user.biography, hydrated.biography)
-    assertEquals(user.followedAssociations.list.value, hydrated.followedAssociations.list.value)
-    assertEquals(user.joinedAssociations.list.value, hydrated.joinedAssociations.list.value)
+    assertEquals(user.followedAssociations.uids, hydrated.followedAssociations.uids)
+    assertEquals(user.joinedAssociations.uids, hydrated.joinedAssociations.uids)
     assertEquals(user.interests, hydrated.interests)
     assertEquals(user.socials, hydrated.socials)
     assertEquals(user.profilePicture, hydrated.profilePicture)
-    assertEquals(user.hasProvidedAccountDetails, hydrated.hasProvidedAccountDetails)
   }
 
   @Test
@@ -124,7 +108,9 @@ class HydrationAndSerializationTest {
     assertEquals(association.name, serialized["name"])
     assertEquals(association.fullName, serialized["fullName"])
     assertEquals(association.description, serialized["description"])
-    assertEquals(association.members.list.value, serialized["members"])
+    assertEquals(association.members.uids, serialized["members"])
+    assertEquals(association.image, serialized["image"])
+    assertEquals(association.events.uids, serialized["events"])
 
     val hydrated = AssociationRepositoryFirestore.hydrate(serialized)
 
@@ -134,6 +120,8 @@ class HydrationAndSerializationTest {
     assertEquals(association.fullName, hydrated.fullName)
     assertEquals(association.description, hydrated.description)
     assertEquals(association.members.list.value, hydrated.members.list.value)
+    assertEquals(association.image, hydrated.image)
+    assertEquals(association.events.list.value, hydrated.events.list.value)
   }
 
   @Test
@@ -146,13 +134,15 @@ class HydrationAndSerializationTest {
     assertEquals(event.description, serialized["description"])
     assertEquals(event.catchyDescription, serialized["catchyDescription"])
     assertEquals(event.price, serialized["price"])
-    assertEquals(event.date, serialized["date"])
+    assertEquals(event.startDate, serialized["startDate"])
+    assertEquals(event.endDate, serialized["endDate"])
     assertEquals(event.location.name, (serialized["location"] as Map<String, Any>)["name"])
     assertEquals(event.location.latitude, (serialized["location"] as Map<String, Any>)["latitude"])
     assertEquals(
         event.location.longitude, (serialized["location"] as Map<String, Any>)["longitude"])
-    assertEquals(event.organisers.list.value, serialized["organisers"])
-    assertEquals(event.taggedAssociations.list.value, serialized["taggedAssociations"])
+    assertEquals(event.organisers.uids, serialized["organisers"])
+    assertEquals(event.taggedAssociations.uids, serialized["taggedAssociations"])
+    assertEquals(event.placesRemaining, serialized["placesRemaining"])
 
     val hydrated = EventRepositoryFirestore.hydrate(serialized)
 
@@ -162,10 +152,12 @@ class HydrationAndSerializationTest {
     assertEquals(event.description, hydrated.description)
     assertEquals(event.catchyDescription, hydrated.catchyDescription)
     assertEquals(event.price, hydrated.price)
-    assertEquals(event.date, hydrated.date)
+    assertEquals(event.startDate, hydrated.startDate)
+    assertEquals(event.endDate, hydrated.endDate)
     assertEquals(event.location, hydrated.location)
-    assertEquals(event.organisers.list.value, hydrated.organisers.list.value)
-    assertEquals(event.taggedAssociations.list.value, hydrated.taggedAssociations.list.value)
+    assertEquals(event.organisers.uids, hydrated.organisers.uids)
+    assertEquals(event.taggedAssociations.uids, hydrated.taggedAssociations.uids)
+    assertEquals(event.placesRemaining, hydrated.placesRemaining)
   }
 
   /** Test hydration when the map misses fields. */
@@ -185,7 +177,6 @@ class HydrationAndSerializationTest {
     assertEquals(emptyList<Interest>(), hydrated.interests)
     assertEquals(emptyList<UserSocial>(), hydrated.socials)
     assertEquals("", hydrated.profilePicture)
-    assertEquals(false, hydrated.hasProvidedAccountDetails)
   }
 
   @Test
@@ -199,7 +190,9 @@ class HydrationAndSerializationTest {
     assertEquals("", hydrated.name)
     assertEquals("", hydrated.fullName)
     assertEquals("", hydrated.description)
-    assertEquals(emptyList<String>(), hydrated.members.list.value)
+    assertEquals(emptyList<User>(), hydrated.members.list.value)
+    assertEquals("", hydrated.image)
+    assertEquals(emptyList<Event>(), hydrated.events.list.value)
   }
 
   @Test
@@ -214,9 +207,45 @@ class HydrationAndSerializationTest {
     assertEquals("", hydrated.description)
     assertEquals("", hydrated.catchyDescription)
     assertEquals(0.0, hydrated.price)
-    assertEquals(Timestamp(0, 0), hydrated.date)
+    assertEquals(Timestamp(0, 0), hydrated.startDate)
+    assertEquals(Timestamp(0, 0), hydrated.endDate)
     assertEquals(Location(), hydrated.location)
-    assertEquals(emptyList<String>(), hydrated.organisers.list.value)
-    assertEquals(emptyList<String>(), hydrated.taggedAssociations.list.value)
+    assertEquals(emptyList<Association>(), hydrated.organisers.list.value)
+    assertEquals(emptyList<Association>(), hydrated.taggedAssociations.list.value)
+    assertEquals(-1, hydrated.placesRemaining)
+  }
+
+  /** Test that serialization includes all data class fields. */
+  @Test
+  fun testUserSerializationHasAllFields() {
+    val classMembers = User::class.memberProperties.map { it.name }
+
+    val serialized = UserRepositoryFirestore.serialize(user)
+
+    classMembers.forEach {
+      assertTrue("User serialization is missing field '$it'.", serialized.containsKey(it))
+    }
+  }
+
+  @Test
+  fun testAssociationSerializationHasAllFields() {
+    val classMembers = Association::class.memberProperties.map { it.name }
+
+    val serialized = AssociationRepositoryFirestore.serialize(association)
+
+    classMembers.forEach {
+      assertTrue("Association serialization is missing field '$it'.", serialized.containsKey(it))
+    }
+  }
+
+  @Test
+  fun testEventSerializationHasAllFields() {
+    val classMembers = Event::class.memberProperties.map { it.name }
+
+    val serialized = EventRepositoryFirestore.serialize(event)
+
+    classMembers.forEach {
+      assertTrue("Event serialization is missing field '$it'.", serialized.containsKey(it))
+    }
   }
 }
