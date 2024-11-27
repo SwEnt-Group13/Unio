@@ -19,12 +19,14 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.Divider
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.AccessTime
@@ -35,6 +37,8 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -66,6 +70,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.PopupProperties
 import coil.compose.rememberAsyncImagePainter
 import com.android.unio.R
 import com.android.unio.model.association.Association
@@ -74,6 +79,7 @@ import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.firestore.firestoreReferenceListWith
 import com.android.unio.model.map.Location
+import com.android.unio.model.map.nominatim.NominatimLocationSearchViewModel
 import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.strings.FormatStrings.DAY_MONTH_YEAR_FORMAT
 import com.android.unio.model.strings.FormatStrings.HOUR_MINUTE_FORMAT
@@ -91,7 +97,8 @@ fun EventCreationScreen(
     navigationAction: NavigationAction,
     searchViewModel: SearchViewModel,
     associationViewModel: AssociationViewModel,
-    eventViewModel: EventViewModel
+    eventViewModel: EventViewModel,
+    locationSearchViewModel: NominatimLocationSearchViewModel
 ) {
   val context = LocalContext.current
   val scrollState = rememberScrollState()
@@ -110,6 +117,11 @@ fun EventCreationScreen(
 
   var startTimestamp: Timestamp? by remember { mutableStateOf(null) }
   var endTimestamp: Timestamp? by remember { mutableStateOf(null) }
+
+  var selectedLocation by remember { mutableStateOf<Location?>(null) }
+  val locationQuery by locationSearchViewModel.query.collectAsState()
+  val locationSuggestions by locationSearchViewModel.locationSuggestions.collectAsState()
+  var showDropdown by remember { mutableStateOf(false) }
 
   val eventBannerUri = remember { mutableStateOf<Uri>(Uri.EMPTY) }
 
@@ -206,15 +218,46 @@ fun EventCreationScreen(
             }
           }
 
-          OutlinedTextField(
-              modifier =
-                  Modifier.fillMaxWidth().testTag(EventCreationTestTags.LOCATION).clickable {
-                    Toast.makeText(context, "Location is not implemented yet", Toast.LENGTH_SHORT)
-                        .show()
-                  },
-              value = "",
-              onValueChange = {},
-              label = { Text(context.getString(R.string.event_creation_location_label)) })
+          Box(modifier = Modifier.fillMaxWidth()) {
+            OutlinedTextField(
+                value = locationQuery,
+                onValueChange = {
+                  locationSearchViewModel.setQuery(it)
+                  showDropdown = true
+                },
+                label = { Text(context.getString(R.string.event_creation_location_label)) },
+                placeholder = { Text("Enter an Address or Location") },
+                modifier = Modifier.fillMaxWidth().testTag(EventCreationTestTags.LOCATION))
+
+            DropdownMenu(
+                expanded = showDropdown && locationSuggestions.isNotEmpty(),
+                onDismissRequest = { showDropdown = false },
+                properties = PopupProperties(focusable = false),
+                modifier = Modifier.fillMaxWidth().heightIn(max = 200.dp)) {
+                  locationSuggestions.take(3).forEach { location ->
+                    DropdownMenuItem(
+                        text = {
+                          Text(
+                              text =
+                                  location.name.take(30) +
+                                      if (location.name.length > 30) "..." else "",
+                              maxLines = 1)
+                        },
+                        onClick = {
+                          locationSearchViewModel.setQuery(location.name)
+                          selectedLocation = location
+                          showDropdown = false
+                        },
+                        modifier = Modifier.padding(8.dp))
+                    Divider()
+                  }
+
+                  if (locationSuggestions.size > 3) {
+                    DropdownMenuItem(
+                        text = { Text("More...") }, onClick = {}, modifier = Modifier.padding(8.dp))
+                  }
+                }
+          }
 
           Spacer(modifier = Modifier.width(10.dp))
 
