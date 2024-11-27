@@ -44,6 +44,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -137,7 +138,6 @@ fun AssociationProfileScaffold(
     associationViewModel: AssociationViewModel,
     onEdit: () -> Unit
 ) {
-
   val associationState by associationViewModel.selectedAssociation.collectAsState()
   val association = associationState!!
 
@@ -295,6 +295,11 @@ private fun AssociationProfileContent(
     navigationAction.navigateTo(Screen.SOMEONE_ELSE_PROFILE)
   }
 
+  var events by remember { mutableStateOf<List<Event>>(emptyList()) }
+  LaunchedEffect(Unit) {
+    associationViewModel.getEventsForAssociation(association!!, { events = it })
+  }
+
   // Add spacedBy to the horizontalArrangement
   Column(
       modifier =
@@ -305,7 +310,7 @@ private fun AssociationProfileContent(
       verticalArrangement = Arrangement.spacedBy(16.dp)) {
         AssociationHeader(association!!, isFollowed, enableButton, onFollow)
         AssociationDescription(association!!)
-        AssociationEvents(navigationAction, association!!, userViewModel, eventViewModel)
+        AssociationEvents(navigationAction, association!!, userViewModel, eventViewModel, events)
         AssociationMembers(members, onMemberClick)
         AssociationRecruitment(association!!)
       }
@@ -433,13 +438,12 @@ private fun AssociationEvents(
     navigationAction: NavigationAction,
     association: Association,
     userViewModel: UserViewModel,
-    eventViewModel: EventViewModel
+    eventViewModel: EventViewModel,
+    events: List<Event>
 ) {
   val context = LocalContext.current
 
   var isSeeMoreClicked by remember { mutableStateOf(false) }
-
-  val events by association.events.list.collectAsState()
 
   var isAdmin by remember { mutableStateOf(true) }
 
