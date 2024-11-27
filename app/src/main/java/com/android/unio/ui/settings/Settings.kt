@@ -74,12 +74,14 @@ fun SettingsScreen(
       topBar = {
         TopAppBar(
             navigationIcon = {
-              IconButton(onClick = { navigationAction.goBack() }) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
-                    contentDescription =
-                        context.getString(R.string.settings_back_content_description))
-              }
+              IconButton(
+                  modifier = Modifier.testTag(SettingsTestTags.GO_BACK),
+                  onClick = { navigationAction.goBack() }) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
+                        contentDescription =
+                            context.getString(R.string.settings_back_content_description))
+                  }
             },
             title = { Text(context.getString(R.string.settings_title)) })
       }) { padding ->
@@ -196,8 +198,7 @@ fun SettingsContainer(onPasswordChange: (() -> Unit) -> Unit) {
             }
           })
       preference(
-          modifier =
-              Modifier.testTag(AppPreferences.RESET_PASSWORD),
+          modifier = Modifier.testTag(AppPreferences.RESET_PASSWORD),
           key = AppPreferences.RESET_PASSWORD,
           title = { Text(context.getString(R.string.settings_reset_password)) },
           icon = {
