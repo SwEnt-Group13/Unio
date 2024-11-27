@@ -23,6 +23,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -42,6 +43,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign.Companion.Center
 import androidx.compose.ui.unit.dp
 import com.android.unio.R
+import com.android.unio.model.authentication.AuthViewModel
 import com.android.unio.model.strings.test_tags.WelcomeTestTags
 import com.android.unio.model.user.SignInState
 import com.android.unio.model.user.UserViewModel
@@ -55,7 +57,7 @@ import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.auth
 
 @Composable
-fun WelcomeScreen(userViewModel: UserViewModel) {
+fun WelcomeScreen(userViewModel: UserViewModel, authViewModel: AuthViewModel) {
   val context = LocalContext.current
 
   var email by remember { mutableStateOf("") }
@@ -142,7 +144,30 @@ fun WelcomeScreen(userViewModel: UserViewModel) {
                       else PasswordVisualTransformation(),
               )
 
-              Spacer(modifier = Modifier.size(70.dp))
+              TextButton(
+                  onClick = {
+                    authViewModel.sendEmailResetPassword(email, {
+                        Toast.makeText(
+                            context,
+                            context.getString(R.string.welcome_toast_reset_password),
+                            Toast.LENGTH_SHORT)
+                            .show()
+                    }, {
+                        Toast.makeText(
+                            context,
+                            context.getString(R.string.welcome_toast_reset_password_error),
+                            Toast.LENGTH_SHORT)
+                            .show()
+                    })
+
+                  },
+                  modifier = Modifier.testTag(WelcomeTestTags.FORGOT_PASSWORD)) {
+                    Text(
+                        text = context.getString(R.string.welcome_forgot_password),
+                        style = AppTypography.bodyMedium)
+                  }
+
+              Spacer(modifier = Modifier.size(62.dp))
 
               Button(
                   modifier = Modifier.testTag(WelcomeTestTags.BUTTON),
