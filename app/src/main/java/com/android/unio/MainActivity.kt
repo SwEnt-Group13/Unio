@@ -159,7 +159,9 @@ fun UnioApp(imageRepository: ImageRepositoryFirebaseStorage) {
       composable(Screen.EDIT_PROFILE) {
         UserProfileEditionScreen(userViewModel, imageRepository, navigationActions)
       }
-      composable(Screen.SETTINGS) { SettingsScreen(navigationActions) }
+      composable(Screen.SETTINGS) {
+        SettingsScreen(navigationActions, authViewModel, userViewModel)
+      }
       composable(Screen.CLAIM_ASSOCIATION_RIGHTS) {
         UserClaimAssociationScreen(associationViewModel, navigationActions, searchViewModel)
       }
