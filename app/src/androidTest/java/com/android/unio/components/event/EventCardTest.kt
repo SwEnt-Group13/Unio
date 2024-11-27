@@ -53,7 +53,13 @@ class EventCardTest : TearDown() {
   private fun setEventScreen(event: Event) {
     composeTestRule.setContent {
       EventCardScaffold(
-          event, associations, true, { navigationAction.navigateTo(Screen.EVENT_DETAILS) }, {})
+          event,
+          associations,
+          true,
+          { navigationAction.navigateTo(Screen.EVENT_DETAILS) },
+          {},
+          {},
+          true)
     }
   }
 
@@ -90,6 +96,14 @@ class EventCardTest : TearDown() {
         .onNodeWithTag(EventCardTestTags.EVENT_CATCHY_DESCRIPTION, useUnmergedTree = true)
         .assertExists()
         .assertTextEquals("This is a catchy description.")
+
+    composeTestRule
+        .onNodeWithTag(EventCardTestTags.EDIT_BUTTON, useUnmergedTree = true)
+        .assertExists()
+
+    composeTestRule
+        .onNodeWithTag(EventCardTestTags.SAVE_BUTTON, useUnmergedTree = true)
+        .assertExists()
   }
 
   @Test

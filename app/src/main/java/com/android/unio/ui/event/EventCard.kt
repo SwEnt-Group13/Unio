@@ -146,7 +146,8 @@ fun EventCardScaffold(
                           Modifier.size(28.dp)
                               .clip(RoundedCornerShape(14.dp))
                               .background(MaterialTheme.colorScheme.inversePrimary)
-                              .padding(4.dp),
+                              .padding(4.dp)
+                              .testTag(EventCardTestTags.EDIT_BUTTON),
                       onClick = { onClickEditButton() }) {
                         Icon(
                             imageVector = Icons.Outlined.Edit,
@@ -162,7 +163,8 @@ fun EventCardScaffold(
                             .clip(RoundedCornerShape(14.dp))
                             .background(MaterialTheme.colorScheme.inversePrimary)
                             .clickable { onClickSaveButton() }
-                            .padding(4.dp)) {
+                            .padding(4.dp)
+                            .testTag(EventCardTestTags.SAVE_BUTTON)) {
                       Icon(
                           imageVector =
                               if (isSaved) Icons.Rounded.Favorite else Icons.Rounded.FavoriteBorder,
