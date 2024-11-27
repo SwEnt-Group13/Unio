@@ -137,7 +137,6 @@ constructor(
           repository.addEvent(event, onSuccess, onFailure)
         },
         { e -> Log.e("ImageRepository", "Failed to store image: $e") })
-    // TODO check if this should only be done if the above is successful
     associationRepository.getAssociations(
         onSuccess = { associationList ->
           associationList
@@ -165,7 +164,6 @@ constructor(
   fun updateEventWithoutImage(event: Event, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
     repository.addEvent(event, onSuccess, onFailure)
     event.organisers.requestAll(onSuccess)
-    // TODO check if this should only be done if the above is successful
     associationRepository.getAssociations(
         onSuccess = { associationList ->
           associationList

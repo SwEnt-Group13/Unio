@@ -294,6 +294,7 @@ fun EventCreationScreen(
   }
 }
 
+// These components should be moved to a separate file
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun AssociationChips(

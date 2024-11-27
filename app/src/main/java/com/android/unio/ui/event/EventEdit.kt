@@ -214,7 +214,7 @@ fun EventEditScreen(
                         ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.error),
                     onClick = {
-                      // TODO add a dialog to confirm deletion
+                      // A dialog should be added to prevent accidental deletion
                       eventViewModel.deleteEvent(
                           eventToEdit.uid,
                           onSuccess = { navigationAction.goBack() },
@@ -264,7 +264,7 @@ fun EventEditScreen(
                               endDate = endTimestamp!!,
                               location = Location(),
                           )
-                      // TODO extract checkImageUri to utils
+                      // This should be extracted to a util
                       if (checkImageUri(eventBannerUri.toString()) == ImageUriType.LOCAL) {
                         val inputStream =
                             context.contentResolver.openInputStream(eventBannerUri.value)!!
