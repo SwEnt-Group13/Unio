@@ -264,33 +264,33 @@ fun EventCreationScreen(
               }) {
                 Text(context.getString(R.string.event_creation_save_button))
               }
-
-          if (showCoauthorsOverlay) {
-            AssociationsOverlay(
-                onDismiss = { showCoauthorsOverlay = false },
-                onSave = { coauthors ->
-                  coauthorsAndBoolean = coauthors
-                  showCoauthorsOverlay = false
-                },
-                associations = coauthorsAndBoolean,
-                searchViewModel = searchViewModel,
-                headerText = context.getString(R.string.associations_overlay_coauthors_title),
-                bodyText = context.getString(R.string.associations_overlay_coauthors_description))
-          }
-
-          if (showTaggedOverlay) {
-            AssociationsOverlay(
-                onDismiss = { showTaggedOverlay = false },
-                onSave = { tagged ->
-                  taggedAndBoolean = tagged
-                  showTaggedOverlay = false
-                },
-                associations = taggedAndBoolean,
-                searchViewModel = searchViewModel,
-                headerText = context.getString(R.string.associations_overlay_tagged_title),
-                bodyText = context.getString(R.string.associations_overlay_tagged_description))
-          }
         }
+
+    if (showCoauthorsOverlay) {
+      AssociationsOverlay(
+          onDismiss = { showCoauthorsOverlay = false },
+          onSave = { coauthors ->
+            coauthorsAndBoolean = coauthors
+            showCoauthorsOverlay = false
+          },
+          associations = coauthorsAndBoolean,
+          searchViewModel = searchViewModel,
+          headerText = context.getString(R.string.associations_overlay_coauthors_title),
+          bodyText = context.getString(R.string.associations_overlay_coauthors_description))
+    }
+
+    if (showTaggedOverlay) {
+      AssociationsOverlay(
+          onDismiss = { showTaggedOverlay = false },
+          onSave = { tagged ->
+            taggedAndBoolean = tagged
+            showTaggedOverlay = false
+          },
+          associations = taggedAndBoolean,
+          searchViewModel = searchViewModel,
+          headerText = context.getString(R.string.associations_overlay_tagged_title),
+          bodyText = context.getString(R.string.associations_overlay_tagged_description))
+    }
   }
 }
 
