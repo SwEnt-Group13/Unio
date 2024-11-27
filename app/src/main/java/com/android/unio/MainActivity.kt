@@ -103,7 +103,7 @@ fun UnioApp(imageRepository: ImageRepositoryFirebaseStorage) {
 
   NavHost(navController = navController, startDestination = Route.AUTH) {
     navigation(startDestination = Screen.WELCOME, route = Route.AUTH) {
-      composable(Screen.WELCOME) { WelcomeScreen(userViewModel) }
+      composable(Screen.WELCOME) { WelcomeScreen(userViewModel, authViewModel) }
       composable(Screen.EMAIL_VERIFICATION) {
         EmailVerificationScreen(navigationActions, userViewModel)
       }
