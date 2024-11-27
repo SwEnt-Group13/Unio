@@ -26,6 +26,14 @@ constructor(private val firebaseAuth: FirebaseAuth, private val userRepository: 
     addAuthStateVerifier()
   }
 
+  fun sendEmailResetPassword(email: String) {
+    firebaseAuth.sendPasswordResetEmail(email).addOnCompleteListener { task ->
+      if (task.isSuccessful) {
+        Log.d("AuthViewModel", "Email sent.")
+      }
+    }
+  }
+
   /**
    * Verifies the authentication state of the user. If the user should be redirected, the
    * [authState] is updated.
