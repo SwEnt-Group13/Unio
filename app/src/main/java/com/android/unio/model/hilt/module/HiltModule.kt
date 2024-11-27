@@ -9,6 +9,9 @@ import com.android.unio.model.follow.ConcurrentAssociationUserRepository
 import com.android.unio.model.follow.ConcurrentAssociationUserRepositoryFirestore
 import com.android.unio.model.image.ImageRepository
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
+import com.android.unio.model.map.LocationRepository
+import com.android.unio.model.map.nominatim.NominatimApiService
+import com.android.unio.model.map.nominatim.NominatimLocationRepository
 import com.android.unio.model.user.UserRepository
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -24,6 +27,11 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -104,4 +112,33 @@ object LocationModule {
   ): FusedLocationProviderClient {
     return LocationServices.getFusedLocationProviderClient(context)
   }
+}
+
+@Module
+@InstallIn(SingletonComponent::class)
+abstract class NetworkModule {
+
+  companion object {
+    @Provides
+    @Singleton
+    fun provideNominatimApiService(): NominatimApiService {
+      val logging = HttpLoggingInterceptor()
+      logging.setLevel(HttpLoggingInterceptor.Level.BODY)
+
+      val client = OkHttpClient.Builder().addInterceptor(logging).build()
+
+      return Retrofit.Builder()
+          .baseUrl("https://nominatim.openstreetmap.org/")
+          .client(client)
+          .addConverterFactory(GsonConverterFactory.create())
+          .build()
+          .create(NominatimApiService::class.java)
+    }
+  }
+
+  @Binds
+  @Singleton
+  abstract fun bindLocationRepository(
+      nominatimLocationRepository: NominatimLocationRepository
+  ): LocationRepository
 }
