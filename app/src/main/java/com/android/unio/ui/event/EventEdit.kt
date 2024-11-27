@@ -45,7 +45,7 @@ import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.firestore.firestoreReferenceListWith
 import com.android.unio.model.map.Location
 import com.android.unio.model.search.SearchViewModel
-import com.android.unio.model.strings.test_tags.EventCreationTestTags
+import com.android.unio.model.strings.test_tags.EventEditTestTags
 import com.android.unio.model.user.ImageUriType
 import com.android.unio.model.user.checkImageUri
 import com.android.unio.ui.event.overlay.AssociationsOverlay
@@ -99,7 +99,7 @@ fun EventEditScreen(
 
   val eventBannerUri = remember { mutableStateOf<Uri>(eventToEdit.image.toUri()) }
 
-  Scaffold(modifier = Modifier.testTag(EventCreationTestTags.SCREEN)) { padding ->
+  Scaffold(modifier = Modifier.testTag(EventEditTestTags.SCREEN)) { padding ->
     Column(
         modifier =
             Modifier.padding(padding).padding(20.dp).fillMaxWidth().verticalScroll(scrollState),
@@ -115,19 +115,19 @@ fun EventEditScreen(
                       contentDescription = context.getString(R.string.event_creation_cancel_button))
                 }
                 Text(
-                    context.getString(R.string.event_creation_title),
+                    context.getString(R.string.event_edit_title) + " " + eventToEdit.title,
                     style = AppTypography.headlineSmall,
-                    modifier = Modifier.testTag(EventCreationTestTags.TITLE))
+                    modifier = Modifier.testTag(EventEditTestTags.TITLE))
               }
 
           OutlinedTextField(
-              modifier = Modifier.fillMaxWidth().testTag(EventCreationTestTags.EVENT_TITLE),
+              modifier = Modifier.fillMaxWidth().testTag(EventEditTestTags.EVENT_TITLE),
               value = name,
               onValueChange = { name = it },
               label = { Text(context.getString(R.string.event_creation_name_label)) })
 
           OutlinedTextField(
-              modifier = Modifier.fillMaxWidth().testTag(EventCreationTestTags.SHORT_DESCRIPTION),
+              modifier = Modifier.fillMaxWidth().testTag(EventEditTestTags.SHORT_DESCRIPTION),
               value = shortDescription,
               onValueChange = { shortDescription = it },
               label = { Text(context.getString(R.string.event_creation_short_description_label)) })
@@ -135,7 +135,7 @@ fun EventEditScreen(
           BannerImagePicker(eventBannerUri)
 
           OutlinedButton(
-              modifier = Modifier.fillMaxWidth().testTag(EventCreationTestTags.COAUTHORS),
+              modifier = Modifier.fillMaxWidth().testTag(EventEditTestTags.COAUTHORS),
               onClick = { showCoauthorsOverlay = true }) {
                 Icon(
                     Icons.Default.Add,
@@ -147,7 +147,7 @@ fun EventEditScreen(
           AssociationChips(coauthorsAndBoolean)
 
           OutlinedButton(
-              modifier = Modifier.fillMaxWidth().testTag(EventCreationTestTags.TAGGED_ASSOCIATIONS),
+              modifier = Modifier.fillMaxWidth().testTag(EventEditTestTags.TAGGED_ASSOCIATIONS),
               onClick = { showTaggedOverlay = true }) {
                 Icon(
                     Icons.Default.Add,
@@ -159,7 +159,7 @@ fun EventEditScreen(
           AssociationChips(taggedAndBoolean)
 
           OutlinedTextField(
-              modifier = Modifier.fillMaxWidth().testTag(EventCreationTestTags.DESCRIPTION),
+              modifier = Modifier.fillMaxWidth().testTag(EventEditTestTags.DESCRIPTION),
               value = longDescription,
               onValueChange = { longDescription = it },
               label = { Text(context.getString(R.string.event_creation_description_label)) })
@@ -167,34 +167,34 @@ fun EventEditScreen(
           DateAndTimePicker(
               context.getString(R.string.event_creation_startdate_label),
               context.getString(R.string.event_creation_starttime_label),
-              modifier = Modifier.testTag(EventCreationTestTags.START_TIME)) {
+              modifier = Modifier.testTag(EventEditTestTags.START_TIME)) {
                 startTimestamp = it
               }
 
           DateAndTimePicker(
               context.getString(R.string.event_creation_enddate_label),
               context.getString(R.string.event_creation_endtime_label),
-              modifier = Modifier.testTag(EventCreationTestTags.END_TIME)) {
+              modifier = Modifier.testTag(EventEditTestTags.END_TIME)) {
                 endTimestamp = it
               }
           if (startTimestamp != null && endTimestamp != null) {
             if (startTimestamp!! > endTimestamp!!) {
               Text(
                   text = context.getString(R.string.event_creation_end_before_start),
-                  modifier = Modifier.testTag(EventCreationTestTags.ERROR_TEXT1),
+                  modifier = Modifier.testTag(EventEditTestTags.ERROR_TEXT1),
                   color = MaterialTheme.colorScheme.error)
             }
             if (startTimestamp!! == endTimestamp!!) {
               Text(
                   text = context.getString(R.string.event_creation_end_equals_start),
-                  modifier = Modifier.testTag(EventCreationTestTags.ERROR_TEXT2),
+                  modifier = Modifier.testTag(EventEditTestTags.ERROR_TEXT2),
                   color = MaterialTheme.colorScheme.error)
             }
           }
 
           OutlinedTextField(
               modifier =
-                  Modifier.fillMaxWidth().testTag(EventCreationTestTags.LOCATION).clickable {
+                  Modifier.fillMaxWidth().testTag(EventEditTestTags.LOCATION).clickable {
                     Toast.makeText(context, "Location is not implemented yet", Toast.LENGTH_SHORT)
                         .show()
                   },
@@ -209,7 +209,7 @@ fun EventEditScreen(
               horizontalArrangement = Arrangement.SpaceEvenly,
               verticalAlignment = Alignment.CenterVertically) {
                 Button(
-                    // modifier = Modifier.testTag(EventCreationTestTags.DELETE_BUTTON),
+                     modifier = Modifier.testTag(EventEditTestTags.DELETE_BUTTON),
                     colors =
                         ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.error),
@@ -221,19 +221,16 @@ fun EventEditScreen(
                           onFailure = {
                             Toast.makeText(
                                     context,
-                                    context.getString(R.string.event_creation_failed),
+                                    context.getString(R.string.event_edit_failed),
                                     Toast.LENGTH_SHORT)
                                 .show()
                           })
                     }) {
-                      Text(
-                          "Delete"
-                          // context.getString(R.string.event_creation_delete_button)
-                          )
+                      Text(context.getString(R.string.event_edit_delete_button))
                     }
 
                 Button(
-                    modifier = Modifier.testTag(EventCreationTestTags.SAVE_BUTTON),
+                    modifier = Modifier.testTag(EventEditTestTags.SAVE_BUTTON),
                     enabled =
                         name.isNotEmpty() &&
                             shortDescription.isNotEmpty() &&
@@ -295,10 +292,7 @@ fun EventEditScreen(
                             })
                       }
                     }) {
-                      Text(
-                          "Save"
-                          // context.getString(R.string.event_creation_save_button)
-                          )
+                      Text(context.getString(R.string.event_edit_save_button))
                     }
               }
           Spacer(modifier = Modifier.width(10.dp))

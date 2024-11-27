@@ -39,6 +39,24 @@ object EventCreationOverlayTestTags {
   const val ASSOCIATION_LIST = "eventCreationOverlayAssociationList"
 }
 
+object EventEditTestTags {
+    const val SCREEN = "eventEditScreen"
+    const val TITLE = "eventEditTitle"
+    const val EVENT_TITLE = "eventEditEventTitle"
+    const val SHORT_DESCRIPTION = "eventEditShortDescription"
+    const val COAUTHORS = "eventEditCoauthors"
+    const val TAGGED_ASSOCIATIONS = "eventEditTaggedAssociations"
+    const val DESCRIPTION = "eventEditDescription"
+    const val LOCATION = "eventEditLocation"
+    const val SAVE_BUTTON = "eventEditSaveButton"
+    const val DELETE_BUTTON = "eventEditDeleteButton"
+    const val EVENT_IMAGE = "eventEditEventImage"
+    const val START_TIME = "eventEditStartTime"
+    const val END_TIME = "eventEditEndTime"
+    const val ERROR_TEXT1 = "eventEditStartAfterEnd"
+    const val ERROR_TEXT2 = "eventEditStartEqualsEnd"
+}
+
 object EventDetailsTestTags {
   const val SCREEN = "eventScreen"
   const val SNACKBAR_HOST = "snackbarHost"
