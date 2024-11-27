@@ -209,7 +209,7 @@ fun EventEditScreen(
               horizontalArrangement = Arrangement.SpaceEvenly,
               verticalAlignment = Alignment.CenterVertically) {
                 Button(
-                     modifier = Modifier.testTag(EventEditTestTags.DELETE_BUTTON),
+                    modifier = Modifier.testTag(EventEditTestTags.DELETE_BUTTON),
                     colors =
                         ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.error),
