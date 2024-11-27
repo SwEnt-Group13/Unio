@@ -59,6 +59,8 @@ mapsComposeUtils = "4.3.0"
 
 # Networking
 okhttp = "4.12.0"
+okhttpLoggingInterceptor = "4.12.0"
+retrofit = "2.11.0"
 
 # Testing Unit
 junit = "4.13.2"
@@ -191,6 +193,7 @@ mockk-android = { module = "io.mockk:mockk-android", version.ref = "mockkAndroid
 mockk-v1130 = { module = "io.mockk:mockk", version.ref = "mockkVersion" }
 mockk-v193 = { module = "io.mockk:mockk", version.ref = "mockkMockk" }
 okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
+okhttp-logging-interceptor = { module = "com.squareup.okhttp3:logging-interceptor", version.ref = "okhttp" }
 play-services-auth = { module = "com.google.android.gms:play-services-auth", version.ref = "playServicesAuth" }
 play-services-auth-v2041 = { module = "com.google.android.gms:play-services-auth", version.ref = "playServicesAuthVersion" }
 play-services-maps = { module = "com.google.android.gms:play-services-maps", version.ref = "playServicesMaps" }
@@ -204,8 +207,8 @@ androidx-compose-material = { group = "androidx.wear.compose", name = "compose-m
 core = { group = "com.google.ar", name = "core", version.ref = "core" }
 firebase-functions-ktx = { group = "com.google.firebase", name = "firebase-functions-ktx", version.ref = "firebaseFunctionsKtx" }
 play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServicesLocation" }
-
-
+retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
+retrofit-gson-converter = { module = "com.squareup.retrofit2:converter-gson", version.ref = "retrofit" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

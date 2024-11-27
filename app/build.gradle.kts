@@ -246,6 +246,9 @@ dependencies {
 
     // Networking with OkHttp
     implementation(libs.okhttp)
+    implementation(libs.okhttp.logging.interceptor)
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.gson.converter)
 
     // Testing Unit
     testImplementation(libs.junit)
