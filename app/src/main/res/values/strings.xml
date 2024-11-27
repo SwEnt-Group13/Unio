@@ -138,6 +138,9 @@
     <string name="welcome_toast_account_created">Account created successfully</string>
     <string name="welcome_content_description_hide_password">Hide password</string>
     <string name="welcome_content_description_show_password">Show password</string>
+    <string name="welcome_forgot_password">Reset your password</string>
+    <string name="welcome_toast_reset_password">An email has been sent to the given address</string>
+    <string name="welcome_toast_reset_password_error">Failed to send the email</string>
 
     /**
     * package: event
@@ -271,6 +274,7 @@
     <string name="settings_language_content_description">Language Settings</string>
     <string name="settings_reset_password">Reset Password</string>
     <string name="settings_reset_password_sent">The password modification email has been sent.</string>
+    <string name="settings_reset_password_error">Failed to send the password modification email.</string>
 
     /**
     * package: user

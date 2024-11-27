@@ -134,6 +134,9 @@
     <string name="welcome_toast_account_created">Compte créé avec succès</string>
     <string name="welcome_content_description_hide_password">Cacher le mot de passe</string>
     <string name="welcome_content_description_show_password">Montrer le mot de passe</string>
+    <string name="welcome_forgot_password">Réinitialiser le mot de passe</string>
+    <string name="welcome_toast_reset_password">Un email a été envoyé à l\'adresse indiquée</string>
+    <string name="welcome_toast_reset_password_error">Echec de l\'envoi de l\'email de réinitialisation</string>
 
     /**
     * package: event
@@ -243,6 +246,7 @@
     <string name="settings_language_content_description">Réglages de Langue</string>
     <string name="settings_reset_password">Réinitialiser le mot de passe</string>
     <string name="settings_reset_password_sent">L\'email de modification de mot de passe a bien été envoyé</string>
+    <string name="settings_reset_password_error">Echec de l\'envoi de l\'email de modification de mot de passe</string>
 
     /**
     * package: user
