@@ -166,6 +166,12 @@ open class EndToEndTest : FirebaseEmulatorFunctions {
     const val PASSWORD = "helloWorld123"
   }
 
+  object MarjolaineLemm {
+    const val EMAIL = "exampleresetpwd@gmail.com"
+    const val OLD_PASSWORD = "oldPassword456"
+    const val NEW_PASSWORD = "newPassword123"
+  }
+
   // This user's email is already verified
   object AliceMurphy {
     const val EMAIL = "example2@gmail.com"

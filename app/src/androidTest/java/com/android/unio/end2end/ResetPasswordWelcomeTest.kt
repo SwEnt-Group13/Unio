@@ -10,52 +10,52 @@ import androidx.test.filters.LargeTest
 import com.android.unio.model.strings.test_tags.HomeTestTags
 import com.android.unio.model.strings.test_tags.WelcomeTestTags
 import dagger.hilt.android.testing.HiltAndroidTest
+import java.net.URL
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.json.JSONObject
 import org.junit.Test
-import java.net.URL
 
 @HiltAndroidTest
 @LargeTest
 class ResetPasswordWelcomeTest : EndToEndTest() {
 
-    @Test
-    fun testUserCanResetPassword() {
+  @Test
+  fun testUserCanResetPassword() {
 
-        composeTestRule.waitUntil(10000) {
-            composeTestRule.onNodeWithTag(WelcomeTestTags.SCREEN).isDisplayed()
-        }
-        composeTestRule.onNodeWithTag(WelcomeTestTags.EMAIL).performTextInput(MarjolaineLemm.EMAIL)
-        composeTestRule.onNodeWithTag(WelcomeTestTags.FORGOT_PASSWORD).performClick()
+    composeTestRule.waitUntil(10000) {
+      composeTestRule.onNodeWithTag(WelcomeTestTags.SCREEN).isDisplayed()
+    }
+    composeTestRule.onNodeWithTag(WelcomeTestTags.EMAIL).performTextInput(MarjolaineLemm.EMAIL)
+    composeTestRule.onNodeWithTag(WelcomeTestTags.FORGOT_PASSWORD).performClick()
 
-        Thread.sleep(1000)
+    Thread.sleep(1000)
 
-        simulateResetPassword()
+    simulateResetPassword()
 
-        composeTestRule.onNodeWithTag(WelcomeTestTags.EMAIL).performTextClearance()
+    composeTestRule.onNodeWithTag(WelcomeTestTags.EMAIL).performTextClearance()
 
-        signInWithUser(composeTestRule, MarjolaineLemm.EMAIL, MarjolaineLemm.NEW_PASSWORD)
-        composeTestRule.waitUntil(10000){
-            composeTestRule.onNodeWithTag(HomeTestTags.SCREEN).isDisplayed()
-        }
-
-        signOutWithUser(composeTestRule)
+    signInWithUser(composeTestRule, MarjolaineLemm.EMAIL, MarjolaineLemm.NEW_PASSWORD)
+    composeTestRule.waitUntil(10000) {
+      composeTestRule.onNodeWithTag(HomeTestTags.SCREEN).isDisplayed()
     }
 
-    private fun simulateResetPassword() {
-        val ip = "10.0.2.2"
-        val raw = Auth.OOB_URL
-        val response = URL(raw).readText()
-        Log.d("ResetPasswordSettingsTest", "Response: $response")
-        val json = JSONObject(response)
-        val resetLink = json.optJSONArray("oobCodes")?.getJSONObject(0)?.optString("oobLink")
-        assert(resetLink != null)
-        val url = resetLink!! + "&newPassword=${MarjolaineLemm.NEW_PASSWORD}"
-        Log.d("ResetPasswordSettingsTest", "Reset link: $url")
-        val client = OkHttpClient()
-        val request = Request.Builder().url(url.replace("127.0.0.1", ip)).build()
+    signOutWithUser(composeTestRule)
+  }
 
-        client.newCall(request).execute()
-    }
+  private fun simulateResetPassword() {
+    val ip = "10.0.2.2"
+    val raw = Auth.OOB_URL
+    val response = URL(raw).readText()
+    Log.d("ResetPasswordSettingsTest", "Response: $response")
+    val json = JSONObject(response)
+    val resetLink = json.optJSONArray("oobCodes")?.getJSONObject(0)?.optString("oobLink")
+    assert(resetLink != null)
+    val url = resetLink!! + "&newPassword=${MarjolaineLemm.NEW_PASSWORD}"
+    Log.d("ResetPasswordSettingsTest", "Reset link: $url")
+    val client = OkHttpClient()
+    val request = Request.Builder().url(url.replace("127.0.0.1", ip)).build()
+
+    client.newCall(request).execute()
+  }
 }
