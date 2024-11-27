@@ -317,6 +317,9 @@
     * Other
     */
 
+    <!-- General Strings -->
+    <string name="no_internet_connection">You appear to be offline</string>
+
     <!-- EventListOverview Strings -->
     <string name="event_upcomingEvents">Upcoming Events</string>
     <string name="event_tab_all">All</string>

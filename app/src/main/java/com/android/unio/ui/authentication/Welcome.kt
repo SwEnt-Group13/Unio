@@ -1,7 +1,6 @@
 package com.android.unio.ui.authentication
 
 import android.content.Context
-import android.net.ConnectivityManager
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
@@ -42,7 +41,6 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign.Companion.Center
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat.getSystemService
 import com.android.unio.R
 import com.android.unio.model.strings.test_tags.WelcomeTestTags
 import com.android.unio.model.user.SignInState
@@ -50,6 +48,7 @@ import com.android.unio.model.user.UserViewModel
 import com.android.unio.model.user.isValidEmail
 import com.android.unio.model.user.isValidPassword
 import com.android.unio.model.user.signInOrCreateAccount
+import com.android.unio.model.utils.Utils.checkInternetConnection
 import com.android.unio.ui.theme.AppTypography
 import com.google.firebase.Firebase
 import com.google.firebase.auth.EmailAuthProvider
@@ -169,9 +168,10 @@ fun WelcomeScreen(userViewModel: UserViewModel) {
 fun handleAuthentication(email: String, password: String, context: Context) {
 
   // Check internet connectivity
-  val connectivityManager = getSystemService(context, ConnectivityManager::class.java)
-  if (connectivityManager?.activeNetwork == null) {
-    Toast.makeText(context, "You appear to be offline.", Toast.LENGTH_SHORT).show()
+  val isConnected = checkInternetConnection(context)
+  if (!isConnected) {
+    Toast.makeText(context, context.getString(R.string.no_internet_connection), Toast.LENGTH_SHORT)
+        .show()
     return
   }
 

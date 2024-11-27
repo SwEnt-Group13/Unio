@@ -285,6 +285,9 @@
     * Other
     */
 
+    <!-- General Strings -->
+    <string name="no_internet_connection">Vous semblez être hors-ligne</string>
+
     <!-- EventListOverview Strings -->
     <string name="event_upcomingEvents">Évènements à venir</string>
     <string name="event_tab_all">Tous</string>
