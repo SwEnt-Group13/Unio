@@ -53,6 +53,15 @@ import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.theme.AppTypography
 import com.google.firebase.Timestamp
 
+/**
+ * Composable function that displays the event edit screen. It functions similarly to the Event
+ * Creation screen, but pre-populates the fields with the event's current data.
+ *
+ * @param navigationAction The navigation actions to be performed.
+ * @param searchViewModel The [SearchViewModel] that provides search functionality.
+ * @param associationViewModel The [AssociationViewModel] that provides association data.
+ * @param eventViewModel The [EventViewModel] that provides event data.
+ */
 @Composable
 fun EventEditScreen(
     navigationAction: NavigationAction,
@@ -65,29 +74,29 @@ fun EventEditScreen(
   var showCoauthorsOverlay by remember { mutableStateOf(false) }
   var showTaggedOverlay by remember { mutableStateOf(false) }
 
-  var event = remember { eventViewModel.selectedEvent.value!! }
+  val eventToEdit = remember { eventViewModel.selectedEvent.value!! }
 
-  var name by remember { mutableStateOf(event.title) }
-  var shortDescription by remember { mutableStateOf(event.catchyDescription) }
-  var longDescription by remember { mutableStateOf(event.description) }
+  var name by remember { mutableStateOf(eventToEdit.title) }
+  var shortDescription by remember { mutableStateOf(eventToEdit.catchyDescription) }
+  var longDescription by remember { mutableStateOf(eventToEdit.description) }
 
   var coauthorsAndBoolean =
       associationViewModel.associations.collectAsState().value.map {
         it to
-            (if (event.organisers.contains(it.uid)) mutableStateOf(true) else mutableStateOf(false))
+            (if (eventToEdit.organisers.contains(it.uid)) mutableStateOf(true) else mutableStateOf(false))
       }
 
   var taggedAndBoolean =
       associationViewModel.associations.collectAsState().value.map {
         it to
-            (if (event.taggedAssociations.contains(it.uid)) mutableStateOf(true)
+            (if (eventToEdit.taggedAssociations.contains(it.uid)) mutableStateOf(true)
             else mutableStateOf(false))
       }
 
-  var startTimestamp: Timestamp? by remember { mutableStateOf(event.startDate) }
-  var endTimestamp: Timestamp? by remember { mutableStateOf(event.endDate) }
+  var startTimestamp: Timestamp? by remember { mutableStateOf(eventToEdit.startDate) }
+  var endTimestamp: Timestamp? by remember { mutableStateOf(eventToEdit.endDate) }
 
-  val eventBannerUri = remember { mutableStateOf<Uri>(event.image.toUri()) }
+  val eventBannerUri = remember { mutableStateOf<Uri>(eventToEdit.image.toUri()) }
 
   Scaffold(modifier = Modifier.testTag(EventCreationTestTags.SCREEN)) { padding ->
     Column(
@@ -206,7 +215,7 @@ fun EventEditScreen(
                     onClick = {
                       // TODO add a dialog to confirm deletion
                       eventViewModel.deleteEvent(
-                          event.uid,
+                          eventToEdit.uid,
                           onSuccess = { navigationAction.goBack() },
                           onFailure = {
                             Toast.makeText(
@@ -235,7 +244,7 @@ fun EventEditScreen(
                     onClick = {
                       val updatedEvent =
                           Event(
-                              uid = event.uid,
+                              uid = eventToEdit.uid,
                               title = name,
                               organisers =
                                   Association.firestoreReferenceListWith(

@@ -445,6 +445,7 @@ private fun AssociationEvents(
 
   var isSeeMoreClicked by remember { mutableStateOf(false) }
 
+  // To be changed when we have a functional admin system
   var isAdmin by remember { mutableStateOf(true) }
 
   if (events.isNotEmpty()) {

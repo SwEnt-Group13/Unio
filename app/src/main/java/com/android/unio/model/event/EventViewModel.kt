@@ -99,8 +99,13 @@ constructor(private val repository: EventRepository, private val imageRepository
   }
 
   /**
-   * Update an existing event in the repository. It uploads the event image first, then updates the
-   * event.
+   * Update an existing event in the repository with a new image. It uploads the event image first,
+   * then updates the event.
+   *
+   * @param inputStream The input stream of the image to upload.
+   * @param event The event to update.
+   * @param onSuccess A callback that is called when the event is successfully updated.
+   * @param onFailure A callback that is called when an error occurs while updating the event.
    */
   fun updateEvent(
       inputStream: InputStream,
@@ -123,8 +128,11 @@ constructor(private val repository: EventRepository, private val imageRepository
   }
 
   /**
-   * Update an existing event in the repository. It uploads the event image first, then updates the
-   * event.
+   * Update an existing event in the repository without updating its image.
+   *
+   * @param event The event to update.
+   * @param onSuccess A callback that is called when the event is successfully updated.
+   * @param onFailure A callback that is called when an error occurs while updating the event.
    */
   fun updateEventWithoutImage(event: Event, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
     repository.addEvent(event, onSuccess, onFailure)
@@ -138,6 +146,8 @@ constructor(private val repository: EventRepository, private val imageRepository
    * Deletes an event from the repository.
    *
    * @param eventId The ID of the event to delete.
+   * @param onSuccess A callback that is called when the event is successfully deleted.
+   * @param onFailure A callback that is called when an error occurs while deleting the event.
    */
   fun deleteEvent(eventId: String, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
     repository.deleteEventById(
