@@ -97,25 +97,25 @@ fun AssociationProfileScreen(
     userViewModel: UserViewModel,
     eventViewModel: EventViewModel
 ) {
-    val association by associationViewModel.selectedAssociation.collectAsState()
-    val context = LocalContext.current
+  val association by associationViewModel.selectedAssociation.collectAsState()
+  val context = LocalContext.current
 
-    if (association == null) {
-        Log.e("AssociationProfileScreen", "Association not found.")
-        Toast.makeText(context, context.getString(R.string.association_toast_error), Toast.LENGTH_SHORT)
-            .show()
-        return
-    }
+  if (association == null) {
+    Log.e("AssociationProfileScreen", "Association not found.")
+    Toast.makeText(context, context.getString(R.string.association_toast_error), Toast.LENGTH_SHORT)
+        .show()
+    return
+  }
 
-    AssociationProfileScaffold(
-        navigationAction = navigationAction,
-        userViewModel = userViewModel,
-        eventViewModel = eventViewModel,
-        associationViewModel = associationViewModel,
-        onEdit = {
-            associationViewModel.selectAssociation(association!!.uid)
-            navigationAction.navigateTo(Screen.EDIT_ASSOCIATION)
-        })
+  AssociationProfileScaffold(
+      navigationAction = navigationAction,
+      userViewModel = userViewModel,
+      eventViewModel = eventViewModel,
+      associationViewModel = associationViewModel,
+      onEdit = {
+        associationViewModel.selectAssociation(association!!.uid)
+        navigationAction.navigateTo(Screen.EDIT_ASSOCIATION)
+      })
 }
 
 /**
@@ -139,74 +139,74 @@ fun AssociationProfileScaffold(
     onEdit: () -> Unit
 ) {
 
-    val associationState by associationViewModel.selectedAssociation.collectAsState()
-    val association = associationState!!
+  val associationState by associationViewModel.selectedAssociation.collectAsState()
+  val association = associationState!!
 
-    var showSheet by remember { mutableStateOf(false) }
+  var showSheet by remember { mutableStateOf(false) }
 
-    val context = LocalContext.current
-    testSnackbar = remember { SnackbarHostState() }
-    scope = rememberCoroutineScope()
-    Scaffold(
-        snackbarHost = {
-            SnackbarHost(
-                hostState = testSnackbar!!,
-                modifier = Modifier.testTag(AssociationProfileTestTags.SNACKBAR_HOST),
-                snackbar = {
-                    Snackbar {
-                        TextButton(
-                            onClick = { testSnackbar!!.currentSnackbarData?.dismiss() },
-                            modifier =
-                            Modifier.testTag(AssociationProfileTestTags.SNACKBAR_ACTION_BUTTON)) {
-                            Text(text = DEBUG_MESSAGE)
-                        }
+  val context = LocalContext.current
+  testSnackbar = remember { SnackbarHostState() }
+  scope = rememberCoroutineScope()
+  Scaffold(
+      snackbarHost = {
+        SnackbarHost(
+            hostState = testSnackbar!!,
+            modifier = Modifier.testTag(AssociationProfileTestTags.SNACKBAR_HOST),
+            snackbar = {
+              Snackbar {
+                TextButton(
+                    onClick = { testSnackbar!!.currentSnackbarData?.dismiss() },
+                    modifier =
+                        Modifier.testTag(AssociationProfileTestTags.SNACKBAR_ACTION_BUTTON)) {
+                      Text(text = DEBUG_MESSAGE)
                     }
-                })
-        },
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        text = association.name,
-                        modifier = Modifier.testTag(AssociationProfileTestTags.TITLE))
-                },
-                navigationIcon = {
-                    IconButton(
-                        onClick = { navigationAction.goBack() },
-                        modifier = Modifier.testTag(AssociationProfileTestTags.GO_BACK_BUTTON)) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
-                            contentDescription = context.getString(R.string.association_go_back))
+              }
+            })
+      },
+      topBar = {
+        TopAppBar(
+            title = {
+              Text(
+                  text = association.name,
+                  modifier = Modifier.testTag(AssociationProfileTestTags.TITLE))
+            },
+            navigationIcon = {
+              IconButton(
+                  onClick = { navigationAction.goBack() },
+                  modifier = Modifier.testTag(AssociationProfileTestTags.GO_BACK_BUTTON)) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
+                        contentDescription = context.getString(R.string.association_go_back))
+                  }
+            },
+            actions = {
+              Row {
+                IconButton(
+                    modifier = Modifier.testTag(AssociationProfileTestTags.SHARE_BUTTON),
+                    onClick = {
+                      scope!!.launch {
+                        testSnackbar!!.showSnackbar(
+                            message = DEBUG_MESSAGE, duration = SnackbarDuration.Short)
+                      }
+                    }) {
+                      Icon(
+                          Icons.Outlined.Share,
+                          contentDescription = context.getString(R.string.association_share))
                     }
-                },
-                actions = {
-                    Row {
-                        IconButton(
-                            modifier = Modifier.testTag(AssociationProfileTestTags.SHARE_BUTTON),
-                            onClick = {
-                                scope!!.launch {
-                                    testSnackbar!!.showSnackbar(
-                                        message = DEBUG_MESSAGE, duration = SnackbarDuration.Short)
-                                }
-                            }) {
-                            Icon(
-                                Icons.Outlined.Share,
-                                contentDescription = context.getString(R.string.association_share))
-                        }
-                    }
-                })
-        },
-        content = { padding ->
-            Surface(
-                modifier = Modifier.padding(padding),
-            ) {
-                AssociationProfileContent(
-                    navigationAction, userViewModel, eventViewModel, associationViewModel)
-            }
-        })
+              }
+            })
+      },
+      content = { padding ->
+        Surface(
+            modifier = Modifier.padding(padding),
+        ) {
+          AssociationProfileContent(
+              navigationAction, userViewModel, eventViewModel, associationViewModel)
+        }
+      })
 
-    AssociationProfileBottomSheet(
-        association, showSheet, onClose = { showSheet = false }, onEdit = onEdit)
+  AssociationProfileBottomSheet(
+      association, showSheet, onClose = { showSheet = false }, onEdit = onEdit)
 }
 
 /**
@@ -334,47 +334,47 @@ private fun AssociationProfileContent(
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun AssociationRecruitment(association: Association) {
-    val context = LocalContext.current
+  val context = LocalContext.current
 
-    Text(
-        text = context.getString(R.string.association_join) + " ${association.name} ?",
-        style = AppTypography.headlineMedium,
-        modifier = Modifier.testTag(AssociationProfileTestTags.RECRUITMENT_TITLE))
-    Text(
-        text = context.getString(R.string.association_help_us),
-        style = AppTypography.bodySmall,
-        modifier = Modifier.testTag(AssociationProfileTestTags.RECRUITMENT_DESCRIPTION))
-    FlowRow(
-        modifier = Modifier.testTag(AssociationProfileTestTags.RECRUITMENT_ROLES),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        OutlinedButton(
-            modifier = Modifier.testTag(AssociationProfileTestTags.DESIGNER_ROLES),
-            onClick = {
-                scope!!.launch {
-                    testSnackbar!!.showSnackbar(message = DEBUG_MESSAGE, duration = SnackbarDuration.Short)
-                }
-            },
-            enabled = true) {
-            Icon(
-                Icons.Filled.Add,
-                contentDescription = context.getString(R.string.association_recruitment))
-            Spacer(Modifier.width(2.dp))
-            Text("Graphic Designer")
+  Text(
+      text = context.getString(R.string.association_join) + " ${association.name} ?",
+      style = AppTypography.headlineMedium,
+      modifier = Modifier.testTag(AssociationProfileTestTags.RECRUITMENT_TITLE))
+  Text(
+      text = context.getString(R.string.association_help_us),
+      style = AppTypography.bodySmall,
+      modifier = Modifier.testTag(AssociationProfileTestTags.RECRUITMENT_DESCRIPTION))
+  FlowRow(
+      modifier = Modifier.testTag(AssociationProfileTestTags.RECRUITMENT_ROLES),
+      horizontalArrangement = Arrangement.spacedBy(8.dp),
+  ) {
+    OutlinedButton(
+        modifier = Modifier.testTag(AssociationProfileTestTags.DESIGNER_ROLES),
+        onClick = {
+          scope!!.launch {
+            testSnackbar!!.showSnackbar(message = DEBUG_MESSAGE, duration = SnackbarDuration.Short)
+          }
+        },
+        enabled = true) {
+          Icon(
+              Icons.Filled.Add,
+              contentDescription = context.getString(R.string.association_recruitment))
+          Spacer(Modifier.width(2.dp))
+          Text("Graphic Designer")
         }
-        OutlinedButton(
-            modifier = Modifier.testTag(AssociationProfileTestTags.TREASURER_ROLES),
-            onClick = {
-                scope!!.launch {
-                    testSnackbar!!.showSnackbar(message = DEBUG_MESSAGE, duration = SnackbarDuration.Short)
-                }
-            },
-            enabled = true) {
-            Icon(
-                Icons.Filled.Add,
-                contentDescription = context.getString(R.string.association_recruitment))
-            Spacer(Modifier.width(2.dp))
-            Text("Treasurer")
+    OutlinedButton(
+        modifier = Modifier.testTag(AssociationProfileTestTags.TREASURER_ROLES),
+        onClick = {
+          scope!!.launch {
+            testSnackbar!!.showSnackbar(message = DEBUG_MESSAGE, duration = SnackbarDuration.Short)
+          }
+        },
+        enabled = true) {
+          Icon(
+              Icons.Filled.Add,
+              contentDescription = context.getString(R.string.association_recruitment))
+          Spacer(Modifier.width(2.dp))
+          Text("Treasurer")
         }
   }
 }
