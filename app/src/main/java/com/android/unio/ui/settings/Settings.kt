@@ -9,6 +9,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Nightlight
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Smartphone
@@ -23,13 +24,18 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.AnnotatedString
 import com.android.unio.R
+import com.android.unio.model.authentication.AuthViewModel
 import com.android.unio.model.preferences.AppPreferences
 import com.android.unio.model.strings.test_tags.SettingsTestTags
+import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.navigation.NavigationAction
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
@@ -42,8 +48,14 @@ import me.zhanghai.compose.preference.switchPreference
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingsScreen(navigationAction: NavigationAction) {
+fun SettingsScreen(
+    navigationAction: NavigationAction,
+    authViewModel: AuthViewModel,
+    userViewModel: UserViewModel
+) {
   val context = LocalContext.current
+  val email = userViewModel.user.collectAsState().value!!.email
+  val onPasswordChange = { authViewModel.sendEmailResetPassword(email) }
 
   Scaffold(
       modifier = Modifier.testTag(SettingsTestTags.SCREEN),
@@ -59,7 +71,7 @@ fun SettingsScreen(navigationAction: NavigationAction) {
             },
             title = { Text(context.getString(R.string.settings_title)) })
       }) { padding ->
-        Surface(modifier = Modifier.padding(padding)) { SettingsContainer() }
+        Surface(modifier = Modifier.padding(padding)) { SettingsContainer(onPasswordChange) }
       }
 }
 
@@ -69,7 +81,7 @@ fun SettingsScreen(navigationAction: NavigationAction) {
  */
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun SettingsContainer() {
+fun SettingsContainer(onPasswordChange: () -> Unit) {
   val context = LocalContext.current
   val preferences by LocalPreferenceFlow.current.collectAsState()
 
@@ -89,6 +101,8 @@ fun SettingsContainer() {
   val language = preferences.get<String>(AppPreferences.LANGUAGE) ?: AppPreferences.Language.default
   val locale = Locale(language)
   Locale.setDefault(locale)
+
+  var passwordResetSummary: String by remember { mutableStateOf("") }
 
   val configuration = context.resources.configuration
   configuration.setLocale(locale)
@@ -168,6 +182,20 @@ fun SettingsContainer() {
                       Manifest.permission.ACCESS_FINE_LOCATION,
                       Manifest.permission.ACCESS_COARSE_LOCATION))
             }
+          })
+      preference(
+          modifier = Modifier.testTag("a"),
+          key = AppPreferences.RESET_PASSWORD,
+          title = { Text(context.getString(R.string.settings_reset_password)) },
+          icon = {
+            Icon(
+                imageVector = Icons.Default.Lock,
+                contentDescription = context.getString(R.string.settings_reset_password))
+          },
+          summary = { Text(passwordResetSummary) },
+          onClick = {
+            onPasswordChange()
+            passwordResetSummary = context.getString(R.string.settings_reset_password_sent)
           })
     }
   }
