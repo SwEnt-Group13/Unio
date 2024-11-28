@@ -271,7 +271,7 @@ fun EventCreationScreen(
                       endTimestamp != null &&
                       startTimestamp!! < endTimestamp!! &&
                       eventBannerUri.value != Uri.EMPTY &&
-                          selectedLocation != null,
+                      selectedLocation != null,
               onClick = {
                 val inputStream = context.contentResolver.openInputStream(eventBannerUri.value)!!
                 eventViewModel.addEvent(
