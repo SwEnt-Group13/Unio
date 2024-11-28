@@ -1,6 +1,5 @@
 package com.android.unio.components.event
 
-import android.util.Log
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
@@ -31,7 +30,6 @@ import com.google.firebase.auth.internal.zzac
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import io.mockk.MockKAnnotations
-import io.mockk.core.ValueClassSupport.boxedValue
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockkStatic
