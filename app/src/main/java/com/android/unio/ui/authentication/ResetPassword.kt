@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import com.android.unio.R
 import com.android.unio.model.authentication.AuthViewModel
 import com.android.unio.model.strings.test_tags.AccountDetailsTestTags
+import com.android.unio.model.strings.test_tags.ResetPasswordTestTags
 import com.android.unio.model.user.isValidEmail
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.theme.AppTypography
@@ -60,6 +61,7 @@ fun ResetPasswordScreen(
                         Toast.LENGTH_SHORT)
                         .show()
                 })
+            navigationAction.goBack()
         },
         onDismiss = { navigationAction.goBack() }
     )
@@ -76,6 +78,7 @@ fun ResetPasswordContent(
     val context = LocalContext.current
 
     Scaffold(
+        modifier = Modifier.testTag(ResetPasswordTestTags.SCREEN),
         topBar = {
             TopAppBar(
                 title = {},
@@ -111,26 +114,28 @@ fun ResetPasswordContent(
                 Modifier
                     .padding(4.dp)
                     .fillMaxWidth()
-                    .testTag(AccountDetailsTestTags.FIRST_NAME_TEXT_FIELD),
+                    .testTag(ResetPasswordTestTags.EMAIL_FIELD),
                 label = {
                     Text(text = context.getString(R.string.reset_password_email_place_holder),
                         style = AppTypography.bodySmall,
-                        modifier = Modifier.testTag(AccountDetailsTestTags.FIRST_NAME_TEXT))
+                        modifier = Modifier.testTag(ResetPasswordTestTags.EMAIL_TEXT))
                 },
                 isError = (invalidEmail),
                 supportingText = {
                     if (invalidEmail) {
                         Text(
                             context.getString(R.string.reset_password_invalid_email),
-                            modifier = Modifier.testTag(AccountDetailsTestTags.FIRST_NAME_ERROR_TEXT))
+                            modifier = Modifier.testTag(ResetPasswordTestTags.EMAIL_ERROR_TEXT))
                     }
                 },
                 onValueChange = { email = it },
                 value = email)
 
             Button(
+                modifier = Modifier.testTag(ResetPasswordTestTags.RESET_PASSWORD_BUTTON),
                 onClick = {
                     if (isValidEmail(email)){
+                        invalidEmail = false
                         onChangePassword(email)
                     }else{
                         invalidEmail = true
