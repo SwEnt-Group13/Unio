@@ -92,15 +92,21 @@
     <string name="account_details_content_description_remove_pfp">Supprimer la photo de profil</string>
 
     <!-- UserSettings Strings -->
-    <string name="user_settings_content_description_remove_social" translatable="false">Remove User Social</string>
-    <string name="user_settings_first_name" translatable="true">Modifier Prénom</string>
-    <string name="user_settings_last_name" translatable="true">Modifier Nom</string>
-    <string name="user_settings_bio" translatable="true">Modifier Biographie</string>
-    <string name="user_settings_edit_interests" translatable="true">Modifier vos centres d\'intérêts</string>
-    <string name="user_settings_edit_socials" translatable="true">Modifier vos réseaux sociaux</string>
-    <string name="user_settings_discard_changes" translatable="true">Annuler vos modifications</string>
-    <string name="user_settings_save_changes" translatable="true">Sauvegarder vos modifications</string>
-    <string name="user_settings_modified_successfully" translatable="true">Changements correctement modifié</string>
+    <string name="user_edition_content_description_remove_social" translatable="false">Remove User Social</string>
+    <string name="user_edition_first_name" translatable="true">Modifier Prénom</string>
+    <string name="user_edition_last_name" translatable="true">Modifier Nom</string>
+    <string name="user_edition_bio" translatable="true">Modifier Biographie</string>
+    <string name="user_edition_edit_interests" translatable="true">Modifier vos centres d\'intérêts</string>
+    <string name="user_edition_edit_socials" translatable="true">Modifier vos réseaux sociaux</string>
+    <string name="user_edition_discard_changes" translatable="true">Annuler vos modifications</string>
+    <string name="user_edition_save_changes" translatable="true">Sauvegarder vos modifications</string>
+    <string name="user_edition_modified_successfully" translatable="true">Changements correctement modifié</string>
+    <string name="user_edition_delete_user" translatable="true">Supprimer le compte</string>
+    <string name="user_edition_delete_user_confirmation" translatable="true">Toutes vos données seront supprimées, êtes-vous sûr de poursuivre ?</string>
+    <string name="user_edition_delete_user_confirm" translatable="true">Confirmer</string>
+    <string name="user_edition_delete_user_success" translatable="true">Votre compte a été supprimer</string>
+
+
 
 
 
