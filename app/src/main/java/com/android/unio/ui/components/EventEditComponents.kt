@@ -47,6 +47,7 @@ import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
@@ -125,6 +126,10 @@ fun DateAndTimePicker(
     modifier: Modifier,
     initialDate: Long?,
     initialTime: Long?,
+    dateFieldTestTag: String,
+    timeFieldTestTag: String,
+    datePickerTestTag: String,
+    timePickerTestTag: String,
     onTimestamp: (Timestamp) -> Unit
 ) {
   var isDatePickerVisible by remember { mutableStateOf(false) }
@@ -138,7 +143,7 @@ fun DateAndTimePicker(
   ) {
     OutlinedTextField(
         modifier =
-            Modifier.weight(1f).pointerInput(Unit) {
+            Modifier.testTag(dateFieldTestTag).weight(1f).pointerInput(Unit) {
               awaitEachGesture {
                 // Modifier.clickable doesn't work for text fields, so we use Modifier.pointerInput
                 // in the Initial pass to observe events before the text field consumes them
@@ -162,7 +167,7 @@ fun DateAndTimePicker(
     Spacer(modifier = Modifier.weight(0.05f))
     OutlinedTextField(
         modifier =
-            Modifier.weight(1f).pointerInput(Unit) {
+            Modifier.testTag(timeFieldTestTag).weight(1f).pointerInput(Unit) {
               awaitEachGesture {
                 // Modifier.clickable doesn't work for text fields, so we use Modifier.pointerInput
                 // in the Initial pass to observe events before the text field consumes them
@@ -187,6 +192,7 @@ fun DateAndTimePicker(
 
   if (isDatePickerVisible) {
     DatePickerModal(
+        modifier = Modifier.testTag(datePickerTestTag),
         onDateSelected = {
           selectedDate = it
           isDatePickerVisible = false
@@ -196,6 +202,7 @@ fun DateAndTimePicker(
 
   if (isTimePickerVisible) {
     TimePickerModal(
+        modifier = Modifier.testTag(timePickerTestTag),
         onTimeSelected = {
           selectedTime = it
           isTimePickerVisible = false
@@ -215,11 +222,16 @@ fun DateAndTimePicker(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DatePickerModal(onDateSelected: (Long?) -> Unit, onDismiss: () -> Unit) {
+fun DatePickerModal(
+    onDateSelected: (Long?) -> Unit,
+    onDismiss: () -> Unit,
+    modifier: Modifier = Modifier
+) {
   val datePickerState = rememberDatePickerState()
   val context = LocalContext.current
 
   DatePickerDialog(
+      modifier = modifier,
       onDismissRequest = onDismiss,
       confirmButton = {
         TextButton(
@@ -241,10 +253,11 @@ fun DatePickerModal(onDateSelected: (Long?) -> Unit, onDismiss: () -> Unit) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TimePickerModal(onTimeSelected: (Long?) -> Unit, onDismiss: () -> Unit) {
+fun TimePickerModal(onTimeSelected: (Long?) -> Unit, onDismiss: () -> Unit, modifier: Modifier) {
   val timePickerState = rememberTimePickerState(is24Hour = true)
 
   TimePickerDialog(
+      modifier = modifier,
       onDismiss = onDismiss,
       onConfirm = {
         onTimeSelected(
@@ -263,10 +276,12 @@ fun TimePickerModal(onTimeSelected: (Long?) -> Unit, onDismiss: () -> Unit) {
 fun TimePickerDialog(
     onDismiss: () -> Unit,
     onConfirm: () -> Unit,
+    modifier: Modifier,
     content: @Composable () -> Unit
 ) {
   val context = LocalContext.current
   AlertDialog(
+      modifier = modifier,
       onDismissRequest = onDismiss,
       dismissButton = {
         TextButton(onClick = { onDismiss() }) {
