@@ -203,6 +203,8 @@ class EventEditTests : TearDown() {
 
     composeTestRule.onNodeWithTag(EventEditTestTags.SAVE_BUTTON).performClick()
 
+    composeTestRule.waitForIdle()
+
     val result = eventSlot.captured
     assert(shouldBeTrue)
     assert(result.title != mockEvent.title)
