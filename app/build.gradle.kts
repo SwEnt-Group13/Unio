@@ -251,6 +251,8 @@ dependencies {
     implementation(libs.retrofit.gson.converter)
     testImplementation(libs.retrofit.mock)
     testImplementation(libs.mockwebserver)
+    androidTestImplementation(libs.mockwebserver)
+    androidTestImplementation(libs.retrofit.mock)
 
 
     // Testing Unit
