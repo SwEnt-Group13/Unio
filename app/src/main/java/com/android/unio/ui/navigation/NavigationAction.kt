@@ -142,6 +142,7 @@ object Screen {
       "User_Claim_Association_Presidential_Rights_Screen"
   const val EVENT_CREATION = "Event_Creation_Screen"
   const val EDIT_EVENT = "Edit_Event_Screen"
+    const val RESET_PASSWORD = "Reset_Password_Screen"
 
   /**
    * Replace the placeholders in the screen with the provided parameters.
