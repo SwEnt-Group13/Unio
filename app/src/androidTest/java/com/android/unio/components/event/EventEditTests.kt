@@ -4,6 +4,7 @@ import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextClearance
 import androidx.compose.ui.test.performTextReplacement
 import com.android.unio.TearDown
@@ -179,7 +180,7 @@ class EventEditTests : TearDown() {
       EventEditScreen(navigationAction, searchViewModel, associationViewModel, eventViewModel)
     }
 
-    composeTestRule.onNodeWithTag(EventEditTestTags.DELETE_BUTTON).performClick()
+    composeTestRule.onNodeWithTag(EventEditTestTags.DELETE_BUTTON).performScrollTo().performClick()
     composeTestRule.waitForIdle()
     assert(shouldBeTrue)
   }
@@ -201,7 +202,7 @@ class EventEditTests : TearDown() {
         .onNodeWithTag(EventEditTestTags.EVENT_TITLE)
         .performTextReplacement("New Sample Event")
 
-    composeTestRule.onNodeWithTag(EventEditTestTags.SAVE_BUTTON).performClick()
+    composeTestRule.onNodeWithTag(EventEditTestTags.SAVE_BUTTON).performScrollTo().performClick()
 
     composeTestRule.waitForIdle()
 
