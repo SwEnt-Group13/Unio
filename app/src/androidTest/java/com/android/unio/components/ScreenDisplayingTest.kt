@@ -190,7 +190,7 @@ class ScreenDisplayingTest : TearDown() {
 
   @Test
   fun testWelcomeDisplayed() {
-    composeTestRule.setContent { WelcomeScreen(userViewModel, authViewModel) }
+    composeTestRule.setContent { WelcomeScreen(navigationAction, userViewModel) }
     composeTestRule.onNodeWithTag(WelcomeTestTags.SCREEN).assertIsDisplayed()
   }
 
