@@ -161,7 +161,7 @@ fun DateAndTimePicker(
                 ?: "",
         readOnly = true,
         onValueChange = {},
-        trailingIcon = { Icon(Icons.Default.DateRange, contentDescription = "Select date") },
+        trailingIcon = { Icon(Icons.Default.DateRange, contentDescription = context.getString(R.string.event_edit_date_picker_desc)) },
         placeholder = { Text(context.getString(R.string.event_creation_placeholder_date_input)) },
         label = { Text(dateString) })
     Spacer(modifier = Modifier.weight(0.05f))
@@ -185,7 +185,7 @@ fun DateAndTimePicker(
                 ?: "",
         readOnly = true,
         onValueChange = {},
-        trailingIcon = { Icon(Icons.Default.AccessTime, contentDescription = "Select date") },
+        trailingIcon = { Icon(Icons.Default.AccessTime, contentDescription = context.getString(R.string.event_edit_time_picker_desc)) },
         placeholder = { Text(context.getString(R.string.event_creation_placeholder_time_input)) },
         label = { Text(timeString) })
   }

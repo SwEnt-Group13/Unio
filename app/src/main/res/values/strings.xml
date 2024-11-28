@@ -184,6 +184,10 @@
     <string name="event_edit_failed">Failed to edit event</string>
     <string name="event_edit_save_button">Save</string>
 
+    <!-- Event Edit Component Strings -->
+    <string name="event_edit_date_picker_desc" translatable="false">Select date</string>
+    <string name="event_edit_time_picker_desc" translatable="false">Select time</string>
+
     <!-- Associations Overlay Strings -->
     <string name="associations_overlay_coauthors_title" translatable="true">Coauthors</string>
     <string name="associations_overlay_coauthors_description" translatable="true">Select coauthors for your event</string>
