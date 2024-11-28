@@ -29,6 +29,14 @@ object EventCreationTestTags {
   const val END_TIME = "eventCreationEndTime"
   const val ERROR_TEXT1 = "eventCreationStartAfterEnd"
   const val ERROR_TEXT2 = "eventCreationStartEqualsEnd"
+  const val START_DATE_FIELD = "eventCreationOverlayStartDateField"
+  const val START_TIME_FIELD = "eventCreationOverlayStartTimeField"
+  const val START_DATE_PICKER = "eventCreationOverlayStartDatePicker"
+  const val START_TIME_PICKER = "eventCreationOverlayStartTimePicker"
+  const val END_DATE_FIELD = "eventCreationOverlayEndDateField"
+  const val END_TIME_FIELD = "eventCreationOverlayEndTimeField"
+  const val END_DATE_PICKER = "eventCreationOverlayEndDatePicker"
+  const val END_TIME_PICKER = "eventCreationOverlayEndTimePicker"
 }
 
 object EventCreationOverlayTestTags {
@@ -57,6 +65,14 @@ object EventEditTestTags {
   const val END_TIME = "eventEditEndTime"
   const val ERROR_TEXT1 = "eventEditStartAfterEnd"
   const val ERROR_TEXT2 = "eventEditStartEqualsEnd"
+  const val START_DATE_FIELD = "eventEditOverlayStartDateField"
+  const val START_TIME_FIELD = "eventEditOverlayStartTimeField"
+  const val START_DATE_PICKER = "eventEditOverlayStartDatePicker"
+  const val START_TIME_PICKER = "eventEditOverlayStartTimePicker"
+  const val END_DATE_FIELD = "eventEditOverlayEndDateField"
+  const val END_TIME_FIELD = "eventEditOverlayEndTimeField"
+  const val END_DATE_PICKER = "eventEditOverlayEndDatePicker"
+  const val END_TIME_PICKER = "eventEditOverlayEndTimePicker"
 }
 
 object EventDetailsTestTags {
