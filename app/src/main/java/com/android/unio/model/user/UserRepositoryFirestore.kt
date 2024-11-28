@@ -58,6 +58,13 @@ class UserRepositoryFirestore @Inject constructor(private val db: FirebaseFirest
         .performFirestoreOperation(onSuccess = { onSuccess() }, onFailure = onFailure)
   }
 
+    override fun deleteUser(user: User, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+        db.collection(USER_PATH).document(user.uid)
+            .delete()
+            .addOnSuccessListener { onSuccess() }
+            .addOnFailureListener { onFailure(it) }
+    }
+
   // Note: the following line is needed to add external methods to the companion object
   companion object
 }
