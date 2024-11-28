@@ -47,7 +47,6 @@ import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
@@ -55,7 +54,6 @@ import com.android.unio.R
 import com.android.unio.model.association.Association
 import com.android.unio.model.strings.FormatStrings.DAY_MONTH_YEAR_FORMAT
 import com.android.unio.model.strings.FormatStrings.HOUR_MINUTE_FORMAT
-import com.android.unio.model.strings.test_tags.EventCreationTestTags
 import com.google.firebase.Timestamp
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -86,7 +84,7 @@ fun AssociationChips(
 }
 
 @Composable
-fun BannerImagePicker(eventBannerUri: MutableState<Uri>) {
+fun BannerImagePicker(eventBannerUri: MutableState<Uri>, modifier: Modifier) {
   val context = LocalContext.current
 
   val pickMedia =
@@ -95,14 +93,9 @@ fun BannerImagePicker(eventBannerUri: MutableState<Uri>) {
           onResult = { uri: Uri? -> uri?.let { eventBannerUri.value = it } })
 
   Box(
-      modifier =
-          Modifier.size(390.dp, 100.dp)
-              .clip(RoundedCornerShape(4.dp))
-              .testTag(EventCreationTestTags.EVENT_IMAGE)
-              .clickable {
-                pickMedia.launch(
-                    PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
-              },
+      modifier.size(390.dp, 100.dp).clip(RoundedCornerShape(4.dp)).clickable {
+        pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+      },
       contentAlignment = Alignment.Center) {
         if (eventBannerUri.value != Uri.EMPTY) {
           Image(

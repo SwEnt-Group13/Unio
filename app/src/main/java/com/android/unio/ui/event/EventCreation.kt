@@ -112,7 +112,8 @@ fun EventCreationScreen(
               onValueChange = { shortDescription = it },
               label = { Text(context.getString(R.string.event_creation_short_description_label)) })
 
-          BannerImagePicker(eventBannerUri)
+          BannerImagePicker(
+              eventBannerUri, modifier = Modifier.testTag(EventCreationTestTags.EVENT_IMAGE))
 
           OutlinedButton(
               modifier = Modifier.fillMaxWidth().testTag(EventCreationTestTags.COAUTHORS),
