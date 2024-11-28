@@ -23,6 +23,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -49,13 +50,15 @@ import com.android.unio.model.user.isValidEmail
 import com.android.unio.model.user.isValidPassword
 import com.android.unio.model.user.signInOrCreateAccount
 import com.android.unio.model.utils.Utils.checkInternetConnection
+import com.android.unio.ui.navigation.NavigationAction
+import com.android.unio.ui.navigation.Screen
 import com.android.unio.ui.theme.AppTypography
 import com.google.firebase.Firebase
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.auth
 
 @Composable
-fun WelcomeScreen(userViewModel: UserViewModel) {
+fun WelcomeScreen(navigationAction: NavigationAction, userViewModel: UserViewModel) {
   val context = LocalContext.current
 
   var email by remember { mutableStateOf("") }
@@ -142,7 +145,15 @@ fun WelcomeScreen(userViewModel: UserViewModel) {
                       else PasswordVisualTransformation(),
               )
 
-              Spacer(modifier = Modifier.size(70.dp))
+              TextButton(
+                  onClick = { navigationAction.navigateTo(Screen.RESET_PASSWORD) },
+                  modifier = Modifier.testTag(WelcomeTestTags.FORGOT_PASSWORD)) {
+                    Text(
+                        text = context.getString(R.string.welcome_forgot_password),
+                        style = AppTypography.bodyMedium)
+                  }
+
+              Spacer(modifier = Modifier.size(62.dp))
 
               Button(
                   modifier = Modifier.testTag(WelcomeTestTags.BUTTON),
