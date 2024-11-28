@@ -1,4 +1,4 @@
-package com.android.unio.ui.notifications
+package com.android.unio.components.notification
 
 import android.app.NotificationManager
 import android.content.Context
