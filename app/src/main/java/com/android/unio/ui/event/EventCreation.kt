@@ -256,7 +256,11 @@ fun EventCreationScreen(
                           selectedLocation = location
                           showDropdown = false
                         },
-                        modifier = Modifier.padding(8.dp))
+                        modifier =
+                            Modifier.padding(8.dp)
+                                .testTag(
+                                    EventCreationTestTags.LOCATION_SUGGESTION_ITEM +
+                                        location.latitude))
                     Divider()
                   }
 
