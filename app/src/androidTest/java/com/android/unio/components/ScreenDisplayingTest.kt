@@ -12,6 +12,7 @@ import com.android.unio.mocks.event.MockEvent
 import com.android.unio.mocks.user.MockUser
 import com.android.unio.model.association.AssociationRepositoryFirestore
 import com.android.unio.model.association.AssociationViewModel
+import com.android.unio.model.authentication.AuthViewModel
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventRepositoryFirestore
 import com.android.unio.model.event.EventViewModel
@@ -83,6 +84,7 @@ class ScreenDisplayingTest : TearDown() {
 
   @MockK private lateinit var userRepository: UserRepositoryFirestore
   private lateinit var userViewModel: UserViewModel
+  private lateinit var authViewModel: AuthViewModel
 
   private lateinit var associationViewModel: AssociationViewModel
 
@@ -126,6 +128,7 @@ class ScreenDisplayingTest : TearDown() {
   fun setUp() {
     MockKAnnotations.init(this, relaxed = true)
     searchViewModel = spyk(SearchViewModel(searchRepository))
+    authViewModel = spyk(AuthViewModel(mock(), userRepository))
 
     hiltRule.inject()
 
@@ -190,7 +193,7 @@ class ScreenDisplayingTest : TearDown() {
 
   @Test
   fun testWelcomeDisplayed() {
-    composeTestRule.setContent { WelcomeScreen(userViewModel) }
+    composeTestRule.setContent { WelcomeScreen(navigationAction, userViewModel) }
     composeTestRule.onNodeWithTag(WelcomeTestTags.SCREEN).assertIsDisplayed()
   }
 
@@ -272,7 +275,9 @@ class ScreenDisplayingTest : TearDown() {
 
   @Test
   fun testSettingsDisplayed() {
-    composeTestRule.setContent { ProvidePreferenceLocals { SettingsScreen(navigationAction) } }
+    composeTestRule.setContent {
+      ProvidePreferenceLocals { SettingsScreen(navigationAction, authViewModel, userViewModel) }
+    }
     composeTestRule.onNodeWithTag(SettingsTestTags.SCREEN).assertIsDisplayed()
   }
 

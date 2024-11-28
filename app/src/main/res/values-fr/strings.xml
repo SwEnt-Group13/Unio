@@ -134,6 +134,7 @@
     <string name="welcome_toast_account_created">Compte créé avec succès</string>
     <string name="welcome_content_description_hide_password">Cacher le mot de passe</string>
     <string name="welcome_content_description_show_password">Montrer le mot de passe</string>
+    <string name="welcome_forgot_password">Oublié votre mot de passe ?</string>
 
     /**
     * package: event
@@ -247,6 +248,9 @@
     <string name="settings_location_content_description">Réglages de localisation</string>
     <string name="settings_language_title">Language</string>
     <string name="settings_language_content_description">Réglages de Langue</string>
+    <string name="settings_reset_password">Réinitialiser le mot de passe</string>
+    <string name="settings_reset_password_sent">L\'email de modification de mot de passe a bien été envoyé</string>
+    <string name="settings_reset_password_error">Echec de l\'envoi de l\'email de modification de mot de passe</string>
 
     /**
     * package: user
@@ -290,6 +294,9 @@
     /**
     * Other
     */
+
+    <!-- General Strings -->
+    <string name="no_internet_connection">Vous semblez être hors-ligne</string>
 
     <!-- EventListOverview Strings -->
     <string name="event_upcomingEvents">Évènements à venir</string>
@@ -341,6 +348,15 @@
     <string name="association_edit">Modifier l\'Association</string>
     <string name="association_recruitment">Recrutement</string>
     <string name="association_contact_member_profile_picture">Photo de profil du membre contactable</string>
+
+    <!-- Reset Password Strings -->
+    <string name="reset_password_success_toast">Un email a été envoyé à l\'adresse indiquée</string>
+    <string name="reset_password_error_toast">Echec de l\'envoi de l\'email de réinitialisation</string>
+    <string name="reset_password_text">Veuillez entrer un mail de récupération</string>
+    <string name="reset_password_email_place_holder">Le lien va être envoyé à cette addresse</string>
+    <string name="reset_password_button">Confirmer</string>
+    <string name="reset_password_invalid_email">Veuillez entrer un addresse email valide</string>
+
 
 </resources>
 

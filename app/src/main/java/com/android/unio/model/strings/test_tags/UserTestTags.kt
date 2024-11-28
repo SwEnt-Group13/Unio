@@ -12,6 +12,7 @@ object UserProfileTestTags {
   const val FOLLOWED_ASSOCIATIONS = "userProfileFollowedAssociations"
   const val EDITION = "userProfileEdit"
   const val SETTINGS = "userProfileSettings"
+  const val USER_SETTINGS = "userProfileUserSettings"
   const val SIGN_OUT = "userProfileSignOut"
   const val CLAIMING_BUTTON = "userClaimingButton"
 

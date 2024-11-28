@@ -66,6 +66,7 @@ import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.strings.test_tags.AssociationProfileTestTags
 import com.android.unio.model.user.User
 import com.android.unio.model.user.UserViewModel
+import com.android.unio.model.utils.Utils
 import com.android.unio.ui.event.EventCard
 import com.android.unio.ui.image.AsyncImageWrapper
 import com.android.unio.ui.navigation.NavigationAction
@@ -266,6 +267,7 @@ private fun AssociationProfileContent(
     eventViewModel: EventViewModel,
     associationViewModel: AssociationViewModel
 ) {
+  val context = LocalContext.current
   val association by associationViewModel.selectedAssociation.collectAsState()
   val user by userViewModel.user.collectAsState()
 
@@ -280,13 +282,21 @@ private fun AssociationProfileContent(
     mutableStateOf(user!!.followedAssociations.contains(association!!.uid))
   }
   var enableButton by remember { mutableStateOf(true) }
+  val isConnected = Utils.checkInternetConnection(context)
+
   val onFollow = {
-    enableButton = false
-    associationViewModel.updateFollow(association!!, user!!, isFollowed) {
-      userViewModel.refreshUser()
-      enableButton = true
+    if (isConnected) {
+      enableButton = false
+      associationViewModel.updateFollow(association!!, user!!, isFollowed) {
+        userViewModel.refreshUser()
+        enableButton = true
+      }
+      isFollowed = !isFollowed
+    } else {
+      Toast.makeText(
+              context, context.getString(R.string.no_internet_connection), Toast.LENGTH_SHORT)
+          .show()
     }
-    isFollowed = !isFollowed
   }
 
   val onMemberClick = { member: User ->
@@ -569,6 +579,7 @@ private fun AssociationHeader(
           style = AppTypography.headlineSmall,
           modifier =
               Modifier.padding(bottom = 14.dp).testTag(AssociationProfileTestTags.HEADER_MEMBERS))
+
       if (isFollowed) {
         OutlinedButton(
             enabled = enableButton,

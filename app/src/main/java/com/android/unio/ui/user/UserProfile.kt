@@ -328,7 +328,7 @@ fun UserProfileBottomSheet(
               Text(context.getString(R.string.user_profile_bottom_sheet_edit))
             }
         TextButton(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().testTag(UserProfileTestTags.USER_SETTINGS),
             onClick = {
               scope.launch {
                 sheetState.hide()

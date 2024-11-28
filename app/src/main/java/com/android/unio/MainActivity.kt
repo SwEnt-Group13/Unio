@@ -32,6 +32,7 @@ import com.android.unio.ui.association.AssociationProfileScreen
 import com.android.unio.ui.association.EditAssociationScreen
 import com.android.unio.ui.authentication.AccountDetailsScreen
 import com.android.unio.ui.authentication.EmailVerificationScreen
+import com.android.unio.ui.authentication.ResetPasswordScreen
 import com.android.unio.ui.authentication.WelcomeScreen
 import com.android.unio.ui.event.EventCreationScreen
 import com.android.unio.ui.event.EventEditScreen
@@ -104,13 +105,14 @@ fun UnioApp(imageRepository: ImageRepositoryFirebaseStorage) {
 
   NavHost(navController = navController, startDestination = Route.AUTH) {
     navigation(startDestination = Screen.WELCOME, route = Route.AUTH) {
-      composable(Screen.WELCOME) { WelcomeScreen(userViewModel) }
+      composable(Screen.WELCOME) { WelcomeScreen(navigationActions, userViewModel) }
       composable(Screen.EMAIL_VERIFICATION) {
         EmailVerificationScreen(navigationActions, userViewModel)
       }
       composable(Screen.ACCOUNT_DETAILS) {
         AccountDetailsScreen(navigationActions, userViewModel, imageRepository)
       }
+      composable(Screen.RESET_PASSWORD) { ResetPasswordScreen(navigationActions, authViewModel) }
     }
     navigation(startDestination = Screen.HOME, route = Route.HOME) {
       composable(Screen.HOME) {
@@ -163,7 +165,9 @@ fun UnioApp(imageRepository: ImageRepositoryFirebaseStorage) {
       composable(Screen.EDIT_PROFILE) {
         UserProfileEditionScreen(userViewModel, imageRepository, navigationActions)
       }
-      composable(Screen.SETTINGS) { SettingsScreen(navigationActions) }
+      composable(Screen.SETTINGS) {
+        SettingsScreen(navigationActions, authViewModel, userViewModel)
+      }
       composable(Screen.CLAIM_ASSOCIATION_RIGHTS) {
         UserClaimAssociationScreen(associationViewModel, navigationActions, searchViewModel)
       }
