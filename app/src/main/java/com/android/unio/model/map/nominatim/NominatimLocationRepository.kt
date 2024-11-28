@@ -8,9 +8,20 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
+/**
+ * Repository for searching locations using the Nominatim API.
+ *
+ * @param apiService The Nominatim API service.
+ */
 class NominatimLocationRepository @Inject constructor(private val apiService: NominatimApiService) :
     LocationRepository {
 
+  /**
+   * Searches for locations using the Nominatim API.
+   *
+   * @param query The search query.
+   * @return A flow of suggested locations.
+   */
   override fun search(query: String): Flow<List<Location>> = flow {
     try {
       val response = apiService.search(query)
@@ -32,7 +43,7 @@ class NominatimLocationRepository @Inject constructor(private val apiService: No
                 longitude = it.lon.toDouble(),
                 name = shortFormattedAddress)
           }
-      delay(1000)
+      delay(1000) // Simulate 1 second delay to respect the API rate limit
       emit(locations)
     } catch (e: Exception) {
       Log.e("NominatimRepository", "Error during search: ", e)
