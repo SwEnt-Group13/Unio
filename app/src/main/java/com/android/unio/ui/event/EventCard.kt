@@ -2,6 +2,7 @@ package com.android.unio.ui.event
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.os.Build
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -51,7 +52,6 @@ import com.android.unio.model.event.EventType
 import com.android.unio.model.event.EventUtils.addAlphaToColor
 import com.android.unio.model.event.EventUtils.formatTimestamp
 import com.android.unio.model.event.EventViewModel
-import com.android.unio.model.notification.NotificationReceiver
 import com.android.unio.model.notification.NotificationWorker
 import com.android.unio.model.notification.UnioNotification
 import com.android.unio.model.strings.FormatStrings.DAY_MONTH_FORMAT
@@ -97,15 +97,15 @@ fun EventCard(
   val scheduleReminderNotification = {
     NotificationWorker.schedule(
         context,
-        UnioNotification(title = event.title,
+        UnioNotification(
+            title = event.title,
             message = context.getString(R.string.notification_event_reminder),
             icon = R.drawable.other_icon,
             channelId = EVENT_REMINDER_CHANNEL_ID,
             channelName = EVENT_REMINDER_CHANNEL_ID,
             notificationId = event.uid.hashCode(),
             // Schedule a notification a few hours before the event's startDate
-            timeMillis =(event.startDate.seconds - 2 * SECONDS_IN_AN_HOUR) * SECONDS_IN_AN_HOUR))
-
+            timeMillis = (event.startDate.seconds - 2 * SECONDS_IN_AN_HOUR) * SECONDS_IN_AN_HOUR))
   }
 
   val permissionLauncher =
@@ -125,18 +125,21 @@ fun EventCard(
     if (isSaved) {
       user!!.savedEvents.remove(event.uid)
       if (isNotificationsEnabled) {
-          NotificationWorker.unschedule(context, event.uid.hashCode())
+        NotificationWorker.unschedule(context, event.uid.hashCode())
       }
       isSaved = false
     } else {
       if (event.startDate.seconds - Timestamp.now().seconds > 3 * SECONDS_IN_AN_HOUR) {
         if (!isNotificationsEnabled) {
-          permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+          if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            // this permission requires api 33
+            // We should check how to make notifications work with lower api versions
+            permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+          }
         } else {
           scheduleReminderNotification()
         }
       }
-
 
       user!!.savedEvents.add(event.uid)
     }

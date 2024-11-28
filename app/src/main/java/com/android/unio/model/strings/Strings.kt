@@ -39,4 +39,6 @@ object FormatStrings {
 
 object NotificationStrings {
   const val EVENT_REMINDER_CHANNEL_ID = "EventReminder"
+  const val NOTIFICATION_SCHEDULER_TYPE_CANCEL = "cancel"
+  const val NOTIFICATION_SCHEDULER_TYPE_CREATE = "EventReminder"
 }
