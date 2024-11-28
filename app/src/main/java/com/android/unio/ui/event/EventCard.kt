@@ -51,7 +51,9 @@ import com.android.unio.model.event.EventType
 import com.android.unio.model.event.EventUtils.addAlphaToColor
 import com.android.unio.model.event.EventUtils.formatTimestamp
 import com.android.unio.model.event.EventViewModel
+import com.android.unio.model.notification.NotificationReceiver
 import com.android.unio.model.notification.NotificationWorker
+import com.android.unio.model.notification.UnioNotification
 import com.android.unio.model.strings.FormatStrings.DAY_MONTH_FORMAT
 import com.android.unio.model.strings.FormatStrings.HOUR_MINUTE_FORMAT
 import com.android.unio.model.strings.NotificationStrings.EVENT_REMINDER_CHANNEL_ID
@@ -92,15 +94,18 @@ fun EventCard(
 
   var isSaved = user!!.savedEvents.contains(event.uid)
 
-  val scheduleNotification = {
+  val scheduleReminderNotification = {
     NotificationWorker.schedule(
         context,
-        title = event.title,
-        message = context.getString(R.string.notification_event_reminder),
-        icon = R.drawable.other_icon,
-        channelId = EVENT_REMINDER_CHANNEL_ID,
-        notificationId = event.title.hashCode(),
-        timeMillis = (event.startDate.seconds - 2 * SECONDS_IN_AN_HOUR) * SECONDS_IN_AN_HOUR)
+        UnioNotification(title = event.title,
+            message = context.getString(R.string.notification_event_reminder),
+            icon = R.drawable.other_icon,
+            channelId = EVENT_REMINDER_CHANNEL_ID,
+            channelName = EVENT_REMINDER_CHANNEL_ID,
+            notificationId = event.uid.hashCode(),
+            // Schedule a notification a few hours before the event's startDate
+            timeMillis =(event.startDate.seconds - 2 * SECONDS_IN_AN_HOUR) * SECONDS_IN_AN_HOUR))
+
   }
 
   val permissionLauncher =
@@ -108,7 +113,7 @@ fun EventCard(
         when {
           permission -> {
             isNotificationsEnabled = true
-            scheduleNotification()
+            scheduleReminderNotification()
           }
           else -> {
             isNotificationsEnabled = false
@@ -119,17 +124,19 @@ fun EventCard(
   val onClickSaveButton = {
     if (isSaved) {
       user!!.savedEvents.remove(event.uid)
-      // TODO : Unschedule notification.
+      if (isNotificationsEnabled) {
+          NotificationWorker.unschedule(context, event.uid.hashCode())
+      }
       isSaved = false
     } else {
       if (event.startDate.seconds - Timestamp.now().seconds > 3 * SECONDS_IN_AN_HOUR) {
         if (!isNotificationsEnabled) {
           permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
         } else {
-          scheduleNotification()
+          scheduleReminderNotification()
         }
       }
-      // Schedule a notification a few hours before the event's startDate
+
 
       user!!.savedEvents.add(event.uid)
     }

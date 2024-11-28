@@ -78,7 +78,7 @@ class EventCardTest : TearDown() {
     mockkObject(NotificationWorker.Companion)
     context = InstrumentationRegistry.getInstrumentation().targetContext
     val user = MockUser.createMockUser(followedAssociations = associations, savedEvents = listOf())
-    every { NotificationWorker.schedule(any(), any(), any(), any(), any(), any(), any()) } just runs
+    every { NotificationWorker.schedule(any(), any()) } just runs
     eventViewModel = EventViewModel(eventRepository, imageRepository)
     userViewModel = UserViewModel(userRepository)
     every { userRepository.updateUser(user, any(), any()) } answers
@@ -251,7 +251,7 @@ class EventCardTest : TearDown() {
     setEventScreen(event)
     composeTestRule.onNodeWithTag(EventCardTestTags.EVENT_SAVE_BUTTON).assertExists().performClick()
     Thread.sleep(500)
-    verify { NotificationWorker.schedule(any(), any(), any(), any(), any(), any(), any()) }
+    verify { NotificationWorker.schedule(any(), any()) }
   }
 
   @After

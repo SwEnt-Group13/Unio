@@ -11,13 +11,13 @@ import com.android.unio.model.event.EventRepositoryFirestore
 import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.notification.NotificationWorker
+import com.android.unio.model.notification.UnioNotification
 import com.android.unio.model.search.SearchRepository
 import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.home.HomeScreen
 import com.android.unio.ui.navigation.NavigationAction
-import com.google.firebase.Timestamp
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
@@ -31,76 +31,99 @@ import org.junit.Rule
 import org.junit.Test
 
 class NotificationTest : TearDown() {
-  @get:Rule val composeTestRule = createComposeRule()
-  @get:Rule
-  val permissionRule = GrantPermissionRule.grant(android.Manifest.permission.POST_NOTIFICATIONS)
+    @get:Rule
+    val composeTestRule = createComposeRule()
 
-  @MockK private lateinit var navigationAction: NavigationAction
+    @get:Rule
+    val permissionRule = GrantPermissionRule.grant(android.Manifest.permission.POST_NOTIFICATIONS)
 
-  private lateinit var userViewModel: UserViewModel
+    @MockK
+    private lateinit var navigationAction: NavigationAction
 
-  // Mock event repository to provide test data.
-  @MockK private lateinit var eventRepository: EventRepositoryFirestore
-  @MockK(relaxed = true) private lateinit var searchRepository: SearchRepository
-  @MockK private lateinit var imageRepository: ImageRepositoryFirebaseStorage
-  @MockK private lateinit var userRepository: UserRepositoryFirestore
-  private lateinit var eventViewModel: EventViewModel
-  private lateinit var searchViewModel: SearchViewModel
-  private lateinit var context: Context
-  private val mockNotificationValues =
-      mapOf(
-          "id" to 0,
-          "title" to "my notification title",
-          "description" to "super duper event, come it will be nice :)",
-          "channelId" to "1234",
-          "timeMillis" to 5.toLong(), // short time so test can run fast
-          "icon" to R.drawable.other_icon)
+    private lateinit var userViewModel: UserViewModel
 
-  private val timerNotif: Long = 5000
+    // Mock event repository to provide test data.
+    @MockK
+    private lateinit var eventRepository: EventRepositoryFirestore
 
-  @Before
-  fun setUp() {
-    MockKAnnotations.init(this)
-    every { eventRepository.init(any()) } just runs
-    context = InstrumentationRegistry.getInstrumentation().targetContext
-    searchViewModel = spyk(SearchViewModel(searchRepository))
-    eventViewModel = EventViewModel(eventRepository, imageRepository)
-    userViewModel = spyk(UserViewModel(userRepository))
+    @MockK(relaxed = true)
+    private lateinit var searchRepository: SearchRepository
 
-    composeTestRule.setContent {
-      HomeScreen(navigationAction, eventViewModel, userViewModel, searchViewModel)
+    @MockK
+    private lateinit var imageRepository: ImageRepositoryFirebaseStorage
+
+    @MockK
+    private lateinit var userRepository: UserRepositoryFirestore
+    private lateinit var eventViewModel: EventViewModel
+    private lateinit var searchViewModel: SearchViewModel
+    private lateinit var context: Context
+    private val timerNotif: Long = 5000 // short time so test doesn't take too long
+    private val mockNotification = UnioNotification(
+        "my notification title", "super duper event, come it will be nice :)",
+        R.drawable.other_icon, "1234", "anonymous",0, System.currentTimeMillis() + timerNotif
+    )
+
+
+    @Before
+    fun setUp() {
+        MockKAnnotations.init(this)
+        every { eventRepository.init(any()) } just runs
+        every { userRepository.init(any()) } just runs
+        context = InstrumentationRegistry.getInstrumentation().targetContext
+        searchViewModel = spyk(SearchViewModel(searchRepository))
+        eventViewModel = EventViewModel(eventRepository, imageRepository)
+        userViewModel = spyk(UserViewModel(userRepository))
+
+
     }
-  }
 
-  @Test
-  fun notificationIsSentTest() {
-    val startTimer = Timestamp.now()
-    NotificationWorker.schedule(
-        context,
-        mockNotificationValues["title"]!! as String,
-        mockNotificationValues["description"]!! as String,
-        mockNotificationValues["icon"]!! as Int,
-        mockNotificationValues["channelId"]!! as String,
-        mockNotificationValues["id"]!! as Int,
-        mockNotificationValues["timeMillis"]!! as Long)
-    Thread.sleep(timerNotif + 500)
-    val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-    with(manager.activeNotifications.first()) {
-      assertEquals(mockNotificationValues["id"]!!, this.id)
-      assertEquals(
-          mockNotificationValues["title"]!!, this.notification.extras.getString("android.title"))
-      assertEquals(
-          mockNotificationValues["description"]!!,
-          this.notification.extras.getString("android.text"))
+    @Test
+    fun notificationIsSentTest() {
+        composeTestRule.setContent {
+            HomeScreen(navigationAction, eventViewModel, userViewModel, searchViewModel)
+        }
+        NotificationWorker.schedule(
+            context,
+            mockNotification
+        )
 
-      assertEquals(mockNotificationValues["icon"]!!, this.notification.smallIcon.resId)
+        Thread.sleep(timerNotif + 500)
+        val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        with(manager.activeNotifications.first()) {
+            assertEquals(mockNotification.notificationId, this.id)
+            assertEquals(
+                mockNotification.title, this.notification.extras.getString("android.title")
+            )
+            assertEquals(
+                mockNotification.message,
+                this.notification.extras.getString("android.text")
+            )
+
+            assertEquals(mockNotification.icon, this.notification.smallIcon.resId)
+        }
+        manager.cancelAll()
     }
-  }
 
-  @After
-  override fun tearDown() {
-    super.tearDown()
-    val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-    manager.cancelAll()
-  }
+    @Test
+    fun notificationScheduledThenCanceled() {
+        composeTestRule.setContent {
+            HomeScreen(navigationAction, eventViewModel, userViewModel, searchViewModel)
+        }
+        NotificationWorker.schedule(
+            context,
+            mockNotification
+        )
+        val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        Thread.sleep(timerNotif / 2)
+        NotificationWorker.unschedule(context, mockNotification.notificationId)
+        Thread.sleep(timerNotif / 2 + 500)
+        assert(manager.activeNotifications.isEmpty())
+    }
+
+    @After
+    override fun tearDown() {
+        super.tearDown()
+        val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        manager.cancelAll()
+    }
 }
