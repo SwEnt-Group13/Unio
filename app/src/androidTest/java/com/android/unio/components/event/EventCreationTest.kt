@@ -1,8 +1,11 @@
 package com.android.unio.components.event
 
+import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import com.android.unio.TearDown
 import com.android.unio.assertDisplayComponentInScroll
 import com.android.unio.mocks.association.MockAssociation
@@ -134,6 +137,38 @@ class EventCreationTest : TearDown() {
     composeTestRule
         .onNodeWithTag(EventCreationTestTags.TAGGED_ASSOCIATIONS)
         .assertDisplayComponentInScroll()
+
+    composeTestRule
+        .onNodeWithTag(EventCreationTestTags.START_DATE_FIELD)
+        .performScrollTo()
+        .assertIsDisplayed()
+        .performClick()
+    composeTestRule.onNodeWithTag(EventCreationTestTags.START_DATE_PICKER).assertIsDisplayed()
+    composeTestRule.onNodeWithText("Cancel").performClick()
+
+    composeTestRule
+        .onNodeWithTag(EventCreationTestTags.START_TIME_FIELD)
+        .performScrollTo()
+        .assertIsDisplayed()
+        .performClick()
+    composeTestRule.onNodeWithTag(EventCreationTestTags.START_TIME_PICKER).assertIsDisplayed()
+    composeTestRule.onNodeWithText("Cancel").performClick()
+
+    composeTestRule
+        .onNodeWithTag(EventCreationTestTags.END_DATE_FIELD)
+        .performScrollTo()
+        .assertIsDisplayed()
+        .performClick()
+    composeTestRule.onNodeWithTag(EventCreationTestTags.END_DATE_PICKER).assertIsDisplayed()
+    composeTestRule.onNodeWithText("Cancel").performClick()
+
+    composeTestRule
+        .onNodeWithTag(EventCreationTestTags.END_TIME_FIELD)
+        .performScrollTo()
+        .assertIsDisplayed()
+        .performClick()
+    composeTestRule.onNodeWithTag(EventCreationTestTags.END_TIME_PICKER).assertIsDisplayed()
+    composeTestRule.onNodeWithText("Cancel").performClick()
 
     composeTestRule.onNodeWithTag(EventCreationTestTags.TAGGED_ASSOCIATIONS).performClick()
     composeTestRule.waitForIdle()
