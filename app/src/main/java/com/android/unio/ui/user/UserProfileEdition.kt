@@ -19,6 +19,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -43,11 +45,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.core.net.toUri
 import com.android.unio.R
+import com.android.unio.model.authentication.AuthViewModel
 import com.android.unio.model.image.ImageRepository
 import com.android.unio.model.strings.StoragePathsStrings
 import com.android.unio.model.strings.test_tags.InterestsOverlayTestTags
@@ -61,13 +65,14 @@ import com.android.unio.model.user.UserViewModel
 import com.android.unio.model.user.checkImageUri
 import com.android.unio.model.user.checkNewUser
 import com.android.unio.ui.authentication.overlay.InterestOverlay
-import com.android.unio.ui.authentication.overlay.InterestsOverlayInterestRow
 import com.android.unio.ui.authentication.overlay.SocialOverlay
 import com.android.unio.ui.components.InterestInputChip
 import com.android.unio.ui.components.ProfilePicturePicker
 import com.android.unio.ui.components.SocialInputChip
 import com.android.unio.ui.navigation.NavigationAction
+import com.android.unio.ui.navigation.Screen
 import com.android.unio.ui.theme.AppTypography
+import com.android.unio.ui.theme.errorContainerDarkMediumContrast
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -75,6 +80,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 @Composable
 fun UserProfileEditionScreen(
     userViewModel: UserViewModel,
+    authViewModel: AuthViewModel,
     imageRepository: ImageRepository,
     navigationAction: NavigationAction
 ) {
@@ -117,12 +123,27 @@ fun UserProfileEditionScreen(
             onSuccess = {
               Toast.makeText(
                       context,
-                      context.getString(R.string.user_settings_modified_successfully),
+                      context.getString(R.string.user_edition_modified_successfully),
                       Toast.LENGTH_SHORT)
                   .show()
               navigationAction.goBack()
             })
-      })
+      },
+      onDeleteUser = { uid ->
+          Log.d("Text9000", uid)
+          authViewModel.deleteAccount(
+              onSuccess = {
+                  Toast.makeText(
+                      context,
+                      context.getString(R.string.user_edition_delete_user_success),
+                      Toast.LENGTH_SHORT)
+                  .show()},
+              onFailure = {exception -> Log.e("UserDeletion", "Failed to delete user in auth: $exception" )}
+          )
+          userViewModel.deleteUserDocument(uid)
+          navigationAction.navigateTo(Screen.WELCOME)
+      }
+  )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -132,6 +153,7 @@ fun UserProfileEditionScreenContent(
     onDiscardChanges: () -> Unit,
     onModifyUser: (MutableState<Uri>, (String) -> Unit) -> Unit,
     onUploadUser: (User) -> Unit,
+    onDeleteUser: (String) -> Unit
 ) {
 
   val context = LocalContext.current
@@ -194,7 +216,7 @@ fun UserProfileEditionScreenContent(
         TopAppBar(
             title = {
               Text(
-                  context.getString(R.string.user_settings_discard_changes),
+                  context.getString(R.string.user_edition_discard_changes),
                   modifier = Modifier.testTag(UserEditionTestTags.DISCARD_TEXT))
             },
             navigationIcon = {
@@ -238,13 +260,20 @@ fun UserProfileEditionScreenContent(
           Button(
               onClick = { onModifyUser(profilePictureUri, createUser) },
               modifier = Modifier.testTag(UserEditionTestTags.SAVE_BUTTON)) {
-                Text(context.getString(R.string.user_settings_save_changes))
+                Text(context.getString(R.string.user_edition_save_changes))
               }
 
             Button(
                 onClick = {showDeleteUserPrompt = true},
-                modifier = Modifier.testTag("")) {
-                Text("Delete User")
+                modifier = Modifier
+                    .testTag("")
+                    .padding(10.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = errorContainerDarkMediumContrast
+                ),
+
+            ) {
+                Text(context.getString(R.string.user_edition_delete_user))
             }
         }
 
@@ -271,7 +300,7 @@ fun UserProfileEditionScreenContent(
       if(showDeleteUserPrompt){
           UserDeletePrompt(
               onDismiss = { showDeleteUserPrompt = false},
-              onConfirmDelete = {})
+              onConfirmDelete = { onDeleteUser(user.uid) })
       }
   }
 }
@@ -296,7 +325,7 @@ private fun EditUserTextFields(
           .testTag(UserEditionTestTags.FIRST_NAME_TEXT_FIELD),
       label = {
         Text(
-            context.getString(R.string.user_settings_first_name),
+            context.getString(R.string.user_edition_first_name),
             modifier = Modifier.testTag(UserEditionTestTags.FIRST_NAME_TEXT))
       },
       isError = (isFirstNameError),
@@ -316,7 +345,7 @@ private fun EditUserTextFields(
           .testTag(UserEditionTestTags.LAST_NAME_TEXT_FIELD),
       label = {
         Text(
-            context.getString(R.string.user_settings_last_name),
+            context.getString(R.string.user_edition_last_name),
             modifier = Modifier.testTag(UserEditionTestTags.LAST_NAME_TEXT))
       },
       isError = (isLastNameError),
@@ -339,7 +368,7 @@ private fun EditUserTextFields(
           .testTag(UserEditionTestTags.BIOGRAPHY_TEXT_FIELD),
       label = {
         Text(
-            context.getString(R.string.user_settings_bio),
+            context.getString(R.string.user_edition_bio),
             modifier = Modifier.testTag(UserEditionTestTags.BIOGRAPHY_TEXT))
       },
       onValueChange = onBioChange,
@@ -365,7 +394,7 @@ private fun InterestButtonAndFlowRow(
             Icons.Default.Add,
             contentDescription =
                 context.getString(R.string.account_details_content_description_add))
-        Text(context.getString(R.string.user_settings_edit_interests))
+        Text(context.getString(R.string.user_edition_edit_interests))
       }
   FlowRow {
     interests.forEach { pair ->
@@ -395,7 +424,7 @@ private fun SocialButtonAndFlowRow(
             Icons.Default.Add,
             contentDescription =
                 context.getString(R.string.account_details_content_description_close))
-        Text(context.getString(R.string.user_settings_edit_socials))
+        Text(context.getString(R.string.user_edition_edit_socials))
       }
 
   FlowRow(modifier = Modifier
@@ -417,6 +446,7 @@ fun UserDeletePrompt(
     onDismiss: () -> Unit,
     onConfirmDelete: () -> Unit,
 ) {
+    val context = LocalContext.current
 
     Dialog(
         onDismissRequest = onDismiss,
@@ -429,20 +459,25 @@ fun UserDeletePrompt(
             Modifier
                 .fillMaxWidth()
                 .padding(20.dp)
-                .testTag(InterestsOverlayTestTags.CARD))
+                .testTag(""))
         {
+            Column(
+                modifier = Modifier.padding(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.SpaceBetween
+            )
+            {
+                Text(text = context.getString(R.string.user_edition_delete_user_confirmation),
+                    textAlign = TextAlign.Center)
 
+                Button(
+                    onClick = onConfirmDelete,
+                    colors = ButtonDefaults.buttonColors(containerColor = errorContainerDarkMediumContrast)
+                ){
+                    Text(context.getString(R.string.user_edition_delete_user_confirm))
+                }
+            }
 
-
-//            Column(
-//                modifier =
-//                Modifier.fillMaxWidth()
-//                    .padding(15.dp)
-//                    .sizeIn(maxHeight = 400.dp)
-//                    .testTag(InterestsOverlayTestTags.COLUMN),
-//                verticalArrangement = Arrangement.SpaceBetween) {
-//
-//            }
         }
     }
 }
