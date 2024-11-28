@@ -5,6 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.android.unio.model.map.Location
 import com.android.unio.model.map.LocationRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import javax.inject.Inject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -19,7 +21,10 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class NominatimLocationSearchViewModel
 @Inject
-constructor(private val repository: LocationRepository) : ViewModel() {
+constructor(
+  private val repository: LocationRepository,
+  private val dispatcher: CoroutineDispatcher
+) : ViewModel() {
 
   /** Query for searching locations. */
   private val _query = MutableStateFlow("")
@@ -42,7 +47,7 @@ constructor(private val repository: LocationRepository) : ViewModel() {
    */
   @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
   private fun collectQuery() {
-    viewModelScope.launch {
+    viewModelScope.launch(dispatcher) {
       _query
           .debounce(1000)
           .filter { it.isNotEmpty() }
