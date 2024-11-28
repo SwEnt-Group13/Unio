@@ -138,7 +138,7 @@
     <string name="welcome_toast_account_created">Account created successfully</string>
     <string name="welcome_content_description_hide_password">Hide password</string>
     <string name="welcome_content_description_show_password">Show password</string>
-    <string name="welcome_forgot_password">Reset your password</string>
+    <string name="welcome_forgot_password">Forgot your password ?</string>
 
     /**
     * package: event

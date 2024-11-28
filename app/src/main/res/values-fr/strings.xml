@@ -134,7 +134,7 @@
     <string name="welcome_toast_account_created">Compte créé avec succès</string>
     <string name="welcome_content_description_hide_password">Cacher le mot de passe</string>
     <string name="welcome_content_description_show_password">Montrer le mot de passe</string>
-    <string name="welcome_forgot_password">Réinitialiser le mot de passe</string>
+    <string name="welcome_forgot_password">Oublié votre mot de passe ?</string>
 
     /**
     * package: event
