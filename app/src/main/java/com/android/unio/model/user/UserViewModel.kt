@@ -104,6 +104,15 @@ class UserViewModel @Inject constructor(private val userRepository: UserReposito
         onFailure = { Log.e("UserViewModel", "Failed to update user", it) })
   }
 
+  fun deleteUserDocument(userUid: String) {
+    userRepository.deleteUser(userUid,
+      onSuccess = {},
+      onFailure = { exception ->
+        Log.e("UserDeletionFirestore", "Failed to delete user in firestore: $exception")
+      }
+    )
+  }
+
   fun updateUserDebounced(user: User, interval: Long = debounceInterval) {
     updateJob?.cancel()
     updateJob =

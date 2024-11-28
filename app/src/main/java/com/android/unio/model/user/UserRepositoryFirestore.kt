@@ -58,8 +58,8 @@ class UserRepositoryFirestore @Inject constructor(private val db: FirebaseFirest
         .performFirestoreOperation(onSuccess = { onSuccess() }, onFailure = onFailure)
   }
 
-    override fun deleteUser(user: User, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
-        db.collection(USER_PATH).document(user.uid)
+    override fun deleteUser(userId: String, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+        db.collection(USER_PATH).document(userId)
             .delete()
             .addOnSuccessListener { onSuccess() }
             .addOnFailureListener { onFailure(it) }
