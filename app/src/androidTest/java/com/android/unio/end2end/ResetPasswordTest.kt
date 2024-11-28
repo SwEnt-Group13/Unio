@@ -101,7 +101,6 @@ class ResetPasswordTest : EndToEndTest() {
 
     simulateResetPassword(LebronJames.NEW_PASSWORD)
 
-
     composeTestRule.waitUntil(10000) {
       composeTestRule.onNodeWithTag(WelcomeTestTags.SCREEN).isDisplayed()
     }
