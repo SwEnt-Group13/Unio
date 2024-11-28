@@ -9,6 +9,7 @@ interface NominatimApiService {
   @GET("search")
   suspend fun search(
       @Query("q") query: String,
-      @Query("format") format: String = "json"
+      @Query("format") format: String = "json",
+      @Query("addressdetails") addressdetails: Int = 1
   ): List<NominatimLocationResponse>
 }
