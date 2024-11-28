@@ -270,7 +270,8 @@ fun EventCreationScreen(
                       startTimestamp != null &&
                       endTimestamp != null &&
                       startTimestamp!! < endTimestamp!! &&
-                      eventBannerUri.value != Uri.EMPTY,
+                      eventBannerUri.value != Uri.EMPTY &&
+                          selectedLocation != null,
               onClick = {
                 val inputStream = context.contentResolver.openInputStream(eventBannerUri.value)!!
                 eventViewModel.addEvent(
@@ -294,7 +295,7 @@ fun EventCreationScreen(
                         price = 0.0,
                         startDate = startTimestamp!!,
                         endDate = endTimestamp!!,
-                        location = Location(),
+                        location = selectedLocation!!,
                     ),
                     onSuccess = { navigationAction.goBack() },
                     onFailure = {
