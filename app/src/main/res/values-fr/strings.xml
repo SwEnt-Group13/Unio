@@ -135,8 +135,6 @@
     <string name="welcome_content_description_hide_password">Cacher le mot de passe</string>
     <string name="welcome_content_description_show_password">Montrer le mot de passe</string>
     <string name="welcome_forgot_password">Réinitialiser le mot de passe</string>
-    <string name="welcome_toast_reset_password">Un email a été envoyé à l\'adresse indiquée</string>
-    <string name="welcome_toast_reset_password_error">Echec de l\'envoi de l\'email de réinitialisation</string>
 
     /**
     * package: event
@@ -344,6 +342,15 @@
     <string name="association_edit">Modifier l\'Association</string>
     <string name="association_recruitment">Recrutement</string>
     <string name="association_contact_member_profile_picture">Photo de profil du membre contactable</string>
+
+    <!-- Reset Password Strings -->
+    <string name="reset_password_success_toast">Un email a été envoyé à l\'adresse indiquée</string>
+    <string name="reset_password_error_toast">Echec de l\'envoi de l\'email de réinitialisation</string>
+    <string name="reset_password_text">Veuillez entrer un mail de récupération</string>
+    <string name="reset_password_email_place_holder">Le lien va être envoyé à cette addresse</string>
+    <string name="reset_password_button">Confirmer</string>
+    <string name="reset_password_invalid_email">Veuillez entrer un addresse email valide</string>
+
 
 </resources>
 
