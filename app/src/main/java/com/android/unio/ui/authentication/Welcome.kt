@@ -149,31 +149,6 @@ fun WelcomeScreen(navigationAction: NavigationAction ,userViewModel: UserViewMod
               TextButton(
                   onClick = {
                       navigationAction.navigateTo(Screen.RESET_PASSWORD)
-
-//                    if (!validEmail) {
-//                      Toast.makeText(
-//                              context,
-//                              context.getString(R.string.welcome_toast_enter_valid_email),
-//                              Toast.LENGTH_SHORT)
-//                          .show()
-//                    } else {
-//                      authViewModel.sendEmailResetPassword(
-//                          email,
-//                          {
-//                            Toast.makeText(
-//                                    context,
-//                                    context.getString(R.string.welcome_toast_reset_password),
-//                                    Toast.LENGTH_SHORT)
-//                                .show()
-//                          },
-//                          {
-//                            Toast.makeText(
-//                                    context,
-//                                    context.getString(R.string.welcome_toast_reset_password_error),
-//                                    Toast.LENGTH_SHORT)
-//                                .show()
-//                          })
-//                    }
                   },
                   modifier = Modifier.testTag(WelcomeTestTags.FORGOT_PASSWORD)) {
                     Text(

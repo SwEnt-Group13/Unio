@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import com.android.unio.R
 import com.android.unio.model.authentication.AuthViewModel
 import com.android.unio.model.strings.test_tags.AccountDetailsTestTags
+import com.android.unio.model.user.isValidEmail
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.theme.AppTypography
 
@@ -43,16 +44,25 @@ fun ResetPasswordScreen(
 
     ResetPasswordContent(
         onChangePassword = { email ->
-                authViewModel.sendEmailResetPassword(email,
-                    onSuccess = {},
-                    onFailure = {
-                        Toast.makeText(context, it.message, Toast.LENGTH_SHORT).show()
-                    })
-            },
-        onDismiss = { navigationAction.goBack()
-        }
+            authViewModel.sendEmailResetPassword(
+                email,
+                onSuccess =  {
+                    Toast.makeText(
+                        context,
+                        context.getString(R.string.reset_password_success_toast),
+                        Toast.LENGTH_SHORT)
+                        .show()
+                },
+                onFailure =  {
+                    Toast.makeText(
+                        context,
+                        context.getString(R.string.reset_password_error_toast),
+                        Toast.LENGTH_SHORT)
+                        .show()
+                })
+        },
+        onDismiss = { navigationAction.goBack() }
     )
-
 }
 
 
@@ -82,6 +92,7 @@ fun ResetPasswordContent(
         }
     ) { padding ->
         var email: String by remember { mutableStateOf("") }
+        var invalidEmail: Boolean by remember { mutableStateOf(false) }
 
         Column(
             modifier = Modifier
@@ -106,11 +117,11 @@ fun ResetPasswordContent(
                         style = AppTypography.bodySmall,
                         modifier = Modifier.testTag(AccountDetailsTestTags.FIRST_NAME_TEXT))
                 },
-                isError = (isFirstNameError),
+                isError = (invalidEmail),
                 supportingText = {
-                    if (isFirstNameError) {
+                    if (invalidEmail) {
                         Text(
-                            context.getString(AccountDetailsError.EMPTY_FIRST_NAME.errorMessage),
+                            context.getString(R.string.reset_password_invalid_email),
                             modifier = Modifier.testTag(AccountDetailsTestTags.FIRST_NAME_ERROR_TEXT))
                     }
                 },
@@ -118,7 +129,13 @@ fun ResetPasswordContent(
                 value = email)
 
             Button(
-                onClick = { onChangePassword(email) }
+                onClick = {
+                    if (isValidEmail(email)){
+                        onChangePassword(email)
+                    }else{
+                        invalidEmail = true
+                    }
+                }
             ) {
                 Text(context.getString(R.string.reset_password_button))
             }
