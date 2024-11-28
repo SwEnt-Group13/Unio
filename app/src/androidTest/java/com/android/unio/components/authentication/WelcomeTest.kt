@@ -15,6 +15,7 @@ import com.android.unio.model.user.User
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.authentication.WelcomeScreen
+import com.android.unio.ui.navigation.NavigationAction
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
@@ -30,6 +31,7 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.mockito.Mockito.mock
 
 class WelcomeTest : TearDown() {
 
@@ -38,18 +40,18 @@ class WelcomeTest : TearDown() {
   val user = MockUser.createMockUser()
 
   private lateinit var userViewModel: UserViewModel
-  private lateinit var authViewModel: AuthViewModel
+  @MockK private lateinit var navigationAction: NavigationAction
   @MockK private lateinit var userRepository: UserRepositoryFirestore
-  @MockK private lateinit var firebaseAuth: FirebaseAuth
+//  @MockK private lateinit var firebaseAuth: FirebaseAuth
 
   @Before
   fun setUp() {
     MockKAnnotations.init(this)
 
-    mockkStatic(FirebaseAuth::class)
-    every { Firebase.auth } returns firebaseAuth
-    every { firebaseAuth.addAuthStateListener(any()) } just runs
-    every { firebaseAuth.removeAuthStateListener(any()) } just runs
+//    mockkStatic(FirebaseAuth::class)
+//    every { Firebase.auth } returns firebaseAuth
+//    every { firebaseAuth.addAuthStateListener(any()) } just runs
+//    every { firebaseAuth.removeAuthStateListener(any()) } just runs
 
     // Call first callback when init is called
     every { userRepository.init(any()) } answers { firstArg<() -> Unit>().invoke() }
@@ -59,13 +61,13 @@ class WelcomeTest : TearDown() {
           onSuccess(user)
         }
 
-    authViewModel = AuthViewModel(firebaseAuth, userRepository)
+    navigationAction = mock(NavigationAction::class.java)
     userViewModel = UserViewModel(userRepository, false)
   }
 
   @Test
   fun testWelcomeIsDisplayed() {
-    composeTestRule.setContent { WelcomeScreen(userViewModel, authViewModel) }
+    composeTestRule.setContent { WelcomeScreen(navigationAction, userViewModel) }
     composeTestRule.onNodeWithTag(WelcomeTestTags.EMAIL).assertIsDisplayed()
     composeTestRule.onNodeWithTag(WelcomeTestTags.PASSWORD).assertIsDisplayed()
     composeTestRule.onNodeWithTag(WelcomeTestTags.BUTTON).assertIsDisplayed()
@@ -75,7 +77,7 @@ class WelcomeTest : TearDown() {
 
   @Test
   fun testButtonEnables() {
-    composeTestRule.setContent { WelcomeScreen(userViewModel, authViewModel) }
+    composeTestRule.setContent { WelcomeScreen(navigationAction, userViewModel) }
     composeTestRule.onNodeWithTag(WelcomeTestTags.BUTTON).assertIsNotEnabled()
 
     composeTestRule.onNodeWithTag(WelcomeTestTags.EMAIL).performTextInput("john.doe@epfl.ch")
