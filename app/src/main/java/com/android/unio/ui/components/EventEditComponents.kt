@@ -56,8 +56,6 @@ import com.android.unio.model.strings.FormatStrings.DAY_MONTH_YEAR_FORMAT
 import com.android.unio.model.strings.FormatStrings.HOUR_MINUTE_FORMAT
 import com.google.firebase.Timestamp
 import java.text.SimpleDateFormat
-import java.time.Instant
-import java.time.ZoneId
 import java.util.Date
 import java.util.Locale
 
@@ -152,7 +150,10 @@ fun DateAndTimePicker(
                 }
               }
             },
-        value = selectedDate?.let { convertMillisToDate(it) } ?: initialDate?.let { convertMillisToDate(it) } ?: "",
+        value =
+            selectedDate?.let { convertMillisToDate(it) }
+                ?: initialDate?.let { convertMillisToDate(it) }
+                ?: "",
         readOnly = true,
         onValueChange = {},
         trailingIcon = { Icon(Icons.Default.DateRange, contentDescription = "Select date") },
@@ -173,7 +174,10 @@ fun DateAndTimePicker(
                 }
               }
             },
-        value = selectedTime?.let { convertMillisToTime(it) } ?: initialTime?.let { convertMillisToTime(it) } ?: "",
+        value =
+            selectedTime?.let { convertMillisToTime(it) }
+                ?: initialTime?.let { convertMillisToTime(it) }
+                ?: "",
         readOnly = true,
         onValueChange = {},
         trailingIcon = { Icon(Icons.Default.AccessTime, contentDescription = "Select date") },
@@ -199,14 +203,12 @@ fun DateAndTimePicker(
         onDismiss = { isTimePickerVisible = false })
   }
 
-    // Allows to only partially fill the date and time fields
+  // Allows to only partially fill the date and time fields
   if (selectedDate != null && selectedTime != null) {
     onTimestamp(Timestamp(Date(selectedDate!! + selectedTime!!)))
-  }
-  else if (selectedDate != null && initialTime != null) {
+  } else if (selectedDate != null && initialTime != null) {
     onTimestamp(Timestamp(Date(selectedDate!! + initialTime)))
-  }
-  else if (initialDate != null && selectedTime != null) {
+  } else if (initialDate != null && selectedTime != null) {
     onTimestamp(Timestamp(Date(initialDate + selectedTime!!)))
   }
 }
@@ -289,6 +291,12 @@ fun convertMillisToTime(millis: Long): String {
   return formatter.format(Date(millis))
 }
 
-fun getHHMMInMillisFromTimestamp(timestampInSeconds: Timestamp): Long {
-    return ((timestampInSeconds.toDate().hours -1) * 60 + timestampInSeconds.toDate().minutes) * 60 * 1000L
+/**
+ * Returns the time of the hours and minutes component in milliseconds from the timestamp in seconds
+ *
+ * @param timestamp: Timestamp
+ * @return Long how many milliseconds have passed since the beginning of the day
+ */
+fun getHHMMInMillisFromTimestamp(timestamp: Timestamp): Long {
+  return ((timestamp.toDate().hours - 1) * 60 + timestamp.toDate().minutes) * 60 * 1000L
 }
