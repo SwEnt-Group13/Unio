@@ -61,6 +61,7 @@ import androidx.core.net.toUri
 import com.android.unio.R
 import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationViewModel
+import com.android.unio.model.association.Member
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.strings.test_tags.AssociationProfileTestTags
@@ -277,7 +278,6 @@ private fun AssociationProfileContent(
     return
   }
 
-  val members by association!!.members.list.collectAsState()
 
   var isFollowed by remember {
     mutableStateOf(user!!.followedAssociations.contains(association!!.uid))
@@ -316,7 +316,7 @@ private fun AssociationProfileContent(
         AssociationHeader(association!!, isFollowed, enableButton, onFollow)
         AssociationDescription(association!!)
         AssociationEvents(navigationAction, association!!, userViewModel, eventViewModel)
-        AssociationMembers(members, onMemberClick)
+        AssociationMembers(associationViewModel, association!!.members, onMemberClick)
         AssociationRecruitment(association!!)
       }
 }
@@ -387,7 +387,7 @@ private fun AssociationRecruitment(association: Association) {
  */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun AssociationMembers(members: List<User>, onMemberClick: (User) -> Unit) {
+private fun AssociationMembers(associationViewModel: AssociationViewModel, members: List<Member>, onMemberClick: (User) -> Unit) {
   val context = LocalContext.current
 
   if (members.isEmpty()) {
@@ -402,12 +402,14 @@ private fun AssociationMembers(members: List<User>, onMemberClick: (User) -> Uni
       modifier = Modifier.fillMaxWidth(),
       horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally),
       verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        members.forEach { user ->
+        members.forEach { member ->
+            val user = associationViewModel.getUserFromMember(member).collectAsState()
+            user.value?.firstName?.let { Log.d("USER", it) }
           Column(
               modifier =
                   Modifier.background(
                           MaterialTheme.colorScheme.secondaryContainer, RoundedCornerShape(8.dp))
-                      .clickable { onMemberClick(user) }
+                      .clickable { user.value?.let { onMemberClick(it) } }
                       .padding(16.dp),
               verticalArrangement = Arrangement.spacedBy(8.dp),
               horizontalAlignment = Alignment.CenterHorizontally) {
@@ -417,14 +419,17 @@ private fun AssociationMembers(members: List<User>, onMemberClick: (User) -> Uni
                             .size(75.dp)
                             .background(MaterialTheme.colorScheme.surfaceDim)) {
                       AsyncImageWrapper(
-                          imageUri = user.profilePicture.toUri(),
+                          imageUri = "user.value!!.profilePicture".toUri(),
                           contentDescription =
                               context.getString(
                                   R.string.association_contact_member_profile_picture),
                           modifier = Modifier.fillMaxWidth(),
                           contentScale = ContentScale.Crop)
                     }
-                Text("${user.firstName} ${user.lastName}")
+              user.value?.firstName?.let {val firstName = it
+                  user.value?.lastName?.let {val lastName = it
+                  Text("${firstName} ${lastName}")}}
+
               }
         }
       }
@@ -565,7 +570,7 @@ private fun AssociationHeader(
           modifier =
               Modifier.padding(bottom = 5.dp).testTag(AssociationProfileTestTags.HEADER_FOLLOWERS))
       Text(
-          "${association.members.uids.size} " + context.getString(R.string.association_member),
+          "${association.members.size} " + context.getString(R.string.association_member),
           style = AppTypography.headlineSmall,
           modifier =
               Modifier.padding(bottom = 14.dp).testTag(AssociationProfileTestTags.HEADER_MEMBERS))
