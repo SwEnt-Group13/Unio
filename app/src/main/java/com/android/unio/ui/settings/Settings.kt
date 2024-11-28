@@ -1,6 +1,7 @@
 package com.android.unio.ui.settings
 
 import android.Manifest
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.padding
@@ -9,6 +10,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Nightlight
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Smartphone
@@ -23,13 +25,16 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.AnnotatedString
 import com.android.unio.R
+import com.android.unio.model.authentication.AuthViewModel
 import com.android.unio.model.preferences.AppPreferences
 import com.android.unio.model.strings.test_tags.SettingsTestTags
+import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.navigation.NavigationAction
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
@@ -42,24 +47,43 @@ import me.zhanghai.compose.preference.switchPreference
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingsScreen(navigationAction: NavigationAction) {
+fun SettingsScreen(
+    navigationAction: NavigationAction,
+    authViewModel: AuthViewModel,
+    userViewModel: UserViewModel
+) {
   val context = LocalContext.current
+  val email = userViewModel.user.collectAsState().value!!.email
+  val onPasswordChange: (() -> Unit) -> Unit = {
+    authViewModel.sendEmailResetPassword(
+        email,
+        onSuccess = it,
+        onFailure = {
+          Toast.makeText(
+                  context,
+                  context.getString(R.string.settings_reset_password_error),
+                  Toast.LENGTH_SHORT)
+              .show()
+        })
+  }
 
   Scaffold(
       modifier = Modifier.testTag(SettingsTestTags.SCREEN),
       topBar = {
         TopAppBar(
             navigationIcon = {
-              IconButton(onClick = { navigationAction.goBack() }) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
-                    contentDescription =
-                        context.getString(R.string.settings_back_content_description))
-              }
+              IconButton(
+                  modifier = Modifier.testTag(SettingsTestTags.GO_BACK),
+                  onClick = { navigationAction.goBack() }) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
+                        contentDescription =
+                            context.getString(R.string.settings_back_content_description))
+                  }
             },
             title = { Text(context.getString(R.string.settings_title)) })
       }) { padding ->
-        Surface(modifier = Modifier.padding(padding)) { SettingsContainer() }
+        Surface(modifier = Modifier.padding(padding)) { SettingsContainer(onPasswordChange) }
       }
 }
 
@@ -69,7 +93,7 @@ fun SettingsScreen(navigationAction: NavigationAction) {
  */
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun SettingsContainer() {
+fun SettingsContainer(onPasswordChange: (() -> Unit) -> Unit) {
   val context = LocalContext.current
   val preferences by LocalPreferenceFlow.current.collectAsState()
 
@@ -168,6 +192,24 @@ fun SettingsContainer() {
                       Manifest.permission.ACCESS_FINE_LOCATION,
                       Manifest.permission.ACCESS_COARSE_LOCATION))
             }
+          })
+      preference(
+          modifier = Modifier.testTag(AppPreferences.RESET_PASSWORD),
+          key = AppPreferences.RESET_PASSWORD,
+          title = { Text(context.getString(R.string.settings_reset_password)) },
+          icon = {
+            Icon(
+                imageVector = Icons.Default.Lock,
+                contentDescription = context.getString(R.string.settings_reset_password))
+          },
+          onClick = {
+            onPasswordChange({
+              Toast.makeText(
+                      context,
+                      context.getString(R.string.settings_reset_password_sent),
+                      Toast.LENGTH_SHORT)
+                  .show()
+            })
           })
     }
   }

@@ -138,6 +138,7 @@
     <string name="welcome_toast_account_created">Account created successfully</string>
     <string name="welcome_content_description_hide_password">Hide password</string>
     <string name="welcome_content_description_show_password">Show password</string>
+    <string name="welcome_forgot_password">Forgot your password ?</string>
 
     /**
     * package: event
@@ -269,6 +270,9 @@
     <string name="settings_location_content_description" translatable="true">Location Permissions</string>
     <string name="settings_language_title">Language</string>
     <string name="settings_language_content_description">Language Settings</string>
+    <string name="settings_reset_password">Reset Password</string>
+    <string name="settings_reset_password_sent">The password modification email has been sent.</string>
+    <string name="settings_reset_password_error">Failed to send the password modification email.</string>
 
     /**
     * package: user
@@ -316,6 +320,9 @@
     /**
     * Other
     */
+
+    <!-- General Strings -->
+    <string name="no_internet_connection">You appear to be offline</string>
 
     <!-- EventListOverview Strings -->
     <string name="event_upcomingEvents">Upcoming Events</string>
@@ -381,6 +388,16 @@
     <string name="interest_food" translatable="true">Food</string>
     <string name="interest_gaming" translatable="true">Gaming</string>
     <string name="interest_festivals" translatable="true">Festivals</string>
+
+    <!-- Reset Password Strings -->
+    <string name="reset_password_success_toast">An email has been sent to the given address</string>
+    <string name="reset_password_error_toast">Failed to send the email</string>
+    <string name="reset_password_go_back" translatable="false">Go back to home page</string>
+    <string name="reset_password_text">Please provide an email address</string>
+    <string name="reset_password_email_place_holder">The link will be sent to this address</string>
+    <string name="reset_password_button">Confirm</string>
+    <string name="reset_password_invalid_email">Please enter a valid email</string>
+
 
     <!-- Notification Strings -->
     <string name="notification_event_reminder" translatable="true">The event is about to begin :)</string>

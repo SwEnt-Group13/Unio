@@ -18,9 +18,11 @@ import com.google.firebase.auth.auth
 import com.google.firebase.firestore.firestore
 import com.google.firebase.functions.functions
 import dagger.hilt.android.testing.HiltAndroidRule
+import java.net.URL
 import junit.framework.TestCase.assertEquals
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import org.json.JSONObject
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -166,6 +168,20 @@ open class EndToEndTest : FirebaseEmulatorFunctions {
     const val PASSWORD = "helloWorld123"
   }
 
+  // Resets her pasword in settings
+  object MarjolaineLemm {
+    const val EMAIL = "exampleresetpwd@gmail.com"
+    const val OLD_PASSWORD = "oldPassword456"
+    const val NEW_PASSWORD = "newPassword123"
+  }
+
+  // Lebron James has forgot his password and resets it in the welcome screen
+  object LebronJames {
+    const val EMAIL = "lepookie@gmail.com"
+    const val OLD_PASSWORD = "thePrince23"
+    const val NEW_PASSWORD = "theKing23"
+  }
+
   // This user's email is already verified
   object AliceMurphy {
     const val EMAIL = "example2@gmail.com"
@@ -176,5 +192,24 @@ open class EndToEndTest : FirebaseEmulatorFunctions {
     // sense)
     const val EMAIL = "admin@admin.com"
     const val PASSWORD = "adminadmin9"
+  }
+
+  /**
+   * This function simulates the reset password process by adding a new password to the URL received
+   * from the Firebase and then sending a request to the URL.
+   */
+  fun simulateResetPassword(newPassword: String) {
+    val raw = Auth.OOB_URL
+    val response = URL(raw).readText()
+    Log.d("ResetPasswordSettingsTest", "Response: $response")
+    val json = JSONObject(response)
+    val resetLink = json.optJSONArray("oobCodes")?.getJSONObject(0)?.optString("oobLink")
+    assert(resetLink != null)
+    val url = resetLink!! + "&newPassword=${newPassword}"
+    Log.d("ResetPasswordSettingsTest", "Reset link: $url")
+    val client = OkHttpClient()
+    val request = Request.Builder().url(url.replace("127.0.0.1", HOST)).build()
+
+    client.newCall(request).execute()
   }
 }

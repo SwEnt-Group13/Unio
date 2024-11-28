@@ -92,4 +92,5 @@ object WelcomeTestTags {
   const val EMAIL = "welcomeEmail"
   const val PASSWORD = "welcomePassword"
   const val BUTTON = "welcomeButton"
+  const val FORGOT_PASSWORD = "welcomeForgotPassword"
 }
