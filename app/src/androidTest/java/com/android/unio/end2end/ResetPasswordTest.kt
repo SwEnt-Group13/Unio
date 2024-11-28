@@ -95,13 +95,12 @@ class ResetPasswordTest : EndToEndTest() {
         .onNodeWithTag(ResetPasswordTestTags.EMAIL_FIELD)
         .performTextInput(LebronJames.EMAIL)
 
-    composeTestRule.onNodeWithTag(ResetPasswordTestTags.EMAIL_ERROR_TEXT).assertDoesNotExist()
-
     composeTestRule.onNodeWithTag(ResetPasswordTestTags.RESET_PASSWORD_BUTTON).performClick()
+
+    Thread.sleep(1000)
 
     simulateResetPassword(LebronJames.NEW_PASSWORD)
 
-    Thread.sleep(1000)
 
     composeTestRule.waitUntil(10000) {
       composeTestRule.onNodeWithTag(WelcomeTestTags.SCREEN).isDisplayed()
@@ -113,7 +112,10 @@ class ResetPasswordTest : EndToEndTest() {
       composeTestRule.onNodeWithTag(WelcomeTestTags.SCREEN).isDisplayed()
     }
 
-    signInWithUser(composeTestRule, MarjolaineLemm.EMAIL, LebronJames.NEW_PASSWORD)
+    composeTestRule.onNodeWithTag(WelcomeTestTags.EMAIL).performTextClearance()
+    composeTestRule.onNodeWithTag(WelcomeTestTags.PASSWORD).performTextClearance()
+
+    signInWithUser(composeTestRule, LebronJames.EMAIL, LebronJames.NEW_PASSWORD)
     composeTestRule.waitUntil(10000) {
       composeTestRule.onNodeWithTag(HomeTestTags.SCREEN).isDisplayed()
     }

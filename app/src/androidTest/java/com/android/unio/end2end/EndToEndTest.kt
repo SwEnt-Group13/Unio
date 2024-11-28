@@ -177,7 +177,7 @@ open class EndToEndTest : FirebaseEmulatorFunctions {
 
   // Lebron James has forgot his password and resets it in the welcome screen
   object LebronJames {
-    const val EMAIL = "lePookie@gmail.com"
+    const val EMAIL = "lepookie@gmail.com"
     const val OLD_PASSWORD = "thePrince23"
     const val NEW_PASSWORD = "theKing23"
   }
