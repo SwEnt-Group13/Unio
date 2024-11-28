@@ -239,7 +239,7 @@ fun EventCreationScreen(
                 onDismissRequest = { showDropdown = false },
                 properties = PopupProperties(focusable = false),
                 modifier = Modifier.fillMaxWidth().heightIn(max = 200.dp)) {
-                  locationSuggestions.take(3).forEach { location ->
+                  locationSuggestions.take(DROP_DOWN_MAX_ROWS).forEach { location ->
                     DropdownMenuItem(
                         text = {
                           Text(
