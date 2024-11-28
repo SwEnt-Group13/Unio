@@ -21,6 +21,12 @@ class ResetPasswordWelcomeTest : EndToEndTest() {
     composeTestRule.waitUntil(10000) {
       composeTestRule.onNodeWithTag(WelcomeTestTags.SCREEN).isDisplayed()
     }
+    composeTestRule.onNodeWithTag(WelcomeTestTags.FORGOT_PASSWORD).performClick()
+
+    //A Toast appears here because no email is entered. We just check if the welcome screen is still displayed
+    composeTestRule.onNodeWithTag(WelcomeTestTags.SCREEN).isDisplayed()
+
+
     composeTestRule.onNodeWithTag(WelcomeTestTags.EMAIL).performTextInput(MarjolaineLemm.EMAIL)
     composeTestRule.onNodeWithTag(WelcomeTestTags.FORGOT_PASSWORD).performClick()
 
