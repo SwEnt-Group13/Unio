@@ -9,6 +9,7 @@ object AppPreferences {
   const val NOTIFICATIONS = "notifications"
   const val LOCATION_PERMISSION = "location_permission"
   const val LANGUAGE = "language"
+  const val RESET_PASSWORD = "reset_password"
 
   object Theme {
     const val LIGHT = "light"

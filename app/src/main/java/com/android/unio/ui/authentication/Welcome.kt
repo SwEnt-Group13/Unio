@@ -1,7 +1,6 @@
 package com.android.unio.ui.authentication
 
 import android.content.Context
-import android.net.ConnectivityManager
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
@@ -24,6 +23,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -42,7 +42,6 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign.Companion.Center
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat.getSystemService
 import com.android.unio.R
 import com.android.unio.model.strings.test_tags.WelcomeTestTags
 import com.android.unio.model.user.SignInState
@@ -50,13 +49,16 @@ import com.android.unio.model.user.UserViewModel
 import com.android.unio.model.user.isValidEmail
 import com.android.unio.model.user.isValidPassword
 import com.android.unio.model.user.signInOrCreateAccount
+import com.android.unio.model.utils.Utils.checkInternetConnection
+import com.android.unio.ui.navigation.NavigationAction
+import com.android.unio.ui.navigation.Screen
 import com.android.unio.ui.theme.AppTypography
 import com.google.firebase.Firebase
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.auth
 
 @Composable
-fun WelcomeScreen(userViewModel: UserViewModel) {
+fun WelcomeScreen(navigationAction: NavigationAction, userViewModel: UserViewModel) {
   val context = LocalContext.current
 
   var email by remember { mutableStateOf("") }
@@ -143,7 +145,15 @@ fun WelcomeScreen(userViewModel: UserViewModel) {
                       else PasswordVisualTransformation(),
               )
 
-              Spacer(modifier = Modifier.size(70.dp))
+              TextButton(
+                  onClick = { navigationAction.navigateTo(Screen.RESET_PASSWORD) },
+                  modifier = Modifier.testTag(WelcomeTestTags.FORGOT_PASSWORD)) {
+                    Text(
+                        text = context.getString(R.string.welcome_forgot_password),
+                        style = AppTypography.bodyMedium)
+                  }
+
+              Spacer(modifier = Modifier.size(62.dp))
 
               Button(
                   modifier = Modifier.testTag(WelcomeTestTags.BUTTON),
@@ -169,9 +179,10 @@ fun WelcomeScreen(userViewModel: UserViewModel) {
 fun handleAuthentication(email: String, password: String, context: Context) {
 
   // Check internet connectivity
-  val connectivityManager = getSystemService(context, ConnectivityManager::class.java)
-  if (connectivityManager?.activeNetwork == null) {
-    Toast.makeText(context, "You appear to be offline.", Toast.LENGTH_SHORT).show()
+  val isConnected = checkInternetConnection(context)
+  if (!isConnected) {
+    Toast.makeText(context, context.getString(R.string.no_internet_connection), Toast.LENGTH_SHORT)
+        .show()
     return
   }
 
