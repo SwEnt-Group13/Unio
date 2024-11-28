@@ -27,6 +27,7 @@ object EventCreationTestTags {
   const val END_TIME = "eventCreationEndTime"
   const val ERROR_TEXT1 = "eventCreationStartAfterEnd"
   const val ERROR_TEXT2 = "eventCreationStartEqualsEnd"
+  const val LOCATION_SUGGESTION_ITEM = "eventCreationSuggestionItem: "
 }
 
 object EventCreationOverlayTestTags {

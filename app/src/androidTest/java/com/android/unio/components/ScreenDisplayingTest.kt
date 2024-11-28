@@ -18,6 +18,8 @@ import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.follow.ConcurrentAssociationUserRepositoryFirestore
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.map.MapViewModel
+import com.android.unio.model.map.nominatim.NominatimLocationRepository
+import com.android.unio.model.map.nominatim.NominatimLocationSearchViewModel
 import com.android.unio.model.search.SearchRepository
 import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.strings.test_tags.AccountDetailsTestTags
@@ -89,6 +91,9 @@ class ScreenDisplayingTest : TearDown() {
 
   @MockK private lateinit var eventRepository: EventRepositoryFirestore
   private lateinit var eventViewModel: EventViewModel
+
+  @MockK private lateinit var nominatimLocationRepository: NominatimLocationRepository
+  private lateinit var nominatimLocationSearchViewModel: NominatimLocationSearchViewModel
 
   // Mocking the mapViewModel and its dependencies
   private lateinit var locationTask: Task<Location>
@@ -186,6 +191,8 @@ class ScreenDisplayingTest : TearDown() {
     every { Firebase.auth } returns firebaseAuth
     every { firebaseAuth.currentUser } returns mockFirebaseUser
     associationViewModel.selectAssociation(associations.first().uid)
+
+    nominatimLocationSearchViewModel = NominatimLocationSearchViewModel(nominatimLocationRepository)
   }
 
   @Test
@@ -250,7 +257,12 @@ class ScreenDisplayingTest : TearDown() {
   @Test
   fun testEventCreationDisplayed() {
     composeTestRule.setContent {
-      EventCreationScreen(navigationAction, searchViewModel, associationViewModel, eventViewModel)
+      EventCreationScreen(
+          navigationAction,
+          searchViewModel,
+          associationViewModel,
+          eventViewModel,
+          nominatimLocationSearchViewModel)
     }
     composeTestRule.onNodeWithTag(EventCreationTestTags.SCREEN).assertIsDisplayed()
   }
