@@ -3,6 +3,10 @@ package com.android.unio.model.firestore.transform
 import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationCategory
 import com.android.unio.model.association.AssociationRepositoryFirestore
+import com.android.unio.model.association.Member
+import com.android.unio.model.association.PermissionType
+import com.android.unio.model.association.Permissions
+import com.android.unio.model.association.Role
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventRepositoryFirestore
 import com.android.unio.model.event.EventType
@@ -14,6 +18,7 @@ import com.android.unio.model.user.User
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserSocial
 import com.google.firebase.Timestamp
+import firestoreReferenceElementWith
 
 fun AssociationRepositoryFirestore.Companion.hydrate(data: Map<String, Any>?): Association {
   val category = data?.get(Association::category.name)
@@ -22,6 +27,31 @@ fun AssociationRepositoryFirestore.Companion.hydrate(data: Map<String, Any>?): A
   val events =
       Event.firestoreReferenceListWith(
           data?.get(Association::events.name) as? List<String> ?: emptyList())
+    val rolesMap = data?.get(Association::roles.name) as? Map<String, Map<String, Any>> ?: emptyMap()
+    val permissions = Permissions.NONE
+    val roles = rolesMap.map { (roleUid, roleData) ->
+        Role.createRole(
+            uid = roleUid,
+            displayName = roleData["displayName"] as? String ?: "",
+            permissions =
+            permissions.addPermissions((roleData["permissions"] as? List<String> ?: emptyList()).mapNotNull { permissionString ->
+                // Find the corresponding PermissionType by its stringName
+                PermissionType.entries.find { it.stringName == permissionString }
+            })
+
+        )
+    }
+
+    // Hydrate members
+    val membersMap = data?.get(Association::members.name) as? Map<String, String> ?: emptyMap()
+    val memberReferences = membersMap.map { (userUid, roleUid) ->
+        // Create a ReferenceElement for the User, which can be lazily fetched
+        val userReference = User.firestoreReferenceElementWith(userUid)
+        val role = roles.firstOrNull { it.uid == roleUid } ?: Role.GUEST
+
+        // Return a Member containing the ReferenceElement<User> and the associated Role
+        Member(user = userReference, role = role)
+    }
 
   return Association(
       uid = data?.get(Association::uid.name) as? String ?: "",
@@ -32,12 +62,12 @@ fun AssociationRepositoryFirestore.Companion.hydrate(data: Map<String, Any>?): A
           if (category is String) AssociationCategory.valueOf(category)
           else AssociationCategory.UNKNOWN,
       description = data?.get(Association::description.name) as? String ?: "",
-      members = members,
+      members = memberReferences,
       followersCount = (data?.get(Association::followersCount.name) as? Number ?: 0).toInt(),
       image = data?.get(Association::image.name) as? String ?: "",
       events = events,
       principalEmailAddress = data?.get(Association::principalEmailAddress.name) as? String ?: "",
-      adminUid = data?.get(Association::adminUid.name) as? String ?: "",
+      roles = roles,
   )
 }
 
