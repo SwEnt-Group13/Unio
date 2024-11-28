@@ -206,7 +206,6 @@ class EventEditTests : TearDown() {
     composeTestRule.onNodeWithTag(EventEditTestTags.SAVE_BUTTON).performClick()
 
     val result = eventSlot.captured
-    Log.d("EventEditTests", "result: ${result.boxedValue}")
     assert(shouldBeTrue)
     assert(result.title != mockEvent.title)
     assert(result.description == mockEvent.description)
