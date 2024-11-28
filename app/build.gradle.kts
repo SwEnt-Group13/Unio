@@ -249,6 +249,9 @@ dependencies {
     implementation(libs.okhttp.logging.interceptor)
     implementation(libs.retrofit)
     implementation(libs.retrofit.gson.converter)
+    testImplementation(libs.retrofit.mock)
+    testImplementation(libs.mockwebserver)
+
 
     // Testing Unit
     testImplementation(libs.junit)
