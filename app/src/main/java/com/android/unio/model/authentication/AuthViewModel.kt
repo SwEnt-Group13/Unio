@@ -42,13 +42,13 @@ constructor(private val firebaseAuth: FirebaseAuth, private val userRepository: 
   }
 
     fun deleteAccount(onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
-        firebaseAuth.currentUser!!.delete().addOnCompleteListener { task ->
+        firebaseAuth.currentUser?.delete()?.addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 onSuccess()
             } else {
                 onFailure(task.exception!!)
             }
-        }
+        }?: onFailure(Exception("User does not exist"))
     }
 
   /**
