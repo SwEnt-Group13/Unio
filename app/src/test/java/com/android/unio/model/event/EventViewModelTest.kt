@@ -87,38 +87,38 @@ class EventViewModelTest {
         inputStream, event, { verify(repository).addEvent(eq(event), any(), any()) }, {})
   }
 
-    @Test
-    fun updateEventTest() {
-        val event = testEvents.get(0)
-        `when`(repository.addEvent(eq(event), any(), any())).thenAnswer { invocation ->
-            val onSuccess = invocation.arguments[1] as () -> Unit
-            onSuccess()
-        }
-        eventViewModel.updateEvent(
-            inputStream, event, { verify(repository).addEvent(eq(event), any(), any()) }, {})
+  @Test
+  fun updateEventTest() {
+    val event = testEvents.get(0)
+    `when`(repository.addEvent(eq(event), any(), any())).thenAnswer { invocation ->
+      val onSuccess = invocation.arguments[1] as () -> Unit
+      onSuccess()
     }
+    eventViewModel.updateEvent(
+        inputStream, event, { verify(repository).addEvent(eq(event), any(), any()) }, {})
+  }
 
-    @Test
-    fun updateEventWithoutImageTest() {
-        val event = testEvents.get(0)
-        `when`(repository.addEvent(eq(event), any(), any())).thenAnswer { invocation ->
-            val onSuccess = invocation.arguments[1] as () -> Unit
-            onSuccess()
-        }
-        eventViewModel.updateEventWithoutImage(
-            event, { verify(repository).addEvent(eq(event), any(), any()) }, {})
+  @Test
+  fun updateEventWithoutImageTest() {
+    val event = testEvents.get(0)
+    `when`(repository.addEvent(eq(event), any(), any())).thenAnswer { invocation ->
+      val onSuccess = invocation.arguments[1] as () -> Unit
+      onSuccess()
     }
+    eventViewModel.updateEventWithoutImage(
+        event, { verify(repository).addEvent(eq(event), any(), any()) }, {})
+  }
 
-    @Test
-    fun deleteEventTest() {
-        val event = testEvents.get(0)
-        `when`(repository.deleteEventById(eq(event.uid), any(), any())).thenAnswer { invocation ->
-            val onSuccess = invocation.arguments[1] as () -> Unit
-            onSuccess()
-        }
-        eventViewModel.deleteEvent(event.uid, { verify(repository).deleteEventById(eq(event.uid), any(), any()) }, {})
+  @Test
+  fun deleteEventTest() {
+    val event = testEvents.get(0)
+    `when`(repository.deleteEventById(eq(event.uid), any(), any())).thenAnswer { invocation ->
+      val onSuccess = invocation.arguments[1] as () -> Unit
+      onSuccess()
     }
-
+    eventViewModel.deleteEvent(
+        event.uid, { verify(repository).deleteEventById(eq(event.uid), any(), any()) }, {})
+  }
 
   @Test
   fun testFindEventById() {
