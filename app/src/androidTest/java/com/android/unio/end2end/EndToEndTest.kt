@@ -18,9 +18,11 @@ import com.google.firebase.auth.auth
 import com.google.firebase.firestore.firestore
 import com.google.firebase.functions.functions
 import dagger.hilt.android.testing.HiltAndroidRule
+import java.net.URL
 import junit.framework.TestCase.assertEquals
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import org.json.JSONObject
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -182,5 +184,24 @@ open class EndToEndTest : FirebaseEmulatorFunctions {
     // sense)
     const val EMAIL = "admin@admin.com"
     const val PASSWORD = "adminadmin9"
+  }
+
+  /**
+   * This function simulates the reset password process by adding a new password to the URL received
+   * from the Firebase and then sending a request to the URL.
+   */
+  fun simulateResetPassword() {
+    val raw = Auth.OOB_URL
+    val response = URL(raw).readText()
+    Log.d("ResetPasswordSettingsTest", "Response: $response")
+    val json = JSONObject(response)
+    val resetLink = json.optJSONArray("oobCodes")?.getJSONObject(0)?.optString("oobLink")
+    assert(resetLink != null)
+    val url = resetLink!! + "&newPassword=${MarjolaineLemm.NEW_PASSWORD}"
+    Log.d("ResetPasswordSettingsTest", "Reset link: $url")
+    val client = OkHttpClient()
+    val request = Request.Builder().url(url.replace("127.0.0.1", HOST)).build()
+
+    client.newCall(request).execute()
   }
 }

@@ -26,6 +26,11 @@ constructor(private val firebaseAuth: FirebaseAuth, private val userRepository: 
     addAuthStateVerifier()
   }
 
+  /**
+   * Send a password reset email to the email given in parameter. If the email is sent correctly the
+   * [onSuccess] function is called, otherwise the [onFailure] function is called with the exception
+   * that occurred.
+   */
   fun sendEmailResetPassword(email: String, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
     firebaseAuth.sendPasswordResetEmail(email).addOnCompleteListener { task ->
       if (task.isSuccessful) {

@@ -25,8 +25,6 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -116,8 +114,6 @@ fun SettingsContainer(onPasswordChange: (() -> Unit) -> Unit) {
   val locale = Locale(language)
   Locale.setDefault(locale)
 
-  var passwordResetSummary: String by remember { mutableStateOf("") }
-
   val configuration = context.resources.configuration
   configuration.setLocale(locale)
   configuration.setLayoutDirection(locale)
@@ -206,10 +202,13 @@ fun SettingsContainer(onPasswordChange: (() -> Unit) -> Unit) {
                 imageVector = Icons.Default.Lock,
                 contentDescription = context.getString(R.string.settings_reset_password))
           },
-          summary = { Text(passwordResetSummary) },
           onClick = {
             onPasswordChange({
-              passwordResetSummary = context.getString(R.string.settings_reset_password_sent)
+              Toast.makeText(
+                      context,
+                      context.getString(R.string.settings_reset_password_sent),
+                      Toast.LENGTH_SHORT)
+                  .show()
             })
           })
     }
