@@ -186,8 +186,11 @@ open class EndToEndTest : FirebaseEmulatorFunctions {
     const val PASSWORD = "adminadmin9"
   }
 
+  /**
+   * This function simulates the reset password process by adding a new password to the URL received from the Firebase
+   * and then sending a request to the URL.
+   */
   fun simulateResetPassword() {
-    val ip = "10.0.2.2"
     val raw = Auth.OOB_URL
     val response = URL(raw).readText()
     Log.d("ResetPasswordSettingsTest", "Response: $response")
@@ -197,7 +200,7 @@ open class EndToEndTest : FirebaseEmulatorFunctions {
     val url = resetLink!! + "&newPassword=${MarjolaineLemm.NEW_PASSWORD}"
     Log.d("ResetPasswordSettingsTest", "Reset link: $url")
     val client = OkHttpClient()
-    val request = Request.Builder().url(url.replace("127.0.0.1", ip)).build()
+    val request = Request.Builder().url(url.replace("127.0.0.1", HOST)).build()
 
     client.newCall(request).execute()
   }
