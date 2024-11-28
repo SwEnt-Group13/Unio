@@ -123,6 +123,8 @@ fun DateAndTimePicker(
     dateString: String,
     timeString: String,
     modifier: Modifier,
+    initialDate: String,
+    initialTime: String,
     onTimestamp: (Timestamp) -> Unit
 ) {
   var isDatePickerVisible by remember { mutableStateOf(false) }
@@ -148,7 +150,7 @@ fun DateAndTimePicker(
                 }
               }
             },
-        value = selectedDate?.let { convertMillisToDate(it) } ?: "",
+        value = selectedDate?.let { convertMillisToDate(it) } ?: initialDate,
         readOnly = true,
         onValueChange = {},
         trailingIcon = { Icon(Icons.Default.DateRange, contentDescription = "Select date") },
@@ -169,7 +171,7 @@ fun DateAndTimePicker(
                 }
               }
             },
-        value = selectedTime?.let { convertMillisToTime(it) } ?: "",
+        value = selectedTime?.let { convertMillisToTime(it) } ?: initialTime,
         readOnly = true,
         onValueChange = {},
         trailingIcon = { Icon(Icons.Default.AccessTime, contentDescription = "Select date") },

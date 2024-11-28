@@ -148,14 +148,18 @@ fun EventCreationScreen(
           DateAndTimePicker(
               context.getString(R.string.event_creation_startdate_label),
               context.getString(R.string.event_creation_starttime_label),
-              modifier = Modifier.testTag(EventCreationTestTags.START_TIME)) {
+              modifier = Modifier.testTag(EventCreationTestTags.START_TIME),
+              "",
+              "") {
                 startTimestamp = it
               }
 
           DateAndTimePicker(
               context.getString(R.string.event_creation_enddate_label),
               context.getString(R.string.event_creation_endtime_label),
-              modifier = Modifier.testTag(EventCreationTestTags.END_TIME)) {
+              modifier = Modifier.testTag(EventCreationTestTags.END_TIME),
+              "",
+              "") {
                 endTimestamp = it
               }
           if (startTimestamp != null && endTimestamp != null) {
@@ -260,5 +264,3 @@ fun EventCreationScreen(
     }
   }
 }
-
-// These components should be moved to a separate file
