@@ -92,6 +92,9 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
+private const val DROP_DOWN_MAX_CHARACTERS = 40
+private const val DROP_DOWN_MAX_ROWS = 3
+
 @Composable
 fun EventCreationScreen(
     navigationAction: NavigationAction,
@@ -226,7 +229,9 @@ fun EventCreationScreen(
                   showDropdown = true
                 },
                 label = { Text(context.getString(R.string.event_creation_location_label)) },
-                placeholder = { Text("Enter an Address or Location") },
+                placeholder = {
+                  Text(context.getString(R.string.event_creation_location_input_label))
+                },
                 modifier = Modifier.fillMaxWidth().testTag(EventCreationTestTags.LOCATION))
 
             DropdownMenu(
@@ -239,8 +244,11 @@ fun EventCreationScreen(
                         text = {
                           Text(
                               text =
-                                  location.name.take(30) +
-                                      if (location.name.length > 30) "..." else "",
+                                  location.name.take(DROP_DOWN_MAX_CHARACTERS) +
+                                      if (location.name.length > DROP_DOWN_MAX_CHARACTERS)
+                                          context.getString(
+                                              R.string.event_creation_location_dropdown_points)
+                                      else "",
                               maxLines = 1)
                         },
                         onClick = {
@@ -252,9 +260,13 @@ fun EventCreationScreen(
                     Divider()
                   }
 
-                  if (locationSuggestions.size > 3) {
+                  if (locationSuggestions.size > DROP_DOWN_MAX_ROWS) {
                     DropdownMenuItem(
-                        text = { Text("More...") }, onClick = {}, modifier = Modifier.padding(8.dp))
+                        text = {
+                          Text(context.getString(R.string.event_creation_location_dropdown_more))
+                        },
+                        onClick = {},
+                        modifier = Modifier.padding(8.dp))
                   }
                 }
           }
