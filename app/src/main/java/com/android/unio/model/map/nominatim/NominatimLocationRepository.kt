@@ -16,8 +16,21 @@ class NominatimLocationRepository @Inject constructor(private val apiService: No
       val response = apiService.search(query)
       val locations =
           response.map {
+            val addressComponents =
+                listOfNotNull(
+                    it.address.road,
+                    it.address.houseNumber,
+                    it.address.postcode +
+                        " " +
+                        (it.address.village ?: it.address.town ?: it.address.city),
+                    it.address.state,
+                    it.address.country)
+
+            val shortFormattedAddress = addressComponents.joinToString(", ")
             Location(
-                latitude = it.lat.toDouble(), longitude = it.lon.toDouble(), name = it.displayName)
+                latitude = it.lat.toDouble(),
+                longitude = it.lon.toDouble(),
+                name = shortFormattedAddress)
           }
       emit(locations)
     } catch (e: Exception) {
