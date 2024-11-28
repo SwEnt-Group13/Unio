@@ -43,7 +43,6 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign.Companion.Center
 import androidx.compose.ui.unit.dp
 import com.android.unio.R
-import com.android.unio.model.authentication.AuthViewModel
 import com.android.unio.model.strings.test_tags.WelcomeTestTags
 import com.android.unio.model.user.SignInState
 import com.android.unio.model.user.UserViewModel
@@ -59,7 +58,7 @@ import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.auth
 
 @Composable
-fun WelcomeScreen(navigationAction: NavigationAction ,userViewModel: UserViewModel) {
+fun WelcomeScreen(navigationAction: NavigationAction, userViewModel: UserViewModel) {
   val context = LocalContext.current
 
   var email by remember { mutableStateOf("") }
@@ -147,9 +146,7 @@ fun WelcomeScreen(navigationAction: NavigationAction ,userViewModel: UserViewMod
               )
 
               TextButton(
-                  onClick = {
-                      navigationAction.navigateTo(Screen.RESET_PASSWORD)
-                  },
+                  onClick = { navigationAction.navigateTo(Screen.RESET_PASSWORD) },
                   modifier = Modifier.testTag(WelcomeTestTags.FORGOT_PASSWORD)) {
                     Text(
                         text = context.getString(R.string.welcome_forgot_password),

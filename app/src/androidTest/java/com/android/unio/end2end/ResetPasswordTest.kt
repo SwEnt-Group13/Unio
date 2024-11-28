@@ -76,20 +76,24 @@ class ResetPasswordTest : EndToEndTest() {
     }
     composeTestRule.onNodeWithTag(WelcomeTestTags.FORGOT_PASSWORD).performClick()
 
-    //Wait for the reset password screen to appear
-    composeTestRule.waitUntil (10000) {
+    // Wait for the reset password screen to appear
+    composeTestRule.waitUntil(10000) {
       composeTestRule.onNodeWithTag(ResetPasswordTestTags.SCREEN).isDisplayed()
     }
 
-    //Input a wrong email to make sure that the error text is displayed
-    composeTestRule.onNodeWithTag(ResetPasswordTestTags.EMAIL_FIELD).performTextInput("not an email")
+    // Input a wrong email to make sure that the error text is displayed
+    composeTestRule
+        .onNodeWithTag(ResetPasswordTestTags.EMAIL_FIELD)
+        .performTextInput("not an email")
 
     composeTestRule.onNodeWithTag(ResetPasswordTestTags.EMAIL_ERROR_TEXT).assertIsDisplayed()
 
-    //Input a correct email and continue with the test
+    // Input a correct email and continue with the test
     composeTestRule.onNodeWithTag(ResetPasswordTestTags.EMAIL_FIELD).performTextClearance()
 
-    composeTestRule.onNodeWithTag(ResetPasswordTestTags.EMAIL_FIELD).performTextInput(LebronJames.EMAIL)
+    composeTestRule
+        .onNodeWithTag(ResetPasswordTestTags.EMAIL_FIELD)
+        .performTextInput(LebronJames.EMAIL)
 
     composeTestRule.onNodeWithTag(ResetPasswordTestTags.EMAIL_ERROR_TEXT).assertDoesNotExist()
 
@@ -99,13 +103,13 @@ class ResetPasswordTest : EndToEndTest() {
 
     Thread.sleep(1000)
 
-    composeTestRule.waitUntil (10000) {
+    composeTestRule.waitUntil(10000) {
       composeTestRule.onNodeWithTag(WelcomeTestTags.SCREEN).isDisplayed()
     }
 
-    //Assert that the user cannot login with his old password (stays in the home screen)
+    // Assert that the user cannot login with his old password (stays in the home screen)
     signInWithUser(composeTestRule, LebronJames.EMAIL, LebronJames.OLD_PASSWORD)
-    composeTestRule.waitUntil (1000) {
+    composeTestRule.waitUntil(1000) {
       composeTestRule.onNodeWithTag(WelcomeTestTags.SCREEN).isDisplayed()
     }
 
