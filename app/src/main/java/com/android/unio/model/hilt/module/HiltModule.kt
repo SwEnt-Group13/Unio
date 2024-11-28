@@ -114,11 +114,22 @@ object LocationModule {
   }
 }
 
+/**
+ * A Dagger module that provides the Nominatim API service.
+ *
+ * This module is specific to the Nominatim API service. If we want to switch APIs, we simply need
+ * to update this module, and add a new ApiService interface, and that's it.
+ */
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class NetworkModule {
 
   companion object {
+
+    /**
+     * Provides the Nominatim API service by defining the client and the URL builder, with HTTP
+     * logging.
+     */
     @Provides
     @Singleton
     fun provideNominatimApiService(): NominatimApiService {
