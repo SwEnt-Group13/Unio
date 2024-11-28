@@ -187,8 +187,8 @@ open class EndToEndTest : FirebaseEmulatorFunctions {
   }
 
   /**
-   * This function simulates the reset password process by adding a new password to the URL received from the Firebase
-   * and then sending a request to the URL.
+   * This function simulates the reset password process by adding a new password to the URL received
+   * from the Firebase and then sending a request to the URL.
    */
   fun simulateResetPassword() {
     val raw = Auth.OOB_URL
