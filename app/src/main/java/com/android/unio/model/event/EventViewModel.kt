@@ -183,7 +183,7 @@ constructor(
   /**
    * Deletes an event from the repository.
    *
-   * @param eventId The ID of the event to delete.
+   * @param eventId The UID of the event to delete.
    * @param onSuccess A callback that is called when the event is successfully deleted.
    * @param onFailure A callback that is called when an error occurs while deleting the event.
    */
