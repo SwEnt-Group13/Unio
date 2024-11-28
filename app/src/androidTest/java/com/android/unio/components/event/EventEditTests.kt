@@ -1,8 +1,10 @@
 package com.android.unio.components.event
 
+import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performTextClearance
 import com.android.unio.TearDown
 import com.android.unio.assertDisplayComponentInScroll
 import com.android.unio.mocks.association.MockAssociation
@@ -27,13 +29,10 @@ import com.google.firebase.auth.internal.zzac
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import io.mockk.MockKAnnotations
-import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockkStatic
 import io.mockk.spyk
-import io.mockk.unmockkAll
-import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -122,7 +121,7 @@ class EventEditTests : TearDown() {
   }
 
   @Test
-  fun testEventCreationTagsDisplayed() {
+  fun testEventEditTagsDisplayed() {
     composeTestRule.setContent {
       EventEditScreen(navigationAction, searchViewModel, associationViewModel, eventViewModel)
     }
@@ -140,9 +139,11 @@ class EventEditTests : TearDown() {
 
     composeTestRule.onNodeWithTag(EventEditTestTags.DESCRIPTION).assertDisplayComponentInScroll()
     composeTestRule.onNodeWithTag(EventEditTestTags.LOCATION).assertDisplayComponentInScroll()
+    composeTestRule.onNodeWithTag(EventEditTestTags.DELETE_BUTTON).assertDisplayComponentInScroll()
     composeTestRule.onNodeWithTag(EventEditTestTags.SAVE_BUTTON).assertDisplayComponentInScroll()
     composeTestRule.onNodeWithTag(EventEditTestTags.END_TIME).assertDisplayComponentInScroll()
     composeTestRule.onNodeWithTag(EventEditTestTags.START_TIME).assertDisplayComponentInScroll()
+    composeTestRule.onNodeWithTag(EventEditTestTags.EVENT_IMAGE).assertDisplayComponentInScroll()
 
     composeTestRule
         .onNodeWithTag(EventEditTestTags.TAGGED_ASSOCIATIONS)
@@ -152,9 +153,15 @@ class EventEditTests : TearDown() {
     composeTestRule.waitForIdle()
   }
 
-  @After
-  fun teardown() {
-    clearAllMocks()
-    unmockkAll()
+  @Test
+  fun testEventCannotBeSavedWhenEmptyField() {
+    composeTestRule.setContent {
+      EventEditScreen(navigationAction, searchViewModel, associationViewModel, eventViewModel)
+    }
+    composeTestRule
+        .onNodeWithTag(EventEditTestTags.EVENT_TITLE, useUnmergedTree = true)
+        .performTextClearance()
+    composeTestRule.onNodeWithTag(EventEditTestTags.SAVE_BUTTON).assertIsNotEnabled()
+    composeTestRule.waitForIdle()
   }
 }
