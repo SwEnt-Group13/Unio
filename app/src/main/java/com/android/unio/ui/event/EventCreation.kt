@@ -149,8 +149,8 @@ fun EventCreationScreen(
               context.getString(R.string.event_creation_startdate_label),
               context.getString(R.string.event_creation_starttime_label),
               modifier = Modifier.testTag(EventCreationTestTags.START_TIME),
-              "",
-              "") {
+              null,
+              null) {
                 startTimestamp = it
               }
 
@@ -158,8 +158,8 @@ fun EventCreationScreen(
               context.getString(R.string.event_creation_enddate_label),
               context.getString(R.string.event_creation_endtime_label),
               modifier = Modifier.testTag(EventCreationTestTags.END_TIME),
-              "",
-              "") {
+              null,
+              null) {
                 endTimestamp = it
               }
           if (startTimestamp != null && endTimestamp != null) {

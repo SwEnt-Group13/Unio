@@ -53,6 +53,7 @@ import com.android.unio.ui.components.BannerImagePicker
 import com.android.unio.ui.components.DateAndTimePicker
 import com.android.unio.ui.components.convertMillisToDate
 import com.android.unio.ui.components.convertMillisToTime
+import com.android.unio.ui.components.getHHMMInMillisFromTimestamp
 import com.android.unio.ui.event.overlay.AssociationsOverlay
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.theme.AppTypography
@@ -101,12 +102,6 @@ fun EventEditScreen(
 
   var startTimestamp: Timestamp? by remember { mutableStateOf(eventToEdit.startDate) }
   var endTimestamp: Timestamp? by remember { mutableStateOf(eventToEdit.endDate) }
-
-  val initialDate = convertMillisToDate(eventToEdit.startDate.seconds * 1000)
-  val initialTime = convertMillisToTime(eventToEdit.startDate.seconds * 1000)
-
-  val finalDate = convertMillisToDate(eventToEdit.endDate.seconds * 1000)
-  val finalTime = convertMillisToTime(eventToEdit.endDate.seconds * 1000)
 
   val eventBannerUri = remember { mutableStateOf<Uri>(eventToEdit.image.toUri()) }
 
@@ -180,8 +175,9 @@ fun EventEditScreen(
               context.getString(R.string.event_creation_startdate_label),
               context.getString(R.string.event_creation_starttime_label),
               modifier = Modifier.testTag(EventEditTestTags.START_TIME),
-              initialDate = initialDate,
-              initialTime = initialTime) {
+              initialDate = eventToEdit.startDate.toDate().time - getHHMMInMillisFromTimestamp(eventToEdit.startDate),
+              initialTime = getHHMMInMillisFromTimestamp(eventToEdit.startDate)
+          ) {
                 startTimestamp = it
               }
 
@@ -189,8 +185,8 @@ fun EventEditScreen(
               context.getString(R.string.event_creation_enddate_label),
               context.getString(R.string.event_creation_endtime_label),
               modifier = Modifier.testTag(EventEditTestTags.END_TIME),
-              initialDate = finalDate,
-              initialTime = finalTime) {
+              initialDate = eventToEdit.endDate.toDate().time - getHHMMInMillisFromTimestamp(eventToEdit.endDate),
+              initialTime = getHHMMInMillisFromTimestamp(eventToEdit.endDate)) {
                 endTimestamp = it
               }
           if (startTimestamp != null && endTimestamp != null) {
