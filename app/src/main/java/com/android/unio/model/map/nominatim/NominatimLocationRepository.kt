@@ -32,10 +32,10 @@ class NominatimLocationRepository @Inject constructor(private val apiService: No
                 longitude = it.lon.toDouble(),
                 name = shortFormattedAddress)
           }
+      delay(1000)
       emit(locations)
     } catch (e: Exception) {
       Log.e("NominatimRepository", "Error during search: ", e)
     }
-    delay(1000)
   }
 }
