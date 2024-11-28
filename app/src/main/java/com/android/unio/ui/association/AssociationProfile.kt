@@ -304,13 +304,6 @@ private fun AssociationProfileContent(
     navigationAction.navigateTo(Screen.SOMEONE_ELSE_PROFILE)
   }
 
-  // A debug block that properly fetches the events of the association if they were modified
-  // or created this session as the events are not updated in the association object
-  var events by remember { mutableStateOf<List<Event>>(emptyList()) }
-  //  LaunchedEffect(Unit) {
-  //    associationViewModel.getEventsForAssociation(association!!, { events = it })
-  //  }
-
   // Add spacedBy to the horizontalArrangement
   Column(
       modifier =
@@ -321,7 +314,7 @@ private fun AssociationProfileContent(
       verticalArrangement = Arrangement.spacedBy(16.dp)) {
         AssociationHeader(association!!, isFollowed, enableButton, onFollow)
         AssociationDescription(association!!)
-        AssociationEvents(navigationAction, association!!, userViewModel, eventViewModel, events)
+        AssociationEvents(navigationAction, association!!, userViewModel, eventViewModel)
         AssociationMembers(members, onMemberClick)
         AssociationRecruitment(association!!)
       }
@@ -450,8 +443,7 @@ private fun AssociationEvents(
     navigationAction: NavigationAction,
     association: Association,
     userViewModel: UserViewModel,
-    eventViewModel: EventViewModel,
-    events: List<Event>
+    eventViewModel: EventViewModel
 ) {
   val context = LocalContext.current
 
