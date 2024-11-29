@@ -117,7 +117,7 @@ class EventViewModelTest {
       onSuccess()
     }
     eventViewModel.deleteEvent(
-        event.uid, { verify(repository).deleteEventById(eq(event.uid), any(), any()) }, {})
+        event, { verify(repository).deleteEventById(eq(event.uid), any(), any()) }, {})
   }
 
   @Test

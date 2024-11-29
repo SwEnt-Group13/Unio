@@ -239,7 +239,7 @@ fun EventEditScreen(
                     onClick = {
                       // A dialog should be added to prevent accidental deletion
                       eventViewModel.deleteEvent(
-                          eventToEdit.uid,
+                          eventToEdit,
                           onSuccess = { navigationAction.goBack() },
                           onFailure = {
                             Toast.makeText(

@@ -98,19 +98,22 @@ constructor(
           repository.addEvent(event, onSuccess, onFailure)
         },
         { e -> Log.e("ImageRepository", "Failed to store image: $e") })
-    associationRepository.getAssociations(
-        onSuccess = { associationList ->
-          associationList
-              .filter { event.organisers.contains(it.uid) }
-              .forEach {
-                it.events.add(event.uid)
-                associationRepository.saveAssociation(it, {}, {})
-              }
-        },
-        onFailure = { exception ->
-          Log.e("EventViewModel", "An error occurred while loading associations: $exception")
-        })
-    event.organisers.requestAll(onSuccess)
+
+    event.organisers.requestAll({
+        event.organisers.list.value.forEach {
+            it.events.add(event.uid)
+            associationRepository.saveAssociation(
+                it,
+                {it.events.requestAll()},
+                { e ->
+                    Log.e(
+                        "EventViewModel",
+                        "An error occurred while loading associations: $e"
+                    )
+                })
+        }
+    }
+    )
     _events.value += event
   }
 
@@ -137,19 +140,20 @@ constructor(
           repository.addEvent(event, onSuccess, onFailure)
         },
         { e -> Log.e("ImageRepository", "Failed to store image: $e") })
-    associationRepository.getAssociations(
-        onSuccess = { associationList ->
-          associationList
-              .filter { event.organisers.contains(it.uid) }
-              .forEach {
-                it.events.add(event.uid)
-                associationRepository.saveAssociation(it, {}, {})
-              }
-        },
-        onFailure = { exception ->
-          Log.e("EventViewModel", "An error occurred while loading associations: $exception")
-        })
-    event.organisers.requestAll(onSuccess)
+
+    event.organisers.requestAll(
+        {
+        event.organisers.list.value.forEach {
+          it.events.add(event.uid)
+          associationRepository.saveAssociation(
+              it,
+              {},
+              { e -> Log.e("EventViewModel", "An error occurred while loading associations: $e") })
+          it.events.requestAll()
+        }
+      }
+    )
+
     _events.value = _events.value.filter { it.uid != event.uid } // Remove the outdated event
     _events.value += event
   }
@@ -163,19 +167,25 @@ constructor(
    */
   fun updateEventWithoutImage(event: Event, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
     repository.addEvent(event, onSuccess, onFailure)
-    event.organisers.requestAll(onSuccess)
-    associationRepository.getAssociations(
-        onSuccess = { associationList ->
-          associationList
-              .filter { event.organisers.contains(it.uid) }
-              .forEach {
+
+    event.organisers.requestAll(
+        {
+            event.organisers.list.value.forEach {
                 it.events.add(event.uid)
-                associationRepository.saveAssociation(it, {}, {})
-              }
-        },
-        onFailure = { exception ->
-          Log.e("EventViewModel", "An error occurred while loading associations: $exception")
-        })
+                associationRepository.saveAssociation(
+                    it,
+                    {},
+                    { e ->
+                        Log.e(
+                            "EventViewModel",
+                            "An error occurred while loading associations: $e"
+                        )
+                    })
+                it.events.requestAll()
+            }
+        }
+    )
+
     _events.value = _events.value.filter { it.uid != event.uid } // Remove the outdated event
     _events.value += event
   }
@@ -183,19 +193,38 @@ constructor(
   /**
    * Deletes an event from the repository.
    *
-   * @param eventId The UID of the event to delete.
+   * @param event The event to delete.
    * @param onSuccess A callback that is called when the event is successfully deleted.
    * @param onFailure A callback that is called when an error occurs while deleting the event.
    */
-  fun deleteEvent(eventId: String, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+  fun deleteEvent(event: Event, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
     repository.deleteEventById(
-        eventId,
+        event.uid,
         onSuccess = {
-          _events.value = _events.value.filter { it.uid != eventId }
+          _events.value = _events.value.filter { it.uid != event.uid }
           onSuccess()
         },
         onFailure = { exception ->
           Log.e("EventViewModel", "An error occurred while deleting event: $exception")
         })
+
+    event.organisers.requestAll(
+        {
+        event.organisers.list.value.forEach {
+            it.events.remove(event.uid)
+            associationRepository.saveAssociation(
+                it,
+                {},
+                { e ->
+                    Log.e(
+                        "EventViewModel",
+                        "An error occurred while loading associations: $e"
+                    )
+                })
+            it.events.requestAll()
+        }
+    }
+    )
+
   }
 }
