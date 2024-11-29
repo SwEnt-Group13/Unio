@@ -404,7 +404,6 @@ private fun AssociationMembers(associationViewModel: AssociationViewModel, membe
       verticalArrangement = Arrangement.spacedBy(16.dp)) {
         members.forEach { member ->
             val user = associationViewModel.getUserFromMember(member).collectAsState()
-            user.value?.firstName?.let { Log.d("USER", it) }
           Column(
               modifier =
                   Modifier.background(
