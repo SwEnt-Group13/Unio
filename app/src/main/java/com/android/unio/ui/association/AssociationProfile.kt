@@ -485,6 +485,7 @@ private fun AssociationEvents(
   if (isAdmin) {
     Button(
         onClick = { navigationAction.navigateTo(Screen.EVENT_CREATION) },
+        modifier = Modifier.testTag(AssociationProfileTestTags.ADD_EVENT_BUTTON),
         contentPadding = ButtonDefaults.ButtonWithIconContentPadding) {
           Icon(
               Icons.Filled.Add,

@@ -11,7 +11,7 @@ object EventCardTestTags {
   const val EVENT_TIME = "event_EventTime"
   const val EVENT_CATCHY_DESCRIPTION = "event_EventCatchyDescription"
   const val EDIT_BUTTON = "event_EditButton"
-  const val SAVE_BUTTON = "event_SaveButton"
+  const val EVENT_SAVE_BUTTON = "event_EventSaveButton"
 }
 
 object EventCreationTestTags {
@@ -29,6 +29,7 @@ object EventCreationTestTags {
   const val END_TIME = "eventCreationEndTime"
   const val ERROR_TEXT1 = "eventCreationStartAfterEnd"
   const val ERROR_TEXT2 = "eventCreationStartEqualsEnd"
+  const val LOCATION_SUGGESTION_ITEM = "eventCreationSuggestionItem: "
   const val START_DATE_FIELD = "eventCreationOverlayStartDateField"
   const val START_TIME_FIELD = "eventCreationOverlayStartTimeField"
   const val START_DATE_PICKER = "eventCreationOverlayStartDatePicker"

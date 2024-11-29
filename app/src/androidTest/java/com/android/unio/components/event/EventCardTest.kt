@@ -1,32 +1,53 @@
 package com.android.unio.components.event
 
+import android.app.NotificationManager
+import android.content.Context
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
+import androidx.test.platform.app.InstrumentationRegistry
+import androidx.test.rule.GrantPermissionRule
 import com.android.unio.TearDown
 import com.android.unio.mocks.association.MockAssociation
 import com.android.unio.mocks.event.MockEvent
 import com.android.unio.mocks.map.MockLocation
+import com.android.unio.mocks.user.MockUser
 import com.android.unio.model.event.Event
+import com.android.unio.model.event.EventRepositoryFirestore
 import com.android.unio.model.event.EventType
+import com.android.unio.model.event.EventViewModel
+import com.android.unio.model.image.ImageRepositoryFirebaseStorage
+import com.android.unio.model.notification.NotificationWorker
 import com.android.unio.model.strings.test_tags.EventCardTestTags
+import com.android.unio.model.user.UserRepositoryFirestore
+import com.android.unio.model.user.UserViewModel
+import com.android.unio.ui.event.EventCard
 import com.android.unio.ui.event.EventCardScaffold
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
 import com.google.firebase.Timestamp
 import io.mockk.MockKAnnotations
+import io.mockk.every
+import io.mockk.impl.annotations.MockK
+import io.mockk.just
+import io.mockk.mockk
+import io.mockk.mockkObject
+import io.mockk.runs
+import io.mockk.verify
 import java.util.Date
+import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.mockito.Mockito.mock
-import org.mockito.kotlin.verify
 
 class EventCardTest : TearDown() {
 
   @get:Rule val composeTestRule = createComposeRule()
+
+  @get:Rule
+  val permissionRule = GrantPermissionRule.grant(android.Manifest.permission.POST_NOTIFICATIONS)
 
   private lateinit var navigationAction: NavigationAction
   private val imgUrl =
@@ -44,10 +65,32 @@ class EventCardTest : TearDown() {
           MockAssociation.createMockAssociation(uid = "c"),
           MockAssociation.createMockAssociation(uid = "d"))
 
+  @MockK private lateinit var userRepository: UserRepositoryFirestore
+  private lateinit var userViewModel: UserViewModel
+  private lateinit var eventViewModel: EventViewModel
+  @MockK private lateinit var eventRepository: EventRepositoryFirestore
+  @MockK private lateinit var imageRepository: ImageRepositoryFirebaseStorage
+  private lateinit var context: Context
+
   @Before
   fun setUp() {
     MockKAnnotations.init(this, relaxed = true)
-    navigationAction = mock(NavigationAction::class.java)
+    navigationAction = mockk()
+    mockkObject(NotificationWorker.Companion)
+    context = InstrumentationRegistry.getInstrumentation().targetContext
+    val user = MockUser.createMockUser(followedAssociations = associations, savedEvents = listOf())
+    every { NotificationWorker.schedule(any(), any()) } just runs
+    eventViewModel = EventViewModel(eventRepository, imageRepository)
+    userViewModel = UserViewModel(userRepository)
+    every { userRepository.updateUser(user, any(), any()) } answers
+        {
+          val onSuccess = args[1] as () -> Unit
+          onSuccess()
+        }
+    userViewModel.addUser(user, {})
+
+    every { navigationAction.navigateTo(Screen.EVENT_DETAILS) } just runs
+    every { eventRepository.getEvents(any(), any()) }
   }
 
   private fun setEventScreen(event: Event) {
@@ -96,13 +139,12 @@ class EventCardTest : TearDown() {
         .onNodeWithTag(EventCardTestTags.EVENT_CATCHY_DESCRIPTION, useUnmergedTree = true)
         .assertExists()
         .assertTextEquals("This is a catchy description.")
-
     composeTestRule
-        .onNodeWithTag(EventCardTestTags.EDIT_BUTTON, useUnmergedTree = true)
+        .onNodeWithTag(EventCardTestTags.EVENT_SAVE_BUTTON, useUnmergedTree = true)
         .assertExists()
 
     composeTestRule
-        .onNodeWithTag(EventCardTestTags.SAVE_BUTTON, useUnmergedTree = true)
+        .onNodeWithTag(EventCardTestTags.EDIT_BUTTON, useUnmergedTree = true)
         .assertExists()
   }
 
@@ -113,7 +155,7 @@ class EventCardTest : TearDown() {
         .onNodeWithTag(EventCardTestTags.EVENT_TITLE, useUnmergedTree = true)
         .assertIsDisplayed()
         .performClick()
-    verify(navigationAction).navigateTo(Screen.EVENT_DETAILS)
+    verify { navigationAction.navigateTo(Screen.EVENT_DETAILS) }
   }
 
   @Test
@@ -213,5 +255,23 @@ class EventCardTest : TearDown() {
     composeTestRule
         .onNodeWithTag(EventCardTestTags.EVENT_DATE, useUnmergedTree = true)
         .assertExists()
+  }
+
+  @Test
+  fun testEventCardSaveEvent() {
+    val event =
+        MockEvent.createMockEvent(
+            startDate = Timestamp(Date((Timestamp.now().seconds + 4 * 3600) * 1000)))
+    setEventScreen(event)
+    composeTestRule.onNodeWithTag(EventCardTestTags.EVENT_SAVE_BUTTON).assertExists().performClick()
+    Thread.sleep(500)
+    verify { NotificationWorker.schedule(any(), any()) }
+  }
+
+  @After
+  override fun tearDown() {
+    super.tearDown()
+    val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+    manager.cancelAll()
   }
 }

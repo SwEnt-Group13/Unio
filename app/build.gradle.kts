@@ -156,12 +156,14 @@ dependencies {
 
     implementation(platform(libs.firebase.bom))
     implementation(libs.google.firebase.auth.ktx)
+    implementation(libs.firebase.analytics)
 
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.lifecycle.livedata.ktx)
 
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.work.runtime.ktx)
 
     // Core
     implementation(libs.core.ktx)
@@ -187,6 +189,7 @@ dependencies {
     implementation(libs.core)
     implementation(libs.firebase.functions.ktx)
     implementation(libs.play.services.location)
+    implementation(libs.firebase.messaging.ktx)
 
     testImplementation(libs.test.core.ktx)
     debugImplementation(libs.androidx.ui.tooling)
@@ -246,6 +249,14 @@ dependencies {
 
     // Networking with OkHttp
     implementation(libs.okhttp)
+    implementation(libs.okhttp.logging.interceptor)
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.gson.converter)
+    testImplementation(libs.retrofit.mock)
+    testImplementation(libs.mockwebserver)
+    androidTestImplementation(libs.mockwebserver)
+    androidTestImplementation(libs.retrofit.mock)
+
 
     // Testing Unit
     testImplementation(libs.junit)
