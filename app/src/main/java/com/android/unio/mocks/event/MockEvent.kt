@@ -82,7 +82,7 @@ class MockEvent {
             if (associationDependency) {
               emptyList()
             } else {
-              MockAssociation.createAllMockAssociations(userDependency = userDependency)
+              MockAssociation.createAllMockAssociations(userDependency = userDependency, eventDependency = true)
             },
         taggedAssociations: List<Association> =
             if (associationDependency) {

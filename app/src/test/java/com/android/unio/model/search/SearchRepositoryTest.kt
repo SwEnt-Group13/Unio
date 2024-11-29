@@ -13,6 +13,8 @@ import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationCategory
 import com.android.unio.model.association.AssociationDocument
 import com.android.unio.model.association.AssociationRepository
+import com.android.unio.model.association.Member
+import com.android.unio.model.association.Role
 import com.android.unio.model.association.toAssociationDocument
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventDocument
@@ -29,6 +31,7 @@ import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.auth
+import firestoreReferenceElementWith
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
@@ -81,11 +84,11 @@ class SearchRepositoryTest {
           category = AssociationCategory.SCIENCE_TECH,
           description = "ACM is the world's largest educational and scientific computing society.",
           followersCount = 1,
-          members = User.firestoreReferenceListWith(listOf("1", "2")),
+          members = listOf(Member(User.firestoreReferenceElementWith("1"), Role.GUEST)),
+          roles = listOf(Role.GUEST),
           image = "https://www.example.com/image.jpg",
           events = Event.firestoreReferenceListWith(listOf("1", "2")),
-          principalEmailAddress = "example@adress.com",
-          adminUid = "1")
+          principalEmailAddress = "example@adress.com")
 
   private val association2 =
       Association(
@@ -97,11 +100,11 @@ class SearchRepositoryTest {
           description =
               "IEEE is the world's largest technical professional organization dedicated to advancing technology for the benefit of humanity.",
           followersCount = 1,
-          members = User.firestoreReferenceListWith(listOf("3", "4")),
+          members = listOf(Member(User.firestoreReferenceElementWith("2"), Role.GUEST)),
+          roles = listOf(Role.GUEST),
           image = "https://www.example.com/image.jpg",
           events = Event.firestoreReferenceListWith(listOf("3", "4")),
-          principalEmailAddress = "example2@adress.com",
-          adminUid = "2")
+          principalEmailAddress = "example2@adress.com")
 
   private val event1 =
       Event(
