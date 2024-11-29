@@ -27,31 +27,33 @@ fun AssociationRepositoryFirestore.Companion.hydrate(data: Map<String, Any>?): A
   val events =
       Event.firestoreReferenceListWith(
           data?.get(Association::events.name) as? List<String> ?: emptyList())
-    val rolesMap = data?.get(Association::roles.name) as? Map<String, Map<String, Any>> ?: emptyMap()
-    val permissions = Permissions.NONE
-    val roles = rolesMap.map { (roleUid, roleData) ->
+  val rolesMap = data?.get(Association::roles.name) as? Map<String, Map<String, Any>> ?: emptyMap()
+  val permissions = Permissions.NONE
+  val roles =
+      rolesMap.map { (roleUid, roleData) ->
         Role.createRole(
             uid = roleUid,
             displayName = roleData["displayName"] as? String ?: "",
             permissions =
-            permissions.addPermissions((roleData["permissions"] as? List<String> ?: emptyList()).mapNotNull { permissionString ->
-                // Find the corresponding PermissionType by its stringName
-                PermissionType.entries.find { it.stringName == permissionString }
-            })
+                permissions.addPermissions(
+                    (roleData["permissions"] as? List<String> ?: emptyList()).mapNotNull {
+                        permissionString ->
+                      // Find the corresponding PermissionType by its stringName
+                      PermissionType.entries.find { it.stringName == permissionString }
+                    }))
+      }
 
-        )
-    }
-
-    // Hydrate members
-    val membersMap = data?.get(Association::members.name) as? Map<String, String> ?: emptyMap()
-    val memberReferences = membersMap.map { (userUid, roleUid) ->
+  // Hydrate members
+  val membersMap = data?.get(Association::members.name) as? Map<String, String> ?: emptyMap()
+  val memberReferences =
+      membersMap.map { (userUid, roleUid) ->
         // Create a ReferenceElement for the User, which can be lazily fetched
         val userReference = User.firestoreReferenceElementWith(userUid)
         val role = roles.firstOrNull { it.uid == roleUid } ?: Role.GUEST
 
         // Return a Member containing the ReferenceElement<User> and the associated Role
         Member(user = userReference, role = role)
-    }
+      }
 
   return Association(
       uid = data?.get(Association::uid.name) as? String ?: "",

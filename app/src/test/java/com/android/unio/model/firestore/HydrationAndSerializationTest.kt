@@ -116,7 +116,7 @@ class HydrationAndSerializationTest {
     assertEquals(association.fullName, serialized["fullName"])
     assertEquals(association.description, serialized["description"])
     assertEquals(mapUsersToRoles(association.members), serialized["members"])
-      assertEquals(mapRolesToPermission(association.roles), serialized["roles"])
+    assertEquals(mapRolesToPermission(association.roles), serialized["roles"])
     assertEquals(association.image, serialized["image"])
     assertEquals(association.events.uids, serialized["events"])
 
@@ -127,8 +127,8 @@ class HydrationAndSerializationTest {
     assertEquals(association.name, hydrated.name)
     assertEquals(association.fullName, hydrated.fullName)
     assertEquals(association.description, hydrated.description)
-      assertEquals(compareMemberLists(association.members, hydrated.members), true)
-      assertEquals(compareRoleLists(association.roles, hydrated.roles), true)
+    assertEquals(compareMemberLists(association.members, hydrated.members), true)
+    assertEquals(compareRoleLists(association.roles, hydrated.roles), true)
     assertEquals(association.image, hydrated.image)
     assertEquals(association.events.list.value, hydrated.events.list.value)
   }

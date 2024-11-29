@@ -12,7 +12,7 @@ import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserSocial
 
 fun AssociationRepositoryFirestore.Companion.serialize(association: Association): Map<String, Any> {
-    println(mapRolesToPermission(association.roles))
+  println(mapRolesToPermission(association.roles))
   return mapOf(
       Association::uid.name to association.uid,
       Association::url.name to association.url,
@@ -29,20 +29,17 @@ fun AssociationRepositoryFirestore.Companion.serialize(association: Association)
 }
 
 fun mapUsersToRoles(members: List<Member>): Map<String, String> {
-    return members.associate { member ->
-        member.user.uid to member.role.uid
-    }
+  return members.associate { member -> member.user.uid to member.role.uid }
 }
 
 fun mapRolesToPermission(roles: List<Role>): Map<String, Map<String, Any>> {
-    return roles.associate { role ->
-        role.uid to mapOf(
+  return roles.associate { role ->
+    role.uid to
+        mapOf(
             "displayName" to role.displayName,
-            "permissions" to role.permissions.getGrantedPermissions().map { it.stringName }
-        )
-    }
+            "permissions" to role.permissions.getGrantedPermissions().map { it.stringName })
+  }
 }
-
 
 fun UserRepositoryFirestore.Companion.serialize(user: User): Map<String, Any> {
   return mapOf(

@@ -278,7 +278,6 @@ private fun AssociationProfileContent(
     return
   }
 
-
   var isFollowed by remember {
     mutableStateOf(user!!.followedAssociations.contains(association!!.uid))
   }
@@ -387,7 +386,11 @@ private fun AssociationRecruitment(association: Association) {
  */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun AssociationMembers(associationViewModel: AssociationViewModel, members: List<Member>, onMemberClick: (User) -> Unit) {
+private fun AssociationMembers(
+    associationViewModel: AssociationViewModel,
+    members: List<Member>,
+    onMemberClick: (User) -> Unit
+) {
   val context = LocalContext.current
 
   if (members.isEmpty()) {
@@ -403,7 +406,7 @@ private fun AssociationMembers(associationViewModel: AssociationViewModel, membe
       horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally),
       verticalArrangement = Arrangement.spacedBy(16.dp)) {
         members.forEach { member ->
-            val user = associationViewModel.getUserFromMember(member).collectAsState()
+          val user = associationViewModel.getUserFromMember(member).collectAsState()
           Column(
               modifier =
                   Modifier.background(
@@ -425,10 +428,13 @@ private fun AssociationMembers(associationViewModel: AssociationViewModel, membe
                           modifier = Modifier.fillMaxWidth(),
                           contentScale = ContentScale.Crop)
                     }
-              user.value?.firstName?.let {val firstName = it
-                  user.value?.lastName?.let {val lastName = it
-                  Text("${firstName} ${lastName}")}}
-
+                user.value?.firstName?.let {
+                  val firstName = it
+                  user.value?.lastName?.let {
+                    val lastName = it
+                    Text("${firstName} ${lastName}")
+                  }
+                }
               }
         }
       }

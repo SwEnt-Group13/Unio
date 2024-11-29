@@ -36,8 +36,7 @@ constructor(
   val selectedAssociation: StateFlow<Association?> = _selectedAssociation
 
   init {
-    associationRepository.init { getAssociations()}
-
+    associationRepository.init { getAssociations() }
   }
 
   fun getEventsForAssociation(association: Association, onSuccess: (List<Event>) -> Unit) {
@@ -52,14 +51,14 @@ constructor(
         })
   }
 
-    // Get the user from a member
-    fun getUserFromMember(member: Member): StateFlow<User?> {
-        return member.user.element
-    }
+  // Get the user from a member
+  fun getUserFromMember(member: Member): StateFlow<User?> {
+    return member.user.element
+  }
 
-    fun fetchUserFromMember(member: Member){
-        member.user.fetch()
-    }
+  fun fetchUserFromMember(member: Member) {
+    member.user.fetch()
+  }
 
   /**
    * Fetches all associations from the repository and updates the [_associations] and
@@ -164,8 +163,8 @@ constructor(
   fun selectAssociation(associationId: String) {
     _selectedAssociation.value =
         findAssociationById(associationId).also { it ->
-            it?.events?.requestAll()
-            it?.members?.forEach { fetchUserFromMember(it) }
+          it?.events?.requestAll()
+          it?.members?.forEach { fetchUserFromMember(it) }
         }
   }
 }

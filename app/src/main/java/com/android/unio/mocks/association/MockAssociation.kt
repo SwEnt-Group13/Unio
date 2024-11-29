@@ -11,7 +11,6 @@ import com.android.unio.model.association.Role
 import com.android.unio.model.event.Event
 import com.android.unio.model.firestore.ReferenceList
 import com.android.unio.model.firestore.emptyFirestoreReferenceList
-import com.android.unio.model.user.User
 
 /**
  * MockAssociation class provides edge-case instances of the Association data class for testing
@@ -86,14 +85,29 @@ class MockAssociation {
         members: List<Member> = emptyList(),
         roles: List<Role> = listOf(Role.GUEST, Role.ADMIN),
         events: ReferenceList<Event> =
-            if(eventDependency){Event.emptyFirestoreReferenceList()} else {MockReferenceList(listOf(MockEvent.createMockEvent(associationDependency = true, userDependency = userDependency)))},
+            if (eventDependency) {
+              Event.emptyFirestoreReferenceList()
+            } else {
+              MockReferenceList(
+                  listOf(
+                      MockEvent.createMockEvent(
+                          associationDependency = true, userDependency = userDependency)))
+            },
         principalEmailAddress: String = "principal@email_adress.com"
     ): Association {
       val membersHelper =
           if (userDependency) {
             members
           } else {
-              listOf(Member(MockReferenceElement(MockUser.createMockUser(uid="1", associationDependency = true)), Role.GUEST), Member(MockReferenceElement(MockUser.createMockUser(uid="2", associationDependency = true)), Role.GUEST))
+            listOf(
+                Member(
+                    MockReferenceElement(
+                        MockUser.createMockUser(uid = "1", associationDependency = true)),
+                    Role.GUEST),
+                Member(
+                    MockReferenceElement(
+                        MockUser.createMockUser(uid = "2", associationDependency = true)),
+                    Role.GUEST))
           }
       return Association(
           uid = uid,

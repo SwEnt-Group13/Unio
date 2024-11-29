@@ -44,8 +44,6 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import io.mockk.spyk
 import io.mockk.verify
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -93,10 +91,11 @@ class HomeTest : TearDown() {
           onSuccess()
         }
 
-    every { userRepository.getUserWithId(any(), any(), any()) } answers {
-      val onSuccess = args[1] as (User) -> Unit
-      onSuccess(MockUser.createMockUser())
-    }
+    every { userRepository.getUserWithId(any(), any(), any()) } answers
+        {
+          val onSuccess = args[1] as (User) -> Unit
+          onSuccess(MockUser.createMockUser())
+        }
 
     userViewModel = spyk(UserViewModel(userRepository))
     val asso = MockAssociation.createMockAssociation()
@@ -209,22 +208,19 @@ class HomeTest : TearDown() {
    * that both actions trigger their respective animations and behaviors.
    */
 
-  /**@Test
-  fun testClickFollowingAndAdd() {
-    composeTestRule.setContent {
-      val eventViewModel = EventViewModel(eventRepository, imageRepository)
-      HomeScreen(navigationAction, eventViewModel, userViewModel, searchViewModel)
-    }
-
-    composeTestRule.onNodeWithTag(HomeTestTags.TAB_FOLLOWING).assertExists()
-    composeTestRule.onNodeWithTag(HomeTestTags.TAB_FOLLOWING).performClick()
-
-    composeTestRule.onNodeWithTag(HomeTestTags.MAP_BUTTON).assertExists()
-    composeTestRule.onNodeWithTag(HomeTestTags.MAP_BUTTON).performClick()
-
-    verify { navigationAction.navigateTo(Screen.MAP) }
-  }**/
-
+  /**
+   * @Test fun testClickFollowingAndAdd() { composeTestRule.setContent { val eventViewModel =
+   *   EventViewModel(eventRepository, imageRepository) HomeScreen(navigationAction, eventViewModel,
+   *   userViewModel, searchViewModel) }
+   *
+   * composeTestRule.onNodeWithTag(HomeTestTags.TAB_FOLLOWING).assertExists()
+   * composeTestRule.onNodeWithTag(HomeTestTags.TAB_FOLLOWING).performClick()
+   *
+   * composeTestRule.onNodeWithTag(HomeTestTags.MAP_BUTTON).assertExists()
+   * composeTestRule.onNodeWithTag(HomeTestTags.MAP_BUTTON).performClick()
+   *
+   * verify { navigationAction.navigateTo(Screen.MAP) } }*
+   */
   @Module
   @InstallIn(SingletonComponent::class)
   object FirebaseTestModule {

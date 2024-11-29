@@ -6,8 +6,6 @@ import com.android.unio.model.event.Event
 import com.android.unio.model.firestore.FirestorePaths.ASSOCIATION_PATH
 import com.android.unio.model.firestore.FirestorePaths.USER_PATH
 import com.android.unio.model.firestore.emptyFirestoreReferenceList
-import com.android.unio.model.firestore.transform.mapRolesToPermission
-import com.android.unio.model.firestore.transform.mapUsersToRoles
 import com.android.unio.model.user.User
 import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.gms.tasks.Task
@@ -82,7 +80,9 @@ class AssociationRepositoryFirestoreTest {
     every { FirebaseAuth.getInstance() } returns auth
 
     association1 =
-        MockAssociation.createMockAssociation(category = AssociationCategory.SCIENCE_TECH, members=listOf(Member(User.emptyFirestoreReferenceElement(), Role.ADMIN)))
+        MockAssociation.createMockAssociation(
+            category = AssociationCategory.SCIENCE_TECH,
+            members = listOf(Member(User.emptyFirestoreReferenceElement(), Role.ADMIN)))
     association2 =
         MockAssociation.createMockAssociation(category = AssociationCategory.SCIENCE_TECH)
 
@@ -118,8 +118,20 @@ class AssociationRepositoryFirestoreTest {
             "fullName" to association1.fullName,
             "category" to association1.category.name,
             "description" to association1.description,
-            "members" to mapOf("1" to "Guest", "2" to "Guest"), //the serialization process does not allow us to simply put association1.members
-            "roles" to mapOf("Guest" to mapOf("displayName" to "Guest", "permissions" to listOf("Full rights")), "Administrator" to mapOf("displayName" to "Administrator", "permissions" to listOf("Full rights"))),
+            "members" to
+                mapOf(
+                    "1" to "Guest",
+                    "2" to
+                        "Guest"), // the serialization process does not allow us to simply put
+                                  // association1.members
+            "roles" to
+                mapOf(
+                    "Guest" to
+                        mapOf("displayName" to "Guest", "permissions" to listOf("Full rights")),
+                    "Administrator" to
+                        mapOf(
+                            "displayName" to "Administrator",
+                            "permissions" to listOf("Full rights"))),
             "followersCount" to association1.followersCount,
             "image" to association1.image,
             "events" to association1.events.uids,
@@ -134,7 +146,14 @@ class AssociationRepositoryFirestoreTest {
             "category" to association2.category.name,
             "description" to association2.description,
             "members" to mapOf("1" to "Guest", "2" to "Guest"),
-            "roles" to mapOf("Guest" to mapOf("displayName" to "Guest", "permissions" to listOf("Full rights")), "Administrator" to mapOf("displayName" to "Administrator", "permissions" to listOf("Full rights"))),
+            "roles" to
+                mapOf(
+                    "Guest" to
+                        mapOf("displayName" to "Guest", "permissions" to listOf("Full rights")),
+                    "Administrator" to
+                        mapOf(
+                            "displayName" to "Administrator",
+                            "permissions" to listOf("Full rights"))),
             "followersCount" to association2.followersCount,
             "image" to association2.image,
             "events" to association2.events.uids,
@@ -188,18 +207,24 @@ class AssociationRepositoryFirestoreTest {
           assertEquals(association1.name, associations[0].name)
           assertEquals(association1.fullName, associations[0].fullName)
           assertEquals(association1.description, associations[0].description)
-            println("Ok")
-            println(associations[0])
-            println(association1)
-            assertEquals(association1.members.map{it.uid}.toSet(), associations[0].members.map{it.uid}.toSet())
-            assertEquals(association1.roles.map{it.uid}.toSet(), associations[0].roles.map{it.uid}.toSet())
+          println("Ok")
+          println(associations[0])
+          println(association1)
+          assertEquals(
+              association1.members.map { it.uid }.toSet(),
+              associations[0].members.map { it.uid }.toSet())
+          assertEquals(
+              association1.roles.map { it.uid }.toSet(),
+              associations[0].roles.map { it.uid }.toSet())
 
           assertEquals(association2.uid, associations[1].uid)
           assertEquals(association2.name, associations[1].name)
           assertEquals(association2.fullName, associations[1].fullName)
           assertEquals(association2.description, associations[1].description)
-            assertEquals(association2.members.map{it.uid}, associations[1].members.map{it.uid})
-            assertEquals(association2.roles.map{it.uid}.toSet(), associations[1].roles.map{it.uid}.toSet())
+          assertEquals(association2.members.map { it.uid }, associations[1].members.map { it.uid })
+          assertEquals(
+              association2.roles.map { it.uid }.toSet(),
+              associations[1].roles.map { it.uid }.toSet())
         },
         onFailure = { exception -> assert(false) })
   }
@@ -237,7 +262,6 @@ class AssociationRepositoryFirestoreTest {
           assertEquals("", associations[1].name)
           assertEquals("", associations[1].fullName)
           assertEquals("", associations[1].description)
-
         },
         onFailure = { exception -> assert(false) })
   }
@@ -252,7 +276,8 @@ class AssociationRepositoryFirestoreTest {
           assertEquals(association1.name, association.name)
           assertEquals(association1.fullName, association.fullName)
           assertEquals(association1.description, association.description)
-            //assertEquals(association1.members.map{it.uid}.toSet(), association.members.map{it.uid}.toSet())
+          // assertEquals(association1.members.map{it.uid}.toSet(),
+          // association.members.map{it.uid}.toSet())
         },
         onFailure = { exception -> assert(false) })
   }

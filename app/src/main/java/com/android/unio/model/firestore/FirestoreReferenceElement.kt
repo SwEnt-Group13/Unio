@@ -14,83 +14,78 @@ class FirestoreReferenceElement<T : UniquelyIdentifiable>(
     private val hydrate: (Map<String, Any>?) -> T
 ) : ReferenceElement<T> {
 
-    private var _uid: String = ""
+  private var _uid: String = ""
 
-    override val uid: String
-        get() = _uid
+  override val uid: String
+    get() = _uid
 
-    override fun set(uid: String) {
-        _uid = uid
+  override fun set(uid: String) {
+    _uid = uid
+  }
+
+  private val _element = MutableStateFlow<T?>(null)
+  override val element: StateFlow<T?> = _element
+
+  override fun fetch(onSuccess: () -> Unit, lazy: Boolean) {
+    if (lazy && _element.value?.uid == _uid) {
+      onSuccess()
+      return
     }
 
-    private val _element = MutableStateFlow<T?>(null)
-    override val element: StateFlow<T?> = _element
+    _element.value = null
 
+    if (_uid.isEmpty()) {
+      onSuccess()
+      return
+    }
 
-    override fun fetch(onSuccess: () -> Unit, lazy: Boolean) {
-        if (lazy && _element.value?.uid == _uid) {
+    if (collectionPath != null) {
+      // Standard hydration case
+      FirebaseFirestore.getInstance()
+          .collection(collectionPath)
+          .document(_uid)
+          .get()
+          .addOnSuccessListener { document ->
+            _element.value = hydrate(document.data)
             onSuccess()
-            return
-        }
+          }
+          .addOnFailureListener { exception ->
+            Log.e("FirestoreReferenceElement", "Failed to fetch document", exception)
+          }
+    } else {
+      Log.e("FirestoreReferenceElement", "Missing collection path")
+    }
+  }
 
-        _element.value = null
-
-        if (_uid.isEmpty()) {
-            onSuccess()
-            return
-        }
-
-        if (collectionPath != null) {
-            // Standard hydration case
-            FirebaseFirestore.getInstance()
-                .collection(collectionPath)
-                .document(_uid)
-                .get()
-                .addOnSuccessListener { document ->
-                    _element.value = hydrate(document.data)
-                    onSuccess()
-                }
-                .addOnFailureListener { exception ->
-                    Log.e("FirestoreReferenceElement", "Failed to fetch document", exception)
-                }
-        } else {
-            Log.e("FirestoreReferenceElement", "Missing collection path")
-        }
+  companion object {
+    /** Creates an empty [FirestoreReferenceElement]. */
+    fun <T : UniquelyIdentifiable> empty(
+        collectionPath: String? = null,
+        hydrate: (Map<String, Any>?) -> T
+    ): FirestoreReferenceElement<T> {
+      return FirestoreReferenceElement(collectionPath, hydrate)
     }
 
-    companion object {
-        /** Creates an empty [FirestoreReferenceElement]. */
-        fun <T : UniquelyIdentifiable> empty(
-            collectionPath: String? = null,
-            hydrate: (Map<String, Any>?) -> T
-        ): FirestoreReferenceElement<T> {
-            return FirestoreReferenceElement(collectionPath, hydrate)
-        }
-
-        /** Creates a [FirestoreReferenceElement] for a specific UID. */
-        fun <T : UniquelyIdentifiable> withUid(
-            uid: String,
-            collectionPath: String? = null,
-            hydrate: (Map<String, Any>?) -> T
-        ): FirestoreReferenceElement<T> {
-            return FirestoreReferenceElement(collectionPath, hydrate).apply {
-                set(uid)
-            }
-        }
+    /** Creates a [FirestoreReferenceElement] for a specific UID. */
+    fun <T : UniquelyIdentifiable> withUid(
+        uid: String,
+        collectionPath: String? = null,
+        hydrate: (Map<String, Any>?) -> T
+    ): FirestoreReferenceElement<T> {
+      return FirestoreReferenceElement(collectionPath, hydrate).apply { set(uid) }
     }
+  }
 }
 
 fun User.Companion.emptyFirestoreReferenceElement(): FirestoreReferenceElement<User> {
-    return FirestoreReferenceElement.empty(
-        collectionPath = FirestorePaths.USER_PATH,
-        hydrate = UserRepositoryFirestore.Companion::hydrate
-    )
+  return FirestoreReferenceElement.empty(
+      collectionPath = FirestorePaths.USER_PATH,
+      hydrate = UserRepositoryFirestore.Companion::hydrate)
 }
 
 fun User.Companion.firestoreReferenceElementWith(uid: String): FirestoreReferenceElement<User> {
-    return FirestoreReferenceElement.withUid(
-        uid = uid,
-        collectionPath = FirestorePaths.USER_PATH,
-        hydrate = UserRepositoryFirestore.Companion::hydrate
-    )
+  return FirestoreReferenceElement.withUid(
+      uid = uid,
+      collectionPath = FirestorePaths.USER_PATH,
+      hydrate = UserRepositoryFirestore.Companion::hydrate)
 }

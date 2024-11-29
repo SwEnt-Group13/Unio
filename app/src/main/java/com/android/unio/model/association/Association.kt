@@ -13,11 +13,11 @@ import com.android.unio.model.strings.AssociationStrings
 import com.android.unio.model.user.User
 
 /**
- * Represents an association within the system.
- * This class holds various details about the association and its related entities.
+ * Represents an association within the system. This class holds various details about the
+ * association and its related entities.
  *
- * **Note:** When modifying this class, ensure the serialization and hydration methods
- * are updated accordingly to reflect the changes.
+ * **Note:** When modifying this class, ensure the serialization and hydration methods are updated
+ * accordingly to reflect the changes.
  *
  * @property uid Unique identifier for the association.
  * @property url URL of the association's homepage.
@@ -32,7 +32,6 @@ import com.android.unio.model.user.User
  * @property events A reference list containing events associated with the association.
  * @property principalEmailAddress Primary email address for contacting the association.
  */
-
 data class Association(
     override val uid: String,
     val url: String,
@@ -55,7 +54,6 @@ data class Association(
  *
  * @property displayName A human-readable name for the category.
  */
-
 enum class AssociationCategory(val displayName: String) {
   EPFL_BODIES(AssociationStrings.EPFL_BODIES),
   REPRESENTATION(AssociationStrings.REPRESENTATION),
@@ -72,24 +70,17 @@ enum class AssociationCategory(val displayName: String) {
   UNKNOWN(AssociationStrings.UNKNOWN)
 }
 
-
 /**
  * Represents a member of an association.
  *
  * @property user Reference to the user who is a member.
  * @property role The role assigned to the member within the association.
  */
+data class Member(val user: ReferenceElement<User>, val role: Role) : UniquelyIdentifiable {
+  class Companion {}
 
-data class Member(
-    val user: ReferenceElement<User>,
-    val role: Role
-) : UniquelyIdentifiable {
-    class Companion {
-
-    }
-
-    override val uid: String
-        get() = user.uid
+  override val uid: String
+    get() = user.uid
 }
 
 /**
@@ -99,20 +90,19 @@ data class Member(
  * @param actual Actual list of members.
  * @return `true` if the lists are identical in content and order, otherwise `false`.
  */
-
 fun compareMemberLists(expected: List<Member>, actual: List<Member>): Boolean {
-    if (expected.size != actual.size) return false
+  if (expected.size != actual.size) return false
 
-    // sort both lists by Member.uid for consistent comparison
-    val sortedExpected = expected.sortedBy { it.uid }
-    val sortedActual = actual.sortedBy { it.uid }
+  // sort both lists by Member.uid for consistent comparison
+  val sortedExpected = expected.sortedBy { it.uid }
+  val sortedActual = actual.sortedBy { it.uid }
 
-    // compare each Member in the sorted lists
-    return sortedExpected.zip(sortedActual).all { (expectedMember, actualMember) ->
-        expectedMember.uid == actualMember.uid &&
-                expectedMember.user.uid == actualMember.user.uid &&
-                expectedMember.role.uid == actualMember.role.uid
-    }
+  // compare each Member in the sorted lists
+  return sortedExpected.zip(sortedActual).all { (expectedMember, actualMember) ->
+    expectedMember.uid == actualMember.uid &&
+        expectedMember.user.uid == actualMember.user.uid &&
+        expectedMember.role.uid == actualMember.role.uid
+  }
 }
 
 /**
@@ -122,14 +112,13 @@ fun compareMemberLists(expected: List<Member>, actual: List<Member>): Boolean {
  * @param actual Actual list of roles.
  * @return `true` if the sets of UIDs are identical, otherwise `false`.
  */
-
 fun compareRoleLists(expected: List<Role>, actual: List<Role>): Boolean {
-    // convert both lists to sets of Role.uid for comparison
-    val expectedUids = expected.map { it.uid }.toSet()
-    val actualUids = actual.map { it.uid }.toSet()
+  // convert both lists to sets of Role.uid for comparison
+  val expectedUids = expected.map { it.uid }.toSet()
+  val actualUids = actual.map { it.uid }.toSet()
 
-    // return true if the sets of UIDs are identical
-    return expectedUids == actualUids
+  // return true if the sets of UIDs are identical
+  return expectedUids == actualUids
 }
 
 /**
@@ -139,29 +128,29 @@ fun compareRoleLists(expected: List<Role>, actual: List<Role>): Boolean {
  * @property permissions Set of permissions assigned to this role.
  * @property uid Unique identifier for the role.
  */
+class Role(val displayName: String, val permissions: Permissions, override val uid: String) :
+    UniquelyIdentifiable {
 
-class Role(
-    val displayName: String,
-    val permissions: Permissions,
-    override val uid: String
-) : UniquelyIdentifiable {
+  companion object {
+    // Predefined roles
+    val ADMIN = Role("Administrator", Permissions.FULL_RIGHTS, "Administrator")
+    val COMITE =
+        Role(
+            "Committee",
+            Permissions.PermissionsBuilder()
+                .addPermission(PermissionType.VIEW_MEMBERS)
+                .addPermission(PermissionType.EDIT_MEMBERS)
+                .addPermission(PermissionType.VIEW_EVENTS)
+                .build(),
+            "Committee")
+    val MEMBER = Role("Member", Permissions.NONE, "Member")
+    val GUEST = Role("Guest", Permissions.NONE, "Guest")
 
-    companion object {
-        // Predefined roles
-        val ADMIN = Role("Administrator", Permissions.FULL_RIGHTS, "Administrator")
-        val COMITE = Role("Committee", Permissions.PermissionsBuilder()
-            .addPermission(PermissionType.VIEW_MEMBERS)
-            .addPermission(PermissionType.EDIT_MEMBERS)
-            .addPermission(PermissionType.VIEW_EVENTS).build(), "Committee")
-        val MEMBER = Role("Member", Permissions.NONE, "Member")
-        val GUEST = Role("Guest", Permissions.NONE, "Guest")
-
-        // Factory method to create new roles
-        fun createRole(displayName: String, permissions: Permissions, uid: String): Role {
-            return Role(displayName, permissions, uid)
-        }
+    // Factory method to create new roles
+    fun createRole(displayName: String, permissions: Permissions, uid: String): Role {
+      return Role(displayName, permissions, uid)
     }
-
+  }
 }
 
 /**
@@ -169,81 +158,81 @@ class Role(
  *
  * @property grantedPermissions The permissions granted to this set.
  */
-
 class Permissions private constructor(private val grantedPermissions: MutableSet<PermissionType>) {
 
-    fun hasPermission(permission: PermissionType): Boolean {
-        return grantedPermissions.contains(permission) || grantedPermissions.contains(PermissionType.FULL_RIGHTS)
+  fun hasPermission(permission: PermissionType): Boolean {
+    return grantedPermissions.contains(permission) ||
+        grantedPermissions.contains(PermissionType.FULL_RIGHTS)
+  }
+
+  fun getGrantedPermissions(): Set<PermissionType> = grantedPermissions.toSet()
+
+  fun addPermission(permission: PermissionType): Permissions {
+    grantedPermissions.add(permission)
+    return this.copy()
+  }
+
+  fun addPermissions(permissionList: List<PermissionType>): Permissions {
+    grantedPermissions.addAll(permissionList)
+    return this.copy()
+  }
+
+  fun deletePermission(permission: PermissionType): Permissions {
+    grantedPermissions.remove(permission)
+    return this.copy()
+  }
+
+  fun deletePermissions(permissionList: List<PermissionType>): Permissions {
+    grantedPermissions.removeAll(permissionList)
+    return this.copy()
+  }
+
+  // create and return a copy of the current Permissions object with updated permissions
+  private fun copy(): Permissions {
+    return Permissions(grantedPermissions.toMutableSet())
+  }
+
+  companion object {
+    // predefined permission sets
+    val FULL_RIGHTS = Permissions(mutableSetOf(PermissionType.FULL_RIGHTS))
+    val NONE = Permissions(mutableSetOf())
+  }
+
+  // PermissionsBuilder class to create Permissions with a list of roles/permissions
+  class PermissionsBuilder {
+    private val permissions = mutableSetOf<PermissionType>()
+
+    // Add a specific permission to the permissions set
+    fun addPermission(permission: PermissionType): PermissionsBuilder {
+      permissions.add(permission)
+      return this
     }
 
-    fun getGrantedPermissions(): Set<PermissionType> = grantedPermissions.toSet()
-
-    fun addPermission(permission: PermissionType): Permissions {
-        grantedPermissions.add(permission)
-        return this.copy()
+    // Add a list of permissions to the permissions set
+    fun addPermissions(permissionList: List<PermissionType>): PermissionsBuilder {
+      permissions.addAll(permissionList)
+      return this
     }
 
-    fun addPermissions(permissionList: List<PermissionType>): Permissions {
-        grantedPermissions.addAll(permissionList)
-        return this.copy()
+    // Build and return the Permissions object
+    fun build(): Permissions {
+      // Ensure that FULL_RIGHTS is not included explicitly
+      if (permissions.contains(PermissionType.FULL_RIGHTS)) {
+        throw IllegalArgumentException("Cannot grant FULL_RIGHTS explicitly.")
+      }
+      return Permissions(permissions)
     }
-
-    fun deletePermission(permission: PermissionType): Permissions {
-        grantedPermissions.remove(permission)
-        return this.copy()
-    }
-
-    fun deletePermissions(permissionList: List<PermissionType>): Permissions {
-        grantedPermissions.removeAll(permissionList)
-        return this.copy()
-    }
-
-    // create and return a copy of the current Permissions object with updated permissions
-    private fun copy(): Permissions {
-        return Permissions(grantedPermissions.toMutableSet())
-    }
-
-    companion object {
-        // predefined permission sets
-        val FULL_RIGHTS = Permissions(mutableSetOf(PermissionType.FULL_RIGHTS))
-        val NONE = Permissions(mutableSetOf())
-    }
-
-    // PermissionsBuilder class to create Permissions with a list of roles/permissions
-    class PermissionsBuilder {
-        private val permissions = mutableSetOf<PermissionType>()
-
-        // Add a specific permission to the permissions set
-        fun addPermission(permission: PermissionType): PermissionsBuilder {
-            permissions.add(permission)
-            return this
-        }
-
-        // Add a list of permissions to the permissions set
-        fun addPermissions(permissionList: List<PermissionType>): PermissionsBuilder {
-            permissions.addAll(permissionList)
-            return this
-        }
-
-        // Build and return the Permissions object
-        fun build(): Permissions {
-            // Ensure that FULL_RIGHTS is not included explicitly
-            if (permissions.contains(PermissionType.FULL_RIGHTS)) {
-                throw IllegalArgumentException("Cannot grant FULL_RIGHTS explicitly.")
-            }
-            return Permissions(permissions)
-        }
-    }
+  }
 }
 
-enum class PermissionType(val stringName : String) {
-    FULL_RIGHTS("Full rights"), // Special permission granting all rights
-    VIEW_MEMBERS("View members"),
-    EDIT_MEMBERS("Edit members"),
-    DELETE_MEMBERS("Delete members"),
-    VIEW_EVENTS("View events"),
-    EDIT_EVENTS("Edit events"),
-    DELETE_EVENTS("Delete Events")
+enum class PermissionType(val stringName: String) {
+  FULL_RIGHTS("Full rights"), // Special permission granting all rights
+  VIEW_MEMBERS("View members"),
+  EDIT_MEMBERS("Edit members"),
+  DELETE_MEMBERS("Delete members"),
+  VIEW_EVENTS("View events"),
+  EDIT_EVENTS("Edit events"),
+  DELETE_EVENTS("Delete Events")
 }
 
 @Document
