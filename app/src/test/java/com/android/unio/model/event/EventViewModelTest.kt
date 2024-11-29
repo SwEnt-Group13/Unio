@@ -71,6 +71,7 @@ class EventViewModelTest {
         }
 
     every { associationRepositoryFirestore.getAssociations(any(), any()) } answers {}
+    every { associationRepositoryFirestore.saveAssociation(any(), any(), any()) } answers {}
 
     eventViewModel = EventViewModel(repository, imageRepository, associationRepositoryFirestore)
   }
