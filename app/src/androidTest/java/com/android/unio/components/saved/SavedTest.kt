@@ -7,6 +7,7 @@ import com.android.unio.assertDisplayComponentInScroll
 import com.android.unio.mocks.association.MockAssociation
 import com.android.unio.mocks.event.MockEvent
 import com.android.unio.mocks.user.MockUser
+import com.android.unio.model.association.AssociationRepositoryFirestore
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventRepositoryFirestore
 import com.android.unio.model.event.EventViewModel
@@ -38,11 +39,9 @@ class SavedTest : TearDown() {
 
   // Mock event repository to provide test data.
   @MockK private lateinit var eventRepository: EventRepositoryFirestore
-
   @MockK private lateinit var userRepository: UserRepositoryFirestore
-
   @MockK private lateinit var navigationAction: NavigationAction
-
+  @MockK private lateinit var associationRepositoryFirestore: AssociationRepositoryFirestore
   @MockK private lateinit var imageRepository: ImageRepositoryFirebaseStorage
 
   private lateinit var eventViewModel: EventViewModel
@@ -87,7 +86,8 @@ class SavedTest : TearDown() {
           onSuccess()
         }
 
-    eventViewModel = EventViewModel(eventRepository, imageRepository)
+    eventViewModel =
+        EventViewModel(eventRepository, imageRepository, associationRepositoryFirestore)
   }
 
   @Test

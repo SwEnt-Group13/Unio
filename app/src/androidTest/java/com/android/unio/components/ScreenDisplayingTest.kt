@@ -10,6 +10,7 @@ import com.android.unio.TearDown
 import com.android.unio.mocks.association.MockAssociation
 import com.android.unio.mocks.event.MockEvent
 import com.android.unio.mocks.user.MockUser
+import com.android.unio.model.association.AssociationRepositoryFirestore
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.authentication.AuthViewModel
 import com.android.unio.model.event.Event
@@ -106,6 +107,7 @@ class ScreenDisplayingTest : TearDown() {
         longitude = 6.559331096
       }
 
+  @MockK private lateinit var associationRepositoryFirestore: AssociationRepositoryFirestore
   @MockK private lateinit var imageRepositoryFirestore: ImageRepositoryFirebaseStorage
 
   @MockK private lateinit var firebaseAuth: FirebaseAuth
@@ -138,7 +140,7 @@ class ScreenDisplayingTest : TearDown() {
     associationViewModel =
         spyk(
             AssociationViewModel(
-                mock(),
+                associationRepositoryFirestore,
                 mockk<EventRepositoryFirestore>(),
                 imageRepositoryFirestore,
                 mockk<ConcurrentAssociationUserRepositoryFirestore>()))
@@ -148,7 +150,8 @@ class ScreenDisplayingTest : TearDown() {
           val onSuccess = args[0] as (List<Event>) -> Unit
           onSuccess(events)
         }
-    eventViewModel = EventViewModel(eventRepository, imageRepositoryFirestore)
+    eventViewModel =
+        EventViewModel(eventRepository, imageRepositoryFirestore, associationRepositoryFirestore)
     eventViewModel.loadEvents()
     eventViewModel.selectEvent(events.first().uid)
 

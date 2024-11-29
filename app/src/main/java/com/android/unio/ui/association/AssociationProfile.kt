@@ -138,7 +138,6 @@ fun AssociationProfileScaffold(
     associationViewModel: AssociationViewModel,
     onEdit: () -> Unit
 ) {
-
   val associationState by associationViewModel.selectedAssociation.collectAsState()
   val association = associationState!!
 
@@ -437,6 +436,7 @@ private fun AssociationMembers(members: List<User>, onMemberClick: (User) -> Uni
  * @param navigationAction (NavigationAction) : The navigation actions of the screen
  * @param association (Association) : The association currently displayed
  * @param userViewModel (UserViewModel) : The user view model
+ * @param eventViewModel (EventViewModel) : The event view model
  */
 @Composable
 private fun AssociationEvents(
@@ -451,6 +451,7 @@ private fun AssociationEvents(
 
   val events by association.events.list.collectAsState()
 
+  // To be changed when we have a functional admin system
   var isAdmin by remember { mutableStateOf(true) }
 
   if (events.isNotEmpty()) {
@@ -513,7 +514,8 @@ private fun AssociationEventCard(
         navigationAction = navigationAction,
         event = event,
         userViewModel = userViewModel,
-        eventViewModel = eventViewModel)
+        eventViewModel = eventViewModel,
+        true)
   }
 }
 

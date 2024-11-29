@@ -1,10 +1,13 @@
 package com.android.unio.components.event
 
+import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.isDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextClearance
 import androidx.compose.ui.test.performTextInput
 import com.android.unio.TearDown
@@ -35,16 +38,13 @@ import com.google.firebase.auth.internal.zzac
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import io.mockk.MockKAnnotations
-import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockkStatic
 import io.mockk.spyk
-import io.mockk.unmockkAll
 import java.net.HttpURLConnection
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
-import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -102,7 +102,8 @@ class EventCreationTest : TearDown() {
           val onSuccess = args[0] as (List<Event>) -> Unit
           onSuccess(events)
         }
-    eventViewModel = EventViewModel(eventRepository, imageRepositoryFirestore)
+    eventViewModel =
+        EventViewModel(eventRepository, imageRepositoryFirestore, associationRepositoryFirestore)
 
     searchViewModel = spyk(SearchViewModel(searchRepository))
     associationViewModel =
@@ -164,6 +165,38 @@ class EventCreationTest : TearDown() {
     composeTestRule
         .onNodeWithTag(EventCreationTestTags.TAGGED_ASSOCIATIONS)
         .assertDisplayComponentInScroll()
+
+    composeTestRule
+        .onNodeWithTag(EventCreationTestTags.START_DATE_FIELD)
+        .performScrollTo()
+        .assertIsDisplayed()
+        .performClick()
+    composeTestRule.onNodeWithTag(EventCreationTestTags.START_DATE_PICKER).assertIsDisplayed()
+    composeTestRule.onNodeWithText("Cancel").performClick()
+
+    composeTestRule
+        .onNodeWithTag(EventCreationTestTags.START_TIME_FIELD)
+        .performScrollTo()
+        .assertIsDisplayed()
+        .performClick()
+    composeTestRule.onNodeWithTag(EventCreationTestTags.START_TIME_PICKER).assertIsDisplayed()
+    composeTestRule.onNodeWithText("Cancel").performClick()
+
+    composeTestRule
+        .onNodeWithTag(EventCreationTestTags.END_DATE_FIELD)
+        .performScrollTo()
+        .assertIsDisplayed()
+        .performClick()
+    composeTestRule.onNodeWithTag(EventCreationTestTags.END_DATE_PICKER).assertIsDisplayed()
+    composeTestRule.onNodeWithText("Cancel").performClick()
+
+    composeTestRule
+        .onNodeWithTag(EventCreationTestTags.END_TIME_FIELD)
+        .performScrollTo()
+        .assertIsDisplayed()
+        .performClick()
+    composeTestRule.onNodeWithTag(EventCreationTestTags.END_TIME_PICKER).assertIsDisplayed()
+    composeTestRule.onNodeWithText("Cancel").performClick()
 
     composeTestRule.onNodeWithTag(EventCreationTestTags.TAGGED_ASSOCIATIONS).performClick()
     composeTestRule.waitForIdle()
@@ -263,11 +296,5 @@ class EventCreationTest : TearDown() {
             "Test Road, 123, 12345 Test City, Test State, Test Country", includeEditableText = true)
 
     server.shutdown()
-  }
-
-  @After
-  fun teardown() {
-    clearAllMocks()
-    unmockkAll()
   }
 }

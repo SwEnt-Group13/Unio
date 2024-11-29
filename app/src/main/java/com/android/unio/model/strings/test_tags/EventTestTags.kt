@@ -10,6 +10,7 @@ object EventCardTestTags {
   const val EVENT_DATE = "event_EventDate"
   const val EVENT_TIME = "event_EventTime"
   const val EVENT_CATCHY_DESCRIPTION = "event_EventCatchyDescription"
+  const val EDIT_BUTTON = "event_EditButton"
   const val EVENT_SAVE_BUTTON = "event_EventSaveButton"
 }
 
@@ -29,6 +30,14 @@ object EventCreationTestTags {
   const val ERROR_TEXT1 = "eventCreationStartAfterEnd"
   const val ERROR_TEXT2 = "eventCreationStartEqualsEnd"
   const val LOCATION_SUGGESTION_ITEM = "eventCreationSuggestionItem: "
+  const val START_DATE_FIELD = "eventCreationOverlayStartDateField"
+  const val START_TIME_FIELD = "eventCreationOverlayStartTimeField"
+  const val START_DATE_PICKER = "eventCreationOverlayStartDatePicker"
+  const val START_TIME_PICKER = "eventCreationOverlayStartTimePicker"
+  const val END_DATE_FIELD = "eventCreationOverlayEndDateField"
+  const val END_TIME_FIELD = "eventCreationOverlayEndTimeField"
+  const val END_DATE_PICKER = "eventCreationOverlayEndDatePicker"
+  const val END_TIME_PICKER = "eventCreationOverlayEndTimePicker"
 }
 
 object EventCreationOverlayTestTags {
@@ -39,6 +48,32 @@ object EventCreationOverlayTestTags {
   const val CANCEL = "eventCreationOverlayCancel"
   const val SAVE = "eventCreationOverlaySave"
   const val ASSOCIATION_LIST = "eventCreationOverlayAssociationList"
+}
+
+object EventEditTestTags {
+  const val SCREEN = "eventEditScreen"
+  const val TITLE = "eventEditTitle"
+  const val EVENT_TITLE = "eventEditEventTitle"
+  const val SHORT_DESCRIPTION = "eventEditShortDescription"
+  const val COAUTHORS = "eventEditCoauthors"
+  const val TAGGED_ASSOCIATIONS = "eventEditTaggedAssociations"
+  const val DESCRIPTION = "eventEditDescription"
+  const val LOCATION = "eventEditLocation"
+  const val SAVE_BUTTON = "eventEditSaveButton"
+  const val DELETE_BUTTON = "eventEditDeleteButton"
+  const val EVENT_IMAGE = "eventEditEventImage"
+  const val START_TIME = "eventEditStartTime"
+  const val END_TIME = "eventEditEndTime"
+  const val ERROR_TEXT1 = "eventEditStartAfterEnd"
+  const val ERROR_TEXT2 = "eventEditStartEqualsEnd"
+  const val START_DATE_FIELD = "eventEditOverlayStartDateField"
+  const val START_TIME_FIELD = "eventEditOverlayStartTimeField"
+  const val START_DATE_PICKER = "eventEditOverlayStartDatePicker"
+  const val START_TIME_PICKER = "eventEditOverlayStartTimePicker"
+  const val END_DATE_FIELD = "eventEditOverlayEndDateField"
+  const val END_TIME_FIELD = "eventEditOverlayEndTimeField"
+  const val END_DATE_PICKER = "eventEditOverlayEndDatePicker"
+  const val END_TIME_PICKER = "eventEditOverlayEndTimePicker"
 }
 
 object EventDetailsTestTags {

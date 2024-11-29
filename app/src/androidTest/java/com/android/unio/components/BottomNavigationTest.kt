@@ -4,6 +4,7 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import com.android.unio.TearDown
+import com.android.unio.model.association.AssociationRepositoryFirestore
 import com.android.unio.model.event.EventRepository
 import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
@@ -31,6 +32,7 @@ class BottomNavigationTest : TearDown() {
   private lateinit var eventViewModel: EventViewModel
 
   @MockK private lateinit var imageRepository: ImageRepositoryFirebaseStorage
+  @MockK private lateinit var associationRepositoryFirestore: AssociationRepositoryFirestore
 
   private lateinit var userRepository: UserRepository
   private lateinit var userViewModel: UserViewModel
@@ -44,7 +46,8 @@ class BottomNavigationTest : TearDown() {
   fun setUp() {
     MockKAnnotations.init(this)
     eventRepository = mock { EventRepository::class.java }
-    eventViewModel = EventViewModel(eventRepository, imageRepository)
+    eventViewModel =
+        EventViewModel(eventRepository, imageRepository, associationRepositoryFirestore)
 
     userRepository = mock { UserRepositoryFirestore::class.java }
     userViewModel = UserViewModel(userRepository, false)

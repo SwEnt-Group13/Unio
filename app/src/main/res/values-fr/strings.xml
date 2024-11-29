@@ -177,6 +177,12 @@
     <string name="event_creation_location_dropdown_points">…</string>
     <string name="event_creation_location_dropdown_more">Plus…</string>
 
+    <!-- Event Edit Strings -->
+    <string name="event_edit_title">Modifier </string>
+    <string name="event_edit_delete_button">Supprimer</string>
+    <string name="event_edit_failed">Echec lors de la modification</string>
+    <string name="event_edit_save_button">Sauvegarder</string>
+
     <!-- Associations Overlay Strings -->
     <string name="associations_overlay_coauthors_title" translatable="true">Co-organisateurs</string>
     <string name="associations_overlay_coauthors_description" translatable="true">Choisir quels associations organisent l\'évènement avec vous</string>

@@ -14,6 +14,7 @@ import com.android.unio.mocks.association.MockAssociation
 import com.android.unio.mocks.event.MockEvent
 import com.android.unio.mocks.map.MockLocation
 import com.android.unio.mocks.user.MockUser
+import com.android.unio.model.association.AssociationRepositoryFirestore
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventRepositoryFirestore
 import com.android.unio.model.event.EventType
@@ -69,6 +70,7 @@ class EventCardTest : TearDown() {
   private lateinit var eventViewModel: EventViewModel
   @MockK private lateinit var eventRepository: EventRepositoryFirestore
   @MockK private lateinit var imageRepository: ImageRepositoryFirebaseStorage
+  @MockK private lateinit var associationRepository: AssociationRepositoryFirestore
   private lateinit var context: Context
 
   @Before
@@ -79,7 +81,7 @@ class EventCardTest : TearDown() {
     context = InstrumentationRegistry.getInstrumentation().targetContext
     val user = MockUser.createMockUser(followedAssociations = associations, savedEvents = listOf())
     every { NotificationWorker.schedule(any(), any()) } just runs
-    eventViewModel = EventViewModel(eventRepository, imageRepository)
+    eventViewModel = EventViewModel(eventRepository, imageRepository, associationRepository)
     userViewModel = UserViewModel(userRepository)
     every { userRepository.updateUser(user, any(), any()) } answers
         {
@@ -93,7 +95,9 @@ class EventCardTest : TearDown() {
   }
 
   private fun setEventScreen(event: Event) {
-    composeTestRule.setContent { EventCard(navigationAction, event, userViewModel, eventViewModel) }
+    composeTestRule.setContent {
+      EventCard(navigationAction, event, userViewModel, eventViewModel, true)
+    }
   }
 
   @Test
@@ -131,6 +135,10 @@ class EventCardTest : TearDown() {
         .assertTextEquals("This is a catchy description.")
     composeTestRule
         .onNodeWithTag(EventCardTestTags.EVENT_SAVE_BUTTON, useUnmergedTree = true)
+        .assertExists()
+
+    composeTestRule
+        .onNodeWithTag(EventCardTestTags.EDIT_BUTTON, useUnmergedTree = true)
         .assertExists()
   }
 

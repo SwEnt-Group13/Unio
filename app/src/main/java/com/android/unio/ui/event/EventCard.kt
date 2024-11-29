@@ -9,6 +9,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -21,9 +22,11 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -74,7 +77,9 @@ fun EventCard(
     navigationAction: NavigationAction,
     event: Event,
     userViewModel: UserViewModel,
-    eventViewModel: EventViewModel
+    eventViewModel: EventViewModel,
+    shouldBeEditable: Boolean =
+        false // To be changed in the future once permissions are implemented
 ) {
   val context = LocalContext.current
   val user by userViewModel.user.collectAsState()
@@ -154,7 +159,12 @@ fun EventCard(
         eventViewModel.selectEvent(event.uid)
         navigationAction.navigateTo(Screen.EVENT_DETAILS)
       },
-      onClickSaveButton = onClickSaveButton)
+      onClickSaveButton = onClickSaveButton,
+      onClickEditButton = {
+        eventViewModel.selectEvent(event.uid)
+        navigationAction.navigateTo(Screen.EDIT_EVENT)
+      },
+      shouldBeEditable = shouldBeEditable)
 }
 
 @Composable
@@ -163,7 +173,9 @@ fun EventCardScaffold(
     organisers: List<Association>,
     isSaved: Boolean,
     onClickEventCard: () -> Unit,
-    onClickSaveButton: () -> Unit
+    onClickSaveButton: () -> Unit,
+    onClickEditButton: () -> Unit,
+    shouldBeEditable: Boolean
 ) {
   val context = LocalContext.current
   Column(
@@ -192,26 +204,46 @@ fun EventCardScaffold(
 
           // Save button icon on the top right corner of the image, allows the user to save/unsave
           // the event
+          Row(
+              modifier = Modifier.align(Alignment.TopEnd).padding(2.dp),
+              horizontalArrangement = Arrangement.SpaceBetween) {
+                if (shouldBeEditable) {
+                  IconButton(
+                      modifier =
+                          Modifier.size(28.dp)
+                              .clip(RoundedCornerShape(14.dp))
+                              .background(MaterialTheme.colorScheme.inversePrimary)
+                              .padding(4.dp)
+                              .testTag(EventCardTestTags.EDIT_BUTTON),
+                      onClick = { onClickEditButton() }) {
+                        Icon(
+                            imageVector = Icons.Outlined.Edit,
+                            contentDescription = "editassociation",
+                            tint = Color.White)
+                      }
+                }
+                Spacer(modifier = Modifier.width(2.dp))
 
-          Box(
-              modifier =
-                  Modifier.size(28.dp)
-                      .clip(RoundedCornerShape(14.dp))
-                      .background(MaterialTheme.colorScheme.inversePrimary)
-                      .align(Alignment.TopEnd)
-                      .clickable { onClickSaveButton() }
-                      .padding(4.dp)
-                      .testTag(EventCardTestTags.EVENT_SAVE_BUTTON)) {
-                Icon(
-                    imageVector =
-                        if (isSaved) Icons.Rounded.Favorite else Icons.Rounded.FavoriteBorder,
-                    contentDescription =
-                        if (isSaved)
-                            context.getString(R.string.event_card_content_description_saved_event)
-                        else
-                            context.getString(
-                                R.string.event_card_content_description_not_saved_event),
-                    tint = if (isSaved) Color.Red else Color.White)
+                Box(
+                    modifier =
+                        Modifier.size(28.dp)
+                            .clip(RoundedCornerShape(14.dp))
+                            .background(MaterialTheme.colorScheme.inversePrimary)
+                            .clickable { onClickSaveButton() }
+                            .padding(4.dp)
+                            .testTag(EventCardTestTags.EVENT_SAVE_BUTTON)) {
+                      Icon(
+                          imageVector =
+                              if (isSaved) Icons.Rounded.Favorite else Icons.Rounded.FavoriteBorder,
+                          contentDescription =
+                              if (isSaved)
+                                  context.getString(
+                                      R.string.event_card_content_description_saved_event)
+                              else
+                                  context.getString(
+                                      R.string.event_card_content_description_not_saved_event),
+                          tint = if (isSaved) Color.Red else Color.White)
+                    }
               }
         }
 
