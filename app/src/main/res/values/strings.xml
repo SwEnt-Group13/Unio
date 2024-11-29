@@ -402,6 +402,12 @@
     <string name="reset_password_invalid_email">Please enter a valid email</string>
 
 
+    <!-- Notification Strings -->
+    <string name="notification_event_reminder" translatable="true">The event is about to begin :)</string>
+    <string name="notification_event_reminder_default_message" translatable="true">"An event will occur soon"</string>
+    <string name="notification_event_reminder_default_title" translatable="false">Unio</string>
+
+
     <!-- Debug/Temporary Strings -->
     <string name="debug_lorem_ipsum" translatable="false">Lorem ipsum dolor sit amet, consectetur
         adipiscing elit. Nam nec fermentum orci. Praesent tortor purus, porta at ligula id, vehicula sodales

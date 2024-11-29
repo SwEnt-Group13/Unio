@@ -20,6 +20,7 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
+import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.storage.FirebaseStorage
 import dagger.Binds
 import dagger.Module
@@ -100,6 +101,13 @@ abstract class ConcurrentAssociationUserModule {
 object FirebaseStorageModule {
 
   @Provides fun provideFirebaseStorage(): FirebaseStorage = FirebaseStorage.getInstance()
+}
+
+@Module
+@InstallIn(SingletonComponent::class)
+object FirebaseMessagingModule {
+
+  @Provides fun provideFirebaseMessaging(): FirebaseMessaging = FirebaseMessaging.getInstance()
 }
 
 @Module

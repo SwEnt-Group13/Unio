@@ -36,3 +36,10 @@ object FormatStrings {
   const val HOUR_MINUTE_FORMAT = "HH:mm"
   const val DAY_MONTH_YEAR_FORMAT = "dd/MM/yy"
 }
+
+object NotificationStrings {
+  const val EVENT_REMINDER_CHANNEL_ID = "EventReminder"
+  const val NOTIFICATION_SCHEDULER_TYPE_CANCEL = "cancel"
+  const val NOTIFICATION_SCHEDULER_TYPE_CREATE = "create"
+  const val NOTIFICATION_SCHEDULER_TYPE = "type"
+}

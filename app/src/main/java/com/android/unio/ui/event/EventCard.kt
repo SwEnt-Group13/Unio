@@ -1,7 +1,12 @@
 package com.android.unio.ui.event
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.os.Build
 import android.util.Log
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -24,6 +29,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -35,6 +43,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import com.android.unio.R
 import com.android.unio.model.association.Association
@@ -43,16 +52,22 @@ import com.android.unio.model.event.EventType
 import com.android.unio.model.event.EventUtils.addAlphaToColor
 import com.android.unio.model.event.EventUtils.formatTimestamp
 import com.android.unio.model.event.EventViewModel
+import com.android.unio.model.notification.NotificationWorker
+import com.android.unio.model.notification.UnioNotification
 import com.android.unio.model.strings.FormatStrings.DAY_MONTH_FORMAT
 import com.android.unio.model.strings.FormatStrings.HOUR_MINUTE_FORMAT
+import com.android.unio.model.strings.NotificationStrings.EVENT_REMINDER_CHANNEL_ID
 import com.android.unio.model.strings.test_tags.EventCardTestTags
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.image.AsyncImageWrapper
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
 import com.android.unio.ui.theme.AppTypography
+import com.google.firebase.Timestamp
 import java.text.SimpleDateFormat
 import java.util.Locale
+
+const val SECONDS_IN_AN_HOUR = 3600
 
 @Composable
 fun EventCard(
@@ -61,16 +76,75 @@ fun EventCard(
     userViewModel: UserViewModel,
     eventViewModel: EventViewModel
 ) {
+  val context = LocalContext.current
   val user by userViewModel.user.collectAsState()
   val associations by event.organisers.list.collectAsState()
+  var isNotificationsEnabled by remember { mutableStateOf(false) }
+  when (PackageManager.PERMISSION_GRANTED) {
+    ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) -> {
+      isNotificationsEnabled = true
+    }
+  }
 
   if (user == null) {
     Log.e("EventCard", "User not found.")
-    Toast.makeText(LocalContext.current, "An error occurred.", Toast.LENGTH_SHORT).show()
+    Toast.makeText(context, "An error occurred.", Toast.LENGTH_SHORT).show()
     return
   }
 
-  val isSaved = user!!.savedEvents.contains(event.uid)
+  var isSaved = user!!.savedEvents.contains(event.uid)
+
+  val scheduleReminderNotification = {
+    NotificationWorker.schedule(
+        context,
+        UnioNotification(
+            title = event.title,
+            message = context.getString(R.string.notification_event_reminder),
+            icon = R.drawable.other_icon,
+            channelId = EVENT_REMINDER_CHANNEL_ID,
+            channelName = EVENT_REMINDER_CHANNEL_ID,
+            notificationId = event.uid.hashCode(),
+            // Schedule a notification a few hours before the event's startDate
+            timeMillis = (event.startDate.seconds - 2 * SECONDS_IN_AN_HOUR) * SECONDS_IN_AN_HOUR))
+  }
+
+  val permissionLauncher =
+      rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { permission ->
+        when {
+          permission -> {
+            isNotificationsEnabled = true
+            scheduleReminderNotification()
+          }
+          else -> {
+            isNotificationsEnabled = false
+            Log.e("EventCard", "Notification permission is not granted.")
+          }
+        }
+      }
+  val onClickSaveButton = {
+    if (isSaved) {
+      user!!.savedEvents.remove(event.uid)
+      if (isNotificationsEnabled) {
+        NotificationWorker.unschedule(context, event.uid.hashCode())
+      }
+      isSaved = false
+    } else {
+      if (event.startDate.seconds - Timestamp.now().seconds > 3 * SECONDS_IN_AN_HOUR) {
+        if (!isNotificationsEnabled) {
+          if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            // this permission requires api 33
+            // We should check how to make notifications work with lower api versions
+            permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+          }
+        } else {
+          scheduleReminderNotification()
+        }
+      }
+
+      user!!.savedEvents.add(event.uid)
+    }
+    userViewModel.updateUserDebounced(user!!)
+  }
 
   EventCardScaffold(
       event,
@@ -80,14 +154,7 @@ fun EventCard(
         eventViewModel.selectEvent(event.uid)
         navigationAction.navigateTo(Screen.EVENT_DETAILS)
       },
-      onClickSaveButton = {
-        if (isSaved) {
-          user!!.savedEvents.remove(event.uid)
-        } else {
-          user!!.savedEvents.add(event.uid)
-        }
-        userViewModel.updateUserDebounced(user!!)
-      })
+      onClickSaveButton = onClickSaveButton)
 }
 
 @Composable
@@ -133,7 +200,8 @@ fun EventCardScaffold(
                       .background(MaterialTheme.colorScheme.inversePrimary)
                       .align(Alignment.TopEnd)
                       .clickable { onClickSaveButton() }
-                      .padding(4.dp)) {
+                      .padding(4.dp)
+                      .testTag(EventCardTestTags.EVENT_SAVE_BUTTON)) {
                 Icon(
                     imageVector =
                         if (isSaved) Icons.Rounded.Favorite else Icons.Rounded.FavoriteBorder,
