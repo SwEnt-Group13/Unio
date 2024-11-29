@@ -121,9 +121,8 @@ class AssociationRepositoryFirestoreTest {
             "members" to
                 mapOf(
                     "1" to "Guest",
-                    "2" to
-                        "Guest"), // the serialization process does not allow us to simply put
-                                  // association1.members
+                    "2" to "Guest"), // the serialization process does not allow us to simply put
+            // association1.members
             "roles" to
                 mapOf(
                     "Guest" to
