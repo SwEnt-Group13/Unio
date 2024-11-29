@@ -100,20 +100,14 @@ constructor(
         { e -> Log.e("ImageRepository", "Failed to store image: $e") })
 
     event.organisers.requestAll({
-        event.organisers.list.value.forEach {
-            it.events.add(event.uid)
-            associationRepository.saveAssociation(
-                it,
-                {it.events.requestAll()},
-                { e ->
-                    Log.e(
-                        "EventViewModel",
-                        "An error occurred while loading associations: $e"
-                    )
-                })
-        }
-    }
-    )
+      event.organisers.list.value.forEach {
+        it.events.add(event.uid)
+        associationRepository.saveAssociation(
+            it,
+            { it.events.requestAll() },
+            { e -> Log.e("EventViewModel", "An error occurred while loading associations: $e") })
+      }
+    })
     _events.value += event
   }
 
@@ -141,18 +135,16 @@ constructor(
         },
         { e -> Log.e("ImageRepository", "Failed to store image: $e") })
 
-    event.organisers.requestAll(
-        {
-        event.organisers.list.value.forEach {
-          it.events.add(event.uid)
-          associationRepository.saveAssociation(
-              it,
-              {},
-              { e -> Log.e("EventViewModel", "An error occurred while loading associations: $e") })
-          it.events.requestAll()
-        }
+    event.organisers.requestAll({
+      event.organisers.list.value.forEach {
+        it.events.add(event.uid)
+        associationRepository.saveAssociation(
+            it,
+            {},
+            { e -> Log.e("EventViewModel", "An error occurred while loading associations: $e") })
+        it.events.requestAll()
       }
-    )
+    })
 
     _events.value = _events.value.filter { it.uid != event.uid } // Remove the outdated event
     _events.value += event
@@ -168,23 +160,16 @@ constructor(
   fun updateEventWithoutImage(event: Event, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
     repository.addEvent(event, onSuccess, onFailure)
 
-    event.organisers.requestAll(
-        {
-            event.organisers.list.value.forEach {
-                it.events.add(event.uid)
-                associationRepository.saveAssociation(
-                    it,
-                    {},
-                    { e ->
-                        Log.e(
-                            "EventViewModel",
-                            "An error occurred while loading associations: $e"
-                        )
-                    })
-                it.events.requestAll()
-            }
-        }
-    )
+    event.organisers.requestAll({
+      event.organisers.list.value.forEach {
+        it.events.add(event.uid)
+        associationRepository.saveAssociation(
+            it,
+            {},
+            { e -> Log.e("EventViewModel", "An error occurred while loading associations: $e") })
+        it.events.requestAll()
+      }
+    })
 
     _events.value = _events.value.filter { it.uid != event.uid } // Remove the outdated event
     _events.value += event
@@ -208,23 +193,15 @@ constructor(
           Log.e("EventViewModel", "An error occurred while deleting event: $exception")
         })
 
-    event.organisers.requestAll(
-        {
-        event.organisers.list.value.forEach {
-            it.events.remove(event.uid)
-            associationRepository.saveAssociation(
-                it,
-                {},
-                { e ->
-                    Log.e(
-                        "EventViewModel",
-                        "An error occurred while loading associations: $e"
-                    )
-                })
-            it.events.requestAll()
-        }
-    }
-    )
-
+    event.organisers.requestAll({
+      event.organisers.list.value.forEach {
+        it.events.remove(event.uid)
+        associationRepository.saveAssociation(
+            it,
+            {},
+            { e -> Log.e("EventViewModel", "An error occurred while loading associations: $e") })
+        it.events.requestAll()
+      }
+    })
   }
 }
