@@ -3,9 +3,15 @@ package com.android.unio.model.firestore
 import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationCategory
 import com.android.unio.model.association.AssociationRepositoryFirestore
+import com.android.unio.model.association.Member
+import com.android.unio.model.association.Role
+import com.android.unio.model.association.compareMemberLists
+import com.android.unio.model.association.compareRoleLists
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventRepositoryFirestore
 import com.android.unio.model.firestore.transform.hydrate
+import com.android.unio.model.firestore.transform.mapRolesToPermission
+import com.android.unio.model.firestore.transform.mapUsersToRoles
 import com.android.unio.model.firestore.transform.serialize
 import com.android.unio.model.map.Location
 import com.android.unio.model.user.Interest
@@ -14,6 +20,7 @@ import com.android.unio.model.user.User
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserSocial
 import com.google.firebase.Timestamp
+import firestoreReferenceElementWith
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertTrue
 import kotlin.reflect.full.memberProperties
@@ -45,12 +52,12 @@ class HydrationAndSerializationTest {
           fullName = "Example Association",
           category = AssociationCategory.ARTS,
           description = "An example association",
-          members = User.firestoreReferenceListWith(listOf("1", "2")),
+          members = listOf(Member(User.firestoreReferenceElementWith("1"), Role.GUEST)),
+          roles = listOf(Role.GUEST),
           followersCount = 0,
           image = "https://www.example.com/image.jpg",
           events = Event.firestoreReferenceListWith(listOf("1", "2")),
-          principalEmailAddress = "example@adress.com",
-          adminUid = "1")
+          principalEmailAddress = "example@adress.com")
 
   private val event =
       Event(
@@ -108,7 +115,8 @@ class HydrationAndSerializationTest {
     assertEquals(association.name, serialized["name"])
     assertEquals(association.fullName, serialized["fullName"])
     assertEquals(association.description, serialized["description"])
-    assertEquals(association.members.uids, serialized["members"])
+    assertEquals(mapUsersToRoles(association.members), serialized["members"])
+      assertEquals(mapRolesToPermission(association.roles), serialized["roles"])
     assertEquals(association.image, serialized["image"])
     assertEquals(association.events.uids, serialized["events"])
 
@@ -119,7 +127,8 @@ class HydrationAndSerializationTest {
     assertEquals(association.name, hydrated.name)
     assertEquals(association.fullName, hydrated.fullName)
     assertEquals(association.description, hydrated.description)
-    assertEquals(association.members.list.value, hydrated.members.list.value)
+      assertEquals(compareMemberLists(association.members, hydrated.members), true)
+      assertEquals(compareRoleLists(association.roles, hydrated.roles), true)
     assertEquals(association.image, hydrated.image)
     assertEquals(association.events.list.value, hydrated.events.list.value)
   }
@@ -190,7 +199,7 @@ class HydrationAndSerializationTest {
     assertEquals("", hydrated.name)
     assertEquals("", hydrated.fullName)
     assertEquals("", hydrated.description)
-    assertEquals(emptyList<User>(), hydrated.members.list.value)
+    assertEquals(emptyList<User>(), hydrated.members)
     assertEquals("", hydrated.image)
     assertEquals(emptyList<Event>(), hydrated.events.list.value)
   }

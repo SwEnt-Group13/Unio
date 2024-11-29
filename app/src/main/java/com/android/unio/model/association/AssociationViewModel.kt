@@ -59,7 +59,6 @@ constructor(
 
     fun fetchUserFromMember(member: Member){
         member.user.fetch()
-        Log.d("USERFETCH", "Fetch")
     }
 
   /**
