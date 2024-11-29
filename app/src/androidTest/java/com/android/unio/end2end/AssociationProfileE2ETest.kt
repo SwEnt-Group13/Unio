@@ -39,14 +39,14 @@ class AssociationProfileE2ETest : EndToEndTest() {
     composeTestRule.waitUntil(10000) {
       composeTestRule.onNodeWithTag(AssociationProfileTestTags.SCREEN).isDisplayed()
     }
-    Thread.sleep(3000)
+    Thread.sleep(1000)
     composeTestRule.onNodeWithText(ASSOCIATION_MEMBERS).assertDisplayComponentInScroll()
     composeTestRule.onNodeWithText(ASSOCIATION_MEMBERS).performClick()
 
     composeTestRule.waitUntil(10000) {
       composeTestRule.onNodeWithTag(SomeoneElseUserProfileTestTags.SCREEN).isDisplayed()
     }
-    Thread.sleep(3000)
+
     composeTestRule.onNodeWithTag(SomeoneElseUserProfileTestTags.NAME).assertIsDisplayed()
 
     composeTestRule.waitUntil(10000) {
