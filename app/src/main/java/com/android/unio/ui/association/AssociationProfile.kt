@@ -419,13 +419,15 @@ private fun AssociationMembers(
                         Modifier.clip(CircleShape)
                             .size(75.dp)
                             .background(MaterialTheme.colorScheme.surfaceDim)) {
-                      AsyncImageWrapper(
-                          imageUri = "user.value!!.profilePicture".toUri(),
-                          contentDescription =
-                              context.getString(
-                                  R.string.association_contact_member_profile_picture),
-                          modifier = Modifier.fillMaxWidth(),
-                          contentScale = ContentScale.Crop)
+                      user.value?.profilePicture?.toUri()?.let {
+                        AsyncImageWrapper(
+                            imageUri = it,
+                            contentDescription =
+                                context.getString(
+                                    R.string.association_contact_member_profile_picture),
+                            modifier = Modifier.fillMaxWidth(),
+                            contentScale = ContentScale.Crop)
+                      }
                     }
                 user.value?.firstName?.let {
                   val firstName = it

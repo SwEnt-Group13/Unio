@@ -22,8 +22,6 @@ import firestoreReferenceElementWith
 
 fun AssociationRepositoryFirestore.Companion.hydrate(data: Map<String, Any>?): Association {
   val category = data?.get(Association::category.name)
-  val memberUids = data?.get(Association::members.name) as? List<String> ?: emptyList()
-  val members = User.firestoreReferenceListWith(memberUids)
   val events =
       Event.firestoreReferenceListWith(
           data?.get(Association::events.name) as? List<String> ?: emptyList())
@@ -33,10 +31,10 @@ fun AssociationRepositoryFirestore.Companion.hydrate(data: Map<String, Any>?): A
       rolesMap.map { (roleUid, roleData) ->
         Role.createRole(
             uid = roleUid,
-            displayName = roleData["displayName"] as? String ?: "",
+            displayName = roleData[Role::displayName.name] as? String ?: "",
             permissions =
                 permissions.addPermissions(
-                    (roleData["permissions"] as? List<String> ?: emptyList()).mapNotNull {
+                    (roleData[Role::permissions.name] as? List<String> ?: emptyList()).mapNotNull {
                         permissionString ->
                       // Find the corresponding PermissionType by its stringName
                       PermissionType.entries.find { it.stringName == permissionString }

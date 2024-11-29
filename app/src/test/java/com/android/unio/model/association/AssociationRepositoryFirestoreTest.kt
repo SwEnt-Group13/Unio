@@ -206,9 +206,6 @@ class AssociationRepositoryFirestoreTest {
           assertEquals(association1.name, associations[0].name)
           assertEquals(association1.fullName, associations[0].fullName)
           assertEquals(association1.description, associations[0].description)
-          println("Ok")
-          println(associations[0])
-          println(association1)
           assertEquals(
               association1.members.map { it.uid }.toSet(),
               associations[0].members.map { it.uid }.toSet())
@@ -275,8 +272,6 @@ class AssociationRepositoryFirestoreTest {
           assertEquals(association1.name, association.name)
           assertEquals(association1.fullName, association.fullName)
           assertEquals(association1.description, association.description)
-          // assertEquals(association1.members.map{it.uid}.toSet(),
-          // association.members.map{it.uid}.toSet())
         },
         onFailure = { exception -> assert(false) })
   }
