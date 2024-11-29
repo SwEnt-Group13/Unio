@@ -177,7 +177,19 @@
     <string name="event_creation_end_before_start">Event cannot start after it ends</string>
     <string name="event_creation_end_equals_start">Event cannot start and end at the same time</string>
     <string name="event_creation_failed">Failed to create event</string>
+    <string name="event_creation_location_input_label">Enter an address</string>
+    <string name="event_creation_location_dropdown_points">…</string>
+    <string name="event_creation_location_dropdown_more">More…</string>
 
+    <!-- Event Edit Strings -->
+    <string name="event_edit_title">Edit </string>
+    <string name="event_edit_delete_button">Delete</string>
+    <string name="event_edit_failed">Failed to edit event</string>
+    <string name="event_edit_save_button">Save</string>
+
+    <!-- Event Edit Component Strings -->
+    <string name="event_edit_date_picker_desc" translatable="false">Select date</string>
+    <string name="event_edit_time_picker_desc" translatable="false">Select time</string>
 
     <!-- Associations Overlay Strings -->
     <string name="associations_overlay_coauthors_title" translatable="true">Coauthors</string>
@@ -397,6 +409,12 @@
     <string name="reset_password_email_place_holder">The link will be sent to this address</string>
     <string name="reset_password_button">Confirm</string>
     <string name="reset_password_invalid_email">Please enter a valid email</string>
+
+
+    <!-- Notification Strings -->
+    <string name="notification_event_reminder" translatable="true">The event is about to begin :)</string>
+    <string name="notification_event_reminder_default_message" translatable="true">"An event will occur soon"</string>
+    <string name="notification_event_reminder_default_title" translatable="false">Unio</string>
 
 
     <!-- Debug/Temporary Strings -->

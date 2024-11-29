@@ -15,6 +15,7 @@ import com.android.unio.assertDisplayComponentInScroll
 import com.android.unio.mocks.association.MockAssociation
 import com.android.unio.mocks.event.MockEvent
 import com.android.unio.mocks.user.MockUser
+import com.android.unio.model.association.AssociationRepositoryFirestore
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventRepositoryFirestore
 import com.android.unio.model.event.EventViewModel
@@ -68,6 +69,7 @@ class HomeTest : TearDown() {
   @MockK private lateinit var userRepository: UserRepositoryFirestore
   @MockK private lateinit var imageRepository: ImageRepositoryFirebaseStorage
   @MockK private lateinit var navigationAction: NavigationAction
+  @MockK private lateinit var associationRepositoryFirestore: AssociationRepositoryFirestore
 
   private lateinit var eventViewModel: EventViewModel
   private lateinit var searchViewModel: SearchViewModel
@@ -125,7 +127,8 @@ class HomeTest : TearDown() {
           val onSuccess = args[0] as (List<Event>) -> Unit
           onSuccess(eventList)
         }
-    eventViewModel = EventViewModel(eventRepository, imageRepository)
+    eventViewModel =
+        EventViewModel(eventRepository, imageRepository, associationRepositoryFirestore)
     eventListFollowed = asso.let { eventList.filter { event -> event.organisers.contains(it.uid) } }
   }
 
@@ -145,7 +148,8 @@ class HomeTest : TearDown() {
     composeTestRule.setContent {
       val context = LocalContext.current
       text = context.getString(R.string.event_no_events_available)
-      val eventViewModel = EventViewModel(eventRepository, imageRepository)
+      val eventViewModel =
+          EventViewModel(eventRepository, imageRepository, associationRepositoryFirestore)
       HomeScreen(navigationAction, eventViewModel, userViewModel, searchViewModel)
     }
     composeTestRule.onNodeWithTag(HomeTestTags.EMPTY_EVENT_PROMPT).assertExists()
@@ -193,7 +197,8 @@ class HomeTest : TearDown() {
   @Test
   fun testMapButton() {
     composeTestRule.setContent {
-      val eventViewModel = EventViewModel(eventRepository, imageRepository)
+      val eventViewModel =
+          EventViewModel(eventRepository, imageRepository, associationRepositoryFirestore)
       HomeScreen(navigationAction, eventViewModel, userViewModel, searchViewModel)
     }
     composeTestRule.onNodeWithTag(HomeTestTags.MAP_BUTTON).assertExists()
@@ -208,19 +213,26 @@ class HomeTest : TearDown() {
    * that both actions trigger their respective animations and behaviors.
    */
 
-  /**
-   * @Test fun testClickFollowingAndAdd() { composeTestRule.setContent { val eventViewModel =
-   *   EventViewModel(eventRepository, imageRepository) HomeScreen(navigationAction, eventViewModel,
-   *   userViewModel, searchViewModel) }
-   *
-   * composeTestRule.onNodeWithTag(HomeTestTags.TAB_FOLLOWING).assertExists()
-   * composeTestRule.onNodeWithTag(HomeTestTags.TAB_FOLLOWING).performClick()
-   *
-   * composeTestRule.onNodeWithTag(HomeTestTags.MAP_BUTTON).assertExists()
-   * composeTestRule.onNodeWithTag(HomeTestTags.MAP_BUTTON).performClick()
-   *
-   * verify { navigationAction.navigateTo(Screen.MAP) } }*
-   */
+  @OptIn(ExperimentalCoroutinesApi::class)
+  @Test
+  fun testClickFollowingAndAdd() = runBlockingTest {
+    composeTestRule.setContent {
+      val eventViewModel =
+          EventViewModel(eventRepository, imageRepository, associationRepositoryFirestore)
+      HomeScreen(navigationAction, eventViewModel, userViewModel, searchViewModel)
+    }
+
+    composeTestRule.onNodeWithTag(HomeTestTags.TAB_FOLLOWING).assertExists()
+    composeTestRule.onNodeWithTag(HomeTestTags.TAB_FOLLOWING).performClick()
+
+    composeTestRule.onNodeWithTag(HomeTestTags.MAP_BUTTON).assertExists()
+    composeTestRule.onNodeWithTag(HomeTestTags.MAP_BUTTON).performClick()
+
+    verify { navigationAction.navigateTo(Screen.MAP) }
+  }
+
+
+
   @Module
   @InstallIn(SingletonComponent::class)
   object FirebaseTestModule {

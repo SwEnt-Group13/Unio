@@ -12,6 +12,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.rule.GrantPermissionRule
 import com.android.unio.TearDown
 import com.android.unio.mocks.user.MockUser
+import com.android.unio.model.association.AssociationRepositoryFirestore
 import com.android.unio.model.event.EventRepositoryFirestore
 import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
@@ -54,6 +55,7 @@ class MapScreenTest : TearDown() {
   @MockK private lateinit var imageRepository: ImageRepositoryFirebaseStorage
   @MockK private lateinit var userRepository: UserRepositoryFirestore
   @MockK private lateinit var navHostController: NavHostController
+  @MockK private lateinit var associationRepositoryFirestore: AssociationRepositoryFirestore
 
   private lateinit var locationTask: Task<Location>
   private lateinit var context: Context
@@ -76,7 +78,8 @@ class MapScreenTest : TearDown() {
     navigationAction = NavigationAction(navHostController)
 
     every { eventRepository.init(any()) } answers {}
-    eventViewModel = EventViewModel(eventRepository, imageRepository)
+    eventViewModel =
+        EventViewModel(eventRepository, imageRepository, associationRepositoryFirestore)
 
     every { userRepository.init(any()) } returns Unit
     every { userRepository.getUserWithId("123", any(), any()) } answers

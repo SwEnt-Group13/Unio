@@ -2,6 +2,7 @@ package com.android.unio.model.event
 
 import androidx.test.core.app.ApplicationProvider
 import com.android.unio.mocks.event.MockEvent
+import com.android.unio.model.association.AssociationRepositoryFirestore
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.google.firebase.FirebaseApp
 import com.google.firebase.Timestamp
@@ -34,6 +35,7 @@ class EventViewModelTest {
   @Mock private lateinit var inputStream: InputStream
 
   @MockK lateinit var imageRepository: ImageRepositoryFirebaseStorage
+  @MockK private lateinit var associationRepositoryFirestore: AssociationRepositoryFirestore
 
   private lateinit var eventViewModel: EventViewModel
 
@@ -68,11 +70,14 @@ class EventViewModelTest {
           onSuccess("url")
         }
 
-    eventViewModel = EventViewModel(repository, imageRepository)
+    every { associationRepositoryFirestore.getAssociations(any(), any()) } answers {}
+    every { associationRepositoryFirestore.saveAssociation(any(), any(), any()) } answers {}
+
+    eventViewModel = EventViewModel(repository, imageRepository, associationRepositoryFirestore)
   }
 
   @Test
-  fun addEventTest() {
+  fun addEventandUpdateTest() {
     val event = testEvents.get(0)
     `when`(repository.addEvent(eq(event), any(), any())).thenAnswer { invocation ->
       val onSuccess = invocation.arguments[1] as () -> Unit
@@ -81,6 +86,39 @@ class EventViewModelTest {
     `when`(repository.getNewUid()).thenReturn("1")
     eventViewModel.addEvent(
         inputStream, event, { verify(repository).addEvent(eq(event), any(), any()) }, {})
+  }
+
+  @Test
+  fun updateEventTest() {
+    val event = testEvents.get(0)
+    `when`(repository.addEvent(eq(event), any(), any())).thenAnswer { invocation ->
+      val onSuccess = invocation.arguments[1] as () -> Unit
+      onSuccess()
+    }
+    eventViewModel.updateEvent(
+        inputStream, event, { verify(repository).addEvent(eq(event), any(), any()) }, {})
+  }
+
+  @Test
+  fun updateEventWithoutImageTest() {
+    val event = testEvents.get(0)
+    `when`(repository.addEvent(eq(event), any(), any())).thenAnswer { invocation ->
+      val onSuccess = invocation.arguments[1] as () -> Unit
+      onSuccess()
+    }
+    eventViewModel.updateEventWithoutImage(
+        event, { verify(repository).addEvent(eq(event), any(), any()) }, {})
+  }
+
+  @Test
+  fun deleteEventTest() {
+    val event = testEvents.get(0)
+    `when`(repository.deleteEventById(eq(event.uid), any(), any())).thenAnswer { invocation ->
+      val onSuccess = invocation.arguments[1] as () -> Unit
+      onSuccess()
+    }
+    eventViewModel.deleteEvent(
+        event, { verify(repository).deleteEventById(eq(event.uid), any(), any()) }, {})
   }
 
   @Test
