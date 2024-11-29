@@ -212,7 +212,6 @@ class HomeTest : TearDown() {
    * Tests the sequence of clicking on the 'Following' tab and then on the 'Map' button to ensure
    * that both actions trigger their respective animations and behaviors.
    */
-
   @Test
   fun testClickFollowingAndAdd() {
     composeTestRule.setContent {
