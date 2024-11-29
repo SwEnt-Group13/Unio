@@ -1,14 +1,16 @@
 package com.android.unio.mocks.association
 
 import com.android.unio.mocks.event.MockEvent
+import com.android.unio.mocks.firestore.MockReferenceElement
 import com.android.unio.mocks.firestore.MockReferenceList
 import com.android.unio.mocks.user.MockUser
 import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationCategory
+import com.android.unio.model.association.Member
+import com.android.unio.model.association.Role
 import com.android.unio.model.event.Event
 import com.android.unio.model.firestore.ReferenceList
 import com.android.unio.model.firestore.emptyFirestoreReferenceList
-import com.android.unio.model.user.User
 
 /**
  * MockAssociation class provides edge-case instances of the Association data class for testing
@@ -80,23 +82,32 @@ class MockAssociation {
         category: AssociationCategory = AssociationCategory.ENTERTAINMENT,
         description: String = "This is the best description",
         image: String = "image1.png",
-        members: List<User> = emptyList(),
+        members: List<Member> = emptyList(),
+        roles: List<Role> = listOf(Role.GUEST, Role.ADMIN),
         events: ReferenceList<Event> =
-            MockReferenceList(
-                listOf(
-                    MockEvent.createMockEvent(
-                        associationDependency = true, userDependency = userDependency))),
-        principalEmailAddress: String = "principal@email_adress.com",
-        parentAssociations: ReferenceList<Association> = Association.emptyFirestoreReferenceList(),
-        childAssociations: ReferenceList<Association> = Association.emptyFirestoreReferenceList(),
-        adminUid: String = "1"
+            if (eventDependency) {
+              Event.emptyFirestoreReferenceList()
+            } else {
+              MockReferenceList(
+                  listOf(
+                      MockEvent.createMockEvent(
+                          associationDependency = true, userDependency = userDependency)))
+            },
+        principalEmailAddress: String = "principal@email_adress.com"
     ): Association {
       val membersHelper =
           if (userDependency) {
             members
           } else {
-            MockUser.createAllMockUsers(
-                associationDependency = true, eventDependency = eventDependency)
+            listOf(
+                Member(
+                    MockReferenceElement(
+                        MockUser.createMockUser(uid = "1", associationDependency = true)),
+                    Role.GUEST),
+                Member(
+                    MockReferenceElement(
+                        MockUser.createMockUser(uid = "2", associationDependency = true)),
+                    Role.GUEST))
           }
       return Association(
           uid = uid,
@@ -105,12 +116,12 @@ class MockAssociation {
           fullName = fullName,
           category = category,
           description = description,
-          members = MockReferenceList(membersHelper),
+          members = membersHelper,
+          roles = roles,
           image = image,
           followersCount = 2,
           events = events,
-          principalEmailAddress = principalEmailAddress,
-          adminUid = adminUid)
+          principalEmailAddress = principalEmailAddress)
     }
 
     fun createAllMockAssociations(

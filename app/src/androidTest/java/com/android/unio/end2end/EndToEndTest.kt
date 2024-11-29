@@ -107,7 +107,7 @@ open class EndToEndTest : FirebaseEmulatorFunctions {
     } finally {
       val currentHost = Firebase.firestore.firestoreSettings.host
       if (!currentHost.contains(HOST)) {
-        throw Exception("Failed to connect to Firebase Emulators.")
+        throw Exception("Failed to connect to Firebase Emulators. Host is $currentHost")
       }
     }
   }

@@ -20,6 +20,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QueryDocumentSnapshot
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.firestore
+import emptyFirestoreReferenceElement
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
@@ -79,7 +80,9 @@ class AssociationRepositoryFirestoreTest {
     every { FirebaseAuth.getInstance() } returns auth
 
     association1 =
-        MockAssociation.createMockAssociation(category = AssociationCategory.SCIENCE_TECH)
+        MockAssociation.createMockAssociation(
+            category = AssociationCategory.SCIENCE_TECH,
+            members = listOf(Member(User.emptyFirestoreReferenceElement(), Role.ADMIN)))
     association2 =
         MockAssociation.createMockAssociation(category = AssociationCategory.SCIENCE_TECH)
 
@@ -115,12 +118,23 @@ class AssociationRepositoryFirestoreTest {
             "fullName" to association1.fullName,
             "category" to association1.category.name,
             "description" to association1.description,
-            "members" to association1.members.uids,
+            "members" to
+                mapOf(
+                    "1" to "Guest",
+                    "2" to "Guest"), // the serialization process does not allow us to simply put
+            // association1.members
+            "roles" to
+                mapOf(
+                    "Guest" to
+                        mapOf("displayName" to "Guest", "permissions" to listOf("Full rights")),
+                    "Administrator" to
+                        mapOf(
+                            "displayName" to "Administrator",
+                            "permissions" to listOf("Full rights"))),
             "followersCount" to association1.followersCount,
             "image" to association1.image,
             "events" to association1.events.uids,
-            "principalEmailAddress" to association1.principalEmailAddress,
-            "adminUid" to association1.adminUid)
+            "principalEmailAddress" to association1.principalEmailAddress)
 
     map2 =
         mapOf(
@@ -130,12 +144,19 @@ class AssociationRepositoryFirestoreTest {
             "fullName" to association2.fullName,
             "category" to association2.category.name,
             "description" to association2.description,
-            "members" to association2.members.uids,
+            "members" to mapOf("1" to "Guest", "2" to "Guest"),
+            "roles" to
+                mapOf(
+                    "Guest" to
+                        mapOf("displayName" to "Guest", "permissions" to listOf("Full rights")),
+                    "Administrator" to
+                        mapOf(
+                            "displayName" to "Administrator",
+                            "permissions" to listOf("Full rights"))),
             "followersCount" to association2.followersCount,
             "image" to association2.image,
             "events" to association2.events.uids,
-            "principalEmailAddress" to association1.principalEmailAddress,
-            "adminUid" to association1.adminUid)
+            "principalEmailAddress" to association2.principalEmailAddress)
 
     `when`(queryDocumentSnapshot1.data).thenReturn(map1)
 
@@ -185,13 +206,21 @@ class AssociationRepositoryFirestoreTest {
           assertEquals(association1.name, associations[0].name)
           assertEquals(association1.fullName, associations[0].fullName)
           assertEquals(association1.description, associations[0].description)
-          assertEquals(association1.members.uids, associations[0].members.uids)
+          assertEquals(
+              association1.members.map { it.uid }.toSet(),
+              associations[0].members.map { it.uid }.toSet())
+          assertEquals(
+              association1.roles.map { it.uid }.toSet(),
+              associations[0].roles.map { it.uid }.toSet())
 
           assertEquals(association2.uid, associations[1].uid)
           assertEquals(association2.name, associations[1].name)
           assertEquals(association2.fullName, associations[1].fullName)
           assertEquals(association2.description, associations[1].description)
-          assertEquals(association2.members.uids, associations[1].members.uids)
+          assertEquals(association2.members.map { it.uid }, associations[1].members.map { it.uid })
+          assertEquals(
+              association2.roles.map { it.uid }.toSet(),
+              associations[1].roles.map { it.uid }.toSet())
         },
         onFailure = { exception -> assert(false) })
   }
@@ -211,12 +240,12 @@ class AssociationRepositoryFirestoreTest {
                   fullName = "",
                   category = AssociationCategory.ARTS,
                   description = "",
-                  members = User.emptyFirestoreReferenceList(),
+                  members = listOf(Member(User.emptyFirestoreReferenceElement(), Role.GUEST)),
+                  roles = listOf(Role.GUEST),
                   followersCount = 0,
                   image = "",
                   events = Event.emptyFirestoreReferenceList(),
-                  principalEmailAddress = "",
-                  adminUid = "1")
+                  principalEmailAddress = "")
 
           assertEquals(2, associations.size)
 
@@ -224,13 +253,11 @@ class AssociationRepositoryFirestoreTest {
           assertEquals(association1.name, associations[0].name)
           assertEquals(association1.fullName, associations[0].fullName)
           assertEquals(association1.description, associations[0].description)
-          assertEquals(association1.members.uids, associations[0].members.uids)
 
           assertEquals(emptyAssociation.uid, associations[1].uid)
           assertEquals("", associations[1].name)
           assertEquals("", associations[1].fullName)
           assertEquals("", associations[1].description)
-          assertEquals(emptyList<String>(), associations[1].members.uids)
         },
         onFailure = { exception -> assert(false) })
   }
@@ -245,7 +272,6 @@ class AssociationRepositoryFirestoreTest {
           assertEquals(association1.name, association.name)
           assertEquals(association1.fullName, association.fullName)
           assertEquals(association1.description, association.description)
-          assertEquals(association1.members.uids, association.members.uids)
         },
         onFailure = { exception -> assert(false) })
   }

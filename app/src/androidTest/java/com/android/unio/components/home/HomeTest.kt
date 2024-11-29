@@ -24,6 +24,7 @@ import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.search.SearchRepository
 import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.strings.test_tags.HomeTestTags
+import com.android.unio.model.user.User
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.home.HomeScreen
@@ -44,8 +45,6 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import io.mockk.spyk
 import io.mockk.verify
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -92,6 +91,12 @@ class HomeTest : TearDown() {
         {
           val onSuccess = args[0] as () -> Unit
           onSuccess()
+        }
+
+    every { userRepository.getUserWithId(any(), any(), any()) } answers
+        {
+          val onSuccess = args[1] as (User) -> Unit
+          onSuccess(MockUser.createMockUser())
         }
 
     userViewModel = spyk(UserViewModel(userRepository))
@@ -207,9 +212,8 @@ class HomeTest : TearDown() {
    * Tests the sequence of clicking on the 'Following' tab and then on the 'Map' button to ensure
    * that both actions trigger their respective animations and behaviors.
    */
-  @OptIn(ExperimentalCoroutinesApi::class)
   @Test
-  fun testClickFollowingAndAdd() = runBlockingTest {
+  fun testClickFollowingAndAdd() {
     composeTestRule.setContent {
       val eventViewModel =
           EventViewModel(eventRepository, imageRepository, associationRepositoryFirestore)
