@@ -355,6 +355,7 @@
 
     <!-- Notification Strings -->
     <string name="notification_event_reminder" translatable="true">L\'évènement va bientôt commencer :)</string>
+    <string name="notification_event_reminder_default_message" translatable="true">Un évènement va bientôt avoir lieu</string>
 
 </resources>
 

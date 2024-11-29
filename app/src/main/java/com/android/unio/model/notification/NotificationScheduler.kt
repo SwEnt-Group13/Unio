@@ -19,6 +19,8 @@ import androidx.work.WorkManager
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.android.unio.MainActivity
+import com.android.unio.R
+import com.android.unio.model.strings.NotificationStrings.NOTIFICATION_SCHEDULER_TYPE
 import com.android.unio.model.strings.NotificationStrings.NOTIFICATION_SCHEDULER_TYPE_CANCEL
 import com.android.unio.model.strings.NotificationStrings.NOTIFICATION_SCHEDULER_TYPE_CREATE
 
@@ -34,7 +36,7 @@ class NotificationScheduler() : BroadcastReceiver() {
      */
     private fun createIntent(context: Context, data: Data): PendingIntent {
 
-      val notificationId = data.getInt("notificationId", 0)
+      val notificationId = data.getInt(UnioNotification::notificationId.name, 0)
       val bundle = Bundle(data.keyValueMap.toPersistableBundle())
       val alarmIntent =
           Intent(context.applicationContext, NotificationScheduler::class.java).putExtras(bundle)
@@ -58,10 +60,10 @@ class NotificationScheduler() : BroadcastReceiver() {
       val manager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
       // pass intent if extra data is needed
       val pendingIntent = createIntent(context, data)
-      val timeMillis = data.getLong("timeMillis", System.currentTimeMillis() + 10000)
-      println(timeMillis)
+      val timeMillis =
+          data.getLong(UnioNotification::timeMillis.name, System.currentTimeMillis() + 10000)
       manager.set(AlarmManager.RTC_WAKEUP, timeMillis, pendingIntent)
-      Log.d("NotificationScheduler", "Notification scheduled")
+      Log.i("NotificationScheduler", "Notification scheduled")
     }
     /**
      * Unschedules a previously scheduled notification using AlarmManager.
@@ -74,7 +76,7 @@ class NotificationScheduler() : BroadcastReceiver() {
 
       val pendingIntent = createIntent(context, data)
       manager.cancel(pendingIntent)
-      Log.d("NotificationScheduler", "Notification canceled")
+      Log.i("NotificationScheduler", "Notification canceled")
     }
   }
   /**
@@ -93,13 +95,17 @@ class NotificationScheduler() : BroadcastReceiver() {
       return
     }
     val data = intent.extras ?: return
-    val title = data.getString("title") ?: "Unio"
-    val message = data.getString("message") ?: "An event will occur soon"
-    val icon = data.getInt("icon")
-    val channelId = data.getString("channelId") ?: "0"
-    val channelName = data.getString("channelName") ?: "0"
-    val notificationId = data.getInt("notificationId")
-    val timeMillis = data.getLong("timeMillis")
+    val title =
+        data.getString(UnioNotification::title.name)
+            ?: context.getString(R.string.notification_event_reminder_default_title)
+    val message =
+        data.getString(UnioNotification::message.name)
+            ?: context.getString(R.string.notification_event_reminder_default_message)
+    val icon = data.getInt(UnioNotification::icon.name)
+    val channelId = data.getString(UnioNotification::channelId.name) ?: "0"
+    val channelName = data.getString(UnioNotification::channelName.name) ?: "0"
+    val notificationId = data.getInt(UnioNotification::notificationId.name)
+    val timeMillis = data.getLong(UnioNotification::timeMillis.name)
 
     if ("android.intent.action.BOOT_COMPLETED" ==
         intent.action) { // allows notification to persist after a phone reboot
@@ -171,13 +177,14 @@ class NotificationWorker(context: Context, params: WorkerParameters) : Worker(co
           Data.Builder()
               .putAll(
                   mapOf(
-                      "title" to notification.title,
-                      "message" to notification.message,
-                      "icon" to notification.icon,
-                      "channelId" to notification.channelId,
-                      "notificationId" to notification.notificationId,
-                      "timeMillis" to notification.timeMillis,
-                      "type" to NOTIFICATION_SCHEDULER_TYPE_CREATE))
+                      UnioNotification::title.name to notification.title,
+                      UnioNotification::message.name to notification.message,
+                      UnioNotification::icon.name to notification.icon,
+                      UnioNotification::channelId.name to notification.channelId,
+                      UnioNotification::channelName.name to notification.channelName,
+                      UnioNotification::notificationId.name to notification.notificationId,
+                      UnioNotification::timeMillis.name to notification.timeMillis,
+                      NOTIFICATION_SCHEDULER_TYPE to NOTIFICATION_SCHEDULER_TYPE_CREATE))
       val request =
           OneTimeWorkRequest.Builder(NotificationWorker::class.java)
               .setInputData(data.build())
@@ -203,13 +210,14 @@ class NotificationWorker(context: Context, params: WorkerParameters) : Worker(co
           Data.Builder()
               .putAll(
                   mapOf(
-                      "title" to notification.title,
-                      "message" to notification.message,
-                      "icon" to notification.icon,
-                      "channelId" to notification.channelId,
-                      "notificationId" to notification.notificationId,
-                      "timeMillis" to notification.timeMillis,
-                      "type" to NOTIFICATION_SCHEDULER_TYPE_CANCEL))
+                      UnioNotification::title.name to notification.title,
+                      UnioNotification::message.name to notification.message,
+                      UnioNotification::icon.name to notification.icon,
+                      UnioNotification::channelId.name to notification.channelId,
+                      UnioNotification::channelName.name to notification.channelName,
+                      UnioNotification::notificationId.name to notification.notificationId,
+                      UnioNotification::timeMillis.name to notification.timeMillis,
+                      NOTIFICATION_SCHEDULER_TYPE to NOTIFICATION_SCHEDULER_TYPE_CANCEL))
       val request =
           OneTimeWorkRequest.Builder(NotificationWorker::class.java)
               .setInputData(data.build())
@@ -227,9 +235,10 @@ class NotificationWorker(context: Context, params: WorkerParameters) : Worker(co
    * @return The Result of the work execution.
    */
   override fun doWork(): Result {
-    if (inputData.getString("type") == NOTIFICATION_SCHEDULER_TYPE_CANCEL) {
+    if (inputData.getString(NOTIFICATION_SCHEDULER_TYPE) == NOTIFICATION_SCHEDULER_TYPE_CANCEL) {
       NotificationScheduler.unschedule(this.applicationContext, inputData)
-    } else if (inputData.getString("type") == NOTIFICATION_SCHEDULER_TYPE_CREATE) {
+    } else if (inputData.getString(NOTIFICATION_SCHEDULER_TYPE) ==
+        NOTIFICATION_SCHEDULER_TYPE_CREATE) {
       NotificationScheduler.schedule(this.applicationContext, inputData)
     } else {
       return Result.failure()
