@@ -224,25 +224,26 @@ fun EventCardScaffold(
                 }
                 Spacer(modifier = Modifier.width(2.dp))
 
-          Box(
-              modifier =
-                  Modifier.size(28.dp)
-                      .clip(RoundedCornerShape(14.dp))
-                      .background(MaterialTheme.colorScheme.inversePrimary)
-                      .clickable { onClickSaveButton() }
-                      .padding(4.dp)
-                      .testTag(EventCardTestTags.EVENT_SAVE_BUTTON)) {
-                Icon(
-                    imageVector =
-                        if (isSaved) Icons.Rounded.Favorite else Icons.Rounded.FavoriteBorder,
-                    contentDescription =
-                        if (isSaved)
-                            context.getString(R.string.event_card_content_description_saved_event)
-                        else
-                            context.getString(
-                                R.string.event_card_content_description_not_saved_event),
-                    tint = if (isSaved) Color.Red else Color.White)
-                }
+                Box(
+                    modifier =
+                        Modifier.size(28.dp)
+                            .clip(RoundedCornerShape(14.dp))
+                            .background(MaterialTheme.colorScheme.inversePrimary)
+                            .clickable { onClickSaveButton() }
+                            .padding(4.dp)
+                            .testTag(EventCardTestTags.EVENT_SAVE_BUTTON)) {
+                      Icon(
+                          imageVector =
+                              if (isSaved) Icons.Rounded.Favorite else Icons.Rounded.FavoriteBorder,
+                          contentDescription =
+                              if (isSaved)
+                                  context.getString(
+                                      R.string.event_card_content_description_saved_event)
+                              else
+                                  context.getString(
+                                      R.string.event_card_content_description_not_saved_event),
+                          tint = if (isSaved) Color.Red else Color.White)
+                    }
               }
         }
 

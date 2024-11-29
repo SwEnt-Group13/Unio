@@ -7,6 +7,7 @@ import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.GrantPermissionRule
 import com.android.unio.R
 import com.android.unio.TearDown
+import com.android.unio.model.association.AssociationRepositoryFirestore
 import com.android.unio.model.event.EventRepositoryFirestore
 import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
@@ -46,7 +47,7 @@ class NotificationTest : TearDown() {
   @MockK(relaxed = true) private lateinit var searchRepository: SearchRepository
 
   @MockK private lateinit var imageRepository: ImageRepositoryFirebaseStorage
-
+  @MockK private lateinit var associationRepository: AssociationRepositoryFirestore
   @MockK private lateinit var userRepository: UserRepositoryFirestore
   private lateinit var eventViewModel: EventViewModel
   private lateinit var searchViewModel: SearchViewModel
@@ -69,7 +70,7 @@ class NotificationTest : TearDown() {
     every { userRepository.init(any()) } just runs
     context = InstrumentationRegistry.getInstrumentation().targetContext
     searchViewModel = spyk(SearchViewModel(searchRepository))
-    eventViewModel = EventViewModel(eventRepository, imageRepository)
+    eventViewModel = EventViewModel(eventRepository, imageRepository, associationRepository)
     userViewModel = spyk(UserViewModel(userRepository))
   }
 

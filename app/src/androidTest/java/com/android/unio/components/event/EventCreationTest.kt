@@ -1,8 +1,8 @@
 package com.android.unio.components.event
 
+import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.isDisplayed
-import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
@@ -42,11 +42,9 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockkStatic
 import io.mockk.spyk
-import io.mockk.unmockkAll
 import java.net.HttpURLConnection
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
-import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -299,9 +297,4 @@ class EventCreationTest : TearDown() {
 
     server.shutdown()
   }
-//  @After
-//  fun teardown() {
-//    clearAllMocks()
-//    unmockkAll()
-//  }
 }

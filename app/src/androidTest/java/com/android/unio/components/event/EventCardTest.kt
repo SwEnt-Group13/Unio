@@ -14,6 +14,7 @@ import com.android.unio.mocks.association.MockAssociation
 import com.android.unio.mocks.event.MockEvent
 import com.android.unio.mocks.map.MockLocation
 import com.android.unio.mocks.user.MockUser
+import com.android.unio.model.association.AssociationRepositoryFirestore
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventRepositoryFirestore
 import com.android.unio.model.event.EventType
@@ -24,7 +25,6 @@ import com.android.unio.model.strings.test_tags.EventCardTestTags
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.event.EventCard
-import com.android.unio.ui.event.EventCardScaffold
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
 import com.google.firebase.Timestamp
@@ -70,6 +70,7 @@ class EventCardTest : TearDown() {
   private lateinit var eventViewModel: EventViewModel
   @MockK private lateinit var eventRepository: EventRepositoryFirestore
   @MockK private lateinit var imageRepository: ImageRepositoryFirebaseStorage
+  @MockK private lateinit var associationRepository: AssociationRepositoryFirestore
   private lateinit var context: Context
 
   @Before
@@ -80,7 +81,7 @@ class EventCardTest : TearDown() {
     context = InstrumentationRegistry.getInstrumentation().targetContext
     val user = MockUser.createMockUser(followedAssociations = associations, savedEvents = listOf())
     every { NotificationWorker.schedule(any(), any()) } just runs
-    eventViewModel = EventViewModel(eventRepository, imageRepository)
+    eventViewModel = EventViewModel(eventRepository, imageRepository, associationRepository)
     userViewModel = UserViewModel(userRepository)
     every { userRepository.updateUser(user, any(), any()) } answers
         {
@@ -95,14 +96,7 @@ class EventCardTest : TearDown() {
 
   private fun setEventScreen(event: Event) {
     composeTestRule.setContent {
-      EventCardScaffold(
-          event,
-          associations,
-          true,
-          { navigationAction.navigateTo(Screen.EVENT_DETAILS) },
-          {},
-          {},
-          true)
+      EventCard(navigationAction, event, userViewModel, eventViewModel, true)
     }
   }
 
