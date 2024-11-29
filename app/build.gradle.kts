@@ -249,6 +249,14 @@ dependencies {
 
     // Networking with OkHttp
     implementation(libs.okhttp)
+    implementation(libs.okhttp.logging.interceptor)
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.gson.converter)
+    testImplementation(libs.retrofit.mock)
+    testImplementation(libs.mockwebserver)
+    androidTestImplementation(libs.mockwebserver)
+    androidTestImplementation(libs.retrofit.mock)
+
 
     // Testing Unit
     testImplementation(libs.junit)

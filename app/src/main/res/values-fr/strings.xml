@@ -173,6 +173,9 @@
     <string name="event_creation_end_before_start">L\'heure de fin doit être avant celle de début</string>
     <string name="event_creation_end_equals_start">L\'heure de fin ne peut pas être l\'heure de début</string>
     <string name="event_creation_failed">Echec lors de la création</string>
+    <string name="event_creation_location_input_label">Entrez une addresse</string>
+    <string name="event_creation_location_dropdown_points">…</string>
+    <string name="event_creation_location_dropdown_more">Plus…</string>
 
     <!-- Associations Overlay Strings -->
     <string name="associations_overlay_coauthors_title" translatable="true">Co-organisateurs</string>

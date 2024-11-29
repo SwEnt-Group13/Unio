@@ -31,6 +31,9 @@ object AssociationProfileTestTags {
   // EVENT CARD
   const val EVENT_CARD = "associationEventCard-"
 
+  // EVENT CREATION
+  const val ADD_EVENT_BUTTON = "associationAddEventButton"
+
   // DESCRIPTION
   const val DESCRIPTION = "associationDescription"
 

@@ -177,6 +177,9 @@
     <string name="event_creation_end_before_start">Event cannot start after it ends</string>
     <string name="event_creation_end_equals_start">Event cannot start and end at the same time</string>
     <string name="event_creation_failed">Failed to create event</string>
+    <string name="event_creation_location_input_label">Enter an address</string>
+    <string name="event_creation_location_dropdown_points">…</string>
+    <string name="event_creation_location_dropdown_more">More…</string>
 
 
     <!-- Associations Overlay Strings -->
