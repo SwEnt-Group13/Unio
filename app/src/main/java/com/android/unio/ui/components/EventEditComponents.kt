@@ -4,7 +4,6 @@ import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
@@ -48,13 +47,12 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import coil.compose.rememberAsyncImagePainter
 import com.android.unio.R
 import com.android.unio.model.association.Association
 import com.android.unio.model.strings.FormatStrings.DAY_MONTH_YEAR_FORMAT
 import com.android.unio.model.strings.FormatStrings.HOUR_MINUTE_FORMAT
+import com.android.unio.ui.image.AsyncImageWrapper
 import com.google.firebase.Timestamp
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -98,20 +96,14 @@ fun BannerImagePicker(eventBannerUri: MutableState<Uri>, modifier: Modifier) {
         pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
       },
       contentAlignment = Alignment.Center) {
-        if (eventBannerUri.value != Uri.EMPTY) {
-          Image(
-              painter = rememberAsyncImagePainter(eventBannerUri.value),
-              contentDescription =
-                  context.getString(R.string.event_creation_selected_image_description),
-              modifier = Modifier.fillMaxSize(),
-              contentScale = ContentScale.Crop)
-        } else {
-          Image(
-              painter = painterResource(id = R.drawable.adec),
-              contentDescription =
-                  context.getString(R.string.event_creation_placeholder_image_description),
-              modifier = Modifier.fillMaxSize(),
-              contentScale = ContentScale.Crop)
+        AsyncImageWrapper(
+            eventBannerUri.value,
+            contentDescription =
+                context.getString(R.string.event_creation_selected_image_description),
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.Crop,
+            placeholderResourceId = R.drawable.adec)
+        if (eventBannerUri.value == Uri.EMPTY) {
           Text(
               text = context.getString(R.string.event_creation_image_label),
               modifier = Modifier.align(Alignment.Center))
