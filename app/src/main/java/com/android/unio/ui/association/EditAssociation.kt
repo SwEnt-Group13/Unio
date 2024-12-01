@@ -171,13 +171,13 @@ fun EditAssociationScaffold(
                   onClick = { expanded = true },
                   modifier =
                       Modifier.fillMaxWidth().testTag(EditAssociationTestTags.CATEGORY_BUTTON)) {
-                    Text(text = category.displayName)
+                    Text(text = context.getString(category.displayNameId))
                   }
 
               DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
                 AssociationCategory.entries.forEach { categoryOption ->
                   DropdownMenuItem(
-                      text = { Text(text = categoryOption.displayName) },
+                      text = { Text(text = context.getString(categoryOption.displayNameId)) },
                       onClick = {
                         category = categoryOption
                         expanded = false

@@ -5,11 +5,11 @@ import androidx.appsearch.annotation.Document.Id
 import androidx.appsearch.annotation.Document.Namespace
 import androidx.appsearch.annotation.Document.StringProperty
 import androidx.appsearch.app.AppSearchSchema.StringPropertyConfig
+import com.android.unio.R
 import com.android.unio.model.event.Event
 import com.android.unio.model.firestore.ReferenceElement
 import com.android.unio.model.firestore.ReferenceList
 import com.android.unio.model.firestore.UniquelyIdentifiable
-import com.android.unio.model.strings.AssociationStrings
 import com.android.unio.model.user.User
 
 /**
@@ -54,20 +54,20 @@ data class Association(
  *
  * @property displayName A human-readable name for the category.
  */
-enum class AssociationCategory(val displayName: String) {
-  EPFL_BODIES(AssociationStrings.EPFL_BODIES),
-  REPRESENTATION(AssociationStrings.REPRESENTATION),
-  PROJECTS(AssociationStrings.PROJECTS),
-  EPFL_STUDENTS(AssociationStrings.EPFL_STUDENTS),
-  COUNTRIES(AssociationStrings.COUNTRIES),
-  SUSTAINABILITY(AssociationStrings.SUSTAINABILITY),
-  SCIENCE_TECH(AssociationStrings.SCIENCE_TECH),
-  CULTURE_SOCIETY(AssociationStrings.CULTURE_SOCIETY),
-  ARTS(AssociationStrings.ARTS),
-  ENTERTAINMENT(AssociationStrings.ENTERTAINMENT),
-  SPORTS(AssociationStrings.SPORTS),
-  GUIDANCE(AssociationStrings.GUIDANCE),
-  UNKNOWN(AssociationStrings.UNKNOWN)
+enum class AssociationCategory(val displayNameId: Int) {
+  EPFL_BODIES(R.string.association_category_epfl_bodies),
+  REPRESENTATION(R.string.association_category_representation),
+  PROJECTS(R.string.association_category_projects),
+  EPFL_STUDENTS(R.string.association_category_epfl_students),
+  COUNTRIES(R.string.association_category_countries),
+  SUSTAINABILITY(R.string.association_category_sustainability),
+  SCIENCE_TECH(R.string.association_category_science_tech),
+  CULTURE_SOCIETY(R.string.association_category_culture_society),
+  ARTS(R.string.association_category_arts),
+  ENTERTAINMENT(R.string.association_category_entertainment),
+  SPORTS(R.string.association_category_sports),
+  GUIDANCE(R.string.association_category_guidance),
+  UNKNOWN(R.string.association_category_unknown)
 }
 
 /**
