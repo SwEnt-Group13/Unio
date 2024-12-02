@@ -64,6 +64,7 @@ import com.android.unio.model.user.UserSocial
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.model.user.checkImageUri
 import com.android.unio.model.user.checkNewUser
+import com.android.unio.model.user.deleteUser
 import com.android.unio.ui.authentication.overlay.InterestOverlay
 import com.android.unio.ui.authentication.overlay.SocialOverlay
 import com.android.unio.ui.components.InterestInputChip
@@ -71,7 +72,6 @@ import com.android.unio.ui.components.ProfilePicturePicker
 import com.android.unio.ui.components.SocialInputChip
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
-import com.android.unio.ui.theme.AppTypography
 import com.android.unio.ui.theme.errorContainerDarkMediumContrast
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
@@ -130,23 +130,43 @@ fun UserProfileEditionScreen(
             })
       },
       onDeleteUser = { uid ->
-          authViewModel.deleteAccount(
-              onSuccess = {
-                  Toast.makeText(
-                      context,
-                      context.getString(R.string.user_edition_delete_user_success),
-                      Toast.LENGTH_SHORT)
-                  .show()},
-              onFailure = {exception -> Log.e("UserDeletion", "Failed to delete user in auth: $exception" )}
-          )
-          userViewModel.deleteUserDocument(uid)
-          imageRepository.deleteImage(StoragePathsStrings.USER_IMAGES + uid,
-              onSuccess = {
-                  Log.i("UserDeletion", "User image deleted successfully")
-              },
-              onFailure = {
-                    Log.e("UserDeletion", "Failed to delete user image: $it")
-              })
+
+          if (deleteUser(
+                  uid,
+                  authViewModel,
+                  userViewModel,
+                  imageRepository
+              )
+          ) {
+              Toast.makeText(
+                  context,
+                  context.getString(R.string.user_edition_delete_user_success),
+                  Toast.LENGTH_SHORT
+              ).show()
+          }else{
+              Toast.makeText(
+                  context,
+                  context.getString(R.string.user_edition_delete_user_failure),
+                  Toast.LENGTH_SHORT
+              ).show()
+          }
+//          authViewModel.deleteAccount(
+//              onSuccess = {
+//                  Toast.makeText(
+//                      context,
+//                      context.getString(R.string.user_edition_delete_user_success),
+//                      Toast.LENGTH_SHORT)
+//                  .show()},
+//              onFailure = {exception -> Log.e("UserDeletion", "Failed to delete user in auth: $exception" )}
+//          )
+//          userViewModel.deleteUserDocument(uid)
+//          imageRepository.deleteImage(StoragePathsStrings.USER_IMAGES + uid,
+//              onSuccess = {
+//                  Log.i("UserDeletion", "User image deleted successfully")
+//              },
+//              onFailure = {
+//                    Log.e("UserDeletion", "Failed to delete user image: $it")
+//              })
           navigationAction.navigateTo(Screen.WELCOME)
       }
   )
