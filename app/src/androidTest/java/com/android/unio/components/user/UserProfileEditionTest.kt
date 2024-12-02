@@ -126,28 +126,34 @@ class UserProfileEditionTest : TearDown() {
   fun testUpdateUserOnline() {
     every { connectivityManager?.activeNetwork } returns mockk<Network>()
 
-      composeTestRule.onNodeWithTag(UserEditionTestTags.FIRST_NAME_TEXT_FIELD).assertDisplayComponentInScroll()
+    composeTestRule
+        .onNodeWithTag(UserEditionTestTags.FIRST_NAME_TEXT_FIELD)
+        .assertDisplayComponentInScroll()
     composeTestRule.onNodeWithTag(UserEditionTestTags.FIRST_NAME_TEXT_FIELD).performTextClearance()
     composeTestRule.onNodeWithTag(UserEditionTestTags.FIRST_NAME_TEXT_FIELD).performClick()
     composeTestRule
         .onNodeWithTag(UserEditionTestTags.FIRST_NAME_TEXT_FIELD)
         .performTextInput(UserUpdate.FIRST_NAME)
 
-      composeTestRule.onNodeWithTag(UserEditionTestTags.LAST_NAME_TEXT_FIELD).assertDisplayComponentInScroll()
+    composeTestRule
+        .onNodeWithTag(UserEditionTestTags.LAST_NAME_TEXT_FIELD)
+        .assertDisplayComponentInScroll()
     composeTestRule.onNodeWithTag(UserEditionTestTags.LAST_NAME_TEXT_FIELD).performTextClearance()
     composeTestRule.onNodeWithTag(UserEditionTestTags.LAST_NAME_TEXT_FIELD).performClick()
     composeTestRule
         .onNodeWithTag(UserEditionTestTags.LAST_NAME_TEXT_FIELD)
         .performTextInput(UserUpdate.LAST_NAME)
 
-      composeTestRule.onNodeWithTag(UserEditionTestTags.BIOGRAPHY_TEXT_FIELD).assertDisplayComponentInScroll()
+    composeTestRule
+        .onNodeWithTag(UserEditionTestTags.BIOGRAPHY_TEXT_FIELD)
+        .assertDisplayComponentInScroll()
     composeTestRule.onNodeWithTag(UserEditionTestTags.BIOGRAPHY_TEXT_FIELD).performTextClearance()
     composeTestRule.onNodeWithTag(UserEditionTestTags.BIOGRAPHY_TEXT_FIELD).performClick()
     composeTestRule
         .onNodeWithTag(UserEditionTestTags.BIOGRAPHY_TEXT_FIELD)
         .performTextInput(UserUpdate.BIOGRAPHY)
 
-      composeTestRule.onNodeWithTag(UserEditionTestTags.SAVE_BUTTON).assertDisplayComponentInScroll()
+    composeTestRule.onNodeWithTag(UserEditionTestTags.SAVE_BUTTON).assertDisplayComponentInScroll()
     composeTestRule.onNodeWithTag(UserEditionTestTags.SAVE_BUTTON).performClick()
 
     assert(user.firstName == UserUpdate.FIRST_NAME)
