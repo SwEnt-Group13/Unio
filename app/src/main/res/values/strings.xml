@@ -110,6 +110,7 @@
     <string name="user_edition_delete_user_confirmation" translatable="true">All your data will be deleted, are you sure of proceeding ?</string>
     <string name="user_edition_delete_user_confirm" translatable="true">Confirm</string>
     <string name="user_edition_delete_user_success" translatable="true">Your Account has been deleted</string>
+    <string name="user_edition_delete_user_failure" translatable="true">Failed to delete account, try again later</string>
 
 
     <!-- EmailVerification Strings -->

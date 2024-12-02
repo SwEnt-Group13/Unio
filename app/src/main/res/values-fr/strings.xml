@@ -105,9 +105,7 @@
     <string name="user_edition_delete_user_confirmation" translatable="true">Toutes vos données seront supprimées, êtes-vous sûr de poursuivre ?</string>
     <string name="user_edition_delete_user_confirm" translatable="true">Confirmer</string>
     <string name="user_edition_delete_user_success" translatable="true">Votre compte a été supprimer</string>
-
-
-
+    <string name="user_edition_delete_user_failure" translatable="true">Echec de suppression de compte, veuillez essayer plus tard</string>
 
 
     <!-- EmailVerification Strings -->
