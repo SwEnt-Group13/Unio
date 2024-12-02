@@ -41,16 +41,31 @@ constructor(private val firebaseAuth: FirebaseAuth, private val userRepository: 
     }
   }
 
-    fun deleteAccount(onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
-        val currentUser = firebaseAuth.currentUser
+    fun deleteAccount(userId: String): Boolean {
+        var isSuccessful = false
 
-        currentUser?.delete()?.addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                onSuccess()
-            } else {
-                onFailure(task.exception!!)
+        userRepository.deleteUserInAuth(
+            userId,
+            onSuccess = {
+              Log.i("AuthViewModel", "User deleted successfully")
+                isSuccessful = true
+            },
+            onFailure = {
+                Log.e("AuthViewModel", "Failed to delete user", it)
+                isSuccessful = false
             }
-        }?: onFailure(Exception("User does not exist"))
+        )
+
+//        val currentUser = firebaseAuth.currentUser
+//
+//        currentUser?.delete()?.addOnCompleteListener { task ->
+//            if (task.isSuccessful) {
+//                onSuccess()
+//            } else {
+//                onFailure(task.exception!!)
+//            }
+//        }?: onFailure(Exception("User does not exist"))
+        return isSuccessful
     }
 
   /**
