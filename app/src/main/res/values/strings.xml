@@ -106,6 +106,7 @@
     <string name="user_settings_discard_changes" translatable="true">"Discard Changes"</string>
     <string name="user_settings_save_changes" translatable="true">Save changes</string>
     <string name="user_settings_modified_successfully" translatable="true">Changes Successfully modified</string>
+    <string name="user_settings_modified_offline">Change has been saved. Turn online to apply change</string>
 
 
     <!-- EmailVerification Strings -->
