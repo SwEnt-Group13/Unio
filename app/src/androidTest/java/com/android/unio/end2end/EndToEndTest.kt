@@ -51,7 +51,7 @@ open class EndToEndTest : FirebaseEmulatorFunctions {
   }
 
   @After
-  fun tearDown() {
+  override fun tearDown() {
     clearTest()
   }
 
