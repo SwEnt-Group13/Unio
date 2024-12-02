@@ -73,20 +73,19 @@ class AssociationRepositoryFirestore @Inject constructor(private val db: Firebas
       onSuccess: (Association) -> Unit,
       onFailure: (Exception) -> Unit
   ) {
-    getAssociationRef(id)
-        .addSnapshotListener(MetadataChanges.EXCLUDE){
-            documentSnapshot, exception ->
-          if (exception != null) {
-            onFailure(exception)
-            return@addSnapshotListener
-          }
-          if (documentSnapshot != null && documentSnapshot.exists()) {
-            onSuccess(hydrate(documentSnapshot.data))
-          }
-        }
-//        .performFirestoreOperation(
-//            onSuccess = { document -> onSuccess(hydrate(document.data)) },
-//            onFailure = { exception -> onFailure(exception) })
+    getAssociationRef(id).addSnapshotListener(MetadataChanges.EXCLUDE) { documentSnapshot, exception
+      ->
+      if (exception != null) {
+        onFailure(exception)
+        return@addSnapshotListener
+      }
+      if (documentSnapshot != null && documentSnapshot.exists()) {
+        onSuccess(hydrate(documentSnapshot.data))
+      }
+    }
+    //        .performFirestoreOperation(
+    //            onSuccess = { document -> onSuccess(hydrate(document.data)) },
+    //            onFailure = { exception -> onFailure(exception) })
   }
 
   override fun saveAssociation(
