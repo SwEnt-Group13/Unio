@@ -130,7 +130,6 @@ fun UserProfileEditionScreen(
             })
       },
       onDeleteUser = { uid ->
-          Log.d("Text9000", uid)
           authViewModel.deleteAccount(
               onSuccess = {
                   Toast.makeText(
@@ -141,6 +140,13 @@ fun UserProfileEditionScreen(
               onFailure = {exception -> Log.e("UserDeletion", "Failed to delete user in auth: $exception" )}
           )
           userViewModel.deleteUserDocument(uid)
+          imageRepository.deleteImage(StoragePathsStrings.USER_IMAGES + uid,
+              onSuccess = {
+                  Log.i("UserDeletion", "User image deleted successfully")
+              },
+              onFailure = {
+                    Log.e("UserDeletion", "Failed to delete user image: $it")
+              })
           navigationAction.navigateTo(Screen.WELCOME)
       }
   )

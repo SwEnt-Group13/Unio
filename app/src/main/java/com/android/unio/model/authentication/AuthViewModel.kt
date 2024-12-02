@@ -42,7 +42,9 @@ constructor(private val firebaseAuth: FirebaseAuth, private val userRepository: 
   }
 
     fun deleteAccount(onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
-        firebaseAuth.currentUser?.delete()?.addOnCompleteListener { task ->
+        val currentUser = firebaseAuth.currentUser
+
+        currentUser?.delete()?.addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 onSuccess()
             } else {
