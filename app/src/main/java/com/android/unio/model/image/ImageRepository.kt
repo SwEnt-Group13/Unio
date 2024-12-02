@@ -12,4 +12,6 @@ interface ImageRepository {
   )
 
   fun getImageUrl(firebasePath: String, onSuccess: (String) -> Unit, onFailure: (Exception) -> Unit)
+
+  fun deleteImage(firebasePath: String, onSuccess: () -> Unit, onFailure: (Exception) -> Unit)
 }

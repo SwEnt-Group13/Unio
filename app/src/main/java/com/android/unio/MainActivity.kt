@@ -176,7 +176,7 @@ fun UnioApp(imageRepository: ImageRepositoryFirebaseStorage) {
         UserProfileScreen(userViewModel, associationViewModel, navigationActions)
       }
       composable(Screen.EDIT_PROFILE) {
-        UserProfileEditionScreen(userViewModel, imageRepository, navigationActions)
+        UserProfileEditionScreen(userViewModel, authViewModel ,imageRepository, navigationActions)
       }
       composable(Screen.SETTINGS) {
         SettingsScreen(navigationActions, authViewModel, userViewModel)

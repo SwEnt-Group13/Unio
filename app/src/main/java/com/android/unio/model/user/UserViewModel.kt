@@ -104,6 +104,31 @@ class UserViewModel @Inject constructor(private val userRepository: UserReposito
         onFailure = { Log.e("UserViewModel", "Failed to update user", it) })
   }
 
+  fun deleteUserDocument(userUid: String): Boolean {
+    var isSuccessful = false
+
+    if(userUid != user.value!!.uid){
+      Log.e("UserDeletionFirestore", "UserUid does not match current user uid")
+      return false
+    }
+
+  userRepository.deleteUserInFirestore(userUid,
+      onSuccess = {
+        if(userUid == _user.value?.uid){
+          _user.value = null
+        }
+        Log.i("UserDeletionFirestore", "User deleted successfully")
+        isSuccessful = true
+      },
+      onFailure = { exception ->
+        Log.e("UserDeletionFirestore", "Failed to delete user in firestore: $exception")
+        isSuccessful = false
+      }
+    )
+
+    return isSuccessful
+  }
+
   fun updateUserDebounced(user: User, interval: Long = debounceInterval) {
     updateJob?.cancel()
     updateJob =

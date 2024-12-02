@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 @HiltViewModel
-class AuthViewModel
+class                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  AuthViewModel
 @Inject
 constructor(private val firebaseAuth: FirebaseAuth, private val userRepository: UserRepository) :
     ViewModel() {
@@ -40,6 +40,33 @@ constructor(private val firebaseAuth: FirebaseAuth, private val userRepository: 
       }
     }
   }
+
+    fun deleteAccount(userId: String): Boolean {
+        var isSuccessful = false
+
+        userRepository.deleteUserInAuth(
+            userId,
+            onSuccess = {
+              Log.i("AuthViewModel", "User deleted successfully")
+                isSuccessful = true
+            },
+            onFailure = {
+                Log.e("AuthViewModel", "Failed to delete user", it)
+                isSuccessful = false
+            }
+        )
+
+//        val currentUser = firebaseAuth.currentUser
+//
+//        currentUser?.delete()?.addOnCompleteListener { task ->
+//            if (task.isSuccessful) {
+//                onSuccess()
+//            } else {
+//                onFailure(task.exception!!)
+//            }
+//        }?: onFailure(Exception("User does not exist"))
+        return isSuccessful
+    }
 
   /**
    * Verifies the authentication state of the user. If the user should be redirected, the

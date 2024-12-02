@@ -1,6 +1,9 @@
 package com.android.unio.model.user
 
 import android.util.Log
+import com.android.unio.model.authentication.AuthViewModel
+import com.android.unio.model.image.ImageRepository
+import com.android.unio.model.strings.StoragePathsStrings
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
@@ -97,4 +100,37 @@ fun isValidEmail(text: String): Boolean {
  */
 fun isValidPassword(text: String): Boolean {
   return text.length in 6..4096 && text.contains(Regex("[0-9]"))
+}
+
+/**
+ * Deletes the user with the given userId from firebase auth, storage and firestore
+ *
+ * @param userId The Id of the corresponding user we want to delete
+ * @param authViewModel The instance of the authViewModel to delete the user in firebase auth
+ * @param userViewModel The instance of the userViewModel to delete the user in firestore
+ * @param imageRepository The instance of the image repository to delete the user's profile picture
+ *
+ * @return true if all three method were successful and false otherwise
+ *
+ */
+fun deleteUser(
+    userId: String,
+    authViewModel: AuthViewModel,
+    userViewModel: UserViewModel,
+    imageRepository: ImageRepository,
+): Boolean {
+    val successAuthDeletion = authViewModel.deleteAccount(userId)
+    val successFirestoreDeletion = userViewModel.deleteUserDocument(userId)
+    var successStorageDeletion = false
+    imageRepository.deleteImage(
+        StoragePathsStrings.USER_IMAGES + userId,
+        onSuccess = {
+            Log.i("UserDeletion", "User image deleted successfully")
+            successStorageDeletion = true
+        },
+        onFailure = {
+            Log.e("UserDeletion", "Failed to delete user image: $it")
+        })
+
+    return successAuthDeletion && successFirestoreDeletion && successStorageDeletion
 }
