@@ -13,5 +13,7 @@ interface UserRepository {
 
   fun updateUser(user: User, onSuccess: () -> Unit, onFailure: (Exception) -> Unit)
 
-  fun deleteUser(userId: String, onSuccess: () -> Unit, onFailure: (Exception) -> Unit)
+  fun deleteUserInFirestore(userId: String, onSuccess: () -> Unit, onFailure: (Exception) -> Unit)
+
+  fun deleteUserInAuth(userId: String, onSuccess: () -> Unit, onFailure: (Exception) -> Unit)
 }
