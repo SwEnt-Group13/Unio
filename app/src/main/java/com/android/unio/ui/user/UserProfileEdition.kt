@@ -48,14 +48,13 @@ import com.android.unio.model.user.UserSocial
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.model.user.checkImageUri
 import com.android.unio.model.user.checkNewUser
+import com.android.unio.model.utils.Utils
 import com.android.unio.ui.authentication.overlay.InterestOverlay
 import com.android.unio.ui.authentication.overlay.SocialOverlay
 import com.android.unio.ui.components.InterestInputChip
 import com.android.unio.ui.components.ProfilePicturePicker
 import com.android.unio.ui.components.SocialInputChip
 import com.android.unio.ui.navigation.NavigationAction
-import com.google.firebase.Firebase
-import com.google.firebase.auth.auth
 import kotlinx.coroutines.flow.MutableStateFlow
 
 @Composable
@@ -66,9 +65,9 @@ fun UserProfileEditionScreen(
 ) {
 
   val context = LocalContext.current
-  val userId = Firebase.auth.currentUser?.uid
 
   val user by userViewModel.user.collectAsState()
+  val userId = user!!.uid
 
   UserProfileEditionScreenContent(
       user = user!!,
@@ -97,7 +96,7 @@ fun UserProfileEditionScreen(
           }
         }
       },
-      onUploadUser = { modifiedUser ->
+      onUploadUserOnline = { modifiedUser ->
         userViewModel.addUser(
             modifiedUser,
             onSuccess = {
@@ -108,6 +107,23 @@ fun UserProfileEditionScreen(
                   .show()
               navigationAction.goBack()
             })
+      },
+      onUploadUserOffline = { modifiedUser ->
+        Toast.makeText(
+                context,
+                context.getString(R.string.user_settings_modified_offline),
+                Toast.LENGTH_LONG)
+            .show()
+        userViewModel.addUser(
+            modifiedUser,
+            onSuccess = {
+              Toast.makeText(
+                      context,
+                      context.getString(R.string.user_settings_modified_successfully),
+                      Toast.LENGTH_SHORT)
+                  .show()
+            })
+        navigationAction.goBack()
       })
 }
 
@@ -117,7 +133,8 @@ fun UserProfileEditionScreenContent(
     user: User,
     onDiscardChanges: () -> Unit,
     onModifyUser: (MutableState<Uri>, (String) -> Unit) -> Unit,
-    onUploadUser: (User) -> Unit,
+    onUploadUserOnline: (User) -> Unit,
+    onUploadUserOffline: (User) -> Unit
 ) {
 
   val context = LocalContext.current
@@ -141,7 +158,7 @@ fun UserProfileEditionScreenContent(
   // But if it's the first time entering the page the uri will be the one from firebase
   // and therefore cannot be opened in a input stream in the onModifyUser function
   // Hence we must check whether the user has changed his profile picture or not to get a local URI.
-  val profilePictureUri = remember { mutableStateOf<Uri>(user.profilePicture.toUri()) }
+  val profilePictureUri = remember { mutableStateOf(user.profilePicture.toUri()) }
 
   var showInterestsOverlay by remember { mutableStateOf(false) }
   var showSocialsOverlay by remember { mutableStateOf(false) }
@@ -153,6 +170,7 @@ fun UserProfileEditionScreenContent(
    * simply be copied from the user.
    */
   val createUser: (String) -> Unit = { uri ->
+    val hasInternet = Utils.checkInternetConnection(context)
     val newUser =
         User(
             uid = user.uid,
@@ -169,7 +187,11 @@ fun UserProfileEditionScreenContent(
 
     isErrors = checkNewUser(newUser)
     if (isErrors.isEmpty()) {
-      onUploadUser(newUser)
+      if (hasInternet) {
+        onUploadUserOnline(newUser)
+      } else {
+        onUploadUserOffline(newUser)
+      }
     }
   }
 
