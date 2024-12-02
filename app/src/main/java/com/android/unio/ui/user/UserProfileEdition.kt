@@ -7,11 +7,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -19,18 +17,15 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -42,7 +37,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
@@ -54,7 +48,6 @@ import com.android.unio.R
 import com.android.unio.model.authentication.AuthViewModel
 import com.android.unio.model.image.ImageRepository
 import com.android.unio.model.strings.StoragePathsStrings
-import com.android.unio.model.strings.test_tags.InterestsOverlayTestTags
 import com.android.unio.model.strings.test_tags.UserEditionTestTags
 import com.android.unio.model.user.AccountDetailsError
 import com.android.unio.model.user.ImageUriType
@@ -131,25 +124,22 @@ fun UserProfileEditionScreen(
       },
       onDeleteUser = { uid ->
 
-          if (deleteUser(
-                  uid,
-                  authViewModel,
-                  userViewModel,
-                  imageRepository
-              )
-          ) {
-              Toast.makeText(
-                  context,
-                  context.getString(R.string.user_edition_delete_user_success),
-                  Toast.LENGTH_SHORT
-              ).show()
-          }else{
-              Toast.makeText(
-                  context,
-                  context.getString(R.string.user_edition_delete_user_failure),
-                  Toast.LENGTH_SHORT
-              ).show()
-          }
+         deleteUser(uid, authViewModel, userViewModel, imageRepository,
+              onSuccess = {
+                  Toast.makeText(
+                      context,
+                      context.getString(R.string.user_edition_delete_user_success),
+                      Toast.LENGTH_SHORT
+                  ).show()
+                  navigationAction.navigateTo(Screen.WELCOME)
+              },
+              onFailure = {
+                  Toast.makeText(
+                      context,
+                      context.getString(R.string.user_edition_delete_user_failure),
+                      Toast.LENGTH_SHORT
+                  ).show()
+              })
 //          authViewModel.deleteAccount(
 //              onSuccess = {
 //                  Toast.makeText(
@@ -167,7 +157,6 @@ fun UserProfileEditionScreen(
 //              onFailure = {
 //                    Log.e("UserDeletion", "Failed to delete user image: $it")
 //              })
-          navigationAction.navigateTo(Screen.WELCOME)
       }
   )
 }

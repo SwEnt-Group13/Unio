@@ -118,7 +118,9 @@ fun deleteUser(
     authViewModel: AuthViewModel,
     userViewModel: UserViewModel,
     imageRepository: ImageRepository,
-): Boolean {
+    onSuccess: () -> Unit,
+    onFailure: (Exception) -> Unit
+){
     val successAuthDeletion = authViewModel.deleteAccount(userId)
     val successFirestoreDeletion = userViewModel.deleteUserDocument(userId)
     var successStorageDeletion = false
@@ -132,5 +134,10 @@ fun deleteUser(
             Log.e("UserDeletion", "Failed to delete user image: $it")
         })
 
-    return successAuthDeletion && successFirestoreDeletion && successStorageDeletion
+    Log.e("UserDeletion", "Auth: $successAuthDeletion, Firestore: $successFirestoreDeletion, Storage: $successStorageDeletion")
+    if( successAuthDeletion && successFirestoreDeletion && successStorageDeletion ){
+        onSuccess()
+    }else{
+        onFailure(Exception("Failed to delete user"))
+    }
 }
