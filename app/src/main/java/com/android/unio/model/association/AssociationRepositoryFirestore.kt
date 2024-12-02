@@ -9,6 +9,7 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.MetadataChanges
 import com.google.firebase.firestore.QuerySnapshot
 import javax.inject.Inject
 
@@ -73,10 +74,19 @@ class AssociationRepositoryFirestore @Inject constructor(private val db: Firebas
       onFailure: (Exception) -> Unit
   ) {
     getAssociationRef(id)
-        .get()
-        .performFirestoreOperation(
-            onSuccess = { document -> onSuccess(hydrate(document.data)) },
-            onFailure = { exception -> onFailure(exception) })
+        .addSnapshotListener(MetadataChanges.EXCLUDE){
+            documentSnapshot, exception ->
+          if (exception != null) {
+            onFailure(exception)
+            return@addSnapshotListener
+          }
+          if (documentSnapshot != null && documentSnapshot.exists()) {
+            onSuccess(hydrate(documentSnapshot.data))
+          }
+        }
+//        .performFirestoreOperation(
+//            onSuccess = { document -> onSuccess(hydrate(document.data)) },
+//            onFailure = { exception -> onFailure(exception) })
   }
 
   override fun saveAssociation(
