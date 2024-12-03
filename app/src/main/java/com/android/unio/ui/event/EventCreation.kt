@@ -17,9 +17,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
-import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -52,14 +52,15 @@ import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.strings.test_tags.EventCreationTestTags
 import com.android.unio.ui.components.AssociationChips
 import com.android.unio.ui.components.BannerImagePicker
+import com.android.unio.ui.components.DROP_DOWN_MAX_CHARACTERS
+import com.android.unio.ui.components.DROP_DOWN_MAX_ROWS
 import com.android.unio.ui.components.DateAndTimePicker
 import com.android.unio.ui.event.overlay.AssociationsOverlay
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.theme.AppTypography
 import com.google.firebase.Timestamp
 
-private const val DROP_DOWN_MAX_CHARACTERS = 40
-private const val DROP_DOWN_MAX_ROWS = 3
+
 
 @Composable
 fun EventCreationScreen(
@@ -240,7 +241,7 @@ fun EventCreationScreen(
                                 .testTag(
                                     EventCreationTestTags.LOCATION_SUGGESTION_ITEM +
                                         location.latitude))
-                    Divider()
+                      HorizontalDivider()
                   }
 
                   if (locationSuggestions.size > DROP_DOWN_MAX_ROWS) {

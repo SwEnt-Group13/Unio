@@ -60,6 +60,9 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
+const val DROP_DOWN_MAX_CHARACTERS = 40
+const val DROP_DOWN_MAX_ROWS = 3
+
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun AssociationChips(
