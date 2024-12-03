@@ -3,6 +3,7 @@ package com.android.unio.model.association
 import com.android.unio.model.authentication.registerAuthStateListener
 import com.android.unio.model.firestore.FirestorePaths.ASSOCIATION_PATH
 import com.android.unio.model.firestore.performFirestoreOperation
+import com.android.unio.model.firestore.registerSnapshotListener
 import com.android.unio.model.firestore.transform.hydrate
 import com.android.unio.model.firestore.transform.serialize
 import com.google.firebase.Firebase
@@ -73,11 +74,12 @@ class AssociationRepositoryFirestore @Inject constructor(private val db: Firebas
       onSuccess: (Association) -> Unit,
       onFailure: (Exception) -> Unit
   ) {
-    getAssociationRef(id).addSnapshotListener(MetadataChanges.EXCLUDE) { documentSnapshot, exception
-      ->
+    getAssociationRef(id).registerSnapshotListener(MetadataChanges.EXCLUDE) {
+        documentSnapshot,
+        exception ->
       if (exception != null) {
         onFailure(exception)
-        return@addSnapshotListener
+        return@registerSnapshotListener
       }
       if (documentSnapshot != null && documentSnapshot.exists()) {
         onSuccess(hydrate(documentSnapshot.data))

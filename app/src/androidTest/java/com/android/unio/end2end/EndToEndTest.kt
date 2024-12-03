@@ -129,7 +129,8 @@ open class EndToEndTest : FirebaseEmulatorFunctions {
   }
 
   companion object {
-    const val HOST = "10.0.2.2"
+    //    const val HOST = "10.0.2.2"
+    const val HOST = "128.179.205.75"
   }
 
   /* Constant URLs used by the local emulator */
