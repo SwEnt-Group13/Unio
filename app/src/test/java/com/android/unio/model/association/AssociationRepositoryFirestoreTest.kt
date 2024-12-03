@@ -18,6 +18,7 @@ import com.google.firebase.auth.auth
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.EventListener
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.MetadataChanges
 import com.google.firebase.firestore.QueryDocumentSnapshot
@@ -107,7 +108,6 @@ class AssociationRepositoryFirestoreTest {
 
     every { documentReference.get() } returns documentSnapshotTask
     every { documentReference.set(any()) } returns Tasks.forResult(null)
-    every { documentReference.addSnapshotListener(any<MetadataChanges>(), any()) } returns mockk()
 
     // When the query snapshot is iterated, return the two query document snapshots
     every { querySnapshot.iterator() } returns
@@ -122,7 +122,11 @@ class AssociationRepositoryFirestoreTest {
         }
     every { querySnapshotTask.addOnFailureListener(any()) } answers { querySnapshotTask }
 
-    every { documentReference.addSnapshotListener(any()) } returns mockk()
+    every { documentReference.addSnapshotListener(any<MetadataChanges>(), any<EventListener<DocumentSnapshot>>()) } answers {
+        val listener = it.invocation.args[1] as EventListener<DocumentSnapshot>
+        listener.onEvent(queryDocumentSnapshot1, null)
+        mockk()
+    }
 
     every { documentSnapshotTask.addOnSuccessListener(any()) } answers
         { call ->
@@ -301,7 +305,7 @@ class AssociationRepositoryFirestoreTest {
           assertEquals(association1.description, association.description)
           success = true
         },
-        onFailure = { exception -> assert(false) })
+        onFailure = { assert(false) })
     assert(success)
   }
 
