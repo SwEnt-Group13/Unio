@@ -2,7 +2,6 @@ package com.android.unio.ui.event
 
 import android.net.Uri
 import android.widget.Toast
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -44,6 +43,7 @@ import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.firestore.firestoreReferenceListWith
 import com.android.unio.model.map.Location
+import com.android.unio.model.map.nominatim.NominatimLocationSearchViewModel
 import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.strings.test_tags.EventEditTestTags
 import com.android.unio.model.user.ImageUriType
@@ -51,6 +51,7 @@ import com.android.unio.model.user.checkImageUri
 import com.android.unio.ui.components.AssociationChips
 import com.android.unio.ui.components.BannerImagePicker
 import com.android.unio.ui.components.DateAndTimePicker
+import com.android.unio.ui.components.NominatimLocationPicker
 import com.android.unio.ui.components.getHHMMInMillisFromTimestamp
 import com.android.unio.ui.event.overlay.AssociationsOverlay
 import com.android.unio.ui.navigation.NavigationAction
@@ -71,7 +72,8 @@ fun EventEditScreen(
     navigationAction: NavigationAction,
     searchViewModel: SearchViewModel,
     associationViewModel: AssociationViewModel,
-    eventViewModel: EventViewModel
+    eventViewModel: EventViewModel,
+    locationSearchViewModel: NominatimLocationSearchViewModel
 ) {
   val context = LocalContext.current
   val scrollState = rememberScrollState()
@@ -106,6 +108,8 @@ fun EventEditScreen(
 
   val initialEndTime = getHHMMInMillisFromTimestamp(eventToEdit.endDate)
   val initialEndDate = eventToEdit.endDate.toDate().time - initialEndTime
+
+  var selectedLocation by remember { mutableStateOf<Location?>(null) }
 
   val eventBannerUri = remember { mutableStateOf<Uri>(eventToEdit.image.toUri()) }
 
@@ -215,15 +219,12 @@ fun EventEditScreen(
             }
           }
 
-          OutlinedTextField(
-              modifier =
-                  Modifier.fillMaxWidth().testTag(EventEditTestTags.LOCATION).clickable {
-                    Toast.makeText(context, "Location is not implemented yet", Toast.LENGTH_SHORT)
-                        .show()
-                  },
-              value = "",
-              onValueChange = {},
-              label = { Text(context.getString(R.string.event_creation_location_label)) })
+          NominatimLocationPicker(
+              locationSearchViewModel,
+              EventEditTestTags.LOCATION,
+              EventEditTestTags.LOCATION_SUGGESTION_ITEM) {
+                selectedLocation = it
+              }
 
           Spacer(modifier = Modifier.width(10.dp))
 
@@ -261,7 +262,8 @@ fun EventEditScreen(
                             startTimestamp != null &&
                             endTimestamp != null &&
                             startTimestamp!! < endTimestamp!! &&
-                            eventBannerUri.value != Uri.EMPTY,
+                            eventBannerUri.value != Uri.EMPTY &&
+                            selectedLocation != null,
                     onClick = {
                       val updatedEvent =
                           Event(
@@ -285,7 +287,7 @@ fun EventEditScreen(
                               price = 0.0,
                               startDate = startTimestamp!!,
                               endDate = endTimestamp!!,
-                              location = Location(),
+                              location = selectedLocation!!,
                           )
                       // This should be extracted to a util
                       if (checkImageUri(eventBannerUri.toString()) == ImageUriType.LOCAL) {

@@ -21,6 +21,8 @@ import com.android.unio.model.event.EventRepositoryFirestore
 import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.follow.ConcurrentAssociationUserRepositoryFirestore
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
+import com.android.unio.model.map.nominatim.NominatimLocationRepository
+import com.android.unio.model.map.nominatim.NominatimLocationSearchViewModel
 import com.android.unio.model.search.SearchRepository
 import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.strings.test_tags.EventEditTestTags
@@ -84,6 +86,10 @@ class EventEditTests : TearDown() {
           location = MockEvent.createMockEvent().location,
           types = listOf(MockEvent.createMockEvent().types.first()))
 
+  @MockK
+  private lateinit var nominatimLocationRepositoryWithoutFunctionality: NominatimLocationRepository
+  private lateinit var nominatimLocationSearchViewModel: NominatimLocationSearchViewModel
+
   @Before
   fun setUp() {
     MockKAnnotations.init(this, relaxed = true)
@@ -130,8 +136,15 @@ class EventEditTests : TearDown() {
 
   @Test
   fun testEventEditTagsDisplayed() {
+    nominatimLocationSearchViewModel =
+        NominatimLocationSearchViewModel(nominatimLocationRepositoryWithoutFunctionality)
     composeTestRule.setContent {
-      EventEditScreen(navigationAction, searchViewModel, associationViewModel, eventViewModel)
+      EventEditScreen(
+          navigationAction,
+          searchViewModel,
+          associationViewModel,
+          eventViewModel,
+          nominatimLocationSearchViewModel)
     }
 
     composeTestRule.waitForIdle()
@@ -195,8 +208,15 @@ class EventEditTests : TearDown() {
 
   @Test
   fun testEventCannotBeSavedWhenEmptyField() {
+    nominatimLocationSearchViewModel =
+        NominatimLocationSearchViewModel(nominatimLocationRepositoryWithoutFunctionality)
     composeTestRule.setContent {
-      EventEditScreen(navigationAction, searchViewModel, associationViewModel, eventViewModel)
+      EventEditScreen(
+          navigationAction,
+          searchViewModel,
+          associationViewModel,
+          eventViewModel,
+          nominatimLocationSearchViewModel)
     }
     composeTestRule
         .onNodeWithTag(EventEditTestTags.EVENT_TITLE, useUnmergedTree = true)
@@ -207,11 +227,18 @@ class EventEditTests : TearDown() {
 
   @Test
   fun testDeleteButtonWorksCorrectly() {
+    nominatimLocationSearchViewModel =
+        NominatimLocationSearchViewModel(nominatimLocationRepositoryWithoutFunctionality)
     var shouldBeTrue = false
     every { eventViewModel.deleteEvent(any(), any(), any()) } answers { shouldBeTrue = true }
 
     composeTestRule.setContent {
-      EventEditScreen(navigationAction, searchViewModel, associationViewModel, eventViewModel)
+      EventEditScreen(
+          navigationAction,
+          searchViewModel,
+          associationViewModel,
+          eventViewModel,
+          nominatimLocationSearchViewModel)
     }
 
     composeTestRule.onNodeWithTag(EventEditTestTags.DELETE_BUTTON).performScrollTo().performClick()
@@ -221,6 +248,8 @@ class EventEditTests : TearDown() {
 
   @Test
   fun testSaveButtonSavesNewEvent() {
+    nominatimLocationSearchViewModel =
+        NominatimLocationSearchViewModel(nominatimLocationRepositoryWithoutFunctionality)
     var shouldBeTrue = false
 
     val eventSlot = slot<Event>()
@@ -230,7 +259,12 @@ class EventEditTests : TearDown() {
         }
 
     composeTestRule.setContent {
-      EventEditScreen(navigationAction, searchViewModel, associationViewModel, eventViewModel)
+      EventEditScreen(
+          navigationAction,
+          searchViewModel,
+          associationViewModel,
+          eventViewModel,
+          nominatimLocationSearchViewModel)
     }
     composeTestRule
         .onNodeWithTag(EventEditTestTags.EVENT_TITLE)
