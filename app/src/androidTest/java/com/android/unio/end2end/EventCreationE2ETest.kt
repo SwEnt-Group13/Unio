@@ -4,11 +4,8 @@ import android.app.Activity
 import android.app.Instrumentation
 import android.content.Intent
 import android.net.Uri
-import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextEquals
-import androidx.compose.ui.test.hasAnyChild
-import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.isDisplayed
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
@@ -37,7 +34,8 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.UninstallModules
 import dagger.hilt.components.SingletonComponent
-import okhttp3.OkHttpClient
+import javax.inject.Inject
+import javax.inject.Singleton
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
@@ -45,20 +43,19 @@ import org.junit.Before
 import org.junit.Test
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import javax.inject.Inject
-import javax.inject.Singleton
 
 @LargeTest
 @HiltAndroidTest
 @UninstallModules(NetworkModule::class)
 class EventCreationE2ETest : EndToEndTest() {
-    @Inject lateinit var mockWebServer: MockWebServer
+  @Inject lateinit var mockWebServer: MockWebServer
 
-    @Before
-    override fun setUp() {
-        mockWebServer.start()
+  @Before
+  override fun setUp() {
+    mockWebServer.start()
 
-        val mockResponseBody = """
+    val mockResponseBody =
+        """
         [
             {
                 "lat": "45.512331",
@@ -75,185 +72,182 @@ class EventCreationE2ETest : EndToEndTest() {
             }
         ]
     """
-        mockWebServer.enqueue(MockResponse().setBody(mockResponseBody))
+    mockWebServer.enqueue(MockResponse().setBody(mockResponseBody))
 
-        Intents.init()
-        super.setUp()
+    Intents.init()
+    super.setUp()
+  }
+
+  @After
+  override fun tearDown() {
+    mockWebServer.shutdown()
+    Intents.release()
+    super.tearDown()
+  }
+
+  private fun selectDate(datePickerTag: String, day: String) {
+    composeTestRule.waitUntil(10000) {
+      composeTestRule.onNodeWithTag(datePickerTag, useUnmergedTree = true).isDisplayed()
     }
 
-    @After
-    override fun tearDown() {
-        mockWebServer.shutdown()
-        Intents.release()
-        super.tearDown()
+    composeTestRule.onNodeWithText(day, useUnmergedTree = true).performClick()
+
+    composeTestRule.onNodeWithText("OK", ignoreCase = true).performClick()
+  }
+
+  private fun selectTime(timePickerTag: String, hour: Int, minute: Int) {
+    composeTestRule.waitUntil(10000) { composeTestRule.onNodeWithTag(timePickerTag).isDisplayed() }
+
+    composeTestRule.onNodeWithText("Hour", useUnmergedTree = true).performTextClearance()
+    composeTestRule.onNodeWithText("Hour", useUnmergedTree = true).performTextInput(hour.toString())
+
+    composeTestRule.onNodeWithText("Minute", useUnmergedTree = true).performTextClearance()
+    composeTestRule
+        .onNodeWithText("Minute", useUnmergedTree = true)
+        .performTextInput(minute.toString())
+
+    composeTestRule.onNodeWithText("OK", ignoreCase = true).performClick()
+  }
+
+  private fun setDateTime(
+      dateFieldTag: String,
+      datePickerTag: String,
+      timeFieldTag: String,
+      timePickerTag: String,
+      day: String,
+      hour: Int,
+      minute: Int
+  ) {
+    composeTestRule.onNodeWithTag(dateFieldTag).performScrollTo().performClick()
+    selectDate(datePickerTag, day)
+
+    composeTestRule.onNodeWithTag(timeFieldTag).performScrollTo().performClick()
+    selectTime(timePickerTag, hour, minute)
+  }
+
+  @Test
+  fun testEventCreation() {
+    signInWithUser(composeTestRule, JohnDoe.EMAIL, JohnDoe.PASSWORD)
+
+    // Navigate to the event creation screen
+    composeTestRule.waitUntil(10000) {
+      composeTestRule.onNodeWithTag(HomeTestTags.SCREEN).isDisplayed()
     }
 
-    private fun selectDate(datePickerTag: String, day: String) {
-        composeTestRule.waitUntil(10000) {
-            composeTestRule.onNodeWithTag(datePickerTag, useUnmergedTree = true).isDisplayed()
-        }
-
-        composeTestRule.onNodeWithText(day, useUnmergedTree = true).performClick()
-
-        composeTestRule.onNodeWithText("OK", ignoreCase = true).performClick()
+    composeTestRule.onNodeWithTag(BottomNavBarTestTags.EXPLORE).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(BottomNavBarTestTags.EXPLORE).performClick()
+    composeTestRule.waitUntil(10000) {
+      composeTestRule.onNodeWithTag(ExploreTestTags.EXPLORE_SCAFFOLD_TITLE).isDisplayed()
     }
 
-    private fun selectTime(timePickerTag: String, hour: Int, minute: Int) {
-        composeTestRule.waitUntil(10000) {
-            composeTestRule.onNodeWithTag(timePickerTag).isDisplayed()
-        }
-
-        composeTestRule.onNodeWithText("Hour", useUnmergedTree = true).performTextClearance()
-        composeTestRule.onNodeWithText("Hour", useUnmergedTree = true).performTextInput(hour.toString())
-
-        composeTestRule.onNodeWithText("Minute", useUnmergedTree = true).performTextClearance()
-        composeTestRule.onNodeWithText("Minute", useUnmergedTree = true).performTextInput(minute.toString())
-
-        composeTestRule.onNodeWithText("OK", ignoreCase = true).performClick()
+    composeTestRule.onNodeWithText(ASSOCIATION_NAME).assertDisplayComponentInScroll()
+    composeTestRule.onNodeWithText(ASSOCIATION_NAME).performClick()
+    composeTestRule.waitUntil(10000) {
+      composeTestRule.onNodeWithTag(AssociationProfileTestTags.SCREEN).isDisplayed()
     }
 
-    private fun setDateTime(
-        dateFieldTag: String,
-        datePickerTag: String,
-        timeFieldTag: String,
-        timePickerTag: String,
-        day: String,
-        hour: Int,
-        minute: Int
-    ) {
-        composeTestRule.onNodeWithTag(dateFieldTag).performScrollTo().performClick()
-        selectDate(datePickerTag, day)
-
-        composeTestRule.onNodeWithTag(timeFieldTag).performScrollTo().performClick()
-        selectTime(timePickerTag, hour, minute)
+    composeTestRule.onNodeWithTag(AssociationProfileTestTags.ADD_EVENT_BUTTON).performClick()
+    composeTestRule.waitUntil(10000) {
+      composeTestRule.onNodeWithTag(EventCreationTestTags.SCREEN).isDisplayed()
     }
 
-    @Test
-    fun testEventCreation() {
-        signInWithUser(composeTestRule, JohnDoe.EMAIL, JohnDoe.PASSWORD)
+    // Fill in the event creation form
+    composeTestRule.onNodeWithTag(EventCreationTestTags.EVENT_TITLE).performTextInput("Test Event")
 
-        // Navigate to the event creation screen
-        composeTestRule.waitUntil(10000) {
-            composeTestRule.onNodeWithTag(HomeTestTags.SCREEN).isDisplayed()
-        }
+    composeTestRule
+        .onNodeWithTag(EventCreationTestTags.SHORT_DESCRIPTION)
+        .performTextInput("This is a short description.")
 
-        composeTestRule.onNodeWithTag(BottomNavBarTestTags.EXPLORE).assertIsDisplayed()
-        composeTestRule.onNodeWithTag(BottomNavBarTestTags.EXPLORE).performClick()
-        composeTestRule.waitUntil(10000) {
-            composeTestRule.onNodeWithTag(ExploreTestTags.EXPLORE_SCAFFOLD_TITLE).isDisplayed()
-        }
+    composeTestRule
+        .onNodeWithTag(EventCreationTestTags.DESCRIPTION)
+        .performTextInput("This is a detailed description of the test event.")
 
-        composeTestRule.onNodeWithText(ASSOCIATION_NAME).assertDisplayComponentInScroll()
-        composeTestRule.onNodeWithText(ASSOCIATION_NAME).performClick()
-        composeTestRule.waitUntil(10000) {
-            composeTestRule.onNodeWithTag(AssociationProfileTestTags.SCREEN).isDisplayed()
-        }
+    // Handle the image picker
+    val fakeImageUri = Uri.parse("android.resource://com.android.unio/drawable/test_image")
+    val resultData = Intent()
+    resultData.data = fakeImageUri
 
-        composeTestRule.onNodeWithTag(AssociationProfileTestTags.ADD_EVENT_BUTTON).performClick()
-        composeTestRule.waitUntil(10000) {
-            composeTestRule.onNodeWithTag(EventCreationTestTags.SCREEN).isDisplayed()
-        }
+    intending(anyIntent())
+        .respondWith(Instrumentation.ActivityResult(Activity.RESULT_OK, resultData))
 
-        // Fill in the event creation form
-        composeTestRule.onNodeWithTag(EventCreationTestTags.EVENT_TITLE)
-            .performTextInput("Test Event")
+    // Click on the image picker
+    composeTestRule.onNodeWithTag(EventCreationTestTags.EVENT_IMAGE).performClick()
 
-        composeTestRule.onNodeWithTag(EventCreationTestTags.SHORT_DESCRIPTION)
-            .performTextInput("This is a short description.")
+    // Set Start Date and Time
+    setDateTime(
+        dateFieldTag = EventCreationTestTags.START_DATE_FIELD,
+        datePickerTag = EventCreationTestTags.START_DATE_PICKER,
+        timeFieldTag = EventCreationTestTags.START_TIME_FIELD,
+        timePickerTag = EventCreationTestTags.START_TIME_PICKER,
+        day = "15",
+        hour = 10,
+        minute = 30)
 
-        composeTestRule.onNodeWithTag(EventCreationTestTags.DESCRIPTION)
-            .performTextInput("This is a detailed description of the test event.")
+    setDateTime(
+        dateFieldTag = EventCreationTestTags.END_DATE_FIELD,
+        datePickerTag = EventCreationTestTags.END_DATE_PICKER,
+        timeFieldTag = EventCreationTestTags.END_TIME_FIELD,
+        timePickerTag = EventCreationTestTags.END_TIME_PICKER,
+        day = "15",
+        hour = 12,
+        minute = 0)
 
-        // Handle the image picker
-        val fakeImageUri = Uri.parse("android.resource://com.android.unio/drawable/test_image")
-        val resultData = Intent()
-        resultData.data = fakeImageUri
+    // Select a mocked location with the mocked web client
+    val query = "Test Query"
+    composeTestRule.onNodeWithTag(EventCreationTestTags.LOCATION).performTextClearance()
+    composeTestRule.onNodeWithTag(EventCreationTestTags.LOCATION).performTextInput(query)
 
-        intending(anyIntent()).respondWith(Instrumentation.ActivityResult(Activity.RESULT_OK, resultData))
+    composeTestRule.waitUntil(10000) {
+      composeTestRule
+          .onNodeWithTag(EventCreationTestTags.LOCATION_SUGGESTION_ITEM + "45.512331")
+          .isDisplayed()
+    }
+    composeTestRule
+        .onNodeWithTag(EventCreationTestTags.LOCATION_SUGGESTION_ITEM + "45.512331")
+        .performClick()
 
-        // Click on the image picker
-        composeTestRule.onNodeWithTag(EventCreationTestTags.EVENT_IMAGE)
-            .performClick()
+    composeTestRule
+        .onNodeWithTag(EventCreationTestTags.LOCATION)
+        .assertTextEquals("Test Road, 123, 12345 Test City, Test State, Test Country")
 
-        // Set Start Date and Time
-        setDateTime(
-            dateFieldTag = EventCreationTestTags.START_DATE_FIELD,
-            datePickerTag = EventCreationTestTags.START_DATE_PICKER,
-            timeFieldTag = EventCreationTestTags.START_TIME_FIELD,
-            timePickerTag = EventCreationTestTags.START_TIME_PICKER,
-            day = "15",
-            hour = 10,
-            minute = 30
-        )
+    composeTestRule.onNodeWithTag(EventCreationTestTags.SAVE_BUTTON).performClick()
 
-        setDateTime(
-            dateFieldTag = EventCreationTestTags.END_DATE_FIELD,
-            datePickerTag = EventCreationTestTags.END_DATE_PICKER,
-            timeFieldTag = EventCreationTestTags.END_TIME_FIELD,
-            timePickerTag = EventCreationTestTags.END_TIME_PICKER,
-            day = "15",
-            hour = 12,
-            minute = 0
-        )
+    // Verify that the event appears on the Home screen
 
-        // Select a mocked location with the mocked web client
-        val query = "Test Query"
-        composeTestRule.onNodeWithTag(EventCreationTestTags.LOCATION).performTextClearance()
-        composeTestRule.onNodeWithTag(EventCreationTestTags.LOCATION).performTextInput(query)
+    signOutWithUser(composeTestRule)
+  }
 
-        composeTestRule.waitUntil(10000) {
-            composeTestRule
-                .onNodeWithTag(EventCreationTestTags.LOCATION_SUGGESTION_ITEM + "45.512331")
-                .isDisplayed()
-        }
-        composeTestRule
-            .onNodeWithTag(EventCreationTestTags.LOCATION_SUGGESTION_ITEM + "45.512331")
-            .performClick()
+  private companion object AssociationTarget {
+    const val ASSOCIATION_NAME = "Ebou"
+    const val ASSOCIATION_MEMBERS = "Renata Mendoza Flores"
+  }
 
-        composeTestRule
-            .onNodeWithTag(EventCreationTestTags.LOCATION)
-            .assertTextEquals("Test Road, 123, 12345 Test City, Test State, Test Country")
+  @Module
+  @InstallIn(SingletonComponent::class)
+  abstract class TestNetworkModule {
 
-        composeTestRule.onNodeWithTag(EventCreationTestTags.SAVE_BUTTON)
-            .performClick()
+    companion object {
+      @Provides
+      @Singleton
+      fun provideMockWebServer(): MockWebServer {
+        return MockWebServer()
+      }
 
-        // Verify that the event appears on the Home screen
-
-        signOutWithUser(composeTestRule)
+      @Provides
+      @Singleton
+      fun provideNominatimApiService(mockWebServer: MockWebServer): NominatimApiService {
+        return Retrofit.Builder()
+            .baseUrl(mockWebServer.url("/"))
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create(NominatimApiService::class.java)
+      }
     }
 
-    private companion object AssociationTarget {
-        const val ASSOCIATION_NAME = "Ebou"
-        const val ASSOCIATION_MEMBERS = "Renata Mendoza Flores"
-    }
-
-    @Module
-    @InstallIn(SingletonComponent::class)
-    abstract class TestNetworkModule {
-
-        companion object {
-            @Provides
-            @Singleton
-            fun provideMockWebServer(): MockWebServer {
-                return MockWebServer()
-            }
-
-            @Provides
-            @Singleton
-            fun provideNominatimApiService(mockWebServer: MockWebServer): NominatimApiService {
-                return Retrofit.Builder()
-                    .baseUrl(mockWebServer.url("/"))
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .build()
-                    .create(NominatimApiService::class.java)
-            }
-        }
-
-        @Binds
-        @Singleton
-        abstract fun bindLocationRepository(
-            nominatimLocationRepository: NominatimLocationRepository
-        ): LocationRepository
-    }
+    @Binds
+    @Singleton
+    abstract fun bindLocationRepository(
+        nominatimLocationRepository: NominatimLocationRepository
+    ): LocationRepository
+  }
 }
-
