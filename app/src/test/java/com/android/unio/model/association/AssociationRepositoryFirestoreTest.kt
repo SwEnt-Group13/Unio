@@ -41,6 +41,7 @@ import org.mockito.kotlin.eq
 import org.mockito.kotlin.verify
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.Shadows.shadowOf
+import java.util.EventListener
 
 @RunWith(RobolectricTestRunner::class)
 class AssociationRepositoryFirestoreTest {
@@ -102,6 +103,8 @@ class AssociationRepositoryFirestoreTest {
       callback.onSuccess(querySnapshot)
       querySnapshotTask
     }
+
+      `when`(documentReference.addSnapshotListener(any())).thenReturn(documentReference)
 
     `when`(documentSnapshotTask.addOnSuccessListener(any())).thenAnswer { invocation ->
       val callback = invocation.arguments[0] as OnSuccessListener<DocumentSnapshot>
