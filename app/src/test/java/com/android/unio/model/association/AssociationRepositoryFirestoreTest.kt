@@ -122,11 +122,15 @@ class AssociationRepositoryFirestoreTest {
         }
     every { querySnapshotTask.addOnFailureListener(any()) } answers { querySnapshotTask }
 
-    every { documentReference.addSnapshotListener(any<MetadataChanges>(), any<EventListener<DocumentSnapshot>>()) } answers {
-        val listener = it.invocation.args[1] as EventListener<DocumentSnapshot>
-        listener.onEvent(queryDocumentSnapshot1, null)
-        mockk()
-    }
+    every {
+      documentReference.addSnapshotListener(
+          any<MetadataChanges>(), any<EventListener<DocumentSnapshot>>())
+    } answers
+        {
+          val listener = it.invocation.args[1] as EventListener<DocumentSnapshot>
+          listener.onEvent(queryDocumentSnapshot1, null)
+          mockk()
+        }
 
     every { documentSnapshotTask.addOnSuccessListener(any()) } answers
         { call ->
