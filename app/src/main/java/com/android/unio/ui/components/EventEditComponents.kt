@@ -72,6 +72,16 @@ import java.util.Locale
 const val DROP_DOWN_MAX_CHARACTERS = 40
 const val DROP_DOWN_MAX_ROWS = 3
 
+/**
+ * Composable for the location picker that uses the Nominatim API to search for locations. It
+ * consists of a text field and a dropdown menu with location suggestions.
+ *
+ * @param locationSearchViewModel NominatimLocationSearchViewModel : ViewModel for searching
+ *   locations.
+ * @param textFieldTestTag String : Test tag for the text field.
+ * @param dropdownTestTag String : Test tag for the dropdown menu.
+ * @param onLocationSelected (Location) -> Unit : Lambda that is called when a location is selected.
+ */
 @Composable
 fun NominatimLocationPicker(
     locationSearchViewModel: NominatimLocationSearchViewModel,
@@ -132,6 +142,12 @@ fun NominatimLocationPicker(
   }
 }
 
+/**
+ * Composable for the association chips that show the selected associations.
+ *
+ * @param associations List<Pair<Association, MutableState<Boolean>>> : List of associations and
+ *   their selected state.
+ */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun AssociationChips(
@@ -156,6 +172,12 @@ fun AssociationChips(
   }
 }
 
+/**
+ * Composable for the banner image picker that allows the user to select an image from the gallery.
+ *
+ * @param eventBannerUri MutableState<Uri> : MutableState that holds the URI of the selected image.
+ * @param modifier Modifier : Modifier for the banner image picker.
+ */
 @Composable
 fun BannerImagePicker(eventBannerUri: MutableState<Uri>, modifier: Modifier) {
   val context = LocalContext.current
@@ -191,6 +213,20 @@ fun BannerImagePicker(eventBannerUri: MutableState<Uri>, modifier: Modifier) {
       }
 }
 
+/**
+ * Composable for the date and time picker that allows the user to select a date and time.
+ *
+ * @param dateString String : Label for the date field.
+ * @param timeString String : Label for the time field.
+ * @param modifier Modifier : Modifier for the date and time picker.
+ * @param initialDate Long? : Initial date in milliseconds. Used to pre-fill the date field.
+ * @param initialTime Long? : Initial time in milliseconds. Used to pre-fill the time field.
+ * @param dateFieldTestTag String : Test tag for the date field.
+ * @param timeFieldTestTag String : Test tag for the time field.
+ * @param datePickerTestTag String : Test tag for the date picker.
+ * @param timePickerTestTag String : Test tag for the time picker.
+ * @param onTimestamp (Timestamp) -> Unit : Lambda that is called when a timestamp is selected.
+ */
 @Composable
 fun DateAndTimePicker(
     dateString: String,
@@ -300,6 +336,13 @@ fun DateAndTimePicker(
   }
 }
 
+/**
+ * Composable for the date picker modal that allows the user to select a date.
+ *
+ * @param onDateSelected (Long?) -> Unit : Lambda that is called when a date is selected.
+ * @param onDismiss () -> Unit : Lambda that is called when the modal is dismissed.
+ * @param modifier Modifier : Modifier for the date picker modal.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DatePickerModal(
@@ -331,6 +374,13 @@ fun DatePickerModal(
       }
 }
 
+/**
+ * Composable for the time picker modal that allows the user to select a time.
+ *
+ * @param onTimeSelected (Long?) -> Unit : Lambda that is called when a time is selected.
+ * @param onDismiss () -> Unit : Lambda that is called when the modal is dismissed.
+ * @param modifier Modifier : Modifier for the time picker modal.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TimePickerModal(onTimeSelected: (Long?) -> Unit, onDismiss: () -> Unit, modifier: Modifier) {
@@ -351,6 +401,11 @@ fun TimePickerModal(onTimeSelected: (Long?) -> Unit, onDismiss: () -> Unit, modi
 /**
  * A Dialog that is the analog of the DatePickerDialog, but for TimePicker as it currently does not
  * exist in the Material3 library.
+ *
+ * @param onDismiss: () -> Unit: Lambda that is called when the dialog is dismissed.
+ * @param onConfirm: () -> Unit: Lambda that is called when the dialog is confirmed.
+ * @param modifier: Modifier: Modifier for the dialog.
+ * @param content: @Composable () -> Unit: Content of the dialog.
  */
 @Composable
 fun TimePickerDialog(
@@ -376,11 +431,23 @@ fun TimePickerDialog(
       text = { content() })
 }
 
+/**
+ * Converts milliseconds to a date string in the format "dd/MM/yy".
+ *
+ * @param millis: Long: Milliseconds to convert.
+ * @return String: Date string in the format "dd/MM/yy".
+ */
 fun convertMillisToDate(millis: Long): String {
   val formatter = SimpleDateFormat(DAY_MONTH_YEAR_FORMAT, Locale.getDefault())
   return formatter.format(Date(millis))
 }
 
+/**
+ * Converts milliseconds to a time string in the format "HH:mm".
+ *
+ * @param millis: Long: Milliseconds to convert.
+ * @return String: Time string in the format "HH:mm".
+ */
 fun convertMillisToTime(millis: Long): String {
   val formatter = SimpleDateFormat(HOUR_MINUTE_FORMAT, Locale.getDefault())
   return formatter.format(Date(millis))
