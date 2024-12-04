@@ -128,12 +128,25 @@ fun EventCard(
       }
   val onClickSaveButton = {
     if (isSaved) {
-      user!!.savedEvents.remove(event.uid)
+      val newEvent = event.copy(numberOfSaved = event.numberOfSaved - 1)
+      eventViewModel.updateEventWithoutImage(
+          newEvent,
+          onSuccess = {},
+          onFailure = { e -> Log.e("EventCard", "Failed to update event: $e") })
+
       if (isNotificationsEnabled) {
         NotificationWorker.unschedule(context, event.uid.hashCode())
       }
+
+      user!!.savedEvents.remove(event.uid)
       isSaved = false
     } else {
+      val newEvent = event.copy(numberOfSaved = event.numberOfSaved + 1)
+      eventViewModel.updateEventWithoutImage(
+          newEvent,
+          onSuccess = {},
+          onFailure = { e -> Log.e("EventCard", "Failed to update event: $e") })
+
       if (event.startDate.seconds - Timestamp.now().seconds > 3 * SECONDS_IN_AN_HOUR) {
         if (!isNotificationsEnabled) {
           if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
