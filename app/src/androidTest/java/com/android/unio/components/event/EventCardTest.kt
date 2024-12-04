@@ -93,8 +93,9 @@ class EventCardTest : TearDown() {
         }
     userViewModel.addUser(user, {})
 
-      mockkStatic(ContextCompat::class)
-      every { ContextCompat.checkSelfPermission(any(), any()) } returns android.content.pm.PackageManager.PERMISSION_GRANTED
+    mockkStatic(ContextCompat::class)
+    every { ContextCompat.checkSelfPermission(any(), any()) } returns
+        android.content.pm.PackageManager.PERMISSION_GRANTED
 
     every { navigationAction.navigateTo(Screen.EVENT_DETAILS) } just runs
     every { eventRepository.getEvents(any(), any()) }
