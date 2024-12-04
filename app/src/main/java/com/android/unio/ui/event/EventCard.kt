@@ -223,7 +223,7 @@ fun EventCardScaffold(
                         .clip(RoundedCornerShape(4.dp))
                         .background(MaterialTheme.colorScheme.surfaceContainer)) {
                   Text(
-                      " ${event.numberOfSaved} Interested ",
+                      " ${event.numberOfSaved}" + context.getString(R.string.event_card_interested_string) + " ",
                       color = MaterialTheme.colorScheme.onSecondaryContainer)
                 }
           }

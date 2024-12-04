@@ -151,6 +151,7 @@
     <string name="event_card_content_description_saved_event">Saved</string>
     <string name="event_card_content_description_not_saved_event">Not saved</string>
     <string name="event_card_content_description_association_logo">Association logo</string>
+    <string name="event_card_interested_string">Interested</string>
 
     <!-- Event Creation Strings -->
     <string name="event_creation_screen">Event creation</string>
