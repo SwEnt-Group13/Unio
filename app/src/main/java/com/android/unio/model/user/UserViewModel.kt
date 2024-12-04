@@ -123,14 +123,12 @@ class UserViewModel @Inject constructor(private val userRepository: UserReposito
     }
     newUser.savedEvents.add(event.uid)
     updateUser(newUser)
-    _user.value = newUser
   }
 
   fun unsaveEvent(event: Event, removeNotification: () -> Unit) {
     val newUser = _user.value!!.copy()
     newUser.savedEvents.remove(event.uid)
     updateUser(newUser)
-    _user.value = newUser
   }
 
   fun addUser(user: User, onSuccess: () -> Unit) {
