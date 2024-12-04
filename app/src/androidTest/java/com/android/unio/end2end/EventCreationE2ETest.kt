@@ -60,7 +60,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 class EventCreationE2ETest : EndToEndTest() {
 
   /** The [MockWebServer] instance used to mock the location search API. */
-  private val mockWebServer: MockWebServer = MockWebServer()
+  private lateinit var mockWebServer: MockWebServer
 
   /** The date formatter Material3 uses to format the date in the date picker. */
   private val dateFormatter: DateTimeFormatter =
@@ -75,6 +75,7 @@ class EventCreationE2ETest : EndToEndTest() {
   @Before
   override fun setUp() {
     super.setUp()
+    mockWebServer = MockWebServer()
     mockWebServer.start(8081) // Need to use a custom port to avoid conflict with firebase emulator
 
     mockResponseBody =
