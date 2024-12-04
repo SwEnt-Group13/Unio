@@ -17,7 +17,7 @@ import org.robolectric.RobolectricTestRunner
 class UserViewModelTest {
   private val user = MockUser.createMockUser()
 
-  @MockK private lateinit var repository: UserRepository
+  @MockK private lateinit var repository: UserRepositoryFirestore
   private lateinit var userViewModel: UserViewModel
 
   @Before
