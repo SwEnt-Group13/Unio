@@ -81,6 +81,7 @@ class EventCardTest : TearDown() {
     context = InstrumentationRegistry.getInstrumentation().targetContext
     val user = MockUser.createMockUser(followedAssociations = associations, savedEvents = listOf())
     every { NotificationWorker.schedule(any(), any()) } just runs
+    every { NotificationWorker.unschedule(any(), any()) } just runs
     eventViewModel = EventViewModel(eventRepository, imageRepository, associationRepository)
     userViewModel = UserViewModel(userRepository)
     every { userRepository.updateUser(user, any(), any()) } answers
@@ -252,7 +253,7 @@ class EventCardTest : TearDown() {
   }
 
   @Test
-  fun testEventCardSaveEvent() {
+  fun testEventCardSaveAndUnsaveEventOnline() {
     val event =
         MockEvent.createMockEvent(
             startDate = Timestamp(Date((Timestamp.now().seconds + 4 * 3600) * 1000)))
@@ -260,6 +261,9 @@ class EventCardTest : TearDown() {
     composeTestRule.onNodeWithTag(EventCardTestTags.EVENT_SAVE_BUTTON).assertExists().performClick()
     Thread.sleep(500)
     verify { NotificationWorker.schedule(any(), any()) }
+    composeTestRule.onNodeWithTag(EventCardTestTags.EVENT_SAVE_BUTTON).assertExists().performClick()
+    Thread.sleep(500)
+    verify { NotificationWorker.unschedule(any(), any()) }
   }
 
   @After
