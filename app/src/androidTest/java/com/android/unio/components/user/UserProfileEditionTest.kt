@@ -44,7 +44,7 @@ class UserProfileEditionTest : TearDown() {
 
     composeTestRule.setContent {
       UserProfileEditionScreenContent(
-          user, onDiscardChanges = { navigationAction.goBack() }, { uri, method -> method("") }, {})
+          user, onDiscardChanges = { navigationAction.goBack() }, { uri, method -> method("") }, {}, {})
     }
   }
 
