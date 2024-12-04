@@ -18,6 +18,7 @@ import com.google.firebase.auth.auth
 import com.google.firebase.firestore.firestore
 import com.google.firebase.functions.functions
 import dagger.hilt.android.testing.HiltAndroidRule
+import java.net.URL
 import junit.framework.TestCase.assertEquals
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -25,7 +26,6 @@ import org.json.JSONObject
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
-import java.net.URL
 
 open class EndToEndTest : FirebaseEmulatorFunctions {
   init {

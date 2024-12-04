@@ -105,7 +105,8 @@ fun isValidPassword(text: String): Boolean {
 }
 
 /**
- * Deletes the user with the given userId from firebase auth, storage and firestore
+ * Deletes the user with the given userId from firebase auth, storage (for the profile picture) and
+ * firestore
  *
  * @param userId The Id of the corresponding user we want to delete
  * @param authViewModel The instance of the authViewModel to delete the user in firebase auth
