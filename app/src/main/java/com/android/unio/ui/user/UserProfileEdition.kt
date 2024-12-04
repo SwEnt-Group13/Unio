@@ -132,7 +132,7 @@ fun UserProfileEditionScreen(
               authViewModel,
               userViewModel,
               imageRepository,
-                deleteWithProfilePicture = user!!.profilePicture != Uri.EMPTY.toString(),
+              deleteWithProfilePicture = user!!.profilePicture != Uri.EMPTY.toString(),
               onSuccess = {
                 Toast.makeText(
                         context,
