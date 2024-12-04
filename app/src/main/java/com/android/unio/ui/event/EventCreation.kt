@@ -191,6 +191,7 @@ fun EventCreationScreen(
 
           NominatimLocationPicker(
               locationSearchViewModel,
+              null,
               EventCreationTestTags.LOCATION,
               EventCreationTestTags.LOCATION_SUGGESTION_ITEM) {
                 selectedLocation = it

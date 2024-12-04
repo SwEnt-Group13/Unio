@@ -109,7 +109,8 @@ fun EventEditScreen(
   val initialEndTime = getHHMMInMillisFromTimestamp(eventToEdit.endDate)
   val initialEndDate = eventToEdit.endDate.toDate().time - initialEndTime
 
-  var selectedLocation by remember { mutableStateOf<Location?>(null) }
+  val initialLocation: Location? = eventToEdit.location
+  var selectedLocation by remember { mutableStateOf<Location?>(eventToEdit.location) }
 
   val eventBannerUri = remember { mutableStateOf<Uri>(eventToEdit.image.toUri()) }
 
@@ -221,6 +222,7 @@ fun EventEditScreen(
 
           NominatimLocationPicker(
               locationSearchViewModel,
+              initialLocation,
               EventEditTestTags.LOCATION,
               EventEditTestTags.LOCATION_SUGGESTION_ITEM) {
                 selectedLocation = it

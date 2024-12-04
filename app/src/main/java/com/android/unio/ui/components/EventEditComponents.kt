@@ -78,6 +78,7 @@ const val DROP_DOWN_MAX_ROWS = 3
  *
  * @param locationSearchViewModel NominatimLocationSearchViewModel : ViewModel for searching
  *   locations.
+ * @param initialLocation Location? : Initial location to pre-fill the text field.
  * @param textFieldTestTag String : Test tag for the text field.
  * @param dropdownTestTag String : Test tag for the dropdown menu.
  * @param onLocationSelected (Location) -> Unit : Lambda that is called when a location is selected.
@@ -85,6 +86,7 @@ const val DROP_DOWN_MAX_ROWS = 3
 @Composable
 fun NominatimLocationPicker(
     locationSearchViewModel: NominatimLocationSearchViewModel,
+    initialLocation: Location?,
     textFieldTestTag: String,
     dropdownTestTag: String,
     onLocationSelected: (Location) -> Unit
@@ -95,11 +97,14 @@ fun NominatimLocationPicker(
   val locationSuggestions by locationSearchViewModel.locationSuggestions.collectAsState()
   var showDropdown by remember { mutableStateOf(false) }
 
+  var shouldDisplayInitialLocation by remember { mutableStateOf(true) }
+
   Box(modifier = Modifier.fillMaxWidth()) {
     OutlinedTextField(
-        value = locationQuery,
+        value = if (shouldDisplayInitialLocation) initialLocation?.name ?: "" else locationQuery,
         onValueChange = {
           locationSearchViewModel.setQuery(it)
+          shouldDisplayInitialLocation = false
           showDropdown = true
         },
         label = { Text(context.getString(R.string.event_creation_location_label)) },
