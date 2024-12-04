@@ -3,12 +3,14 @@ package com.android.unio.model.event
 import com.android.unio.model.authentication.registerAuthStateListener
 import com.android.unio.model.firestore.FirestorePaths.EVENT_PATH
 import com.android.unio.model.firestore.performFirestoreOperation
+import com.android.unio.model.firestore.registerSnapshotListener
 import com.android.unio.model.firestore.transform.hydrate
 import com.android.unio.model.firestore.transform.serialize
 import com.google.firebase.Firebase
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.MetadataChanges
 import javax.inject.Inject
 
 class EventRepositoryFirestore @Inject constructor(private val db: FirebaseFirestore) :
@@ -43,12 +45,17 @@ class EventRepositoryFirestore @Inject constructor(private val db: FirebaseFires
       onSuccess: (Event) -> Unit,
       onFailure: (Exception) -> Unit
   ) {
-    db.collection(EVENT_PATH)
-        .document(id)
-        .get()
-        .performFirestoreOperation(
-            onSuccess = { document -> onSuccess(hydrate(document.data)) },
-            onFailure = { exception -> onFailure(exception) })
+    db.collection(EVENT_PATH).document(id).registerSnapshotListener(MetadataChanges.EXCLUDE) {
+        documentSnapshot,
+        exception ->
+      if (exception != null) {
+        onFailure(exception)
+        return@registerSnapshotListener
+      }
+      if (documentSnapshot != null && documentSnapshot.exists()) {
+        onSuccess(hydrate(documentSnapshot.data))
+      }
+    }
   }
 
   override fun getNextEventsFromDateToDate(
