@@ -10,11 +10,15 @@ import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.gms.tasks.Task
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuth.AuthStateListener
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.auth
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.EventListener
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.MetadataChanges
 import com.google.firebase.firestore.QueryDocumentSnapshot
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.firestore
@@ -66,7 +70,15 @@ class UserRepositoryFirestoreTest {
     every { Firebase.firestore } returns db
 
     mockkStatic(FirebaseAuth::class)
+    every { Firebase.auth } returns auth
     every { FirebaseAuth.getInstance() } returns auth
+    every { auth.addAuthStateListener(any<AuthStateListener>()) } answers
+        { call ->
+          if (auth.currentUser != null) {
+            val listener = call.invocation.args[0] as AuthStateListener
+            listener.onAuthStateChanged(auth)
+          }
+        }
 
     // When getting the collection, return the task
     every { db.collection(USER_PATH) } returns userCollectionReference
@@ -114,6 +126,15 @@ class UserRepositoryFirestoreTest {
     every { (querySnapshot.iterator()) } returns
         (mutableListOf(queryDocumentSnapshot1, queryDocumentSnapshot2).iterator())
 
+    every {
+      documentReference.addSnapshotListener(
+          any<MetadataChanges>(), any<EventListener<DocumentSnapshot>>())
+    } answers
+        {
+          val listener = it.invocation.args[1] as EventListener<DocumentSnapshot>
+          listener.onEvent(queryDocumentSnapshot1, null)
+          mockk()
+        }
     // When the task is successful, return the query snapshot
     every { (querySnapshotTask.addOnSuccessListener(any())) } answers
         { call ->
@@ -149,6 +170,7 @@ class UserRepositoryFirestoreTest {
     every { (map1.get("socials")) } returns
         (user1.socials.map { mapOf("social" to it.social.name, "content" to it.content) })
     every { (map1.get("profilePicture")) } returns (user1.profilePicture)
+    every { (map1.get("savedEvents")) } returns (user1.savedEvents.list.value.map { it.uid })
 
     // Only set the uid field for user2
     every { (map2.get("uid")) } returns (user2.uid)
@@ -202,6 +224,7 @@ class UserRepositoryFirestoreTest {
     every { (map2.get("socials")) } returns
         (user2.socials.map { mapOf("social" to it.social.name, "content" to it.content) })
     every { (map2.get("profilePicture")) } returns (user2.profilePicture)
+    every { (map2.get("savedEvents")) } returns (user2.savedEvents.list.value.map { it.uid })
 
     var success = false
 
@@ -251,6 +274,16 @@ class UserRepositoryFirestoreTest {
   @Test
   fun testGetAssociationsWithMissingFields() {
     // No specific fields are set for user2
+    every { map2.get("email") } returns ("")
+    every { (map2.get("firstName")) } returns ("")
+    every { (map2.get("lastName")) } returns ("")
+    every { (map2.get("biography")) } returns ("")
+    every { (map2.get("followedAssociations")) } returns (Association.emptyFirestoreReferenceList())
+    every { (map2.get("joinedAssociations")) } returns (Association.emptyFirestoreReferenceList())
+    every { (map2.get("interests")) } returns emptyList<Interest>()
+    every { (map2.get("socials")) } returns (emptyList<UserSocial>())
+    every { (map2.get("profilePicture")) } returns ("")
+    every { (map2.get("savedEvents")) } returns (Event.emptyFirestoreReferenceList())
 
     var success = false
 
