@@ -266,7 +266,7 @@ fun UserProfileEditionScreenContent(
 
           Button(
               onClick = { showDeleteUserPrompt = true },
-              modifier = Modifier.testTag("").padding(10.dp),
+              modifier = Modifier.testTag(UserEditionTestTags.DELETE_BUTTON).padding(10.dp),
               colors =
                   ButtonDefaults.buttonColors(containerColor = errorContainerDarkMediumContrast),
           ) {
@@ -450,6 +450,7 @@ fun UserDeletePrompt(
                         textAlign = TextAlign.Center)
 
                     Button(
+                        modifier = Modifier.testTag(UserEditionTestTags.DELETE_CONFIRMATION),
                         onClick = onConfirmDelete,
                         colors =
                             ButtonDefaults.buttonColors(
