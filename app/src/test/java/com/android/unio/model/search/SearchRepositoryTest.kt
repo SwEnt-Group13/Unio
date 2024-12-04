@@ -1,5 +1,7 @@
 package com.android.unio.model.search
 
+import android.content.Context
+import android.net.ConnectivityManager
 import androidx.appsearch.app.AppSearchBatchResult
 import androidx.appsearch.app.AppSearchSession
 import androidx.appsearch.app.PutDocumentsRequest
@@ -57,6 +59,7 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
+import org.robolectric.Shadows
 
 @RunWith(RobolectricTestRunner::class)
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -264,8 +267,48 @@ class SearchRepositoryTest {
       }
 
   @Test
-  fun `test searchAssociations returns correct associations`() =
+  fun `test searchAssociations returns correct associations online`() =
       testScope.runTest {
+        // Arrange
+        val query = "ACM"
+
+        val mockSearchResults: SearchResults = mockk()
+        every { mockSession.search(any(), any()) } returns mockSearchResults
+
+        val mockSearchResult: SearchResult = mockk()
+        val associationDocument = association1.toAssociationDocument()
+
+        every { mockSearchResult.getDocument(AssociationDocument::class.java) } returns
+            associationDocument
+
+        val mockFuture: ListenableFuture<List<SearchResult>> =
+            immediateFuture(listOf(mockSearchResult))
+        every { mockSearchResults.nextPageAsync } returns mockFuture
+
+        every { mockAssociationRepository.getAssociationWithId(any(), any(), any()) } answers
+            {
+              val id = firstArg<String>()
+              val onSuccess = secondArg<(Association) -> Unit>()
+              onSuccess(association1)
+            }
+
+        // Act
+        val resultAssociations = searchRepository.searchAssociations(query)
+
+        // Assert
+        assertEquals(listOf(association1), resultAssociations)
+      }
+
+  @Test
+  fun `test searchAssociations returns correct associations offline`() =
+      testScope.runTest {
+        val connectivityManager =
+            ApplicationProvider.getApplicationContext<Context>()
+                .getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+
+        // Use Robolectric Shadow to simulate no network
+        Shadows.shadowOf(connectivityManager).setActiveNetworkInfo(null)
+
         // Arrange
         val query = "ACM"
 

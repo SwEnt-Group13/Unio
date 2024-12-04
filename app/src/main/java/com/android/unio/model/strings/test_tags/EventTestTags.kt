@@ -59,6 +59,7 @@ object EventEditTestTags {
   const val TAGGED_ASSOCIATIONS = "eventEditTaggedAssociations"
   const val DESCRIPTION = "eventEditDescription"
   const val LOCATION = "eventEditLocation"
+  const val LOCATION_SUGGESTION_ITEM = "eventCreationSuggestionItem: "
   const val SAVE_BUTTON = "eventEditSaveButton"
   const val DELETE_BUTTON = "eventEditDeleteButton"
   const val EVENT_IMAGE = "eventEditEventImage"

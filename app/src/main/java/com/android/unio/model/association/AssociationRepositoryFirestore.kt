@@ -3,12 +3,14 @@ package com.android.unio.model.association
 import com.android.unio.model.authentication.registerAuthStateListener
 import com.android.unio.model.firestore.FirestorePaths.ASSOCIATION_PATH
 import com.android.unio.model.firestore.performFirestoreOperation
+import com.android.unio.model.firestore.registerSnapshotListener
 import com.android.unio.model.firestore.transform.hydrate
 import com.android.unio.model.firestore.transform.serialize
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.MetadataChanges
 import com.google.firebase.firestore.QuerySnapshot
 import javax.inject.Inject
 
@@ -67,16 +69,32 @@ class AssociationRepositoryFirestore @Inject constructor(private val db: Firebas
             onFailure = { exception -> onFailure(exception) })
   }
 
+  /**
+   * Fetches an [Association] object from Firestore using the provided [id]. Here, instead of using
+   * success and failure listener directly, we use a Snapshot Listener that call directly the
+   * callback when a read/write are made on the local (cache) database.
+   *
+   * @param id [String] : The id of the [Association] to fetch.
+   * @param onSuccess [(Association) -> Unit] : The callback to call when the [Association] is
+   *   fetched.
+   * @param onFailure [(Exception) -> Unit] : The callback to call when the fetch fails.
+   */
   override fun getAssociationWithId(
       id: String,
       onSuccess: (Association) -> Unit,
       onFailure: (Exception) -> Unit
   ) {
-    getAssociationRef(id)
-        .get()
-        .performFirestoreOperation(
-            onSuccess = { document -> onSuccess(hydrate(document.data)) },
-            onFailure = { exception -> onFailure(exception) })
+    getAssociationRef(id).registerSnapshotListener(MetadataChanges.EXCLUDE) {
+        documentSnapshot,
+        exception ->
+      if (exception != null) {
+        onFailure(exception)
+        return@registerSnapshotListener
+      }
+      if (documentSnapshot != null && documentSnapshot.exists()) {
+        onSuccess(hydrate(documentSnapshot.data))
+      }
+    }
   }
 
   override fun saveAssociation(
