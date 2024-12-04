@@ -48,10 +48,11 @@ import retrofit2.converter.gson.GsonConverterFactory
 @HiltAndroidTest
 @UninstallModules(NetworkModule::class)
 class EventCreationE2ETest : EndToEndTest() {
-  @Inject lateinit var mockWebServer: MockWebServer
+  private val mockWebServer: MockWebServer = MockWebServer()
 
   @Before
   override fun setUp() {
+      super.setUp()
     mockWebServer.start()
 
     val mockResponseBody =
@@ -75,14 +76,13 @@ class EventCreationE2ETest : EndToEndTest() {
     mockWebServer.enqueue(MockResponse().setBody(mockResponseBody))
 
     Intents.init()
-    super.setUp()
   }
 
   @After
   override fun tearDown() {
+      super.tearDown()
     mockWebServer.shutdown()
     Intents.release()
-    super.tearDown()
   }
 
   private fun selectDate(datePickerTag: String, day: String) {
@@ -229,15 +229,9 @@ class EventCreationE2ETest : EndToEndTest() {
     companion object {
       @Provides
       @Singleton
-      fun provideMockWebServer(): MockWebServer {
-        return MockWebServer()
-      }
-
-      @Provides
-      @Singleton
-      fun provideNominatimApiService(mockWebServer: MockWebServer): NominatimApiService {
+      fun provideNominatimApiService(): NominatimApiService {
         return Retrofit.Builder()
-            .baseUrl(mockWebServer.url("/"))
+            .baseUrl("http://127.0.0.1:8080/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(NominatimApiService::class.java)
