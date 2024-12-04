@@ -333,7 +333,7 @@ fun EventDetailsBody(
 
           val placesStr =
               if (event.placesRemaining >= 0) {
-                "${event.placesRemaining}${context.getString(R.string.event_places_remaining)}"
+                "${event.numberOfSaved}/${event.placesRemaining}${context.getString(R.string.event_places_remaining)}"
               } else ""
           Text(
               placesStr,
