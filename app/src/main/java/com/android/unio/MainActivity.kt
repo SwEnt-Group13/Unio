@@ -2,9 +2,11 @@ package com.android.unio
 
 import android.annotation.SuppressLint
 import android.app.Application
+import android.content.Context
 import android.content.pm.ActivityInfo
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
@@ -18,14 +20,19 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
+import com.android.unio.model.association.Association
+import com.android.unio.model.association.AssociationCategory
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.authentication.AuthViewModel
+import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventViewModel
+import com.android.unio.model.firestore.emptyFirestoreReferenceList
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.map.MapViewModel
 import com.android.unio.model.map.nominatim.NominatimLocationSearchViewModel
@@ -56,8 +63,16 @@ import com.android.unio.ui.user.UserProfileEditionScreen
 import com.android.unio.ui.user.UserProfileScreen
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.HiltAndroidApp
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import me.zhanghai.compose.preference.ProvidePreferenceLocals
+import java.io.BufferedReader
+import java.io.InputStream
+import java.io.InputStreamReader
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -70,6 +85,8 @@ class MainActivity : ComponentActivity() {
     requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
     super.onCreate(savedInstanceState)
 
+
+
     setContent {
       Surface(modifier = Modifier.fillMaxSize()) {
         ProvidePreferenceLocals { AppTheme { UnioApp(imageRepository) } }
@@ -77,6 +94,84 @@ class MainActivity : ComponentActivity() {
     }
   }
 }
+
+private fun processAndSaveAssociations(
+  inputStream: InputStream,
+  saveAssociation: (Association, InputStream?) -> Unit,
+  context: Context // Pass the context to access resources or assets
+) {
+  val bufferedReader = BufferedReader(InputStreamReader(inputStream))
+  try {
+    bufferedReader.useLines { lines ->
+      lines.forEach { line ->
+        val association = parseLineToAssociation(line)
+        association?.let {
+         // The name of the raw resource, without the "R.raw." prefix
+
+          val resourceId = context.resources.getIdentifier(it.image, "raw", context.packageName)
+
+          if (resourceId != 0) {  // Ensure the resource exists
+            val imageStream = try {
+              context.resources.openRawResource(resourceId)
+            } catch (e: Exception) {
+              Log.e("MainActivity", "Error opening resource: ${it.image}", e)
+              null
+            }
+            saveAssociation(it, imageStream)
+          } else {
+            Log.e("MainActivity", "Resource not found: ${it.image}")
+          }
+
+
+        }
+      }
+    }
+  } catch (e: Exception) {
+    Log.e("MainActivity", "Error processing file", e)
+  }
+}
+
+
+
+private fun parseLineToAssociation(line: String): Association? {
+  try {
+    // Assuming the line format is comma-separated:
+    // uid,url,name,fullName,category,description,followersCount,image,principalEmailAddress
+    val parts = line.split(",")
+
+    if (parts.size < 9) return null // Skip incomplete lines
+
+    val uid = parts[0]
+    val url = parts[1]
+    val name = parts[2]
+    val fullName = parts[3]
+    val category = AssociationCategory.valueOf(parts[4])
+    val description = parts[5]
+    val followersCount = parts[6].toIntOrNull() ?: 0
+    val image = parts[7]
+    val principalEmailAddress = parts[8]
+
+    // Dummy empty lists for members, roles, and events
+    return Association(
+      uid = uid,
+      url = url,
+      name = name,
+      fullName = fullName,
+      category = category,
+      description = description,
+      followersCount = followersCount,
+      members = emptyList(),
+      roles = emptyList(),
+      image = image,
+      events = Event.emptyFirestoreReferenceList(),
+      principalEmailAddress = principalEmailAddress
+    )
+  } catch (e: Exception) {
+    Log.e("MainActivity", "Error parsing line: $line", e)
+    return null
+  }
+}
+
 
 @HiltAndroidApp class UnioApplication : Application()
 
@@ -98,6 +193,8 @@ fun UnioApp(imageRepository: ImageRepositoryFirebaseStorage) {
   val authState by authViewModel.authState.collectAsState()
   var previousAuthState by rememberSaveable { mutableStateOf<String?>(null) }
 
+  val context = LocalContext.current
+
   LaunchedEffect(authState) {
     authState?.let { screen ->
       // Only navigate if the screen has changed
@@ -107,6 +204,27 @@ fun UnioApp(imageRepository: ImageRepositoryFirebaseStorage) {
       }
     }
   }
+
+  LaunchedEffect(Unit) {
+    withContext(Dispatchers.IO) {
+      Log.d("okokokok", "la")
+      delay(30000)
+      Log.d("okokokok", "la")
+
+      val inputStream = context.resources.openRawResource(R.raw.associations)
+      processAndSaveAssociations(inputStream, { association, imageStream ->
+        associationViewModel.saveAssociation(
+          association,
+          imageStream = imageStream,
+          onSuccess = { Log.i("UnioApp", "Saved association: ${association.name}") },
+          onFailure = { exception ->
+            Log.e("UnioApp", "Failed to save association", exception)
+          }
+        )
+      }, context)
+    }
+  }
+
 
   NavHost(navController = navController, startDestination = Route.AUTH) {
     navigation(startDestination = Screen.WELCOME, route = Route.AUTH) {
