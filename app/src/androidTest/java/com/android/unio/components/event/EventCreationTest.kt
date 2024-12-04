@@ -280,12 +280,12 @@ class EventCreationTest : TearDown() {
 
     composeTestRule.waitUntil(10000) {
       composeTestRule
-          .onNodeWithTag(EventCreationTestTags.LOCATION_SUGGESTION_ITEM + "45.512331")
+          .onNodeWithTag(EventCreationTestTags.LOCATION_SUGGESTION_ITEM_LATITUDE + "45.512331")
           .isDisplayed()
     }
 
     composeTestRule
-        .onNodeWithTag(EventCreationTestTags.LOCATION_SUGGESTION_ITEM + "45.512331")
+        .onNodeWithTag(EventCreationTestTags.LOCATION_SUGGESTION_ITEM_LATITUDE + "45.512331")
         .performClick()
 
     composeTestRule.waitForIdle()
