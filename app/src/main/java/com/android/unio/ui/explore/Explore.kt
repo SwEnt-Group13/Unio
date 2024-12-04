@@ -1,6 +1,7 @@
 package com.android.unio.ui.explore
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -19,11 +20,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
@@ -78,14 +79,17 @@ fun ExploreScreenContent(
     searchViewModel: SearchViewModel
 ) {
   val associationsByCategory by associationViewModel.associationsByCategory.collectAsState()
-  var searchQuery by remember { mutableStateOf("") }
-  var expanded by rememberSaveable { mutableStateOf(false) }
-  val assocationResults by searchViewModel.associations.collectAsState()
-  val searchState by searchViewModel.status.collectAsState()
   val context = LocalContext.current
+  var shouldCloseExpandable by rememberSaveable { mutableStateOf(false) }
 
   Column(
-      modifier = Modifier.padding(padding).fillMaxWidth(),
+      modifier =
+          Modifier.padding(padding).fillMaxWidth().pointerInput(shouldCloseExpandable) {
+            detectTapGestures {
+              // Collapse the component when clicking outside
+              shouldCloseExpandable = true
+            }
+          },
       horizontalAlignment = Alignment.CenterHorizontally) {
         Text(
             text = context.getString(R.string.explore_content_screen_title),
@@ -100,7 +104,9 @@ fun ExploreScreenContent(
             onAssociationSelected = { association ->
               associationViewModel.selectAssociation(association.uid)
               navigationAction.navigateTo(Screen.ASSOCIATION_PROFILE)
-            })
+            },
+            shouldCloseExpandable,
+            onOutsideClickHandled = { shouldCloseExpandable = false })
 
         LazyColumn(
             modifier = Modifier.fillMaxSize().testTag(ExploreContentTestTags.CATEGORIES_LIST),
