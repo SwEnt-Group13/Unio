@@ -126,26 +126,29 @@ fun UserProfileEditionScreen(
             })
       },
       onDeleteUser = { uid ->
-          CoroutineScope(Dispatchers.Main).launch {
-              deleteUser(uid, authViewModel, userViewModel, imageRepository,
-                  onSuccess = {
-                      Toast.makeText(
-                          context,
-                          context.getString(R.string.user_edition_delete_user_success),
-                          Toast.LENGTH_SHORT
-                      ).show()
-                      navigationAction.navigateTo(Screen.WELCOME)
-                  },
-                  onFailure = {
-                      Toast.makeText(
-                          context,
-                          context.getString(R.string.user_edition_delete_user_failure),
-                          Toast.LENGTH_SHORT
-                      ).show()
-                  })
-          }
-      }
-  )
+        CoroutineScope(Dispatchers.Main).launch {
+          deleteUser(
+              uid,
+              authViewModel,
+              userViewModel,
+              imageRepository,
+              onSuccess = {
+                Toast.makeText(
+                        context,
+                        context.getString(R.string.user_edition_delete_user_success),
+                        Toast.LENGTH_SHORT)
+                    .show()
+                navigationAction.navigateTo(Screen.WELCOME)
+              },
+              onFailure = {
+                Toast.makeText(
+                        context,
+                        context.getString(R.string.user_edition_delete_user_failure),
+                        Toast.LENGTH_SHORT)
+                    .show()
+              })
+        }
+      })
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -183,7 +186,7 @@ fun UserProfileEditionScreenContent(
 
   var showInterestsOverlay by remember { mutableStateOf(false) }
   var showSocialsOverlay by remember { mutableStateOf(false) }
-    var showDeleteUserPrompt by remember { mutableStateOf(false) }
+  var showDeleteUserPrompt by remember { mutableStateOf(false) }
 
   val scrollState = rememberScrollState()
 
@@ -232,11 +235,7 @@ fun UserProfileEditionScreenContent(
   ) { padding ->
     Column(
         modifier =
-        Modifier
-            .padding(padding)
-            .fillMaxWidth()
-            .padding(40.dp)
-            .verticalScroll(scrollState),
+            Modifier.padding(padding).fillMaxWidth().padding(40.dp).verticalScroll(scrollState),
         horizontalAlignment = Alignment.CenterHorizontally) {
           ProfilePicturePicker(
               profilePictureUri,
@@ -265,18 +264,14 @@ fun UserProfileEditionScreenContent(
                 Text(context.getString(R.string.user_edition_save_changes))
               }
 
-            Button(
-                onClick = {showDeleteUserPrompt = true},
-                modifier = Modifier
-                    .testTag("")
-                    .padding(10.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = errorContainerDarkMediumContrast
-                ),
-
-            ) {
-                Text(context.getString(R.string.user_edition_delete_user))
-            }
+          Button(
+              onClick = { showDeleteUserPrompt = true },
+              modifier = Modifier.testTag("").padding(10.dp),
+              colors =
+                  ButtonDefaults.buttonColors(containerColor = errorContainerDarkMediumContrast),
+          ) {
+            Text(context.getString(R.string.user_edition_delete_user))
+          }
         }
 
     if (showInterestsOverlay) {
@@ -299,11 +294,11 @@ fun UserProfileEditionScreenContent(
           userSocials = socials)
     }
 
-      if(showDeleteUserPrompt){
-          UserDeletePrompt(
-              onDismiss = { showDeleteUserPrompt = false},
-              onConfirmDelete = { onDeleteUser(user.uid)  })
-      }
+    if (showDeleteUserPrompt) {
+      UserDeletePrompt(
+          onDismiss = { showDeleteUserPrompt = false },
+          onConfirmDelete = { onDeleteUser(user.uid) })
+    }
   }
 }
 
@@ -322,9 +317,7 @@ private fun EditUserTextFields(
   val isLastNameError = isErrors.contains(AccountDetailsError.EMPTY_LAST_NAME)
 
   OutlinedTextField(
-      modifier = Modifier
-          .padding(4.dp)
-          .testTag(UserEditionTestTags.FIRST_NAME_TEXT_FIELD),
+      modifier = Modifier.padding(4.dp).testTag(UserEditionTestTags.FIRST_NAME_TEXT_FIELD),
       label = {
         Text(
             context.getString(R.string.user_edition_first_name),
@@ -342,9 +335,7 @@ private fun EditUserTextFields(
       value = firstName)
 
   OutlinedTextField(
-      modifier = Modifier
-          .padding(4.dp)
-          .testTag(UserEditionTestTags.LAST_NAME_TEXT_FIELD),
+      modifier = Modifier.padding(4.dp).testTag(UserEditionTestTags.LAST_NAME_TEXT_FIELD),
       label = {
         Text(
             context.getString(R.string.user_edition_last_name),
@@ -363,11 +354,10 @@ private fun EditUserTextFields(
 
   OutlinedTextField(
       modifier =
-      Modifier
-          .padding(4.dp)
-          .fillMaxWidth()
-          .height(200.dp)
-          .testTag(UserEditionTestTags.BIOGRAPHY_TEXT_FIELD),
+          Modifier.padding(4.dp)
+              .fillMaxWidth()
+              .height(200.dp)
+              .testTag(UserEditionTestTags.BIOGRAPHY_TEXT_FIELD),
       label = {
         Text(
             context.getString(R.string.user_edition_bio),
@@ -388,9 +378,7 @@ private fun InterestButtonAndFlowRow(
   val interests by interestsFlow.collectAsState()
 
   OutlinedButton(
-      modifier = Modifier
-          .fillMaxWidth()
-          .testTag(UserEditionTestTags.INTERESTS_BUTTON),
+      modifier = Modifier.fillMaxWidth().testTag(UserEditionTestTags.INTERESTS_BUTTON),
       onClick = onShowInterests) {
         Icon(
             Icons.Default.Add,
@@ -418,9 +406,7 @@ private fun SocialButtonAndFlowRow(
   val socials by userSocialFlow.collectAsState()
 
   OutlinedButton(
-      modifier = Modifier
-          .fillMaxWidth()
-          .testTag(UserEditionTestTags.SOCIALS_BUTTON),
+      modifier = Modifier.fillMaxWidth().testTag(UserEditionTestTags.SOCIALS_BUTTON),
       onClick = onShowSocials) {
         Icon(
             Icons.Default.Add,
@@ -429,9 +415,7 @@ private fun SocialButtonAndFlowRow(
         Text(context.getString(R.string.user_edition_edit_socials))
       }
 
-  FlowRow(modifier = Modifier
-      .fillMaxWidth()
-      .padding(3.dp)) {
+  FlowRow(modifier = Modifier.fillMaxWidth().padding(3.dp)) {
     socials.forEachIndexed { index, userSocial ->
       SocialInputChip(
           userSocial,
@@ -448,38 +432,31 @@ fun UserDeletePrompt(
     onDismiss: () -> Unit,
     onConfirmDelete: () -> Unit,
 ) {
-    val context = LocalContext.current
+  val context = LocalContext.current
 
-    Dialog(
-        onDismissRequest = onDismiss,
-        properties = DialogProperties(usePlatformDefaultWidth = false)
-    ) {
+  Dialog(
+      onDismissRequest = onDismiss,
+      properties = DialogProperties(usePlatformDefaultWidth = false)) {
         Card(
             elevation = CardDefaults.cardElevation(8.dp),
             shape = RoundedCornerShape(16.dp),
-            modifier =
-            Modifier
-                .fillMaxWidth()
-                .padding(20.dp)
-                .testTag(""))
-        {
-            Column(
-                modifier = Modifier.padding(16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.SpaceBetween
-            )
-            {
-                Text(text = context.getString(R.string.user_edition_delete_user_confirmation),
-                    textAlign = TextAlign.Center)
+            modifier = Modifier.fillMaxWidth().padding(20.dp).testTag("")) {
+              Column(
+                  modifier = Modifier.padding(16.dp),
+                  horizontalAlignment = Alignment.CenterHorizontally,
+                  verticalArrangement = Arrangement.SpaceBetween) {
+                    Text(
+                        text = context.getString(R.string.user_edition_delete_user_confirmation),
+                        textAlign = TextAlign.Center)
 
-                Button(
-                    onClick = onConfirmDelete,
-                    colors = ButtonDefaults.buttonColors(containerColor = errorContainerDarkMediumContrast)
-                ){
-                    Text(context.getString(R.string.user_edition_delete_user_confirm))
-                }
+                    Button(
+                        onClick = onConfirmDelete,
+                        colors =
+                            ButtonDefaults.buttonColors(
+                                containerColor = errorContainerDarkMediumContrast)) {
+                          Text(context.getString(R.string.user_edition_delete_user_confirm))
+                        }
+                  }
             }
-
-        }
-    }
+      }
 }

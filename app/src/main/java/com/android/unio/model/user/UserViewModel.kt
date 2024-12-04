@@ -10,13 +10,13 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.auth
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 class UserViewModel @Inject constructor(private val userRepository: UserRepository) : ViewModel() {
@@ -106,16 +106,13 @@ class UserViewModel @Inject constructor(private val userRepository: UserReposito
 
   fun deleteUserDocument(userUid: String, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
 
-    if(userUid != user.value!!.uid) {
+    if (userUid != user.value!!.uid) {
       Log.e("UserDeletionFirestore", "UserUid does not match current user uid")
       return
     }
 
-    userRepository.deleteUserInFirestore(userUid,
-        onSuccess = { onSuccess() },
-        onFailure = { onFailure(it) }
-      )
-
+    userRepository.deleteUserInFirestore(
+        userUid, onSuccess = { onSuccess() }, onFailure = { onFailure(it) })
   }
 
   fun updateUserDebounced(user: User, interval: Long = debounceInterval) {

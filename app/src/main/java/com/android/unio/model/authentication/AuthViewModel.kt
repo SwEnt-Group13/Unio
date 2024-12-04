@@ -7,13 +7,13 @@ import com.android.unio.ui.navigation.Route
 import com.android.unio.ui.navigation.Screen
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import javax.inject.Inject
 
 @HiltViewModel
-class                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  AuthViewModel
+class AuthViewModel
 @Inject
 constructor(private val firebaseAuth: FirebaseAuth, private val userRepository: UserRepository) :
     ViewModel() {
@@ -41,20 +41,19 @@ constructor(private val firebaseAuth: FirebaseAuth, private val userRepository: 
     }
   }
 
-    fun deleteAccount(userId: String, onSuccess: () -> Unit, onFailure: (Exception) -> Unit ){
+  fun deleteAccount(userId: String, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
 
-        userRepository.deleteUserInAuth(
-            userId,
-            onSuccess = {
-                Log.i("AuthViewModel", "User deleted successfully")
-                onSuccess()
-            },
-            onFailure = {
-                Log.e("AuthViewModel", "Failed to delete user", it)
-                onFailure(it)
-            }
-        )
-    }
+    userRepository.deleteUserInAuth(
+        userId,
+        onSuccess = {
+          Log.i("AuthViewModel", "User deleted successfully")
+          onSuccess()
+        },
+        onFailure = {
+          Log.e("AuthViewModel", "Failed to delete user", it)
+          onFailure(it)
+        })
+  }
 
   /**
    * Verifies the authentication state of the user. If the user should be redirected, the
