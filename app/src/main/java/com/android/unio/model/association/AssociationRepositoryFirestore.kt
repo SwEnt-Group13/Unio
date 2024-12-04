@@ -85,9 +85,6 @@ class AssociationRepositoryFirestore @Inject constructor(private val db: Firebas
         onSuccess(hydrate(documentSnapshot.data))
       }
     }
-    //        .performFirestoreOperation(
-    //            onSuccess = { document -> onSuccess(hydrate(document.data)) },
-    //            onFailure = { exception -> onFailure(exception) })
   }
 
   override fun saveAssociation(
