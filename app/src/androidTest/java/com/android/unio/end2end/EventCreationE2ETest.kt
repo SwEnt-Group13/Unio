@@ -4,6 +4,8 @@ import android.app.Activity
 import android.app.Instrumentation
 import android.content.Intent
 import android.net.Uri
+import android.widget.DatePicker
+import android.widget.TimePicker
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.isDisplayed
@@ -13,9 +15,18 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextClearance
 import androidx.compose.ui.test.performTextInput
+import androidx.test.espresso.Espresso
+import androidx.test.espresso.action.ViewActions.click
+import androidx.test.espresso.assertion.ViewAssertions.matches
+import androidx.test.espresso.contrib.PickerActions
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.Intents.intending
 import androidx.test.espresso.intent.matcher.IntentMatchers.anyIntent
+import androidx.test.espresso.matcher.RootMatchers.isDialog
+import androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom
+import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
+import androidx.test.espresso.matcher.ViewMatchers.withClassName
+import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.filters.LargeTest
 import com.android.unio.assertDisplayComponentInScroll
 import com.android.unio.model.hilt.module.NetworkModule
@@ -38,6 +49,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
+import org.hamcrest.Matchers
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -85,45 +97,41 @@ class EventCreationE2ETest : EndToEndTest() {
     Intents.release()
   }
 
-  private fun selectDate(datePickerTag: String, day: String) {
-    composeTestRule.waitUntil(10000) {
-      composeTestRule.onNodeWithTag(datePickerTag, useUnmergedTree = true).isDisplayed()
+    private fun selectDate(day: Int) {
+        Espresso.onView(isAssignableFrom(DatePicker::class.java))
+            .inRoot(isDialog())
+            .check(matches(isDisplayed()))
+
+        Espresso.onView(withClassName(Matchers.equalTo(DatePicker::class.java.name)))
+            .perform(PickerActions.setDate(2024, 12, day))
+
+        Espresso.onView(withText(android.R.string.ok)).perform(click())
     }
 
-    composeTestRule.onNodeWithText(day, useUnmergedTree = true).performClick()
+    private fun selectTime(hour: Int, minute: Int) {
+        Espresso.onView(isAssignableFrom(TimePicker::class.java))
+            .inRoot(isDialog())
+            .check(matches(isDisplayed()))
 
-    composeTestRule.onNodeWithText("OK", ignoreCase = true).performClick()
-  }
+        Espresso.onView(withClassName(Matchers.equalTo(TimePicker::class.java.name)))
+            .perform(PickerActions.setTime(hour, minute))
 
-  private fun selectTime(timePickerTag: String, hour: Int, minute: Int) {
-    composeTestRule.waitUntil(10000) { composeTestRule.onNodeWithTag(timePickerTag).isDisplayed() }
+        Espresso.onView(withText(android.R.string.ok)).perform(click())
+    }
 
-    composeTestRule.onNodeWithText("Hour", useUnmergedTree = true).performTextClearance()
-    composeTestRule.onNodeWithText("Hour", useUnmergedTree = true).performTextInput(hour.toString())
+    private fun setDateTime(
+        dateFieldTag: String,
+        timeFieldTag: String,
+        day: Int,
+        hour: Int,
+        minute: Int
+    ) {
+        composeTestRule.onNodeWithTag(dateFieldTag).performScrollTo().performClick()
+        selectDate(day)
 
-    composeTestRule.onNodeWithText("Minute", useUnmergedTree = true).performTextClearance()
-    composeTestRule
-        .onNodeWithText("Minute", useUnmergedTree = true)
-        .performTextInput(minute.toString())
-
-    composeTestRule.onNodeWithText("OK", ignoreCase = true).performClick()
-  }
-
-  private fun setDateTime(
-      dateFieldTag: String,
-      datePickerTag: String,
-      timeFieldTag: String,
-      timePickerTag: String,
-      day: String,
-      hour: Int,
-      minute: Int
-  ) {
-    composeTestRule.onNodeWithTag(dateFieldTag).performScrollTo().performClick()
-    selectDate(datePickerTag, day)
-
-    composeTestRule.onNodeWithTag(timeFieldTag).performScrollTo().performClick()
-    selectTime(timePickerTag, hour, minute)
-  }
+        composeTestRule.onNodeWithTag(timeFieldTag).performScrollTo().performClick()
+        selectTime(hour, minute)
+    }
 
   @Test
   fun testEventCreation() {
@@ -173,24 +181,23 @@ class EventCreationE2ETest : EndToEndTest() {
     // Click on the image picker
     composeTestRule.onNodeWithTag(EventCreationTestTags.EVENT_IMAGE).performClick()
 
-    // Set Start Date and Time
-    setDateTime(
-        dateFieldTag = EventCreationTestTags.START_DATE_FIELD,
-        datePickerTag = EventCreationTestTags.START_DATE_PICKER,
-        timeFieldTag = EventCreationTestTags.START_TIME_FIELD,
-        timePickerTag = EventCreationTestTags.START_TIME_PICKER,
-        day = "15",
-        hour = 10,
-        minute = 30)
+      // Set Start Date and Time
+      setDateTime(
+          dateFieldTag = EventCreationTestTags.START_DATE_FIELD,
+          timeFieldTag = EventCreationTestTags.START_TIME_FIELD,
+          day = 15,
+          hour = 10,
+          minute = 30
+      )
 
-    setDateTime(
-        dateFieldTag = EventCreationTestTags.END_DATE_FIELD,
-        datePickerTag = EventCreationTestTags.END_DATE_PICKER,
-        timeFieldTag = EventCreationTestTags.END_TIME_FIELD,
-        timePickerTag = EventCreationTestTags.END_TIME_PICKER,
-        day = "15",
-        hour = 12,
-        minute = 0)
+      // Set End Date and Time
+      setDateTime(
+          dateFieldTag = EventCreationTestTags.END_DATE_FIELD,
+          timeFieldTag = EventCreationTestTags.END_TIME_FIELD,
+          day = 15,
+          hour = 11,
+          minute = 30
+      )
 
     // Select a mocked location with the mocked web client
     val query = "Test Query"
