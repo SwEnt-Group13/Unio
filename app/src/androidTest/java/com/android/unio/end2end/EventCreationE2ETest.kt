@@ -338,9 +338,8 @@ class EventCreationE2ETest : EndToEndTest() {
       @Singleton
       fun provideNominatimApiService(): NominatimApiService {
         return Retrofit.Builder()
-            .baseUrl(
-                "http://127.0.0.1:8081/") // Need to use a custom port to avoid conflict with
-                                          // firebase emulator
+            .baseUrl("http://127.0.0.1:8081/") // Need to use a custom port to avoid conflict with
+            // firebase emulator
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(NominatimApiService::class.java)
