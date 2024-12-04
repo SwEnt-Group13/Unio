@@ -120,7 +120,7 @@ fun UserProfileEditionScreen(
             onSuccess = {
               Toast.makeText(
                       context,
-                      context.getString(R.string.user_settings_modified_successfully),
+                      context.getString(R.string.user_edition_modified_successfully),
                       Toast.LENGTH_SHORT)
                   .show()
               navigationAction.goBack()
@@ -129,7 +129,7 @@ fun UserProfileEditionScreen(
       onUploadUserOffline = { modifiedUser ->
         Toast.makeText(
                 context,
-                context.getString(R.string.user_settings_modified_offline),
+                context.getString(R.string.user_edition_modified_offline),
                 Toast.LENGTH_LONG)
             .show()
         userViewModel.addUser(
