@@ -112,8 +112,7 @@ fun AssociationSearchBar(
                               .testTag(
                                   ExploreContentTestTags.ASSOCIATION_EXPLORE_RESULT +
                                       association.name),
-                      headlineContent = { Text(association.name) },
-                  )
+                      headlineContent = { Text(association.name) })
                 }
               }
             }
