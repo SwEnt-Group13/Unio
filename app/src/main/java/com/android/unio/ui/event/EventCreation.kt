@@ -238,7 +238,7 @@ fun EventCreationScreen(
                         modifier =
                             Modifier.padding(8.dp)
                                 .testTag(
-                                    EventCreationTestTags.LOCATION_SUGGESTION_ITEM +
+                                    EventCreationTestTags.LOCATION_SUGGESTION_ITEM_LATITUDE +
                                         location.latitude))
                     Divider()
                   }
