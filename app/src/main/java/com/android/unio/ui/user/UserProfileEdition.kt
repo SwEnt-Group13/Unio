@@ -68,7 +68,10 @@ import com.android.unio.ui.navigation.Screen
 import com.android.unio.ui.theme.errorContainerDarkMediumContrast
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
 
 @Composable
 fun UserProfileEditionScreen(
@@ -123,40 +126,24 @@ fun UserProfileEditionScreen(
             })
       },
       onDeleteUser = { uid ->
-
-         deleteUser(uid, authViewModel, userViewModel, imageRepository,
-              onSuccess = {
-                  Toast.makeText(
-                      context,
-                      context.getString(R.string.user_edition_delete_user_success),
-                      Toast.LENGTH_SHORT
-                  ).show()
-                  navigationAction.navigateTo(Screen.WELCOME)
-              },
-              onFailure = {
-                  Toast.makeText(
-                      context,
-                      context.getString(R.string.user_edition_delete_user_failure),
-                      Toast.LENGTH_SHORT
-                  ).show()
-              })
-//          authViewModel.deleteAccount(
-//              onSuccess = {
-//                  Toast.makeText(
-//                      context,
-//                      context.getString(R.string.user_edition_delete_user_success),
-//                      Toast.LENGTH_SHORT)
-//                  .show()},
-//              onFailure = {exception -> Log.e("UserDeletion", "Failed to delete user in auth: $exception" )}
-//          )
-//          userViewModel.deleteUserDocument(uid)
-//          imageRepository.deleteImage(StoragePathsStrings.USER_IMAGES + uid,
-//              onSuccess = {
-//                  Log.i("UserDeletion", "User image deleted successfully")
-//              },
-//              onFailure = {
-//                    Log.e("UserDeletion", "Failed to delete user image: $it")
-//              })
+          CoroutineScope(Dispatchers.Main).launch {
+              deleteUser(uid, authViewModel, userViewModel, imageRepository,
+                  onSuccess = {
+                      Toast.makeText(
+                          context,
+                          context.getString(R.string.user_edition_delete_user_success),
+                          Toast.LENGTH_SHORT
+                      ).show()
+                      navigationAction.navigateTo(Screen.WELCOME)
+                  },
+                  onFailure = {
+                      Toast.makeText(
+                          context,
+                          context.getString(R.string.user_edition_delete_user_failure),
+                          Toast.LENGTH_SHORT
+                      ).show()
+                  })
+          }
       }
   )
 }
@@ -315,7 +302,7 @@ fun UserProfileEditionScreenContent(
       if(showDeleteUserPrompt){
           UserDeletePrompt(
               onDismiss = { showDeleteUserPrompt = false},
-              onConfirmDelete = { onDeleteUser(user.uid) })
+              onConfirmDelete = { onDeleteUser(user.uid)  })
       }
   }
 }

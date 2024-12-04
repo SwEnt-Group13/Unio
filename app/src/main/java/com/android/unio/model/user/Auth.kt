@@ -8,6 +8,8 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.google.firebase.auth.FirebaseUser
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 
 enum class SignInState {
   INVALID_CREDENTIALS,
@@ -113,31 +115,46 @@ fun isValidPassword(text: String): Boolean {
  * @return true if all three method were successful and false otherwise
  *
  */
-fun deleteUser(
+suspend fun deleteUser(
     userId: String,
     authViewModel: AuthViewModel,
     userViewModel: UserViewModel,
     imageRepository: ImageRepository,
     onSuccess: () -> Unit,
     onFailure: (Exception) -> Unit
-){
-    val successAuthDeletion = authViewModel.deleteAccount(userId)
-    val successFirestoreDeletion = userViewModel.deleteUserDocument(userId)
-    var successStorageDeletion = false
-    imageRepository.deleteImage(
-        StoragePathsStrings.USER_IMAGES + userId,
-        onSuccess = {
-            Log.i("UserDeletion", "User image deleted successfully")
-            successStorageDeletion = true
-        },
-        onFailure = {
-            Log.e("UserDeletion", "Failed to delete user image: $it")
-        })
+) {
+    try {
+        coroutineScope {
+            val authTask = async {
+                authViewModel.deleteAccount(userId, onSuccess = {
+                    Log.i("UserDeletion", "Successfully deleted user from auth")
+                }, onFailure = { throw it })
+            }
 
-    Log.e("UserDeletion", "Auth: $successAuthDeletion, Firestore: $successFirestoreDeletion, Storage: $successStorageDeletion")
-    if( successAuthDeletion && successFirestoreDeletion && successStorageDeletion ){
-        onSuccess()
-    }else{
-        onFailure(Exception("Failed to delete user"))
+            val firestoreTask = async {
+                userViewModel.deleteUserDocument(userId, onSuccess = {
+                    Log.i("UserDeletion", "Successfully deleted user from firestore")
+                }, onFailure = { throw it })
+            }
+
+            val imageTask = async {
+                imageRepository.deleteImage(
+                    StoragePathsStrings.USER_IMAGES + userId,
+                    onSuccess = {
+                        Log.i("UserDeletion", "Successfully deleted user's profile picture")
+                    },
+                    onFailure = { throw it }
+                )
+            }
+
+            authTask.await()
+            firestoreTask.await()
+            imageTask.await()
+
+            onSuccess()
+        }
+    } catch (e: Exception) {
+        Log.e("UserDeletion", "Failed to delete user: ${e.message}", e)
+        onFailure(e)
     }
 }
