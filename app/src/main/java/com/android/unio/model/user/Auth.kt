@@ -119,35 +119,40 @@ suspend fun deleteUser(
     authViewModel: AuthViewModel,
     userViewModel: UserViewModel,
     imageRepository: ImageRepository,
+    deleteWithProfilePicture: Boolean,
     onSuccess: () -> Unit,
     onFailure: (Exception) -> Unit
 ) {
   try {
     coroutineScope {
-      val authTask = async {
-        authViewModel.deleteAccount(
+
+        //Only delete the profile picture if the user has one!
+        if(deleteWithProfilePicture){
+            val imageTask = async {
+                imageRepository.deleteImage(
+                    StoragePathsStrings.USER_IMAGES + userId,
+                    onSuccess = { Log.i("UserDeletion", "Successfully deleted user's profile picture") },
+                    onFailure = { throw it })
+            }
+            imageTask.await()
+        }
+
+        val authTask = async {
+            authViewModel.deleteAccount(
             userId,
             onSuccess = { Log.i("UserDeletion", "Successfully deleted user from auth") },
             onFailure = { throw it })
-      }
+        }
 
-      val firestoreTask = async {
-        userViewModel.deleteUserDocument(
+        val firestoreTask = async {
+            userViewModel.deleteUserDocument(
             userId,
             onSuccess = { Log.i("UserDeletion", "Successfully deleted user from firestore") },
             onFailure = { throw it })
-      }
+        }
 
-      val imageTask = async {
-        imageRepository.deleteImage(
-            StoragePathsStrings.USER_IMAGES + userId,
-            onSuccess = { Log.i("UserDeletion", "Successfully deleted user's profile picture") },
-            onFailure = { throw it })
-      }
-
-      authTask.await()
-      firestoreTask.await()
-      imageTask.await()
+        authTask.await()
+        firestoreTask.await()
 
       onSuccess()
     }
