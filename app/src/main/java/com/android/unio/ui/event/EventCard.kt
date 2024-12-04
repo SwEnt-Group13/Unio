@@ -215,6 +215,18 @@ fun EventCardScaffold(
               contentScale = ContentScale.Crop // crop the image to fit
               )
 
+          if (shouldBeEditable) {
+            Box(
+                modifier =
+                    Modifier.align(Alignment.TopStart)
+                        .padding(4.dp)
+                        .clip(RoundedCornerShape(4.dp))
+                        .background(MaterialTheme.colorScheme.surfaceContainer)) {
+                  Text(
+                      " ${event.numberOfSaved} Interested ",
+                      color = MaterialTheme.colorScheme.onSecondaryContainer)
+                }
+          }
           // Save button icon on the top right corner of the image, allows the user to save/unsave
           // the event
           Row(
