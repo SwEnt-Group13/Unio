@@ -73,8 +73,10 @@ class AssociationRepositoryFirestore @Inject constructor(private val db: Firebas
    * Fetches an [Association] object from Firestore using the provided [id]. Here, instead of using
    * success and failure listener directly, we use a Snapshot Listener that call directly the
    * callback when a read/write are made on the local (cache) database.
+   *
    * @param id [String] : The id of the [Association] to fetch.
-   * @param onSuccess [(Association) -> Unit] : The callback to call when the [Association] is fetched.
+   * @param onSuccess [(Association) -> Unit] : The callback to call when the [Association] is
+   *   fetched.
    * @param onFailure [(Exception) -> Unit] : The callback to call when the fetch fails.
    */
   override fun getAssociationWithId(
