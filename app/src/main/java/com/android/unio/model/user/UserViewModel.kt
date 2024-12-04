@@ -6,7 +6,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.unio.model.authentication.registerAuthStateListener
+import com.android.unio.model.event.Event
+import com.android.unio.ui.event.SECONDS_IN_AN_HOUR
 import com.google.firebase.Firebase
+import com.google.firebase.Timestamp
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.auth
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -111,6 +114,23 @@ class UserViewModel @Inject constructor(private val userRepository: UserReposito
           delay(interval)
           updateUser(user)
         }
+  }
+
+  fun saveEvent(event: Event, setupNotification: () -> Unit) {
+    val newUser = _user.value!!.copy()
+    if (event.startDate.seconds - Timestamp.now().seconds > 3 * SECONDS_IN_AN_HOUR) {
+      setupNotification()
+    }
+    newUser.savedEvents.add(event.uid)
+    updateUser(newUser)
+    _user.value = newUser
+  }
+
+  fun unsaveEvent(event: Event, removeNotification: () -> Unit) {
+    val newUser = _user.value!!.copy()
+    newUser.savedEvents.remove(event.uid)
+    updateUser(newUser)
+    _user.value = newUser
   }
 
   fun addUser(user: User, onSuccess: () -> Unit) {
