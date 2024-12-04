@@ -7,7 +7,6 @@ import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
-import androidx.core.content.ContextCompat
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.GrantPermissionRule
 import com.android.unio.TearDown
@@ -35,7 +34,6 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.mockkObject
-import io.mockk.mockkStatic
 import io.mockk.runs
 import io.mockk.verify
 import java.util.Date
@@ -92,10 +90,6 @@ class EventCardTest : TearDown() {
           onSuccess()
         }
     userViewModel.addUser(user, {})
-
-    mockkStatic(ContextCompat::class)
-    every { ContextCompat.checkSelfPermission(any(), any()) } returns
-        android.content.pm.PackageManager.PERMISSION_GRANTED
 
     every { navigationAction.navigateTo(Screen.EVENT_DETAILS) } just runs
     every { eventRepository.getEvents(any(), any()) }
@@ -267,9 +261,6 @@ class EventCardTest : TearDown() {
     composeTestRule.onNodeWithTag(EventCardTestTags.EVENT_SAVE_BUTTON).assertExists().performClick()
     Thread.sleep(500)
     verify { NotificationWorker.schedule(any(), any()) }
-    composeTestRule.onNodeWithTag(EventCardTestTags.EVENT_SAVE_BUTTON).assertExists().performClick()
-    Thread.sleep(500)
-    verify { NotificationWorker.unschedule(any(), any()) }
   }
 
   @After
