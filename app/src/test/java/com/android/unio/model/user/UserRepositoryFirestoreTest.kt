@@ -23,13 +23,16 @@ import com.google.firebase.firestore.QueryDocumentSnapshot
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.firestore
 import io.mockk.MockKAnnotations
+import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import io.mockk.mockkStatic
+import io.mockk.unmockkAll
 import io.mockk.verify
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertTrue
+import org.junit.After
 import org.junit.Assert.assertFalse
 import org.junit.Before
 import org.junit.Test
@@ -370,5 +373,12 @@ class UserRepositoryFirestoreTest {
         },
         onFailure = { exception -> assert(false) })
     assert(success)
+  }
+
+  @After
+  fun tearDown() {
+    // Clean up
+    unmockkAll()
+    clearAllMocks()
   }
 }

@@ -5,10 +5,13 @@ import com.google.firebase.Firebase
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
+import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
+import io.mockk.unmockkAll
 import junit.framework.TestCase.assertEquals
+import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -125,5 +128,12 @@ class UserTest {
 
     val remoteUri = "https://firebasestorage.googleapis.com/blablabla"
     assertEquals(ImageUriType.REMOTE, checkImageUri(remoteUri))
+  }
+
+  @After
+  fun tearDown() {
+    // Clean up
+    unmockkAll()
+    clearAllMocks()
   }
 }

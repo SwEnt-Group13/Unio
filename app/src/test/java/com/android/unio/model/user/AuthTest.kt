@@ -7,10 +7,13 @@ import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseUser
+import io.mockk.clearAllMocks
+import io.mockk.unmockkAll
 import java.security.cert.CertificateExpiredException
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertNotNull
 import junit.framework.TestCase.assertNull
+import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mock
@@ -127,5 +130,12 @@ class AuthTest {
     assertEquals(false, isValidPassword("123"))
     assertEquals(false, isValidPassword("abc"))
     assertEquals(false, isValidPassword("abcdef"))
+  }
+
+  @After
+  fun tearDown() {
+    // Clean up
+    unmockkAll()
+    clearAllMocks()
   }
 }
