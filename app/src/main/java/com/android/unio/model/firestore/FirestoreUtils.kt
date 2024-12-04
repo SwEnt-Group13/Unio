@@ -10,6 +10,11 @@ import com.google.firebase.firestore.MetadataChanges
 
 private val snapshotListeners = mutableListOf<ListenerRegistration>()
 
+/**
+ * Extension function that registers a snapshot listener for a [DocumentReference] and adds it to
+ * the [snapshotListeners] list. This is useful for unregistering all snapshot listeners at once,
+ * for example when logging out.
+ */
 fun DocumentReference.registerSnapshotListener(
     metadata: MetadataChanges,
     callback: EventListener<DocumentSnapshot>
@@ -18,6 +23,7 @@ fun DocumentReference.registerSnapshotListener(
   snapshotListeners.add(listener)
 }
 
+/** Unregisters and remove all snapshot listeners in the [snapshotListeners] list. */
 fun unregisterAllSnapshotListeners() {
   snapshotListeners.forEach { it.remove() }
   snapshotListeners.clear()
