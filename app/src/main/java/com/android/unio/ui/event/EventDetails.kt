@@ -18,22 +18,28 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.DirectionsWalk
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.LocationOn
-import androidx.compose.material.icons.outlined.Share
+import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.ModalBottomSheetProperties
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarDuration
@@ -42,11 +48,14 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -56,6 +65,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import androidx.core.net.toUri
 import com.android.unio.R
 import com.android.unio.model.association.Association
@@ -63,6 +73,8 @@ import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventUtils.formatTimestamp
 import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.map.MapViewModel
+import com.android.unio.model.notification.NotificationType
+import com.android.unio.model.notification.broadcastMessage
 import com.android.unio.model.strings.FormatStrings.DAY_MONTH_FORMAT
 import com.android.unio.model.strings.FormatStrings.HOUR_MINUTE_FORMAT
 import com.android.unio.model.strings.test_tags.EventDetailsTestTags
@@ -71,6 +83,8 @@ import com.android.unio.ui.image.AsyncImageWrapper
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
 import com.android.unio.ui.theme.AppTypography
+import com.google.firebase.Firebase
+import com.google.firebase.messaging.messaging
 import java.text.SimpleDateFormat
 import java.util.Locale
 import kotlinx.coroutines.CoroutineScope
@@ -106,7 +120,7 @@ fun EventScreen(
     Toast.makeText(LocalContext.current, "An error occurred.", Toast.LENGTH_SHORT).show()
     return
   }
-  val associations by event!!.organisers.list.collectAsState()
+  val organisers by event!!.organisers.list.collectAsState()
 
   val isSaved = user!!.savedEvents.contains(event!!.uid)
 
@@ -119,6 +133,7 @@ fun EventScreen(
           newEvent,
           onSuccess = {},
           onFailure = { e -> Log.e("EventCard", "Failed to update event: $e") })
+      Firebase.messaging.unsubscribeFromTopic(event!!.uid)
     } else {
       user!!.savedEvents.add(event!!.uid)
       val newEvent = event!!.copy(numberOfSaved = event!!.numberOfSaved + 1)
@@ -126,12 +141,13 @@ fun EventScreen(
           newEvent,
           onSuccess = {},
           onFailure = { e -> Log.e("EventCard", "Failed to update event: $e") })
+      Firebase.messaging.subscribeToTopic(event!!.uid)
     }
     userViewModel.updateUserDebounced(user!!)
   }
 
   EventScreenScaffold(
-      navigationAction, mapViewModel, event!!, associations, isSaved, onClickSaveButton)
+      navigationAction, mapViewModel, event!!, organisers, isSaved, onClickSaveButton)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -140,20 +156,28 @@ fun EventScreenScaffold(
     navigationAction: NavigationAction,
     mapViewModel: MapViewModel,
     event: Event,
-    associations: List<Association>,
+    organisers: List<Association>,
     isSaved: Boolean,
     onClickSaveButton: () -> Unit
 ) {
   val context = LocalContext.current
+
   testSnackbar = remember { SnackbarHostState() }
   scope = rememberCoroutineScope()
+
+  var showSheet by remember { mutableStateOf(false) }
+
+  var showNotificationDialog by remember { mutableStateOf(false) }
+  var notificationText by remember { mutableStateOf("") }
+  val maxNotificationLength = 100
+
   Scaffold(
       modifier = Modifier.testTag(EventDetailsTestTags.SCREEN),
       snackbarHost = {
         SnackbarHost(
             hostState = testSnackbar!!,
             modifier = Modifier.testTag(EventDetailsTestTags.SNACKBAR_HOST),
-            snackbar = { data ->
+            snackbar = {
               Snackbar {
                 TextButton(
                     onClick = { testSnackbar!!.currentSnackbarData?.dismiss() },
@@ -192,17 +216,88 @@ fun EventScreenScaffold(
                   }
               IconButton(
                   modifier = Modifier.testTag(EventDetailsTestTags.SHARE_BUTTON),
-                  onClick = DEBUG_LAMBDA) {
+                  onClick = { showSheet = true }) {
                     Icon(
-                        Icons.Outlined.Share,
+                        Icons.Outlined.MoreVert,
                         contentDescription =
-                            context.getString(R.string.event_share_button_description))
+                            context.getString(R.string.event_more_button_description))
                   }
             })
       },
       content = { padding ->
-        EventScreenContent(navigationAction, mapViewModel, event, associations, padding)
+        EventScreenContent(navigationAction, mapViewModel, event, organisers, padding)
       })
+
+  if (showNotificationDialog) {
+    Dialog(onDismissRequest = { showNotificationDialog = false }) {
+      Card(
+          elevation = CardDefaults.cardElevation(8.dp),
+          shape = RoundedCornerShape(16.dp),
+          modifier = Modifier.fillMaxWidth().padding(20.dp)) {
+            Column(
+                modifier = Modifier.fillMaxWidth().padding(15.dp),
+                verticalArrangement = Arrangement.spacedBy(20.dp)) {
+                  Text("Send a notification to all participants", style = AppTypography.bodyLarge)
+
+                  OutlinedTextField(
+                      value = notificationText,
+                      onValueChange = {
+                        if (it.length <= maxNotificationLength) {
+                          notificationText = it
+                        }
+                      },
+                      label = {
+                        if (notificationText.isEmpty()) {
+                          Text("Notification")
+                        } else {
+                          Text("Notification (${notificationText.length}/${maxNotificationLength})")
+                        }
+                      })
+
+                  Row(
+                      horizontalArrangement = Arrangement.End,
+                      modifier = Modifier.fillMaxWidth().padding(top = 10.dp)) {
+                        OutlinedButton(
+                            onClick = { showNotificationDialog = false },
+                        ) {
+                          Text("Cancel")
+                        }
+                        Button(
+                            onClick = {
+                              broadcastMessage(
+                                  type = NotificationType.EVENT_MESSAGE,
+                                  topic = event.uid,
+                                  payload =
+                                      mapOf(
+                                          "title" to event.title,
+                                          "body" to notificationText,
+                                      ),
+                                  onSuccess = {
+                                    Toast.makeText(
+                                            context,
+                                            "Notification sent successfully",
+                                            Toast.LENGTH_SHORT)
+                                        .show()
+                                  },
+                                  {
+                                    Toast.makeText(
+                                            context,
+                                            "Failed to send notification",
+                                            Toast.LENGTH_SHORT)
+                                        .show()
+                                  })
+                              showNotificationDialog = false
+                            },
+                        ) {
+                          Text("Send")
+                        }
+                      }
+                }
+          }
+    }
+  }
+
+  EventDetailsBottomSheet(showSheet, { showNotificationDialog = true }) { showSheet = false }
 }
 
 @Composable
@@ -210,7 +305,7 @@ fun EventScreenContent(
     navigationAction: NavigationAction,
     mapViewModel: MapViewModel,
     event: Event,
-    associations: List<Association>,
+    organisers: List<Association>,
     padding: PaddingValues
 ) {
   val context = LocalContext.current
@@ -228,14 +323,14 @@ fun EventScreenContent(
               contentScale = ContentScale.Crop)
         }
 
-        EventInformationCard(event, associations, context)
+        EventInformationCard(event, organisers, context)
 
         EventDetailsBody(navigationAction, mapViewModel, event, context)
       }
 }
 
 @Composable
-fun EventInformationCard(event: Event, associations: List<Association>, context: Context) {
+fun EventInformationCard(event: Event, organisers: List<Association>, context: Context) {
   Column(
       modifier =
           Modifier.testTag(EventDetailsTestTags.DETAILS_INFORMATION_CARD)
@@ -251,14 +346,14 @@ fun EventInformationCard(event: Event, associations: List<Association>, context:
             color = MaterialTheme.colorScheme.onPrimary)
 
         Row(modifier = Modifier.align(Alignment.Start)) {
-          for (i in associations.indices) {
+          for (i in organisers.indices) {
             Row(
                 modifier =
                     Modifier.testTag("${EventDetailsTestTags.ORGANIZING_ASSOCIATION}$i")
                         .padding(end = 6.dp),
                 horizontalArrangement = Arrangement.Center) {
                   AsyncImageWrapper(
-                      imageUri = associations[i].image.toUri(),
+                      imageUri = organisers[i].image.toUri(),
                       contentDescription =
                           context.getString(R.string.event_association_icon_description),
                       modifier =
@@ -270,7 +365,7 @@ fun EventInformationCard(event: Event, associations: List<Association>, context:
                       filterQuality = FilterQuality.None)
 
                   Text(
-                      associations[i].name,
+                      organisers[i].name,
                       modifier =
                           Modifier.testTag("${EventDetailsTestTags.ASSOCIATION_NAME}$i")
                               .padding(start = 3.dp),
@@ -402,4 +497,40 @@ fun EventDetailsBody(
                   }
             }
       }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun EventDetailsBottomSheet(
+    showSheet: Boolean,
+    onNotificationDialogOpen: () -> Unit,
+    onClose: () -> Unit
+) {
+  val sheetState = rememberModalBottomSheetState()
+  val scope = rememberCoroutineScope()
+
+  val context = LocalContext.current
+
+  if (showSheet) {
+    ModalBottomSheet(
+        modifier = Modifier.testTag(EventDetailsTestTags.BOTTOM_SHEET),
+        sheetState = sheetState,
+        onDismissRequest = onClose,
+        properties = ModalBottomSheetProperties(shouldDismissOnBackPress = true),
+    ) {
+      Column(modifier = Modifier) {
+        TextButton(
+            modifier = Modifier.fillMaxWidth().testTag(EventDetailsTestTags.SEND_NOTIFICATION),
+            onClick = {
+              scope.launch {
+                sheetState.hide()
+                onClose()
+                onNotificationDialogOpen()
+              }
+            }) {
+              Text(context.getString(R.string.event_send_notification))
+            }
+      }
+    }
+  }
 }
