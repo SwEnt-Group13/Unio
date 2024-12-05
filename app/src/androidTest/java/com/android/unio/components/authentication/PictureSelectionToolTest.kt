@@ -33,9 +33,6 @@ class PictureSelectionToolTest : TearDown() {
   @get:Rule val composeTestRule = createComposeRule()
   @get:Rule val hiltRule = HiltAndroidRule(this)
 
-  private val mockOnValidate: (List<Uri>) -> Unit = mockk()
-  private val mockOnCancel: () -> Unit = mockk()
-
   @Before
   fun setUp() {
     MockKAnnotations.init(this, relaxed = true)
@@ -54,8 +51,8 @@ class PictureSelectionToolTest : TearDown() {
           maxPictures = 3,
           allowGallery = true,
           allowCamera = true,
-          onValidate = mockOnValidate,
-          onCancel = mockOnCancel,
+          onValidate = {},
+          onCancel = {},
           initialSelectedPictures = emptyList())
     }
     // Verify that initial UI elements are displayed
@@ -73,8 +70,8 @@ class PictureSelectionToolTest : TearDown() {
           maxPictures = 3,
           allowGallery = true,
           allowCamera = true,
-          onValidate = mockOnValidate,
-          onCancel = mockOnCancel,
+          onValidate = {},
+          onCancel = {},
           initialSelectedPictures = listOf(mockUri1))
     }
     // Verify that the selected pictures are displayed
