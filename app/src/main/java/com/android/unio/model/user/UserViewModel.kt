@@ -111,17 +111,6 @@ class UserViewModel @Inject constructor(private val userRepository: UserReposito
         onFailure = { Log.e("UserViewModel", "Failed to update user", it) })
   }
 
-  fun deleteUserDocument(userUid: String, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
-
-    if (userUid != user.value!!.uid) {
-      Log.e("UserDeletionFirestore", "UserUid does not match current user uid")
-      return
-    }
-
-    userRepository.deleteUserInFirestore(
-        userUid, onSuccess = { onSuccess() }, onFailure = { onFailure(it) })
-  }
-
   fun updateUserDebounced(user: User, interval: Long = debounceInterval) {
     updateJob?.cancel()
     updateJob =
@@ -169,7 +158,7 @@ class UserViewModel @Inject constructor(private val userRepository: UserReposito
             imageRepository.deleteImage(
               StoragePathsStrings.USER_IMAGES + userId,
               onSuccess = { Log.i("UserDeletion", "Successfully deleted user's profile picture") },
-              onFailure = { throw it })
+              onFailure = { onFailure(it) })
           }
           imageTask.await()
         }
@@ -178,28 +167,33 @@ class UserViewModel @Inject constructor(private val userRepository: UserReposito
           userRepository.deleteUserInAuth(
             userId,
             onSuccess = {
-              Log.i("AuthViewModel", "User deleted successfully")
-              onSuccess()
+              Log.i("UserDeletion", "User deleted successfully")
             },
             onFailure = {
-              Log.e("AuthViewModel", "Failed to delete user", it)
+              Log.e("UserDeletion", "Failed to delete user", it)
               onFailure(it)
             })
         }
 
         val firestoreTask = async {
-          deleteUserDocument(
+          userRepository.deleteUserInFirestore(
             userId,
-            onSuccess = { Log.i("UserDeletion", "Successfully deleted user from firestore") },
-            onFailure = { throw it })
+            onSuccess = {
+              Log.i("UserDeletion", "Successfully deleted user from firestore")
+            },
+            onFailure = {
+              onFailure(it)
+            })
         }
 
         authTask.await()
         firestoreTask.await()
-
-        onSuccess()
       }
     } catch (e: Exception) {
+      if(e.message == null){
+        onSuccess()
+      }
+
       Log.e("UserDeletion", "Failed to delete user: ${e.message}", e)
       onFailure(e)
     }
