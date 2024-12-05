@@ -207,8 +207,8 @@ fun UserProfileEditionScreenContent(
    * uid, email, followedAssociations, joinedAssociations and savedEvents will not be modified and
    * simply be copied from the user.
    */
-  val createUser: (String) -> Unit = { uri ->
-    val hasInternet = Utils.checkInternetConnection(context)
+  val hasInternet = Utils.checkInternetConnection(context)
+    val createUser: (String) -> Unit = { uri ->
     val newUser =
         User(
             uid = user.uid,
@@ -282,8 +282,17 @@ fun UserProfileEditionScreenContent(
                 Text(context.getString(R.string.user_edition_save_changes))
               }
 
+
           Button(
-              onClick = { showDeleteUserPrompt = true },
+              onClick = {
+                  if(hasInternet){
+                      showDeleteUserPrompt = true
+                  }else{
+                    Toast.makeText(
+                        context,
+                        context.getString(R.string.user_edition_delete_user_offline),
+                        Toast.LENGTH_SHORT).show()
+                  }},
               modifier = Modifier.testTag(UserEditionTestTags.DELETE_BUTTON).padding(10.dp),
               colors =
                   ButtonDefaults.buttonColors(containerColor = errorContainerDarkMediumContrast),
