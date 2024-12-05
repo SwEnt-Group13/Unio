@@ -47,6 +47,7 @@ import com.android.unio.model.user.User
 import com.android.unio.model.user.UserSocial
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.model.user.checkNewUser
+import com.android.unio.model.utils.TextLength
 import com.android.unio.model.utils.Utils
 import com.android.unio.ui.authentication.overlay.InterestOverlay
 import com.android.unio.ui.authentication.overlay.SocialOverlay
@@ -260,9 +261,17 @@ private fun UserTextFields(
               .fillMaxWidth()
               .testTag(AccountDetailsTestTags.FIRST_NAME_TEXT_FIELD),
       label = {
-        Text(
-            context.getString(R.string.account_details_first_name),
-            modifier = Modifier.testTag(AccountDetailsTestTags.FIRST_NAME_TEXT))
+          Row(
+              horizontalArrangement = Arrangement.SpaceBetween,
+              verticalAlignment = Alignment.CenterVertically
+          ){
+              Text(
+                  context.getString(R.string.account_details_first_name),
+                  modifier = Modifier.testTag(AccountDetailsTestTags.FIRST_NAME_TEXT).padding(4.dp))
+              if(Utils.checkInputLengthIsClose(firstName, TextLength.SMALL)){
+                  Text("${firstName.length}/${TextLength.SMALL.length}")
+              }
+          }
       },
       isError = (isFirstNameError),
       supportingText = {
@@ -272,7 +281,11 @@ private fun UserTextFields(
               modifier = Modifier.testTag(AccountDetailsTestTags.FIRST_NAME_ERROR_TEXT))
         }
       },
-      onValueChange = onFirstNameChange,
+      onValueChange = {
+          if(Utils.checkInputLength(it, TextLength.SMALL)){
+              onFirstNameChange(it)
+          }
+      },
       value = firstName)
 
   OutlinedTextField(
@@ -281,9 +294,18 @@ private fun UserTextFields(
               .fillMaxWidth()
               .testTag(AccountDetailsTestTags.LAST_NAME_TEXT_FIELD),
       label = {
-        Text(
-            context.getString(R.string.account_details_last_name),
-            modifier = Modifier.testTag(AccountDetailsTestTags.LAST_NAME_TEXT))
+          Row(
+              horizontalArrangement = Arrangement.SpaceBetween,
+              verticalAlignment = Alignment.CenterVertically
+          ){
+              Text(
+                  context.getString(R.string.account_details_last_name),
+                  modifier = Modifier.testTag(AccountDetailsTestTags.LAST_NAME_TEXT).padding(4.dp))
+              if(Utils.checkInputLengthIsClose(lastName, TextLength.SMALL)){
+                  Text("${lastName.length}/${TextLength.SMALL.length}")
+              }
+          }
+
       },
       isError = (isLastNameError),
       supportingText = {
@@ -293,7 +315,11 @@ private fun UserTextFields(
               modifier = Modifier.testTag(AccountDetailsTestTags.LAST_NAME_ERROR_TEXT))
         }
       },
-      onValueChange = onLastNameChange,
+      onValueChange = {
+          if(Utils.checkInputLength(it, TextLength.SMALL)){
+              onLastNameChange(it)
+          }
+      },
       value = lastName)
 
   OutlinedTextField(
@@ -310,14 +336,14 @@ private fun UserTextFields(
               Text(
                   context.getString(R.string.account_details_bio),
                   modifier = Modifier.testTag(AccountDetailsTestTags.BIOGRAPHY_TEXT))
-                if(bio.length >= Utils.MAX_INPUT_LENGTH_LONG - Utils.MAX_INPUT_LENGTH_LONG/10){
-                    Text("${bio.length}/${Utils.MAX_INPUT_LENGTH_LONG}")
+                if(Utils.checkInputLengthIsClose(bio, TextLength.LARGE)){
+                    Text("${bio.length}/${TextLength.LARGE.length}")
                 }
           }
       },
       onValueChange = {
-          if(Utils.checkInputLengthLong(bio)) {
-                  onBioChange(it)
+          if(Utils.checkInputLength(it, TextLength.LARGE)) {
+              onBioChange(it)
           }
       },
       value = bio)
