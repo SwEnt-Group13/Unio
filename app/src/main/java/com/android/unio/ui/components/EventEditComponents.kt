@@ -149,7 +149,9 @@ fun NominatimLocationPicker(
 
                   toast =
                       Toast.makeText(
-                          context, "Continue typing to see more results", Toast.LENGTH_SHORT)
+                          context,
+                          context.getString(R.string.event_edit_toast_more_button),
+                          Toast.LENGTH_SHORT)
                   toast?.show()
                 },
                 modifier = Modifier.padding(8.dp))
