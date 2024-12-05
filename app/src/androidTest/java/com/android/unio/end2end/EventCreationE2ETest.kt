@@ -5,9 +5,11 @@ import android.app.Instrumentation
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.material3.DatePickerDialog
+import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.hasContentDescription
+import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.isDisplayed
 import androidx.compose.ui.test.onNodeWithTag
@@ -172,6 +174,7 @@ class EventCreationE2ETest : EndToEndTest() {
     selectTime(hour, minute, timePickerTag)
   }
 
+  @OptIn(ExperimentalTestApi::class)
   @Test
   fun testEventCreation() {
     // Sign in with the admin user
@@ -268,12 +271,10 @@ class EventCreationE2ETest : EndToEndTest() {
     composeTestRule.onNodeWithTag(EventCreationTestTags.LOCATION).performTextInput(query)
 
     // Wait for the location suggestions to load and select it.
-    composeTestRule.waitUntil(10000) {
-      composeTestRule
-          .onNodeWithTag(EventCreationTestTags.LOCATION_SUGGESTION_ITEM_LATITUDE + EVENT_LATITUDE)
-          .performScrollTo()
-          .isDisplayed()
-    }
+    composeTestRule.waitUntilExactlyOneExists(
+        matcher =
+            hasTestTag(EventCreationTestTags.LOCATION_SUGGESTION_ITEM_LATITUDE + EVENT_LATITUDE),
+        10000)
 
     composeTestRule
         .onNodeWithTag(EventCreationTestTags.LOCATION_SUGGESTION_ITEM_LATITUDE + EVENT_LATITUDE)
