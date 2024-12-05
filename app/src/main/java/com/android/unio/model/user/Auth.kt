@@ -1,15 +1,10 @@
 package com.android.unio.model.user
 
 import android.util.Log
-import com.android.unio.model.authentication.AuthViewModel
-import com.android.unio.model.image.ImageRepository
-import com.android.unio.model.strings.StoragePathsStrings
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.google.firebase.auth.FirebaseUser
-import kotlinx.coroutines.async
-import kotlinx.coroutines.coroutineScope
 
 enum class SignInState {
   INVALID_CREDENTIALS,
@@ -102,62 +97,4 @@ fun isValidEmail(text: String): Boolean {
  */
 fun isValidPassword(text: String): Boolean {
   return text.length in 6..4096 && text.contains(Regex("[0-9]"))
-}
-
-/**
- * Deletes the user with the given userId from firebase auth, storage (for the profile picture) and
- * firestore
- *
- * @param userId The Id of the corresponding user we want to delete
- * @param authViewModel The instance of the authViewModel to delete the user in firebase auth
- * @param userViewModel The instance of the userViewModel to delete the user in firestore
- * @param imageRepository The instance of the image repository to delete the user's profile picture
- * @return true if all three method were successful and false otherwise
- */
-suspend fun deleteUser(
-    userId: String,
-    authViewModel: AuthViewModel,
-    userViewModel: UserViewModel,
-    imageRepository: ImageRepository,
-    deleteWithProfilePicture: Boolean,
-    onSuccess: () -> Unit,
-    onFailure: (Exception) -> Unit
-) {
-  try {
-    coroutineScope {
-
-      // Only delete the profile picture if the user has one!
-      if (deleteWithProfilePicture) {
-        val imageTask = async {
-          imageRepository.deleteImage(
-              StoragePathsStrings.USER_IMAGES + userId,
-              onSuccess = { Log.i("UserDeletion", "Successfully deleted user's profile picture") },
-              onFailure = { throw it })
-        }
-        imageTask.await()
-      }
-
-      val authTask = async {
-        authViewModel.deleteAccount(
-            userId,
-            onSuccess = { Log.i("UserDeletion", "Successfully deleted user from auth") },
-            onFailure = { throw it })
-      }
-
-      val firestoreTask = async {
-        userViewModel.deleteUserDocument(
-            userId,
-            onSuccess = { Log.i("UserDeletion", "Successfully deleted user from firestore") },
-            onFailure = { throw it })
-      }
-
-      authTask.await()
-      firestoreTask.await()
-
-      onSuccess()
-    }
-  } catch (e: Exception) {
-    Log.e("UserDeletion", "Failed to delete user: ${e.message}", e)
-    onFailure(e)
-  }
 }

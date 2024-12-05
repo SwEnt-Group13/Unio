@@ -174,7 +174,7 @@ class AssociationProfileTest : TearDown() {
           onSuccess()
         }
 
-    userViewModel = UserViewModel(userRepository, false)
+    userViewModel = UserViewModel(userRepository, imageRepository)
     userViewModel.addUser(user, {})
 
     associationViewModel =

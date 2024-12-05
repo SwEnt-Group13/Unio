@@ -112,6 +112,8 @@
     <string name="user_edition_delete_user_success" translatable="true">Your Account has been deleted</string>
     <string name="user_edition_delete_user_failure" translatable="true">Failed to delete account, try again later</string>
     <string name="user_edition_modified_offline" translatable="true">Deleted user offline</string>
+    <string name="user_edition_delete_user_offline" translatable="true">Please be connected to the internet to delete your Account</string>
+
 
     <!-- EmailVerification Strings -->
     <string name="email_verification_refresh_failed">Failed to refresh</string>

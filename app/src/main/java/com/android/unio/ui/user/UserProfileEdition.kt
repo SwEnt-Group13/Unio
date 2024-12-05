@@ -45,7 +45,6 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.core.net.toUri
 import com.android.unio.R
-import com.android.unio.model.authentication.AuthViewModel
 import com.android.unio.model.image.ImageRepository
 import com.android.unio.model.strings.StoragePathsStrings
 import com.android.unio.model.strings.test_tags.UserEditionTestTags
@@ -57,7 +56,6 @@ import com.android.unio.model.user.UserSocial
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.model.user.checkImageUri
 import com.android.unio.model.user.checkNewUser
-import com.android.unio.model.user.deleteUser
 import com.android.unio.model.utils.Utils
 import com.android.unio.ui.authentication.overlay.InterestOverlay
 import com.android.unio.ui.authentication.overlay.SocialOverlay
@@ -75,7 +73,6 @@ import kotlinx.coroutines.launch
 @Composable
 fun UserProfileEditionScreen(
     userViewModel: UserViewModel,
-    authViewModel: AuthViewModel,
     imageRepository: ImageRepository,
     navigationAction: NavigationAction
 ) {
@@ -143,11 +140,8 @@ fun UserProfileEditionScreen(
       },
       onDeleteUser = { uid ->
         CoroutineScope(Dispatchers.Main).launch {
-          deleteUser(
+          userViewModel.deleteUser(
               uid,
-              authViewModel,
-              userViewModel,
-              imageRepository,
               deleteWithProfilePicture = user!!.profilePicture != Uri.EMPTY.toString(),
               onSuccess = {
                 Toast.makeText(
@@ -212,8 +206,8 @@ fun UserProfileEditionScreenContent(
    * uid, email, followedAssociations, joinedAssociations and savedEvents will not be modified and
    * simply be copied from the user.
    */
+  val hasInternet = Utils.checkInternetConnection(context)
   val createUser: (String) -> Unit = { uri ->
-    val hasInternet = Utils.checkInternetConnection(context)
     val newUser =
         User(
             uid = user.uid,
@@ -288,7 +282,17 @@ fun UserProfileEditionScreenContent(
               }
 
           Button(
-              onClick = { showDeleteUserPrompt = true },
+              onClick = {
+                if (hasInternet) {
+                  showDeleteUserPrompt = true
+                } else {
+                  Toast.makeText(
+                          context,
+                          context.getString(R.string.user_edition_delete_user_offline),
+                          Toast.LENGTH_SHORT)
+                      .show()
+                }
+              },
               modifier = Modifier.testTag(UserEditionTestTags.DELETE_BUTTON).padding(10.dp),
               colors =
                   ButtonDefaults.buttonColors(containerColor = errorContainerDarkMediumContrast),

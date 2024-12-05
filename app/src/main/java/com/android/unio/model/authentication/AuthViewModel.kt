@@ -41,20 +41,6 @@ constructor(private val firebaseAuth: FirebaseAuth, private val userRepository: 
     }
   }
 
-  fun deleteAccount(userId: String, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
-
-    userRepository.deleteUserInAuth(
-        userId,
-        onSuccess = {
-          Log.i("AuthViewModel", "User deleted successfully")
-          onSuccess()
-        },
-        onFailure = {
-          Log.e("AuthViewModel", "Failed to delete user", it)
-          onFailure(it)
-        })
-  }
-
   /**
    * Verifies the authentication state of the user. If the user should be redirected, the
    * [authState] is updated.
