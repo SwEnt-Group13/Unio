@@ -261,7 +261,9 @@ fun UserProfileScreenContent(
           if (joinedAssociations.isNotEmpty()) {
             HorizontalDivider()
 
-            Text("Joined", style = AppTypography.headlineSmall)
+            Text(
+                context.getString(R.string.user_profile_association_joined),
+                style = AppTypography.headlineSmall)
             Column(
                 modifier = Modifier.fillMaxWidth().testTag(UserProfileTestTags.JOINED_ASSOCIATIONS),
                 verticalArrangement = Arrangement.spacedBy(4.dp),
@@ -269,12 +271,14 @@ fun UserProfileScreenContent(
               joinedAssociations.map { AssociationSmall(it) { onAssociationClick(it.uid) } }
             }
           } else {
-            Text("You are not member of any association yet", style = AppTypography.bodySmall)
+            Text(
+                context.getString(R.string.user_profile_no_associations),
+                style = AppTypography.bodySmall)
 
             Button(
                 onClick = onClaimAssociationClick,
                 modifier = Modifier.testTag(UserProfileTestTags.CLAIMING_BUTTON)) {
-                  Text("Claim Association")
+                  Text(context.getString(R.string.user_profile_claim_association))
                 }
           }
 
