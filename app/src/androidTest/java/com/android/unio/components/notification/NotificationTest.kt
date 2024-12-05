@@ -71,7 +71,7 @@ class NotificationTest : TearDown() {
     context = InstrumentationRegistry.getInstrumentation().targetContext
     searchViewModel = spyk(SearchViewModel(searchRepository))
     eventViewModel = EventViewModel(eventRepository, imageRepository, associationRepository)
-    userViewModel = spyk(UserViewModel(userRepository))
+    userViewModel = spyk(UserViewModel(userRepository, imageRepository))
   }
 
   @Test

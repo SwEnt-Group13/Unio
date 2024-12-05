@@ -2,6 +2,7 @@ package com.android.unio.model.user
 
 import androidx.test.core.app.ApplicationProvider
 import com.android.unio.mocks.user.MockUser
+import com.android.unio.model.image.ImageRepository
 import com.google.firebase.FirebaseApp
 import io.mockk.MockKAnnotations
 import io.mockk.every
@@ -18,6 +19,7 @@ class UserViewModelTest {
   private val user = MockUser.createMockUser()
 
   @MockK private lateinit var repository: UserRepository
+  @MockK private lateinit var imageRepository: ImageRepository
   private lateinit var userViewModel: UserViewModel
 
   @Before
@@ -30,7 +32,7 @@ class UserViewModelTest {
       FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext())
     }
 
-    userViewModel = UserViewModel(repository)
+    userViewModel = UserViewModel(repository, imageRepository)
   }
 
   @Test

@@ -73,7 +73,7 @@ class SavedTest : TearDown() {
           onSuccess()
         }
 
-    userViewModel = spyk(UserViewModel(userRepository))
+    userViewModel = spyk(UserViewModel(userRepository, imageRepository))
 
     every { eventRepository.getEvents(any(), any()) } answers
         {

@@ -17,6 +17,7 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.firestore
 import com.google.firebase.functions.functions
+import com.google.firebase.storage.storage
 import dagger.hilt.android.testing.HiltAndroidRule
 import java.net.URL
 import junit.framework.TestCase.assertEquals
@@ -102,6 +103,7 @@ open class EndToEndTest : FirebaseEmulatorFunctions {
       Firebase.firestore.useEmulator(HOST, Firestore.PORT)
       Firebase.auth.useEmulator(HOST, Auth.PORT)
       Firebase.functions.useEmulator(HOST, Functions.PORT)
+      Firebase.storage.useEmulator(HOST, Storage.PORT)
     } catch (e: IllegalStateException) {
       Log.d("EndToEndTest", "Firebase Emulators are already in use. $e")
     } finally {
@@ -153,6 +155,10 @@ open class EndToEndTest : FirebaseEmulatorFunctions {
     const val ROOT = "http://$HOST:$PORT"
   }
 
+  object Storage {
+    const val PORT = 9199
+  }
+
   object UnverifiedUser {
     const val EMAIL = "example@gmail.com"
     const val PWD = "123456"
@@ -180,6 +186,11 @@ open class EndToEndTest : FirebaseEmulatorFunctions {
     const val EMAIL = "lepookie@gmail.com"
     const val OLD_PASSWORD = "thePrince23"
     const val NEW_PASSWORD = "theKing23"
+  }
+
+  object UserToDelete {
+    const val EMAIL = "userToDelete@gmail.com"
+    const val PASSWORD = "userToDelete123"
   }
 
   // This user's email is already verified
