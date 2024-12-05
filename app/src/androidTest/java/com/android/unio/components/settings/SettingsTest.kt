@@ -7,6 +7,7 @@ import com.android.unio.TearDown
 import com.android.unio.mocks.user.MockUser
 import com.android.unio.model.authentication.AuthViewModel
 import com.android.unio.model.image.ImageRepository
+import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.preferences.AppPreferences
 import com.android.unio.model.strings.test_tags.SettingsTestTags
 import com.android.unio.model.user.UserRepositoryFirestore
@@ -31,7 +32,7 @@ import org.junit.Test
 class SettingsTest : TearDown() {
   @MockK private lateinit var navigationAction: NavigationAction
   @MockK private lateinit var userRepository: UserRepositoryFirestore
-  @MockK private lateinit var imageRepository: ImageRepository
+  @MockK private lateinit var imageRepository: ImageRepositoryFirebaseStorage
 
   private lateinit var authViewModel: AuthViewModel
   private lateinit var userViewModel: UserViewModel
