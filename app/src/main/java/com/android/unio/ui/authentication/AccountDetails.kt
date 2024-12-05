@@ -47,6 +47,7 @@ import com.android.unio.model.user.User
 import com.android.unio.model.user.UserSocial
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.model.user.checkNewUser
+import com.android.unio.model.utils.Utils
 import com.android.unio.ui.authentication.overlay.InterestOverlay
 import com.android.unio.ui.authentication.overlay.SocialOverlay
 import com.android.unio.ui.components.InterestInputChip
@@ -302,11 +303,23 @@ private fun UserTextFields(
               .height(200.dp)
               .testTag(AccountDetailsTestTags.BIOGRAPHY_TEXT_FIELD),
       label = {
-        Text(
-            context.getString(R.string.account_details_bio),
-            modifier = Modifier.testTag(AccountDetailsTestTags.BIOGRAPHY_TEXT))
+          Row(
+              horizontalArrangement = Arrangement.SpaceBetween,
+              verticalAlignment = Alignment.CenterVertically
+          ){
+              Text(
+                  context.getString(R.string.account_details_bio),
+                  modifier = Modifier.testTag(AccountDetailsTestTags.BIOGRAPHY_TEXT))
+                if(bio.length >= Utils.MAX_INPUT_LENGTH_LONG - Utils.MAX_INPUT_LENGTH_LONG/10){
+                    Text("${bio.length}/${Utils.MAX_INPUT_LENGTH_LONG}")
+                }
+          }
       },
-      onValueChange = onBioChange,
+      onValueChange = {
+          if(Utils.checkInputLengthLong(bio)) {
+                  onBioChange(it)
+          }
+      },
       value = bio)
 }
 
