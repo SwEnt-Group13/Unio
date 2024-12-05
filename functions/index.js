@@ -1,39 +1,30 @@
 
 // The Cloud Functions for Firebase SDK to create Cloud Functions and triggers.
-const {logger} = require("firebase-functions");
-const {onRequest} = require("firebase-functions/v2/https");
-const {onDocumentCreated} = require("firebase-functions/v2/firestore");
+const { logger } = require("firebase-functions");
+const { onRequest } = require("firebase-functions/v2/https");
+const { onDocumentCreated } = require("firebase-functions/v2/firestore");
 const nodemailer = require('nodemailer');
 
 // The Firebase Admin SDK to access Firestore.
-const {initializeApp} = require("firebase-admin/app");
-const {getFirestore, Timestamp, arrayUnion} = require("firebase-admin/firestore");
+const { initializeApp } = require("firebase-admin/app");
+const { getFirestore, Timestamp, arrayUnion } = require("firebase-admin/firestore");
+
+const { getMessaging } = require("firebase-admin/messaging");
 
 //Scheduale management
-const {onSchedule} = require("firebase-functions/v2/scheduler");
+const { onSchedule } = require("firebase-functions/v2/scheduler");
 
-const {defineString} = require('firebase-functions/params')
+const { defineString } = require('firebase-functions/params')
 
 
 initializeApp();
 
 const db = getFirestore();
 
-const email = defineString('FUNCTIONS_COMPANY_EMAIL')
-const password = defineString('FUNCTIONS_COMPANY_PASSWORD')
-
-const transporter = nodemailer.createTransport({
-  service: 'gmail', 
-  auth: {
-    user: email.value(), 
-    pass: password.value(), 
-  },
-});
-
 // this function send the email with a random 6-digit code
 exports.sendVerificationEmail = onRequest(async (req, res) => {
 
-  const email = req.body.data?.email;
+  const recipientEmail = req.body.data?.email;
   const associationUid = req.body.data?.associationUid;
 
   // Generate a random 6-digit verification code
@@ -41,7 +32,7 @@ exports.sendVerificationEmail = onRequest(async (req, res) => {
 
   // Store verification details in Firestore
   await db.collection('emailVerifications').doc(associationUid).set({
-    email,
+    email: recipientEmail,
     code,
     timestamp: Timestamp.now(),
     status: 'pending',
@@ -50,10 +41,21 @@ exports.sendVerificationEmail = onRequest(async (req, res) => {
   // Send email with the code
   const mailOptions = {
     from: 'software.entreprise@gmail.com',
-    to: email,
+    to: recipientEmail,
     subject: 'Your Verification Code',
     text: `Your verification code is ${code}. This code will expire in 10 minutes.`,
   };
+
+  const senderEmail = defineString('FUNCTIONS_COMPANY_EMAIL')
+  const password = defineString('FUNCTIONS_COMPANY_PASSWORD')
+
+  const transporter = nodemailer.createTransport({
+    service: 'gmail', 
+    auth: {
+      user: senderEmail.value(), 
+      pass: password.value(), 
+    },
+  });
 
   try {
     await transporter.sendMail(mailOptions);
@@ -98,6 +100,31 @@ exports.verifyCode = onRequest(async (req, res) => {
     // General catch-all error handler for unexpected issues
     return res.status(500).json({ message: "server-error", error: "An unexpected error occurred." });
   }
+});
+
+exports.broadcastMessage = onRequest(async (req, res) => {
+  const type = req.body.data?.type;
+  const topic = req.body.data?.topic;
+  const payload = req.body.data?.payload;
+
+  if (!type || !topic || !payload) {
+    return res.status(400).json({ message: "invalid-request", error: "Type, topic, and payload are required." });
+  }
+
+  const response = {
+    data: { 
+      payload, type
+    },
+    topic
+  };
+
+  try {
+    await getMessaging().send(response);
+    return res.status(200).json({ data: "Message sent successfully" });
+  } catch (error) {
+    return res.status(500).json({ message: "server-error", error: "An unexpected error occurred." });
+  }
+
 });
 
 /* PROOF OF CONCEPT, need to upgrade to Blaze plan according to "https://firebase.google.com/docs/functions/schedule-functions?gen=2nd"
