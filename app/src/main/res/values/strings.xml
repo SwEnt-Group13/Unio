@@ -211,6 +211,7 @@
     <!-- Event Details Strings -->
     <string name="event_sign_up">I\'m going !</string>
     <string name="event_not_found">ERROR : event not found.</string>
+    <string name="event_send_notification">Send notification</string>
     <string name="event_details_content_description_saved">Saved</string>
     <string name="event_details_content_description_not_saved">Not saved</string>
     <string name="event_price_free">Free !</string>
@@ -358,7 +359,7 @@
     <string name="event_map_button_description">Open Map to Add Event</string>
     <string name="event_image_description">Event Image</string>
     <string name="event_save_button_description">Icon for saving event</string>
-    <string name="event_share_button_description">Icon for sharing event</string>
+    <string name="event_more_button_description">Icon for sharing event</string>
     <string name="event_association_icon_description" translatable="false">Icon of the event\'s organiser</string>
     <string name="event_location_button_description">Icon for seeing event\'s location</string>
     <string name="event_signup_button_description">Icon to sign up to the event</string>

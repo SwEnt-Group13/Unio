@@ -323,7 +323,7 @@
     <string name="event_map_button_description">Ouvrir la carte pour ajouter un évènement</string>
     <string name="event_image_description">Image de l\'évènement</string>
     <string name="event_save_button_description">Icone pour sauvegarder un évènement</string>
-    <string name="event_share_button_description">Icone pour partager un évènement</string>
+    <string name="event_more_button_description">Icone pour partager un évènement</string>
 
     <!-- Event Types Strings from EventType.kt -->
     <string name="event_type_festival">Festival</string>
@@ -375,6 +375,7 @@
     <!-- Notification Strings -->
     <string name="notification_event_reminder" translatable="true">L\'évènement va bientôt commencer :)</string>
     <string name="notification_event_reminder_default_message" translatable="true">Un évènement va bientôt avoir lieu</string>
+    <string name="event_send_notification">Envoyer une notification</string>
 
 
     <string name="event_edit_date_picker_desc">Sélectionner une date</string>
