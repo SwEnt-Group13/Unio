@@ -155,7 +155,7 @@ open class EndToEndTest : FirebaseEmulatorFunctions {
     const val ROOT = "http://$HOST:$PORT"
   }
 
-  object Storage{
+  object Storage {
     const val PORT = 9199
   }
 
