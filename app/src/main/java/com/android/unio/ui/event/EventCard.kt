@@ -68,7 +68,6 @@ import com.android.unio.ui.navigation.Screen
 import com.android.unio.ui.theme.AppTypography
 import java.text.SimpleDateFormat
 import java.util.Locale
-import kotlin.reflect.KProperty
 
 const val SECONDS_IN_AN_HOUR = 3600
 
