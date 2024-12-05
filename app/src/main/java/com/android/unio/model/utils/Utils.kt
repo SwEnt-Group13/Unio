@@ -4,26 +4,33 @@ import android.content.Context
 import android.net.ConnectivityManager
 import androidx.core.content.ContextCompat.getSystemService
 
-object Utils {
-  const val MIN_INPUT_LENGTH = 1
-  const val MAX_INPUT_LENGTH_SHORT = 30
-  const val MAX_INPUT_LENGTH_LONG = 200
+enum class TextSize(val size: Int){
+    SMALL(30),
+    MEDIUM(100),
+    LARGE(300)
+}
 
+object Utils {
 
   fun checkInternetConnection(context: Context): Boolean {
     val connectivityManager = getSystemService(context, ConnectivityManager::class.java)
     return connectivityManager?.activeNetwork != null
   }
 
-  fun checkInputLengthShort(input: String) : Boolean {
-    return input.length <= MAX_INPUT_LENGTH_SHORT
+  fun checkInputLength(input: String, textSize: TextSize) : Boolean {
+    return when(textSize) {
+      TextSize.SMALL -> input.length <= textSize.size
+      TextSize.MEDIUM -> input.length <= textSize.size
+      TextSize.LARGE -> input.length <= textSize.size
+    }
   }
 
-  fun checkInputLengthLong(input: String) : Boolean {
-    return input.length <= MAX_INPUT_LENGTH_LONG
-  }
 
-//  fun checkInputLengthIsClose(input: String): Boolean{
-//    return input.length in MIN_INPUT_LENGTH..MAX_INPUT_LENGTH_SHORT
-//  }
+  fun checkInputLengthIsClose(input: String, textSize: TextSize) : Boolean {
+    return when(textSize) {
+      TextSize.SMALL -> input.length >= (textSize.size - textSize.size/30)
+      TextSize.MEDIUM -> input.length >= (textSize.size - textSize.size/20)
+      TextSize.LARGE -> input.length >= (textSize.size - textSize.size/10)
+    }
+  }
 }
