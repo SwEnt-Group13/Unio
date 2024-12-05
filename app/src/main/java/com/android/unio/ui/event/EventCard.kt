@@ -127,25 +127,23 @@ fun EventCard(
       }
   val onClickSaveButton = {
     if (isSaved) {
+      val newEvent = event.copy(numberOfSaved = event.numberOfSaved - 1)
+      eventViewModel.updateEventWithoutImage(
+          newEvent,
+          onSuccess = {},
+          onFailure = { e -> Log.e("EventCard", "Failed to update event: $e") })
       userViewModel.unsaveEvent(event) {
-        val newEvent = event.copy(numberOfSaved = event.numberOfSaved - 1)
-        eventViewModel.updateEventWithoutImage(
-            newEvent,
-            onSuccess = {},
-            onFailure = { e -> Log.e("EventCard", "Failed to update event: $e") })
-
         if (isNotificationsEnabled) {
           NotificationWorker.unschedule(context, event.uid.hashCode())
         }
       }
     } else {
+      val newEvent = event.copy(numberOfSaved = event.numberOfSaved + 1)
+      eventViewModel.updateEventWithoutImage(
+          newEvent,
+          onSuccess = {},
+          onFailure = { e -> Log.e("EventCard", "Failed to update event: $e") })
       userViewModel.saveEvent(event) {
-        val newEvent = event.copy(numberOfSaved = event.numberOfSaved + 1)
-        eventViewModel.updateEventWithoutImage(
-            newEvent,
-            onSuccess = {},
-            onFailure = { e -> Log.e("EventCard", "Failed to update event: $e") })
-
         if (!isNotificationsEnabled) {
           if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             // this permission requires api 33
