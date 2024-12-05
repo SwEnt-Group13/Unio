@@ -50,6 +50,8 @@ import com.android.unio.model.map.Location
 import com.android.unio.model.map.nominatim.NominatimLocationSearchViewModel
 import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.strings.test_tags.EventCreationTestTags
+import com.android.unio.model.utils.TextLength
+import com.android.unio.model.utils.Utils
 import com.android.unio.ui.components.AssociationChips
 import com.android.unio.ui.components.BannerImagePicker
 import com.android.unio.ui.components.DateAndTimePicker
@@ -118,14 +120,48 @@ fun EventCreationScreen(
           OutlinedTextField(
               modifier = Modifier.fillMaxWidth().testTag(EventCreationTestTags.EVENT_TITLE),
               value = name,
-              onValueChange = { name = it },
-              label = { Text(context.getString(R.string.event_creation_name_label)) })
+              onValueChange = {
+                  if(Utils.checkInputLength(it, TextLength.SMALL)){
+                    name = it
+                  }
+              },
+              label = {
+                  Row(
+                      horizontalArrangement = Arrangement.SpaceEvenly,
+                      verticalAlignment = Alignment.CenterVertically
+                  ){
+                      Text(
+                          modifier = Modifier.padding(4.dp),
+                          text = context.getString(R.string.event_creation_name_label))
+
+                      if(Utils.checkInputLengthIsClose(name, TextLength.SMALL)){
+                          Text("${name.length}/${TextLength.SMALL.length}")
+                      }
+                  }
+              })
 
           OutlinedTextField(
               modifier = Modifier.fillMaxWidth().testTag(EventCreationTestTags.SHORT_DESCRIPTION),
               value = shortDescription,
-              onValueChange = { shortDescription = it },
-              label = { Text(context.getString(R.string.event_creation_short_description_label)) })
+              onValueChange = {
+                  if(Utils.checkInputLength(it, TextLength.MEDIUM)){
+                      shortDescription = it
+                  }
+              },
+              label = {
+                  Row(
+                      horizontalArrangement = Arrangement.SpaceEvenly,
+                      verticalAlignment = Alignment.CenterVertically
+                  ){
+                      Text(
+                          modifier = Modifier.padding(4.dp),
+                          text = context.getString(R.string.event_creation_short_description_label))
+
+                      if(Utils.checkInputLengthIsClose(shortDescription, TextLength.MEDIUM)){
+                          Text("${shortDescription.length}/${TextLength.MEDIUM.length}")
+                      }
+                  }
+              })
 
           BannerImagePicker(
               eventBannerUri, modifier = Modifier.testTag(EventCreationTestTags.EVENT_IMAGE))
@@ -157,8 +193,24 @@ fun EventCreationScreen(
           OutlinedTextField(
               modifier = Modifier.fillMaxWidth().testTag(EventCreationTestTags.DESCRIPTION),
               value = longDescription,
-              onValueChange = { longDescription = it },
-              label = { Text(context.getString(R.string.event_creation_description_label)) })
+              onValueChange = {
+                  if(Utils.checkInputLength(it, TextLength.LARGE)){
+                      longDescription = it
+                  }},
+              label = {
+                  Row(
+                      horizontalArrangement = Arrangement.SpaceEvenly,
+                      verticalAlignment = Alignment.CenterVertically
+                  ){
+                      Text(
+                          modifier = Modifier.padding(4.dp),
+                          text = context.getString(R.string.event_creation_description_label))
+
+                      if(Utils.checkInputLengthIsClose(longDescription, TextLength.LARGE)){
+                          Text("${longDescription.length}/${TextLength.LARGE.length}")
+                      }
+                  }
+              })
 
           DateAndTimePicker(
               context.getString(R.string.event_creation_startdate_label),
@@ -204,8 +256,10 @@ fun EventCreationScreen(
             OutlinedTextField(
                 value = locationQuery,
                 onValueChange = {
-                  locationSearchViewModel.setQuery(it)
-                  showDropdown = true
+                    if (Utils.checkInputLength(it, TextLength.MEDIUM)){
+                        locationSearchViewModel.setQuery(it)
+                        showDropdown = true
+                    }
                 },
                 label = { Text(context.getString(R.string.event_creation_location_label)) },
                 placeholder = {
