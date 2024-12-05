@@ -271,6 +271,7 @@ class EventCreationE2ETest : EndToEndTest() {
     composeTestRule.waitUntil(10000) {
       composeTestRule
           .onNodeWithTag(EventCreationTestTags.LOCATION_SUGGESTION_ITEM_LATITUDE + EVENT_LATITUDE)
+          .performScrollTo()
           .isDisplayed()
     }
 
