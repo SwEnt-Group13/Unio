@@ -65,7 +65,6 @@ class UserRepositoryFirestoreTest {
 
   @Before
   fun setUp() {
-    //    MockitoAnnotations.openMocks(this)
     MockKAnnotations.init(this)
 
     db = mockk()
