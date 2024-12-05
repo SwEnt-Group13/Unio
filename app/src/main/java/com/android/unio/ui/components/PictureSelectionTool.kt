@@ -26,6 +26,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
+import com.android.unio.R
 import com.android.unio.model.strings.test_tags.PictureSelectionToolTestTags
 
 /**
@@ -91,7 +92,9 @@ fun PictureSelectionTool(
 
   // User interface for the picture selection tool
   Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(16.dp)) {
-    Text("Selected Pictures: ${selectedPictures.size}/$maxPictures")
+    Text(
+        context.getString(R.string.selection_tool_selected_picture_text) +
+            ": ${selectedPictures.size}/$maxPictures")
 
     // Display selected pictures in a scrollable grid with a fixed number of columns
     LazyVerticalGrid(
@@ -104,13 +107,14 @@ fun PictureSelectionTool(
               // Display the selected image
               Image(
                   painter = rememberAsyncImagePainter(uri),
-                  contentDescription = "Selected Picture",
+                  contentDescription =
+                      context.getString(R.string.selection_tool_selected_picture_text),
                   contentScale = ContentScale.Crop,
                   modifier =
                       Modifier.fillMaxSize().testTag(PictureSelectionToolTestTags.SELECTED_PICTURE))
               Icon(
                   Icons.Default.Close,
-                  contentDescription = "Remove Picture",
+                  contentDescription = context.getString(R.string.selection_tool_remove_picture),
                   modifier =
                       Modifier.align(Alignment.TopEnd)
                           .clickable { selectedPictures.remove(uri) }
@@ -132,8 +136,11 @@ fun PictureSelectionTool(
                   PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
             },
             modifier = Modifier.testTag(PictureSelectionToolTestTags.GALLERY_ADD)) {
-              Icon(Icons.Default.Add, contentDescription = "Add from Gallery")
-              Text("Gallery")
+              Icon(
+                  Icons.Default.Add,
+                  contentDescription =
+                      context.getString(R.string.selection_tool_add_gallery_content_description))
+              Text(context.getString(R.string.selection_tool_gallery_text))
             }
       }
 
@@ -146,8 +153,10 @@ fun PictureSelectionTool(
               takePictureLauncher.launch(uri)
             },
             modifier = Modifier.testTag(PictureSelectionToolTestTags.CAMERA_ADD)) {
-              Icon(Icons.Default.Add, contentDescription = "Take Picture")
-              Text("Camera")
+              Icon(
+                  Icons.Default.Add,
+                  contentDescription = context.getString(R.string.selection_tool_take_picture))
+              Text(context.getString(R.string.selection_tool_camera_text))
             }
       }
     }
@@ -159,14 +168,16 @@ fun PictureSelectionTool(
       Button(
           onClick = { onValidate(selectedPictures) },
           modifier = Modifier.testTag(PictureSelectionToolTestTags.VALIDATE_BUTTON)) {
-            Icon(Icons.Default.Check, contentDescription = "Validate")
-            Text("Validate")
+            Icon(
+                Icons.Default.Check,
+                contentDescription = context.getString(R.string.selection_tool_validate_text))
+            Text(context.getString(R.string.selection_tool_validate_text))
           }
 
       OutlinedButton(
           onClick = onCancel,
           modifier = Modifier.testTag(PictureSelectionToolTestTags.CANCEL_BUTTON)) {
-            Text("Cancel")
+            Text(context.getString(R.string.selection_tool_cancel_text))
           }
     }
   }

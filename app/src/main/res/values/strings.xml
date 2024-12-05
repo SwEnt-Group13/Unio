@@ -141,6 +141,16 @@
     <string name="welcome_content_description_show_password">Show password</string>
     <string name="welcome_forgot_password">Forgot your password ?</string>
 
+    <!-- Picture Selection Tool Strings -->
+    <string name="selection_tool_selected_picture_text">Selected Pictures</string>
+    <string name="selection_tool_remove_picture">Remove Picture</string>
+    <string name="selection_tool_add_gallery_content_description">Add from Gallery</string>
+    <string name="selection_tool_gallery_text">Gallery</string>
+    <string name="selection_tool_take_picture">Take Picture</string>
+    <string name="selection_tool_camera_text">Camera</string>
+    <string name="selection_tool_validate_text">Validate</string>
+    <string name="selection_tool_cancel_text">Cancel</string>
+
     /**
     * package: event
     */
