@@ -1,5 +1,6 @@
 package com.android.unio.ui.explore
 
+import android.content.Context
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -12,7 +13,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -69,7 +69,6 @@ fun ExploreScreen(
  * @param padding The padding values to apply to the content.
  * @param navigationAction The navigation action to use when an association is clicked.
  */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ExploreScreenContent(
     padding: PaddingValues,
@@ -107,14 +106,14 @@ fun ExploreScreenContent(
             contentPadding = PaddingValues(vertical = 16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-          getSortedEntriesAssociationsByCategory(associationsByCategory).forEach {
+          getSortedEntriesAssociationsByCategory(context, associationsByCategory).forEach {
               (category, associations) ->
             val alphabeticalAssociations = getFilteredAssociationsByAlphabeticalOrder(associations)
 
             if (alphabeticalAssociations.isNotEmpty()) {
               item {
                 Text(
-                    text = category.displayName,
+                    text = context.getString(category.displayNameId),
                     style = AppTypography.headlineSmall,
                     modifier =
                         Modifier.padding(horizontal = 16.dp)
@@ -168,16 +167,6 @@ fun AssociationItem(association: Association, onClick: () -> Unit) {
             placeholderResourceId = R.drawable.adec,
             contentScale = ContentScale.Crop)
 
-        /**
-         * The following code is commented out because all images are not available in the Firestore
-         * database. Uncomment the code when all images are available, and remove the placeholder
-         * image.
-         *
-         * AsyncImage( model = association.image.toUri(), contentDescription =
-         * context.getString(R.string.explore_content_description_async_image), modifier =
-         * Modifier.size(124.dp).testTag("associationImage"), contentScale = ContentScale.Crop //
-         * crop the image to fit )
-         */
         Spacer(modifier = Modifier.height(8.dp))
 
         Text(
@@ -197,7 +186,8 @@ fun getFilteredAssociationsByAlphabeticalOrder(associations: List<Association>):
 
 /** Returns the entries of the association map sorted by the key's display name. */
 fun getSortedEntriesAssociationsByCategory(
+    context: Context,
     associationsByCategory: Map<AssociationCategory, List<Association>>
 ): List<Map.Entry<AssociationCategory, List<Association>>> {
-  return associationsByCategory.entries.sortedBy { it.key.displayName }
+  return associationsByCategory.entries.sortedBy { context.getString(it.key.displayNameId) }
 }
