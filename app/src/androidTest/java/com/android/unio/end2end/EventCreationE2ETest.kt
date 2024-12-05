@@ -222,7 +222,6 @@ class EventCreationE2ETest : EndToEndTest() {
         .performTextInput(EVENT_DESCRIPTION)
 
     // Handle the image picker
-    val context = InstrumentationRegistry.getInstrumentation().targetContext
     val resourceId = R.drawable.chooseyourcoach
     val fakeImageUri = Uri.parse("android.resource://${context.packageName}/$resourceId")
     val resultData = Intent()
