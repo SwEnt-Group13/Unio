@@ -274,7 +274,7 @@ class EventCreationE2ETest : EndToEndTest() {
     composeTestRule.waitUntilExactlyOneExists(
         matcher =
             hasTestTag(EventCreationTestTags.LOCATION_SUGGESTION_ITEM_LATITUDE + EVENT_LATITUDE),
-        10000)
+        timeoutMillis = 10000)
 
     composeTestRule
         .onNodeWithTag(EventCreationTestTags.LOCATION_SUGGESTION_ITEM_LATITUDE + EVENT_LATITUDE)
