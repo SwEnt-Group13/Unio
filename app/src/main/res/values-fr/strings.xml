@@ -190,8 +190,8 @@
     <string name="event_edit_save_button">Sauvegarder</string>
 
     <!-- Event Edit Component Strings -->
-    <string name="event_edit_date_picker_desc">Choisir la date</string>
-    <string name="event_edit_time_picker_desc">Choisir l\'heure</string>
+    <string name="event_edit_date_picker_desc">Sélectionner une date</string>
+    <string name="event_edit_time_picker_desc">Sélectionner une heure</string>
     <string name="event_edit_toast_more_button">Continuez à taper pour voir plus de résultats</string>
 
     <!-- Associations Overlay Strings -->
@@ -380,9 +380,6 @@
     <string name="notification_event_reminder" translatable="true">L\'évènement va bientôt commencer :)</string>
     <string name="notification_event_reminder_default_message" translatable="true">Un évènement va bientôt avoir lieu</string>
 
-
-    <string name="event_edit_date_picker_desc">Sélectionner une date</string>
-    <string name="event_edit_time_picker_desc">Sélectionner une heure</string>
     <string name="event_sign_up">Je viens !</string>
     <string name="event_not_found">ERREUR: évènement introuvable</string>
     <string name="event_details_content_description_saved">Sauvegardé</string>
