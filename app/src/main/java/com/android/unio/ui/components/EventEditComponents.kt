@@ -1,6 +1,7 @@
 package com.android.unio.ui.components
 
 import android.net.Uri
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -96,6 +97,7 @@ fun NominatimLocationPicker(
   val locationQuery by locationSearchViewModel.query.collectAsState()
   val locationSuggestions by locationSearchViewModel.locationSuggestions.collectAsState()
   var showDropdown by remember { mutableStateOf(false) }
+  var toast: Toast? by remember { mutableStateOf(null) }
 
   var shouldDisplayInitialLocation by remember { mutableStateOf(true) }
 
@@ -140,7 +142,16 @@ fun NominatimLocationPicker(
           if (locationSuggestions.size > DROP_DOWN_MAX_ROWS) {
             DropdownMenuItem(
                 text = { Text(context.getString(R.string.event_creation_location_dropdown_more)) },
-                onClick = {},
+                onClick = {
+                  if (toast != null) {
+                    toast?.cancel()
+                  }
+
+                  toast =
+                      Toast.makeText(
+                          context, "Continue typing to see more results", Toast.LENGTH_SHORT)
+                  toast?.show()
+                },
                 modifier = Modifier.padding(8.dp))
           }
         }
