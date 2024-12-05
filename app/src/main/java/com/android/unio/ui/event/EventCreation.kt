@@ -3,10 +3,12 @@ package com.android.unio.ui.event
 import android.net.Uri
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
@@ -15,6 +17,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
+import androidx.compose.material3.Divider
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -34,6 +39,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.PopupProperties
 import com.android.unio.R
 import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationViewModel
@@ -47,11 +53,13 @@ import com.android.unio.model.strings.test_tags.EventCreationTestTags
 import com.android.unio.ui.components.AssociationChips
 import com.android.unio.ui.components.BannerImagePicker
 import com.android.unio.ui.components.DateAndTimePicker
-import com.android.unio.ui.components.NominatimLocationPicker
 import com.android.unio.ui.event.overlay.AssociationsOverlay
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.theme.AppTypography
 import com.google.firebase.Timestamp
+
+private const val DROP_DOWN_MAX_CHARACTERS = 40
+private const val DROP_DOWN_MAX_ROWS = 3
 
 @Composable
 fun EventCreationScreen(
@@ -80,6 +88,9 @@ fun EventCreationScreen(
   var endTimestamp: Timestamp? by remember { mutableStateOf(null) }
 
   var selectedLocation by remember { mutableStateOf<Location?>(null) }
+  val locationQuery by locationSearchViewModel.query.collectAsState()
+  val locationSuggestions by locationSearchViewModel.locationSuggestions.collectAsState()
+  var showDropdown by remember { mutableStateOf(false) }
 
   val eventBannerUri = remember { mutableStateOf<Uri>(Uri.EMPTY) }
 
@@ -107,14 +118,46 @@ fun EventCreationScreen(
           OutlinedTextField(
               modifier = Modifier.fillMaxWidth().testTag(EventCreationTestTags.EVENT_TITLE),
               value = name,
-              onValueChange = { name = it },
-              label = { Text(context.getString(R.string.event_creation_name_label)) })
+              onValueChange = {
+                if (Utils.checkInputLength(it, TextLength.SMALL)) {
+                  name = it
+                }
+              },
+              label = {
+                Row(
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    verticalAlignment = Alignment.CenterVertically) {
+                      Text(
+                          modifier = Modifier.padding(4.dp),
+                          text = context.getString(R.string.event_creation_name_label))
+
+                      if (Utils.checkInputLengthIsClose(name, TextLength.SMALL)) {
+                        Text("${name.length}/${TextLength.SMALL.length}")
+                      }
+                    }
+              })
 
           OutlinedTextField(
               modifier = Modifier.fillMaxWidth().testTag(EventCreationTestTags.SHORT_DESCRIPTION),
               value = shortDescription,
-              onValueChange = { shortDescription = it },
-              label = { Text(context.getString(R.string.event_creation_short_description_label)) })
+              onValueChange = {
+                if (Utils.checkInputLength(it, TextLength.MEDIUM)) {
+                  shortDescription = it
+                }
+              },
+              label = {
+                Row(
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    verticalAlignment = Alignment.CenterVertically) {
+                      Text(
+                          modifier = Modifier.padding(4.dp),
+                          text = context.getString(R.string.event_creation_short_description_label))
+
+                      if (Utils.checkInputLengthIsClose(shortDescription, TextLength.MEDIUM)) {
+                        Text("${shortDescription.length}/${TextLength.MEDIUM.length}")
+                      }
+                    }
+              })
 
           BannerImagePicker(
               eventBannerUri, modifier = Modifier.testTag(EventCreationTestTags.EVENT_IMAGE))
@@ -146,8 +189,24 @@ fun EventCreationScreen(
           OutlinedTextField(
               modifier = Modifier.fillMaxWidth().testTag(EventCreationTestTags.DESCRIPTION),
               value = longDescription,
-              onValueChange = { longDescription = it },
-              label = { Text(context.getString(R.string.event_creation_description_label)) })
+              onValueChange = {
+                if (Utils.checkInputLength(it, TextLength.LARGE)) {
+                  longDescription = it
+                }
+              },
+              label = {
+                Row(
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    verticalAlignment = Alignment.CenterVertically) {
+                      Text(
+                          modifier = Modifier.padding(4.dp),
+                          text = context.getString(R.string.event_creation_description_label))
+
+                      if (Utils.checkInputLengthIsClose(longDescription, TextLength.LARGE)) {
+                        Text("${longDescription.length}/${TextLength.LARGE.length}")
+                      }
+                    }
+              })
 
           DateAndTimePicker(
               context.getString(R.string.event_creation_startdate_label),
@@ -189,13 +248,61 @@ fun EventCreationScreen(
             }
           }
 
-          NominatimLocationPicker(
-              locationSearchViewModel,
-              null,
-              EventCreationTestTags.LOCATION,
-              EventCreationTestTags.LOCATION_SUGGESTION_ITEM_LATITUDE) {
-                selectedLocation = it
-              }
+          Box(modifier = Modifier.fillMaxWidth()) {
+            OutlinedTextField(
+                value = locationQuery,
+                onValueChange = {
+                  if (Utils.checkInputLength(it, TextLength.MEDIUM)) {
+                    locationSearchViewModel.setQuery(it)
+                    showDropdown = true
+                  }
+                },
+                label = { Text(context.getString(R.string.event_creation_location_label)) },
+                placeholder = {
+                  Text(context.getString(R.string.event_creation_location_input_label))
+                },
+                modifier = Modifier.fillMaxWidth().testTag(EventCreationTestTags.LOCATION))
+
+            DropdownMenu(
+                expanded = showDropdown && locationSuggestions.isNotEmpty(),
+                onDismissRequest = { showDropdown = false },
+                properties = PopupProperties(focusable = false),
+                modifier = Modifier.fillMaxWidth().heightIn(max = 200.dp)) {
+                  locationSuggestions.take(DROP_DOWN_MAX_ROWS).forEach { location ->
+                    DropdownMenuItem(
+                        text = {
+                          Text(
+                              text =
+                                  location.name.take(DROP_DOWN_MAX_CHARACTERS) +
+                                      if (location.name.length > DROP_DOWN_MAX_CHARACTERS)
+                                          context.getString(
+                                              R.string.event_creation_location_dropdown_points)
+                                      else "",
+                              maxLines = 1)
+                        },
+                        onClick = {
+                          locationSearchViewModel.setQuery(location.name)
+                          selectedLocation = location
+                          showDropdown = false
+                        },
+                        modifier =
+                            Modifier.padding(8.dp)
+                                .testTag(
+                                    EventCreationTestTags.LOCATION_SUGGESTION_ITEM +
+                                        location.latitude))
+                    Divider()
+                  }
+
+                  if (locationSuggestions.size > DROP_DOWN_MAX_ROWS) {
+                    DropdownMenuItem(
+                        text = {
+                          Text(context.getString(R.string.event_creation_location_dropdown_more))
+                        },
+                        onClick = {},
+                        modifier = Modifier.padding(8.dp))
+                  }
+                }
+          }
 
           Spacer(modifier = Modifier.width(10.dp))
 
