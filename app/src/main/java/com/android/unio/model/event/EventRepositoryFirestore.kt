@@ -16,121 +16,124 @@ import javax.inject.Inject
 class EventRepositoryFirestore @Inject constructor(private val db: FirebaseFirestore) :
     EventRepository {
 
-  override fun init(onSuccess: () -> Unit) {
-    Firebase.auth.registerAuthStateListener {
-      if (it.currentUser != null) {
-        onSuccess()
-      }
+    override fun init(onSuccess: () -> Unit) {
+        Firebase.auth.registerAuthStateListener {
+            if (it.currentUser != null) {
+                onSuccess()
+            }
+        }
     }
-  }
 
-  override fun getEventsOfAssociation(
-      association: String,
-      onSuccess: (List<Event>) -> Unit,
-      onFailure: (Exception) -> Unit
-  ) {
-    db.collection(EVENT_PATH)
-        .whereArrayContains("organisers", association)
-        .get()
-        .performFirestoreOperation(
-            onSuccess = { result ->
-              val events = result.mapNotNull { hydrate(it.data) }
-              onSuccess(events)
-            },
-            onFailure = { exception -> onFailure(exception) })
-  }
-
-  /**
-   * Gets the event with the given id. Here, instead of using success and failure listener directly,
-   * we use a Snapshot Listener that call directly the callback when a read/write are made on the
-   * local (cache) database.
-   *
-   * @param id [String] : the id of the event to get.
-   * @param onSuccess [(Event) -> Unit] : the callback to call when the event is found.
-   * @param onFailure [(Exception) -> Unit] : the callback to call when an error occurs.
-   */
-  override fun getEventWithId(
-      id: String,
-      onSuccess: (Event) -> Unit,
-      onFailure: (Exception) -> Unit
-  ) {
-    db.collection(EVENT_PATH).document(id).registerSnapshotListener(MetadataChanges.EXCLUDE) {
-        documentSnapshot,
-        exception ->
-      if (exception != null) {
-        onFailure(exception)
-        return@registerSnapshotListener
-      }
-      if (documentSnapshot != null && documentSnapshot.exists()) {
-        onSuccess(hydrate(documentSnapshot.data))
-      }
+    override fun getEventsOfAssociation(
+        association: String,
+        onSuccess: (List<Event>) -> Unit,
+        onFailure: (Exception) -> Unit
+    ) {
+        db.collection(EVENT_PATH)
+            .whereArrayContains("organisers", association)
+            .get()
+            .performFirestoreOperation(
+                onSuccess = { result ->
+                    val events = result.mapNotNull { hydrate(it.data) }
+                    onSuccess(events)
+                },
+                onFailure = { exception -> onFailure(exception) })
     }
-  }
 
-  override fun getNextEventsFromDateToDate(
-      startDate: Timestamp,
-      endDate: Timestamp,
-      onSuccess: (List<Event>) -> Unit,
-      onFailure: (Exception) -> Unit
-  ) {
-    db.collection(EVENT_PATH)
-        .whereGreaterThanOrEqualTo("date", startDate)
-        .whereLessThan("date", endDate)
-        .get()
-        .performFirestoreOperation(
-            onSuccess = { result ->
-              val events = result.mapNotNull { hydrate(it.data) }
-              onSuccess(events)
-            },
-            onFailure = { exception -> onFailure(exception) })
-  }
-
-  override fun getEvents(onSuccess: (List<Event>) -> Unit, onFailure: (Exception) -> Unit) {
-    db.collection(EVENT_PATH)
-        .get()
-        .performFirestoreOperation(
-            onSuccess = { result ->
-              val events = result.mapNotNull { hydrate(it.data) }
-              onSuccess(events)
-            },
-            onFailure = { exception -> onFailure(exception) })
-  }
-
-  override fun getNewUid(): String {
-    return db.collection(EVENT_PATH).document().id
-  }
-
-  /** Updates the event in the repository or adds it if it does not exist. */
-  override fun addEvent(event: Event, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
-    if (event.uid.isBlank()) {
-      onFailure(IllegalArgumentException("No event id was provided"))
-    } else {
-      db.collection(EVENT_PATH)
-          .document(event.uid)
-          .set(serialize(event))
-          .performFirestoreOperation(
-              onSuccess = { onSuccess() }, onFailure = { exception -> onFailure(exception) })
+    /**
+     * Gets the event with the given id. Here, instead of using success and failure listener directly,
+     * we use a Snapshot Listener that call directly the callback when a read/write are made on the
+     * local (cache) database.
+     *
+     * @param id [String] : the id of the event to get.
+     * @param onSuccess [(Event) -> Unit] : the callback to call when the event is found.
+     * @param onFailure [(Exception) -> Unit] : the callback to call when an error occurs.
+     */
+    override fun getEventWithId(
+        id: String,
+        onSuccess: (Event) -> Unit,
+        onFailure: (Exception) -> Unit
+    ) {
+        db.collection(EVENT_PATH).document(id)
+            .registerSnapshotListener(MetadataChanges.EXCLUDE) { documentSnapshot,
+                                                                 exception ->
+                if (exception != null) {
+                    onFailure(exception)
+                    return@registerSnapshotListener
+                }
+                if (documentSnapshot != null && documentSnapshot.exists()) {
+                    onSuccess(hydrate(documentSnapshot.data))
+                }
+            }
     }
-  }
 
-  override fun deleteEventById(id: String, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
-    db.collection(EVENT_PATH)
-        .document(id)
-        .delete()
-        .performFirestoreOperation(
-            onSuccess = { onSuccess() }, onFailure = { exception -> onFailure(exception) })
-  }
+    override fun getNextEventsFromDateToDate(
+        startDate: Timestamp,
+        endDate: Timestamp,
+        onSuccess: (List<Event>) -> Unit,
+        onFailure: (Exception) -> Unit
+    ) {
+        db.collection(EVENT_PATH)
+            .whereGreaterThanOrEqualTo("date", startDate)
+            .whereLessThan("date", endDate)
+            .get()
+            .performFirestoreOperation(
+                onSuccess = { result ->
+                    val events = result.mapNotNull { hydrate(it.data) }
+                    onSuccess(events)
+                },
+                onFailure = { exception -> onFailure(exception) })
+    }
+
+    override fun getEvents(onSuccess: (List<Event>) -> Unit, onFailure: (Exception) -> Unit) {
+        db.collection(EVENT_PATH)
+            .get()
+            .performFirestoreOperation(
+                onSuccess = { result ->
+                    val events = result.mapNotNull { hydrate(it.data) }
+                    onSuccess(events)
+                },
+                onFailure = { exception -> onFailure(exception) })
+    }
+
+    override fun getNewUid(): String {
+        return db.collection(EVENT_PATH).document().id
+    }
+
+    /** Updates the event in the repository or adds it if it does not exist. */
+    override fun addEvent(event: Event, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+        if (event.uid.isBlank()) {
+            onFailure(IllegalArgumentException("No event id was provided"))
+        } else {
+            db.collection(EVENT_PATH)
+                .document(event.uid)
+                .set(serialize(event))
+                .performFirestoreOperation(
+                    onSuccess = { onSuccess() }, onFailure = { exception -> onFailure(exception) })
+        }
+    }
+
+    override fun deleteEventById(
+        id: String,
+        onSuccess: () -> Unit,
+        onFailure: (Exception) -> Unit
+    ) {
+        db.collection(EVENT_PATH)
+            .document(id)
+            .delete()
+            .performFirestoreOperation(
+                onSuccess = { onSuccess() }, onFailure = { exception -> onFailure(exception) })
+    }
 
     override fun addPictureToEvent(
-        event:Event,
+        event: Event,
         eventPicture: EventUserPicture,
         onSuccess: () -> Unit,
         onFailure: (Exception) -> Unit
     ) {
-        event = event.copy(eventPictures = event.eventPictures.add())
-        db.collection(EVENT_PATH).document(event.uid).
+        TODO()
     }
 
     // Note: the following line is needed to add external methods to the companion object
-  companion object
+    companion object
 }
