@@ -12,52 +12,58 @@ import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuth.AuthStateListener
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.auth
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.EventListener
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.MetadataChanges
 import com.google.firebase.firestore.QueryDocumentSnapshot
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.firestore
 import emptyFirestoreReferenceElement
+import io.mockk.MockKAnnotations
 import io.mockk.every
+import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import io.mockk.mockkStatic
+import io.mockk.verify
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertTrue
 import org.junit.Assert.assertFalse
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.ArgumentCaptor
-import org.mockito.Captor
-import org.mockito.Mock
-import org.mockito.Mockito
-import org.mockito.Mockito.`when`
 import org.mockito.MockitoAnnotations
-import org.mockito.kotlin.any
-import org.mockito.kotlin.eq
-import org.mockito.kotlin.verify
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.Shadows.shadowOf
 
 @RunWith(RobolectricTestRunner::class)
 class AssociationRepositoryFirestoreTest {
   private lateinit var db: FirebaseFirestore
-  @Mock private lateinit var associationCollectionReference: CollectionReference
-  @Mock private lateinit var userCollectionReference: CollectionReference
-  @Mock private lateinit var querySnapshot: QuerySnapshot
-  @Mock private lateinit var queryDocumentSnapshot1: QueryDocumentSnapshot
-  @Mock private lateinit var queryDocumentSnapshot2: QueryDocumentSnapshot
-  @Mock private lateinit var documentReference: DocumentReference
-  @Mock private lateinit var querySnapshotTask: Task<QuerySnapshot>
-  @Mock private lateinit var documentSnapshotTask: Task<DocumentSnapshot>
 
-  @Mock private lateinit var auth: FirebaseAuth
-  @Mock private lateinit var firebaseUser: FirebaseUser
-  @Captor
-  private lateinit var authStateListenerCaptor: ArgumentCaptor<FirebaseAuth.AuthStateListener>
+  @MockK private lateinit var associationCollectionReference: CollectionReference
+
+  @MockK private lateinit var userCollectionReference: CollectionReference
+
+  @MockK private lateinit var querySnapshot: QuerySnapshot
+
+  @MockK private lateinit var queryDocumentSnapshot1: QueryDocumentSnapshot
+
+  @MockK private lateinit var queryDocumentSnapshot2: QueryDocumentSnapshot
+
+  @MockK private lateinit var documentReference: DocumentReference
+
+  @MockK private lateinit var querySnapshotTask: Task<QuerySnapshot>
+
+  @MockK private lateinit var documentSnapshotTask: Task<DocumentSnapshot>
+
+  @MockK private lateinit var auth: FirebaseAuth
+
+  @MockK private lateinit var firebaseUser: FirebaseUser
 
   private lateinit var repository: AssociationRepositoryFirestore
 
@@ -69,6 +75,7 @@ class AssociationRepositoryFirestoreTest {
   @Before
   fun setUp() {
     MockitoAnnotations.openMocks(this)
+    MockKAnnotations.init(this)
 
     db = mockk()
     mockkStatic(FirebaseFirestore::class)
@@ -78,6 +85,14 @@ class AssociationRepositoryFirestoreTest {
 
     mockkStatic(FirebaseAuth::class)
     every { FirebaseAuth.getInstance() } returns auth
+    every { Firebase.auth } returns auth
+    every { auth.addAuthStateListener(any<AuthStateListener>()) } answers
+        { call ->
+          if (auth.currentUser != null) {
+            val listener = call.invocation.args[0] as AuthStateListener
+            listener.onAuthStateChanged(auth)
+          }
+        }
 
     association1 =
         MockAssociation.createMockAssociation(
@@ -87,27 +102,42 @@ class AssociationRepositoryFirestoreTest {
         MockAssociation.createMockAssociation(category = AssociationCategory.SCIENCE_TECH)
 
     // When getting the collection, return the task
-    `when`(associationCollectionReference.get()).thenReturn(querySnapshotTask)
-    `when`(associationCollectionReference.document(eq(association1.uid)))
-        .thenReturn(documentReference)
-    `when`(documentReference.get()).thenReturn(documentSnapshotTask)
+    every { associationCollectionReference.get() } returns (querySnapshotTask)
+    every { associationCollectionReference.document(eq(association1.uid)) } returns
+        (documentReference)
+
+    every { documentReference.get() } returns documentSnapshotTask
+    every { documentReference.set(any()) } returns Tasks.forResult(null)
 
     // When the query snapshot is iterated, return the two query document snapshots
-    `when`(querySnapshot.iterator())
-        .thenReturn(mutableListOf(queryDocumentSnapshot1, queryDocumentSnapshot2).iterator())
+    every { querySnapshot.iterator() } returns
+        mutableListOf(queryDocumentSnapshot1, queryDocumentSnapshot2).iterator()
 
     // When the task is successful, return the query snapshot
-    `when`(querySnapshotTask.addOnSuccessListener(any())).thenAnswer { invocation ->
-      val callback = invocation.arguments[0] as OnSuccessListener<QuerySnapshot>
-      callback.onSuccess(querySnapshot)
-      querySnapshotTask
-    }
+    every { querySnapshotTask.addOnSuccessListener(any()) } answers
+        { call ->
+          val callback = call.invocation.args[0] as OnSuccessListener<QuerySnapshot>
+          callback.onSuccess(querySnapshot)
+          querySnapshotTask
+        }
+    every { querySnapshotTask.addOnFailureListener(any()) } answers { querySnapshotTask }
 
-    `when`(documentSnapshotTask.addOnSuccessListener(any())).thenAnswer { invocation ->
-      val callback = invocation.arguments[0] as OnSuccessListener<DocumentSnapshot>
-      callback.onSuccess(queryDocumentSnapshot1)
-      documentSnapshotTask
-    }
+    every {
+      documentReference.addSnapshotListener(
+          any<MetadataChanges>(), any<EventListener<DocumentSnapshot>>())
+    } answers
+        {
+          val listener = it.invocation.args[1] as EventListener<DocumentSnapshot>
+          listener.onEvent(queryDocumentSnapshot1, null)
+          mockk()
+        }
+
+    every { documentSnapshotTask.addOnSuccessListener(any()) } answers
+        { call ->
+          val callback = call.invocation.args[0] as OnSuccessListener<DocumentSnapshot>
+          callback.onSuccess(queryDocumentSnapshot1)
+          documentSnapshotTask
+        }
 
     // Set up mock data maps
     map1 =
@@ -158,21 +188,20 @@ class AssociationRepositoryFirestoreTest {
             "events" to association2.events.uids,
             "principalEmailAddress" to association2.principalEmailAddress)
 
-    `when`(queryDocumentSnapshot1.data).thenReturn(map1)
+    every { queryDocumentSnapshot1.data } returns (map1)
 
     repository = AssociationRepositoryFirestore(db)
   }
 
   @Test
   fun testInitUserAuthenticated() {
-    `when`(auth.currentUser).thenReturn(firebaseUser)
+    every { auth.currentUser } returns (firebaseUser)
     var onSuccessCalled = false
     val onSuccess = { onSuccessCalled = true }
 
     repository.init(onSuccess)
 
-    Mockito.verify(auth).addAuthStateListener(authStateListenerCaptor.capture())
-    authStateListenerCaptor.value.onAuthStateChanged(auth)
+    verify { auth.addAuthStateListener(any()) }
 
     shadowOf(Looper.getMainLooper()).idle()
 
@@ -181,14 +210,13 @@ class AssociationRepositoryFirestoreTest {
 
   @Test
   fun testInitUserNotAuthenticated() {
-    `when`(auth.currentUser).thenReturn(null)
+    every { auth.currentUser } returns (null)
     var onSuccessCalled = false
     val onSuccess = { onSuccessCalled = true }
 
     repository.init(onSuccess)
 
-    Mockito.verify(auth).addAuthStateListener(authStateListenerCaptor.capture())
-    authStateListenerCaptor.value.onAuthStateChanged(auth)
+    verify { auth.addAuthStateListener(any()) }
 
     shadowOf(Looper.getMainLooper()).idle()
 
@@ -197,7 +225,8 @@ class AssociationRepositoryFirestoreTest {
 
   @Test
   fun testGetAssociations() {
-    `when`(queryDocumentSnapshot2.data).thenReturn(map2)
+    every { queryDocumentSnapshot2.data } returns (map2)
+    var success = false
 
     repository.getAssociations(
         onSuccess = { associations ->
@@ -217,18 +246,21 @@ class AssociationRepositoryFirestoreTest {
           assertEquals(association2.name, associations[1].name)
           assertEquals(association2.fullName, associations[1].fullName)
           assertEquals(association2.description, associations[1].description)
-          assertEquals(association2.members.map { it.uid }, associations[1].members.map { it.uid })
           assertEquals(
               association2.roles.map { it.uid }.toSet(),
               associations[1].roles.map { it.uid }.toSet())
+          assertEquals(association2.members.map { it.uid }, associations[1].members.map { it.uid })
+          success = true
         },
-        onFailure = { exception -> assert(false) })
+        onFailure = { assert(false) })
+    assert(success)
   }
 
   @Test
   fun testGetAssociationsWithMissingFields() {
     // Only set the ID for the second association, leaving the other fields as null
-    `when`(queryDocumentSnapshot2.data).thenReturn(mapOf("uid" to association2.uid))
+    every { queryDocumentSnapshot2.data } returns (mapOf("uid" to association2.uid))
+    var success = false
 
     repository.getAssociations(
         onSuccess = { associations ->
@@ -258,13 +290,16 @@ class AssociationRepositoryFirestoreTest {
           assertEquals("", associations[1].name)
           assertEquals("", associations[1].fullName)
           assertEquals("", associations[1].description)
+          success = true
         },
-        onFailure = { exception -> assert(false) })
+        onFailure = { assert(false) })
+    assert(success)
   }
 
   @Test
   fun testGetAssociationWithId() {
-    `when`(queryDocumentSnapshot1.exists()).thenReturn(true)
+    every { queryDocumentSnapshot1.exists() } returns (true)
+    var success = false
     repository.getAssociationWithId(
         association1.uid,
         onSuccess = { association ->
@@ -272,82 +307,87 @@ class AssociationRepositoryFirestoreTest {
           assertEquals(association1.name, association.name)
           assertEquals(association1.fullName, association.fullName)
           assertEquals(association1.description, association.description)
+          success = true
         },
-        onFailure = { exception -> assert(false) })
+        onFailure = { assert(false) })
+    assert(success)
   }
 
   @Test
   fun testGetAssociationsByCategory() {
-    `when`(queryDocumentSnapshot2.data).thenReturn(map2)
-    `when`(associationCollectionReference.whereEqualTo(eq("category"), any()))
-        .thenReturn(associationCollectionReference)
+    every { queryDocumentSnapshot2.data } returns (map2)
+    every { associationCollectionReference.whereEqualTo(eq("category"), any()) } returns
+        (associationCollectionReference)
+    var success = false
     repository.getAssociationsByCategory(
         AssociationCategory.SCIENCE_TECH,
         onSuccess = { associations ->
           for (asso in associations) {
             assertEquals(asso.category, AssociationCategory.SCIENCE_TECH)
           }
+          success = true
         },
-        onFailure = { exception -> assert(false) })
+        onFailure = { assert(false) })
+    assert(success)
   }
 
   @Test
   fun testAddAssociationSuccess() {
-    `when`(documentReference.set(map1)).thenReturn(Tasks.forResult(null))
+    every { documentReference.set(map1) } returns (Tasks.forResult(null))
 
     repository.saveAssociation(
         association1, onSuccess = { assert(true) }, onFailure = { assert(false) })
 
-    verify(documentReference).set(map1)
+    verify { documentReference.set(map1) }
   }
 
   @Test
   fun testAddAssociationFailure() {
-    `when`(documentReference.set(any())).thenReturn(Tasks.forException(Exception()))
+    every { documentReference.set(any()) } returns (Tasks.forException(Exception()))
 
     repository.saveAssociation(
         association1, onSuccess = { assert(false) }, onFailure = { assert(true) })
 
-    verify(documentReference).set(map1)
+    verify { documentReference.set(map1) }
   }
 
   @Test
   fun testUpdateAssociationSuccess() {
-    `when`(documentReference.set(any())).thenReturn(Tasks.forResult(null))
+    every { documentReference.set(any()) } returns (Tasks.forResult(null))
 
     repository.saveAssociation(
         association1, onSuccess = { assert(true) }, onFailure = { assert(false) })
 
-    verify(documentReference).set(map1)
+    verify { documentReference.set(map1) }
   }
 
   @Test
   fun testUpdateAssociationFailure() {
-    `when`(documentReference.set(any())).thenReturn(Tasks.forException(Exception()))
+    every { documentReference.set(any()) } returns (Tasks.forException(Exception()))
 
     repository.saveAssociation(
         association1, onSuccess = { assert(false) }, onFailure = { assert(true) })
 
-    verify(documentReference).set(map1)
+    verify { documentReference.set(map1) }
   }
 
   @Test
   fun testDeleteAssociationByIdSuccess() {
-    `when`(documentReference.delete()).thenReturn(Tasks.forResult(null))
+    every { documentReference.delete() } returns (Tasks.forResult(null))
 
     repository.deleteAssociationById(
         association1.uid, onSuccess = { assert(true) }, onFailure = { assert(false) })
 
-    verify(documentReference).delete()
+    verify { documentReference.delete() }
   }
 
   @Test
   fun testDeleteAssociationByIdFailure() {
-    `when`(documentReference.delete()).thenReturn(Tasks.forException(Exception()))
+    every { documentReference.delete() } returns (Tasks.forException(Exception()))
 
     repository.deleteAssociationById(
         association1.uid, onSuccess = { assert(false) }, onFailure = { assert(true) })
 
-    verify(documentReference).delete()
+    verify { documentReference.delete() }
   }
 }

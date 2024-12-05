@@ -50,7 +50,7 @@ class BottomNavigationTest : TearDown() {
         EventViewModel(eventRepository, imageRepository, associationRepositoryFirestore)
 
     userRepository = mock { UserRepositoryFirestore::class.java }
-    userViewModel = UserViewModel(userRepository, false)
+    userViewModel = UserViewModel(userRepository, imageRepository)
 
     searchViewModel = spyk(SearchViewModel(searchRepository))
 

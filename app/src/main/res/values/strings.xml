@@ -97,15 +97,22 @@
     <string name="account_details_content_description_remove_pfp">Remove Profile Picture</string>
 
     <!-- UserSettings Strings -->
-    <string name="user_settings_content_description_remove_social" translatable="false">Remove User Social</string>
-    <string name="user_settings_first_name" translatable="true">Edit First name</string>
-    <string name="user_settings_last_name" translatable="true">Edit Last name</string>
-    <string name="user_settings_bio" translatable="true">Edit Biography</string>
-    <string name="user_settings_edit_interests" translatable="true">Edit your centers of interests</string>
-    <string name="user_settings_edit_socials" translatable="true">Edit your user socials</string>
-    <string name="user_settings_discard_changes" translatable="true">"Discard Changes"</string>
-    <string name="user_settings_save_changes" translatable="true">Save changes</string>
-    <string name="user_settings_modified_successfully" translatable="true">Changes Successfully modified</string>
+    <string name="user_edition_content_description_remove_social" translatable="false">Remove User Social</string>
+    <string name="user_edition_first_name" translatable="true">Edit First name</string>
+    <string name="user_edition_last_name" translatable="true">Edit Last name</string>
+    <string name="user_edition_bio" translatable="true">Edit Biography</string>
+    <string name="user_edition_edit_interests" translatable="true">Edit your centers of interests</string>
+    <string name="user_edition_edit_socials" translatable="true">Edit your user socials</string>
+    <string name="user_edition_discard_changes" translatable="true">"Discard Changes"</string>
+    <string name="user_edition_save_changes" translatable="true">Save changes</string>
+    <string name="user_edition_modified_successfully" translatable="true">Changes Successfully modified</string>
+    <string name="user_edition_delete_user" translatable="true">Delete Account</string>
+    <string name="user_edition_delete_user_confirmation" translatable="true">All your data will be deleted, are you sure of proceeding ?</string>
+    <string name="user_edition_delete_user_confirm" translatable="true">Confirm</string>
+    <string name="user_edition_delete_user_success" translatable="true">Your Account has been deleted</string>
+    <string name="user_edition_delete_user_failure" translatable="true">Failed to delete account, try again later</string>
+    <string name="user_edition_modified_offline" translatable="true">Deleted user offline</string>
+    <string name="user_edition_delete_user_offline" translatable="true">Please be connected to the internet to delete your Account</string>
 
 
     <!-- EmailVerification Strings -->
