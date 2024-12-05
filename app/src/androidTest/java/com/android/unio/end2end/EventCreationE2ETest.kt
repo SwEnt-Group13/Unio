@@ -45,6 +45,7 @@ import java.net.HttpURLConnection
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale
+import javax.inject.Inject
 import javax.inject.Singleton
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
@@ -60,7 +61,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 class EventCreationE2ETest : EndToEndTest() {
 
   /** The [MockWebServer] instance used to mock the location search API. */
-  private lateinit var mockWebServer: MockWebServer
+  @Inject lateinit var mockWebServer: MockWebServer
 
   /** The date formatter Material3 uses to format the date in the date picker. */
   private val dateFormatter: DateTimeFormatter =
@@ -75,8 +76,7 @@ class EventCreationE2ETest : EndToEndTest() {
   @Before
   override fun setUp() {
     super.setUp()
-    mockWebServer = MockWebServer()
-    mockWebServer.start(8081) // Need to use a custom port to avoid conflict with firebase emulator
+    hiltRule.inject()
 
     mockResponseBody =
         """
@@ -337,10 +337,15 @@ class EventCreationE2ETest : EndToEndTest() {
     companion object {
       @Provides
       @Singleton
-      fun provideNominatimApiService(): NominatimApiService {
+      fun provideMockWebServer(): MockWebServer {
+        return MockWebServer()
+      }
+
+      @Provides
+      @Singleton
+      fun provideNominatimApiService(mockWebServer: MockWebServer): NominatimApiService {
         return Retrofit.Builder()
-            .baseUrl("http://127.0.0.1:8081/") // Need to use a custom port to avoid conflict with
-            // firebase emulator
+            .baseUrl(mockWebServer.url("/"))
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(NominatimApiService::class.java)
