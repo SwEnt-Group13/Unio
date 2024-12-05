@@ -165,10 +165,6 @@ fun EventCard(
       shouldBeEditable = shouldBeEditable)
 }
 
-private operator fun Any.getValue(nothing: Nothing?, property: KProperty<*>): Any {
-  TODO("Not yet implemented")
-}
-
 @Composable
 fun EventCardScaffold(
     event: Event,
