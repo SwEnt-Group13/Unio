@@ -137,7 +137,8 @@ constructor(
 
     event.organisers.requestAll({
       event.organisers.list.value.forEach {
-        it.events.add(event.uid)
+          if (it.events.contains(event.uid)) it.events.remove(event.uid)
+          it.events.add(event.uid)
         associationRepository.saveAssociation(
             it,
             {},
@@ -162,6 +163,7 @@ constructor(
 
     event.organisers.requestAll({
       event.organisers.list.value.forEach {
+        if (it.events.contains(event.uid)) it.events.remove(event.uid)
         it.events.add(event.uid)
         associationRepository.saveAssociation(
             it,
