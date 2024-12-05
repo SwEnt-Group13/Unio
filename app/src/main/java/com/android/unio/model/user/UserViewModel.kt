@@ -7,9 +7,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.unio.model.authentication.registerAuthStateListener
 import com.android.unio.model.event.Event
-import com.android.unio.ui.event.SECONDS_IN_AN_HOUR
 import com.android.unio.model.image.ImageRepository
 import com.android.unio.model.strings.StoragePathsStrings
+import com.android.unio.ui.event.SECONDS_IN_AN_HOUR
 import com.google.firebase.Firebase
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.AuthCredential
