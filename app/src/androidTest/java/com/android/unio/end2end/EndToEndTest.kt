@@ -17,6 +17,7 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.firestore
 import com.google.firebase.functions.functions
+import com.google.firebase.storage.storage
 import dagger.hilt.android.testing.HiltAndroidRule
 import java.net.URL
 import junit.framework.TestCase.assertEquals
@@ -102,6 +103,7 @@ open class EndToEndTest : FirebaseEmulatorFunctions {
       Firebase.firestore.useEmulator(HOST, Firestore.PORT)
       Firebase.auth.useEmulator(HOST, Auth.PORT)
       Firebase.functions.useEmulator(HOST, Functions.PORT)
+      Firebase.storage.useEmulator(HOST, Storage.PORT)
     } catch (e: IllegalStateException) {
       Log.d("EndToEndTest", "Firebase Emulators are already in use. $e")
     } finally {
@@ -151,6 +153,10 @@ open class EndToEndTest : FirebaseEmulatorFunctions {
   object Functions {
     const val PORT = 5001
     const val ROOT = "http://$HOST:$PORT"
+  }
+
+  object Storage{
+    const val PORT = 9199
   }
 
   object UnverifiedUser {
