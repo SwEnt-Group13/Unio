@@ -9,6 +9,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performTextInput
 import com.android.unio.TearDown
 import com.android.unio.mocks.user.MockUser
+import com.android.unio.model.image.ImageRepository
 import com.android.unio.model.strings.test_tags.WelcomeTestTags
 import com.android.unio.model.user.User
 import com.android.unio.model.user.UserRepositoryFirestore
@@ -35,6 +36,7 @@ class WelcomeTest : TearDown() {
   private lateinit var userViewModel: UserViewModel
   @MockK private lateinit var navigationAction: NavigationAction
   @MockK private lateinit var userRepository: UserRepositoryFirestore
+  @MockK private lateinit var imageRepository: ImageRepository
   //  @MockK private lateinit var firebaseAuth: FirebaseAuth
 
   @Before
@@ -55,7 +57,7 @@ class WelcomeTest : TearDown() {
         }
 
     navigationAction = mock(NavigationAction::class.java)
-    userViewModel = UserViewModel(userRepository, false)
+    userViewModel = UserViewModel(userRepository, imageRepository)
   }
 
   @Test

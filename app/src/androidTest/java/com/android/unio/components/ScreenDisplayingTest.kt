@@ -176,7 +176,7 @@ class ScreenDisplayingTest : TearDown() {
           val onSuccess = args[1] as (User) -> Unit
           onSuccess(user)
         }
-    userViewModel = UserViewModel(userRepository)
+    userViewModel = UserViewModel(userRepository, imageRepositoryFirestore)
     userViewModel.getUserByUid("1", false)
 
     searchViewModel = spyk(SearchViewModel(searchRepository))
