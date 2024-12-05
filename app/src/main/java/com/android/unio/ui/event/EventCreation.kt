@@ -121,46 +121,44 @@ fun EventCreationScreen(
               modifier = Modifier.fillMaxWidth().testTag(EventCreationTestTags.EVENT_TITLE),
               value = name,
               onValueChange = {
-                  if(Utils.checkInputLength(it, TextLength.SMALL)){
-                    name = it
-                  }
+                if (Utils.checkInputLength(it, TextLength.SMALL)) {
+                  name = it
+                }
               },
               label = {
-                  Row(
-                      horizontalArrangement = Arrangement.SpaceEvenly,
-                      verticalAlignment = Alignment.CenterVertically
-                  ){
+                Row(
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    verticalAlignment = Alignment.CenterVertically) {
                       Text(
                           modifier = Modifier.padding(4.dp),
                           text = context.getString(R.string.event_creation_name_label))
 
-                      if(Utils.checkInputLengthIsClose(name, TextLength.SMALL)){
-                          Text("${name.length}/${TextLength.SMALL.length}")
+                      if (Utils.checkInputLengthIsClose(name, TextLength.SMALL)) {
+                        Text("${name.length}/${TextLength.SMALL.length}")
                       }
-                  }
+                    }
               })
 
           OutlinedTextField(
               modifier = Modifier.fillMaxWidth().testTag(EventCreationTestTags.SHORT_DESCRIPTION),
               value = shortDescription,
               onValueChange = {
-                  if(Utils.checkInputLength(it, TextLength.MEDIUM)){
-                      shortDescription = it
-                  }
+                if (Utils.checkInputLength(it, TextLength.MEDIUM)) {
+                  shortDescription = it
+                }
               },
               label = {
-                  Row(
-                      horizontalArrangement = Arrangement.SpaceEvenly,
-                      verticalAlignment = Alignment.CenterVertically
-                  ){
+                Row(
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    verticalAlignment = Alignment.CenterVertically) {
                       Text(
                           modifier = Modifier.padding(4.dp),
                           text = context.getString(R.string.event_creation_short_description_label))
 
-                      if(Utils.checkInputLengthIsClose(shortDescription, TextLength.MEDIUM)){
-                          Text("${shortDescription.length}/${TextLength.MEDIUM.length}")
+                      if (Utils.checkInputLengthIsClose(shortDescription, TextLength.MEDIUM)) {
+                        Text("${shortDescription.length}/${TextLength.MEDIUM.length}")
                       }
-                  }
+                    }
               })
 
           BannerImagePicker(
@@ -194,22 +192,22 @@ fun EventCreationScreen(
               modifier = Modifier.fillMaxWidth().testTag(EventCreationTestTags.DESCRIPTION),
               value = longDescription,
               onValueChange = {
-                  if(Utils.checkInputLength(it, TextLength.LARGE)){
-                      longDescription = it
-                  }},
+                if (Utils.checkInputLength(it, TextLength.LARGE)) {
+                  longDescription = it
+                }
+              },
               label = {
-                  Row(
-                      horizontalArrangement = Arrangement.SpaceEvenly,
-                      verticalAlignment = Alignment.CenterVertically
-                  ){
+                Row(
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    verticalAlignment = Alignment.CenterVertically) {
                       Text(
                           modifier = Modifier.padding(4.dp),
                           text = context.getString(R.string.event_creation_description_label))
 
-                      if(Utils.checkInputLengthIsClose(longDescription, TextLength.LARGE)){
-                          Text("${longDescription.length}/${TextLength.LARGE.length}")
+                      if (Utils.checkInputLengthIsClose(longDescription, TextLength.LARGE)) {
+                        Text("${longDescription.length}/${TextLength.LARGE.length}")
                       }
-                  }
+                    }
               })
 
           DateAndTimePicker(
@@ -256,10 +254,10 @@ fun EventCreationScreen(
             OutlinedTextField(
                 value = locationQuery,
                 onValueChange = {
-                    if (Utils.checkInputLength(it, TextLength.MEDIUM)){
-                        locationSearchViewModel.setQuery(it)
-                        showDropdown = true
-                    }
+                  if (Utils.checkInputLength(it, TextLength.MEDIUM)) {
+                    locationSearchViewModel.setQuery(it)
+                    showDropdown = true
+                  }
                 },
                 label = { Text(context.getString(R.string.event_creation_location_label)) },
                 placeholder = {

@@ -183,13 +183,13 @@ fun AccountDetailsContent(
               modifier = Modifier.testTag(AccountDetailsTestTags.TITLE_TEXT))
 
           UserTextFields(
-              isErrors,
-              firstName,
-              lastName,
-              bio,
-              { firstName = it },
-              { lastName = it },
-              { bio = it })
+              isErrors = isErrors,
+              firstName = firstName,
+              lastName = lastName,
+              bio = bio,
+              onFirstNameChange = { firstName = it },
+              onLastNameChange = { lastName = it },
+              onBioChange = { bio = it })
 
           Row(
               modifier = Modifier.fillMaxWidth().padding(8.dp),
@@ -261,17 +261,16 @@ private fun UserTextFields(
               .fillMaxWidth()
               .testTag(AccountDetailsTestTags.FIRST_NAME_TEXT_FIELD),
       label = {
-          Row(
-              horizontalArrangement = Arrangement.SpaceBetween,
-              verticalAlignment = Alignment.CenterVertically
-          ){
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically) {
               Text(
                   context.getString(R.string.account_details_first_name),
                   modifier = Modifier.testTag(AccountDetailsTestTags.FIRST_NAME_TEXT).padding(4.dp))
-              if(Utils.checkInputLengthIsClose(firstName, TextLength.SMALL)){
-                  Text("${firstName.length}/${TextLength.SMALL.length}")
+              if (Utils.checkInputLengthIsClose(firstName, TextLength.SMALL)) {
+                Text("${firstName.length}/${TextLength.SMALL.length}")
               }
-          }
+            }
       },
       isError = (isFirstNameError),
       supportingText = {
@@ -282,9 +281,9 @@ private fun UserTextFields(
         }
       },
       onValueChange = {
-          if(Utils.checkInputLength(it, TextLength.SMALL)){
-              onFirstNameChange(it)
-          }
+        if (Utils.checkInputLength(it, TextLength.SMALL)) {
+          onFirstNameChange(it)
+        }
       },
       value = firstName)
 
@@ -294,18 +293,16 @@ private fun UserTextFields(
               .fillMaxWidth()
               .testTag(AccountDetailsTestTags.LAST_NAME_TEXT_FIELD),
       label = {
-          Row(
-              horizontalArrangement = Arrangement.SpaceBetween,
-              verticalAlignment = Alignment.CenterVertically
-          ){
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically) {
               Text(
                   context.getString(R.string.account_details_last_name),
                   modifier = Modifier.testTag(AccountDetailsTestTags.LAST_NAME_TEXT).padding(4.dp))
-              if(Utils.checkInputLengthIsClose(lastName, TextLength.SMALL)){
-                  Text("${lastName.length}/${TextLength.SMALL.length}")
+              if (Utils.checkInputLengthIsClose(lastName, TextLength.SMALL)) {
+                Text("${lastName.length}/${TextLength.SMALL.length}")
               }
-          }
-
+            }
       },
       isError = (isLastNameError),
       supportingText = {
@@ -316,9 +313,9 @@ private fun UserTextFields(
         }
       },
       onValueChange = {
-          if(Utils.checkInputLength(it, TextLength.SMALL)){
-              onLastNameChange(it)
-          }
+        if (Utils.checkInputLength(it, TextLength.SMALL)) {
+          onLastNameChange(it)
+        }
       },
       value = lastName)
 
@@ -329,22 +326,21 @@ private fun UserTextFields(
               .height(200.dp)
               .testTag(AccountDetailsTestTags.BIOGRAPHY_TEXT_FIELD),
       label = {
-          Row(
-              horizontalArrangement = Arrangement.SpaceBetween,
-              verticalAlignment = Alignment.CenterVertically
-          ){
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically) {
               Text(
                   context.getString(R.string.account_details_bio),
                   modifier = Modifier.testTag(AccountDetailsTestTags.BIOGRAPHY_TEXT))
-                if(Utils.checkInputLengthIsClose(bio, TextLength.LARGE)){
-                    Text("${bio.length}/${TextLength.LARGE.length}")
-                }
-          }
+              if (Utils.checkInputLengthIsClose(bio, TextLength.LARGE)) {
+                Text("${bio.length}/${TextLength.LARGE.length}")
+              }
+            }
       },
       onValueChange = {
-          if(Utils.checkInputLength(it, TextLength.LARGE)) {
-              onBioChange(it)
-          }
+        if (Utils.checkInputLength(it, TextLength.LARGE)) {
+          onBioChange(it)
+        }
       },
       value = bio)
 }

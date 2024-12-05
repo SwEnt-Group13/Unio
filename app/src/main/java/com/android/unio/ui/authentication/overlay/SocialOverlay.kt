@@ -240,9 +240,9 @@ fun SocialPrompt(
                 OutlinedTextField(
                     value = socialURL,
                     onValueChange = {
-                        if(Utils.checkInputLength(it, TextLength.SMALL)) {
-                            socialURL = it
-                        }
+                      if (Utils.checkInputLength(it, TextLength.SMALL)) {
+                        socialURL = it
+                      }
                     },
                     placeholder = {
                       if (selectedSocial != Social.WEBSITE) {
