@@ -206,8 +206,8 @@ fun UserProfileEditionScreenContent(
    * uid, email, followedAssociations, joinedAssociations and savedEvents will not be modified and
    * simply be copied from the user.
    */
-  val hasInternet = Utils.checkInternetConnection(context)
   val createUser: (String) -> Unit = { uri ->
+    val hasInternet = Utils.checkInternetConnection(context)
     val newUser =
         User(
             uid = user.uid,
@@ -283,7 +283,7 @@ fun UserProfileEditionScreenContent(
 
           Button(
               onClick = {
-                if (hasInternet) {
+                if (Utils.checkInternetConnection(context)) {
                   showDeleteUserPrompt = true
                 } else {
                   Toast.makeText(

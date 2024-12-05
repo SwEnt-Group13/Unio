@@ -6,7 +6,6 @@ import androidx.compose.ui.test.onNodeWithTag
 import com.android.unio.TearDown
 import com.android.unio.mocks.user.MockUser
 import com.android.unio.model.authentication.AuthViewModel
-import com.android.unio.model.image.ImageRepository
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.preferences.AppPreferences
 import com.android.unio.model.strings.test_tags.SettingsTestTags
