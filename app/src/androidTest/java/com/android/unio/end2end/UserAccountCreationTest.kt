@@ -88,8 +88,6 @@ class UserAccountCreationTest : EndToEndTest() {
     composeTestRule.onNodeWithTag(AccountDetailsTestTags.PROFILE_PICTURE_ICON).assertIsDisplayed()
     composeTestRule.onNodeWithTag(AccountDetailsTestTags.PROFILE_PICTURE_ICON).performClick()
 
-    // balablablaGoBack !dsajdsajdbsakjdsa
-
     composeTestRule
         .onNodeWithTag(AccountDetailsTestTags.CONTINUE_BUTTON)
         .assertDisplayComponentInScroll()

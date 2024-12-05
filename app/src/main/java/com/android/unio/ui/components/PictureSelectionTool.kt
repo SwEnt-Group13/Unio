@@ -84,8 +84,10 @@ fun PictureSelectionTool(
     val resolver = context.contentResolver
     val contentValues =
         ContentValues().apply {
-          put(MediaStore.Images.Media.DISPLAY_NAME, "new_profile_picture.jpg")
-          put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
+          put(
+              MediaStore.Images.Media.DISPLAY_NAME,
+              PictureSelectionToolTestTags.NEW_PROFILE_PICTURE)
+          put(MediaStore.Images.Media.MIME_TYPE, PictureSelectionToolTestTags.IMAGE_JPEG)
         }
     return resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)!!
   }

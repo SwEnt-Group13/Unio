@@ -22,7 +22,6 @@ import io.mockk.mockkStatic
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.mockito.Mockito.mock
 
 @LargeTest
 @HiltAndroidTest
@@ -34,8 +33,8 @@ class PictureSelectionToolTest : TearDown() {
   @get:Rule val composeTestRule = createComposeRule()
   @get:Rule val hiltRule = HiltAndroidRule(this)
 
-  private val mockOnValidate: (List<Uri>) -> Unit = mock()
-  private val mockOnCancel: () -> Unit = mock()
+  private val mockOnValidate: (List<Uri>) -> Unit = mockk()
+  private val mockOnCancel: () -> Unit = mockk()
 
   @Before
   fun setUp() {
