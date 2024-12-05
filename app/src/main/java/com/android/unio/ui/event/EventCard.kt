@@ -127,12 +127,22 @@ fun EventCard(
       }
   val onClickSaveButton = {
     if (isSaved) {
+      val newEvent = event.copy(numberOfSaved = event.numberOfSaved - 1)
+      eventViewModel.updateEventWithoutImage(
+          newEvent,
+          onSuccess = {},
+          onFailure = { e -> Log.e("EventCard", "Failed to update event: $e") })
       userViewModel.unsaveEvent(event) {
         if (isNotificationsEnabled) {
           NotificationWorker.unschedule(context, event.uid.hashCode())
         }
       }
     } else {
+      val newEvent = event.copy(numberOfSaved = event.numberOfSaved + 1)
+      eventViewModel.updateEventWithoutImage(
+          newEvent,
+          onSuccess = {},
+          onFailure = { e -> Log.e("EventCard", "Failed to update event: $e") })
       userViewModel.saveEvent(event) {
         if (!isNotificationsEnabled) {
           if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -199,6 +209,20 @@ fun EventCardScaffold(
               contentScale = ContentScale.Crop // crop the image to fit
               )
 
+          if (shouldBeEditable) {
+            Box(
+                modifier =
+                    Modifier.align(Alignment.TopStart)
+                        .padding(4.dp)
+                        .clip(RoundedCornerShape(4.dp))
+                        .background(MaterialTheme.colorScheme.surfaceContainer)) {
+                  Text(
+                      " ${event.numberOfSaved} " +
+                          context.getString(R.string.event_card_interested_string) +
+                          " ",
+                      color = MaterialTheme.colorScheme.onSecondaryContainer)
+                }
+          }
           // Save button icon on the top right corner of the image, allows the user to save/unsave
           // the event
           Row(

@@ -39,13 +39,19 @@ import com.android.unio.ui.theme.AppTypography
 fun AssociationSearchBar(
     searchViewModel: SearchViewModel,
     onAssociationSelected: (Association) -> Unit,
-    modifier: Modifier = Modifier
+    shouldCloseExpandable: Boolean,
+    onOutsideClickHandled: () -> Unit
 ) {
   var searchQuery by remember { mutableStateOf("") }
-  var expanded by rememberSaveable { mutableStateOf(false) }
+  var isExpanded by rememberSaveable { mutableStateOf(false) }
   val associationResults by searchViewModel.associations.collectAsState()
   val searchState by searchViewModel.status.collectAsState()
   val context = LocalContext.current
+
+  if (shouldCloseExpandable && isExpanded) {
+    isExpanded = false
+    onOutsideClickHandled()
+  }
 
   DockedSearchBar(
       inputField = {
@@ -57,8 +63,8 @@ fun AssociationSearchBar(
               searchViewModel.debouncedSearch(it, SearchViewModel.SearchType.ASSOCIATION)
             },
             onSearch = {},
-            expanded = expanded,
-            onExpandedChange = { expanded = it },
+            expanded = isExpanded,
+            onExpandedChange = { isExpanded = it },
             placeholder = {
               Text(
                   text = context.getString(R.string.search_placeholder),
@@ -74,8 +80,8 @@ fun AssociationSearchBar(
             },
         )
       },
-      expanded = expanded,
-      onExpandedChange = { expanded = it },
+      expanded = isExpanded,
+      onExpandedChange = { isExpanded = it },
       modifier = Modifier.padding(horizontal = 16.dp).testTag(ExploreContentTestTags.SEARCH_BAR)) {
         when (searchState) {
           SearchViewModel.Status.ERROR -> {
@@ -106,7 +112,7 @@ fun AssociationSearchBar(
                   ListItem(
                       modifier =
                           Modifier.clickable {
-                                expanded = false
+                                isExpanded = false
                                 onAssociationSelected(association)
                               }
                               .testTag(
