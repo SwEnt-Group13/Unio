@@ -16,6 +16,7 @@ class ImageViewModel @Inject constructor(private val repository: ImageRepository
   ) {
     repository.uploadImage(inputStream, path, onSuccess) { exception ->
       Log.e("ImageViewModel", "Error uploading image: $exception")
+      onFailure()
     }
   }
 }
