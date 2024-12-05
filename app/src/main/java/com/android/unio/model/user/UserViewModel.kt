@@ -137,6 +137,7 @@ constructor(
 
   fun unsaveEvent(event: Event, removeNotification: () -> Unit) {
     val newUser = _user.value!!.copy()
+    removeNotification()
     newUser.savedEvents.remove(event.uid)
     updateUser(newUser)
   }
