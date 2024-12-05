@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -56,6 +57,7 @@ import com.android.unio.model.user.UserSocial
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.model.user.checkImageUri
 import com.android.unio.model.user.checkNewUser
+import com.android.unio.model.utils.TextLength
 import com.android.unio.model.utils.Utils
 import com.android.unio.ui.authentication.overlay.InterestOverlay
 import com.android.unio.ui.authentication.overlay.SocialOverlay
@@ -69,6 +71,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
+
 
 @Composable
 fun UserProfileEditionScreen(
@@ -252,7 +255,11 @@ fun UserProfileEditionScreenContent(
   ) { padding ->
     Column(
         modifier =
-            Modifier.padding(padding).fillMaxWidth().padding(40.dp).verticalScroll(scrollState),
+        Modifier
+            .padding(padding)
+            .fillMaxWidth()
+            .padding(40.dp)
+            .verticalScroll(scrollState),
         horizontalAlignment = Alignment.CenterHorizontally) {
           ProfilePicturePicker(
               profilePictureUri,
@@ -293,7 +300,9 @@ fun UserProfileEditionScreenContent(
                       .show()
                 }
               },
-              modifier = Modifier.testTag(UserEditionTestTags.DELETE_BUTTON).padding(10.dp),
+              modifier = Modifier
+                  .testTag(UserEditionTestTags.DELETE_BUTTON)
+                  .padding(10.dp),
               colors =
                   ButtonDefaults.buttonColors(containerColor = errorContainerDarkMediumContrast),
           ) {
@@ -344,29 +353,55 @@ private fun EditUserTextFields(
   val isLastNameError = isErrors.contains(AccountDetailsError.EMPTY_LAST_NAME)
 
   OutlinedTextField(
-      modifier = Modifier.padding(4.dp).testTag(UserEditionTestTags.FIRST_NAME_TEXT_FIELD),
+      modifier = Modifier
+          .padding(4.dp)
+          .testTag(UserEditionTestTags.FIRST_NAME_TEXT_FIELD),
       label = {
-        Text(
-            context.getString(R.string.user_edition_first_name),
-            modifier = Modifier.testTag(UserEditionTestTags.FIRST_NAME_TEXT))
+          Row(
+              horizontalArrangement = Arrangement.SpaceEvenly,
+              verticalAlignment = Alignment.CenterVertically,
+          ){
+              Text(
+                  context.getString(R.string.user_edition_first_name),
+                  modifier = Modifier.testTag(UserEditionTestTags.FIRST_NAME_TEXT))
+
+              if(Utils.checkInputLengthIsClose(firstName, TextLength.SMALL)){
+                  Text("${firstName.length}/${TextLength.SMALL.length}")
+              }
+          }
       },
       isError = (isFirstNameError),
       supportingText = {
         if (isFirstNameError) {
           Text(
               context.getString(AccountDetailsError.EMPTY_FIRST_NAME.errorMessage),
-              modifier = Modifier.testTag(UserEditionTestTags.FIRST_NAME_ERROR_TEXT))
+              modifier = Modifier.testTag(UserEditionTestTags.FIRST_NAME_ERROR_TEXT).padding(4.dp))
         }
       },
-      onValueChange = onFirstNameChange,
+      onValueChange = {
+          if(Utils.checkInputLength(it, TextLength.SMALL)){
+              onFirstNameChange(it)
+          }
+      },
       value = firstName)
 
   OutlinedTextField(
-      modifier = Modifier.padding(4.dp).testTag(UserEditionTestTags.LAST_NAME_TEXT_FIELD),
+      modifier = Modifier
+          .padding(4.dp)
+          .testTag(UserEditionTestTags.LAST_NAME_TEXT_FIELD),
       label = {
-        Text(
-            context.getString(R.string.user_edition_last_name),
-            modifier = Modifier.testTag(UserEditionTestTags.LAST_NAME_TEXT))
+          Row(
+              horizontalArrangement = Arrangement.SpaceEvenly,
+              verticalAlignment = Alignment.CenterVertically,
+          ) {
+              Text(
+                  context.getString(R.string.user_edition_last_name),
+                  modifier = Modifier.testTag(UserEditionTestTags.LAST_NAME_TEXT).padding(4.dp))
+
+              if(Utils.checkInputLengthIsClose(lastName, TextLength.SMALL)){
+                  Text("${lastName.length}/${TextLength.SMALL.length}")
+              }
+          }
       },
       isError = (isLastNameError),
       supportingText = {
@@ -376,21 +411,39 @@ private fun EditUserTextFields(
               modifier = Modifier.testTag(UserEditionTestTags.LAST_NAME_ERROR_TEXT))
         }
       },
-      onValueChange = onLastNameChange,
+      onValueChange = {
+          if(Utils.checkInputLength(it, TextLength.SMALL)){
+              onLastNameChange(it)
+          }
+      },
       value = lastName)
 
   OutlinedTextField(
       modifier =
-          Modifier.padding(4.dp)
-              .fillMaxWidth()
-              .height(200.dp)
-              .testTag(UserEditionTestTags.BIOGRAPHY_TEXT_FIELD),
+      Modifier
+          .padding(4.dp)
+          .fillMaxWidth()
+          .height(200.dp)
+          .testTag(UserEditionTestTags.BIOGRAPHY_TEXT_FIELD),
       label = {
-        Text(
-            context.getString(R.string.user_edition_bio),
-            modifier = Modifier.testTag(UserEditionTestTags.BIOGRAPHY_TEXT))
+          Row(
+              horizontalArrangement = Arrangement.SpaceEvenly,
+              verticalAlignment = Alignment.CenterVertically,
+          ) {
+              Text(
+                  context.getString(R.string.user_edition_bio),
+                  modifier = Modifier.testTag(UserEditionTestTags.BIOGRAPHY_TEXT).padding(4.dp))
+
+              if(Utils.checkInputLengthIsClose(bio, TextLength.LARGE)){
+                  Text("${bio.length}/${TextLength.LARGE.length}")
+              }
+          }
       },
-      onValueChange = onBioChange,
+      onValueChange ={
+          if(Utils.checkInputLength(it, TextLength.LARGE)){
+              onBioChange(it)
+          }
+      },
       value = bio)
 }
 
@@ -405,7 +458,9 @@ private fun InterestButtonAndFlowRow(
   val interests by interestsFlow.collectAsState()
 
   OutlinedButton(
-      modifier = Modifier.fillMaxWidth().testTag(UserEditionTestTags.INTERESTS_BUTTON),
+      modifier = Modifier
+          .fillMaxWidth()
+          .testTag(UserEditionTestTags.INTERESTS_BUTTON),
       onClick = onShowInterests) {
         Icon(
             Icons.Default.Add,
@@ -433,7 +488,9 @@ private fun SocialButtonAndFlowRow(
   val socials by userSocialFlow.collectAsState()
 
   OutlinedButton(
-      modifier = Modifier.fillMaxWidth().testTag(UserEditionTestTags.SOCIALS_BUTTON),
+      modifier = Modifier
+          .fillMaxWidth()
+          .testTag(UserEditionTestTags.SOCIALS_BUTTON),
       onClick = onShowSocials) {
         Icon(
             Icons.Default.Add,
@@ -442,7 +499,9 @@ private fun SocialButtonAndFlowRow(
         Text(context.getString(R.string.user_edition_edit_socials))
       }
 
-  FlowRow(modifier = Modifier.fillMaxWidth().padding(3.dp)) {
+  FlowRow(modifier = Modifier
+      .fillMaxWidth()
+      .padding(3.dp)) {
     socials.forEachIndexed { index, userSocial ->
       SocialInputChip(
           userSocial,
@@ -467,7 +526,10 @@ fun UserDeletePrompt(
         Card(
             elevation = CardDefaults.cardElevation(8.dp),
             shape = RoundedCornerShape(16.dp),
-            modifier = Modifier.fillMaxWidth().padding(20.dp).testTag("")) {
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(20.dp)
+                .testTag("")) {
               Column(
                   modifier = Modifier.padding(16.dp),
                   horizontalAlignment = Alignment.CenterHorizontally,
