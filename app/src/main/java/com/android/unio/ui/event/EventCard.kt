@@ -66,7 +66,6 @@ import com.android.unio.ui.image.AsyncImageWrapper
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
 import com.android.unio.ui.theme.AppTypography
-import com.google.firebase.Timestamp
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -97,7 +96,7 @@ fun EventCard(
     return
   }
 
-  var isSaved = user!!.savedEvents.contains(event.uid)
+  var isSaved by remember { mutableStateOf(user!!.savedEvents.contains(event.uid)) }
 
   val scheduleReminderNotification = {
     NotificationWorker.schedule(
@@ -128,13 +127,13 @@ fun EventCard(
       }
   val onClickSaveButton = {
     if (isSaved) {
-      user!!.savedEvents.remove(event.uid)
-      if (isNotificationsEnabled) {
-        NotificationWorker.unschedule(context, event.uid.hashCode())
+      userViewModel.unsaveEvent(event) {
+        if (isNotificationsEnabled) {
+          NotificationWorker.unschedule(context, event.uid.hashCode())
+        }
       }
-      isSaved = false
     } else {
-      if (event.startDate.seconds - Timestamp.now().seconds > 3 * SECONDS_IN_AN_HOUR) {
+      userViewModel.saveEvent(event) {
         if (!isNotificationsEnabled) {
           if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             // this permission requires api 33
@@ -145,10 +144,8 @@ fun EventCard(
           scheduleReminderNotification()
         }
       }
-
-      user!!.savedEvents.add(event.uid)
     }
-    userViewModel.updateUserDebounced(user!!)
+    isSaved = !isSaved
   }
 
   EventCardScaffold(
@@ -224,14 +221,14 @@ fun EventCardScaffold(
                 }
                 Spacer(modifier = Modifier.width(2.dp))
 
-                Box(
+                IconButton(
                     modifier =
                         Modifier.size(28.dp)
                             .clip(RoundedCornerShape(14.dp))
                             .background(MaterialTheme.colorScheme.inversePrimary)
-                            .clickable { onClickSaveButton() }
                             .padding(4.dp)
-                            .testTag(EventCardTestTags.EVENT_SAVE_BUTTON)) {
+                            .testTag(EventCardTestTags.EVENT_SAVE_BUTTON),
+                    onClick = { onClickSaveButton() }) {
                       Icon(
                           imageVector =
                               if (isSaved) Icons.Rounded.Favorite else Icons.Rounded.FavoriteBorder,

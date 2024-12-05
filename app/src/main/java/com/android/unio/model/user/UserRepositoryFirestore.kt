@@ -3,12 +3,14 @@ package com.android.unio.model.user
 import com.android.unio.model.authentication.registerAuthStateListener
 import com.android.unio.model.firestore.FirestorePaths.USER_PATH
 import com.android.unio.model.firestore.performFirestoreOperation
+import com.android.unio.model.firestore.registerSnapshotListener
 import com.android.unio.model.firestore.transform.hydrate
 import com.android.unio.model.firestore.transform.serialize
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.MetadataChanges
 import javax.inject.Inject
 
 class UserRepositoryFirestore @Inject constructor(private val db: FirebaseFirestore) :
@@ -37,19 +39,32 @@ class UserRepositoryFirestore @Inject constructor(private val db: FirebaseFirest
             onFailure = onFailure)
   }
 
+  /**
+   * Gets the user with the given id. Here, instead of using success and failure listener directly,
+   * we use a Snapshot Listener that call directly the callback when a read/write are made on the
+   * local (cache) database.
+   *
+   * @param id [String] : the id of the user to get.
+   * @param onSuccess [(User) -> Unit] : the callback to call when the user is found.
+   * @param onFailure [(Exception) -> Unit] : the callback to call when an error occurs.
+   */
   override fun getUserWithId(
       id: String,
       onSuccess: (User) -> Unit,
       onFailure: (Exception) -> Unit
   ) {
-    getUserRef(id)
-        .get()
-        .performFirestoreOperation(
-            onSuccess = { document ->
-              val user = hydrate(document.data)
-              onSuccess(user)
-            },
-            onFailure = onFailure)
+    getUserRef(id).registerSnapshotListener(MetadataChanges.EXCLUDE) { documentSnapshot, exception
+      ->
+      if (exception != null) {
+        onFailure(exception)
+        return@registerSnapshotListener
+      }
+
+      if (documentSnapshot != null && documentSnapshot.exists()) {
+        val user = hydrate(documentSnapshot.data)
+        onSuccess(user)
+      }
+    }
   }
 
   override fun updateUser(user: User, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
