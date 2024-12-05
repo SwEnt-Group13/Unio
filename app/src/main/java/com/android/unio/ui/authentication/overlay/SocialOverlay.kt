@@ -56,6 +56,8 @@ import com.android.unio.model.user.UserSocial
 import com.android.unio.model.user.UserSocialError
 import com.android.unio.model.user.checkSocialContent
 import com.android.unio.model.user.getPlaceHolderText
+import com.android.unio.model.utils.TextLength
+import com.android.unio.model.utils.Utils
 import com.android.unio.ui.theme.AppTypography
 import kotlinx.coroutines.flow.MutableStateFlow
 
@@ -237,7 +239,11 @@ fun SocialPrompt(
                 // Text field to input the social URL (for example the instagram @)
                 OutlinedTextField(
                     value = socialURL,
-                    onValueChange = { socialURL = it },
+                    onValueChange = {
+                        if(Utils.checkInputLength(it, TextLength.SMALL)) {
+                            socialURL = it
+                        }
+                    },
                     placeholder = {
                       if (selectedSocial != Social.WEBSITE) {
                         Text(getPlaceHolderText(selectedSocial), fontWeight = FontWeight.Bold)
