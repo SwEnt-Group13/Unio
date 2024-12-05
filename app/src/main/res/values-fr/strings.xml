@@ -101,6 +101,7 @@
     <string name="user_settings_discard_changes" translatable="true">Annuler vos modifications</string>
     <string name="user_settings_save_changes" translatable="true">Sauvegarder vos modifications</string>
     <string name="user_settings_modified_successfully" translatable="true">Changements correctement modifié</string>
+    <string name="user_settings_modified_offline">Changements enregistrés. Connectez-vous à Internet pour appliquer les changements</string>
 
 
 
