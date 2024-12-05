@@ -45,7 +45,6 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.core.net.toUri
 import com.android.unio.R
-import com.android.unio.model.authentication.AuthViewModel
 import com.android.unio.model.image.ImageRepository
 import com.android.unio.model.strings.StoragePathsStrings
 import com.android.unio.model.strings.test_tags.UserEditionTestTags
@@ -208,7 +207,7 @@ fun UserProfileEditionScreenContent(
    * simply be copied from the user.
    */
   val hasInternet = Utils.checkInternetConnection(context)
-    val createUser: (String) -> Unit = { uri ->
+  val createUser: (String) -> Unit = { uri ->
     val newUser =
         User(
             uid = user.uid,
@@ -282,17 +281,18 @@ fun UserProfileEditionScreenContent(
                 Text(context.getString(R.string.user_edition_save_changes))
               }
 
-
           Button(
               onClick = {
-                  if(hasInternet){
-                      showDeleteUserPrompt = true
-                  }else{
-                    Toast.makeText(
-                        context,
-                        context.getString(R.string.user_edition_delete_user_offline),
-                        Toast.LENGTH_SHORT).show()
-                  }},
+                if (hasInternet) {
+                  showDeleteUserPrompt = true
+                } else {
+                  Toast.makeText(
+                          context,
+                          context.getString(R.string.user_edition_delete_user_offline),
+                          Toast.LENGTH_SHORT)
+                      .show()
+                }
+              },
               modifier = Modifier.testTag(UserEditionTestTags.DELETE_BUTTON).padding(10.dp),
               colors =
                   ButtonDefaults.buttonColors(containerColor = errorContainerDarkMediumContrast),

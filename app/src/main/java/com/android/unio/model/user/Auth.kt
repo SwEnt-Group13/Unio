@@ -1,15 +1,10 @@
 package com.android.unio.model.user
 
 import android.util.Log
-import com.android.unio.model.authentication.AuthViewModel
-import com.android.unio.model.image.ImageRepository
-import com.android.unio.model.strings.StoragePathsStrings
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.google.firebase.auth.FirebaseUser
-import kotlinx.coroutines.async
-import kotlinx.coroutines.coroutineScope
 
 enum class SignInState {
   INVALID_CREDENTIALS,
