@@ -204,4 +204,8 @@ constructor(
       }
     })
   }
+
+    fun addUserPictureToEvent(event:Event, picture: EventUserPicture) {
+        imageRepository.add
+    }
 }

@@ -6,6 +6,9 @@ import com.android.unio.model.association.Member
 import com.android.unio.model.association.Role
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventRepositoryFirestore
+import com.android.unio.model.event.EventUserPicture
+import com.android.unio.model.event.EventUserPictureRepository
+import com.android.unio.model.event.EventUserPictureRepositoryFirestore
 import com.android.unio.model.map.Location
 import com.android.unio.model.user.User
 import com.android.unio.model.user.UserRepositoryFirestore
@@ -80,4 +83,11 @@ fun EventRepositoryFirestore.Companion.serialize(event: Event): Map<String, Any>
               Location::name.name to event.location.name),
       Event::types.name to event.types.map { it.name },
       Event::placesRemaining.name to event.placesRemaining)
+}
+fun EventUserPictureRepositoryFirestore.Companion.serialize(eventUserPicture: EventUserPicture): Map<String, Any> {
+    return mapOf(
+        EventUserPicture::uid.name to eventUserPicture.uid,
+        EventUserPicture::image.name to eventUserPicture.image,
+        EventUserPicture::author.name to eventUserPicture.author,
+        EventUserPicture::likes.name to eventUserPicture.likes)
 }

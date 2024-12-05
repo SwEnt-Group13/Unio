@@ -1,6 +1,7 @@
 package com.android.unio.model.firestore.transform
 
 import com.android.unio.mocks.firestore.MockReferenceList
+import com.android.unio.mocks.user.MockUser
 import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationCategory
 import com.android.unio.model.association.AssociationRepositoryFirestore
@@ -12,6 +13,8 @@ import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventRepositoryFirestore
 import com.android.unio.model.event.EventType
 import com.android.unio.model.event.EventUserPicture
+import com.android.unio.model.event.EventUserPictureRepositoryFirestore
+import com.android.unio.model.firestore.ReferenceElement
 import com.android.unio.model.firestore.firestoreReferenceListWith
 import com.android.unio.model.map.Location
 import com.android.unio.model.user.Interest
@@ -121,7 +124,7 @@ fun EventRepositoryFirestore.Companion.hydrate(data: Map<String, Any>?): Event {
   val location = data?.get(Event::location.name) as? Map<String, Any> ?: emptyMap()
   val eventPictures =
       EventUserPicture.firestoreReferenceListWith(
-          data?.get(Event::organisers.name) as? List<String> ?: emptyList())
+          data?.get(Event::eventPictures.name) as? List<String> ?: emptyList())
 
   return Event(
       uid = data?.get(Event::uid.name) as? String ?: "",
@@ -141,5 +144,15 @@ fun EventRepositoryFirestore.Companion.hydrate(data: Map<String, Any>?): Event {
               name = location.get(Location::name.name) as? String ?: ""),
       types = types.map { EventType.valueOf(it) },
       placesRemaining = data?.get(Event::placesRemaining.name) as? Int ?: -1,
-      eventPictures = MockReferenceList())
+      eventPictures = eventPictures)
+}
+fun EventUserPictureRepositoryFirestore.Companion.hydrate(data: Map<String, Any>?): EventUserPicture {
+
+
+    return EventUserPicture(
+        uid = data?.get(EventUserPicture::uid.name) as? String ?: "",
+        author = data?.get(EventUserPicture::author.name) as? User ?: MockUser.createMockUser(), // see if there's another way to implement this
+        image = data?.get(EventUserPicture::image.name) as? String ?: "",
+        likes = data?.get(EventUserPicture::likes.name) as? Int ?: 0,
+    )
 }
