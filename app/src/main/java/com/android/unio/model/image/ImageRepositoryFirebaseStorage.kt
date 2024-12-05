@@ -33,7 +33,7 @@ class ImageRepositoryFirebaseStorage @Inject constructor(storage: FirebaseStorag
     val uploadTask = path.putStream(imageStream)
 
     uploadTask.performFirestoreOperation(
-        onSuccess = { getImageUrl(firebasePath, onSuccess = onSuccess, onFailure = onFailure) },
+        onSuccess = { getImageUrl(firebasePath, onSuccess, onFailure) },
         onFailure = { e -> onFailure(e) })
   }
 }

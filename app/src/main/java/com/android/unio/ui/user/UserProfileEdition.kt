@@ -1,7 +1,6 @@
 package com.android.unio.ui.user
 
 import android.net.Uri
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -37,7 +36,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import com.android.unio.R
-import com.android.unio.model.image.ImageRepository
+import com.android.unio.model.image.ImageViewModel
 import com.android.unio.model.strings.StoragePathsStrings
 import com.android.unio.model.strings.test_tags.UserEditionTestTags
 import com.android.unio.model.user.AccountDetailsError
@@ -60,7 +59,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 @Composable
 fun UserProfileEditionScreen(
     userViewModel: UserViewModel,
-    imageRepository: ImageRepository,
+    imageViewModel: ImageViewModel,
     navigationAction: NavigationAction
 ) {
 
@@ -81,12 +80,11 @@ fun UserProfileEditionScreen(
               createUser(user!!.profilePicture) // create a user with the same URI
           ImageUriType.LOCAL -> { // create a user with a new URI and upload the image to storage
             val inputStream = context.contentResolver.openInputStream(profilePictureUri.value)
-            imageRepository.uploadImage(
+            imageViewModel.uploadImage(
                 inputStream!!,
                 StoragePathsStrings.USER_IMAGES + userId,
                 onSuccess = { imageUrl -> createUser(imageUrl) },
-                onFailure = { exception ->
-                  Log.e("UserSettings", "Error uploading image: $exception")
+                onFailure = {
                   Toast.makeText(
                           context,
                           context.getString(R.string.account_details_image_upload_error),

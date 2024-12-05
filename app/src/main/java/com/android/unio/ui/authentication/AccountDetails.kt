@@ -1,7 +1,6 @@
 package com.android.unio.ui.authentication
 
 import android.net.Uri
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -38,7 +37,7 @@ import com.android.unio.R
 import com.android.unio.model.association.Association
 import com.android.unio.model.event.Event
 import com.android.unio.model.firestore.emptyFirestoreReferenceList
-import com.android.unio.model.image.ImageRepository
+import com.android.unio.model.image.ImageViewModel
 import com.android.unio.model.strings.StoragePathsStrings
 import com.android.unio.model.strings.test_tags.AccountDetailsTestTags
 import com.android.unio.model.user.AccountDetailsError
@@ -63,7 +62,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 fun AccountDetailsScreen(
     navigationAction: NavigationAction,
     userViewModel: UserViewModel,
-    imageRepository: ImageRepository
+    imageViewModel: ImageViewModel
 ) {
 
   val context = LocalContext.current
@@ -76,12 +75,11 @@ fun AccountDetailsScreen(
           createUser("", userId!!)
         } else {
           val inputStream = context.contentResolver.openInputStream(profilePictureUri.value)
-          imageRepository.uploadImage(
+          imageViewModel.uploadImage(
               inputStream!!,
               StoragePathsStrings.USER_IMAGES + userId,
               onSuccess = { imageUrl -> createUser(imageUrl, userId!!) },
-              onFailure = { exception ->
-                Log.e("AccountDetails", "Error uploading image: $exception")
+              onFailure = {
                 Toast.makeText(
                         context,
                         context.getString(R.string.account_details_image_upload_error),
