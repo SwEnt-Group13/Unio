@@ -274,7 +274,7 @@ fun AppTheme(
 ) {
   val preferences by LocalPreferenceFlow.current.collectAsState()
 
-  val theme = (preferences.asMap().getOrDefault(AppPreferences.THEME, AppPreferences.Theme.SYSTEM))
+  val theme = preferences.asMap().getOrDefault(AppPreferences.THEME, AppPreferences.Theme.SYSTEM)
   val language =
       preferences.asMap().getOrDefault(AppPreferences.LANGUAGE, AppPreferences.Language.default)
 
