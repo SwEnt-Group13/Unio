@@ -57,7 +57,6 @@ import com.android.unio.model.user.UserSocial
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.model.user.checkImageUri
 import com.android.unio.model.user.checkNewUser
-import com.android.unio.model.user.deleteUser
 import com.android.unio.model.utils.Utils
 import com.android.unio.ui.authentication.overlay.InterestOverlay
 import com.android.unio.ui.authentication.overlay.SocialOverlay
@@ -75,7 +74,6 @@ import kotlinx.coroutines.launch
 @Composable
 fun UserProfileEditionScreen(
     userViewModel: UserViewModel,
-    authViewModel: AuthViewModel,
     imageRepository: ImageRepository,
     navigationAction: NavigationAction
 ) {
@@ -143,11 +141,8 @@ fun UserProfileEditionScreen(
       },
       onDeleteUser = { uid ->
         CoroutineScope(Dispatchers.Main).launch {
-          deleteUser(
+          userViewModel.deleteUser(
               uid,
-              authViewModel,
-              userViewModel,
-              imageRepository,
               deleteWithProfilePicture = user!!.profilePicture != Uri.EMPTY.toString(),
               onSuccess = {
                 Toast.makeText(

@@ -5,13 +5,18 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.android.unio.model.authentication.AuthViewModel
 import com.android.unio.model.authentication.registerAuthStateListener
+import com.android.unio.model.image.ImageRepository
+import com.android.unio.model.strings.StoragePathsStrings
 import com.google.firebase.Firebase
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.auth
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -19,7 +24,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 @HiltViewModel
-class UserViewModel @Inject constructor(private val userRepository: UserRepository) : ViewModel() {
+class UserViewModel @Inject constructor(private val userRepository: UserRepository,
+                                        private val imageRepository: ImageRepository) : ViewModel() {
   private val _user = MutableStateFlow<User?>(null)
   val user: StateFlow<User?> = _user.asStateFlow()
 
@@ -39,9 +45,10 @@ class UserViewModel @Inject constructor(private val userRepository: UserReposito
     get() = _credential
 
   constructor(
-      repository: UserRepository,
+      userRepository: UserRepository,
+      imageRepository: ImageRepository,
       initializeWithAuthenticatedUser: Boolean
-  ) : this(repository) {
+  ) : this(userRepository, imageRepository) {
     this.initializeWithAuthenticatedUser = initializeWithAuthenticatedUser
   }
 
@@ -139,4 +146,63 @@ class UserViewModel @Inject constructor(private val userRepository: UserReposito
   fun setCredential(credential: AuthCredential?) {
     _credential = credential
   }
+
+  /**
+   * Deletes the user with the given userId from firebase auth, storage (for the profile picture) and
+   * firestore
+   *
+   * @param userId The Id of the corresponding user we want to delete
+   * @return true if all three method were successful and false otherwise
+   */
+  suspend fun deleteUser(
+    userId: String,
+    deleteWithProfilePicture: Boolean,
+    onSuccess: () -> Unit,
+    onFailure: (Exception) -> Unit
+  ) {
+    try {
+      coroutineScope {
+
+        // Only delete the profile picture if the user has one!
+        if (deleteWithProfilePicture) {
+          val imageTask = async {
+            imageRepository.deleteImage(
+              StoragePathsStrings.USER_IMAGES + userId,
+              onSuccess = { Log.i("UserDeletion", "Successfully deleted user's profile picture") },
+              onFailure = { throw it })
+          }
+          imageTask.await()
+        }
+
+        val authTask = async {
+          userRepository.deleteUserInAuth(
+            userId,
+            onSuccess = {
+              Log.i("AuthViewModel", "User deleted successfully")
+              onSuccess()
+            },
+            onFailure = {
+              Log.e("AuthViewModel", "Failed to delete user", it)
+              onFailure(it)
+            })
+        }
+
+        val firestoreTask = async {
+          deleteUserDocument(
+            userId,
+            onSuccess = { Log.i("UserDeletion", "Successfully deleted user from firestore") },
+            onFailure = { throw it })
+        }
+
+        authTask.await()
+        firestoreTask.await()
+
+        onSuccess()
+      }
+    } catch (e: Exception) {
+      Log.e("UserDeletion", "Failed to delete user: ${e.message}", e)
+      onFailure(e)
+    }
+  }
+
 }
