@@ -85,6 +85,11 @@ class UserAccountCreationTest : EndToEndTest() {
     composeTestRule.onNodeWithTag(InterestsOverlayTestTags.SAVE_BUTTON).assertIsDisplayed()
     composeTestRule.onNodeWithTag(InterestsOverlayTestTags.SAVE_BUTTON).performClick()
 
+    composeTestRule.onNodeWithTag(AccountDetailsTestTags.PROFILE_PICTURE_ICON).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(AccountDetailsTestTags.PROFILE_PICTURE_ICON).performClick()
+
+    // balablablaGoBack !dsajdsajdbsakjdsa
+
     composeTestRule
         .onNodeWithTag(AccountDetailsTestTags.CONTINUE_BUTTON)
         .assertDisplayComponentInScroll()

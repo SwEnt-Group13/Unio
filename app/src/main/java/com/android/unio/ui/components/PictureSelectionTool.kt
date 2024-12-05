@@ -23,8 +23,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
+import com.android.unio.model.strings.test_tags.PictureSelectionToolTestTags
 
 /**
  * A composable function to select and display pictures from the gallery or camera. It allows the
@@ -42,11 +44,18 @@ fun PictureSelectionTool(
     allowGallery: Boolean,
     allowCamera: Boolean,
     onValidate: (List<Uri>) -> Unit,
-    onCancel: () -> Unit
+    onCancel: () -> Unit,
+    initialSelectedPictures: List<Uri>
 ) {
   val context = LocalContext.current
 
   val selectedPictures = remember { mutableStateListOf<Uri>() }
+
+  // Initialize selectedPictures with initialSelectedPictures
+  LaunchedEffect(initialSelectedPictures) {
+    selectedPictures.clear() // Clear existing pictures, if any
+    selectedPictures.addAll(initialSelectedPictures) // Add the initial selected pictures
+  }
 
   // Launcher for selecting multiple images from the gallery
   val pickMediaLauncher =
@@ -97,14 +106,16 @@ fun PictureSelectionTool(
                   painter = rememberAsyncImagePainter(uri),
                   contentDescription = "Selected Picture",
                   contentScale = ContentScale.Crop,
-                  modifier = Modifier.fillMaxSize())
+                  modifier =
+                      Modifier.fillMaxSize().testTag(PictureSelectionToolTestTags.SELECTED_PICTURE))
               Icon(
                   Icons.Default.Close,
                   contentDescription = "Remove Picture",
                   modifier =
                       Modifier.align(Alignment.TopEnd)
                           .clickable { selectedPictures.remove(uri) }
-                          .padding(4.dp))
+                          .padding(4.dp)
+                          .testTag(PictureSelectionToolTestTags.REMOVE_PICTURE))
             }
           }
         }
@@ -119,7 +130,8 @@ fun PictureSelectionTool(
             onClick = {
               pickMediaLauncher.launch(
                   PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
-            }) {
+            },
+            modifier = Modifier.testTag(PictureSelectionToolTestTags.GALLERY_ADD)) {
               Icon(Icons.Default.Add, contentDescription = "Add from Gallery")
               Text("Gallery")
             }
@@ -132,7 +144,8 @@ fun PictureSelectionTool(
               val uri = createImageUri() // Local stable reference
               cameraImageUri.value = uri
               takePictureLauncher.launch(uri)
-            }) {
+            },
+            modifier = Modifier.testTag(PictureSelectionToolTestTags.CAMERA_ADD)) {
               Icon(Icons.Default.Add, contentDescription = "Take Picture")
               Text("Camera")
             }
@@ -143,12 +156,18 @@ fun PictureSelectionTool(
 
     // Buttons for validating or canceling the picture selection
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
-      Button(onClick = { onValidate(selectedPictures) }) {
-        Icon(Icons.Default.Check, contentDescription = "Validate")
-        Text("Validate")
-      }
+      Button(
+          onClick = { onValidate(selectedPictures) },
+          modifier = Modifier.testTag(PictureSelectionToolTestTags.VALIDATE_BUTTON)) {
+            Icon(Icons.Default.Check, contentDescription = "Validate")
+            Text("Validate")
+          }
 
-      OutlinedButton(onClick = onCancel) { Text("Cancel") }
+      OutlinedButton(
+          onClick = onCancel,
+          modifier = Modifier.testTag(PictureSelectionToolTestTags.CANCEL_BUTTON)) {
+            Text("Cancel")
+          }
     }
   }
 }

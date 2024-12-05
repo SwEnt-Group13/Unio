@@ -94,3 +94,12 @@ object WelcomeTestTags {
   const val BUTTON = "welcomeButton"
   const val FORGOT_PASSWORD = "welcomeForgotPassword"
 }
+
+object PictureSelectionToolTestTags {
+  const val SELECTED_PICTURE = "pictureSelectionToolSelectedPicture"
+  const val REMOVE_PICTURE = "pictureSelectionToolRemovePicture"
+  const val GALLERY_ADD = "pictureSelectionToolGalleryAdd"
+  const val CAMERA_ADD = "pictureSelectionToolCameraAdd"
+  const val VALIDATE_BUTTON = "pictureSelectionToolValidateButton"
+  const val CANCEL_BUTTON = "pictureSelectionToolCancelButton"
+}

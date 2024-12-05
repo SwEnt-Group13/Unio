@@ -112,7 +112,8 @@ fun ProfilePicturePicker(
               onCancel = {
                 scope.launch { sheetState.hide() }
                 showSheet = false
-              })
+              },
+              initialSelectedPictures = emptyList())
         })
   }
 }
