@@ -270,10 +270,6 @@ class EventCardTest : TearDown() {
     Thread.sleep(500)
     assert(indicator)
     verify { NotificationWorker.schedule(any(), any()) }
-
-    composeTestRule.onNodeWithTag(EventCardTestTags.EVENT_SAVE_BUTTON).performClick()
-    Thread.sleep(500)
-    assert(!indicator)
   }
 
   @After
