@@ -42,7 +42,6 @@ import io.mockk.mockkStatic
 import io.mockk.slot
 import io.mockk.unmockkStatic
 import io.mockk.verify
-import java.util.GregorianCalendar
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.cancel
@@ -60,6 +59,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.Shadows
+import java.util.GregorianCalendar
 
 @RunWith(RobolectricTestRunner::class)
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -120,7 +120,9 @@ class SearchRepositoryTest {
           price = 40.5,
           startDate = Timestamp(GregorianCalendar(2004, 7, 1).time),
           location = Location(1.2345, 2.3455, "Somewhere"),
-          placesRemaining = -1)
+          placesRemaining = -1,
+          eventPictures = emptyList<String>()
+      )
   private val event2 =
       Event(
           uid = "2",
@@ -132,7 +134,9 @@ class SearchRepositoryTest {
           price = 40.5,
           startDate = Timestamp(GregorianCalendar(2008, 7, 1).time),
           location = Location(1.2345, 2.3455, "Somewhere"),
-          placesRemaining = -1)
+          placesRemaining = -1,
+          eventPictures = emptyList<String>()
+      )
 
   @Before
   fun setUp() {

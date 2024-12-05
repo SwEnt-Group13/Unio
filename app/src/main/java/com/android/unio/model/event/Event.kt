@@ -37,6 +37,8 @@ import java.util.Date
  * @property endDate event end date
  * @property location event location
  * @property types list of event types
+ * @property placesRemaining number of remaining places
+ * @property eventPictures number of remaining places
  */
 data class Event(
     override var uid: String = "",
@@ -51,7 +53,8 @@ data class Event(
     val endDate: Timestamp = Timestamp(Date()),
     val location: Location = Location(),
     val types: List<EventType> = mutableListOf(EventType.OTHER),
-    val placesRemaining: Int = -1
+    val placesRemaining: Int = -1,
+    val eventPictures: List<String> = mutableListOf()
 ) : UniquelyIdentifiable {
   companion object
 }

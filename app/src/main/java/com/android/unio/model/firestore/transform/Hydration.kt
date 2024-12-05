@@ -135,5 +135,7 @@ fun EventRepositoryFirestore.Companion.hydrate(data: Map<String, Any>?): Event {
               longitude = location.get(Location::longitude.name) as? Double ?: 0.0,
               name = location.get(Location::name.name) as? String ?: ""),
       types = types.map { EventType.valueOf(it) },
-      placesRemaining = data?.get(Event::placesRemaining.name) as? Int ?: -1)
+      placesRemaining = data?.get(Event::placesRemaining.name) as? Int ?: -1,
+      eventPictures = emptyList<String>()
+  )
 }

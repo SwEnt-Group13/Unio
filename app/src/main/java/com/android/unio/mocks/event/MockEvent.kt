@@ -112,7 +112,9 @@ class MockEvent {
           endDate = endDate,
           location = location,
           types = types,
-          placesRemaining = -1)
+          placesRemaining = -1,
+          eventPictures = emptyList<String>()
+      )
     }
 
     /** Creates a list of mock Events with default properties */

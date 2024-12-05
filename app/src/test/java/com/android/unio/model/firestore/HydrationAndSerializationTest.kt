@@ -23,8 +23,8 @@ import com.google.firebase.Timestamp
 import firestoreReferenceElementWith
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertTrue
-import kotlin.reflect.full.memberProperties
 import org.junit.Test
+import kotlin.reflect.full.memberProperties
 
 class HydrationAndSerializationTest {
 
@@ -72,7 +72,9 @@ class HydrationAndSerializationTest {
           startDate = Timestamp.now(),
           endDate = Timestamp.now(),
           location = Location(latitude = 0.0, longitude = 0.0, name = "Example Location"),
-          placesRemaining = -1)
+          placesRemaining = -1,
+          eventPictures = emptyList<String>()
+      )
 
   /** Round-trip tests for serialization and hydration of user, association, and event instances. */
   @Test

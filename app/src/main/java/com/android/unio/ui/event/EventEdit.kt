@@ -290,6 +290,7 @@ fun EventEditScreen(
                               startDate = startTimestamp!!,
                               endDate = endTimestamp!!,
                               location = selectedLocation!!,
+                              eventPictures = emptyList<String>(),
                           )
                       // This should be extracted to a util
                       if (checkImageUri(eventBannerUri.toString()) == ImageUriType.LOCAL) {

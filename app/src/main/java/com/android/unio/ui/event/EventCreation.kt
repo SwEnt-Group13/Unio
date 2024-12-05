@@ -234,6 +234,7 @@ fun EventCreationScreen(
                         startDate = startTimestamp!!,
                         endDate = endTimestamp!!,
                         location = selectedLocation!!,
+                        eventPictures = emptyList<String>(),
                     ),
                     onSuccess = { navigationAction.goBack() },
                     onFailure = {
