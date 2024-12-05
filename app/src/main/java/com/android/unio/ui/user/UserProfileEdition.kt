@@ -3,6 +3,7 @@ package com.android.unio.ui.user
 import android.net.Uri
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -10,11 +11,15 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -34,7 +39,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.core.net.toUri
 import com.android.unio.R
 import com.android.unio.model.image.ImageRepository
@@ -55,7 +63,12 @@ import com.android.unio.ui.components.InterestInputChip
 import com.android.unio.ui.components.ProfilePicturePicker
 import com.android.unio.ui.components.SocialInputChip
 import com.android.unio.ui.navigation.NavigationAction
+import com.android.unio.ui.navigation.Screen
+import com.android.unio.ui.theme.errorContainerDarkMediumContrast
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
 
 @Composable
 fun UserProfileEditionScreen(
@@ -102,7 +115,7 @@ fun UserProfileEditionScreen(
             onSuccess = {
               Toast.makeText(
                       context,
-                      context.getString(R.string.user_settings_modified_successfully),
+                      context.getString(R.string.user_edition_modified_successfully),
                       Toast.LENGTH_SHORT)
                   .show()
               navigationAction.goBack()
@@ -111,7 +124,7 @@ fun UserProfileEditionScreen(
       onUploadUserOffline = { modifiedUser ->
         Toast.makeText(
                 context,
-                context.getString(R.string.user_settings_modified_offline),
+                context.getString(R.string.user_edition_modified_offline),
                 Toast.LENGTH_LONG)
             .show()
         userViewModel.addUser(
@@ -119,11 +132,33 @@ fun UserProfileEditionScreen(
             onSuccess = {
               Toast.makeText(
                       context,
-                      context.getString(R.string.user_settings_modified_successfully),
+                      context.getString(R.string.user_edition_modified_successfully),
                       Toast.LENGTH_SHORT)
                   .show()
+              navigationAction.goBack()
             })
-        navigationAction.goBack()
+      },
+      onDeleteUser = { uid ->
+        CoroutineScope(Dispatchers.Main).launch {
+          userViewModel.deleteUser(
+              uid,
+              deleteWithProfilePicture = user!!.profilePicture != Uri.EMPTY.toString(),
+              onSuccess = {
+                Toast.makeText(
+                        context,
+                        context.getString(R.string.user_edition_delete_user_success),
+                        Toast.LENGTH_SHORT)
+                    .show()
+                navigationAction.navigateTo(Screen.WELCOME)
+              },
+              onFailure = {
+                Toast.makeText(
+                        context,
+                        context.getString(R.string.user_edition_delete_user_failure),
+                        Toast.LENGTH_SHORT)
+                    .show()
+              })
+        }
       })
 }
 
@@ -134,7 +169,8 @@ fun UserProfileEditionScreenContent(
     onDiscardChanges: () -> Unit,
     onModifyUser: (MutableState<Uri>, (String) -> Unit) -> Unit,
     onUploadUserOnline: (User) -> Unit,
-    onUploadUserOffline: (User) -> Unit
+    onUploadUserOffline: (User) -> Unit,
+    onDeleteUser: (String) -> Unit
 ) {
 
   val context = LocalContext.current
@@ -162,6 +198,7 @@ fun UserProfileEditionScreenContent(
 
   var showInterestsOverlay by remember { mutableStateOf(false) }
   var showSocialsOverlay by remember { mutableStateOf(false) }
+  var showDeleteUserPrompt by remember { mutableStateOf(false) }
 
   val scrollState = rememberScrollState()
 
@@ -201,7 +238,7 @@ fun UserProfileEditionScreenContent(
         TopAppBar(
             title = {
               Text(
-                  context.getString(R.string.user_settings_discard_changes),
+                  context.getString(R.string.user_edition_discard_changes),
                   modifier = Modifier.testTag(UserEditionTestTags.DISCARD_TEXT))
             },
             navigationIcon = {
@@ -241,8 +278,27 @@ fun UserProfileEditionScreenContent(
           Button(
               onClick = { onModifyUser(profilePictureUri, createUser) },
               modifier = Modifier.testTag(UserEditionTestTags.SAVE_BUTTON)) {
-                Text(context.getString(R.string.user_settings_save_changes))
+                Text(context.getString(R.string.user_edition_save_changes))
               }
+
+          Button(
+              onClick = {
+                if (Utils.checkInternetConnection(context)) {
+                  showDeleteUserPrompt = true
+                } else {
+                  Toast.makeText(
+                          context,
+                          context.getString(R.string.user_edition_delete_user_offline),
+                          Toast.LENGTH_SHORT)
+                      .show()
+                }
+              },
+              modifier = Modifier.testTag(UserEditionTestTags.DELETE_BUTTON).padding(10.dp),
+              colors =
+                  ButtonDefaults.buttonColors(containerColor = errorContainerDarkMediumContrast),
+          ) {
+            Text(context.getString(R.string.user_edition_delete_user))
+          }
         }
 
     if (showInterestsOverlay) {
@@ -263,6 +319,12 @@ fun UserProfileEditionScreenContent(
             showSocialsOverlay = false
           },
           userSocials = socials)
+    }
+
+    if (showDeleteUserPrompt) {
+      UserDeletePrompt(
+          onDismiss = { showDeleteUserPrompt = false },
+          onConfirmDelete = { onDeleteUser(user.uid) })
     }
   }
 }
@@ -285,7 +347,7 @@ private fun EditUserTextFields(
       modifier = Modifier.padding(4.dp).testTag(UserEditionTestTags.FIRST_NAME_TEXT_FIELD),
       label = {
         Text(
-            context.getString(R.string.user_settings_first_name),
+            context.getString(R.string.user_edition_first_name),
             modifier = Modifier.testTag(UserEditionTestTags.FIRST_NAME_TEXT))
       },
       isError = (isFirstNameError),
@@ -303,7 +365,7 @@ private fun EditUserTextFields(
       modifier = Modifier.padding(4.dp).testTag(UserEditionTestTags.LAST_NAME_TEXT_FIELD),
       label = {
         Text(
-            context.getString(R.string.user_settings_last_name),
+            context.getString(R.string.user_edition_last_name),
             modifier = Modifier.testTag(UserEditionTestTags.LAST_NAME_TEXT))
       },
       isError = (isLastNameError),
@@ -325,7 +387,7 @@ private fun EditUserTextFields(
               .testTag(UserEditionTestTags.BIOGRAPHY_TEXT_FIELD),
       label = {
         Text(
-            context.getString(R.string.user_settings_bio),
+            context.getString(R.string.user_edition_bio),
             modifier = Modifier.testTag(UserEditionTestTags.BIOGRAPHY_TEXT))
       },
       onValueChange = onBioChange,
@@ -349,7 +411,7 @@ private fun InterestButtonAndFlowRow(
             Icons.Default.Add,
             contentDescription =
                 context.getString(R.string.account_details_content_description_add))
-        Text(context.getString(R.string.user_settings_edit_interests))
+        Text(context.getString(R.string.user_edition_edit_interests))
       }
   FlowRow {
     interests.forEach { pair ->
@@ -377,7 +439,7 @@ private fun SocialButtonAndFlowRow(
             Icons.Default.Add,
             contentDescription =
                 context.getString(R.string.account_details_content_description_close))
-        Text(context.getString(R.string.user_settings_edit_socials))
+        Text(context.getString(R.string.user_edition_edit_socials))
       }
 
   FlowRow(modifier = Modifier.fillMaxWidth().padding(3.dp)) {
@@ -390,4 +452,39 @@ private fun SocialButtonAndFlowRow(
           testTag = UserEditionTestTags.SOCIALS_CHIP)
     }
   }
+}
+
+@Composable
+fun UserDeletePrompt(
+    onDismiss: () -> Unit,
+    onConfirmDelete: () -> Unit,
+) {
+  val context = LocalContext.current
+
+  Dialog(
+      onDismissRequest = onDismiss,
+      properties = DialogProperties(usePlatformDefaultWidth = false)) {
+        Card(
+            elevation = CardDefaults.cardElevation(8.dp),
+            shape = RoundedCornerShape(16.dp),
+            modifier = Modifier.fillMaxWidth().padding(20.dp).testTag("")) {
+              Column(
+                  modifier = Modifier.padding(16.dp),
+                  horizontalAlignment = Alignment.CenterHorizontally,
+                  verticalArrangement = Arrangement.SpaceBetween) {
+                    Text(
+                        text = context.getString(R.string.user_edition_delete_user_confirmation),
+                        textAlign = TextAlign.Center)
+
+                    Button(
+                        modifier = Modifier.testTag(UserEditionTestTags.DELETE_CONFIRMATION),
+                        onClick = onConfirmDelete,
+                        colors =
+                            ButtonDefaults.buttonColors(
+                                containerColor = errorContainerDarkMediumContrast)) {
+                          Text(context.getString(R.string.user_edition_delete_user_confirm))
+                        }
+                  }
+            }
+      }
 }

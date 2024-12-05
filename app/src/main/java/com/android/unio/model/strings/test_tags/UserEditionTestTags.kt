@@ -32,4 +32,8 @@ object UserEditionTestTags {
 
   // SAVE
   const val SAVE_BUTTON = "userSettingsContinueButton"
+
+  // DELETE
+  const val DELETE_BUTTON = "userSettingsDeleteButton"
+  const val DELETE_CONFIRMATION = "userSettingsDeleteConfirmation"
 }
