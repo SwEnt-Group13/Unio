@@ -203,14 +203,19 @@ class EventCreationE2ETest : EndToEndTest() {
     }
 
     // Fill in the event creation form
-    composeTestRule.onNodeWithTag(EventCreationTestTags.EVENT_TITLE).performTextInput(EVENT_TITLE)
+    composeTestRule
+        .onNodeWithTag(EventCreationTestTags.EVENT_TITLE)
+        .performScrollTo()
+        .performTextInput(EVENT_TITLE)
 
     composeTestRule
         .onNodeWithTag(EventCreationTestTags.SHORT_DESCRIPTION)
+        .performScrollTo()
         .performTextInput(EVENT_SHORT_DESCRIPTION)
 
     composeTestRule
         .onNodeWithTag(EventCreationTestTags.DESCRIPTION)
+        .performScrollTo()
         .performTextInput(EVENT_DESCRIPTION)
 
     // Handle the image picker
@@ -224,7 +229,10 @@ class EventCreationE2ETest : EndToEndTest() {
         .respondWith(Instrumentation.ActivityResult(Activity.RESULT_OK, resultData))
 
     // Click on the image picker
-    composeTestRule.onNodeWithTag(EventCreationTestTags.EVENT_IMAGE).performClick()
+    composeTestRule
+        .onNodeWithTag(EventCreationTestTags.EVENT_IMAGE)
+        .performScrollTo()
+        .performClick()
 
     // Set Start Date and Time
     setDateTime(
@@ -253,7 +261,10 @@ class EventCreationE2ETest : EndToEndTest() {
         MockResponse().setBody(mockResponseBody).setResponseCode(HttpURLConnection.HTTP_OK))
 
     // Write the query in the Location input field.
-    composeTestRule.onNodeWithTag(EventCreationTestTags.LOCATION).performTextClearance()
+    composeTestRule
+        .onNodeWithTag(EventCreationTestTags.LOCATION)
+        .performScrollTo()
+        .performTextClearance()
     composeTestRule.onNodeWithTag(EventCreationTestTags.LOCATION).performTextInput(query)
 
     // Wait for the location suggestions to load and select it.
@@ -265,6 +276,7 @@ class EventCreationE2ETest : EndToEndTest() {
 
     composeTestRule
         .onNodeWithTag(EventCreationTestTags.LOCATION_SUGGESTION_ITEM_LATITUDE + EVENT_LATITUDE)
+        .performScrollTo()
         .performClick()
 
     composeTestRule.waitForIdle()
@@ -276,7 +288,10 @@ class EventCreationE2ETest : EndToEndTest() {
 
     // Submit the event
     composeTestRule.waitForIdle()
-    composeTestRule.onNodeWithTag(EventCreationTestTags.SAVE_BUTTON).performClick()
+    composeTestRule
+        .onNodeWithTag(EventCreationTestTags.SAVE_BUTTON)
+        .performScrollTo()
+        .performClick()
 
     // Go back to the Home screen
     composeTestRule.waitUntil(10000) {
@@ -306,7 +321,7 @@ class EventCreationE2ETest : EndToEndTest() {
     composeTestRule.onNodeWithText(EVENT_SHORT_DESCRIPTION).assertIsDisplayed()
 
     // Assert that the rest of the details are displayed
-    composeTestRule.onNodeWithText(EVENT_TITLE).performClick()
+    composeTestRule.onNodeWithText(EVENT_TITLE).performScrollTo().performClick()
     composeTestRule.onNodeWithText(EVENT_DESCRIPTION).assertIsDisplayed()
     composeTestRule.onNodeWithText(EVENT_FORMATTED_ADDRESS).assertIsDisplayed()
 
