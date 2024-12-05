@@ -5,6 +5,7 @@ import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationRepositoryFirestore
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventRepositoryFirestore
+import com.android.unio.model.event.EventUserPicture
 import com.android.unio.model.firestore.FirestorePaths.ASSOCIATION_PATH
 import com.android.unio.model.firestore.FirestorePaths.EVENT_PATH
 import com.android.unio.model.firestore.FirestorePaths.USER_PATH
@@ -165,4 +166,13 @@ fun Event.Companion.emptyFirestoreReferenceList(): FirestoreReferenceList<Event>
 fun Event.Companion.firestoreReferenceListWith(uids: List<String>): FirestoreReferenceList<Event> {
   return FirestoreReferenceList.fromList(
       uids, EVENT_PATH, EventRepositoryFirestore.Companion::hydrate)
+}
+
+fun EventUserPicture.Companion.emptyFirestoreReferenceList(): FirestoreReferenceList<Event> {
+    return FirestoreReferenceList.empty(EVENT_PATH, EventRepositoryFirestore.Companion::hydrate)
+}
+
+fun EventUserPicture.Companion.firestoreReferenceListWith(uids: List<String>): FirestoreReferenceList<Event> {
+    return FirestoreReferenceList.fromList(
+        uids, EVENT_PATH, EventRepositoryFirestore.Companion::hydrate)
 }

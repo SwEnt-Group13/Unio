@@ -54,7 +54,7 @@ data class Event(
     val location: Location = Location(),
     val types: List<EventType> = mutableListOf(EventType.OTHER),
     val placesRemaining: Int = -1,
-    val eventPictures: List<String> = mutableListOf()
+    val eventPictures: ReferenceList<EventUserPicture>,
 ) : UniquelyIdentifiable {
   companion object
 }

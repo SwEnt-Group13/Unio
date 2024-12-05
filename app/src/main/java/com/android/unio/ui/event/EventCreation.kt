@@ -35,6 +35,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.android.unio.R
+import com.android.unio.mocks.firestore.MockReferenceList
 import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.event.Event
@@ -234,7 +235,7 @@ fun EventCreationScreen(
                         startDate = startTimestamp!!,
                         endDate = endTimestamp!!,
                         location = selectedLocation!!,
-                        eventPictures = emptyList<String>(),
+                        eventPictures = MockReferenceList(),
                     ),
                     onSuccess = { navigationAction.goBack() },
                     onFailure = {

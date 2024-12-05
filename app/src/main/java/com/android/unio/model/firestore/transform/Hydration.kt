@@ -1,5 +1,6 @@
 package com.android.unio.model.firestore.transform
 
+import com.android.unio.mocks.firestore.MockReferenceList
 import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationCategory
 import com.android.unio.model.association.AssociationRepositoryFirestore
@@ -10,6 +11,7 @@ import com.android.unio.model.association.Role
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventRepositoryFirestore
 import com.android.unio.model.event.EventType
+import com.android.unio.model.event.EventUserPicture
 import com.android.unio.model.firestore.firestoreReferenceListWith
 import com.android.unio.model.map.Location
 import com.android.unio.model.user.Interest
@@ -117,6 +119,9 @@ fun EventRepositoryFirestore.Companion.hydrate(data: Map<String, Any>?): Event {
   val types = (data?.get(Event::types.name) as? List<String> ?: emptyList())
 
   val location = data?.get(Event::location.name) as? Map<String, Any> ?: emptyMap()
+    val eventPictures =
+        EventUserPicture.firestoreReferenceListWith(
+            data?.get(Event::organisers.name) as? List<String> ?: emptyList())
 
   return Event(
       uid = data?.get(Event::uid.name) as? String ?: "",
@@ -136,6 +141,6 @@ fun EventRepositoryFirestore.Companion.hydrate(data: Map<String, Any>?): Event {
               name = location.get(Location::name.name) as? String ?: ""),
       types = types.map { EventType.valueOf(it) },
       placesRemaining = data?.get(Event::placesRemaining.name) as? Int ?: -1,
-      eventPictures = emptyList<String>()
+      eventPictures = MockReferenceList()
   )
 }
