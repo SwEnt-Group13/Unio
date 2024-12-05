@@ -87,7 +87,7 @@ class MapScreenTest : TearDown() {
           val onSuccess = it.invocation.args[1] as (User) -> Unit
           onSuccess(user)
         }
-    userViewModel = UserViewModel(userRepository, false)
+    userViewModel = UserViewModel(userRepository, imageRepository)
     userViewModel.getUserByUid("123")
 
     fusedLocationProviderClient = mock()

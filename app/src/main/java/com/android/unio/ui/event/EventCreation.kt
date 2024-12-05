@@ -193,7 +193,7 @@ fun EventCreationScreen(
               locationSearchViewModel,
               null,
               EventCreationTestTags.LOCATION,
-              EventCreationTestTags.LOCATION_SUGGESTION_ITEM) {
+              EventCreationTestTags.LOCATION_SUGGESTION_ITEM_LATITUDE) {
                 selectedLocation = it
               }
 

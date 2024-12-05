@@ -10,53 +10,53 @@ import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.gms.tasks.Task
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuth.AuthStateListener
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.auth
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.EventListener
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.MetadataChanges
 import com.google.firebase.firestore.QueryDocumentSnapshot
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.firestore
+import io.mockk.MockKAnnotations
+import io.mockk.clearAllMocks
 import io.mockk.every
+import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import io.mockk.mockkStatic
+import io.mockk.unmockkAll
+import io.mockk.verify
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertTrue
+import org.junit.After
 import org.junit.Assert.assertFalse
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.ArgumentCaptor
-import org.mockito.Captor
-import org.mockito.Mock
-import org.mockito.Mockito.verify
-import org.mockito.Mockito.`when`
-import org.mockito.MockitoAnnotations
-import org.mockito.kotlin.any
-import org.mockito.kotlin.eq
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.Shadows.shadowOf
 
 @RunWith(RobolectricTestRunner::class)
 class UserRepositoryFirestoreTest {
   private lateinit var db: FirebaseFirestore
-  @Mock private lateinit var userCollectionReference: CollectionReference
-  @Mock private lateinit var associationCollectionReference: CollectionReference
-  @Mock private lateinit var eventCollectionReference: CollectionReference
-  @Mock private lateinit var querySnapshot: QuerySnapshot
-  @Mock private lateinit var queryDocumentSnapshot1: QueryDocumentSnapshot
-  @Mock private lateinit var map1: Map<String, Any>
-  @Mock private lateinit var queryDocumentSnapshot2: QueryDocumentSnapshot
-  @Mock private lateinit var map2: Map<String, Any>
-  @Mock private lateinit var documentReference: DocumentReference
-  @Mock private lateinit var querySnapshotTask: Task<QuerySnapshot>
-  @Mock private lateinit var documentSnapshotTask: Task<DocumentSnapshot>
+  @MockK private lateinit var userCollectionReference: CollectionReference
+  @MockK private lateinit var associationCollectionReference: CollectionReference
+  @MockK private lateinit var eventCollectionReference: CollectionReference
+  @MockK private lateinit var querySnapshot: QuerySnapshot
+  @MockK private lateinit var queryDocumentSnapshot1: QueryDocumentSnapshot
+  @MockK private lateinit var map1: Map<String, Any>
+  @MockK private lateinit var queryDocumentSnapshot2: QueryDocumentSnapshot
+  @MockK private lateinit var map2: Map<String, Any>
+  @MockK private lateinit var documentReference: DocumentReference
+  @MockK private lateinit var querySnapshotTask: Task<QuerySnapshot>
+  @MockK private lateinit var documentSnapshotTask: Task<DocumentSnapshot>
 
-  @Mock private lateinit var auth: FirebaseAuth
-  @Mock private lateinit var firebaseUser: FirebaseUser
-  @Captor
-  private lateinit var authStateListenerCaptor: ArgumentCaptor<FirebaseAuth.AuthStateListener>
+  @MockK private lateinit var auth: FirebaseAuth
+  @MockK private lateinit var firebaseUser: FirebaseUser
 
   private lateinit var repository: UserRepositoryFirestore
 
@@ -65,14 +65,22 @@ class UserRepositoryFirestoreTest {
 
   @Before
   fun setUp() {
-    MockitoAnnotations.openMocks(this)
+    MockKAnnotations.init(this)
 
     db = mockk()
     mockkStatic(FirebaseFirestore::class)
     every { Firebase.firestore } returns db
 
     mockkStatic(FirebaseAuth::class)
+    every { Firebase.auth } returns auth
     every { FirebaseAuth.getInstance() } returns auth
+    every { auth.addAuthStateListener(any<AuthStateListener>()) } answers
+        { call ->
+          if (auth.currentUser != null) {
+            val listener = call.invocation.args[0] as AuthStateListener
+            listener.onAuthStateChanged(auth)
+          }
+        }
 
     // When getting the collection, return the task
     every { db.collection(USER_PATH) } returns userCollectionReference
@@ -112,64 +120,76 @@ class UserRepositoryFirestoreTest {
                     UserSocial(Social.WEBSITE, "example2.com")),
             profilePicture = "https://www.example.com/image2")
 
-    `when`(userCollectionReference.get()).thenReturn(querySnapshotTask)
-    `when`(userCollectionReference.document(eq(user1.uid))).thenReturn(documentReference)
-    `when`(documentReference.get()).thenReturn(documentSnapshotTask)
+    every { (userCollectionReference.get()) } returns (querySnapshotTask)
+    every { (userCollectionReference.document(eq(user1.uid))) } returns (documentReference)
+    every { (documentReference.get()) } returns (documentSnapshotTask)
 
     // When the query snapshot is iterated, return the two query document snapshots
-    `when`(querySnapshot.iterator())
-        .thenReturn(mutableListOf(queryDocumentSnapshot1, queryDocumentSnapshot2).iterator())
+    every { (querySnapshot.iterator()) } returns
+        (mutableListOf(queryDocumentSnapshot1, queryDocumentSnapshot2).iterator())
 
+    every {
+      documentReference.addSnapshotListener(
+          any<MetadataChanges>(), any<EventListener<DocumentSnapshot>>())
+    } answers
+        {
+          val listener = it.invocation.args[1] as EventListener<DocumentSnapshot>
+          listener.onEvent(queryDocumentSnapshot1, null)
+          mockk()
+        }
     // When the task is successful, return the query snapshot
-    `when`(querySnapshotTask.addOnSuccessListener(any())).thenAnswer { invocation ->
-      val callback = invocation.arguments[0] as OnSuccessListener<QuerySnapshot>
-      callback.onSuccess(querySnapshot)
-      querySnapshotTask
-    }
+    every { (querySnapshotTask.addOnSuccessListener(any())) } answers
+        { call ->
+          val callback = call.invocation.args[0] as OnSuccessListener<QuerySnapshot>
+          callback.onSuccess(querySnapshot)
+          querySnapshotTask
+        }
+    every { querySnapshotTask.addOnFailureListener(any()) } answers { querySnapshotTask }
 
-    `when`(documentSnapshotTask.addOnSuccessListener(any())).thenAnswer { invocation ->
-      val callback = invocation.arguments[0] as OnSuccessListener<DocumentSnapshot>
-      callback.onSuccess(queryDocumentSnapshot1)
-      documentSnapshotTask
-    }
+    every { (documentSnapshotTask.addOnSuccessListener(any())) } answers
+        { call ->
+          val callback = call.invocation.args[0] as OnSuccessListener<DocumentSnapshot>
+          callback.onSuccess(queryDocumentSnapshot1)
+          documentSnapshotTask
+        }
+    every { documentSnapshotTask.addOnFailureListener(any()) } answers { documentSnapshotTask }
 
     // When the query document snapshots are queried for specific fields, return the fields
 
-    `when`(queryDocumentSnapshot1.data).thenReturn(map1)
-    `when`(queryDocumentSnapshot2.data).thenReturn(map2)
+    every { (queryDocumentSnapshot1.data) } returns (map1)
+    every { (queryDocumentSnapshot2.data) } returns (map2)
 
-    `when`(map1.get("uid")).thenReturn(user1.uid)
-    `when`(map1.get("email")).thenReturn(user1.email)
-    `when`(map1.get("firstName")).thenReturn(user1.firstName)
-    `when`(map1.get("lastName")).thenReturn(user1.lastName)
-    `when`(map1.get("biography")).thenReturn(user1.biography)
-    `when`(map1.get("followedAssociations"))
-        .thenReturn(user1.followedAssociations.list.value.map { it.uid })
-    `when`(map1.get("joinedAssociations"))
-        .thenReturn(user1.joinedAssociations.list.value.map { it.uid })
-    `when`(map1.get("interests")).thenReturn(user1.interests.map { it.name })
-    `when`(map1.get("socials"))
-        .thenReturn(
-            user1.socials.map { mapOf("social" to it.social.name, "content" to it.content) })
-    `when`(map1.get("profilePicture")).thenReturn(user1.profilePicture)
+    every { (map1.get("uid")) } returns (user1.uid)
+    every { (map1.get("email")) } returns (user1.email)
+    every { (map1.get("firstName")) } returns (user1.firstName)
+    every { (map1.get("lastName")) } returns (user1.lastName)
+    every { (map1.get("biography")) } returns (user1.biography)
+    every { (map1.get("followedAssociations")) } returns
+        (user1.followedAssociations.list.value.map { it.uid })
+    every { (map1.get("joinedAssociations")) } returns
+        (user1.joinedAssociations.list.value.map { it.uid })
+    every { (map1.get("interests")) } returns (user1.interests.map { it.name })
+    every { (map1.get("socials")) } returns
+        (user1.socials.map { mapOf("social" to it.social.name, "content" to it.content) })
+    every { (map1.get("profilePicture")) } returns (user1.profilePicture)
+    every { (map1.get("savedEvents")) } returns (user1.savedEvents.list.value.map { it.uid })
 
     // Only set the uid field for user2
-    `when`(map2.get("uid")).thenReturn(user2.uid)
+    every { (map2.get("uid")) } returns (user2.uid)
 
     repository = UserRepositoryFirestore(db)
   }
 
   @Test
   fun testInitUserAuthenticated() {
-    `when`(auth.currentUser).thenReturn(firebaseUser)
+    every { (auth.currentUser) } returns (firebaseUser)
     var onSuccessCalled = false
     val onSuccess = { onSuccessCalled = true }
 
     repository.init(onSuccess)
 
     // Capture listener and trigger it
-    verify(auth).addAuthStateListener(authStateListenerCaptor.capture())
-    authStateListenerCaptor.value.onAuthStateChanged(auth)
+    verify { auth.addAuthStateListener(any()) }
 
     shadowOf(Looper.getMainLooper()).idle()
 
@@ -178,15 +198,14 @@ class UserRepositoryFirestoreTest {
 
   @Test
   fun testInitUserNotAuthenticated() {
-    `when`(auth.currentUser).thenReturn(null)
+    every { (auth.currentUser) } returns (null)
     var onSuccessCalled = false
     val onSuccess = { onSuccessCalled = true }
 
     repository.init(onSuccess)
 
     // Capture listener and trigger it
-    verify(auth).addAuthStateListener(authStateListenerCaptor.capture())
-    authStateListenerCaptor.value.onAuthStateChanged(auth)
+    verify { auth.addAuthStateListener(any()) }
 
     shadowOf(Looper.getMainLooper()).idle()
 
@@ -195,19 +214,21 @@ class UserRepositoryFirestoreTest {
 
   @Test
   fun testGetUsers() {
-    `when`(map2.get("email")).thenReturn(user2.email)
-    `when`(map2.get("firstName")).thenReturn(user2.firstName)
-    `when`(map2.get("lastName")).thenReturn(user2.lastName)
-    `when`(map2.get("biography")).thenReturn(user2.biography)
-    `when`(map2.get("followedAssociations"))
-        .thenReturn(user2.followedAssociations.list.value.map { it.uid })
-    `when`(map2.get("joinedAssociations"))
-        .thenReturn(user2.joinedAssociations.list.value.map { it.uid })
-    `when`(map2.get("interests")).thenReturn(user2.interests.map { it.name })
-    `when`(map2.get("socials"))
-        .thenReturn(
-            user2.socials.map { mapOf("social" to it.social.name, "content" to it.content) })
-    `when`(map2.get("profilePicture")).thenReturn(user2.profilePicture)
+    every { map2.get("email") } returns (user2.email)
+    every { (map2.get("firstName")) } returns (user2.firstName)
+    every { (map2.get("lastName")) } returns (user2.lastName)
+    every { (map2.get("biography")) } returns (user2.biography)
+    every { (map2.get("followedAssociations")) } returns
+        (user2.followedAssociations.list.value.map { it.uid })
+    every { (map2.get("joinedAssociations")) } returns
+        (user2.joinedAssociations.list.value.map { it.uid })
+    every { (map2.get("interests")) } returns (user2.interests.map { it.name })
+    every { (map2.get("socials")) } returns
+        (user2.socials.map { mapOf("social" to it.social.name, "content" to it.content) })
+    every { (map2.get("profilePicture")) } returns (user2.profilePicture)
+    every { (map2.get("savedEvents")) } returns (user2.savedEvents.list.value.map { it.uid })
+
+    var success = false
 
     repository.getUsers(
         onSuccess = { users ->
@@ -246,13 +267,27 @@ class UserRepositoryFirestoreTest {
               user2.socials.map { mapOf("social" to it.social.name, "content" to it.content) },
               users[1].socials.map { mapOf("social" to it.social.name, "content" to it.content) })
           assertEquals(user2.profilePicture, users[1].profilePicture)
+          success = true
         },
         onFailure = { exception -> assert(false) })
+    assert(success)
   }
 
   @Test
   fun testGetAssociationsWithMissingFields() {
     // No specific fields are set for user2
+    every { map2.get("email") } returns ("")
+    every { (map2.get("firstName")) } returns ("")
+    every { (map2.get("lastName")) } returns ("")
+    every { (map2.get("biography")) } returns ("")
+    every { (map2.get("followedAssociations")) } returns (Association.emptyFirestoreReferenceList())
+    every { (map2.get("joinedAssociations")) } returns (Association.emptyFirestoreReferenceList())
+    every { (map2.get("interests")) } returns emptyList<Interest>()
+    every { (map2.get("socials")) } returns (emptyList<UserSocial>())
+    every { (map2.get("profilePicture")) } returns ("")
+    every { (map2.get("savedEvents")) } returns (Event.emptyFirestoreReferenceList())
+
+    var success = false
 
     repository.getUsers(
         onSuccess = { users ->
@@ -304,13 +339,16 @@ class UserRepositoryFirestoreTest {
               emptyUser.socials.map { mapOf("social" to it.social.name, "content" to it.content) },
               users[1].socials.map { mapOf("social" to it.social.name, "content" to it.content) })
           assertEquals(emptyUser.profilePicture, users[1].profilePicture)
+          success = true
         },
         onFailure = { exception -> assert(false) })
+    assert(success)
   }
 
   @Test
   fun testGetUserWithId() {
-    `when`(queryDocumentSnapshot1.exists()).thenReturn(true)
+    every { (queryDocumentSnapshot1.exists()) } returns (true)
+    var success = false
     repository.getUserWithId(
         id = user1.uid,
         onSuccess = { user ->
@@ -330,7 +368,16 @@ class UserRepositoryFirestoreTest {
               user1.socials.map { mapOf("social" to it.social.name, "content" to it.content) },
               user.socials.map { mapOf("social" to it.social.name, "content" to it.content) })
           assertEquals(user1.profilePicture, user.profilePicture)
+          success = true
         },
         onFailure = { exception -> assert(false) })
+    assert(success)
+  }
+
+  @After
+  fun tearDown() {
+    // Clean up
+    unmockkAll()
+    clearAllMocks()
   }
 }

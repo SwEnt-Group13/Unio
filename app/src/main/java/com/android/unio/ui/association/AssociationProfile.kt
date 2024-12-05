@@ -458,6 +458,7 @@ private fun AssociationEvents(
     eventViewModel: EventViewModel
 ) {
   val context = LocalContext.current
+  val isConnected = Utils.checkInternetConnection(context)
 
   var isSeeMoreClicked by remember { mutableStateOf(false) }
 
@@ -496,7 +497,15 @@ private fun AssociationEvents(
   }
   if (isAdmin) {
     Button(
-        onClick = { navigationAction.navigateTo(Screen.EVENT_CREATION) },
+        onClick = {
+          if (isConnected) {
+            navigationAction.navigateTo(Screen.EVENT_CREATION)
+          } else {
+            Toast.makeText(
+                    context, context.getString(R.string.no_internet_connection), Toast.LENGTH_SHORT)
+                .show()
+          }
+        },
         modifier = Modifier.testTag(AssociationProfileTestTags.ADD_EVENT_BUTTON),
         contentPadding = ButtonDefaults.ButtonWithIconContentPadding) {
           Icon(

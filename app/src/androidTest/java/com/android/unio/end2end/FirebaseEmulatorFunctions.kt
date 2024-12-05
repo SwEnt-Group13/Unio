@@ -1,12 +1,16 @@
 package com.android.unio.end2end
 
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
+import org.junit.After
 import org.junit.Before
 
 interface FirebaseEmulatorFunctions {
 
   /** This method makes sure that the emulators are running and sets the tests to use them */
   @Before fun setUp()
+
+  /** This method clears the test data */
+  @After fun tearDown()
 
   /**
    * Verify that the local Firebase emulator is running.
