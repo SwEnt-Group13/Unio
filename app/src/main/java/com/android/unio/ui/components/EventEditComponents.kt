@@ -16,6 +16,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -25,7 +27,10 @@ import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.InputChip
 import androidx.compose.material3.OutlinedTextField
@@ -36,6 +41,7 @@ import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -50,9 +56,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.PopupProperties
 import coil.compose.rememberAsyncImagePainter
 import com.android.unio.R
 import com.android.unio.model.association.Association
+import com.android.unio.model.map.Location
+import com.android.unio.model.map.nominatim.NominatimLocationSearchViewModel
 import com.android.unio.model.strings.FormatStrings.DAY_MONTH_YEAR_FORMAT
 import com.android.unio.model.strings.FormatStrings.HOUR_MINUTE_FORMAT
 import com.google.firebase.Timestamp
@@ -60,6 +69,90 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
+const val DROP_DOWN_MAX_CHARACTERS = 40
+const val DROP_DOWN_MAX_ROWS = 3
+
+/**
+ * Composable for the location picker that uses the Nominatim API to search for locations. It
+ * consists of a text field and a dropdown menu with location suggestions.
+ *
+ * @param locationSearchViewModel NominatimLocationSearchViewModel : ViewModel for searching
+ *   locations.
+ * @param initialLocation Location? : Initial location to pre-fill the text field.
+ * @param textFieldTestTag String : Test tag for the text field.
+ * @param dropdownTestTag String : Test tag for the dropdown menu.
+ * @param onLocationSelected (Location) -> Unit : Lambda that is called when a location is selected.
+ */
+@Composable
+fun NominatimLocationPicker(
+    locationSearchViewModel: NominatimLocationSearchViewModel,
+    initialLocation: Location?,
+    textFieldTestTag: String,
+    dropdownTestTag: String,
+    onLocationSelected: (Location) -> Unit
+) {
+  val context = LocalContext.current
+
+  val locationQuery by locationSearchViewModel.query.collectAsState()
+  val locationSuggestions by locationSearchViewModel.locationSuggestions.collectAsState()
+  var showDropdown by remember { mutableStateOf(false) }
+
+  var shouldDisplayInitialLocation by remember { mutableStateOf(true) }
+
+  Box(modifier = Modifier.fillMaxWidth()) {
+    OutlinedTextField(
+        value = if (shouldDisplayInitialLocation) initialLocation?.name ?: "" else locationQuery,
+        onValueChange = {
+          locationSearchViewModel.setQuery(it)
+          shouldDisplayInitialLocation = false
+          showDropdown = true
+        },
+        label = { Text(context.getString(R.string.event_creation_location_label)) },
+        placeholder = { Text(context.getString(R.string.event_creation_location_input_label)) },
+        modifier = Modifier.fillMaxWidth().testTag(textFieldTestTag))
+
+    DropdownMenu(
+        expanded = showDropdown && locationSuggestions.isNotEmpty(),
+        onDismissRequest = { showDropdown = false },
+        properties = PopupProperties(focusable = false),
+        modifier = Modifier.fillMaxWidth().heightIn(max = 200.dp)) {
+          locationSuggestions.take(DROP_DOWN_MAX_ROWS).forEach { location ->
+            DropdownMenuItem(
+                text = {
+                  Text(
+                      text =
+                          location.name.take(DROP_DOWN_MAX_CHARACTERS) +
+                              if (location.name.length > DROP_DOWN_MAX_CHARACTERS)
+                                  context.getString(
+                                      R.string.event_creation_location_dropdown_points)
+                              else "",
+                      maxLines = 1)
+                },
+                onClick = {
+                  locationSearchViewModel.setQuery(location.name)
+                  onLocationSelected(location)
+                  showDropdown = false
+                },
+                modifier = Modifier.padding(8.dp).testTag(dropdownTestTag + location.latitude))
+            HorizontalDivider()
+          }
+
+          if (locationSuggestions.size > DROP_DOWN_MAX_ROWS) {
+            DropdownMenuItem(
+                text = { Text(context.getString(R.string.event_creation_location_dropdown_more)) },
+                onClick = {},
+                modifier = Modifier.padding(8.dp))
+          }
+        }
+  }
+}
+
+/**
+ * Composable for the association chips that show the selected associations.
+ *
+ * @param associations List<Pair<Association, MutableState<Boolean>>> : List of associations and
+ *   their selected state.
+ */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun AssociationChips(
@@ -84,6 +177,12 @@ fun AssociationChips(
   }
 }
 
+/**
+ * Composable for the banner image picker that allows the user to select an image from the gallery.
+ *
+ * @param eventBannerUri MutableState<Uri> : MutableState that holds the URI of the selected image.
+ * @param modifier Modifier : Modifier for the banner image picker.
+ */
 @Composable
 fun BannerImagePicker(eventBannerUri: MutableState<Uri>, modifier: Modifier) {
   val context = LocalContext.current
@@ -119,6 +218,20 @@ fun BannerImagePicker(eventBannerUri: MutableState<Uri>, modifier: Modifier) {
       }
 }
 
+/**
+ * Composable for the date and time picker that allows the user to select a date and time.
+ *
+ * @param dateString String : Label for the date field.
+ * @param timeString String : Label for the time field.
+ * @param modifier Modifier : Modifier for the date and time picker.
+ * @param initialDate Long? : Initial date in milliseconds. Used to pre-fill the date field.
+ * @param initialTime Long? : Initial time in milliseconds. Used to pre-fill the time field.
+ * @param dateFieldTestTag String : Test tag for the date field.
+ * @param timeFieldTestTag String : Test tag for the time field.
+ * @param datePickerTestTag String : Test tag for the date picker.
+ * @param timePickerTestTag String : Test tag for the time picker.
+ * @param onTimestamp (Timestamp) -> Unit : Lambda that is called when a timestamp is selected.
+ */
 @Composable
 fun DateAndTimePicker(
     dateString: String,
@@ -228,6 +341,13 @@ fun DateAndTimePicker(
   }
 }
 
+/**
+ * Composable for the date picker modal that allows the user to select a date.
+ *
+ * @param onDateSelected (Long?) -> Unit : Lambda that is called when a date is selected.
+ * @param onDismiss () -> Unit : Lambda that is called when the modal is dismissed.
+ * @param modifier Modifier : Modifier for the date picker modal.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DatePickerModal(
@@ -259,6 +379,13 @@ fun DatePickerModal(
       }
 }
 
+/**
+ * Composable for the time picker modal that allows the user to select a time.
+ *
+ * @param onTimeSelected (Long?) -> Unit : Lambda that is called when a time is selected.
+ * @param onDismiss () -> Unit : Lambda that is called when the modal is dismissed.
+ * @param modifier Modifier : Modifier for the time picker modal.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TimePickerModal(onTimeSelected: (Long?) -> Unit, onDismiss: () -> Unit, modifier: Modifier) {
@@ -279,6 +406,11 @@ fun TimePickerModal(onTimeSelected: (Long?) -> Unit, onDismiss: () -> Unit, modi
 /**
  * A Dialog that is the analog of the DatePickerDialog, but for TimePicker as it currently does not
  * exist in the Material3 library.
+ *
+ * @param onDismiss: () -> Unit: Lambda that is called when the dialog is dismissed.
+ * @param onConfirm: () -> Unit: Lambda that is called when the dialog is confirmed.
+ * @param modifier: Modifier: Modifier for the dialog.
+ * @param content: @Composable () -> Unit: Content of the dialog.
  */
 @Composable
 fun TimePickerDialog(
@@ -304,11 +436,23 @@ fun TimePickerDialog(
       text = { content() })
 }
 
+/**
+ * Converts milliseconds to a date string in the format "dd/MM/yy".
+ *
+ * @param millis: Long: Milliseconds to convert.
+ * @return String: Date string in the format "dd/MM/yy".
+ */
 fun convertMillisToDate(millis: Long): String {
   val formatter = SimpleDateFormat(DAY_MONTH_YEAR_FORMAT, Locale.getDefault())
   return formatter.format(Date(millis))
 }
 
+/**
+ * Converts milliseconds to a time string in the format "HH:mm".
+ *
+ * @param millis: Long: Milliseconds to convert.
+ * @return String: Time string in the format "HH:mm".
+ */
 fun convertMillisToTime(millis: Long): String {
   val formatter = SimpleDateFormat(HOUR_MINUTE_FORMAT, Locale.getDefault())
   return formatter.format(Date(millis))

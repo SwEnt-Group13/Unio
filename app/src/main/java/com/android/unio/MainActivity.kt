@@ -182,7 +182,12 @@ fun UnioApp(imageRepository: ImageRepositoryFirebaseStorage) {
         }
       }
       composable(Screen.EDIT_EVENT) {
-        EventEditScreen(navigationActions, searchViewModel, associationViewModel, eventViewModel)
+        EventEditScreen(
+            navigationActions,
+            searchViewModel,
+            associationViewModel,
+            eventViewModel,
+            nominatimLocationSearchViewModel)
       }
     }
     navigation(startDestination = Screen.SAVED, route = Route.SAVED) {

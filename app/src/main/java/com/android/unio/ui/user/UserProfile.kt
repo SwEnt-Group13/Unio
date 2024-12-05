@@ -62,6 +62,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import com.android.unio.R
 import com.android.unio.model.association.AssociationViewModel
+import com.android.unio.model.firestore.unregisterAllSnapshotListeners
 import com.android.unio.model.strings.test_tags.UserProfileTestTags
 import com.android.unio.model.user.User
 import com.android.unio.model.user.UserViewModel
@@ -345,6 +346,7 @@ fun UserProfileBottomSheet(
         TextButton(
             modifier = Modifier.fillMaxWidth().testTag(UserProfileTestTags.SIGN_OUT),
             onClick = {
+              unregisterAllSnapshotListeners()
               Firebase.auth.signOut()
               scope.launch {
                 sheetState.hide()

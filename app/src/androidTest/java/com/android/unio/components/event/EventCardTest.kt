@@ -81,8 +81,9 @@ class EventCardTest : TearDown() {
     context = InstrumentationRegistry.getInstrumentation().targetContext
     val user = MockUser.createMockUser(followedAssociations = associations, savedEvents = listOf())
     every { NotificationWorker.schedule(any(), any()) } just runs
+    every { NotificationWorker.unschedule(any(), any()) } just runs
     eventViewModel = EventViewModel(eventRepository, imageRepository, associationRepository)
-    userViewModel = UserViewModel(userRepository)
+    userViewModel = UserViewModel(userRepository, imageRepository)
     every { userRepository.updateUser(user, any(), any()) } answers
         {
           val onSuccess = args[1] as () -> Unit
@@ -252,7 +253,7 @@ class EventCardTest : TearDown() {
   }
 
   @Test
-  fun testEventCardSaveEvent() {
+  fun testEventCardSaveAndUnsaveEventOnline() {
     val event =
         MockEvent.createMockEvent(
             startDate = Timestamp(Date((Timestamp.now().seconds + 4 * 3600) * 1000)))

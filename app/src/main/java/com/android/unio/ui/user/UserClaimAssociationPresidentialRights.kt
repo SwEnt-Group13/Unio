@@ -46,7 +46,6 @@ import com.google.firebase.functions.FirebaseFunctionsException
 import com.google.firebase.functions.functions
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UserClaimAssociationPresidentialRightsScreen(
     associationViewModel: AssociationViewModel,
@@ -181,8 +180,6 @@ fun UserClaimAssociationPresidentialRightsScreenScaffold(
                                                   .user_claim_association_presidential_rights_unexpected_error),
                                           e)
                                     }
-                                  } else {
-                                    // it works !
                                   }
                                 }
                           }
@@ -300,6 +297,7 @@ fun UserClaimAssociationPresidentialRightsScreenScaffold(
                                                   .user_claim_association_presidential_rights_verified_successfully),
                                           Toast.LENGTH_SHORT)
                                       .show()
+
                                   navigationAction.navigateTo(Screen.MY_PROFILE)
                                 }
                               }

@@ -190,6 +190,7 @@ dependencies {
     implementation(libs.firebase.functions.ktx)
     implementation(libs.play.services.location)
     implementation(libs.firebase.messaging.ktx)
+    implementation(libs.androidx.espresso.contrib)
 
     testImplementation(libs.test.core.ktx)
     debugImplementation(libs.androidx.ui.tooling)
