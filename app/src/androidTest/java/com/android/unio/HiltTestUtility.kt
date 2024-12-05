@@ -22,8 +22,9 @@ class HiltApplication : AndroidJUnitRunner() {
     val testClassName = InstrumentationRegistry.getArguments().getString("class")
     testClassName?.let { className ->
       try {
-        val testClass = Class.forName(className
-          .replace(Regex("#[a-zA-Z0-9 ]*$"), "")) // Remove test method suffix.
+        val testClass =
+            Class.forName(
+                className.replace(Regex("#[a-zA-Z0-9 ]*$"), "")) // Remove test method suffix.
 
         val extendsTearDown = TearDown::class.java.isAssignableFrom(testClass)
         val extendsEndToEndTest = EndToEndTest::class.java.isAssignableFrom(testClass)
