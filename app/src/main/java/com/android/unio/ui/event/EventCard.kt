@@ -57,6 +57,7 @@ import com.android.unio.model.event.EventUtils.formatTimestamp
 import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.notification.NotificationWorker
 import com.android.unio.model.notification.UnioNotification
+import com.android.unio.model.preferences.AppPreferences
 import com.android.unio.model.strings.FormatStrings.DAY_MONTH_FORMAT
 import com.android.unio.model.strings.FormatStrings.HOUR_MINUTE_FORMAT
 import com.android.unio.model.strings.NotificationStrings.EVENT_REMINDER_CHANNEL_ID
@@ -68,6 +69,7 @@ import com.android.unio.ui.navigation.Screen
 import com.android.unio.ui.theme.AppTypography
 import java.text.SimpleDateFormat
 import java.util.Locale
+import me.zhanghai.compose.preference.LocalPreferenceFlow
 
 const val SECONDS_IN_AN_HOUR = 3600
 
@@ -83,12 +85,19 @@ fun EventCard(
   val context = LocalContext.current
   val user by userViewModel.user.collectAsState()
   val associations by event.organisers.list.collectAsState()
-  var isNotificationsEnabled by remember { mutableStateOf(false) }
+  var notificationPermissionsEnabled by remember { mutableStateOf(false) }
   when (PackageManager.PERMISSION_GRANTED) {
     ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) -> {
-      isNotificationsEnabled = true
+      notificationPermissionsEnabled = true
     }
   }
+
+  val preferences by LocalPreferenceFlow.current.collectAsState()
+  val notificationSettingEnabled =
+      preferences
+          .asMap()
+          .getOrDefault(AppPreferences.NOTIFICATIONS, AppPreferences.Notification.default)
+          as Boolean
 
   if (user == null) {
     Log.e("EventCard", "User not found.")
@@ -99,28 +108,30 @@ fun EventCard(
   var isSaved by remember { mutableStateOf(user!!.savedEvents.contains(event.uid)) }
 
   val scheduleReminderNotification = {
-    NotificationWorker.schedule(
-        context,
-        UnioNotification(
-            title = event.title,
-            message = context.getString(R.string.notification_event_reminder),
-            icon = R.drawable.other_icon,
-            channelId = EVENT_REMINDER_CHANNEL_ID,
-            channelName = EVENT_REMINDER_CHANNEL_ID,
-            notificationId = event.uid.hashCode(),
-            // Schedule a notification a few hours before the event's startDate
-            timeMillis = (event.startDate.seconds - 2 * SECONDS_IN_AN_HOUR) * SECONDS_IN_AN_HOUR))
+    if (notificationSettingEnabled) {
+      NotificationWorker.schedule(
+          context,
+          UnioNotification(
+              title = event.title,
+              message = context.getString(R.string.notification_event_reminder),
+              icon = R.drawable.other_icon,
+              channelId = EVENT_REMINDER_CHANNEL_ID,
+              channelName = EVENT_REMINDER_CHANNEL_ID,
+              notificationId = event.uid.hashCode(),
+              // Schedule a notification a few hours before the event's startDate
+              timeMillis = (event.startDate.seconds - 2 * SECONDS_IN_AN_HOUR) * SECONDS_IN_AN_HOUR))
+    }
   }
 
   val permissionLauncher =
       rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { permission ->
         when {
           permission -> {
-            isNotificationsEnabled = true
+            notificationPermissionsEnabled = true
             scheduleReminderNotification()
           }
           else -> {
-            isNotificationsEnabled = false
+            notificationPermissionsEnabled = false
             Log.e("EventCard", "Notification permission is not granted.")
           }
         }
@@ -133,7 +144,7 @@ fun EventCard(
           onSuccess = {},
           onFailure = { e -> Log.e("EventCard", "Failed to update event: $e") })
       userViewModel.unsaveEvent(event) {
-        if (isNotificationsEnabled) {
+        if (notificationPermissionsEnabled) {
           NotificationWorker.unschedule(context, event.uid.hashCode())
         }
       }
@@ -144,7 +155,7 @@ fun EventCard(
           onSuccess = {},
           onFailure = { e -> Log.e("EventCard", "Failed to update event: $e") })
       userViewModel.saveEvent(event) {
-        if (!isNotificationsEnabled) {
+        if (!notificationPermissionsEnabled) {
           if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             // this permission requires api 33
             // We should check how to make notifications work with lower api versions
