@@ -83,7 +83,7 @@ class EventCardTest : TearDown() {
     every { NotificationWorker.schedule(any(), any()) } just runs
     every { NotificationWorker.unschedule(any(), any()) } just runs
     eventViewModel = EventViewModel(eventRepository, imageRepository, associationRepository)
-    userViewModel = UserViewModel(userRepository)
+    userViewModel = UserViewModel(userRepository, imageRepository)
     every { userRepository.updateUser(user, any(), any()) } answers
         {
           val onSuccess = args[1] as () -> Unit

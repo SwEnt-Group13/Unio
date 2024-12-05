@@ -99,7 +99,7 @@ class HomeTest : TearDown() {
           onSuccess(MockUser.createMockUser())
         }
 
-    userViewModel = spyk(UserViewModel(userRepository))
+    userViewModel = spyk(UserViewModel(userRepository, imageRepository))
     val asso = MockAssociation.createMockAssociation()
     val user =
         MockUser.createMockUser(
