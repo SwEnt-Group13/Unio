@@ -169,10 +169,12 @@ fun Event.Companion.firestoreReferenceListWith(uids: List<String>): FirestoreRef
 }
 
 fun EventUserPicture.Companion.emptyFirestoreReferenceList(): FirestoreReferenceList<Event> {
-    return FirestoreReferenceList.empty(EVENT_PATH, EventRepositoryFirestore.Companion::hydrate)
+  return FirestoreReferenceList.empty(EVENT_PATH, EventRepositoryFirestore.Companion::hydrate)
 }
 
-fun EventUserPicture.Companion.firestoreReferenceListWith(uids: List<String>): FirestoreReferenceList<Event> {
-    return FirestoreReferenceList.fromList(
-        uids, EVENT_PATH, EventRepositoryFirestore.Companion::hydrate)
+fun EventUserPicture.Companion.firestoreReferenceListWith(
+    uids: List<String>
+): FirestoreReferenceList<Event> {
+  return FirestoreReferenceList.fromList(
+      uids, EVENT_PATH, EventRepositoryFirestore.Companion::hydrate)
 }

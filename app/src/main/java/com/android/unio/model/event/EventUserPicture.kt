@@ -8,4 +8,6 @@ data class EventUserPicture(
     val image: String,
     val author: User,
     val likes: Int
-) : UniquelyIdentifiable {companion object}
+) : UniquelyIdentifiable {
+  companion object
+}

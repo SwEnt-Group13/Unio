@@ -119,9 +119,9 @@ fun EventRepositoryFirestore.Companion.hydrate(data: Map<String, Any>?): Event {
   val types = (data?.get(Event::types.name) as? List<String> ?: emptyList())
 
   val location = data?.get(Event::location.name) as? Map<String, Any> ?: emptyMap()
-    val eventPictures =
-        EventUserPicture.firestoreReferenceListWith(
-            data?.get(Event::organisers.name) as? List<String> ?: emptyList())
+  val eventPictures =
+      EventUserPicture.firestoreReferenceListWith(
+          data?.get(Event::organisers.name) as? List<String> ?: emptyList())
 
   return Event(
       uid = data?.get(Event::uid.name) as? String ?: "",
@@ -141,6 +141,5 @@ fun EventRepositoryFirestore.Companion.hydrate(data: Map<String, Any>?): Event {
               name = location.get(Location::name.name) as? String ?: ""),
       types = types.map { EventType.valueOf(it) },
       placesRemaining = data?.get(Event::placesRemaining.name) as? Int ?: -1,
-      eventPictures = MockReferenceList()
-  )
+      eventPictures = MockReferenceList())
 }

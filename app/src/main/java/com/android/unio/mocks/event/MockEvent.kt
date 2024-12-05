@@ -3,12 +3,9 @@ package com.android.unio.mocks.event
 import com.android.unio.mocks.association.MockAssociation
 import com.android.unio.mocks.firestore.MockReferenceList
 import com.android.unio.mocks.map.MockLocation
-import com.android.unio.mocks.user.MockUser
-import com.android.unio.mocks.user.MockUser.Companion.createMockUser
 import com.android.unio.model.association.Association
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventType
-import com.android.unio.model.event.EventUserPicture
 import com.android.unio.model.map.Location
 import com.google.firebase.Timestamp
 import java.util.Date
@@ -116,8 +113,7 @@ class MockEvent {
           location = location,
           types = types,
           placesRemaining = -1,
-          eventPictures =MockReferenceList()
-      )
+          eventPictures = MockReferenceList())
     }
 
     /** Creates a list of mock Events with default properties */
