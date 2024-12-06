@@ -31,6 +31,7 @@ import com.android.unio.model.image.ImageViewModel
 import com.android.unio.model.map.MapViewModel
 import com.android.unio.model.map.nominatim.NominatimLocationSearchViewModel
 import com.android.unio.model.preferences.AppPreferences
+import com.android.unio.model.preferences.getOrDefault
 import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.association.AssociationProfileScreen
@@ -86,7 +87,7 @@ fun UnioApp() {
   // Sets language according to LocalPreferences
   val preferences by LocalPreferenceFlow.current.collectAsState()
   val context = LocalContext.current
-  val language = preferences.asMap().getOrDefault(AppPreferences.LANGUAGE, AppPreferences.Language.default) as String
+  val language = preferences.getOrDefault(AppPreferences.LANGUAGE, AppPreferences.Language.default)
   val locale = Locale(language)
   Locale.setDefault(locale)
 
