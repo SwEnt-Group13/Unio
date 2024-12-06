@@ -66,11 +66,11 @@
     <string name="overlay_save" translatable="true">Save</string>
 
     <!-- Social Overlay Strings -->
-    <string name="social_overlay_title" translatable="true">Your social media</string>
+    <string name="social_overlay_title" translatable="true">Your socials</string>
     <string name="social_overlay_description" translatable="true">These will be displayed on your profile to allow other students to contact you</string>
     <string name="social_overlay_add_social" translatable="true">Add social</string>
     <string name="social_overlay_save_changes" translatable="true">Save changes</string>
-    <string name="social_overlay_empty_field" translatable="true">The input is empty or blank</string>
+    <string name="social_overlay_empty_field" translatable="true">The input is empty</string>
     <string name="social_overlay_invalid_phone_number" translatable="true">The phone number has wrong format</string>
     <string name="social_overlay_invalid_website" translatable="true">The website is not encoded with https</string>
     <string name="social_overlay_content_description_close" translatable="true">Close</string>
@@ -83,7 +83,7 @@
     <string name="account_details_bio" translatable="true">Bio</string>
     <string name="account_details_add_profile_picture" translatable="true">Maybe add a profile picture?</string>
     <string name="account_details_add_interests" translatable="true">Add centers of interest</string>
-    <string name="account_details_add_socials" translatable="true">Add links to other social media</string>
+    <string name="account_details_add_socials" translatable="true">Add links to other socials</string>
     <string name="account_details_continue" translatable="true">Continue</string>
     <string name="account_details_first_name_error">Please fill in your first name</string>
     <string name="account_details_last_name_error">Please fill in your last name</string>
@@ -97,16 +97,22 @@
     <string name="account_details_content_description_remove_pfp">Remove Profile Picture</string>
 
     <!-- UserSettings Strings -->
-    <string name="user_settings_content_description_remove_social" translatable="false">Remove User Social</string>
-    <string name="user_settings_first_name" translatable="true">Edit First name</string>
-    <string name="user_settings_last_name" translatable="true">Edit Last name</string>
-    <string name="user_settings_bio" translatable="true">Edit Biography</string>
-    <string name="user_settings_edit_interests" translatable="true">Edit your centers of interests</string>
-    <string name="user_settings_edit_socials" translatable="true">Edit your user socials</string>
-    <string name="user_settings_discard_changes" translatable="true">"Discard Changes"</string>
-    <string name="user_settings_save_changes" translatable="true">Save changes</string>
-    <string name="user_settings_modified_successfully" translatable="true">Changes Successfully modified</string>
-    <string name="user_settings_modified_offline">Change has been saved. Turn online to apply change</string>
+    <string name="user_edition_content_description_remove_social" translatable="false">Remove User Social</string>
+    <string name="user_edition_first_name" translatable="true">Edit First name</string>
+    <string name="user_edition_last_name" translatable="true">Edit Last name</string>
+    <string name="user_edition_bio" translatable="true">Edit Biography</string>
+    <string name="user_edition_edit_interests" translatable="true">Edit your centers of interests</string>
+    <string name="user_edition_edit_socials" translatable="true">Edit your user socials</string>
+    <string name="user_edition_discard_changes" translatable="true">"Discard Changes"</string>
+    <string name="user_edition_save_changes" translatable="true">Save changes</string>
+    <string name="user_edition_modified_successfully" translatable="true">Changes Successfully modified</string>
+    <string name="user_edition_delete_user" translatable="true">Delete Account</string>
+    <string name="user_edition_delete_user_confirmation" translatable="true">All your data will be deleted, are you sure of proceeding ?</string>
+    <string name="user_edition_delete_user_confirm" translatable="true">Confirm</string>
+    <string name="user_edition_delete_user_success" translatable="true">Your Account has been deleted</string>
+    <string name="user_edition_delete_user_failure" translatable="true">Failed to delete account, try again later</string>
+    <string name="user_edition_modified_offline" translatable="true">Deleted user offline</string>
+    <string name="user_edition_delete_user_offline" translatable="true">Please be connected to the internet to delete your Account</string>
 
 
     <!-- EmailVerification Strings -->
@@ -141,17 +147,28 @@
     <string name="welcome_content_description_show_password">Show password</string>
     <string name="welcome_forgot_password">Forgot your password ?</string>
 
+    <!-- Picture Selection Tool Strings -->
+    <string name="selection_tool_selected_picture_text">Selected Pictures</string>
+    <string name="selection_tool_remove_picture">Remove Picture</string>
+    <string name="selection_tool_add_gallery_content_description">Add from Gallery</string>
+    <string name="selection_tool_gallery_text">Gallery</string>
+    <string name="selection_tool_take_picture">Take Picture</string>
+    <string name="selection_tool_camera_text">Camera</string>
+    <string name="selection_tool_validate_text">Validate</string>
+    <string name="selection_tool_cancel_text">Cancel</string>
+
     /**
     * package: event
     */
 
     <!-- Event Card Strings -->
-    <string name="event_event_title">Event Title</string>
+    <string name="event_event_title">Event title</string>
     <string name="event_catchy_description">Catchy Description</string>
     <string name="event_card_content_description_event_image">Image of the event</string>
     <string name="event_card_content_description_saved_event">Saved</string>
     <string name="event_card_content_description_not_saved_event">Not saved</string>
     <string name="event_card_content_description_association_logo">Association logo</string>
+    <string name="event_card_interested_string">Interested</string>
 
     <!-- Event Creation Strings -->
     <string name="event_creation_screen">Event creation</string>
@@ -189,8 +206,8 @@
     <string name="event_edit_save_button">Save</string>
 
     <!-- Event Edit Component Strings -->
-    <string name="event_edit_date_picker_desc" translatable="false">Select date</string>
-    <string name="event_edit_time_picker_desc" translatable="false">Select time</string>
+    <string name="event_edit_date_picker_desc">Select date</string>
+    <string name="event_edit_time_picker_desc">Select time</string>
 
     <!-- Associations Overlay Strings -->
     <string name="associations_overlay_coauthors_title" translatable="true">Coauthors</string>
@@ -202,20 +219,20 @@
 
 
     <!-- Event Details Strings -->
-    <string name="event_sign_up" translatable="false">I\'m going.</string>
-    <string name="event_not_found" translatable="false">ERROR : event not found.</string>
-    <string name="event_details_content_description_saved" translatable="false">Saved</string>
-    <string name="event_details_content_description_not_saved" translatable="false">Not saved</string>
-    <string name="event_price_free" translatable="false">Free !</string>
-    <string name="event_price" translatable="false">Entry: </string>
-    <string name="event_places_remaining" translatable="false"> places remaining</string>
+    <string name="event_sign_up">I\'m going !</string>
+    <string name="event_not_found">ERROR : event not found.</string>
+    <string name="event_details_content_description_saved">Saved</string>
+    <string name="event_details_content_description_not_saved">Not saved</string>
+    <string name="event_price_free">Free !</string>
+    <string name="event_price">Entry: </string>
+    <string name="event_places_remaining"> places remaining</string>
 
     /**
     * package: explore
     */
 
     <!-- Explore Screen Strings -->
-    <string name="explore_content_screen_title">Explore our Associations</string>
+    <string name="explore_content_screen_title">Explore the Associations</string>
     <string name="search_placeholder">Search</string>
     <string name="explore_search_error_message">An error occurred while searching</string>
     <string name="explore_search_no_results">No results found</string>
@@ -300,6 +317,9 @@
     <string name="user_profile_bottom_sheet_edit">Edit Profile</string>
     <string name="user_profile_bottom_sheet_settings">Settings</string>
     <string name="user_profile_bottom_sheet_sign_out">Sign Out</string>
+    <string name="user_profile_claim_association">Claim Association</string>
+    <string name="user_profile_no_associations">You are not member of any association yet</string>
+    <string name="user_profile_association_joined">Joined</string>
 
     <!-- SomeoneElseUserProfile Strings -->
     <string name="someone_else_user_profile_screen_title" translatable="false">Someone else user profile screen</string>
@@ -329,7 +349,6 @@
     <string name="user_claim_association_presidential_rights_verification_request_not_found">Verification request not found</string>
     <string name="user_claim_association_presidential_rights_service_unavailable">Service unavailable. Please try later</string>
 
-
     /**
     * Other
     */
@@ -351,9 +370,9 @@
     <string name="event_save_button_description">Icon for saving event</string>
     <string name="event_share_button_description">Icon for sharing event</string>
     <string name="event_association_icon_description" translatable="false">Icon of the event\'s organiser</string>
-    <string name="event_location_button_description" translatable="false">Icon for seeing event\'s location</string>
-    <string name="event_signup_button_description" translatable="false">Icon to sign up to the event</string>
-    <string name="association_image_description" translatable="false">Association Image</string>
+    <string name="event_location_button_description">Icon for seeing event\'s location</string>
+    <string name="event_signup_button_description">Icon to sign up to the event</string>
+    <string name="association_image_description">Association Image</string>
 
     <!-- Event Types Strings from EventType.kt -->
     <string name="event_type_festival">Festival</string>
@@ -366,10 +385,10 @@
     <string name="event_type_other">Other</string>
 
     <!-- EventRepositoryFirestore Strings -->
-    <string name="event_error_converting_document" translatable="false">Error while converting db document to Event object</string>
-    <string name="event_error_no_id_provided" translatable="false">No event ID was provided</string>
-    <string name="event_error_failed_to_add" translatable="false">Failed to add event</string>
-    <string name="event_error_failed_to_delete" translatable="false">Failed to delete event</string>
+    <string name="event_error_converting_document">Error while converting db document to Event object</string>
+    <string name="event_error_no_id_provided">No event ID was provided</string>
+    <string name="event_error_failed_to_add">Failed to add event</string>
+    <string name="event_error_failed_to_delete">Failed to delete event</string>
 
     <!-- Firestore Paths Strings from FirestorePaths.kt -->
     <string name="firestore_path_association" translatable="false">associations</string>
@@ -405,7 +424,7 @@
     <!-- Reset Password Strings -->
     <string name="reset_password_success_toast">An email has been sent to the given address</string>
     <string name="reset_password_error_toast">Failed to send the email</string>
-    <string name="reset_password_go_back" translatable="false">Go back to home page</string>
+    <string name="reset_password_go_back">Go back to home page</string>
     <string name="reset_password_text">Please provide an email address</string>
     <string name="reset_password_email_place_holder">The link will be sent to this address</string>
     <string name="reset_password_button">Confirm</string>
@@ -416,6 +435,29 @@
     <string name="notification_event_reminder" translatable="true">The event is about to begin :)</string>
     <string name="notification_event_reminder_default_message" translatable="true">"An event will occur soon"</string>
     <string name="notification_event_reminder_default_title" translatable="false">Unio</string>
+
+    <!-- Bottom Navigation Strings -->
+    <string name="bottom_nav_home">Home</string>
+    <string name="bottom_nav_saved">Saved</string>
+    <string name="bottom_nav_explore">Explore</string>
+    <string name="bottom_nav_profile">Profile</string>
+    <string name="nav_auth">Authentication</string>
+
+    <!-- Association Category Strings -->
+    <string name="association_category_epfl_bodies">EPFL bodies</string>
+    <string name="association_category_representation">Representation</string>
+    <string name="association_category_projects">Interdisciplinary projects</string>
+    <string name="association_category_epfl_students">EPFL students</string>
+    <string name="association_category_countries">Students by country</string>
+    <string name="association_category_sustainability">Sustainability</string>
+    <string name="association_category_science_tech">Science and technology</string>
+    <string name="association_category_culture_society">Culture and society</string>
+    <string name="association_category_arts">Arts</string>
+    <string name="association_category_entertainment">Entertainment</string>
+    <string name="association_category_sports">Sports</string>
+    <string name="association_category_guidance">Vocational guidance</string>
+    <string name="association_category_unknown">Unknown</string>
+
 
 
     <!-- Debug/Temporary Strings -->

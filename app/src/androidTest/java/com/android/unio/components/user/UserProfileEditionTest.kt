@@ -78,7 +78,8 @@ class UserProfileEditionTest : TearDown() {
           { navigationAction.goBack() },
           { uri, method -> method("") },
           onOnlineChange,
-          onOfflineChange)
+          onOfflineChange,
+          {})
     }
   }
 

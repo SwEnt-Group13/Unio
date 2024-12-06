@@ -9,9 +9,9 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.getSystemService
-import androidx.navigation.NavHostController
 import androidx.test.core.app.ApplicationProvider
 import com.android.unio.R
 import com.android.unio.TearDown
@@ -35,6 +35,7 @@ import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.association.AssociationProfileScaffold
 import com.android.unio.ui.association.AssociationProfileScreen
 import com.android.unio.ui.navigation.NavigationAction
+import com.android.unio.ui.navigation.Screen
 import com.google.android.gms.tasks.Task
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.CollectionReference
@@ -55,13 +56,13 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import io.mockk.mockkStatic
+import io.mockk.verify
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
 import org.mockito.kotlin.any
-import org.mockito.kotlin.verify
 
 @HiltAndroidTest
 @UninstallModules(FirebaseModule::class)
@@ -70,7 +71,7 @@ class AssociationProfileTest : TearDown() {
   private lateinit var associations: List<Association>
   private lateinit var events: List<Event>
 
-  private lateinit var navigationAction: NavigationAction
+  @MockK private lateinit var navigationAction: NavigationAction
   private lateinit var eventViewModel: EventViewModel
   private lateinit var userViewModel: UserViewModel
   private lateinit var associationViewModel: AssociationViewModel
@@ -110,6 +111,10 @@ class AssociationProfileTest : TearDown() {
     `when`(task.addOnSuccessListener(any())).thenReturn(task)
     `when`(task.addOnFailureListener(any())).thenReturn(task)
 
+    // Mock the navigation action to do nothing
+    every { navigationAction.navigateTo(any<String>()) } returns Unit
+    every { navigationAction.goBack() } returns Unit
+
     associations =
         listOf(
             MockAssociation.createMockAssociation(uid = "1"),
@@ -131,8 +136,6 @@ class AssociationProfileTest : TearDown() {
             socials = emptyList(),
             profilePicture = "",
         )
-
-    navigationAction = NavigationAction(mock(NavHostController::class.java))
 
     every { eventRepository.init(any()) } answers { (args[0] as () -> Unit).invoke() }
 
@@ -174,7 +177,7 @@ class AssociationProfileTest : TearDown() {
           onSuccess()
         }
 
-    userViewModel = UserViewModel(userRepository, false)
+    userViewModel = UserViewModel(userRepository, imageRepository)
     userViewModel.addUser(user, {})
 
     associationViewModel =
@@ -338,11 +341,9 @@ class AssociationProfileTest : TearDown() {
           navigationAction, userViewModel, eventViewModel, associationViewModel) {}
     }
 
-    `when`(navigationAction.navController.popBackStack()).thenReturn(true)
-
     composeTestRule.onNodeWithTag(AssociationProfileTestTags.GO_BACK_BUTTON).performClick()
 
-    verify(navigationAction.navController).popBackStack()
+    verify { navigationAction.goBack() }
   }
 
   @Test
@@ -369,6 +370,42 @@ class AssociationProfileTest : TearDown() {
     }
 
     composeTestRule.onNodeWithTag(AssociationProfileTestTags.SCREEN).assertIsNotDisplayed()
+  }
+
+  @Test
+  fun testAddEventButtonOnline() {
+    every { connectivityManager?.activeNetwork } returns mockk<Network>()
+
+    composeTestRule.setContent {
+      AssociationProfileScaffold(
+          navigationAction, userViewModel, eventViewModel, associationViewModel) {}
+    }
+
+    composeTestRule.onNodeWithTag(AssociationProfileTestTags.ADD_EVENT_BUTTON).assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag(AssociationProfileTestTags.ADD_EVENT_BUTTON)
+        .performScrollTo()
+        .performClick()
+
+    verify { navigationAction.navigateTo(Screen.EVENT_CREATION) }
+  }
+
+  @Test
+  fun testAddEventButtonOffline() {
+    every { connectivityManager?.activeNetwork } returns null
+
+    composeTestRule.setContent {
+      AssociationProfileScaffold(
+          navigationAction, userViewModel, eventViewModel, associationViewModel) {}
+    }
+
+    composeTestRule.onNodeWithTag(AssociationProfileTestTags.ADD_EVENT_BUTTON).assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag(AssociationProfileTestTags.ADD_EVENT_BUTTON)
+        .performScrollTo()
+        .performClick()
+
+    verify(exactly = 0) { navigationAction.navigateTo(Screen.EVENT_CREATION) }
   }
 
   @Module

@@ -38,7 +38,6 @@ import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.navigation.NavigationAction
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
-import java.util.Locale
 import me.zhanghai.compose.preference.LocalPreferenceFlow
 import me.zhanghai.compose.preference.ProvidePreferenceLocals
 import me.zhanghai.compose.preference.listPreference
@@ -110,16 +109,6 @@ fun SettingsContainer(onPasswordChange: (() -> Unit) -> Unit) {
       }
 
   /** Language * */
-  val language = preferences.get<String>(AppPreferences.LANGUAGE) ?: AppPreferences.Language.default
-  val locale = Locale(language)
-  Locale.setDefault(locale)
-
-  val configuration = context.resources.configuration
-  configuration.setLocale(locale)
-  configuration.setLayoutDirection(locale)
-  context.createConfigurationContext(configuration)
-  context.resources.updateConfiguration(configuration, context.resources.displayMetrics)
-
   ProvidePreferenceLocals(flow = LocalPreferenceFlow.current) {
     LazyColumn(
         modifier = Modifier.testTag(SettingsTestTags.CONTAINER),
@@ -201,16 +190,15 @@ fun SettingsContainer(onPasswordChange: (() -> Unit) -> Unit) {
             Icon(
                 imageVector = Icons.Default.Lock,
                 contentDescription = context.getString(R.string.settings_reset_password))
-          },
-          onClick = {
-            onPasswordChange({
+          }) {
+            onPasswordChange {
               Toast.makeText(
                       context,
                       context.getString(R.string.settings_reset_password_sent),
                       Toast.LENGTH_SHORT)
                   .show()
-            })
-          })
+            }
+          }
     }
   }
 }

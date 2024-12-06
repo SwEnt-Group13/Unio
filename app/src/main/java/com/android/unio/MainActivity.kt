@@ -18,6 +18,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -29,6 +30,7 @@ import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.image.ImageViewModel
 import com.android.unio.model.map.MapViewModel
 import com.android.unio.model.map.nominatim.NominatimLocationSearchViewModel
+import com.android.unio.model.preferences.AppPreferences
 import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.association.AssociationProfileScreen
@@ -56,6 +58,9 @@ import com.android.unio.ui.user.UserProfileEditionScreen
 import com.android.unio.ui.user.UserProfileScreen
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.HiltAndroidApp
+import java.util.Locale
+import javax.inject.Inject
+import me.zhanghai.compose.preference.LocalPreferenceFlow
 import me.zhanghai.compose.preference.ProvidePreferenceLocals
 
 @AndroidEntryPoint
@@ -78,6 +83,19 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun UnioApp() {
+  // Sets language according to LocalPreferences
+  val preferences by LocalPreferenceFlow.current.collectAsState()
+  val context = LocalContext.current
+  val language = preferences.asMap().getOrDefault(AppPreferences.LANGUAGE, AppPreferences.Language.default) as String
+  val locale = Locale(language)
+  Locale.setDefault(locale)
+
+  val configuration = context.resources.configuration
+  configuration.setLocale(locale)
+  configuration.setLayoutDirection(locale)
+  context.createConfigurationContext(configuration)
+  context.resources.updateConfiguration(configuration, context.resources.displayMetrics)
+
   val navController = rememberNavController()
 
   val navigationActions = NavigationAction(navController)

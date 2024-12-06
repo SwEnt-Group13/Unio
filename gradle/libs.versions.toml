@@ -108,6 +108,7 @@ firebaseFunctionsKtx = "21.0.0"
 playServicesLocation = "21.3.0"
 firebaseMessagingKtx = "24.1.0"
 workRuntimeKtx = "2.9.1"
+espressoContrib = "3.6.1"
 
 
 [libraries]
@@ -219,6 +220,7 @@ retrofit-mock = { module = "com.squareup.retrofit2:retrofit-mock", version.ref =
 mockwebserver = { module = "com.squareup.okhttp3:mockwebserver", version.ref = "mockwebserver" }
 firebase-messaging-ktx = { group = "com.google.firebase", name = "firebase-messaging-ktx", version.ref = "firebaseMessagingKtx" }
 work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "workRuntimeKtx" }
+androidx-espresso-contrib = { group = "androidx.test.espresso", name = "espresso-contrib", version.ref = "espressoContrib" }
 
 
 

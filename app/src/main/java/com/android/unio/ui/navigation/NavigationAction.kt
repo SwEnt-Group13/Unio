@@ -1,5 +1,7 @@
 package com.android.unio.ui.navigation
 
+import android.content.Context
+import android.util.Log
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.Home
@@ -8,6 +10,7 @@ import androidx.compose.material.icons.outlined.Search
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
+import com.android.unio.R
 import com.android.unio.model.strings.test_tags.BottomNavBarTestTags
 
 open class NavigationAction(val navController: NavHostController) {
@@ -120,6 +123,24 @@ object Route {
   const val EXPLORE = "Explore"
   const val SAVED = "Saved"
   const val MY_PROFILE = "Profile"
+
+  fun toTranslatedString(context: Context, route: String): String {
+
+    val strId =
+        when (route) {
+          HOME -> R.string.bottom_nav_home
+          SAVED -> R.string.bottom_nav_saved
+          EXPLORE -> R.string.bottom_nav_explore
+          MY_PROFILE -> R.string.bottom_nav_profile
+          AUTH -> R.string.nav_auth
+          else -> {
+            Log.e("NavigationAction", "The provided route string does not exist.")
+            0
+          }
+        }
+
+    return context.getString(strId)
+  }
 }
 
 object Screen {

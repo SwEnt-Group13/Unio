@@ -1,5 +1,6 @@
 package com.android.unio.components.explore
 
+import android.content.Context
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createComposeRule
@@ -47,6 +48,7 @@ class ExploreScreenTest : TearDown() {
       ConcurrentAssociationUserRepositoryFirestore
   @MockK private lateinit var eventRepository: EventRepositoryFirestore
   @MockK private lateinit var imageRepository: ImageRepositoryFirebaseStorage
+  @MockK private lateinit var context: Context
   private lateinit var associationViewModel: AssociationViewModel
 
   @get:Rule val composeTestRule = createComposeRule()
@@ -63,6 +65,9 @@ class ExploreScreenTest : TearDown() {
 
     // Mock the navigation action to do nothing
     every { navigationAction.navigateTo(any<String>()) } returns Unit
+    every { context.getString(AssociationCategory.ARTS.displayNameId) } returns "Arts"
+    every { context.getString(AssociationCategory.SCIENCE_TECH.displayNameId) } returns
+        "Science and technology"
 
     associations =
         listOf(
@@ -80,7 +85,7 @@ class ExploreScreenTest : TearDown() {
         }
 
     sortedByCategoryAssociations =
-        getSortedEntriesAssociationsByCategory(associations.groupBy { it.category })
+        getSortedEntriesAssociationsByCategory(context, associations.groupBy { it.category })
 
     associationViewModel =
         AssociationViewModel(
@@ -127,7 +132,8 @@ class ExploreScreenTest : TearDown() {
   fun testGetFilteredAssociationsByCategory() {
     val associationsByCategory = associations.groupBy { it.category }
     val sortedByCategoryAssociations =
-        getSortedEntriesAssociationsByCategory(associationsByCategory)
+        getSortedEntriesAssociationsByCategory(context, associationsByCategory)
+    println(sortedByCategoryAssociations)
 
     assertEquals(AssociationCategory.ARTS, sortedByCategoryAssociations[0].key)
     assertEquals(AssociationCategory.SCIENCE_TECH, sortedByCategoryAssociations[1].key)

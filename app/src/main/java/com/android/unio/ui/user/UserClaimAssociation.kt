@@ -92,7 +92,8 @@ fun UserClaimAssociationScreen(
                   associationViewModel.selectAssociation(association.uid)
                   navigationAction.navigateTo(Screen.CLAIM_ASSOCIATION_PRESIDENTIAL_RIGHTS)
                 },
-                modifier = Modifier)
+                false,
+                {})
           }
         }
       })

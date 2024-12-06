@@ -36,4 +36,20 @@ class ImageRepositoryFirebaseStorage @Inject constructor(storage: FirebaseStorag
         onSuccess = { getImageUrl(firebasePath, onSuccess, onFailure) },
         onFailure = { e -> onFailure(e) })
   }
+
+  override fun deleteImage(
+      firebasePath: String,
+      onSuccess: () -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+    val path = storageRef.child(firebasePath)
+
+    path.delete().addOnCompleteListener { task ->
+      if (task.isSuccessful) {
+        onSuccess()
+      } else {
+        onFailure(task.exception!!)
+      }
+    }
+  }
 }
