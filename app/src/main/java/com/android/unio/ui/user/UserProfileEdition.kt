@@ -357,7 +357,8 @@ private fun EditUserTextFields(
               modifier = Modifier.testTag(UserEditionTestTags.FIRST_NAME_TEXT))
 
           if (Utils.checkInputLengthIsClose(firstName, TextLength.SMALL)) {
-            Text(text = "${firstName.length}/${TextLength.SMALL.length}",
+            Text(
+                text = "${firstName.length}/${TextLength.SMALL.length}",
                 modifier = Modifier.testTag(UserEditionTestTags.FIRST_NAME_CHARACTER_COUNTER))
           }
         }
@@ -389,7 +390,8 @@ private fun EditUserTextFields(
               modifier = Modifier.testTag(UserEditionTestTags.LAST_NAME_TEXT).padding(4.dp))
 
           if (Utils.checkInputLengthIsClose(lastName, TextLength.SMALL)) {
-            Text(text = "${lastName.length}/${TextLength.SMALL.length}",
+            Text(
+                text = "${lastName.length}/${TextLength.SMALL.length}",
                 modifier = Modifier.testTag(UserEditionTestTags.LAST_NAME_CHARACTER_COUNTER))
           }
         }
@@ -425,7 +427,8 @@ private fun EditUserTextFields(
               modifier = Modifier.testTag(UserEditionTestTags.BIOGRAPHY_TEXT).padding(4.dp))
 
           if (Utils.checkInputLengthIsClose(bio, TextLength.LARGE)) {
-            Text(text = "${bio.length}/${TextLength.LARGE.length}",
+            Text(
+                text = "${bio.length}/${TextLength.LARGE.length}",
                 modifier = Modifier.testTag(UserEditionTestTags.BIOGRAPHY_CHARACTER_COUNTER))
           }
         }

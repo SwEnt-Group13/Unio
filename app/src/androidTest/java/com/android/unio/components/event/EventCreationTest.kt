@@ -225,26 +225,33 @@ class EventCreationTest : TearDown() {
         .assertDisplayComponentInScroll()
   }
 
-    @Test
-    fun testCorrectlyDisplaysCharacterCountForTextFields(){
-        composeTestRule.onNodeWithTag(EventCreationTestTags.EVENT_TITLE)
-            .performScrollTo()
-            .performTextInput(TextLengthSamples.SMALL)
-        composeTestRule.onNodeWithTag(EventCreationTestTags.TITLE_CHARACTER_COUNTER).assertIsDisplayed()
-        composeTestRule.onNodeWithTag(EventCreationTestTags.EVENT_TITLE).performTextClearance()
+  @Test
+  fun testCorrectlyDisplaysCharacterCountForTextFields() {
+    composeTestRule
+        .onNodeWithTag(EventCreationTestTags.EVENT_TITLE)
+        .performScrollTo()
+        .performTextInput(TextLengthSamples.SMALL)
+    composeTestRule.onNodeWithTag(EventCreationTestTags.TITLE_CHARACTER_COUNTER).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(EventCreationTestTags.EVENT_TITLE).performTextClearance()
 
-        composeTestRule.onNodeWithTag(EventCreationTestTags.SHORT_DESCRIPTION)
-            .performScrollTo()
-            .performTextInput(TextLengthSamples.MEDIUM)
-        composeTestRule.onNodeWithTag(EventCreationTestTags.SHORT_DESCRIPTION_CHARACTER_COUNTER).assertIsDisplayed()
-        composeTestRule.onNodeWithTag(EventCreationTestTags.SHORT_DESCRIPTION).performTextClearance()
+    composeTestRule
+        .onNodeWithTag(EventCreationTestTags.SHORT_DESCRIPTION)
+        .performScrollTo()
+        .performTextInput(TextLengthSamples.MEDIUM)
+    composeTestRule
+        .onNodeWithTag(EventCreationTestTags.SHORT_DESCRIPTION_CHARACTER_COUNTER)
+        .assertIsDisplayed()
+    composeTestRule.onNodeWithTag(EventCreationTestTags.SHORT_DESCRIPTION).performTextClearance()
 
-        composeTestRule.onNodeWithTag(EventCreationTestTags.DESCRIPTION)
-            .performScrollTo()
-            .performTextInput(TextLengthSamples.LARGE)
-        composeTestRule.onNodeWithTag(EventCreationTestTags.DESCRIPTION_CHARACTER_COUNTER).assertIsDisplayed()
-        composeTestRule.onNodeWithTag(EventCreationTestTags.DESCRIPTION).performTextClearance()
-    }
+    composeTestRule
+        .onNodeWithTag(EventCreationTestTags.DESCRIPTION)
+        .performScrollTo()
+        .performTextInput(TextLengthSamples.LARGE)
+    composeTestRule
+        .onNodeWithTag(EventCreationTestTags.DESCRIPTION_CHARACTER_COUNTER)
+        .assertIsDisplayed()
+    composeTestRule.onNodeWithTag(EventCreationTestTags.DESCRIPTION).performTextClearance()
+  }
 
   @Test
   fun testLocationInputFunctionality() {

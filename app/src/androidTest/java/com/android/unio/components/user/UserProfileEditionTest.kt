@@ -273,27 +273,36 @@ class UserProfileEditionTest : TearDown() {
         .assertExists()
   }
 
-    @Test
-    fun testCorrectlyDisplaysCharacterCountForTextFields(){
-        composeTestRule.onNodeWithTag(UserEditionTestTags.FIRST_NAME_TEXT_FIELD)
-            .performScrollTo()
-            .performTextInput(TextLengthSamples.SMALL)
+  @Test
+  fun testCorrectlyDisplaysCharacterCountForTextFields() {
+    composeTestRule
+        .onNodeWithTag(UserEditionTestTags.FIRST_NAME_TEXT_FIELD)
+        .performScrollTo()
+        .performTextInput(TextLengthSamples.SMALL)
 
-        composeTestRule.onNodeWithTag(UserEditionTestTags.FIRST_NAME_CHARACTER_COUNTER).assertIsDisplayed()
-        composeTestRule.onNodeWithTag(UserEditionTestTags.FIRST_NAME_TEXT_FIELD).performTextClearance()
+    composeTestRule
+        .onNodeWithTag(UserEditionTestTags.FIRST_NAME_CHARACTER_COUNTER)
+        .assertIsDisplayed()
+    composeTestRule.onNodeWithTag(UserEditionTestTags.FIRST_NAME_TEXT_FIELD).performTextClearance()
 
-        composeTestRule.onNodeWithTag(UserEditionTestTags.LAST_NAME_TEXT_FIELD)
-            .performScrollTo()
-            .performTextInput(TextLengthSamples.SMALL)
-        composeTestRule.onNodeWithTag(UserEditionTestTags.LAST_NAME_CHARACTER_COUNTER).assertIsDisplayed()
-        composeTestRule.onNodeWithTag(UserEditionTestTags.LAST_NAME_TEXT_FIELD).performTextClearance()
+    composeTestRule
+        .onNodeWithTag(UserEditionTestTags.LAST_NAME_TEXT_FIELD)
+        .performScrollTo()
+        .performTextInput(TextLengthSamples.SMALL)
+    composeTestRule
+        .onNodeWithTag(UserEditionTestTags.LAST_NAME_CHARACTER_COUNTER)
+        .assertIsDisplayed()
+    composeTestRule.onNodeWithTag(UserEditionTestTags.LAST_NAME_TEXT_FIELD).performTextClearance()
 
-        composeTestRule.onNodeWithTag(UserEditionTestTags.BIOGRAPHY_TEXT_FIELD)
-            .performScrollTo()
-            .performTextInput(TextLengthSamples.LARGE)
-        composeTestRule.onNodeWithTag(UserEditionTestTags.BIOGRAPHY_CHARACTER_COUNTER).assertIsDisplayed()
-        composeTestRule.onNodeWithTag(UserEditionTestTags.BIOGRAPHY_TEXT_FIELD).performTextClearance()
-    }
+    composeTestRule
+        .onNodeWithTag(UserEditionTestTags.BIOGRAPHY_TEXT_FIELD)
+        .performScrollTo()
+        .performTextInput(TextLengthSamples.LARGE)
+    composeTestRule
+        .onNodeWithTag(UserEditionTestTags.BIOGRAPHY_CHARACTER_COUNTER)
+        .assertIsDisplayed()
+    composeTestRule.onNodeWithTag(UserEditionTestTags.BIOGRAPHY_TEXT_FIELD).performTextClearance()
+  }
 
   object UserUpdate {
     const val FIRST_NAME = "Johnny"

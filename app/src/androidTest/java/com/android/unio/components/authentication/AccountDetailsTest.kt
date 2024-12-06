@@ -198,30 +198,44 @@ class AccountDetailsTest : TearDown() {
         .assertIsDisplayed()
   }
 
-    @Test
-    fun testCorrectlyDisplaysCharacterCountForTextFields(){
-        composeTestRule.onNodeWithTag(AccountDetailsTestTags.FIRST_NAME_TEXT_FIELD)
-            .performScrollTo()
-            .performTextInput(TextLengthSamples.SMALL)
+  @Test
+  fun testCorrectlyDisplaysCharacterCountForTextFields() {
+    composeTestRule
+        .onNodeWithTag(AccountDetailsTestTags.FIRST_NAME_TEXT_FIELD)
+        .performScrollTo()
+        .performTextInput(TextLengthSamples.SMALL)
 
-        composeTestRule.onNodeWithTag(AccountDetailsTestTags.FIRST_NAME_CHARACTER_COUNTER).assertIsDisplayed()
-        composeTestRule.onNodeWithTag(AccountDetailsTestTags.FIRST_NAME_TEXT_FIELD).performTextClearance()
+    composeTestRule
+        .onNodeWithTag(AccountDetailsTestTags.FIRST_NAME_CHARACTER_COUNTER)
+        .assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag(AccountDetailsTestTags.FIRST_NAME_TEXT_FIELD)
+        .performTextClearance()
 
-        composeTestRule.onNodeWithTag(AccountDetailsTestTags.LAST_NAME_TEXT_FIELD)
-            .performScrollTo()
-            .performTextInput(TextLengthSamples.SMALL)
+    composeTestRule
+        .onNodeWithTag(AccountDetailsTestTags.LAST_NAME_TEXT_FIELD)
+        .performScrollTo()
+        .performTextInput(TextLengthSamples.SMALL)
 
-        composeTestRule.onNodeWithTag(AccountDetailsTestTags.LAST_NAME_CHARACTER_COUNTER).assertIsDisplayed()
-        composeTestRule.onNodeWithTag(AccountDetailsTestTags.LAST_NAME_TEXT_FIELD).performTextClearance()
+    composeTestRule
+        .onNodeWithTag(AccountDetailsTestTags.LAST_NAME_CHARACTER_COUNTER)
+        .assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag(AccountDetailsTestTags.LAST_NAME_TEXT_FIELD)
+        .performTextClearance()
 
-        composeTestRule.onNodeWithTag(AccountDetailsTestTags.BIOGRAPHY_TEXT_FIELD)
-            .performScrollTo()
-            .performTextInput(TextLengthSamples.LARGE)
+    composeTestRule
+        .onNodeWithTag(AccountDetailsTestTags.BIOGRAPHY_TEXT_FIELD)
+        .performScrollTo()
+        .performTextInput(TextLengthSamples.LARGE)
 
-        composeTestRule.onNodeWithTag(AccountDetailsTestTags.BIOGRAPHY_CHARACTER_COUNTER).assertIsDisplayed()
-        composeTestRule.onNodeWithTag(AccountDetailsTestTags.BIOGRAPHY_TEXT_FIELD).performTextClearance()
-    }
-
+    composeTestRule
+        .onNodeWithTag(AccountDetailsTestTags.BIOGRAPHY_CHARACTER_COUNTER)
+        .assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag(AccountDetailsTestTags.BIOGRAPHY_TEXT_FIELD)
+        .performTextClearance()
+  }
 
   @Test
   fun testContinueButtonCorrectlyNavigatesToHome() {

@@ -123,8 +123,10 @@ fun EventCreationScreen(
                           text = context.getString(R.string.event_creation_name_label))
 
                       if (Utils.checkInputLengthIsClose(name, TextLength.SMALL)) {
-                        Text(text = "${name.length}/${TextLength.SMALL.length}",
-                            modifier = Modifier.testTag(EventCreationTestTags.TITLE_CHARACTER_COUNTER))
+                        Text(
+                            text = "${name.length}/${TextLength.SMALL.length}",
+                            modifier =
+                                Modifier.testTag(EventCreationTestTags.TITLE_CHARACTER_COUNTER))
                       }
                     }
               })
@@ -146,8 +148,11 @@ fun EventCreationScreen(
                           text = context.getString(R.string.event_creation_short_description_label))
 
                       if (Utils.checkInputLengthIsClose(shortDescription, TextLength.MEDIUM)) {
-                        Text(text = "${shortDescription.length}/${TextLength.MEDIUM.length}",
-                            modifier = Modifier.testTag(EventCreationTestTags.SHORT_DESCRIPTION_CHARACTER_COUNTER))
+                        Text(
+                            text = "${shortDescription.length}/${TextLength.MEDIUM.length}",
+                            modifier =
+                                Modifier.testTag(
+                                    EventCreationTestTags.SHORT_DESCRIPTION_CHARACTER_COUNTER))
                       }
                     }
               })
@@ -196,8 +201,11 @@ fun EventCreationScreen(
                           text = context.getString(R.string.event_creation_description_label))
 
                       if (Utils.checkInputLengthIsClose(longDescription, TextLength.LARGE)) {
-                        Text(text = "${longDescription.length}/${TextLength.LARGE.length}",
-                            modifier = Modifier.testTag(EventCreationTestTags.DESCRIPTION_CHARACTER_COUNTER))
+                        Text(
+                            text = "${longDescription.length}/${TextLength.LARGE.length}",
+                            modifier =
+                                Modifier.testTag(
+                                    EventCreationTestTags.DESCRIPTION_CHARACTER_COUNTER))
                       }
                     }
               })
@@ -242,13 +250,13 @@ fun EventCreationScreen(
             }
           }
 
-        NominatimLocationPicker(
-            locationSearchViewModel,
-            null,
-            EventCreationTestTags.LOCATION,
-            EventCreationTestTags.LOCATION_SUGGESTION_ITEM_LATITUDE) {
-            selectedLocation = it
-        }
+          NominatimLocationPicker(
+              locationSearchViewModel,
+              null,
+              EventCreationTestTags.LOCATION,
+              EventCreationTestTags.LOCATION_SUGGESTION_ITEM_LATITUDE) {
+                selectedLocation = it
+              }
 
           Spacer(modifier = Modifier.width(10.dp))
 

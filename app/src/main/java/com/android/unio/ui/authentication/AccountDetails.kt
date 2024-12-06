@@ -268,8 +268,10 @@ private fun UserTextFields(
                   context.getString(R.string.account_details_first_name),
                   modifier = Modifier.testTag(AccountDetailsTestTags.FIRST_NAME_TEXT).padding(4.dp))
               if (Utils.checkInputLengthIsClose(firstName, TextLength.SMALL)) {
-                Text( text = "${firstName.length}/${TextLength.SMALL.length}",
-                    modifier = Modifier.testTag(AccountDetailsTestTags.FIRST_NAME_CHARACTER_COUNTER))
+                Text(
+                    text = "${firstName.length}/${TextLength.SMALL.length}",
+                    modifier =
+                        Modifier.testTag(AccountDetailsTestTags.FIRST_NAME_CHARACTER_COUNTER))
               }
             }
       },
@@ -301,7 +303,8 @@ private fun UserTextFields(
                   context.getString(R.string.account_details_last_name),
                   modifier = Modifier.testTag(AccountDetailsTestTags.LAST_NAME_TEXT).padding(4.dp))
               if (Utils.checkInputLengthIsClose(lastName, TextLength.SMALL)) {
-                Text(text = "${lastName.length}/${TextLength.SMALL.length}",
+                Text(
+                    text = "${lastName.length}/${TextLength.SMALL.length}",
                     modifier = Modifier.testTag(AccountDetailsTestTags.LAST_NAME_CHARACTER_COUNTER))
               }
             }
@@ -335,7 +338,8 @@ private fun UserTextFields(
                   context.getString(R.string.account_details_bio),
                   modifier = Modifier.testTag(AccountDetailsTestTags.BIOGRAPHY_TEXT))
               if (Utils.checkInputLengthIsClose(bio, TextLength.LARGE)) {
-                Text(text = "${bio.length}/${TextLength.LARGE.length}",
+                Text(
+                    text = "${bio.length}/${TextLength.LARGE.length}",
                     modifier = Modifier.testTag(AccountDetailsTestTags.BIOGRAPHY_CHARACTER_COUNTER))
               }
             }
