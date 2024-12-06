@@ -268,7 +268,9 @@ fun UserProfileScreenContent(
                 modifier = Modifier.fillMaxWidth().testTag(UserProfileTestTags.JOINED_ASSOCIATIONS),
                 verticalArrangement = Arrangement.spacedBy(4.dp),
             ) {
-              joinedAssociations.map { AssociationSmall(it) { onAssociationClick(it.uid) } }
+              joinedAssociations.map {
+                AssociationSmall(it, user.uid) { onAssociationClick(it.uid) }
+              }
             }
           } else {
             Text(
@@ -293,7 +295,9 @@ fun UserProfileScreenContent(
                 modifier = Modifier.testTag(UserProfileTestTags.FOLLOWED_ASSOCIATIONS),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-              followedAssociations.map { AssociationSmall(it) { onAssociationClick(it.uid) } }
+              followedAssociations.map {
+                AssociationSmall(it, user.uid) { onAssociationClick(it.uid) }
+              }
             }
           }
         }

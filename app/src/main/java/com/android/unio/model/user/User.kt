@@ -168,3 +168,8 @@ fun getPlaceHolderText(social: Social): String {
     Social.WEBSITE -> "https://www.mywebsite.com"
   }
 }
+
+fun getUserRoleInAssociation(association: Association, userUid: String): String {
+  val member = association.members.find { it.user.uid == userUid }
+  return member?.role?.displayName ?: "No Role"
+}
