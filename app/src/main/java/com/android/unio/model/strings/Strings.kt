@@ -26,4 +26,7 @@ object NotificationStrings {
   const val NOTIFICATION_SCHEDULER_TYPE_CANCEL = "cancel"
   const val NOTIFICATION_SCHEDULER_TYPE_CREATE = "create"
   const val NOTIFICATION_SCHEDULER_TYPE = "type"
+
+  const val EVENT_BROADCAST_CHANNEL_ID = "EventBroadcast"
+  const val EVENT_BROADCAST_NOTIFICATION_ID = 1
 }
