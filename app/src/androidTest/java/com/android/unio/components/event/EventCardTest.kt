@@ -37,6 +37,7 @@ import io.mockk.mockkObject
 import io.mockk.runs
 import io.mockk.spyk
 import io.mockk.verify
+import me.zhanghai.compose.preference.ProvidePreferenceLocals
 import java.util.Date
 import org.junit.After
 import org.junit.Before
@@ -98,7 +99,9 @@ class EventCardTest : TearDown() {
 
   private fun setEventScreen(event: Event) {
     composeTestRule.setContent {
-      EventCard(navigationAction, event, userViewModel, eventViewModel, true)
+      ProvidePreferenceLocals {
+        EventCard(navigationAction, event, userViewModel, eventViewModel, true)
+      }
     }
   }
 

@@ -25,6 +25,7 @@ import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.spyk
+import me.zhanghai.compose.preference.ProvidePreferenceLocals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -94,7 +95,11 @@ class SavedTest : TearDown() {
   fun testSavedScreenWithSavedEvents() {
     userViewModel.addUser(MockUser.createMockUser(savedEvents = eventList)) {}
 
-    composeTestRule.setContent { SavedScreen(navigationAction, eventViewModel, userViewModel) }
+    composeTestRule.setContent {
+      ProvidePreferenceLocals {
+        SavedScreen(navigationAction, eventViewModel, userViewModel)
+      }
+    }
 
     composeTestRule.waitForIdle()
 
@@ -108,7 +113,11 @@ class SavedTest : TearDown() {
   fun testSavedScreenWithNoSavedEvents() {
     userViewModel.addUser(MockUser.createMockUser(savedEvents = emptyList())) {}
 
-    composeTestRule.setContent { SavedScreen(navigationAction, eventViewModel, userViewModel) }
+    composeTestRule.setContent {
+      ProvidePreferenceLocals {
+        SavedScreen(navigationAction, eventViewModel, userViewModel)
+      }
+    }
 
     composeTestRule.waitForIdle()
 

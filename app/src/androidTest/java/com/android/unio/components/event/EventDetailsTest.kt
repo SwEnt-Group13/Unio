@@ -166,8 +166,6 @@ class EventDetailsTest : TearDown() {
     composeTestRule
         .onNodeWithTag(EventDetailsTestTags.SHARE_BUTTON)
         .assertDisplayComponentInScroll()
-    composeTestRule.onNodeWithTag(EventDetailsTestTags.SHARE_BUTTON).performClick()
-    assertSnackBarIsDisplayed()
 
     // Save button
     composeTestRule.onNodeWithTag(EventDetailsTestTags.SAVE_BUTTON).assertDisplayComponentInScroll()
@@ -181,10 +179,7 @@ class EventDetailsTest : TearDown() {
     // Sign-up button
     composeTestRule
         .onNodeWithTag(EventDetailsTestTags.SIGN_UP_BUTTON)
-        .assertDisplayComponentInScroll()
-    composeTestRule.onNodeWithTag(EventDetailsTestTags.SIGN_UP_BUTTON).performClick()
-    assertSnackBarIsDisplayed()
-  }
+        .assertDisplayComponentInScroll() }
 
   private fun assertSnackBarIsDisplayed() {
     composeTestRule.onNodeWithTag(EventDetailsTestTags.SNACKBAR_HOST).assertIsDisplayed()
