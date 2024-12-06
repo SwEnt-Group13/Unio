@@ -53,15 +53,18 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import com.android.unio.R
 import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.association.Member
+import com.android.unio.model.association.PermissionType
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.strings.test_tags.AssociationProfileTestTags
@@ -434,6 +437,19 @@ private fun AssociationMembers(
                   user.value?.lastName?.let {
                     val lastName = it
                     Text("${firstName} ${lastName}")
+
+                    // Role Badge
+                    Box(
+                        modifier =
+                            Modifier.background(
+                                    color = getRandomBadgeColor(), shape = RoundedCornerShape(8.dp))
+                                .padding(horizontal = 8.dp, vertical = 4.dp)) {
+                          Text(
+                              text = member.role.displayName,
+                              style = MaterialTheme.typography.bodySmall,
+                              color = Color.White,
+                              textAlign = TextAlign.Center)
+                        }
                   }
                 }
               }
@@ -463,9 +479,17 @@ private fun AssociationEvents(
   var isSeeMoreClicked by remember { mutableStateOf(false) }
 
   val events by association.events.list.collectAsState()
+  val user by userViewModel.user.collectAsState()
 
-  // To be changed when we have a functional admin system
-  var isAdmin by remember { mutableStateOf(true) }
+  // Check if the user is a member of the association
+  val isMember = association.members.any { it.uid == user?.uid }
+
+  // Retrieve the member's permissions if they are part of the association
+  val userPermissions = association.members.find { it.uid == user?.uid }?.role?.permissions
+
+  // Check if the user has the "ADD_EVENTS" permission using the Permissions class
+  val hasAddEventsPermission = userPermissions?.hasPermission(PermissionType.ADD_EVENTS) == true
+  Log.d("permissions", userPermissions?.getGrantedPermissions()?.size.toString())
 
   if (events.isNotEmpty()) {
     Text(
@@ -495,7 +519,8 @@ private fun AssociationEvents(
           }
     }
   }
-  if (isAdmin) {
+  // Show the "Add Event" button only if the user is a member and has the "ADD_EVENTS" permission
+  if (isMember && hasAddEventsPermission) {
     Button(
         onClick = {
           if (isConnected) {
