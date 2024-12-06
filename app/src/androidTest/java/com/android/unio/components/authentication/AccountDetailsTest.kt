@@ -12,6 +12,7 @@ import androidx.compose.ui.test.performTextInput
 import com.android.unio.TearDown
 import com.android.unio.addNewUserSocial
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
+import com.android.unio.model.image.ImageViewModel
 import com.android.unio.model.strings.TextLengthSamples
 import com.android.unio.model.strings.test_tags.AccountDetailsTestTags
 import com.android.unio.model.strings.test_tags.InterestsOverlayTestTags
@@ -46,6 +47,8 @@ class AccountDetailsTest : TearDown() {
   @MockK private lateinit var userViewModel: UserViewModel
   @MockK private lateinit var imageRepository: ImageRepositoryFirebaseStorage
 
+  private lateinit var imageViewModel: ImageViewModel
+
   // This is the implementation of the abstract method getUid() from FirebaseUser.
   // Because it is impossible to mock abstract method, this is the only way to mock it.
   @MockK private lateinit var mockFirebaseUser: zzac
@@ -75,8 +78,10 @@ class AccountDetailsTest : TearDown() {
     navigationAction = mock(NavigationAction::class.java)
     `when`(navigationAction.getCurrentRoute()).thenReturn(Screen.ACCOUNT_DETAILS)
 
+    imageViewModel = ImageViewModel(imageRepository)
+
     composeTestRule.setContent {
-      AccountDetailsScreen(navigationAction, userViewModel, imageRepository)
+      AccountDetailsScreen(navigationAction, userViewModel, imageViewModel)
     }
   }
 
