@@ -27,6 +27,7 @@ import com.android.unio.model.map.nominatim.NominatimLocationRepository
 import com.android.unio.model.map.nominatim.NominatimLocationSearchViewModel
 import com.android.unio.model.search.SearchRepository
 import com.android.unio.model.search.SearchViewModel
+import com.android.unio.model.strings.TextLengthSamples
 import com.android.unio.model.strings.test_tags.EventCreationOverlayTestTags
 import com.android.unio.model.strings.test_tags.EventCreationTestTags
 import com.android.unio.ui.event.EventCreationScreen
@@ -42,7 +43,6 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockkStatic
 import io.mockk.spyk
-import java.net.HttpURLConnection
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.Before
@@ -50,6 +50,7 @@ import org.junit.Rule
 import org.junit.Test
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.net.HttpURLConnection
 
 @HiltAndroidTest
 class EventCreationTest : TearDown() {
@@ -223,6 +224,27 @@ class EventCreationTest : TearDown() {
         .onNodeWithTag(EventCreationOverlayTestTags.SAVE)
         .assertDisplayComponentInScroll()
   }
+
+    @Test
+    fun testCorrectlyDisplaysCharacterCountForTextFields(){
+        composeTestRule.onNodeWithTag(EventCreationTestTags.EVENT_TITLE)
+            .performScrollTo()
+            .performTextInput(TextLengthSamples.SMALL)
+        composeTestRule.onNodeWithTag(EventCreationTestTags.TITLE_CHARACTER_COUNTER).assertIsDisplayed()
+        composeTestRule.onNodeWithTag(EventCreationTestTags.EVENT_TITLE).performTextClearance()
+
+        composeTestRule.onNodeWithTag(EventCreationTestTags.SHORT_DESCRIPTION)
+            .performScrollTo()
+            .performTextInput(TextLengthSamples.MEDIUM)
+        composeTestRule.onNodeWithTag(EventCreationTestTags.SHORT_DESCRIPTION_CHARACTER_COUNTER).assertIsDisplayed()
+        composeTestRule.onNodeWithTag(EventCreationTestTags.SHORT_DESCRIPTION).performTextClearance()
+
+        composeTestRule.onNodeWithTag(EventCreationTestTags.DESCRIPTION)
+            .performScrollTo()
+            .performTextInput(TextLengthSamples.LARGE)
+        composeTestRule.onNodeWithTag(EventCreationTestTags.DESCRIPTION_CHARACTER_COUNTER).assertIsDisplayed()
+        composeTestRule.onNodeWithTag(EventCreationTestTags.DESCRIPTION).performTextClearance()
+    }
 
   @Test
   fun testLocationInputFunctionality() {

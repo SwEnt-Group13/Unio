@@ -16,6 +16,7 @@ import com.android.unio.TearDown
 import com.android.unio.addNewUserSocial
 import com.android.unio.assertDisplayComponentInScroll
 import com.android.unio.mocks.user.MockUser
+import com.android.unio.model.strings.TextLengthSamples
 import com.android.unio.model.strings.test_tags.InterestsOverlayTestTags
 import com.android.unio.model.strings.test_tags.SocialsOverlayTestTags
 import com.android.unio.model.strings.test_tags.UserEditionTestTags
@@ -271,6 +272,28 @@ class UserProfileEditionTest : TearDown() {
         .onNodeWithTag(UserEditionTestTags.LAST_NAME_ERROR_TEXT, useUnmergedTree = true)
         .assertExists()
   }
+
+    @Test
+    fun testCorrectlyDisplaysCharacterCountForTextFields(){
+        composeTestRule.onNodeWithTag(UserEditionTestTags.FIRST_NAME_TEXT_FIELD)
+            .performScrollTo()
+            .performTextInput(TextLengthSamples.SMALL)
+
+        composeTestRule.onNodeWithTag(UserEditionTestTags.FIRST_NAME_CHARACTER_COUNTER).assertIsDisplayed()
+        composeTestRule.onNodeWithTag(UserEditionTestTags.FIRST_NAME_TEXT_FIELD).performTextClearance()
+
+        composeTestRule.onNodeWithTag(UserEditionTestTags.LAST_NAME_TEXT_FIELD)
+            .performScrollTo()
+            .performTextInput(TextLengthSamples.SMALL)
+        composeTestRule.onNodeWithTag(UserEditionTestTags.LAST_NAME_CHARACTER_COUNTER).assertIsDisplayed()
+        composeTestRule.onNodeWithTag(UserEditionTestTags.LAST_NAME_TEXT_FIELD).performTextClearance()
+
+        composeTestRule.onNodeWithTag(UserEditionTestTags.BIOGRAPHY_TEXT_FIELD)
+            .performScrollTo()
+            .performTextInput(TextLengthSamples.LARGE)
+        composeTestRule.onNodeWithTag(UserEditionTestTags.BIOGRAPHY_CHARACTER_COUNTER).assertIsDisplayed()
+        composeTestRule.onNodeWithTag(UserEditionTestTags.BIOGRAPHY_TEXT_FIELD).performTextClearance()
+    }
 
   object UserUpdate {
     const val FIRST_NAME = "Johnny"
