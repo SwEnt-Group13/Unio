@@ -1,5 +1,7 @@
 package com.android.unio.model.preferences
 
+import me.zhanghai.compose.preference.Preferences
+
 /**
  * Constants for the app preferences. The object contains string constants for the keys of the app
  * preferences, as well as nested objects for specific values of the preferences.
@@ -51,4 +53,8 @@ object AppPreferences {
           else -> language
         }
   }
+}
+
+inline fun <reified T> Preferences.getOrDefault(key: String, defaultValue: T): T {
+  return this.asMap().getOrDefault(key, defaultValue) as? T ?: defaultValue
 }

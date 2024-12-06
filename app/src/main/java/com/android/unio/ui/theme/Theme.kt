@@ -19,6 +19,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 import com.android.unio.model.preferences.AppPreferences
+import com.android.unio.model.preferences.getOrDefault
 import me.zhanghai.compose.preference.LocalPreferenceFlow
 
 private val lightScheme =
@@ -274,9 +275,7 @@ fun AppTheme(
 ) {
   val preferences by LocalPreferenceFlow.current.collectAsState()
 
-  val theme = preferences.asMap().getOrDefault(AppPreferences.THEME, AppPreferences.Theme.SYSTEM)
-  val language =
-      preferences.asMap().getOrDefault(AppPreferences.LANGUAGE, AppPreferences.Language.default)
+  val theme = preferences.getOrDefault(AppPreferences.THEME, AppPreferences.Theme.SYSTEM)
 
   val colorScheme =
       when {

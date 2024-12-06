@@ -18,6 +18,7 @@ import com.android.unio.model.event.EventRepositoryFirestore
 import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.follow.ConcurrentAssociationUserRepositoryFirestore
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
+import com.android.unio.model.image.ImageViewModel
 import com.android.unio.model.map.MapViewModel
 import com.android.unio.model.map.nominatim.NominatimLocationRepository
 import com.android.unio.model.map.nominatim.NominatimLocationSearchViewModel
@@ -110,6 +111,8 @@ class ScreenDisplayingTest : TearDown() {
   @MockK private lateinit var associationRepositoryFirestore: AssociationRepositoryFirestore
   @MockK private lateinit var imageRepositoryFirestore: ImageRepositoryFirebaseStorage
 
+  private lateinit var imageViewModel: ImageViewModel
+
   @MockK private lateinit var firebaseAuth: FirebaseAuth
 
   // This is the implementation of the abstract method getUid() from FirebaseUser.
@@ -196,6 +199,8 @@ class ScreenDisplayingTest : TearDown() {
     associationViewModel.selectAssociation(associations.first().uid)
 
     nominatimLocationSearchViewModel = NominatimLocationSearchViewModel(nominatimLocationRepository)
+
+    imageViewModel = ImageViewModel(imageRepositoryFirestore)
   }
 
   @Test
@@ -213,7 +218,7 @@ class ScreenDisplayingTest : TearDown() {
   @Test
   fun testAccountDetailsDisplayed() {
     composeTestRule.setContent {
-      AccountDetailsScreen(navigationAction, userViewModel, imageRepositoryFirestore)
+      AccountDetailsScreen(navigationAction, userViewModel, imageViewModel)
     }
     composeTestRule.onNodeWithTag(AccountDetailsTestTags.ACCOUNT_DETAILS).assertIsDisplayed()
   }
