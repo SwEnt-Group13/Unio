@@ -96,9 +96,7 @@ class SavedTest : TearDown() {
     userViewModel.addUser(MockUser.createMockUser(savedEvents = eventList)) {}
 
     composeTestRule.setContent {
-      ProvidePreferenceLocals {
-        SavedScreen(navigationAction, eventViewModel, userViewModel)
-      }
+      ProvidePreferenceLocals { SavedScreen(navigationAction, eventViewModel, userViewModel) }
     }
 
     composeTestRule.waitForIdle()
@@ -114,9 +112,7 @@ class SavedTest : TearDown() {
     userViewModel.addUser(MockUser.createMockUser(savedEvents = emptyList())) {}
 
     composeTestRule.setContent {
-      ProvidePreferenceLocals {
-        SavedScreen(navigationAction, eventViewModel, userViewModel)
-      }
+      ProvidePreferenceLocals { SavedScreen(navigationAction, eventViewModel, userViewModel) }
     }
 
     composeTestRule.waitForIdle()

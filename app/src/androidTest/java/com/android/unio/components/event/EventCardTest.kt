@@ -37,8 +37,8 @@ import io.mockk.mockkObject
 import io.mockk.runs
 import io.mockk.spyk
 import io.mockk.verify
-import me.zhanghai.compose.preference.ProvidePreferenceLocals
 import java.util.Date
+import me.zhanghai.compose.preference.ProvidePreferenceLocals
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule

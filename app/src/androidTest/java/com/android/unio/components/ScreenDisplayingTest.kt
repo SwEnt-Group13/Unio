@@ -291,9 +291,7 @@ class ScreenDisplayingTest : TearDown() {
   @Test
   fun testSavedDisplayed() {
     composeTestRule.setContent {
-      ProvidePreferenceLocals {
-        SavedScreen(navigationAction, eventViewModel, userViewModel)
-      }
+      ProvidePreferenceLocals { SavedScreen(navigationAction, eventViewModel, userViewModel) }
     }
     composeTestRule.onNodeWithTag(SavedTestTags.SCREEN).assertIsDisplayed()
   }
