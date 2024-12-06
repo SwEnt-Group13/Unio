@@ -227,20 +227,21 @@ class EventCreationTest : TearDown() {
 
   @Test
   fun testCorrectlyDisplaysCharacterCountForTextFields() {
-      nominatimLocationSearchViewModel =
-          NominatimLocationSearchViewModel(nominatimLocationRepositoryWithoutFunctionality)
-      composeTestRule.setContent {
-          EventCreationScreen(
-              navigationAction,
-              searchViewModel,
-              associationViewModel,
-              eventViewModel,
-              nominatimLocationSearchViewModel)
-      }
+    nominatimLocationSearchViewModel =
+        NominatimLocationSearchViewModel(nominatimLocationRepositoryWithoutFunctionality)
+    composeTestRule.setContent {
+      EventCreationScreen(
+          navigationAction,
+          searchViewModel,
+          associationViewModel,
+          eventViewModel,
+          nominatimLocationSearchViewModel)
+    }
 
-      composeTestRule.onNodeWithTag(EventCreationTestTags.EVENT_TITLE)
-          .performScrollTo()
-          .performTextClearance()
+    composeTestRule
+        .onNodeWithTag(EventCreationTestTags.EVENT_TITLE)
+        .performScrollTo()
+        .performTextClearance()
     composeTestRule
         .onNodeWithTag(EventCreationTestTags.EVENT_TITLE)
         .performTextInput(TextLengthSamples.SMALL)
@@ -249,9 +250,10 @@ class EventCreationTest : TearDown() {
         .assertExists()
     composeTestRule.onNodeWithTag(EventCreationTestTags.EVENT_TITLE).performTextClearance()
 
-      composeTestRule.onNodeWithTag(EventCreationTestTags.SHORT_DESCRIPTION)
-          .performScrollTo()
-          .performTextClearance()
+    composeTestRule
+        .onNodeWithTag(EventCreationTestTags.SHORT_DESCRIPTION)
+        .performScrollTo()
+        .performTextClearance()
     composeTestRule
         .onNodeWithTag(EventCreationTestTags.SHORT_DESCRIPTION)
         .performScrollTo()
@@ -262,9 +264,10 @@ class EventCreationTest : TearDown() {
         .assertExists()
     composeTestRule.onNodeWithTag(EventCreationTestTags.SHORT_DESCRIPTION).performTextClearance()
 
-      composeTestRule.onNodeWithTag(EventCreationTestTags.DESCRIPTION)
-          .performScrollTo()
-          .performTextClearance()
+    composeTestRule
+        .onNodeWithTag(EventCreationTestTags.DESCRIPTION)
+        .performScrollTo()
+        .performTextClearance()
     composeTestRule
         .onNodeWithTag(EventCreationTestTags.DESCRIPTION)
         .performScrollTo()

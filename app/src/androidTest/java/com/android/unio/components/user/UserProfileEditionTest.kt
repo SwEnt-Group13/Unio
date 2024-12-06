@@ -275,9 +275,10 @@ class UserProfileEditionTest : TearDown() {
 
   @Test
   fun testCorrectlyDisplaysCharacterCountForTextFields() {
-      composeTestRule.onNodeWithTag(UserEditionTestTags.FIRST_NAME_TEXT_FIELD)
-          .performScrollTo()
-          .performTextClearance()
+    composeTestRule
+        .onNodeWithTag(UserEditionTestTags.FIRST_NAME_TEXT_FIELD)
+        .performScrollTo()
+        .performTextClearance()
     composeTestRule
         .onNodeWithTag(UserEditionTestTags.FIRST_NAME_TEXT_FIELD)
         .performTextInput(TextLengthSamples.SMALL)
@@ -286,9 +287,10 @@ class UserProfileEditionTest : TearDown() {
         .assertExists()
     composeTestRule.onNodeWithTag(UserEditionTestTags.FIRST_NAME_TEXT_FIELD).performTextClearance()
 
-      composeTestRule.onNodeWithTag(UserEditionTestTags.LAST_NAME_TEXT_FIELD)
-          .performScrollTo()
-          .performTextClearance()
+    composeTestRule
+        .onNodeWithTag(UserEditionTestTags.LAST_NAME_TEXT_FIELD)
+        .performScrollTo()
+        .performTextClearance()
     composeTestRule
         .onNodeWithTag(UserEditionTestTags.LAST_NAME_TEXT_FIELD)
         .performScrollTo()
@@ -298,9 +300,10 @@ class UserProfileEditionTest : TearDown() {
         .assertExists()
     composeTestRule.onNodeWithTag(UserEditionTestTags.LAST_NAME_TEXT_FIELD).performTextClearance()
 
-      composeTestRule.onNodeWithTag(UserEditionTestTags.BIOGRAPHY_TEXT_FIELD)
-          .performScrollTo()
-          .performTextClearance()
+    composeTestRule
+        .onNodeWithTag(UserEditionTestTags.BIOGRAPHY_TEXT_FIELD)
+        .performScrollTo()
+        .performTextClearance()
     composeTestRule
         .onNodeWithTag(UserEditionTestTags.BIOGRAPHY_TEXT_FIELD)
         .performTextInput(TextLengthSamples.LARGE)
