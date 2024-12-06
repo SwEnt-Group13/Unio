@@ -194,7 +194,8 @@ enum class PermissionType(val stringName: String) {
   DELETE_MEMBERS("Delete members"),
   VIEW_EVENTS("View events"),
   EDIT_EVENTS("Edit events"),
-  DELETE_EVENTS("Delete Events")
+  DELETE_EVENTS("Delete Events"),
+  ADD_EVENTS("Add Events")
 }
 
 @Document
