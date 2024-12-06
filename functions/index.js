@@ -108,12 +108,13 @@ exports.broadcastMessage = onRequest(async (req, res) => {
   const payload = req.body.data?.payload;
 
   if (!type || !topic || !payload) {
+    console.error("Invalid request", req.body);
     return res.status(400).json({ message: "invalid-request", error: "Type, topic, and payload are required." });
   }
 
   const response = {
-    data: { 
-      payload, type
+    data: {
+      ...payload, type
     },
     topic
   };
@@ -122,6 +123,7 @@ exports.broadcastMessage = onRequest(async (req, res) => {
     await getMessaging().send(response);
     return res.status(200).json({ data: "Message sent successfully" });
   } catch (error) {
+    console.error(error);
     return res.status(500).json({ message: "server-error", error: "An unexpected error occurred." });
   }
 
