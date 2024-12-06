@@ -2,12 +2,11 @@
 // The Cloud Functions for Firebase SDK to create Cloud Functions and triggers.
 const { logger } = require("firebase-functions");
 const { onRequest } = require("firebase-functions/v2/https");
-const { onDocumentCreated } = require("firebase-functions/v2/firestore");
 const nodemailer = require('nodemailer');
 
 // The Firebase Admin SDK to access Firestore.
 const { initializeApp } = require("firebase-admin/app");
-const { getFirestore, Timestamp, arrayUnion } = require("firebase-admin/firestore");
+const { getFirestore, Timestamp } = require("firebase-admin/firestore");
 
 const { getMessaging } = require("firebase-admin/messaging");
 
@@ -18,10 +17,12 @@ const { defineString } = require('firebase-functions/params')
 
 
 initializeApp();
-
 const db = getFirestore();
+const messaging = getMessaging();
 
-// this function send the email with a random 6-digit code
+/**
+ * Sends a verification email to the user with a 6-digit code.
+ */
 exports.sendVerificationEmail = onRequest(async (req, res) => {
 
   const recipientEmail = req.body.data?.email;
@@ -61,11 +62,14 @@ exports.sendVerificationEmail = onRequest(async (req, res) => {
     await transporter.sendMail(mailOptions);
     res.json({ data: `Association with ID ${associationUid}, bloublou` });
   } catch (error) {
+    console.error(error);
     res.status(500).json({ message: "Email not sent", error: error.message });
   }
 });
 
-// verifies that the code given by the user is the same that the one sent, and if so update admin rights for this association to the user
+/**
+ * Verifies that the code given by the user is the same that the one sent, and if so, give admin rights of this association to the user.
+ */
 exports.verifyCode = onRequest(async (req, res) => {
   try {
     const code = req.body.data?.code;
@@ -98,17 +102,25 @@ exports.verifyCode = onRequest(async (req, res) => {
     }
   } catch (error) {
     // General catch-all error handler for unexpected issues
+    console.error(error);
     return res.status(500).json({ message: "server-error", error: "An unexpected error occurred." });
   }
 });
 
+/**
+ * Broadcasts a message to a topic.
+ * 
+ * The request body must contain an object with the following properties:
+ * - type: The type of message being sent.
+ * - topic: The topic to which the message will be sent.
+ * - payload: The data to be sent in the message.
+ */
 exports.broadcastMessage = onRequest(async (req, res) => {
   const type = req.body.data?.type;
   const topic = req.body.data?.topic;
   const payload = req.body.data?.payload;
 
   if (!type || !topic || !payload) {
-    console.error("Invalid request", req.body);
     return res.status(400).json({ message: "invalid-request", error: "Type, topic, and payload are required." });
   }
 
@@ -120,7 +132,7 @@ exports.broadcastMessage = onRequest(async (req, res) => {
   };
 
   try {
-    await getMessaging().send(response);
+    await messaging.send(response);
     return res.status(200).json({ data: "Message sent successfully" });
   } catch (error) {
     console.error(error);
