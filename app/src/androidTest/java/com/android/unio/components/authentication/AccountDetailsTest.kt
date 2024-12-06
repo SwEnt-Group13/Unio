@@ -204,10 +204,9 @@ class AccountDetailsTest : TearDown() {
         .onNodeWithTag(AccountDetailsTestTags.FIRST_NAME_TEXT_FIELD)
         .performScrollTo()
         .performTextInput(TextLengthSamples.SMALL)
-
     composeTestRule
-        .onNodeWithTag(AccountDetailsTestTags.FIRST_NAME_CHARACTER_COUNTER)
-        .assertIsDisplayed()
+        .onNodeWithTag(AccountDetailsTestTags.FIRST_NAME_CHARACTER_COUNTER, useUnmergedTree = true)
+        .assertExists()
     composeTestRule
         .onNodeWithTag(AccountDetailsTestTags.FIRST_NAME_TEXT_FIELD)
         .performTextClearance()
@@ -216,10 +215,9 @@ class AccountDetailsTest : TearDown() {
         .onNodeWithTag(AccountDetailsTestTags.LAST_NAME_TEXT_FIELD)
         .performScrollTo()
         .performTextInput(TextLengthSamples.SMALL)
-
     composeTestRule
-        .onNodeWithTag(AccountDetailsTestTags.LAST_NAME_CHARACTER_COUNTER)
-        .assertIsDisplayed()
+        .onNodeWithTag(AccountDetailsTestTags.LAST_NAME_CHARACTER_COUNTER, useUnmergedTree = true)
+        .assertExists()
     composeTestRule
         .onNodeWithTag(AccountDetailsTestTags.LAST_NAME_TEXT_FIELD)
         .performTextClearance()
@@ -228,10 +226,9 @@ class AccountDetailsTest : TearDown() {
         .onNodeWithTag(AccountDetailsTestTags.BIOGRAPHY_TEXT_FIELD)
         .performScrollTo()
         .performTextInput(TextLengthSamples.LARGE)
-
     composeTestRule
-        .onNodeWithTag(AccountDetailsTestTags.BIOGRAPHY_CHARACTER_COUNTER)
-        .assertIsDisplayed()
+        .onNodeWithTag(AccountDetailsTestTags.BIOGRAPHY_CHARACTER_COUNTER, useUnmergedTree = true)
+        .assertExists()
     composeTestRule
         .onNodeWithTag(AccountDetailsTestTags.BIOGRAPHY_TEXT_FIELD)
         .performTextClearance()

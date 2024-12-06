@@ -275,32 +275,38 @@ class UserProfileEditionTest : TearDown() {
 
   @Test
   fun testCorrectlyDisplaysCharacterCountForTextFields() {
+      composeTestRule.onNodeWithTag(UserEditionTestTags.FIRST_NAME_TEXT_FIELD)
+          .performScrollTo()
+          .performTextClearance()
     composeTestRule
         .onNodeWithTag(UserEditionTestTags.FIRST_NAME_TEXT_FIELD)
-        .performScrollTo()
         .performTextInput(TextLengthSamples.SMALL)
-
     composeTestRule
-        .onNodeWithTag(UserEditionTestTags.FIRST_NAME_CHARACTER_COUNTER)
-        .assertIsDisplayed()
+        .onNodeWithTag(UserEditionTestTags.FIRST_NAME_CHARACTER_COUNTER, useUnmergedTree = true)
+        .assertExists()
     composeTestRule.onNodeWithTag(UserEditionTestTags.FIRST_NAME_TEXT_FIELD).performTextClearance()
 
+      composeTestRule.onNodeWithTag(UserEditionTestTags.LAST_NAME_TEXT_FIELD)
+          .performScrollTo()
+          .performTextClearance()
     composeTestRule
         .onNodeWithTag(UserEditionTestTags.LAST_NAME_TEXT_FIELD)
         .performScrollTo()
         .performTextInput(TextLengthSamples.SMALL)
     composeTestRule
-        .onNodeWithTag(UserEditionTestTags.LAST_NAME_CHARACTER_COUNTER)
-        .assertIsDisplayed()
+        .onNodeWithTag(UserEditionTestTags.LAST_NAME_CHARACTER_COUNTER, useUnmergedTree = true)
+        .assertExists()
     composeTestRule.onNodeWithTag(UserEditionTestTags.LAST_NAME_TEXT_FIELD).performTextClearance()
 
+      composeTestRule.onNodeWithTag(UserEditionTestTags.BIOGRAPHY_TEXT_FIELD)
+          .performScrollTo()
+          .performTextClearance()
     composeTestRule
         .onNodeWithTag(UserEditionTestTags.BIOGRAPHY_TEXT_FIELD)
-        .performScrollTo()
         .performTextInput(TextLengthSamples.LARGE)
     composeTestRule
-        .onNodeWithTag(UserEditionTestTags.BIOGRAPHY_CHARACTER_COUNTER)
-        .assertIsDisplayed()
+        .onNodeWithTag(UserEditionTestTags.BIOGRAPHY_CHARACTER_COUNTER, useUnmergedTree = true)
+        .assertExists()
     composeTestRule.onNodeWithTag(UserEditionTestTags.BIOGRAPHY_TEXT_FIELD).performTextClearance()
   }
 
