@@ -54,9 +54,10 @@ class UnioMessagingService : FirebaseMessagingService() {
 
     val type = NotificationType.valueOf(message.data["type"]!!)
 
-    var builder = NotificationCompat.Builder(this, EVENT_BROADCAST_CHANNEL_ID)
-      .setSmallIcon(R.drawable.other_icon)
-      .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+    var builder =
+        NotificationCompat.Builder(this, EVENT_BROADCAST_CHANNEL_ID)
+            .setSmallIcon(R.drawable.other_icon)
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
 
     when (type) {
       NotificationType.EVENT_MESSAGE -> {
@@ -65,17 +66,21 @@ class UnioMessagingService : FirebaseMessagingService() {
           return
         }
 
-        builder = builder
-          .setContentTitle(message.data["title"])
-          .setContentText(message.data["body"])
+        builder =
+            builder.setContentTitle(message.data["title"]).setContentText(message.data["body"])
       }
     }
 
-    val notificationManager: NotificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+    val notificationManager: NotificationManager =
+        getSystemService(NOTIFICATION_SERVICE) as NotificationManager
 
     var notificationChannel = notificationManager.getNotificationChannel(EVENT_BROADCAST_CHANNEL_ID)
     if (notificationChannel == null) {
-      notificationChannel = NotificationChannel(EVENT_BROADCAST_CHANNEL_ID, EVENT_BROADCAST_CHANNEL_ID, NotificationManager.IMPORTANCE_HIGH)
+      notificationChannel =
+          NotificationChannel(
+              EVENT_BROADCAST_CHANNEL_ID,
+              EVENT_BROADCAST_CHANNEL_ID,
+              NotificationManager.IMPORTANCE_HIGH)
       notificationChannel.enableLights(true)
       notificationChannel.setShowBadge(true)
       notificationChannel.lockscreenVisibility = Notification.VISIBILITY_PUBLIC
