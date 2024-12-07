@@ -1,7 +1,6 @@
 package com.android.unio.ui.components
 
 import android.net.Uri
-import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -141,10 +140,9 @@ fun NominatimLocationPicker(
             DropdownMenuItem(
                 text = { Text(context.getString(R.string.event_creation_location_dropdown_more)) },
                 onClick = {
-                    ToastUtils.showToast(
-                        context = context,
-                        message = context.getString(R.string.event_edit_toast_more_button)
-                    )
+                  ToastUtils.showToast(
+                      context = context,
+                      message = context.getString(R.string.event_edit_toast_more_button))
                 },
                 modifier = Modifier.padding(8.dp))
           }
