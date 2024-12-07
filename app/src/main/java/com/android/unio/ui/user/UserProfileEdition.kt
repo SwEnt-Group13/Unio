@@ -55,7 +55,7 @@ import com.android.unio.model.user.UserSocial
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.model.user.checkImageUri
 import com.android.unio.model.user.checkNewUser
-import com.android.unio.model.utils.Utils
+import com.android.unio.model.utils.NetworkUtils
 import com.android.unio.ui.authentication.overlay.InterestOverlay
 import com.android.unio.ui.authentication.overlay.SocialOverlay
 import com.android.unio.ui.components.InterestInputChip
@@ -205,7 +205,7 @@ fun UserProfileEditionScreenContent(
    * simply be copied from the user.
    */
   val createUser: (String) -> Unit = { uri ->
-    val hasInternet = Utils.checkInternetConnection(context)
+    val hasInternet = NetworkUtils.checkInternetConnection(context)
     val newUser =
         User(
             uid = user.uid,
@@ -281,7 +281,7 @@ fun UserProfileEditionScreenContent(
 
           Button(
               onClick = {
-                if (Utils.checkInternetConnection(context)) {
+                if (NetworkUtils.checkInternetConnection(context)) {
                   showDeleteUserPrompt = true
                 } else {
                   Toast.makeText(

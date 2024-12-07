@@ -67,7 +67,7 @@ import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.strings.test_tags.AssociationProfileTestTags
 import com.android.unio.model.user.User
 import com.android.unio.model.user.UserViewModel
-import com.android.unio.model.utils.Utils
+import com.android.unio.model.utils.NetworkUtils
 import com.android.unio.ui.event.EventCard
 import com.android.unio.ui.image.AsyncImageWrapper
 import com.android.unio.ui.navigation.NavigationAction
@@ -281,7 +281,7 @@ private fun AssociationProfileContent(
     mutableStateOf(user!!.followedAssociations.contains(association!!.uid))
   }
   var enableButton by remember { mutableStateOf(true) }
-  val isConnected = Utils.checkInternetConnection(context)
+  val isConnected = NetworkUtils.checkInternetConnection(context)
 
   val onFollow = {
     if (isConnected) {
@@ -458,7 +458,7 @@ private fun AssociationEvents(
     eventViewModel: EventViewModel
 ) {
   val context = LocalContext.current
-  val isConnected = Utils.checkInternetConnection(context)
+  val isConnected = NetworkUtils.checkInternetConnection(context)
 
   var isSeeMoreClicked by remember { mutableStateOf(false) }
 

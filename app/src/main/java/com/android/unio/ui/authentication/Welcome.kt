@@ -49,7 +49,7 @@ import com.android.unio.model.user.UserViewModel
 import com.android.unio.model.user.isValidEmail
 import com.android.unio.model.user.isValidPassword
 import com.android.unio.model.user.signInOrCreateAccount
-import com.android.unio.model.utils.Utils.checkInternetConnection
+import com.android.unio.model.utils.NetworkUtils.checkInternetConnection
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
 import com.android.unio.ui.theme.AppTypography

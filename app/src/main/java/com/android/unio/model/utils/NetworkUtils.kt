@@ -4,7 +4,7 @@ import android.content.Context
 import android.net.ConnectivityManager
 import androidx.core.content.ContextCompat.getSystemService
 
-object Utils {
+object NetworkUtils {
 
   fun checkInternetConnection(context: Context): Boolean {
     val connectivityManager = getSystemService(context, ConnectivityManager::class.java)
