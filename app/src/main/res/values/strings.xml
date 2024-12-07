@@ -127,6 +127,7 @@
     <string name="email_verification_email_refresh">Refresh</string>
     <string name="email_verification_content_description_go_back">Go back</string>
     <string name="email_verification_content_description_refresh">Refresh</string>
+    <string name="email_verification_toast_email_sent">Email sent</string>
 
     <!-- Welcome Screen Strings -->
     <string name="welcome_message">The world’s largest campus life platform.</string>

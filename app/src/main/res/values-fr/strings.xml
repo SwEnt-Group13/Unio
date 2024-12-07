@@ -122,6 +122,7 @@
     <string name="email_verification_email_refresh">Rafraîchir</string>
     <string name="email_verification_content_description_go_back">Retour</string>
     <string name="email_verification_content_description_refresh">Rafraîchir</string>
+    <string name="email_verification_toast_email_sent">Email envoyé</string>
 
     <!-- Welcome Screen Strings -->
     <string name="welcome_message">La plus grande plateforme de vie universitaire au monde.</string>

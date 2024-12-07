@@ -1,6 +1,5 @@
 package com.android.unio.ui.user
 
-import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
@@ -24,6 +23,7 @@ import com.android.unio.R
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.strings.test_tags.UserClaimAssociationTestTags
+import com.android.unio.model.utils.ToastUtils
 import com.android.unio.ui.association.AssociationSearchBar
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
@@ -70,11 +70,9 @@ fun UserClaimAssociationScreen(
 
             Button(
                 onClick = {
-                  Toast.makeText(
-                          context,
-                          context.getString(R.string.user_claim_association_not_implemented_yet),
-                          Toast.LENGTH_SHORT)
-                      .show()
+                  ToastUtils.showToast(
+                      context,
+                      context.getString(R.string.user_claim_association_not_implemented_yet))
                 },
                 modifier = Modifier.testTag(UserClaimAssociationTestTags.NEW_ASSOCIATION_BUTTON)) {
                   Text(context.getString(R.string.user_claim_association_create_association))

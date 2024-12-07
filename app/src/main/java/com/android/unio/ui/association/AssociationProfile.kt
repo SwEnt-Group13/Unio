@@ -68,6 +68,7 @@ import com.android.unio.model.strings.test_tags.AssociationProfileTestTags
 import com.android.unio.model.user.User
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.model.utils.NetworkUtils
+import com.android.unio.model.utils.ToastUtils
 import com.android.unio.ui.event.EventCard
 import com.android.unio.ui.image.AsyncImageWrapper
 import com.android.unio.ui.navigation.NavigationAction
@@ -292,9 +293,7 @@ private fun AssociationProfileContent(
       }
       isFollowed = !isFollowed
     } else {
-      Toast.makeText(
-              context, context.getString(R.string.no_internet_connection), Toast.LENGTH_SHORT)
-          .show()
+      ToastUtils.showToast(context, context.getString(R.string.no_internet_connection))
     }
   }
 
@@ -501,9 +500,7 @@ private fun AssociationEvents(
           if (isConnected) {
             navigationAction.navigateTo(Screen.EVENT_CREATION)
           } else {
-            Toast.makeText(
-                    context, context.getString(R.string.no_internet_connection), Toast.LENGTH_SHORT)
-                .show()
+            ToastUtils.showToast(context, context.getString(R.string.no_internet_connection))
           }
         },
         modifier = Modifier.testTag(AssociationProfileTestTags.ADD_EVENT_BUTTON),
