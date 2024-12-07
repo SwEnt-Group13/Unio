@@ -62,6 +62,7 @@ import com.android.unio.model.map.Location
 import com.android.unio.model.map.nominatim.NominatimLocationSearchViewModel
 import com.android.unio.model.strings.FormatStrings.DAY_MONTH_YEAR_FORMAT
 import com.android.unio.model.strings.FormatStrings.HOUR_MINUTE_FORMAT
+import com.android.unio.model.utils.ToastUtils
 import com.android.unio.ui.image.AsyncImageWrapper
 import com.google.firebase.Timestamp
 import java.text.SimpleDateFormat
@@ -95,7 +96,6 @@ fun NominatimLocationPicker(
   val locationQuery by locationSearchViewModel.query.collectAsState()
   val locationSuggestions by locationSearchViewModel.locationSuggestions.collectAsState()
   var showDropdown by remember { mutableStateOf(false) }
-  var toast: Toast? by remember { mutableStateOf(null) }
 
   var shouldDisplayInitialLocation by remember { mutableStateOf(true) }
 
@@ -141,16 +141,10 @@ fun NominatimLocationPicker(
             DropdownMenuItem(
                 text = { Text(context.getString(R.string.event_creation_location_dropdown_more)) },
                 onClick = {
-                  if (toast != null) {
-                    toast?.cancel()
-                  }
-
-                  toast =
-                      Toast.makeText(
-                          context,
-                          context.getString(R.string.event_edit_toast_more_button),
-                          Toast.LENGTH_SHORT)
-                  toast?.show()
+                    ToastUtils.showToast(
+                        context = context,
+                        message = context.getString(R.string.event_edit_toast_more_button)
+                    )
                 },
                 modifier = Modifier.padding(8.dp))
           }
