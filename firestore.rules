@@ -36,8 +36,11 @@ service cloud.firestore {
           request.resource.data.uid == request.auth.uid &&
           request.resource.data.email == request.auth.token.email &&
           request.resource.data.firstName is string &&
+          request.resource.data.firstName.size() <= 30 &&
           request.resource.data.lastName is string &&
+          request.resource.data.lastName.size() <= 30 &&
           request.resource.data.biography is string &&
+          request.resource.data.biography.size() <= 300 &&
           request.resource.data.savedEvents is list &&
           request.resource.data.followedAssociations is list &&
           request.resource.data.joinedAssociations is list &&
@@ -110,11 +113,14 @@ service cloud.firestore {
         return hasCorrectNumberOfFields && hasCorrectFields &&
           request.resource.data.uid == uid &&
           request.resource.data.title is string &&
+          request.resoucre.data.title.size() <= 30 &&
           request.resource.data.organisers is list &&
           request.resource.data.taggedAssociations is list &&
           request.resource.data.image is string &&
           request.resource.data.description is string &&
+          request.resource.data.description.size() <= 300 &&
           request.resource.data.catchyDescription is string &&
+          request.resource.data.catchyDescription.size() <= 100
           request.resource.data.price is number &&
           request.resource.data.price >= 0 &&
           request.resource.data.date is timestamp &&
