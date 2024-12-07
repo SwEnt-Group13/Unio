@@ -14,7 +14,7 @@ import junit.framework.TestCase.assertTrue
 import org.junit.Before
 import org.junit.Test
 
-class FirestoreNetworkUtilsTest {
+class FirestoreUtilsTest {
   @MockK private lateinit var task: Task<Any>
 
   private var onSuccessCalled = false
