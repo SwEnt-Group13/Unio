@@ -33,10 +33,10 @@ import androidx.compose.ui.unit.dp
 import com.android.unio.R
 import com.android.unio.model.strings.test_tags.EmailVerificationTestTags
 import com.android.unio.model.user.UserViewModel
-import com.android.unio.model.utils.ToastUtils
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
 import com.android.unio.ui.theme.AppTypography
+import com.android.unio.ui.utils.ToastUtils
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 

@@ -23,11 +23,11 @@ import com.android.unio.R
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.strings.test_tags.UserClaimAssociationTestTags
-import com.android.unio.model.utils.ToastUtils
 import com.android.unio.ui.association.AssociationSearchBar
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
 import com.android.unio.ui.theme.AppTypography
+import com.android.unio.ui.utils.ToastUtils
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

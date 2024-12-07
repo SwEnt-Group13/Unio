@@ -61,8 +61,8 @@ import com.android.unio.model.map.Location
 import com.android.unio.model.map.nominatim.NominatimLocationSearchViewModel
 import com.android.unio.model.strings.FormatStrings.DAY_MONTH_YEAR_FORMAT
 import com.android.unio.model.strings.FormatStrings.HOUR_MINUTE_FORMAT
-import com.android.unio.model.utils.ToastUtils
 import com.android.unio.ui.image.AsyncImageWrapper
+import com.android.unio.ui.utils.ToastUtils
 import com.google.firebase.Timestamp
 import java.text.SimpleDateFormat
 import java.util.Date

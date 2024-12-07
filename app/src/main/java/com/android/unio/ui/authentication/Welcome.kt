@@ -49,10 +49,10 @@ import com.android.unio.model.user.isValidEmail
 import com.android.unio.model.user.isValidPassword
 import com.android.unio.model.user.signInOrCreateAccount
 import com.android.unio.model.utils.NetworkUtils.checkInternetConnection
-import com.android.unio.model.utils.ToastUtils
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
 import com.android.unio.ui.theme.AppTypography
+import com.android.unio.ui.utils.ToastUtils
 import com.google.firebase.Firebase
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.auth

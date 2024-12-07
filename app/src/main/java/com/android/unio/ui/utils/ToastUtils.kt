@@ -1,4 +1,4 @@
-package com.android.unio.model.utils
+package com.android.unio.ui.utils
 
 import android.content.Context
 import android.widget.Toast
