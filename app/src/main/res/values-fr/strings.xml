@@ -142,6 +142,17 @@
     <string name="welcome_content_description_show_password">Montrer le mot de passe</string>
     <string name="welcome_forgot_password">Oubli de mot de passe ?</string>
 
+    <!-- Picture Selection Tool Strings -->
+    <string name="selection_tool_selected_picture_text">Images sélectionnées</string>
+    <string name="selection_tool_remove_picture">Supprimer l\'image</string>
+    <string name="selection_tool_add_gallery_content_description">Ajouter depuis la galerie</string>
+    <string name="selection_tool_gallery_text">Galerie</string>
+    <string name="selection_tool_take_picture">Prendre une photo</string>
+    <string name="selection_tool_camera_text">Appareil photo</string>
+    <string name="selection_tool_validate_text">Valider</string>
+    <string name="selection_tool_cancel_text">Annuler</string>
+
+
     /**
     * package: event
     */
@@ -153,6 +164,7 @@
     <string name="event_card_content_description_saved_event">Sauvegardé</string>
     <string name="event_card_content_description_not_saved_event">Non sauvegardé</string>
     <string name="event_card_content_description_association_logo">Logo de l\'association</string>
+    <string name="event_card_interested_string">Intéréssés</string>
 
     <!-- Event Creation Strings -->
     <string name="event_creation_screen">Création d\'un évènement</string>

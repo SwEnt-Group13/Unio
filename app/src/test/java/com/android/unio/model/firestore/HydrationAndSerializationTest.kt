@@ -72,7 +72,8 @@ class HydrationAndSerializationTest {
           startDate = Timestamp.now(),
           endDate = Timestamp.now(),
           location = Location(latitude = 0.0, longitude = 0.0, name = "Example Location"),
-          placesRemaining = -1)
+          placesRemaining = -1,
+          numberOfSaved = 3)
 
   /** Round-trip tests for serialization and hydration of user, association, and event instances. */
   @Test
@@ -152,6 +153,7 @@ class HydrationAndSerializationTest {
     assertEquals(event.organisers.uids, serialized["organisers"])
     assertEquals(event.taggedAssociations.uids, serialized["taggedAssociations"])
     assertEquals(event.placesRemaining, serialized["placesRemaining"])
+    assertEquals(event.numberOfSaved, serialized["numberOfSaved"])
 
     val hydrated = EventRepositoryFirestore.hydrate(serialized)
 
@@ -167,6 +169,7 @@ class HydrationAndSerializationTest {
     assertEquals(event.organisers.uids, hydrated.organisers.uids)
     assertEquals(event.taggedAssociations.uids, hydrated.taggedAssociations.uids)
     assertEquals(event.placesRemaining, hydrated.placesRemaining)
+    assertEquals(event.numberOfSaved, hydrated.numberOfSaved)
   }
 
   /** Test hydration when the map misses fields. */
@@ -222,6 +225,7 @@ class HydrationAndSerializationTest {
     assertEquals(emptyList<Association>(), hydrated.organisers.list.value)
     assertEquals(emptyList<Association>(), hydrated.taggedAssociations.list.value)
     assertEquals(-1, hydrated.placesRemaining)
+    assertEquals(0, hydrated.numberOfSaved)
   }
 
   /** Test that serialization includes all data class fields. */
