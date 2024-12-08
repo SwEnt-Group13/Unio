@@ -29,7 +29,7 @@ fun AssociationRepositoryFirestore.Companion.hydrate(data: Map<String, Any>?): A
   val permissions = Permissions.NONE
   val roles =
       rolesMap.map { (roleUid, roleData) ->
-        Role.createRole(
+        Role(
             uid = roleUid,
             displayName = roleData[Role::displayName.name] as? String ?: "",
             permissions =

@@ -107,11 +107,6 @@ class Role(val displayName: String, val permissions: Permissions, override val u
             "Committee")
     val MEMBER = Role("Member", Permissions.NONE, "Member")
     val GUEST = Role("Guest", Permissions.NONE, "Guest")
-
-    // Factory method to create new roles
-    fun createRole(displayName: String, permissions: Permissions, uid: String): Role {
-      return Role(displayName, permissions, uid)
-    }
   }
 }
 
