@@ -289,7 +289,6 @@ fun UserClaimAssociationPresidentialRightsScreenScaffold(
                                         .show()
                                   }
                                 } else {
-                                  Log.d("CloudFunction", "OK")
                                   Toast.makeText(
                                           context,
                                           context.getString(
