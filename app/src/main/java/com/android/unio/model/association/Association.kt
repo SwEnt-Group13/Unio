@@ -52,7 +52,7 @@ data class Association(
 /**
  * Enum representing different categories of associations.
  *
- * @property displayName A human-readable name for the category.
+ * @property displayNameId A human-readable name for the category.
  */
 enum class AssociationCategory(val displayNameId: Int) {
   EPFL_BODIES(R.string.association_category_epfl_bodies),

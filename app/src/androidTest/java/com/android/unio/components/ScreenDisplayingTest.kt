@@ -226,7 +226,9 @@ class ScreenDisplayingTest : TearDown() {
   @Test
   fun testHomeDisplayed() {
     composeTestRule.setContent {
-      HomeScreen(navigationAction, eventViewModel, userViewModel, searchViewModel)
+      ProvidePreferenceLocals {
+        HomeScreen(navigationAction, eventViewModel, userViewModel, searchViewModel)
+      }
     }
     composeTestRule.onNodeWithTag(HomeTestTags.SCREEN).assertIsDisplayed()
     composeTestRule.onNodeWithTag(HomeTestTags.SEARCH_BAR).assertIsDisplayed()
@@ -253,11 +255,13 @@ class ScreenDisplayingTest : TearDown() {
   @Test
   fun testEventDisplayed() {
     composeTestRule.setContent {
-      EventScreen(
-          navigationAction = navigationAction,
-          eventViewModel = eventViewModel,
-          userViewModel = userViewModel,
-          mapViewModel = mapViewModel)
+      ProvidePreferenceLocals {
+        EventScreen(
+            navigationAction = navigationAction,
+            eventViewModel = eventViewModel,
+            userViewModel = userViewModel,
+            mapViewModel = mapViewModel)
+      }
     }
     composeTestRule.onNodeWithTag(EventDetailsTestTags.SCREEN).assertIsDisplayed()
   }
@@ -278,15 +282,19 @@ class ScreenDisplayingTest : TearDown() {
   @Test
   fun testAssociationProfileDisplayed() {
     composeTestRule.setContent {
-      AssociationProfileScaffold(
-          navigationAction, userViewModel, eventViewModel, associationViewModel) {}
+      ProvidePreferenceLocals {
+        AssociationProfileScaffold(
+            navigationAction, userViewModel, eventViewModel, associationViewModel) {}
+      }
     }
     composeTestRule.onNodeWithTag(AssociationProfileTestTags.SCREEN).assertIsDisplayed()
   }
 
   @Test
   fun testSavedDisplayed() {
-    composeTestRule.setContent { SavedScreen(navigationAction, eventViewModel, userViewModel) }
+    composeTestRule.setContent {
+      ProvidePreferenceLocals { SavedScreen(navigationAction, eventViewModel, userViewModel) }
+    }
     composeTestRule.onNodeWithTag(SavedTestTags.SCREEN).assertIsDisplayed()
   }
 

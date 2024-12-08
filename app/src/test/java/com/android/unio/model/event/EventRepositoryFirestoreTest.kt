@@ -9,6 +9,7 @@ import com.google.firebase.Firebase
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.auth
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
@@ -95,7 +96,7 @@ class EventRepositoryFirestoreTest {
     every { db.collection(EVENT_PATH) } returns collectionReference
 
     mockkStatic(FirebaseAuth::class)
-    every { FirebaseAuth.getInstance() } returns auth
+    every { Firebase.auth } returns auth
 
     `when`(collectionReference.get()).thenReturn(getTask)
 

@@ -73,7 +73,6 @@ class UserRepositoryFirestoreTest {
 
     mockkStatic(FirebaseAuth::class)
     every { Firebase.auth } returns auth
-    every { FirebaseAuth.getInstance() } returns auth
     every { auth.addAuthStateListener(any<AuthStateListener>()) } answers
         { call ->
           if (auth.currentUser != null) {

@@ -57,6 +57,7 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.verify
+import me.zhanghai.compose.preference.ProvidePreferenceLocals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -192,11 +193,13 @@ class AssociationProfileTest : TearDown() {
 
   @Test
   fun testAssociationProfileDisplayComponent() {
-    every { connectivityManager?.activeNetwork } returns mockk<Network>()
+    every { connectivityManager.activeNetwork } returns mockk<Network>()
 
     composeTestRule.setContent {
-      AssociationProfileScaffold(
-          navigationAction, userViewModel, eventViewModel, associationViewModel) {}
+      ProvidePreferenceLocals {
+        AssociationProfileScaffold(
+            navigationAction, userViewModel, eventViewModel, associationViewModel) {}
+      }
     }
     composeTestRule.waitForIdle()
 
@@ -211,7 +214,7 @@ class AssociationProfileTest : TearDown() {
         .assertDisplayComponentInScroll()
     composeTestRule.onNodeWithTag(AssociationProfileTestTags.TITLE).assertDisplayComponentInScroll()
     composeTestRule
-        .onNodeWithTag(AssociationProfileTestTags.SHARE_BUTTON)
+        .onNodeWithTag(AssociationProfileTestTags.MORE_BUTTON)
         .assertDisplayComponentInScroll()
     composeTestRule
         .onNodeWithTag(AssociationProfileTestTags.HEADER_FOLLOWERS)
@@ -241,12 +244,14 @@ class AssociationProfileTest : TearDown() {
 
   @Test
   fun testFollowAssociation() {
-    every { connectivityManager?.activeNetwork } returns mockk<Network>()
+    every { connectivityManager.activeNetwork } returns mockk<Network>()
 
     val context: Context = ApplicationProvider.getApplicationContext()
     composeTestRule.setContent {
-      AssociationProfileScaffold(
-          navigationAction, userViewModel, eventViewModel, associationViewModel) {}
+      ProvidePreferenceLocals {
+        AssociationProfileScaffold(
+            navigationAction, userViewModel, eventViewModel, associationViewModel) {}
+      }
     }
     val currentCount = associationViewModel.selectedAssociation.value!!.followersCount
 
@@ -276,13 +281,15 @@ class AssociationProfileTest : TearDown() {
 
   @Test
   fun testFollowOffline() {
+    // Disable internet connection in the test
     val context: Context = ApplicationProvider.getApplicationContext()
-    every { connectivityManager?.activeNetwork } returns null
+    every { connectivityManager.activeNetwork } returns null
     composeTestRule.setContent {
-      AssociationProfileScaffold(
-          navigationAction, userViewModel, eventViewModel, associationViewModel) {}
+      ProvidePreferenceLocals {
+        AssociationProfileScaffold(
+            navigationAction, userViewModel, eventViewModel, associationViewModel) {}
+      }
     }
-    // Disable internet connction in the test
 
     val currentCount = associationViewModel.selectedAssociation.value!!.followersCount
 
@@ -300,30 +307,26 @@ class AssociationProfileTest : TearDown() {
 
   @Test
   fun testButtonBehavior() {
-    every { connectivityManager?.activeNetwork } returns mockk<Network>()
+    every { connectivityManager.activeNetwork } returns mockk<Network>()
 
     composeTestRule.setContent {
-      AssociationProfileScaffold(
-          navigationAction, userViewModel, eventViewModel, associationViewModel) {}
+      ProvidePreferenceLocals {
+        AssociationProfileScaffold(
+            navigationAction, userViewModel, eventViewModel, associationViewModel) {}
+      }
     }
-    // Share button
+    // More button
     composeTestRule
-        .onNodeWithTag(AssociationProfileTestTags.SHARE_BUTTON)
+        .onNodeWithTag(AssociationProfileTestTags.MORE_BUTTON)
         .assertDisplayComponentInScroll()
-    composeTestRule.onNodeWithTag(AssociationProfileTestTags.SHARE_BUTTON).performClick()
-    assertSnackBarIsDisplayed()
 
     // Roles buttons
     composeTestRule
         .onNodeWithTag(AssociationProfileTestTags.TREASURER_ROLES)
         .assertDisplayComponentInScroll()
-    composeTestRule.onNodeWithTag(AssociationProfileTestTags.TREASURER_ROLES).performClick()
-    assertSnackBarIsDisplayed()
     composeTestRule
         .onNodeWithTag(AssociationProfileTestTags.DESIGNER_ROLES)
         .assertDisplayComponentInScroll()
-    composeTestRule.onNodeWithTag(AssociationProfileTestTags.DESIGNER_ROLES).performClick()
-    assertSnackBarIsDisplayed()
   }
 
   private fun assertSnackBarIsDisplayed() {
@@ -334,11 +337,13 @@ class AssociationProfileTest : TearDown() {
 
   @Test
   fun testGoBackButton() {
-    every { connectivityManager?.activeNetwork } returns mockk<Network>()
+    every { connectivityManager.activeNetwork } returns mockk<Network>()
 
     composeTestRule.setContent {
-      AssociationProfileScaffold(
-          navigationAction, userViewModel, eventViewModel, associationViewModel) {}
+      ProvidePreferenceLocals {
+        AssociationProfileScaffold(
+            navigationAction, userViewModel, eventViewModel, associationViewModel) {}
+      }
     }
 
     composeTestRule.onNodeWithTag(AssociationProfileTestTags.GO_BACK_BUTTON).performClick()
@@ -348,11 +353,13 @@ class AssociationProfileTest : TearDown() {
 
   @Test
   fun testAssociationProfileGoodId() {
-    every { connectivityManager?.activeNetwork } returns mockk<Network>()
+    every { connectivityManager.activeNetwork } returns mockk<Network>()
 
     composeTestRule.setContent {
-      AssociationProfileScaffold(
-          navigationAction, userViewModel, eventViewModel, associationViewModel) {}
+      ProvidePreferenceLocals {
+        AssociationProfileScaffold(
+            navigationAction, userViewModel, eventViewModel, associationViewModel) {}
+      }
     }
 
     composeTestRule.onNodeWithTag(AssociationProfileTestTags.TITLE).assertDisplayComponentInScroll()
@@ -361,12 +368,14 @@ class AssociationProfileTest : TearDown() {
 
   @Test
   fun testAssociationProfileNoId() {
-    every { connectivityManager?.activeNetwork } returns mockk<Network>()
+    every { connectivityManager.activeNetwork } returns mockk<Network>()
 
     associationViewModel.selectAssociation("3")
     composeTestRule.setContent {
-      AssociationProfileScreen(
-          navigationAction, associationViewModel, userViewModel, eventViewModel)
+      ProvidePreferenceLocals {
+        AssociationProfileScreen(
+            navigationAction, associationViewModel, userViewModel, eventViewModel)
+      }
     }
 
     composeTestRule.onNodeWithTag(AssociationProfileTestTags.SCREEN).assertIsNotDisplayed()
@@ -374,11 +383,13 @@ class AssociationProfileTest : TearDown() {
 
   @Test
   fun testAddEventButtonOnline() {
-    every { connectivityManager?.activeNetwork } returns mockk<Network>()
+    every { connectivityManager.activeNetwork } returns mockk<Network>()
 
     composeTestRule.setContent {
-      AssociationProfileScaffold(
-          navigationAction, userViewModel, eventViewModel, associationViewModel) {}
+      ProvidePreferenceLocals {
+        AssociationProfileScaffold(
+            navigationAction, userViewModel, eventViewModel, associationViewModel) {}
+      }
     }
 
     composeTestRule.onNodeWithTag(AssociationProfileTestTags.ADD_EVENT_BUTTON).assertIsDisplayed()
@@ -392,11 +403,13 @@ class AssociationProfileTest : TearDown() {
 
   @Test
   fun testAddEventButtonOffline() {
-    every { connectivityManager?.activeNetwork } returns null
+    every { connectivityManager.activeNetwork } returns null
 
     composeTestRule.setContent {
-      AssociationProfileScaffold(
-          navigationAction, userViewModel, eventViewModel, associationViewModel) {}
+      ProvidePreferenceLocals {
+        AssociationProfileScaffold(
+            navigationAction, userViewModel, eventViewModel, associationViewModel) {}
+      }
     }
 
     composeTestRule.onNodeWithTag(AssociationProfileTestTags.ADD_EVENT_BUTTON).assertIsDisplayed()

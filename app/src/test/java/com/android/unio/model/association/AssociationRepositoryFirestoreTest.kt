@@ -84,7 +84,6 @@ class AssociationRepositoryFirestoreTest {
     every { db.collection(USER_PATH) } returns userCollectionReference
 
     mockkStatic(FirebaseAuth::class)
-    every { FirebaseAuth.getInstance() } returns auth
     every { Firebase.auth } returns auth
     every { auth.addAuthStateListener(any<AuthStateListener>()) } answers
         { call ->

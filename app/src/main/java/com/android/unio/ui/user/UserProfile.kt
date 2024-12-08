@@ -284,7 +284,7 @@ fun UserProfileScreenContent(
 
           // Display the associations that the user is following.
           if (followedAssociations.isNotEmpty()) {
-            HorizontalDivider(modifier = Modifier)
+            HorizontalDivider()
 
             Text(
                 context.getString(R.string.user_profile_following_associations_text),
@@ -320,7 +320,7 @@ fun UserProfileBottomSheet(
         onDismissRequest = onClose,
         properties = ModalBottomSheetProperties(shouldDismissOnBackPress = true),
     ) {
-      Column(modifier = Modifier) {
+      Column {
         TextButton(
             modifier = Modifier.fillMaxWidth().testTag(UserProfileTestTags.EDITION),
             onClick = {
