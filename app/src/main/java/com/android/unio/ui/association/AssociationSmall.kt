@@ -16,6 +16,12 @@ import androidx.compose.ui.unit.dp
 import com.android.unio.model.association.Association
 import com.android.unio.ui.theme.AppTypography
 
+/**
+ * A small association item that can be used in a list of associations.
+ *
+ * @param association The association to display.
+ * @param onClick Callback when the association is clicked.
+ */
 @Composable
 fun AssociationSmall(association: Association, onClick: () -> Unit) {
   TextButton(onClick = onClick, modifier = Modifier.fillMaxWidth()) {
