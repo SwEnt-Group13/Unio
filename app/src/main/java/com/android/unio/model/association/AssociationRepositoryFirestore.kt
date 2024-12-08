@@ -94,13 +94,13 @@ class AssociationRepositoryFirestore @Inject constructor(private val db: Firebas
     }
   }
 
-    /**
-     * Saves an [Association] object to Firestore.
-     *
-     * @param association [Association] : The [Association] object to save.
-     * @param onSuccess [() -> Unit] : The callback to call when the [Association] is saved.
-     * @param onFailure [(Exception) -> Unit] : The callback to call when the save fails.
-     */
+  /**
+   * Saves an [Association] object to Firestore.
+   *
+   * @param association [Association] : The [Association] object to save.
+   * @param onSuccess [() -> Unit] : The callback to call when the [Association] is saved.
+   * @param onFailure [(Exception) -> Unit] : The callback to call when the save fails.
+   */
   override fun saveAssociation(
       association: Association,
       onSuccess: () -> Unit,
@@ -111,13 +111,13 @@ class AssociationRepositoryFirestore @Inject constructor(private val db: Firebas
         .performFirestoreOperation(onSuccess = { onSuccess() }, onFailure = onFailure)
   }
 
-    /**
-     * Deletes an [Association] object from Firestore using the provided [associationId].
-     *
-     * @param associationId [String] : The id of the [Association] to delete.
-     * @param onSuccess [() -> Unit] : The callback to call when the [Association] is deleted.
-     * @param onFailure [(Exception) -> Unit] : The callback to call when the delete fails.
-     */
+  /**
+   * Deletes an [Association] object from Firestore using the provided [associationId].
+   *
+   * @param associationId [String] : The id of the [Association] to delete.
+   * @param onSuccess [() -> Unit] : The callback to call when the [Association] is deleted.
+   * @param onFailure [(Exception) -> Unit] : The callback to call when the delete fails.
+   */
   override fun deleteAssociationById(
       associationId: String,
       onSuccess: () -> Unit,
