@@ -14,6 +14,11 @@ import com.google.firebase.functions.functions
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 
+/**
+ * Enum class representing the different types of notifications that can be broadcasted.
+ *
+ * @param requiredFields The fields that are required for the notification type.
+ */
 enum class NotificationTarget(val requiredFields: List<String>) {
   EVENT_SAVERS(listOf("title", "body")),
   ASSOCIATION_FOLLOWERS(listOf("title", "body")),
@@ -59,6 +64,12 @@ class UnioMessagingService : FirebaseMessagingService() {
     // Method is left empty because we do not target single devices
   }
 
+  /**
+   * Called when a message is received from Firebase Cloud Messaging. This method is responsible for
+   * building and displaying the notification.
+   *
+   * @param message The message received from Firebase Cloud Messaging.
+   */
   override fun onMessageReceived(message: RemoteMessage) {
     Log.i("CloudMessaging", "onMessageReceived: message ${message.data}")
 

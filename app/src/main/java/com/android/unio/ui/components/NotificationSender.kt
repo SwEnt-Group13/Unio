@@ -26,6 +26,17 @@ import com.android.unio.model.notification.NotificationTarget
 import com.android.unio.model.notification.broadcastMessage
 import com.android.unio.ui.theme.AppTypography
 
+/**
+ * A composable that shows a dialog for sending a notification to a topic.
+ *
+ * @param dialogTitle The title of the dialog.
+ * @param notificationTarget The target of the notification.
+ * @param topic The topic to send the notification to.
+ * @param notificationContent A function that returns the notification content given the written
+ *   message.
+ * @param showNotificationDialog Whether to show the dialog.
+ * @param onClose The function to call when the dialog is closed.
+ */
 @Composable
 fun NotificationSender(
     dialogTitle: String,
