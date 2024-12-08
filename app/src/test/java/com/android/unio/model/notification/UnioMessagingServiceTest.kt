@@ -28,10 +28,14 @@ class UnioMessagingServiceTest {
   fun setup() {
     MockKAnnotations.init(this)
 
-    every { messagingService.getSystemService(Context.NOTIFICATION_SERVICE) } returns notificationManager
-    every { messagingService.resources } returns InstrumentationRegistry.getInstrumentation().context.resources
-    every { messagingService.applicationInfo } returns InstrumentationRegistry.getInstrumentation().context.applicationInfo
-    every { messagingService.packageName } returns InstrumentationRegistry.getInstrumentation().context.packageName
+    every { messagingService.getSystemService(Context.NOTIFICATION_SERVICE) } returns
+        notificationManager
+    every { messagingService.resources } returns
+        InstrumentationRegistry.getInstrumentation().context.resources
+    every { messagingService.applicationInfo } returns
+        InstrumentationRegistry.getInstrumentation().context.applicationInfo
+    every { messagingService.packageName } returns
+        InstrumentationRegistry.getInstrumentation().context.packageName
 
     every { notificationManager.getNotificationChannel(any()) } returns notificationChannel
     every { notificationManager.notify(any<Int>(), any()) } just runs
@@ -43,11 +47,11 @@ class UnioMessagingServiceTest {
   @Test
   fun `onMessageReceived handles notification with all required fields`() {
     // Mock the RemoteMessage
-    val data = mapOf(
-      "type" to NotificationTarget.EVENT_SAVERS.name,
-      "title" to "Test Title",
-      "body" to "Test Body"
-    )
+    val data =
+        mapOf(
+            "type" to NotificationTarget.EVENT_SAVERS.name,
+            "title" to "Test Title",
+            "body" to "Test Body")
     val remoteMessage = mockk<RemoteMessage>()
     every { remoteMessage.data } returns data
 
@@ -61,10 +65,7 @@ class UnioMessagingServiceTest {
   @Test
   fun `onMessageReceived logs error when type is missing`() {
     // Mock the RemoteMessage
-    val data = mapOf(
-      "title" to "Test Title",
-      "body" to "Test Body"
-    )
+    val data = mapOf("title" to "Test Title", "body" to "Test Body")
     val remoteMessage = mockk<RemoteMessage>()
     every { remoteMessage.data } returns data
 
@@ -73,7 +74,5 @@ class UnioMessagingServiceTest {
 
     // Verify that the notification was not sent
     verify(exactly = 0) { notificationManager.notify(any(), any()) }
-
-
   }
 }
