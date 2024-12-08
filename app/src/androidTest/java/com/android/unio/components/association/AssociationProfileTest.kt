@@ -214,7 +214,7 @@ class AssociationProfileTest : TearDown() {
         .assertDisplayComponentInScroll()
     composeTestRule.onNodeWithTag(AssociationProfileTestTags.TITLE).assertDisplayComponentInScroll()
     composeTestRule
-        .onNodeWithTag(AssociationProfileTestTags.SHARE_BUTTON)
+        .onNodeWithTag(AssociationProfileTestTags.MORE_BUTTON)
         .assertDisplayComponentInScroll()
     composeTestRule
         .onNodeWithTag(AssociationProfileTestTags.HEADER_FOLLOWERS)
@@ -317,9 +317,9 @@ class AssociationProfileTest : TearDown() {
     }
     // Share button
     composeTestRule
-        .onNodeWithTag(AssociationProfileTestTags.SHARE_BUTTON)
+        .onNodeWithTag(AssociationProfileTestTags.MORE_BUTTON)
         .assertDisplayComponentInScroll()
-    composeTestRule.onNodeWithTag(AssociationProfileTestTags.SHARE_BUTTON).performClick()
+    composeTestRule.onNodeWithTag(AssociationProfileTestTags.MORE_BUTTON).performClick()
     assertSnackBarIsDisplayed()
 
     // Roles buttons

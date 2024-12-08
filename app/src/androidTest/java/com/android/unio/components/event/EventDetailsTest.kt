@@ -15,9 +15,11 @@ import com.android.unio.mocks.event.MockEvent
 import com.android.unio.model.association.Association
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventUtils.formatTimestamp
+import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.map.MapViewModel
 import com.android.unio.model.strings.FormatStrings.DAY_MONTH_FORMAT
 import com.android.unio.model.strings.test_tags.EventDetailsTestTags
+import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.event.EventScreenScaffold
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
@@ -43,6 +45,9 @@ class EventDetailsTest : TearDown() {
 
   private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
   private lateinit var mapViewModel: MapViewModel
+
+  @MockK private lateinit var eventViewModel: EventViewModel
+  @MockK private lateinit var userViewModel: UserViewModel
 
   @get:Rule val composeTestRule = createComposeRule()
 
@@ -72,7 +77,8 @@ class EventDetailsTest : TearDown() {
   private fun setEventScreen(event: Event) {
 
     composeTestRule.setContent {
-      EventScreenScaffold(navigationAction, mapViewModel, event, associations, true) {}
+      EventScreenScaffold(
+          navigationAction, mapViewModel, event, associations, eventViewModel, userViewModel)
     }
   }
 
