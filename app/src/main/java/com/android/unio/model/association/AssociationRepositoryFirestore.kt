@@ -66,6 +66,28 @@ class AssociationRepositoryFirestore @Inject constructor(private val db: Firebas
             onFailure = { exception -> onFailure(exception) })
   }
 
+  // TODO needs to be removed ASAP but is kept to make a test pass
+  fun getAssociationsByCategory(
+      category: AssociationCategory,
+      onSuccess: (List<Association>) -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+    db.collection(ASSOCIATION_PATH)
+        .whereEqualTo("category", category)
+        .get()
+        .performFirestoreOperation(
+            onSuccess = { result ->
+              val associations = mutableListOf<Association>()
+              for (document in result) {
+                val association = hydrate(document.data)
+
+                associations.add(association)
+              }
+              onSuccess(associations)
+            },
+            onFailure = { exception -> onFailure(exception) })
+  }
+
   /**
    * Fetches an [Association] object from Firestore using the provided [id]. Here, instead of using
    * success and failure listener directly, we use a Snapshot Listener that call directly the
