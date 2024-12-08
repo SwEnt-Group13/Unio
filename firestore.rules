@@ -113,7 +113,7 @@ service cloud.firestore {
         return hasCorrectNumberOfFields && hasCorrectFields &&
           request.resource.data.uid == uid &&
           request.resource.data.title is string &&
-          request.resoucre.data.title.size() <= 30 &&
+          request.resource.data.title.size() <= 30 &&
           request.resource.data.organisers is list &&
           request.resource.data.taggedAssociations is list &&
           request.resource.data.image is string &&
