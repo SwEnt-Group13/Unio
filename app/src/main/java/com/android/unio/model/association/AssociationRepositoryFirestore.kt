@@ -66,7 +66,6 @@ class AssociationRepositoryFirestore @Inject constructor(private val db: Firebas
             onFailure = { exception -> onFailure(exception) })
   }
 
-  // TODO needs to be removed ASAP but is kept to make a test pass
   fun getAssociationsByCategory(
       category: AssociationCategory,
       onSuccess: (List<Association>) -> Unit,

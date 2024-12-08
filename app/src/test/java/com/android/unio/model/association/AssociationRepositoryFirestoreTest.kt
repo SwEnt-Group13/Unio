@@ -313,7 +313,7 @@ class AssociationRepositoryFirestoreTest {
     assert(success)
   }
 
-  // TODO remove this test, but it is kept to make the testAddAssociationSuccess test pass
+  // We should remove this test, but it is kept to make the testAddAssociationSuccess test pass
   // It looks like there is a bug with the serialization of the roles
   @Test
   fun testGetAssociationsByCategory() {

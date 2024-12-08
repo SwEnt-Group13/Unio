@@ -24,7 +24,6 @@ class EventRepositoryFirestore @Inject constructor(private val db: FirebaseFires
     }
   }
 
-  // TODO we should remove this method
   override fun getEventsOfAssociation(
       association: String,
       onSuccess: (List<Event>) -> Unit,
@@ -68,7 +67,6 @@ class EventRepositoryFirestore @Inject constructor(private val db: FirebaseFires
     }
   }
 
-  // TODO we should remove this method
   override fun getNextEventsFromDateToDate(
       startDate: Timestamp,
       endDate: Timestamp,

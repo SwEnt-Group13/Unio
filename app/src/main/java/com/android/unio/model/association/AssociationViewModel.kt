@@ -50,7 +50,6 @@ constructor(
     associationRepository.init { getAssociations() }
   }
 
-  /** TODO DELETE THIS FUNCTION AND ITS USAGE */
   fun getEventsForAssociation(association: Association, onSuccess: (List<Event>) -> Unit) {
     eventRepository.getEventsOfAssociation(
         association.uid,

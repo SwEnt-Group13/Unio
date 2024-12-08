@@ -37,7 +37,7 @@ fun AssociationRepositoryFirestore.Companion.serialize(association: Association)
 }
 
 /**
- * Maps a list of [Member] to a map of user UIDs to role UIDs. TODO should be private
+ * Maps a list of [Member] to a map of user UIDs to role UIDs.
  *
  * @param members Members to map.
  * @return Map of user UIDs to role UIDs.
