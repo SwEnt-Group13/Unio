@@ -14,10 +14,10 @@ import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.mockkStatic
 import io.mockk.verify
+import kotlin.reflect.jvm.javaMethod
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import kotlin.reflect.jvm.javaMethod
 
 class NotificationSenderTest : TearDown() {
   @get:Rule val composeTestRule = createComposeRule()
@@ -54,10 +54,11 @@ class NotificationSenderTest : TearDown() {
     val message = "Message"
     val payload = mapOf("title" to message)
 
-    every { broadcastMessage(any(), any(), any(), any(), any()) } answers {
-      (args[3] as () -> Unit)()
-      (args[4] as () -> Unit)()
-    }
+    every { broadcastMessage(any(), any(), any(), any(), any()) } answers
+        {
+          (args[3] as () -> Unit)()
+          (args[4] as () -> Unit)()
+        }
 
     composeTestRule.setContent {
       NotificationSender(
