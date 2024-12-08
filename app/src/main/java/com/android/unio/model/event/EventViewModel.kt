@@ -14,9 +14,11 @@ import kotlinx.coroutines.flow.asStateFlow
 /**
  * ViewModel class that manages the event list data and provides it to the UI. It uses an
  * [EventRepository] to load the list of events and exposes them through a [StateFlow] to be
- * observed by the UI.
+ * observed by the UI. It also exposes a [StateFlow] of the selected event to be observed by the UI.
  *
  * @property repository The [EventRepository] that provides the events.
+ * @property imageRepository The [ImageRepository] that provides the images.
+ * @property associationRepository The [AssociationRepository] that provides the associations.
  */
 @HiltViewModel
 class EventViewModel
@@ -61,7 +63,7 @@ constructor(
   }
 
   /**
-   * Selects an event given its id.
+   * Updates the selected event in the ViewModel.
    *
    * @param eventId the ID of the event to select.
    */
@@ -82,6 +84,11 @@ constructor(
   /**
    * Add a new event to the repository. It uploads the event image first, then adds the event. It
    * then adds it to the _events stateflow
+   *
+   * @param inputStream The input stream of the image to upload.
+   * @param event The event to add.
+   * @param onSuccess A callback that is called when the event is successfully added.
+   * @param onFailure A callback that is called when an error occurs while adding the event.
    */
   fun addEvent(
       inputStream: InputStream,

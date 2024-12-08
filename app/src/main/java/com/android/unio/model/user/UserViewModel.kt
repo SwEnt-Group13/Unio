@@ -70,6 +70,10 @@ constructor(
     }
   }
 
+  /**
+   * Updates the user with the data from the corresponding User [uid] and fetches the user's
+   * associations (joined and followed) if [fetchReferences] is set to true.
+   */
   fun getUserByUid(uid: String, fetchReferences: Boolean = false) {
     if (uid.isEmpty()) {
       return
@@ -102,14 +106,27 @@ constructor(
         })
   }
 
+  /**
+   * Calls the [getUserByUid] method with the [User.uid] of the current user with the
+   * fetchReferences parameter set to true.
+   */
   fun refreshUser() {
     _user.value?.let { getUserByUid(it.uid, true) }
   }
 
+  /**
+   * Calls the [getUserByUid] method with the [User.uid] of the selected user with the
+   * fetchReferences parameter set to true.
+   */
   fun refreshSomeoneElseUser() {
     _selectedSomeoneElseUser.value?.let { getUserByUid(it.uid, true) }
   }
 
+  /**
+   * Updates the user with the provided [User] object.
+   *
+   * @param user The [User] object to update the user with.
+   */
   fun updateUser(user: User) {
     userRepository.updateUser(
         user,
@@ -117,6 +134,13 @@ constructor(
         onFailure = { Log.e("UserViewModel", "Failed to update user", it) })
   }
 
+  /**
+   * Updates the user with the provided [User] object after a debounce interval.
+   *
+   * @param user The [User] object to update the user with.
+   * @param interval The debounce interval in milliseconds. Will take the default value of
+   *   [debounceInterval] if not provided.
+   */
   fun updateUserDebounced(user: User, interval: Long = debounceInterval) {
     updateJob?.cancel()
     updateJob =
@@ -126,6 +150,13 @@ constructor(
         }
   }
 
+  /**
+   * Saves the provided [event] to the user's saved events list and sets up a notification for the
+   * event if it starts more than 3 hours from now.
+   *
+   * @param event The [Event] object to save.
+   * @param setupNotification The function to call to set up a notification for the event.
+   */
   fun saveEvent(event: Event, setupNotification: () -> Unit) {
     val newUser = _user.value!!.copy()
     if (event.startDate.seconds - Timestamp.now().seconds > 3 * SECONDS_IN_AN_HOUR) {
@@ -135,12 +166,25 @@ constructor(
     updateUser(newUser)
   }
 
+  /**
+   * Removes the provided [event] from the user's saved events list and removes the notification for
+   * the event.
+   *
+   * @param event The [Event] object to unsave.
+   * @param removeNotification The function to call to remove the notification for the event.
+   */
   fun unsaveEvent(event: Event, removeNotification: () -> Unit) {
     val newUser = _user.value!!.copy()
     newUser.savedEvents.remove(event.uid)
     updateUser(newUser)
   }
 
+  /**
+   * Adds the provided [User] to the database
+   *
+   * @param user The [User] object to add.
+   * @param onSuccess Callback if addition is successful.
+   */
   fun addUser(user: User, onSuccess: () -> Unit) {
     userRepository.updateUser(
         user,
@@ -149,10 +193,20 @@ constructor(
     _user.value = user
   }
 
+  /**
+   * Selects a user to view their profile.
+   *
+   * @param user The [User] object to view.
+   */
   fun setSomeoneElseUser(user: User) {
     _selectedSomeoneElseUser.value = user
   }
 
+  /**
+   * Sets the [AuthCredential] object to be used for linking accounts.
+   *
+   * @param credential The [AuthCredential] object to set.
+   */
   fun setCredential(credential: AuthCredential?) {
     _credential = credential
   }
