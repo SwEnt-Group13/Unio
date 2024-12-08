@@ -59,6 +59,13 @@ import com.android.unio.model.user.getPlaceHolderText
 import com.android.unio.ui.theme.AppTypography
 import kotlinx.coroutines.flow.MutableStateFlow
 
+/**
+ * A dialog that allows users to add and remove their socials.
+ *
+ * @param onDismiss Callback when the dialog is dismissed.
+ * @param onSave Callback when the changes are saved.
+ * @param userSocials The list of [UserSocial] to display.
+ */
 @Composable
 fun SocialOverlay(
     onDismiss: () -> Unit,
@@ -146,6 +153,12 @@ fun SocialOverlay(
   }
 }
 
+/**
+ * A row that displays a social and a close icon to remove it.
+ *
+ * @param userSocial The [UserSocial] to display.
+ * @param onRemoveSocial Callback when the social is removed.
+ */
 @Composable
 private fun SocialsOverlaySocialRow(
     userSocial: UserSocial,
@@ -178,6 +191,12 @@ private fun SocialsOverlaySocialRow(
       }
 }
 
+/**
+ * The bottom buttons for the social overlay.
+ *
+ * @param onAddSocial Callback when the add social button is clicked.
+ * @param onSave Callback when the save button is clicked.
+ */
 @Composable
 private fun SocialOverlayBottomButtons(onAddSocial: () -> Unit, onSave: () -> Unit) {
   val context = LocalContext.current
@@ -202,6 +221,12 @@ private fun SocialOverlayBottomButtons(onAddSocial: () -> Unit, onSave: () -> Un
   }
 }
 
+/**
+ * A dialog that allows users to add a social.
+ *
+ * @param onDismiss Callback when the dialog is dismissed.
+ * @param onSave Callback when the changes are saved.
+ */
 @Composable
 fun SocialPrompt(
     onDismiss: () -> Unit,
@@ -291,6 +316,13 @@ fun SocialPrompt(
   }
 }
 
+/**
+ * A drop down menu to choose which social to add.
+ *
+ * @param selectedSocial The currently selected [Social].
+ * @param socialsList The list of [Social] to display.
+ * @param onSwitchSelectedSocial Callback when a social is selected.
+ */
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun SocialsPromptDropDownMenu(
