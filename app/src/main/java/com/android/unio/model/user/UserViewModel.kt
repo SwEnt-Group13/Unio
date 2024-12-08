@@ -107,16 +107,16 @@ constructor(
   }
 
   /**
-   * Calls the [getUserByUid] method with the [uid] of the current user with the [fetchReferences]
-   * parameter set to true.
+   * Calls the [getUserByUid] method with the [User.uid] of the current user with the
+   * fetchReferences parameter set to true.
    */
   fun refreshUser() {
     _user.value?.let { getUserByUid(it.uid, true) }
   }
 
   /**
-   * Calls the [getUserByUid] method with the [uid] of the selected user with the [fetchReferences]
-   * parameter set to true.
+   * Calls the [getUserByUid] method with the [User.uid] of the selected user with the
+   * fetchReferences parameter set to true.
    */
   fun refreshSomeoneElseUser() {
     _selectedSomeoneElseUser.value?.let { getUserByUid(it.uid, true) }
@@ -180,10 +180,10 @@ constructor(
   }
 
   /**
-   * Adds the provided [association] to the user's followed associations list.
+   * Adds the provided [User] to the database
    *
-   * @param association The [Association] object to follow.
-   * @param onSuccess Callback if follow is successful.
+   * @param user The [User] object to add.
+   * @param onSuccess Callback if addition is successful.
    */
   fun addUser(user: User, onSuccess: () -> Unit) {
     userRepository.updateUser(
