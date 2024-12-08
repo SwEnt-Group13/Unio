@@ -381,25 +381,6 @@ fun EventDetailsBody(
                             context.getString(R.string.event_location_button_description),
                     )
                   }
-
-              Button(
-                  onClick = DEBUG_LAMBDA,
-                  modifier =
-                      Modifier.testTag(EventDetailsTestTags.SIGN_UP_BUTTON)
-                          .align(Alignment.CenterHorizontally)
-                          .height(56.dp),
-                  shape = CircleShape,
-                  colors =
-                      ButtonDefaults.buttonColors(
-                          containerColor = MaterialTheme.colorScheme.inversePrimary,
-                          contentColor = MaterialTheme.colorScheme.primary)) {
-                    Icon(
-                        Icons.AutoMirrored.Filled.DirectionsWalk,
-                        contentDescription =
-                            context.getString(R.string.event_signup_button_description),
-                    )
-                    Text(context.getString(R.string.event_sign_up))
-                  }
             }
       }
 }
