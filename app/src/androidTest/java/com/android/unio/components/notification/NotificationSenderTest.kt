@@ -12,14 +12,12 @@ import com.android.unio.model.strings.test_tags.NotificationSenderTestTags
 import com.android.unio.ui.components.NotificationSender
 import io.mockk.MockKAnnotations
 import io.mockk.every
-import io.mockk.just
 import io.mockk.mockkStatic
-import io.mockk.runs
 import io.mockk.verify
-import kotlin.reflect.jvm.javaMethod
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import kotlin.reflect.jvm.javaMethod
 
 class NotificationSenderTest : TearDown() {
   @get:Rule val composeTestRule = createComposeRule()
@@ -29,7 +27,6 @@ class NotificationSenderTest : TearDown() {
     MockKAnnotations.init(this)
 
     mockkStatic(::broadcastMessage.javaMethod!!.declaringClass.kotlin)
-    every { broadcastMessage(any(), any(), any(), any(), any()) } just runs
   }
 
   @Test
@@ -52,10 +49,15 @@ class NotificationSenderTest : TearDown() {
   }
 
   @Test
-  fun testSendButton() {
+  fun testSendSuccess() {
     val topic = "Topic"
     val message = "Message"
     val payload = mapOf("title" to message)
+
+    every { broadcastMessage(any(), any(), any(), any(), any()) } answers {
+      (args[3] as () -> Unit)()
+      (args[4] as () -> Unit)()
+    }
 
     composeTestRule.setContent {
       NotificationSender(
@@ -74,5 +76,29 @@ class NotificationSenderTest : TearDown() {
 
     // Verify that the broadcastMessage function was called
     verify { broadcastMessage(NotificationType.EVENT_SAVERS, topic, payload, any(), any()) }
+  }
+
+  @Test
+  fun testSendEmptyMessage() {
+    val topic = "Topic"
+    val message = ""
+
+    composeTestRule.setContent {
+      NotificationSender(
+          dialogTitle = "Test",
+          notificationType = NotificationType.EVENT_SAVERS,
+          topic = topic,
+          notificationContent = { mapOf("title" to it) },
+          showNotificationDialog = true,
+          onClose = {})
+    }
+
+    composeTestRule
+        .onNodeWithTag(NotificationSenderTestTags.MESSAGE_FIELD)
+        .performTextInput(message)
+    composeTestRule.onNodeWithTag(NotificationSenderTestTags.SEND_BUTTON).performClick()
+
+    // Verify that the broadcastMessage function was not called
+    verify(exactly = 0) { broadcastMessage(any(), any(), any(), any(), any()) }
   }
 }

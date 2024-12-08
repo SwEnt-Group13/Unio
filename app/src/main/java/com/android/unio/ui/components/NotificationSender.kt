@@ -90,7 +90,10 @@ fun NotificationSender(
                       horizontalArrangement = Arrangement.End,
                       modifier = Modifier.fillMaxWidth().padding(top = 10.dp)) {
                         OutlinedButton(
-                            onClick = onClose,
+                            onClick = {
+                              message = ""
+                              onClose()
+                            },
                         ) {
                           Text(context.getString(R.string.cancel_button_text))
                         }
@@ -126,6 +129,7 @@ fun NotificationSender(
                                             Toast.LENGTH_SHORT)
                                         .show()
                                   })
+                              message = ""
                               onClose()
                             },
                         ) {
