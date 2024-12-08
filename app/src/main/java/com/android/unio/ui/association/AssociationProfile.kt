@@ -474,7 +474,7 @@ private fun AssociationEvents(
         style = AppTypography.headlineMedium)
     events.sortedBy { it.startDate }
     val first = events.first()
-    Column(modifier = Modifier, horizontalAlignment = Alignment.CenterHorizontally) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
       if (isSeeMoreClicked) {
         events.forEach { event ->
           AssociationEventCard(navigationAction, event, userViewModel, eventViewModel)
