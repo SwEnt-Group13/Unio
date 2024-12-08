@@ -74,7 +74,7 @@ import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventUtils.formatTimestamp
 import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.map.MapViewModel
-import com.android.unio.model.notification.NotificationTarget
+import com.android.unio.model.notification.NotificationType
 import com.android.unio.model.notification.NotificationWorker
 import com.android.unio.model.notification.UnioNotification
 import com.android.unio.model.preferences.AppPreferences
@@ -197,7 +197,7 @@ fun EventScreenScaffold(
 
   NotificationSender(
       dialogTitle = context.getString(R.string.event_send_notification),
-      notificationTarget = NotificationTarget.EVENT_SAVERS,
+      notificationType = NotificationType.EVENT_SAVERS,
       topic = event.uid,
       notificationContent = { mapOf("title" to event.title, "body" to it) },
       showNotificationDialog = showNotificationDialog,

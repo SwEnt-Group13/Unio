@@ -49,7 +49,7 @@ class UnioMessagingServiceTest {
     // Mock the RemoteMessage
     val data =
         mapOf(
-            "type" to NotificationTarget.EVENT_SAVERS.name,
+            "type" to NotificationType.EVENT_SAVERS.name,
             "title" to "Test Title",
             "body" to "Test Body")
     val remoteMessage = mockk<RemoteMessage>()

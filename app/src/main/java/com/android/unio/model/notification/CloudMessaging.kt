@@ -19,9 +19,19 @@ import com.google.firebase.messaging.RemoteMessage
  *
  * @param requiredFields The fields that are required for the notification type.
  */
-enum class NotificationTarget(val requiredFields: List<String>) {
-  EVENT_SAVERS(listOf("title", "body")),
-  ASSOCIATION_FOLLOWERS(listOf("title", "body")),
+enum class NotificationType(
+    val requiredFields: List<String>,
+    val displayName: String,
+    val description: String
+) {
+  EVENT_SAVERS(
+      listOf("title", "body"),
+      "Saved Events",
+      "Receive notifications from associations organizing events you saved."),
+  ASSOCIATION_FOLLOWERS(
+      listOf("title", "body"),
+      "Followed Associations",
+      "Receive notifications from associations you follow.")
 }
 
 /**

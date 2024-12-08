@@ -22,7 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import com.android.unio.model.notification.NotificationTarget
+import com.android.unio.model.notification.NotificationType
 import com.android.unio.model.notification.broadcastMessage
 import com.android.unio.ui.theme.AppTypography
 
@@ -30,7 +30,7 @@ import com.android.unio.ui.theme.AppTypography
  * A composable that shows a dialog for sending a notification to a topic.
  *
  * @param dialogTitle The title of the dialog.
- * @param notificationTarget The target of the notification.
+ * @param notificationType The target of the notification.
  * @param topic The topic to send the notification to.
  * @param notificationContent A function that returns the notification content given the written
  *   message.
@@ -40,7 +40,7 @@ import com.android.unio.ui.theme.AppTypography
 @Composable
 fun NotificationSender(
     dialogTitle: String,
-    notificationTarget: NotificationTarget,
+    notificationType: NotificationType,
     topic: String,
     notificationContent: (String) -> Map<String, String>,
     showNotificationDialog: Boolean,
@@ -88,7 +88,7 @@ fun NotificationSender(
                         Button(
                             onClick = {
                               broadcastMessage(
-                                  type = notificationTarget,
+                                  type = notificationType,
                                   topic = topic,
                                   payload = notificationContent(message),
                                   onSuccess = {

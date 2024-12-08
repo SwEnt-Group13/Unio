@@ -38,7 +38,7 @@ class BroadcastMessageTest {
 
     val payload = mapOf("title" to "title")
     broadcastMessage(
-        NotificationTarget.EVENT_SAVERS,
+        NotificationType.EVENT_SAVERS,
         "topic",
         payload,
         { assert(false) { "onSuccess should not be called" } },
@@ -60,7 +60,7 @@ class BroadcastMessageTest {
 
     val payload = mapOf("title" to "title", "body" to "body")
     broadcastMessage(
-        NotificationTarget.EVENT_SAVERS,
+        NotificationType.EVENT_SAVERS,
         "topic",
         payload,
         { onSuccessCalled = true },
