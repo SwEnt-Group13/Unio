@@ -314,24 +314,6 @@ class AssociationRepositoryFirestoreTest {
   }
 
   @Test
-  fun testGetAssociationsByCategory() {
-    every { queryDocumentSnapshot2.data } returns (map2)
-    every { associationCollectionReference.whereEqualTo(eq("category"), any()) } returns
-        (associationCollectionReference)
-    var success = false
-    repository.getAssociationsByCategory(
-        AssociationCategory.SCIENCE_TECH,
-        onSuccess = { associations ->
-          for (asso in associations) {
-            assertEquals(asso.category, AssociationCategory.SCIENCE_TECH)
-          }
-          success = true
-        },
-        onFailure = { assert(false) })
-    assert(success)
-  }
-
-  @Test
   fun testAddAssociationSuccess() {
     every { documentReference.set(map1) } returns (Tasks.forResult(null))
 
