@@ -166,6 +166,9 @@ class AccountDetailsTest : TearDown() {
         .performClick()
     addNewUserSocial(composeTestRule, "facebook_username", "Facebook")
     addNewUserSocial(composeTestRule, "instagram_username", "Instagram")
+
+    composeTestRule.waitForIdle()
+
     composeTestRule
         .onNodeWithTag(SocialsOverlayTestTags.SAVE_BUTTON)
         .performScrollTo()

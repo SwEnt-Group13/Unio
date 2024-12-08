@@ -1,7 +1,6 @@
 package com.android.unio.ui.authentication
 
 import android.util.Log
-import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -37,6 +36,7 @@ import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
 import com.android.unio.ui.theme.AppTypography
+import com.android.unio.ui.utils.ToastUtils
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 
@@ -71,11 +71,7 @@ fun EmailVerificationScreen(navigationAction: NavigationAction, userViewModel: U
         }
       } else {
         Log.e("EmailVerificationScreen", "Failed to refresh", it.exception)
-        Toast.makeText(
-                context,
-                context.getString(R.string.email_verification_refresh_failed),
-                Toast.LENGTH_SHORT)
-            .show()
+        ToastUtils.showToast(context, context.getString(R.string.email_verification_refresh_failed))
       }
     }
   }
@@ -83,14 +79,11 @@ fun EmailVerificationScreen(navigationAction: NavigationAction, userViewModel: U
   val resendEmail = {
     Firebase.auth.currentUser?.sendEmailVerification()?.addOnCompleteListener {
       if (it.isSuccessful) {
-        Toast.makeText(context, "Email sent", Toast.LENGTH_SHORT).show()
+        ToastUtils.showToast(
+            context, context.getString(R.string.email_verification_toast_email_sent))
       } else {
         Log.e("EmailVerificationScreen", "Failed to send email", it.exception)
-        Toast.makeText(
-                context,
-                context.getString(R.string.email_verification_sent_failed),
-                Toast.LENGTH_SHORT)
-            .show()
+        ToastUtils.showToast(context, context.getString(R.string.email_verification_sent_failed))
       }
     }
   }

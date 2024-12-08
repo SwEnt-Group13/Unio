@@ -45,6 +45,7 @@ import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.strings.test_tags.EditAssociationTestTags
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
+import com.android.unio.ui.utils.ToastUtils
 import kotlinx.coroutines.launch
 
 @Composable
@@ -79,9 +80,7 @@ fun EditAssociationScreen(
             },
             onFailure = {
               Log.e("EditAssociationScreen", "Failed to save association.")
-              Toast.makeText(
-                      context, context.getString(R.string.save_failed_message), Toast.LENGTH_SHORT)
-                  .show()
+              ToastUtils.showToast(context, context.getString(R.string.save_failed_message))
             })
       })
 }
