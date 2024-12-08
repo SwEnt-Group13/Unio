@@ -14,10 +14,11 @@ import kotlinx.coroutines.flow.asStateFlow
 
 /**
  * ViewModel class that manages the authentication state of the user. It uses a [FirebaseAuth] to
- * verify the authentication state of the user and provides the [authState] to be observed by the UI.
+ * verify the authentication state of the user and provides the [authState] to be observed by the
+ * UI.
  *
- * @property firebaseAuth The [FirebaseAuth] instance that is used to verify the authentication state
- * of the user.
+ * @property firebaseAuth The [FirebaseAuth] instance that is used to verify the authentication
+ *   state of the user.
  * @property userRepository The [UserRepository] that provides the user data.
  */
 @HiltViewModel
