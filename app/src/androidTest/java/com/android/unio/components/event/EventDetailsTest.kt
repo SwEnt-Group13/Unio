@@ -177,6 +177,9 @@ class EventDetailsTest : TearDown() {
     composeTestRule.onNodeWithTag(EventDetailsTestTags.MAP_BUTTON).assertDisplayComponentInScroll()
     composeTestRule.onNodeWithTag(EventDetailsTestTags.MAP_BUTTON).performClick()
     verify { navigationAction.navigateTo(Screen.MAP) }
+    assert(mapViewModel.highlightedEventUid.value == events[0].uid)
+    assert(mapViewModel.centerLocation.value!!.latitude == events[0].location.latitude)
+    assert(mapViewModel.centerLocation.value!!.longitude == events[0].location.longitude)
 
     // Sign-up button
     composeTestRule
