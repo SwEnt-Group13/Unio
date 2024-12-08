@@ -7,11 +7,13 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
+import androidx.compose.ui.test.performTextClearance
 import androidx.compose.ui.test.performTextInput
 import com.android.unio.TearDown
 import com.android.unio.addNewUserSocial
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.image.ImageViewModel
+import com.android.unio.model.strings.TextLengthSamples
 import com.android.unio.model.strings.test_tags.AccountDetailsTestTags
 import com.android.unio.model.strings.test_tags.InterestsOverlayTestTags
 import com.android.unio.model.strings.test_tags.SocialsOverlayTestTags
@@ -202,6 +204,42 @@ class AccountDetailsTest : TearDown() {
     composeTestRule
         .onNodeWithTag(AccountDetailsTestTags.LAST_NAME_ERROR_TEXT, useUnmergedTree = true)
         .assertIsDisplayed()
+  }
+
+  @Test
+  fun testCorrectlyDisplaysCharacterCountForTextFields() {
+    composeTestRule
+        .onNodeWithTag(AccountDetailsTestTags.FIRST_NAME_TEXT_FIELD)
+        .performScrollTo()
+        .performTextInput(TextLengthSamples.SMALL)
+    composeTestRule
+        .onNodeWithTag(AccountDetailsTestTags.FIRST_NAME_CHARACTER_COUNTER, useUnmergedTree = true)
+        .assertExists()
+    composeTestRule
+        .onNodeWithTag(AccountDetailsTestTags.FIRST_NAME_TEXT_FIELD)
+        .performTextClearance()
+
+    composeTestRule
+        .onNodeWithTag(AccountDetailsTestTags.LAST_NAME_TEXT_FIELD)
+        .performScrollTo()
+        .performTextInput(TextLengthSamples.SMALL)
+    composeTestRule
+        .onNodeWithTag(AccountDetailsTestTags.LAST_NAME_CHARACTER_COUNTER, useUnmergedTree = true)
+        .assertExists()
+    composeTestRule
+        .onNodeWithTag(AccountDetailsTestTags.LAST_NAME_TEXT_FIELD)
+        .performTextClearance()
+
+    composeTestRule
+        .onNodeWithTag(AccountDetailsTestTags.BIOGRAPHY_TEXT_FIELD)
+        .performScrollTo()
+        .performTextInput(TextLengthSamples.LARGE)
+    composeTestRule
+        .onNodeWithTag(AccountDetailsTestTags.BIOGRAPHY_CHARACTER_COUNTER, useUnmergedTree = true)
+        .assertExists()
+    composeTestRule
+        .onNodeWithTag(AccountDetailsTestTags.BIOGRAPHY_TEXT_FIELD)
+        .performTextClearance()
   }
 
   @Test

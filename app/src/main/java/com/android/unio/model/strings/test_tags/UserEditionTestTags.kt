@@ -9,15 +9,18 @@ object UserEditionTestTags {
   const val FIRST_NAME_TEXT_FIELD = "userSettingsFirstNameTextField"
   const val FIRST_NAME_TEXT = "userSettingsFirstNameText"
   const val FIRST_NAME_ERROR_TEXT = "userSettingsFirstNameErrorText"
+  const val FIRST_NAME_CHARACTER_COUNTER = "userSettingsFirstNameCharacterCounter"
 
   // LAST NAME TEXT FIELD
   const val LAST_NAME_TEXT_FIELD = "userSettingsLastNameTextField"
   const val LAST_NAME_TEXT = "userSettingsLastNameText"
   const val LAST_NAME_ERROR_TEXT = "userSettingsLastNameErrorText"
+  const val LAST_NAME_CHARACTER_COUNTER = "userSettingsLastNameCharacterCounter"
 
   // BIOGRAPHY TEXT FIELD
   const val BIOGRAPHY_TEXT_FIELD = "userSettingsBioTextField"
   const val BIOGRAPHY_TEXT = "userSettingsBioText"
+  const val BIOGRAPHY_CHARACTER_COUNTER = "userSettingsBiographyCharacterCounter"
 
   // PROFILE PICTURE
   const val PROFILE_PICTURE_ICON = "userSettingsProfilePictureIcon"

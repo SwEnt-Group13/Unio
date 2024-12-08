@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -56,6 +57,8 @@ import com.android.unio.model.user.UserViewModel
 import com.android.unio.model.user.checkImageUri
 import com.android.unio.model.user.checkNewUser
 import com.android.unio.model.utils.NetworkUtils
+import com.android.unio.model.utils.TextLength
+import com.android.unio.model.utils.Utils
 import com.android.unio.ui.authentication.overlay.InterestOverlay
 import com.android.unio.ui.authentication.overlay.SocialOverlay
 import com.android.unio.ui.components.InterestInputChip
@@ -344,27 +347,53 @@ private fun EditUserTextFields(
   OutlinedTextField(
       modifier = Modifier.padding(4.dp).testTag(UserEditionTestTags.FIRST_NAME_TEXT_FIELD),
       label = {
-        Text(
-            context.getString(R.string.user_edition_first_name),
-            modifier = Modifier.testTag(UserEditionTestTags.FIRST_NAME_TEXT))
+        Row(
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+          Text(
+              context.getString(R.string.user_edition_first_name),
+              modifier = Modifier.testTag(UserEditionTestTags.FIRST_NAME_TEXT))
+
+          if (Utils.checkInputLengthIsClose(firstName, TextLength.SMALL)) {
+            Text(
+                text = "${firstName.length}/${TextLength.SMALL.length}",
+                modifier = Modifier.testTag(UserEditionTestTags.FIRST_NAME_CHARACTER_COUNTER))
+          }
+        }
       },
       isError = (isFirstNameError),
       supportingText = {
         if (isFirstNameError) {
           Text(
               context.getString(AccountDetailsError.EMPTY_FIRST_NAME.errorMessage),
-              modifier = Modifier.testTag(UserEditionTestTags.FIRST_NAME_ERROR_TEXT))
+              modifier = Modifier.testTag(UserEditionTestTags.FIRST_NAME_ERROR_TEXT).padding(4.dp))
         }
       },
-      onValueChange = onFirstNameChange,
+      onValueChange = {
+        if (Utils.checkInputLength(it, TextLength.SMALL)) {
+          onFirstNameChange(it)
+        }
+      },
       value = firstName)
 
   OutlinedTextField(
       modifier = Modifier.padding(4.dp).testTag(UserEditionTestTags.LAST_NAME_TEXT_FIELD),
       label = {
-        Text(
-            context.getString(R.string.user_edition_last_name),
-            modifier = Modifier.testTag(UserEditionTestTags.LAST_NAME_TEXT))
+        Row(
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+          Text(
+              context.getString(R.string.user_edition_last_name),
+              modifier = Modifier.testTag(UserEditionTestTags.LAST_NAME_TEXT).padding(4.dp))
+
+          if (Utils.checkInputLengthIsClose(lastName, TextLength.SMALL)) {
+            Text(
+                text = "${lastName.length}/${TextLength.SMALL.length}",
+                modifier = Modifier.testTag(UserEditionTestTags.LAST_NAME_CHARACTER_COUNTER))
+          }
+        }
       },
       isError = (isLastNameError),
       supportingText = {
@@ -374,7 +403,11 @@ private fun EditUserTextFields(
               modifier = Modifier.testTag(UserEditionTestTags.LAST_NAME_ERROR_TEXT))
         }
       },
-      onValueChange = onLastNameChange,
+      onValueChange = {
+        if (Utils.checkInputLength(it, TextLength.SMALL)) {
+          onLastNameChange(it)
+        }
+      },
       value = lastName)
 
   OutlinedTextField(
@@ -384,9 +417,20 @@ private fun EditUserTextFields(
               .height(200.dp)
               .testTag(UserEditionTestTags.BIOGRAPHY_TEXT_FIELD),
       label = {
-        Text(
-            context.getString(R.string.user_edition_bio),
-            modifier = Modifier.testTag(UserEditionTestTags.BIOGRAPHY_TEXT))
+        Row(
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+          Text(
+              context.getString(R.string.user_edition_bio),
+              modifier = Modifier.testTag(UserEditionTestTags.BIOGRAPHY_TEXT).padding(4.dp))
+
+          if (Utils.checkInputLengthIsClose(bio, TextLength.LARGE)) {
+            Text(
+                text = "${bio.length}/${TextLength.LARGE.length}",
+                modifier = Modifier.testTag(UserEditionTestTags.BIOGRAPHY_CHARACTER_COUNTER))
+          }
+        }
       },
       onValueChange = onBioChange,
       value = bio)

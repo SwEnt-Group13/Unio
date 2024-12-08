@@ -27,3 +27,18 @@ object NotificationStrings {
   const val NOTIFICATION_SCHEDULER_TYPE_CREATE = "create"
   const val NOTIFICATION_SCHEDULER_TYPE = "type"
 }
+
+object TextLengthSamples {
+  // 25 characters
+  const val SMALL = "A wonderful serenity has."
+
+  // 90 characters
+  const val MEDIUM =
+      "A wonderful serenity has taken possession of my entire soul, like these sweet mornings of."
+
+  // 280 characters
+  const val LARGE =
+      "A wonderful serenity has taken possession of my entire soul, like these sweet mornings of spring which " +
+          "I enjoy with my whole heart. I am alone, and feel the charm of existence in this spot, " +
+          "which was created for the bliss of souls like mine. I am so happy, my dear friend, so abso"
+}
