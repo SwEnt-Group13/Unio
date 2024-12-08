@@ -18,7 +18,7 @@
     <string name="association_go_back">Retour</string>
     <string name="association_see_more">Voir plus</string>
     <string name="association_more">Plus</string>
-    <string name="association_broadcast_message">Envoyer un message</string>
+    <string name="association_broadcast_message">Envoyer un message aux abonnés</string>
     <string name="association_contact_members">Membres à contacter</string>
     <string name="association_help_us">
         Voici comment vous pouvez nous aider. Cliquez sur une fonction pour en savoir plus
@@ -387,8 +387,7 @@
     <!-- Notification Strings -->
     <string name="notification_event_reminder" translatable="true">L\'évènement va bientôt commencer :)</string>
     <string name="notification_event_reminder_default_message" translatable="true">Un évènement va bientôt avoir lieu</string>
-    <string name="event_send_notification">Envoyer une notification</string>
-
+    <string name="event_send_notification">Envoyer une notification aux participants</string>
 
     <string name="event_edit_date_picker_desc">Sélectionner une date</string>
     <string name="event_edit_time_picker_desc">Sélectionner une heure</string>

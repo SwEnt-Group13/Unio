@@ -21,7 +21,7 @@
     <string name="association_see_more" translatable="true">See More</string>
     <string name="association_more" translatable="true">More</string>
     <string name="association_edit" translatable="true">Edit Association</string>
-    <string name="association_broadcast_message">Broadcast a message</string>Send
+    <string name="association_broadcast_message">Broadcast a message</string>
     <string name="association_contact_members" translatable="true">Contact Members</string>
     <string name="association_contact_member_profile_picture" translatable="true">Contact Member Profile Picture</string>
     <string name="association_help_us" translatable="true">
@@ -222,7 +222,7 @@
     <!-- Event Details Strings -->
     <string name="event_sign_up">I\'m going !</string>
     <string name="event_not_found">ERROR : event not found.</string>
-    <string name="event_send_notification">Broadcast notification</string>
+    <string name="event_send_notification">Send a notification to attendees</string>
     <string name="event_details_content_description_saved">Saved</string>
     <string name="event_details_content_description_not_saved">Not saved</string>
     <string name="event_price_free">Free !</string>
