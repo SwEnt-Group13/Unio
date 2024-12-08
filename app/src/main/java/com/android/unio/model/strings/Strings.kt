@@ -27,6 +27,8 @@ object NotificationStrings {
   const val NOTIFICATION_SCHEDULER_TYPE_CREATE = "create"
   const val NOTIFICATION_SCHEDULER_TYPE = "type"
 
-  const val EVENT_BROADCAST_CHANNEL_ID = "EventBroadcast"
-  const val EVENT_BROADCAST_NOTIFICATION_ID = 1
+  const val EVENT_BROADCAST_CHANNEL_ID = "SavedEvents"
+  const val EVENT_BROADCAST_CHANNEL_NAME = "Saved Events"
+  const val EVENT_BROADCAST_CHANNEL_DESCRIPTION =
+      "Receive notifications from associations organizing events you saved."
 }

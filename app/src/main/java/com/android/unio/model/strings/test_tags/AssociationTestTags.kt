@@ -6,7 +6,7 @@ object AssociationProfileTestTags {
   const val SNACKBAR_ACTION_BUTTON = "snackbarActionButton"
   const val TITLE = "associationProfileTitle"
   const val GO_BACK_BUTTON = "goBackButton"
-  const val SHARE_BUTTON = "associationShareButton"
+  const val MORE_BUTTON = "associationMoreButton"
 
   // BOTTOM SHEET
   const val BOTTOM_SHEET = "associationProfileBottomSheet"
