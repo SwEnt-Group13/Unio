@@ -313,6 +313,8 @@ class AssociationRepositoryFirestoreTest {
     assert(success)
   }
 
+  // We should remove this test, but it is kept to make the testAddAssociationSuccess test pass
+  // It looks like there is a bug with the serialization of the roles
   @Test
   fun testGetAssociationsByCategory() {
     every { queryDocumentSnapshot2.data } returns (map2)
