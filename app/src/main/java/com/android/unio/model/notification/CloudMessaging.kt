@@ -6,9 +6,6 @@ import android.app.NotificationManager
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.android.unio.R
-import com.android.unio.model.strings.NotificationStrings.EVENT_BROADCAST_CHANNEL_DESCRIPTION
-import com.android.unio.model.strings.NotificationStrings.EVENT_BROADCAST_CHANNEL_ID
-import com.android.unio.model.strings.NotificationStrings.EVENT_BROADCAST_CHANNEL_NAME
 import com.google.firebase.Firebase
 import com.google.firebase.functions.functions
 import com.google.firebase.messaging.FirebaseMessagingService
@@ -44,7 +41,7 @@ enum class NotificationType(
  * @param onSuccess The function to call if the message is successfully sent.
  */
 fun broadcastMessage(
-    type: NotificationTarget,
+    type: NotificationType,
     topic: String,
     payload: Map<String, String>,
     onSuccess: () -> Unit,
@@ -89,10 +86,10 @@ class UnioMessagingService : FirebaseMessagingService() {
       Log.e("CloudMessaging", "onMessageReceived: missing type field")
       return
     }
-    val type = NotificationTarget.valueOf(typeString)
+    val notificationType = NotificationType.valueOf(typeString)
 
     // Check if the notification has the required fields
-    type.requiredFields.forEach {
+    notificationType.requiredFields.forEach {
       if (!message.data.containsKey(it)) {
         Log.e(
             "CloudMessaging",
@@ -103,14 +100,14 @@ class UnioMessagingService : FirebaseMessagingService() {
 
     // Build notification
     var builder =
-        NotificationCompat.Builder(this, EVENT_BROADCAST_CHANNEL_ID)
+        NotificationCompat.Builder(this, notificationType.name)
             .setSmallIcon(R.drawable.other_icon)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
 
     // Set notification content based on type
-    when (type) {
-      NotificationTarget.EVENT_SAVERS,
-      NotificationTarget.ASSOCIATION_FOLLOWERS -> {
+    when (notificationType) {
+      NotificationType.EVENT_SAVERS,
+      NotificationType.ASSOCIATION_FOLLOWERS -> {
         builder =
             builder.setContentTitle(message.data["title"]).setContentText(message.data["body"])
       }
@@ -122,17 +119,17 @@ class UnioMessagingService : FirebaseMessagingService() {
     val notificationManager: NotificationManager =
         getSystemService(NOTIFICATION_SERVICE) as NotificationManager
 
-    var notificationChannel = notificationManager.getNotificationChannel(EVENT_BROADCAST_CHANNEL_ID)
+    var notificationChannel = notificationManager.getNotificationChannel(notificationType.name)
     if (notificationChannel == null) {
       notificationChannel =
           NotificationChannel(
-              EVENT_BROADCAST_CHANNEL_ID,
-              EVENT_BROADCAST_CHANNEL_NAME,
+              notificationType.name,
+              notificationType.displayName,
               NotificationManager.IMPORTANCE_HIGH)
       notificationChannel.enableLights(true)
       notificationChannel.setShowBadge(true)
       notificationChannel.lockscreenVisibility = Notification.VISIBILITY_PUBLIC
-      notificationChannel.description = EVENT_BROADCAST_CHANNEL_DESCRIPTION
+      notificationChannel.description = notificationType.description
 
       notificationManager.createNotificationChannel(notificationChannel)
     }
