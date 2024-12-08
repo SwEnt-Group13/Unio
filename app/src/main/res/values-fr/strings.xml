@@ -388,12 +388,13 @@
     <string name="reset_password_button">Confirmer</string>
     <string name="reset_password_invalid_email">Veuillez entrer une addresse email valide</string>
 
-
-
     <!-- Notification Strings -->
     <string name="notification_event_reminder" translatable="true">L\'évènement va bientôt commencer :)</string>
     <string name="notification_event_reminder_default_message" translatable="true">Un évènement va bientôt avoir lieu</string>
     <string name="event_send_notification">Envoyer une notification aux participants</string>
+    <string name="notification_broadcast_message">Message</string>
+    <string name="notification_broadcast_success">La notification a été envoyée avec succès</string>
+    <string name="notification_broadcast_failure">Une erreur est survenue lors de l\'envoi de la notification.</string>
 
     <string name="event_sign_up">Je viens !</string>
     <string name="event_not_found">ERREUR: évènement introuvable</string>

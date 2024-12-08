@@ -22,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import com.android.unio.R
 import com.android.unio.model.notification.NotificationType
 import com.android.unio.model.notification.broadcastMessage
 import com.android.unio.ui.theme.AppTypography
@@ -71,9 +72,9 @@ fun NotificationSender(
                       },
                       label = {
                         if (message.isEmpty()) {
-                          Text("Message")
+                          Text(context.getString(R.string.notification_broadcast_message))
                         } else {
-                          Text("Message (${message.length}/${maxNotificationLength})")
+                          Text("${context.getString(R.string.notification_broadcast_message)} (${message.length}/${maxNotificationLength})")
                         }
                       })
 
@@ -83,7 +84,7 @@ fun NotificationSender(
                         OutlinedButton(
                             onClick = onClose,
                         ) {
-                          Text("Cancel")
+                          Text(context.getString(R.string.cancel_button_text))
                         }
                         Button(
                             onClick = {
@@ -94,14 +95,14 @@ fun NotificationSender(
                                   onSuccess = {
                                     Toast.makeText(
                                             context,
-                                            "Notification sent successfully",
+                                            context.getString(R.string.notification_broadcast_success),
                                             Toast.LENGTH_SHORT)
                                         .show()
                                   },
                                   {
                                     Toast.makeText(
                                             context,
-                                            "Failed to send notification",
+                                            context.getString(R.string.notification_broadcast_failure),
                                             Toast.LENGTH_SHORT)
                                         .show()
                                   })

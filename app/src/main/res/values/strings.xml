@@ -98,7 +98,7 @@
     <string name="account_details_content_description_remove_pfp">Remove Profile Picture</string>
 
     <!-- UserSettings Strings -->
-    <string name="user_edition_content_description_remove_social" translatable="false">Remove User Social</string>
+    <string name="user_edition_content_description_remove_social">Remove User Social</string>
     <string name="user_edition_first_name" translatable="true">Edit First name</string>
     <string name="user_edition_last_name" translatable="true">Edit Last name</string>
     <string name="user_edition_bio" translatable="true">Edit Biography</string>
@@ -439,6 +439,10 @@
     <string name="notification_event_reminder" translatable="true">The event is about to begin :)</string>
     <string name="notification_event_reminder_default_message" translatable="true">"An event will occur soon"</string>
     <string name="notification_event_reminder_default_title" translatable="false">Unio</string>
+    <string name="notification_broadcast_message">Message</string>
+    <string name="notification_broadcast_success" translatable="true">Notification sent successfully</string>
+    <string name="notification_broadcast_failure" translatable="true">Failed to send notification</string>
+
 
     <!-- Bottom Navigation Strings -->
     <string name="bottom_nav_home">Home</string>
