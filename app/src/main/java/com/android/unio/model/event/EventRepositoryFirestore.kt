@@ -24,6 +24,7 @@ class EventRepositoryFirestore @Inject constructor(private val db: FirebaseFires
     }
   }
 
+  // TODO we should remove this method
   override fun getEventsOfAssociation(
       association: String,
       onSuccess: (List<Event>) -> Unit,
@@ -67,6 +68,7 @@ class EventRepositoryFirestore @Inject constructor(private val db: FirebaseFires
     }
   }
 
+  // TODO we should remove this method
   override fun getNextEventsFromDateToDate(
       startDate: Timestamp,
       endDate: Timestamp,
@@ -85,6 +87,12 @@ class EventRepositoryFirestore @Inject constructor(private val db: FirebaseFires
             onFailure = { exception -> onFailure(exception) })
   }
 
+  /**
+   * Fetches all events from Firestore and calls the onSuccess callback with the list of events.
+   *
+   * @param onSuccess [(List<Event>) -> Unit] : The callback to call when the events are fetched.
+   * @param onFailure [(Exception) -> Unit] : The callback to call when the fetch fails.
+   */
   override fun getEvents(onSuccess: (List<Event>) -> Unit, onFailure: (Exception) -> Unit) {
     db.collection(EVENT_PATH)
         .get()
@@ -96,11 +104,22 @@ class EventRepositoryFirestore @Inject constructor(private val db: FirebaseFires
             onFailure = { exception -> onFailure(exception) })
   }
 
+  /**
+   * Generates a new unique id for an event.
+   *
+   * @return [String] : the new unique id.
+   */
   override fun getNewUid(): String {
     return db.collection(EVENT_PATH).document().id
   }
 
-  /** Updates the event in the repository or adds it if it does not exist. */
+  /**
+   * Updates the event in the repository or adds it if it does not exist.
+   *
+   * @param event [Event] : the event to add or update.
+   * @param onSuccess [() -> Unit] : the callback to call when the event is added or updated.
+   * @param onFailure [(Exception) -> Unit] : the callback to call when the operation fails.
+   */
   override fun addEvent(event: Event, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
     if (event.uid.isBlank()) {
       onFailure(IllegalArgumentException("No event id was provided"))
@@ -113,6 +132,13 @@ class EventRepositoryFirestore @Inject constructor(private val db: FirebaseFires
     }
   }
 
+  /**
+   * Deletes the event with the given id.
+   *
+   * @param id [String] : the id of the event to delete.
+   * @param onSuccess [() -> Unit] : the callback to call when the event is deleted.
+   * @param onFailure [(Exception) -> Unit] : the callback to call when the operation fails.
+   */
   override fun deleteEventById(id: String, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
     db.collection(EVENT_PATH)
         .document(id)
