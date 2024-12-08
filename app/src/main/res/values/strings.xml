@@ -442,7 +442,7 @@
     <string name="notification_broadcast_message">Message</string>
     <string name="notification_broadcast_success" translatable="true">Notification sent successfully</string>
     <string name="notification_broadcast_failure" translatable="true">Failed to send notification</string>
-
+    <string name="notification_empty_message" translatable="true">The message is empty. Please write a message before sending.</string>
 
     <!-- Bottom Navigation Strings -->
     <string name="bottom_nav_home">Home</string>

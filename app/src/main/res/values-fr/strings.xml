@@ -395,6 +395,7 @@
     <string name="notification_broadcast_message">Message</string>
     <string name="notification_broadcast_success">La notification a été envoyée avec succès</string>
     <string name="notification_broadcast_failure">Une erreur est survenue lors de l\'envoi de la notification.</string>
+    <string name="notification_empty_message">Veuillez entrer un message pour envoyer une notification</string>
 
     <string name="event_sign_up">Je viens !</string>
     <string name="event_not_found">ERREUR: évènement introuvable</string>

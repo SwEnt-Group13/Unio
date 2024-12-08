@@ -20,11 +20,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.android.unio.R
 import com.android.unio.model.notification.NotificationType
 import com.android.unio.model.notification.broadcastMessage
+import com.android.unio.model.strings.test_tags.NotificationSenderTestTags
 import com.android.unio.ui.theme.AppTypography
 
 /**
@@ -57,13 +59,18 @@ fun NotificationSender(
       Card(
           elevation = CardDefaults.cardElevation(8.dp),
           shape = RoundedCornerShape(16.dp),
-          modifier = Modifier.fillMaxWidth().padding(20.dp)) {
+          modifier =
+              Modifier.fillMaxWidth().padding(20.dp).testTag(NotificationSenderTestTags.CARD)) {
             Column(
                 modifier = Modifier.fillMaxWidth().padding(15.dp),
                 verticalArrangement = Arrangement.spacedBy(20.dp)) {
-                  Text(dialogTitle, style = AppTypography.bodyLarge)
+                  Text(
+                      dialogTitle,
+                      style = AppTypography.bodyLarge,
+                      modifier = Modifier.testTag(NotificationSenderTestTags.TITLE))
 
                   OutlinedTextField(
+                      modifier = Modifier.testTag(NotificationSenderTestTags.MESSAGE_FIELD),
                       value = message,
                       onValueChange = {
                         if (it.length <= maxNotificationLength) {
@@ -74,7 +81,8 @@ fun NotificationSender(
                         if (message.isEmpty()) {
                           Text(context.getString(R.string.notification_broadcast_message))
                         } else {
-                          Text("${context.getString(R.string.notification_broadcast_message)} (${message.length}/${maxNotificationLength})")
+                          Text(
+                              "${context.getString(R.string.notification_broadcast_message)} (${message.length}/${maxNotificationLength})")
                         }
                       })
 
@@ -87,7 +95,17 @@ fun NotificationSender(
                           Text(context.getString(R.string.cancel_button_text))
                         }
                         Button(
+                            modifier = Modifier.testTag(NotificationSenderTestTags.SEND_BUTTON),
                             onClick = {
+                              if (message.isEmpty()) {
+                                Toast.makeText(
+                                        context,
+                                        context.getString(R.string.notification_empty_message),
+                                        Toast.LENGTH_SHORT)
+                                    .show()
+                                return@Button
+                              }
+
                               broadcastMessage(
                                   type = notificationType,
                                   topic = topic,
@@ -95,14 +113,16 @@ fun NotificationSender(
                                   onSuccess = {
                                     Toast.makeText(
                                             context,
-                                            context.getString(R.string.notification_broadcast_success),
+                                            context.getString(
+                                                R.string.notification_broadcast_success),
                                             Toast.LENGTH_SHORT)
                                         .show()
                                   },
                                   {
                                     Toast.makeText(
                                             context,
-                                            context.getString(R.string.notification_broadcast_failure),
+                                            context.getString(
+                                                R.string.notification_broadcast_failure),
                                             Toast.LENGTH_SHORT)
                                         .show()
                                   })
