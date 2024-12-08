@@ -2,7 +2,6 @@ package com.android.unio.ui.authentication
 
 import android.content.Context
 import android.util.Log
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -49,10 +48,11 @@ import com.android.unio.model.user.UserViewModel
 import com.android.unio.model.user.isValidEmail
 import com.android.unio.model.user.isValidPassword
 import com.android.unio.model.user.signInOrCreateAccount
-import com.android.unio.model.utils.Utils.checkInternetConnection
+import com.android.unio.model.utils.NetworkUtils.checkInternetConnection
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
 import com.android.unio.ui.theme.AppTypography
+import com.android.unio.ui.utils.ToastUtils
 import com.google.firebase.Firebase
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.auth
@@ -159,11 +159,8 @@ fun WelcomeScreen(navigationAction: NavigationAction, userViewModel: UserViewMod
                   modifier = Modifier.testTag(WelcomeTestTags.BUTTON),
                   onClick = {
                     if (!enabled) {
-                      Toast.makeText(
-                              context,
-                              context.getString(R.string.welcome_malformed_email_password),
-                              Toast.LENGTH_SHORT)
-                          .show()
+                      ToastUtils.showToast(
+                          context, context.getString(R.string.welcome_malformed_email_password))
                     } else {
                       userViewModel.setCredential(EmailAuthProvider.getCredential(email, password))
                       handleAuthentication(email, password, context)
@@ -181,8 +178,7 @@ fun handleAuthentication(email: String, password: String, context: Context) {
   // Check internet connectivity
   val isConnected = checkInternetConnection(context)
   if (!isConnected) {
-    Toast.makeText(context, context.getString(R.string.no_internet_connection), Toast.LENGTH_SHORT)
-        .show()
+    ToastUtils.showToast(context, context.getString(R.string.no_internet_connection))
     return
   }
 
@@ -191,63 +187,37 @@ fun handleAuthentication(email: String, password: String, context: Context) {
     // MainActivity
     when (signInResult.state) {
       SignInState.INVALID_CREDENTIALS -> {
-        Toast.makeText(
-                context,
-                context.getString(R.string.welcome_toast_invalid_creds),
-                Toast.LENGTH_SHORT)
-            .show()
+        ToastUtils.showToast(context, context.getString(R.string.welcome_toast_invalid_creds))
       }
       SignInState.INVALID_EMAIL_FORMAT -> {
-        Toast.makeText(
-                context,
-                context.getString(R.string.welcome_toast_enter_valid_email),
-                Toast.LENGTH_SHORT)
-            .show()
+        ToastUtils.showToast(context, context.getString(R.string.welcome_toast_enter_valid_email))
       }
       SignInState.SUCCESS_SIGN_IN -> {
-        Toast.makeText(
-                context, context.getString(R.string.welcome_toast_sign_in), Toast.LENGTH_SHORT)
-            .show()
+        ToastUtils.showToast(context, context.getString(R.string.welcome_toast_sign_in))
 
         if (signInResult.user?.isEmailVerified == false) {
           signInResult.user.sendEmailVerification().addOnCompleteListener {
             if (it.isSuccessful) {
-              Toast.makeText(
-                      context,
-                      context.getString(R.string.welcome_toast_verification_sent),
-                      Toast.LENGTH_SHORT)
-                  .show()
+              ToastUtils.showToast(
+                  context, context.getString(R.string.welcome_toast_verification_sent))
             } else {
-              Toast.makeText(
-                      context,
-                      context.getString(R.string.welcome_toast_verification_sent_failed),
-                      Toast.LENGTH_SHORT)
-                  .show()
+              ToastUtils.showToast(
+                  context, context.getString(R.string.welcome_toast_verification_sent_failed))
               Log.e("WelcomeScreen", "Failed to send verification email", it.exception)
             }
           }
         }
       }
       SignInState.SUCCESS_CREATE_ACCOUNT -> {
-        Toast.makeText(
-                context,
-                context.getString(R.string.welcome_toast_account_created),
-                Toast.LENGTH_SHORT)
-            .show()
+        ToastUtils.showToast(context, context.getString(R.string.welcome_toast_account_created))
 
         signInResult.user?.sendEmailVerification()?.addOnCompleteListener {
           if (it.isSuccessful) {
-            Toast.makeText(
-                    context,
-                    context.getString(R.string.welcome_toast_verification_sent),
-                    Toast.LENGTH_SHORT)
-                .show()
+            ToastUtils.showToast(
+                context, context.getString(R.string.welcome_toast_verification_sent))
           } else {
-            Toast.makeText(
-                    context,
-                    context.getString(R.string.welcome_toast_verification_sent_failed),
-                    Toast.LENGTH_SHORT)
-                .show()
+            ToastUtils.showToast(
+                context, context.getString(R.string.welcome_toast_verification_sent_failed))
             Log.e("WelcomeScreen", "Failed to send verification email", it.exception)
           }
         }
