@@ -95,6 +95,8 @@ class UnioMessagingService : FirebaseMessagingService() {
       }
     }
 
+    val notification = builder.build()
+
     // Create notification channel if it does not exist
     val notificationManager: NotificationManager =
         getSystemService(NOTIFICATION_SERVICE) as NotificationManager
@@ -115,6 +117,6 @@ class UnioMessagingService : FirebaseMessagingService() {
     }
 
     // Send notification
-    notificationManager.notify(System.currentTimeMillis().toInt(), builder.build())
+    notificationManager.notify(System.currentTimeMillis().toInt(), notification)
   }
 }
