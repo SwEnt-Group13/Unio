@@ -66,8 +66,23 @@ class FirestoreReferenceList<T : UniquelyIdentifiable>(
     _uids.addAll(uids)
   }
 
+  /**
+   * Removes a UID from the list.
+   *
+   * @param uid The UID to remove.
+   */
   override fun remove(uid: String) {
     _uids.remove(uid)
+  }
+
+  /**
+   * Checks if the list contains a UID.
+   *
+   * @param uid The UID to check.
+   * @return True if the list contains the UID, false otherwise.
+   */
+  override fun contains(uid: String): Boolean {
+    return _uids.contains(uid)
   }
 
   /**
@@ -107,10 +122,6 @@ class FirestoreReferenceList<T : UniquelyIdentifiable>(
         }
   }
 
-  override fun contains(uid: String): Boolean {
-    return _uids.contains(uid)
-  }
-
   companion object {
     /** Creates a [FirestoreReferenceList] from a list of UIDs. */
     fun <T : UniquelyIdentifiable> fromList(
@@ -134,14 +145,22 @@ class FirestoreReferenceList<T : UniquelyIdentifiable>(
 }
 
 /**
- * Extension functions for creating [FirestoreReferenceList] objects for [Association], [User], and
- * [Event].
+ * Extension function for creating an empty [FirestoreReferenceList] objects for [Association].
+ *
+ * @return The [FirestoreReferenceList] object.
  */
 fun Association.Companion.emptyFirestoreReferenceList(): FirestoreReferenceList<Association> {
   return FirestoreReferenceList.empty(
       ASSOCIATION_PATH, AssociationRepositoryFirestore.Companion::hydrate)
 }
 
+/**
+ * Extension function for creating a [FirestoreReferenceList] objects for [Association] with a list
+ * of UIDs.
+ *
+ * @param uids The list of UIDs.
+ * @return The [FirestoreReferenceList] object.
+ */
 fun Association.Companion.firestoreReferenceListWith(
     uids: List<String>
 ): FirestoreReferenceList<Association> {
@@ -149,19 +168,43 @@ fun Association.Companion.firestoreReferenceListWith(
       uids, ASSOCIATION_PATH, AssociationRepositoryFirestore.Companion::hydrate)
 }
 
+/**
+ * Extension function for creating an empty [FirestoreReferenceList] objects for [User].
+ *
+ * @return The [FirestoreReferenceList] object.
+ */
 fun User.Companion.emptyFirestoreReferenceList(): FirestoreReferenceList<User> {
   return FirestoreReferenceList.empty(USER_PATH, UserRepositoryFirestore.Companion::hydrate)
 }
 
+/**
+ * Extension function for creating a [FirestoreReferenceList] objects for [User] with a list of
+ * UIDs.
+ *
+ * @param uids The list of UIDs.
+ * @return The [FirestoreReferenceList] object.
+ */
 fun User.Companion.firestoreReferenceListWith(uids: List<String>): FirestoreReferenceList<User> {
   return FirestoreReferenceList.fromList(
       uids, USER_PATH, UserRepositoryFirestore.Companion::hydrate)
 }
 
+/**
+ * Extension function for creating an empty [FirestoreReferenceList] objects for [Event].
+ *
+ * @return The [FirestoreReferenceList] object.
+ */
 fun Event.Companion.emptyFirestoreReferenceList(): FirestoreReferenceList<Event> {
   return FirestoreReferenceList.empty(EVENT_PATH, EventRepositoryFirestore.Companion::hydrate)
 }
 
+/**
+ * Extension function for creating a [FirestoreReferenceList] objects for [Event] with a list of
+ * UIDs.
+ *
+ * @param uids The list of UIDs.
+ * @return The [FirestoreReferenceList] object.
+ */
 fun Event.Companion.firestoreReferenceListWith(uids: List<String>): FirestoreReferenceList<Event> {
   return FirestoreReferenceList.fromList(
       uids, EVENT_PATH, EventRepositoryFirestore.Companion::hydrate)
