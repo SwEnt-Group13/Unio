@@ -340,8 +340,8 @@ fun EventDetailsBody(
               color = MaterialTheme.colorScheme.onPrimaryContainer)
 
           val placesStr =
-              if (event.placesRemaining >= 0) {
-                "${event.numberOfSaved}/${event.placesRemaining}${context.getString(R.string.event_places_remaining)}"
+              if (event.maxNumberOfPlaces >= 0) {
+                "${event.numberOfSaved}/${event.maxNumberOfPlaces}${context.getString(R.string.event_places_remaining)}"
               } else ""
           Text(
               placesStr,

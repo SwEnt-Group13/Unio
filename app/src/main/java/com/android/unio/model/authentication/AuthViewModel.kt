@@ -12,6 +12,15 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
+/**
+ * ViewModel class that manages the authentication state of the user. It uses a [FirebaseAuth] to
+ * verify the authentication state of the user and provides the [authState] to be observed by the
+ * UI.
+ *
+ * @property firebaseAuth The [FirebaseAuth] instance that is used to verify the authentication
+ *   state of the user.
+ * @property userRepository The [UserRepository] that provides the user data.
+ */
 @HiltViewModel
 class AuthViewModel
 @Inject
@@ -30,6 +39,10 @@ constructor(private val firebaseAuth: FirebaseAuth, private val userRepository: 
    * Send a password reset email to the email given in parameter. If the email is sent correctly the
    * [onSuccess] function is called, otherwise the [onFailure] function is called with the exception
    * that occurred.
+   *
+   * @param email [String] : The email to send the password reset email to.
+   * @param onSuccess [() -> Unit] : The function to call if the email is sent correctly.
+   * @param onFailure [(Exception) -> Unit] : The function to call if an exception occurs.
    */
   fun sendEmailResetPassword(email: String, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
     firebaseAuth.sendPasswordResetEmail(email).addOnCompleteListener { task ->
