@@ -14,6 +14,7 @@ class FirestoreReferenceElement<T : UniquelyIdentifiable>(
     private val hydrate: (Map<String, Any>?) -> T
 ) : ReferenceElement<T> {
 
+  // We should consider rewriting this in an efficient manner
   private var _uid: String = ""
 
   override val uid: String
@@ -78,7 +79,6 @@ class FirestoreReferenceElement<T : UniquelyIdentifiable>(
      * @param uid UID of the element.
      * @param collectionPath Path to the Firestore collection.
      * @param hydrate Function to hydrate Firestore data into the element.
-     *
      * @return FirestoreReferenceElement with the specified UID.
      */
     fun <T : UniquelyIdentifiable> withUid(
