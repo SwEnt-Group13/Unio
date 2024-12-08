@@ -19,19 +19,19 @@ object NetworkUtils {
 }
 
 object Utils {
-    fun checkInputLength(input: String, textLength: TextLength): Boolean {
-        return when (textLength) {
-            TextLength.SMALL -> input.length <= textLength.length
-            TextLength.MEDIUM -> input.length <= textLength.length
-            TextLength.LARGE -> input.length <= textLength.length
-        }
+  fun checkInputLength(input: String, textLength: TextLength): Boolean {
+    return when (textLength) {
+      TextLength.SMALL -> input.length <= textLength.length
+      TextLength.MEDIUM -> input.length <= textLength.length
+      TextLength.LARGE -> input.length <= textLength.length
     }
+  }
 
-    fun checkInputLengthIsClose(input: String, textLength: TextLength): Boolean {
-        return when (textLength) {
-            TextLength.SMALL -> input.length >= (textLength.length - textLength.length / 3)
-            TextLength.MEDIUM -> input.length >= (textLength.length - textLength.length / 5)
-            TextLength.LARGE -> input.length >= (textLength.length - textLength.length / 10)
-        }
+  fun checkInputLengthIsClose(input: String, textLength: TextLength): Boolean {
+    return when (textLength) {
+      TextLength.SMALL -> input.length >= (textLength.length - textLength.length / 3)
+      TextLength.MEDIUM -> input.length >= (textLength.length - textLength.length / 5)
+      TextLength.LARGE -> input.length >= (textLength.length - textLength.length / 10)
     }
+  }
 }
