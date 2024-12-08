@@ -37,7 +37,7 @@ import java.util.Date
  * @property endDate event end date
  * @property location event location
  * @property types list of event types
- * @property placesRemaining max number of places available for the event
+ * @property maxNumberOfPlaces max number of places available for the event
  * @property numberOfSaved number of users that saved the event
  */
 data class Event(
@@ -53,7 +53,7 @@ data class Event(
     val endDate: Timestamp = Timestamp(Date()),
     val location: Location = Location(),
     val types: List<EventType> = mutableListOf(EventType.OTHER),
-    val placesRemaining: Int = -1,
+    val maxNumberOfPlaces: Int = -1,
     val numberOfSaved: Int = 0
 ) : UniquelyIdentifiable {
   companion object

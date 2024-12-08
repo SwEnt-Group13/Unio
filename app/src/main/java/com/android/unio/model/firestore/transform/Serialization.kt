@@ -79,6 +79,6 @@ fun EventRepositoryFirestore.Companion.serialize(event: Event): Map<String, Any>
               Location::longitude.name to event.location.longitude,
               Location::name.name to event.location.name),
       Event::types.name to event.types.map { it.name },
-      Event::placesRemaining.name to event.placesRemaining,
+      Event::maxNumberOfPlaces.name to event.maxNumberOfPlaces,
       Event::numberOfSaved.name to event.numberOfSaved)
 }

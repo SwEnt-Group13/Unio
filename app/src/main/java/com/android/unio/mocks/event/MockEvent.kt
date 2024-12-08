@@ -112,7 +112,7 @@ class MockEvent {
           endDate = endDate,
           location = location,
           types = types,
-          placesRemaining = -1)
+          maxNumberOfPlaces = -1)
     }
 
     /** Creates a list of mock Events with default properties */
