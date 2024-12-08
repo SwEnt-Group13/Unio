@@ -51,7 +51,7 @@ constructor(private val fusedLocationClient: FusedLocationProviderClient) : View
    * @param location the location of the event to center the map on.
    */
   fun setHighlightedEvent(uid: String?, location: Location?) {
-    _highlightedEventUid.value = uid
+    uid?.let { _highlightedEventUid.value = uid }
     location?.let { _centerLocation.value = LatLng(it.latitude, it.longitude) }
   }
 
