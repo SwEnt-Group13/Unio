@@ -40,6 +40,12 @@ import com.android.unio.ui.utils.ToastUtils
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 
+/**
+ * A screen that allows users to verify their email.
+ *
+ * @param navigationAction The navigation action to use.
+ * @param userViewModel The [UserViewModel] to use.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EmailVerificationScreen(navigationAction: NavigationAction, userViewModel: UserViewModel) {

@@ -34,6 +34,13 @@ import com.android.unio.model.strings.test_tags.InterestsOverlayTestTags
 import com.android.unio.model.user.Interest
 import com.android.unio.ui.theme.AppTypography
 
+/**
+ * A dialog that allows users to select their interests.
+ *
+ * @param onDismiss Callback when the dialog is dismissed.
+ * @param onSave Callback when the changes are saved.
+ * @param interests The list of pairs of [Interest] and their selected state.
+ */
 @Composable
 fun InterestOverlay(
     onDismiss: () -> Unit,
@@ -116,6 +123,11 @@ fun InterestOverlay(
       }
 }
 
+/**
+ * A row that displays an interest and a checkbox to select it.
+ *
+ * @param pair The pair of [Interest] and its selected state.
+ */
 @Composable
 private fun InterestsOverlayInterestRow(
     pair: Pair<Interest, MutableState<Boolean>>,

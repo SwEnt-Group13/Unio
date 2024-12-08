@@ -34,6 +34,13 @@ import com.android.unio.model.user.isValidEmail
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.theme.AppTypography
 
+/**
+ * A screen that allows users to reset their password. This screen is filled with
+ * ResetPasswordContent.
+ *
+ * @param navigationAction The navigation action to use.
+ * @param authViewModel The [AuthViewModel] to use.
+ */
 @Composable
 fun ResetPasswordScreen(navigationAction: NavigationAction, authViewModel: AuthViewModel) {
 
@@ -62,6 +69,12 @@ fun ResetPasswordScreen(navigationAction: NavigationAction, authViewModel: AuthV
       onDismiss = { navigationAction.goBack() })
 }
 
+/**
+ * The content of the Reset Password screen.
+ *
+ * @param onDismiss Callback when the dialog is dismissed.
+ * @param onChangePassword Callback when the password is changed.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ResetPasswordContent(

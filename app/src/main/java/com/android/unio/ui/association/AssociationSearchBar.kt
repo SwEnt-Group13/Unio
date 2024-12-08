@@ -34,6 +34,16 @@ import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.strings.test_tags.ExploreContentTestTags
 import com.android.unio.ui.theme.AppTypography
 
+/**
+ * A search bar that allows users to search for associations. The last 2 parameters are used to
+ * handle the expandable state of the search bar. For an example of how to use this, see Explore.kt
+ *
+ * @param searchViewModel [SearchViewModel] that provides the search results.
+ * @param onAssociationSelected Callback when an association is selected.
+ * @param shouldCloseExpandable Whether the search bar should close the expandable when it is
+ *   expanded.
+ * @param onOutsideClickHandled Callback when the outside click is handled.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AssociationSearchBar(

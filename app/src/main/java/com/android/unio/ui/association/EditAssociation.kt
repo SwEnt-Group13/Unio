@@ -48,6 +48,12 @@ import com.android.unio.ui.navigation.Screen
 import com.android.unio.ui.utils.ToastUtils
 import kotlinx.coroutines.launch
 
+/**
+ * Screen for editing an association.
+ *
+ * @param associationViewModel [AssociationViewModel] that provides the association to edit.
+ * @param navigationAction [NavigationAction] that handles navigation.
+ */
 @Composable
 fun EditAssociationScreen(
     associationViewModel: AssociationViewModel,
@@ -84,6 +90,13 @@ fun EditAssociationScreen(
       })
 }
 
+/**
+ * Scaffold for editing an association.
+ *
+ * @param association The [Association] to edit.
+ * @param onCancel Callback when the user cancels the edit.
+ * @param onSave Callback when the user saves the edit.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditAssociationScaffold(

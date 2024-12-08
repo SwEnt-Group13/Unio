@@ -40,6 +40,12 @@ import com.android.unio.ui.image.AsyncImageWrapper
 import com.android.unio.ui.theme.primaryLight
 import kotlinx.coroutines.launch
 
+/**
+ * A composable function to display the profile picture with the option to remove it.
+ *
+ * @param profilePictureUri The URI of the profile picture.
+ * @param onRemove Lambda to handle the removal of the profile picture.
+ */
 @Composable
 private fun ProfilePictureWithRemoveIcon(
     profilePictureUri: Uri,
@@ -64,6 +70,13 @@ private fun ProfilePictureWithRemoveIcon(
   }
 }
 
+/**
+ * A composable function that allows the user to select a profile picture.
+ *
+ * @param profilePictureUri The URI of the profile picture.
+ * @param onProfilePictureUriChange Lambda to handle the change of the profile picture URI.
+ * @param testTag The test tag to use for the icon.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfilePicturePicker(
@@ -118,6 +131,12 @@ fun ProfilePicturePicker(
   }
 }
 
+/**
+ * A specific implementation of the [InputChip] for interests.
+ *
+ * @param pair The pair of [Interest] and its selected state.
+ * @param testTag The test tag to use for the chip.
+ */
 @Composable
 fun InterestInputChip(pair: Pair<Interest, MutableState<Boolean>>, testTag: String) {
   val context = LocalContext.current
@@ -135,6 +154,13 @@ fun InterestInputChip(pair: Pair<Interest, MutableState<Boolean>>, testTag: Stri
       })
 }
 
+/**
+ * A specific implementation of the [InputChip] for [UserSocial]s.
+ *
+ * @param userSocial The [UserSocial] to display.
+ * @param onRemove Lambda to handle the removal of the social.
+ * @param testTag The test tag to use for the chip.
+ */
 @Composable
 fun SocialInputChip(userSocial: UserSocial, onRemove: () -> Unit, testTag: String) {
   val context = LocalContext.current
