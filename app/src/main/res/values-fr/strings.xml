@@ -17,7 +17,8 @@
     <string name="association_upcoming_events">Évenements à venir</string>
     <string name="association_go_back">Retour</string>
     <string name="association_see_more">Voir plus</string>
-    <string name="association_share">Partager l\'association</string>
+    <string name="association_more">Plus</string>
+    <string name="association_broadcast_message">Envoyer un message</string>
     <string name="association_contact_members">Membres à contacter</string>
     <string name="association_help_us">
         Voici comment vous pouvez nous aider. Cliquez sur une fonction pour en savoir plus
