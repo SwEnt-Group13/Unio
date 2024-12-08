@@ -58,6 +58,14 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import kotlinx.coroutines.flow.MutableStateFlow
 
+/**
+ * The AccountDetailsScreen composable is used to create the account creation screen, and calls the
+ * AccountDetailsContent composable to display the content of the screen.
+ *
+ * @param navigationAction The navigation action to navigate to different screens.
+ * @param userViewModel The view model for the user.
+ * @param imageViewModel The view model for the image.
+ */
 @Composable
 fun AccountDetailsScreen(
     navigationAction: NavigationAction,
@@ -237,6 +245,18 @@ fun AccountDetailsContent(
   }
 }
 
+/**
+ * The [UserTextFields] composable is used to create the text fields for the user to input their
+ * first name, last name, and biography.
+ *
+ * @param isErrors The set of errors that the user has made.
+ * @param firstName The first name of the user.
+ * @param lastName The last name of the user.
+ * @param bio The biography of the user.
+ * @param onFirstNameChange The lambda function to change the first name.
+ * @param onLastNameChange The lambda function to change the last name.
+ * @param onBioChange The lambda function to change the biography.
+ */
 @Composable
 private fun UserTextFields(
     isErrors: MutableSet<AccountDetailsError>,
@@ -308,6 +328,13 @@ private fun UserTextFields(
       value = bio)
 }
 
+/**
+ * The [InterestButtonAndFlowRow] composable contains the button to add interests and display the
+ * row of interests that the user has selected.
+ *
+ * @param interestsFlow The flow of interests that the user has selected.
+ * @param onShowInterests The lambda function to show the interests overlay.
+ */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun InterestButtonAndFlowRow(
@@ -337,6 +364,13 @@ private fun InterestButtonAndFlowRow(
   }
 }
 
+/**
+ * The [SocialButtonAndFlowRow] composable contains the button to add socials and display the row of
+ * socials that the user has selected.
+ *
+ * @param userSocialFlow The flow of socials that the user has selected.
+ * @param onShowSocials The lambda function to show the socials overlay.
+ */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun SocialButtonAndFlowRow(
