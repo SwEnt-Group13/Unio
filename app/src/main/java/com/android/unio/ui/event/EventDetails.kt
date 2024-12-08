@@ -34,8 +34,6 @@ import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -43,7 +41,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.ModalBottomSheetProperties
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarDuration
@@ -69,7 +66,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import com.android.unio.R
@@ -81,7 +77,6 @@ import com.android.unio.model.map.MapViewModel
 import com.android.unio.model.notification.NotificationTarget
 import com.android.unio.model.notification.NotificationWorker
 import com.android.unio.model.notification.UnioNotification
-import com.android.unio.model.notification.broadcastMessage
 import com.android.unio.model.preferences.AppPreferences
 import com.android.unio.model.strings.FormatStrings.DAY_MONTH_FORMAT
 import com.android.unio.model.strings.FormatStrings.HOUR_MINUTE_FORMAT
@@ -89,6 +84,7 @@ import com.android.unio.model.strings.NotificationStrings.EVENT_REMINDER_CHANNEL
 import com.android.unio.model.strings.test_tags.EventCardTestTags
 import com.android.unio.model.strings.test_tags.EventDetailsTestTags
 import com.android.unio.model.user.UserViewModel
+import com.android.unio.ui.components.NotificationSender
 import com.android.unio.ui.image.AsyncImageWrapper
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
@@ -201,6 +197,7 @@ fun EventScreenScaffold(
       })
 
   NotificationSender(
+      dialogTitle = context.getString(R.string.event_send_notification),
       notificationTarget = NotificationTarget.EVENT_SAVERS,
       topic = event.uid,
       notificationContent = { mapOf("title" to event.title, "body" to it) },
@@ -552,83 +549,4 @@ fun EventSaveButton(event: Event, eventViewModel: EventViewModel, userViewModel:
                 else context.getString(R.string.event_card_content_description_not_saved_event),
             tint = if (isSaved) Color.Red else Color.White)
       }
-}
-
-@Composable
-fun NotificationSender(
-    notificationTarget: NotificationTarget,
-    topic: String,
-    notificationContent: (String) -> Map<String, String>,
-    showNotificationDialog: Boolean,
-    onClose: () -> Unit
-) {
-
-  var notificationText by remember { mutableStateOf("") }
-  val maxNotificationLength = 100
-  val context = LocalContext.current
-
-  if (showNotificationDialog) {
-    Dialog(onDismissRequest = onClose) {
-      Card(
-          elevation = CardDefaults.cardElevation(8.dp),
-          shape = RoundedCornerShape(16.dp),
-          modifier = Modifier.fillMaxWidth().padding(20.dp)) {
-            Column(
-                modifier = Modifier.fillMaxWidth().padding(15.dp),
-                verticalArrangement = Arrangement.spacedBy(20.dp)) {
-                  Text("Send a notification to all participants", style = AppTypography.bodyLarge)
-
-                  OutlinedTextField(
-                      value = notificationText,
-                      onValueChange = {
-                        if (it.length <= maxNotificationLength) {
-                          notificationText = it
-                        }
-                      },
-                      label = {
-                        if (notificationText.isEmpty()) {
-                          Text("Notification")
-                        } else {
-                          Text("Notification (${notificationText.length}/${maxNotificationLength})")
-                        }
-                      })
-
-                  Row(
-                      horizontalArrangement = Arrangement.End,
-                      modifier = Modifier.fillMaxWidth().padding(top = 10.dp)) {
-                        OutlinedButton(
-                            onClick = onClose,
-                        ) {
-                          Text("Cancel")
-                        }
-                        Button(
-                            onClick = {
-                              broadcastMessage(
-                                  type = notificationTarget,
-                                  topic = topic,
-                                  payload = notificationContent(notificationText),
-                                  onSuccess = {
-                                    Toast.makeText(
-                                            context,
-                                            "Notification sent successfully",
-                                            Toast.LENGTH_SHORT)
-                                        .show()
-                                  },
-                                  {
-                                    Toast.makeText(
-                                            context,
-                                            "Failed to send notification",
-                                            Toast.LENGTH_SHORT)
-                                        .show()
-                                  })
-                              onClose()
-                            },
-                        ) {
-                          Text("Send")
-                        }
-                      }
-                }
-          }
-    }
-  }
 }

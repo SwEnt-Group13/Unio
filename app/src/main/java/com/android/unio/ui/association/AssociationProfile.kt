@@ -69,8 +69,8 @@ import com.android.unio.model.strings.test_tags.AssociationProfileTestTags
 import com.android.unio.model.user.User
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.model.utils.Utils
+import com.android.unio.ui.components.NotificationSender
 import com.android.unio.ui.event.EventCard
-import com.android.unio.ui.event.NotificationSender
 import com.android.unio.ui.image.AsyncImageWrapper
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
@@ -205,6 +205,7 @@ fun AssociationProfileScaffold(
   var showNotificationDialog by remember { mutableStateOf(false) }
 
   NotificationSender(
+      context.getString(R.string.association_broadcast_message),
       NotificationTarget.ASSOCIATION_FOLLOWERS,
       association.uid,
       { mapOf("title" to association.name, "body" to it) },
