@@ -152,7 +152,7 @@ class HydrationAndSerializationTest {
         event.location.longitude, (serialized["location"] as Map<String, Any>)["longitude"])
     assertEquals(event.organisers.uids, serialized["organisers"])
     assertEquals(event.taggedAssociations.uids, serialized["taggedAssociations"])
-    assertEquals(event.maxNumberOfPlaces, serialized["placesRemaining"])
+    assertEquals(event.maxNumberOfPlaces, serialized["maxNumberOfPlaces"])
     assertEquals(event.numberOfSaved, serialized["numberOfSaved"])
 
     val hydrated = EventRepositoryFirestore.hydrate(serialized)
