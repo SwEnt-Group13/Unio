@@ -22,6 +22,7 @@ import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.notification.NotificationWorker
 import com.android.unio.model.strings.test_tags.EventCardTestTags
+import com.android.unio.model.strings.test_tags.EventDetailsTestTags
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.event.EventCard
@@ -139,7 +140,7 @@ class EventCardTest : TearDown() {
         .assertExists()
         .assertTextEquals("This is a catchy description.")
     composeTestRule
-        .onNodeWithTag(EventCardTestTags.EVENT_SAVE_BUTTON, useUnmergedTree = true)
+        .onNodeWithTag(EventDetailsTestTags.SAVE_BUTTON, useUnmergedTree = true)
         .assertExists()
 
     composeTestRule
@@ -268,13 +269,13 @@ class EventCardTest : TearDown() {
             startDate = Timestamp(Date((Timestamp.now().seconds + 4 * 3600) * 1000)))
 
     setEventScreen(event)
-    composeTestRule.onNodeWithTag(EventCardTestTags.EVENT_SAVE_BUTTON).assertExists().performClick()
+    composeTestRule.onNodeWithTag(EventDetailsTestTags.SAVE_BUTTON).assertExists().performClick()
 
     Thread.sleep(500)
     assert(indicator)
     verify { NotificationWorker.schedule(any(), any()) }
 
-    composeTestRule.onNodeWithTag(EventCardTestTags.EVENT_SAVE_BUTTON).assertExists().performClick()
+    composeTestRule.onNodeWithTag(EventDetailsTestTags.SAVE_BUTTON).assertExists().performClick()
     composeTestRule.waitForIdle()
     assert(!indicator)
   }

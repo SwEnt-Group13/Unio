@@ -81,7 +81,6 @@ import com.android.unio.model.preferences.AppPreferences
 import com.android.unio.model.strings.FormatStrings.DAY_MONTH_FORMAT
 import com.android.unio.model.strings.FormatStrings.HOUR_MINUTE_FORMAT
 import com.android.unio.model.strings.NotificationStrings.EVENT_REMINDER_CHANNEL_ID
-import com.android.unio.model.strings.test_tags.EventCardTestTags
 import com.android.unio.model.strings.test_tags.EventDetailsTestTags
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.components.NotificationSender
@@ -540,7 +539,7 @@ fun EventSaveButton(event: Event, eventViewModel: EventViewModel, userViewModel:
               .clip(RoundedCornerShape(14.dp))
               .background(MaterialTheme.colorScheme.inversePrimary)
               .padding(4.dp)
-              .testTag(EventCardTestTags.EVENT_SAVE_BUTTON),
+              .testTag(EventDetailsTestTags.SAVE_BUTTON),
       onClick = { onClickSaveButton() }) {
         Icon(
             imageVector = if (isSaved) Icons.Rounded.Favorite else Icons.Rounded.FavoriteBorder,
