@@ -1,9 +1,14 @@
 package com.android.unio.ui.event
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.pm.PackageManager
+import android.os.Build
 import android.util.Log
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -34,7 +39,6 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.ModalBottomSheetProperties
@@ -66,6 +70,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import com.android.unio.R
 import com.android.unio.model.association.Association
@@ -73,10 +78,15 @@ import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventUtils.formatTimestamp
 import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.map.MapViewModel
-import com.android.unio.model.notification.NotificationType
+import com.android.unio.model.notification.NotificationTarget
+import com.android.unio.model.notification.NotificationWorker
+import com.android.unio.model.notification.UnioNotification
 import com.android.unio.model.notification.broadcastMessage
+import com.android.unio.model.preferences.AppPreferences
 import com.android.unio.model.strings.FormatStrings.DAY_MONTH_FORMAT
 import com.android.unio.model.strings.FormatStrings.HOUR_MINUTE_FORMAT
+import com.android.unio.model.strings.NotificationStrings.EVENT_REMINDER_CHANNEL_ID
+import com.android.unio.model.strings.test_tags.EventCardTestTags
 import com.android.unio.model.strings.test_tags.EventDetailsTestTags
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.image.AsyncImageWrapper
@@ -89,6 +99,7 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import me.zhanghai.compose.preference.LocalPreferenceFlow
 
 private const val DEBUG_MESSAGE = "<DEBUG> Not implemented yet"
 private val DEBUG_LAMBDA: () -> Unit = {
@@ -122,32 +133,8 @@ fun EventScreen(
   }
   val organisers by event!!.organisers.list.collectAsState()
 
-  val isSaved = user!!.savedEvents.contains(event!!.uid)
-
-  // Save button should be extracted to a utils in the future
-  val onClickSaveButton = {
-    if (isSaved) {
-      user!!.savedEvents.remove(event!!.uid)
-      val newEvent = event!!.copy(numberOfSaved = event!!.numberOfSaved - 1)
-      eventViewModel.updateEventWithoutImage(
-          newEvent,
-          onSuccess = {},
-          onFailure = { e -> Log.e("EventCard", "Failed to update event: $e") })
-      Firebase.messaging.unsubscribeFromTopic(event!!.uid)
-    } else {
-      user!!.savedEvents.add(event!!.uid)
-      val newEvent = event!!.copy(numberOfSaved = event!!.numberOfSaved + 1)
-      eventViewModel.updateEventWithoutImage(
-          newEvent,
-          onSuccess = {},
-          onFailure = { e -> Log.e("EventCard", "Failed to update event: $e") })
-      Firebase.messaging.subscribeToTopic(event!!.uid)
-    }
-    userViewModel.updateUserDebounced(user!!)
-  }
-
   EventScreenScaffold(
-      navigationAction, mapViewModel, event!!, organisers, isSaved, onClickSaveButton)
+      navigationAction, mapViewModel, event!!, organisers, eventViewModel, userViewModel)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -157,8 +144,8 @@ fun EventScreenScaffold(
     mapViewModel: MapViewModel,
     event: Event,
     organisers: List<Association>,
-    isSaved: Boolean,
-    onClickSaveButton: () -> Unit
+    eventViewModel: EventViewModel,
+    userViewModel: UserViewModel
 ) {
   val context = LocalContext.current
 
@@ -168,8 +155,6 @@ fun EventScreenScaffold(
   var showSheet by remember { mutableStateOf(false) }
 
   var showNotificationDialog by remember { mutableStateOf(false) }
-  var notificationText by remember { mutableStateOf("") }
-  val maxNotificationLength = 100
 
   Scaffold(
       modifier = Modifier.testTag(EventDetailsTestTags.SCREEN),
@@ -200,20 +185,7 @@ fun EventScreenScaffold(
                   }
             },
             actions = {
-              IconButton(
-                  modifier = Modifier.testTag(EventDetailsTestTags.SAVE_BUTTON),
-                  onClick = onClickSaveButton) {
-                    Icon(
-                        imageVector =
-                            if (isSaved) Icons.Rounded.Favorite else Icons.Rounded.FavoriteBorder,
-                        contentDescription =
-                            if (isSaved)
-                                context.getString(R.string.event_details_content_description_saved)
-                            else
-                                context.getString(
-                                    R.string.event_details_content_description_not_saved),
-                        tint = if (isSaved) Color.Red else LocalContentColor.current)
-                  }
+              EventSaveButton(event, eventViewModel, userViewModel)
               IconButton(
                   modifier = Modifier.testTag(EventDetailsTestTags.SHARE_BUTTON),
                   onClick = { showSheet = true }) {
@@ -228,74 +200,12 @@ fun EventScreenScaffold(
         EventScreenContent(navigationAction, mapViewModel, event, organisers, padding)
       })
 
-  if (showNotificationDialog) {
-    Dialog(onDismissRequest = { showNotificationDialog = false }) {
-      Card(
-          elevation = CardDefaults.cardElevation(8.dp),
-          shape = RoundedCornerShape(16.dp),
-          modifier = Modifier.fillMaxWidth().padding(20.dp)) {
-            Column(
-                modifier = Modifier.fillMaxWidth().padding(15.dp),
-                verticalArrangement = Arrangement.spacedBy(20.dp)) {
-                  Text("Send a notification to all participants", style = AppTypography.bodyLarge)
-
-                  OutlinedTextField(
-                      value = notificationText,
-                      onValueChange = {
-                        if (it.length <= maxNotificationLength) {
-                          notificationText = it
-                        }
-                      },
-                      label = {
-                        if (notificationText.isEmpty()) {
-                          Text("Notification")
-                        } else {
-                          Text("Notification (${notificationText.length}/${maxNotificationLength})")
-                        }
-                      })
-
-                  Row(
-                      horizontalArrangement = Arrangement.End,
-                      modifier = Modifier.fillMaxWidth().padding(top = 10.dp)) {
-                        OutlinedButton(
-                            onClick = { showNotificationDialog = false },
-                        ) {
-                          Text("Cancel")
-                        }
-                        Button(
-                            onClick = {
-                              broadcastMessage(
-                                  type = NotificationType.EVENT_MESSAGE,
-                                  topic = event.uid,
-                                  payload =
-                                      mapOf(
-                                          "title" to event.title,
-                                          "body" to notificationText,
-                                      ),
-                                  onSuccess = {
-                                    Toast.makeText(
-                                            context,
-                                            "Notification sent successfully",
-                                            Toast.LENGTH_SHORT)
-                                        .show()
-                                  },
-                                  {
-                                    Toast.makeText(
-                                            context,
-                                            "Failed to send notification",
-                                            Toast.LENGTH_SHORT)
-                                        .show()
-                                  })
-                              showNotificationDialog = false
-                            },
-                        ) {
-                          Text("Send")
-                        }
-                      }
-                }
-          }
-    }
-  }
+  NotificationSender(
+      notificationTarget = NotificationTarget.EVENT_SAVERS,
+      topic = event.uid,
+      notificationContent = { mapOf("title" to event.title, "body" to it) },
+      showNotificationDialog = showNotificationDialog,
+      onClose = { showNotificationDialog = false })
 
   EventDetailsBottomSheet(showSheet, { showNotificationDialog = true }) { showSheet = false }
 }
@@ -503,7 +413,7 @@ fun EventDetailsBody(
 @Composable
 fun EventDetailsBottomSheet(
     showSheet: Boolean,
-    onNotificationDialogOpen: () -> Unit,
+    onOpenNotificationDialog: () -> Unit,
     onClose: () -> Unit
 ) {
   val sheetState = rememberModalBottomSheetState()
@@ -518,19 +428,207 @@ fun EventDetailsBottomSheet(
         onDismissRequest = onClose,
         properties = ModalBottomSheetProperties(shouldDismissOnBackPress = true),
     ) {
-      Column(modifier = Modifier) {
+      Column {
         TextButton(
             modifier = Modifier.fillMaxWidth().testTag(EventDetailsTestTags.SEND_NOTIFICATION),
             onClick = {
               scope.launch {
                 sheetState.hide()
                 onClose()
-                onNotificationDialogOpen()
+                onOpenNotificationDialog()
               }
             }) {
               Text(context.getString(R.string.event_send_notification))
             }
       }
+    }
+  }
+}
+
+@Composable
+fun EventSaveButton(event: Event, eventViewModel: EventViewModel, userViewModel: UserViewModel) {
+  val context = LocalContext.current
+
+  val user by userViewModel.user.collectAsState()
+
+  if (user == null) {
+    Log.e("EventCard", "User is null")
+    return
+  }
+
+  var isSaved by remember { mutableStateOf(user!!.savedEvents.contains(event.uid)) }
+
+  var notificationPermissionsEnabled by remember { mutableStateOf(false) }
+  when (PackageManager.PERMISSION_GRANTED) {
+    ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) -> {
+      notificationPermissionsEnabled = true
+    }
+  }
+
+  val preferences by LocalPreferenceFlow.current.collectAsState()
+  val notificationSettingEnabled =
+      preferences
+          .asMap()
+          .getOrDefault(AppPreferences.NOTIFICATIONS, AppPreferences.Notification.default)
+          as Boolean
+
+  val scheduleReminderNotification = {
+    if (notificationSettingEnabled) {
+      NotificationWorker.schedule(
+          context,
+          UnioNotification(
+              title = event.title,
+              message = context.getString(R.string.notification_event_reminder),
+              icon = R.drawable.other_icon,
+              channelId = EVENT_REMINDER_CHANNEL_ID,
+              channelName = EVENT_REMINDER_CHANNEL_ID,
+              notificationId = event.uid.hashCode(),
+              // Schedule a notification a few hours before the event's startDate
+              timeMillis = (event.startDate.seconds - 2 * SECONDS_IN_AN_HOUR) * SECONDS_IN_AN_HOUR))
+    }
+  }
+
+  val permissionLauncher =
+      rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { permission ->
+        when {
+          permission -> {
+            notificationPermissionsEnabled = true
+            scheduleReminderNotification()
+          }
+          else -> {
+            notificationPermissionsEnabled = false
+            Log.e("EventCard", "Notification permission is not granted.")
+          }
+        }
+      }
+
+  val onClickSaveButton = {
+    if (isSaved) {
+      val newEvent = event.copy(numberOfSaved = event.numberOfSaved - 1)
+      eventViewModel.updateEventWithoutImage(
+          newEvent,
+          onSuccess = {},
+          onFailure = { e -> Log.e("EventCard", "Failed to update event: $e") })
+      userViewModel.unsaveEvent(event) {
+        if (notificationPermissionsEnabled) {
+          NotificationWorker.unschedule(context, event.uid.hashCode())
+        }
+      }
+      Firebase.messaging.unsubscribeFromTopic(event.uid)
+    } else {
+      val newEvent = event.copy(numberOfSaved = event.numberOfSaved + 1)
+      eventViewModel.updateEventWithoutImage(
+          newEvent,
+          onSuccess = {},
+          onFailure = { e -> Log.e("EventCard", "Failed to update event: $e") })
+      userViewModel.saveEvent(event) {
+        if (!notificationPermissionsEnabled) {
+          if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            // this permission requires api 33
+            // We should check how to make notifications work with lower api versions
+            permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+          }
+        } else {
+          scheduleReminderNotification()
+        }
+      }
+      Firebase.messaging.subscribeToTopic(event.uid)
+    }
+    isSaved = !isSaved
+  }
+
+  IconButton(
+      modifier =
+          Modifier.size(28.dp)
+              .clip(RoundedCornerShape(14.dp))
+              .background(MaterialTheme.colorScheme.inversePrimary)
+              .padding(4.dp)
+              .testTag(EventCardTestTags.EVENT_SAVE_BUTTON),
+      onClick = { onClickSaveButton() }) {
+        Icon(
+            imageVector = if (isSaved) Icons.Rounded.Favorite else Icons.Rounded.FavoriteBorder,
+            contentDescription =
+                if (isSaved) context.getString(R.string.event_card_content_description_saved_event)
+                else context.getString(R.string.event_card_content_description_not_saved_event),
+            tint = if (isSaved) Color.Red else Color.White)
+      }
+}
+
+@Composable
+fun NotificationSender(
+    notificationTarget: NotificationTarget,
+    topic: String,
+    notificationContent: (String) -> Map<String, String>,
+    showNotificationDialog: Boolean,
+    onClose: () -> Unit
+) {
+
+  var notificationText by remember { mutableStateOf("") }
+  val maxNotificationLength = 100
+  val context = LocalContext.current
+
+  if (showNotificationDialog) {
+    Dialog(onDismissRequest = onClose) {
+      Card(
+          elevation = CardDefaults.cardElevation(8.dp),
+          shape = RoundedCornerShape(16.dp),
+          modifier = Modifier.fillMaxWidth().padding(20.dp)) {
+            Column(
+                modifier = Modifier.fillMaxWidth().padding(15.dp),
+                verticalArrangement = Arrangement.spacedBy(20.dp)) {
+                  Text("Send a notification to all participants", style = AppTypography.bodyLarge)
+
+                  OutlinedTextField(
+                      value = notificationText,
+                      onValueChange = {
+                        if (it.length <= maxNotificationLength) {
+                          notificationText = it
+                        }
+                      },
+                      label = {
+                        if (notificationText.isEmpty()) {
+                          Text("Notification")
+                        } else {
+                          Text("Notification (${notificationText.length}/${maxNotificationLength})")
+                        }
+                      })
+
+                  Row(
+                      horizontalArrangement = Arrangement.End,
+                      modifier = Modifier.fillMaxWidth().padding(top = 10.dp)) {
+                        OutlinedButton(
+                            onClick = onClose,
+                        ) {
+                          Text("Cancel")
+                        }
+                        Button(
+                            onClick = {
+                              broadcastMessage(
+                                  type = notificationTarget,
+                                  topic = topic,
+                                  payload = notificationContent(notificationText),
+                                  onSuccess = {
+                                    Toast.makeText(
+                                            context,
+                                            "Notification sent successfully",
+                                            Toast.LENGTH_SHORT)
+                                        .show()
+                                  },
+                                  {
+                                    Toast.makeText(
+                                            context,
+                                            "Failed to send notification",
+                                            Toast.LENGTH_SHORT)
+                                        .show()
+                                  })
+                              onClose()
+                            },
+                        ) {
+                          Text("Send")
+                        }
+                      }
+                }
+          }
     }
   }
 }
