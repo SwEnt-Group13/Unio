@@ -122,6 +122,7 @@
     <string name="email_verification_email_refresh">Rafraîchir</string>
     <string name="email_verification_content_description_go_back">Retour</string>
     <string name="email_verification_content_description_refresh">Rafraîchir</string>
+    <string name="email_verification_toast_email_sent">Email envoyé</string>
 
     <!-- Welcome Screen Strings -->
     <string name="welcome_message">La plus grande plateforme de vie universitaire au monde.</string>
@@ -200,6 +201,11 @@
     <string name="event_edit_delete_button">Supprimer</string>
     <string name="event_edit_failed">Echec lors de la modification</string>
     <string name="event_edit_save_button">Sauvegarder</string>
+
+    <!-- Event Edit Component Strings -->
+    <string name="event_edit_date_picker_desc">Sélectionner une date</string>
+    <string name="event_edit_time_picker_desc">Sélectionner une heure</string>
+    <string name="event_edit_toast_more_button">Continuez à taper pour voir plus de résultats</string>
 
     <!-- Associations Overlay Strings -->
     <string name="associations_overlay_coauthors_title" translatable="true">Co-organisateurs</string>
@@ -387,9 +393,6 @@
     <string name="notification_event_reminder" translatable="true">L\'évènement va bientôt commencer :)</string>
     <string name="notification_event_reminder_default_message" translatable="true">Un évènement va bientôt avoir lieu</string>
 
-
-    <string name="event_edit_date_picker_desc">Sélectionner une date</string>
-    <string name="event_edit_time_picker_desc">Sélectionner une heure</string>
     <string name="event_sign_up">Je viens !</string>
     <string name="event_not_found">ERREUR: évènement introuvable</string>
     <string name="event_details_content_description_saved">Sauvegardé</string>
