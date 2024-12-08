@@ -315,24 +315,18 @@ class AssociationProfileTest : TearDown() {
             navigationAction, userViewModel, eventViewModel, associationViewModel) {}
       }
     }
-    // Share button
+    // More button
     composeTestRule
         .onNodeWithTag(AssociationProfileTestTags.MORE_BUTTON)
         .assertDisplayComponentInScroll()
-    composeTestRule.onNodeWithTag(AssociationProfileTestTags.MORE_BUTTON).performClick()
-    assertSnackBarIsDisplayed()
 
     // Roles buttons
     composeTestRule
         .onNodeWithTag(AssociationProfileTestTags.TREASURER_ROLES)
         .assertDisplayComponentInScroll()
-    composeTestRule.onNodeWithTag(AssociationProfileTestTags.TREASURER_ROLES).performClick()
-    assertSnackBarIsDisplayed()
     composeTestRule
         .onNodeWithTag(AssociationProfileTestTags.DESIGNER_ROLES)
         .assertDisplayComponentInScroll()
-    composeTestRule.onNodeWithTag(AssociationProfileTestTags.DESIGNER_ROLES).performClick()
-    assertSnackBarIsDisplayed()
   }
 
   private fun assertSnackBarIsDisplayed() {

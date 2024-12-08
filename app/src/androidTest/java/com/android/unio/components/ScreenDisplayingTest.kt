@@ -255,11 +255,13 @@ class ScreenDisplayingTest : TearDown() {
   @Test
   fun testEventDisplayed() {
     composeTestRule.setContent {
-      EventScreen(
-          navigationAction = navigationAction,
-          eventViewModel = eventViewModel,
-          userViewModel = userViewModel,
-          mapViewModel = mapViewModel)
+      ProvidePreferenceLocals {
+        EventScreen(
+            navigationAction = navigationAction,
+            eventViewModel = eventViewModel,
+            userViewModel = userViewModel,
+            mapViewModel = mapViewModel)
+      }
     }
     composeTestRule.onNodeWithTag(EventDetailsTestTags.SCREEN).assertIsDisplayed()
   }
