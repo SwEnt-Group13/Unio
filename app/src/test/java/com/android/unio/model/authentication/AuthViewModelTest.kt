@@ -11,8 +11,10 @@ import com.android.unio.model.user.UserRepository
 import com.android.unio.model.user.UserSocial
 import com.android.unio.ui.navigation.Route
 import com.android.unio.ui.navigation.Screen
+import com.google.firebase.Firebase
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.auth
 import com.google.firebase.auth.internal.zzac
 import io.mockk.MockKAnnotations
 import io.mockk.every
@@ -50,7 +52,7 @@ class AuthViewModelTest {
     }
 
     mockkStatic(FirebaseAuth::class)
-    every { FirebaseAuth.getInstance() } returns firebaseAuth
+    every { Firebase.auth } returns firebaseAuth
     every { firebaseAuth.currentUser } returns firebaseUser
 
     userNonEmptyFirstName =
