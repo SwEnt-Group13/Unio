@@ -267,6 +267,10 @@ data class ColorFamily(
 val unspecified_scheme =
     ColorFamily(Color.Unspecified, Color.Unspecified, Color.Unspecified, Color.Unspecified)
 
+/**
+ * Unio's theme that changes based on the user's preferences. The theme can be light, dark, or
+ * system default, and the contrast can be high, medium, or low.
+ */
 @Composable
 fun AppTheme(
     // Dynamic color is available on Android 12+

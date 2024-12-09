@@ -57,6 +57,15 @@ import java.util.Locale
 
 const val SECONDS_IN_AN_HOUR = 3600
 
+/**
+ * A composable function to display an event card.
+ *
+ * @param navigationAction The navigation action to use.
+ * @param event The event to display.
+ * @param userViewModel The [UserViewModel] to use.
+ * @param eventViewModel The [EventViewModel] to use.
+ * @param shouldBeEditable Whether the event card should be editable.
+ */
 @Composable
 fun EventCard(
     navigationAction: NavigationAction,
@@ -92,6 +101,17 @@ fun EventCard(
       userViewModel = userViewModel)
 }
 
+/**
+ * The content of the event card.
+ *
+ * @param event The event to display.
+ * @param organisers The list of associations organising the event.
+ * @param isSaved Whether the event is saved.
+ * @param onClickEventCard Callback when the event card is clicked.
+ * @param onClickSaveButton Callback when the save button is clicked.
+ * @param onClickEditButton Callback when the edit button is clicked.
+ * @param shouldBeEditable Whether the event card should be editable.
+ */
 @Composable
 fun EventCardScaffold(
     event: Event,

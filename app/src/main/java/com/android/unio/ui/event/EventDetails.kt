@@ -108,6 +108,14 @@ private val ASSOCIATION_ICON_SIZE = 24.dp
 private var testSnackbar: SnackbarHostState? = null
 private var scope: CoroutineScope? = null
 
+/**
+ * A screen that displays the details of an event. This screen is filled with EventScreenScaffold.
+ *
+ * @param navigationAction The navigation action to use.
+ * @param eventViewModel The [EventViewModel] to use.
+ * @param userViewModel The [UserViewModel] to use.
+ * @param mapViewModel The [MapViewModel] to use.
+ */
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun EventScreen(
@@ -116,7 +124,6 @@ fun EventScreen(
     userViewModel: UserViewModel,
     mapViewModel: MapViewModel,
 ) {
-
   val event by eventViewModel.selectedEvent.collectAsState()
 
   val user by userViewModel.user.collectAsState()
@@ -132,6 +139,16 @@ fun EventScreen(
       navigationAction, mapViewModel, event!!, organisers, eventViewModel, userViewModel)
 }
 
+/**
+ * A scaffold for the event screen.
+ *
+ * @param navigationAction The navigation action to use.
+ * @param mapViewModel The [MapViewModel] to use.
+ * @param event The event to display.
+ * @param associations The list of associations organizing the event.
+ * @param isSaved Whether the event is saved.
+ * @param onClickSaveButton Lambda to handle the save button click.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EventScreenScaffold(
@@ -206,6 +223,15 @@ fun EventScreenScaffold(
   EventDetailsBottomSheet(showSheet, { showNotificationDialog = true }) { showSheet = false }
 }
 
+/**
+ * The content of the event screen.
+ *
+ * @param navigationAction The navigation action to use.
+ * @param mapViewModel The [MapViewModel] to use.
+ * @param event The event to display.
+ * @param associations The list of associations organizing the event.
+ * @param padding The padding to use.
+ */
 @Composable
 fun EventScreenContent(
     navigationAction: NavigationAction,
@@ -235,6 +261,13 @@ fun EventScreenContent(
       }
 }
 
+/**
+ * A card that displays the information of the event.
+ *
+ * @param event The event to display.
+ * @param associations The list of associations organizing the event.
+ * @param context The context to use.
+ */
 @Composable
 fun EventInformationCard(event: Event, organisers: List<Association>, context: Context) {
   Column(
@@ -284,17 +317,26 @@ fun EventInformationCard(event: Event, organisers: List<Association>, context: C
       }
 }
 
+/**
+ * A row that displays the date of the event.
+ *
+ * @param event The event to display.
+ */
 @Composable
 fun EventDate(event: Event) {
   Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-    val formattedStartDateDay =
-        formatTimestamp(event.startDate, SimpleDateFormat(DAY_MONTH_FORMAT, Locale.getDefault()))
-    val formattedEndDateDay =
-        formatTimestamp(event.endDate, SimpleDateFormat(DAY_MONTH_FORMAT, Locale.getDefault()))
-    val formattedStartDateHour =
-        formatTimestamp(event.startDate, SimpleDateFormat(HOUR_MINUTE_FORMAT, Locale.getDefault()))
-    val formattedEndDateHour =
-        formatTimestamp(event.endDate, SimpleDateFormat(HOUR_MINUTE_FORMAT, Locale.getDefault()))
+    val formattedStartDateDay = remember {
+      formatTimestamp(event.startDate, SimpleDateFormat(DAY_MONTH_FORMAT, Locale.getDefault()))
+    }
+    val formattedEndDateDay = remember {
+      formatTimestamp(event.endDate, SimpleDateFormat(DAY_MONTH_FORMAT, Locale.getDefault()))
+    }
+    val formattedStartDateHour = remember {
+      formatTimestamp(event.startDate, SimpleDateFormat(HOUR_MINUTE_FORMAT, Locale.getDefault()))
+    }
+    val formattedEndDateHour = remember {
+      formatTimestamp(event.endDate, SimpleDateFormat(HOUR_MINUTE_FORMAT, Locale.getDefault()))
+    }
     if (formattedStartDateDay == formattedEndDateDay) {
       // event starts and ends on the same day
       Text(
@@ -320,6 +362,14 @@ fun EventDate(event: Event) {
   }
 }
 
+/**
+ * The body of the event details.
+ *
+ * @param navigationAction The navigation action to use.
+ * @param mapViewModel The [MapViewModel] to use.
+ * @param event The event to display.
+ * @param context The context to use.
+ */
 @Composable
 fun EventDetailsBody(
     navigationAction: NavigationAction,

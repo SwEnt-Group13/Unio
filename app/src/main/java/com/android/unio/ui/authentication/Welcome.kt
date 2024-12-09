@@ -57,6 +57,12 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.auth
 
+/**
+ * A screen that allows users to sign in or sign up.
+ *
+ * @param navigationAction The navigation action to use.
+ * @param userViewModel The [UserViewModel] to use.
+ */
 @Composable
 fun WelcomeScreen(navigationAction: NavigationAction, userViewModel: UserViewModel) {
   val context = LocalContext.current
@@ -173,6 +179,13 @@ fun WelcomeScreen(navigationAction: NavigationAction, userViewModel: UserViewMod
       })
 }
 
+/**
+ * Handles the authentication process for the user.
+ *
+ * @param email The email to use.
+ * @param password The password to use.
+ * @param context The context to use.
+ */
 fun handleAuthentication(email: String, password: String, context: Context) {
 
   // Check internet connectivity
