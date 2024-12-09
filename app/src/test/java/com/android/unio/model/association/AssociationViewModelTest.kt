@@ -2,7 +2,6 @@ package com.android.unio.model.association
 
 import androidx.test.core.app.ApplicationProvider
 import com.android.unio.mocks.association.MockAssociation
-import com.android.unio.mocks.event.MockEvent
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventRepository
 import com.android.unio.model.firestore.emptyFirestoreReferenceList
@@ -298,5 +297,4 @@ class AssociationViewModelTest {
     verify(associationRepository).saveAssociation(eq(association), any(), any())
     verify(onFailure).invoke(failureException)
   }
-
 }
