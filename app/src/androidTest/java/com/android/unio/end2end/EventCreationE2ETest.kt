@@ -342,7 +342,7 @@ class EventCreationE2ETest : EndToEndTest() {
     const val EVENT_TITLE = "Test Event"
     const val EVENT_SHORT_DESCRIPTION = "This is a short description."
     const val EVENT_DESCRIPTION = "This is a detailed description of the test event."
-    const val EVENT_FORMATTED_ADDRESS = "Test Road, 123, 12345 Test City, Test State, Test Country"
+    const val EVENT_FORMATTED_ADDRESS = "Test Road, 123, 12345, Test City, Test State, Test Country"
     const val EVENT_LATITUDE = "45.512331"
   }
 

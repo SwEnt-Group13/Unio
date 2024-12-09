@@ -347,7 +347,8 @@ class EventCreationTest : TearDown() {
     composeTestRule
         .onNodeWithTag(EventCreationTestTags.LOCATION, useUnmergedTree = true)
         .assertTextEquals(
-            "Test Road, 123, 12345 Test City, Test State, Test Country", includeEditableText = true)
+            "Test Road, 123, 12345, Test City, Test State, Test Country",
+            includeEditableText = true)
 
     server.shutdown()
   }
