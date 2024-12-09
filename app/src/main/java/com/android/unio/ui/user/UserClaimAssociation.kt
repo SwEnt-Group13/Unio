@@ -1,8 +1,7 @@
 package com.android.unio.ui.user
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
@@ -15,6 +14,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
@@ -64,16 +64,18 @@ fun UserClaimAssociationScreen(
         Surface(
             modifier = Modifier.padding(padding),
         ) {
-          Column(modifier = Modifier.padding(16.dp)) {
+          Column(
+              modifier = Modifier.padding(16.dp),
+              verticalArrangement = Arrangement.spacedBy(6.dp),
+              horizontalAlignment = Alignment.CenterHorizontally,
+          ) {
             Text(
                 context.getString(R.string.user_claim_association_you_can_either),
                 style = AppTypography.headlineSmall)
-            Spacer(modifier = Modifier.height(6.dp))
 
             Text(
                 context.getString(R.string.user_claim_association_create_new_association),
                 style = AppTypography.bodySmall)
-            Spacer(modifier = Modifier.height(6.dp))
 
             Button(
                 onClick = {
@@ -84,12 +86,10 @@ fun UserClaimAssociationScreen(
                 modifier = Modifier.testTag(UserClaimAssociationTestTags.NEW_ASSOCIATION_BUTTON)) {
                   Text(context.getString(R.string.user_claim_association_create_association))
                 }
-            Spacer(modifier = Modifier.height(6.dp))
 
             Text(
                 context.getString(R.string.user_claim_association_claim_president_rights),
                 style = AppTypography.bodySmall)
-            Spacer(modifier = Modifier.height(6.dp))
 
             AssociationSearchBar(
                 searchViewModel = searchViewModel,
