@@ -10,6 +10,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import com.android.unio.model.strings.test_tags.NavigationActionTestTags
 
+/**
+ * The Bottom Navigation Menu for the app that displays the tabs at the bottom of the screen and
+ * allows the user to navigate between them.
+ *
+ * @param onSelection : Callback to be called when a tab is selected
+ * @param tabList : List of tabs to be displayed
+ * @param selectedItem : The selected tab
+ */
 @Composable
 fun BottomNavigationMenu(
     onSelection: (TopLevelDestination) -> Unit,
