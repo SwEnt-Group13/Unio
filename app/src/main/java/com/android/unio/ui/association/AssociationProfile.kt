@@ -177,25 +177,6 @@ fun AssociationProfileScaffold(
                         imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
                         contentDescription = context.getString(R.string.association_go_back))
                   }
-            },
-            actions = {
-              Row {
-                //                IconButton(
-                //                    modifier =
-                // Modifier.testTag(AssociationProfileTestTags.SHARE_BUTTON),
-                //                    onClick = {
-                //                      scope!!.launch {
-                //                        testSnackbar!!.showSnackbar(
-                //                            message = DEBUG_MESSAGE, duration =
-                // SnackbarDuration.Short)
-                //                      }
-                //                    }) {
-                //                      Icon(
-                //                          Icons.Outlined.Share,
-                //                          contentDescription =
-                // context.getString(R.string.association_share))
-                //                    }
-              }
             })
       },
       content = { padding ->
@@ -318,66 +299,6 @@ private fun AssociationProfileContent(
         //        AssociationRecruitment(association!!)
       }
 }
-
-/**
- * Composable element that contain the recruitment part of the association profile screen. It
- * display the recruitment title, the recruitment description, the roles that are needed and the
- * users that are already in the association.
- *
- * !!! This element is only a placeholder and should be replaced by the real recruitment system when
- * implemented !!!
- *
- * @param association (Association) : The association currently displayed
- */
-// @OptIn(ExperimentalLayoutApi::class)
-// @Composable
-// private fun AssociationRecruitment(association: Association) {
-//  val context = LocalContext.current
-//
-//  Text(
-//      text = context.getString(R.string.association_join) + " ${association.name} ?",
-//      style = AppTypography.headlineMedium,
-//      modifier = Modifier.testTag(AssociationProfileTestTags.RECRUITMENT_TITLE))
-//  Text(
-//      text = context.getString(R.string.association_help_us),
-//      style = AppTypography.bodySmall,
-//      modifier = Modifier.testTag(AssociationProfileTestTags.RECRUITMENT_DESCRIPTION))
-//  FlowRow(
-//      modifier = Modifier.testTag(AssociationProfileTestTags.RECRUITMENT_ROLES),
-//      horizontalArrangement = Arrangement.spacedBy(8.dp),
-//  ) {
-//    OutlinedButton(
-//        modifier = Modifier.testTag(AssociationProfileTestTags.DESIGNER_ROLES),
-//        onClick = {
-//          scope!!.launch {
-//            testSnackbar!!.showSnackbar(message = DEBUG_MESSAGE, duration =
-// SnackbarDuration.Short)
-//          }
-//        },
-//        enabled = true) {
-//          Icon(
-//              Icons.Filled.Add,
-//              contentDescription = context.getString(R.string.association_recruitment))
-//          Spacer(Modifier.width(2.dp))
-//          Text("Graphic Designer")
-//        }
-//    OutlinedButton(
-//        modifier = Modifier.testTag(AssociationProfileTestTags.TREASURER_ROLES),
-//        onClick = {
-//          scope!!.launch {
-//            testSnackbar!!.showSnackbar(message = DEBUG_MESSAGE, duration =
-// SnackbarDuration.Short)
-//          }
-//        },
-//        enabled = true) {
-//          Icon(
-//              Icons.Filled.Add,
-//              contentDescription = context.getString(R.string.association_recruitment))
-//          Spacer(Modifier.width(2.dp))
-//          Text("Treasurer")
-//        }
-//  }
-// }
 
 /**
  * Component that display the users that are in the association that can be contacted. It display
