@@ -64,6 +64,16 @@ const val APPROXIMATE_CIRCLE_RADIUS = 30.0
 const val APPROXIMATE_CIRCLE_OUTLINE_WIDTH = 2f
 const val INITIAL_ZOOM_LEVEL = 15f
 
+/**
+ * The MapScreen composable displays a map with markers for events. This composable is a Scaffold
+ * that handles the permission logic and displays the TopAppBar and FloatingActionButton. The
+ * EventMap composable is used to display the GoogleMap and markers.
+ *
+ * @param navigationAction the navigation action to use to navigate back
+ * @param eventViewModel the EventViewModel to get the events
+ * @param userViewModel the UserViewModel to get the user and saved events
+ * @param mapViewModel the MapViewModel to get the center and user location
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MapScreen(
@@ -180,13 +190,25 @@ fun MapScreen(
       }
 }
 
+/**
+ * The EventMap composable displays the GoogleMap with markers for events. It also displays the
+ * user's approximate location if only coarse location is available.
+ *
+ * @param pd the padding values to apply to the GoogleMap
+ * @param eventViewModel the EventViewModel to get the events
+ * @param userViewModel the UserViewModel to get the user and saved events
+ * @param cameraPositionState the CameraPositionState to use for the GoogleMap
+ * @param isMyLocationEnabled whether the user's location is enabled
+ * @param showApproximateCircle whether to show the approximate circle
+ * @param userLocation the user's location
+ */
 @Composable
 fun EventMap(
     pd: PaddingValues,
     eventViewModel: EventViewModel,
     userViewModel: UserViewModel,
     cameraPositionState: CameraPositionState,
-    isMyLocatonEnabled: Boolean,
+    isMyLocationEnabled: Boolean,
     showApproximateCircle: Boolean,
     userLocation: LatLng?,
     mapViewModel: MapViewModel
@@ -200,7 +222,7 @@ fun EventMap(
   GoogleMap(
       modifier = Modifier.padding(pd).testTag(MapTestTags.GOOGLE_MAPS),
       cameraPositionState = cameraPositionState,
-      properties = MapProperties(isMyLocationEnabled = isMyLocatonEnabled),
+      properties = MapProperties(isMyLocationEnabled = isMyLocationEnabled),
       uiSettings = MapUiSettings(myLocationButtonEnabled = false)) {
         // Display the user's approximate location if only coarse location is available
         if (showApproximateCircle && userLocation != null) {
