@@ -26,6 +26,7 @@ import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.guava.await
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
 
 /**
@@ -206,13 +207,19 @@ constructor(
     return suspendCoroutine { continuation ->
       associationRepository.getAssociationWithId(
           id = associationDocument.uid,
-          onSuccess = { association -> continuation.resume(association) },
+          onSuccess = { association ->
+            if (continuation.context.isActive) {
+              continuation.resume(association)
+            }
+          },
           onFailure = { exception ->
             Log.e(
                 "SearchRepository",
                 "failed to convert associationDocumentation to association ",
                 exception)
-            continuation.resumeWithException(exception)
+            if (continuation.context.isActive) {
+              continuation.resumeWithException(exception)
+            }
           })
     }
   }
@@ -227,10 +234,16 @@ constructor(
     return suspendCoroutine { continuation ->
       eventRepository.getEventWithId(
           id = eventDocument.uid,
-          onSuccess = { association -> continuation.resume(association) },
+          onSuccess = { association ->
+            if (continuation.context.isActive) {
+              continuation.resume(association)
+            }
+          },
           onFailure = { exception ->
             Log.e("SearchRepository", "failed to convert eventDocumentation to event ", exception)
-            continuation.resumeWithException(exception)
+            if (continuation.context.isActive) {
+              continuation.resumeWithException(exception)
+            }
           })
     }
   }

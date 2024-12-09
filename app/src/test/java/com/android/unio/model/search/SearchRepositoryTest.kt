@@ -69,11 +69,13 @@ class SearchRepositoryTest {
   private val testScope = TestScope(testDispatcher)
 
   @MockK private lateinit var firebaseAuth: FirebaseAuth
+
   @MockK private lateinit var firebaseUser: FirebaseUser
 
   @MockK private lateinit var mockSession: AppSearchSession
 
   @MockK private lateinit var mockAssociationRepository: AssociationRepository
+
   @MockK private lateinit var mockEventRepository: EventRepository
 
   private lateinit var searchRepository: SearchRepository
