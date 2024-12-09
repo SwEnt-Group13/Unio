@@ -74,7 +74,6 @@ class SocialOverlayTest : TearDown() {
   @Test
   fun testDisplayErrorWithIncorrectInput() {
     addNewUserSocial(composeTestRule, "", "Facebook")
-    composeTestRule.waitForIdle()
     composeTestRule
         .onNodeWithTag(SocialsOverlayTestTags.PROMPT_ERROR, useUnmergedTree = true)
         .assertIsDisplayed()
