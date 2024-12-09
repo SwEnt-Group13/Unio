@@ -9,7 +9,7 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextInput
 import com.android.unio.model.authentication.unregisterAllAuthStateListeners
-import com.android.unio.model.strings.test_tags.SocialsOverlayTestTags
+import com.android.unio.model.strings.test_tags.authentication.SocialsOverlayTestTags
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import io.mockk.clearAllMocks

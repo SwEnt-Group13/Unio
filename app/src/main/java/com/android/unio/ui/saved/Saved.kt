@@ -27,7 +27,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.android.unio.R
 import com.android.unio.model.event.EventViewModel
-import com.android.unio.model.strings.test_tags.SavedTestTags
+import com.android.unio.model.strings.test_tags.saved.SavedTestTags
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.event.EventCard
 import com.android.unio.ui.navigation.BottomNavigationMenu

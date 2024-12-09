@@ -10,9 +10,9 @@ import androidx.compose.ui.test.performTextInput
 import com.android.unio.MainActivity
 import com.android.unio.clearTest
 import com.android.unio.model.authentication.currentAuthStateListenerCount
-import com.android.unio.model.strings.test_tags.BottomNavBarTestTags
-import com.android.unio.model.strings.test_tags.UserProfileTestTags
-import com.android.unio.model.strings.test_tags.WelcomeTestTags
+import com.android.unio.model.strings.test_tags.navigation.BottomNavBarTestTags
+import com.android.unio.model.strings.test_tags.user.UserProfileTestTags
+import com.android.unio.model.strings.test_tags.authentication.WelcomeTestTags
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.firestore

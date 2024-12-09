@@ -47,7 +47,7 @@ import androidx.core.net.toUri
 import com.android.unio.R
 import com.android.unio.model.image.ImageViewModel
 import com.android.unio.model.strings.StoragePathsStrings
-import com.android.unio.model.strings.test_tags.UserEditionTestTags
+import com.android.unio.model.strings.test_tags.user.UserEditionTestTags
 import com.android.unio.model.user.AccountDetailsError
 import com.android.unio.model.user.ImageUriType
 import com.android.unio.model.user.Interest

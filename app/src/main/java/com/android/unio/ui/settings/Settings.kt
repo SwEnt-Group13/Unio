@@ -25,7 +25,6 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
@@ -33,7 +32,7 @@ import androidx.compose.ui.text.AnnotatedString
 import com.android.unio.R
 import com.android.unio.model.authentication.AuthViewModel
 import com.android.unio.model.preferences.AppPreferences
-import com.android.unio.model.strings.test_tags.SettingsTestTags
+import com.android.unio.model.strings.test_tags.settings.SettingsTestTags
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.navigation.NavigationAction
 import com.google.accompanist.permissions.ExperimentalPermissionsApi

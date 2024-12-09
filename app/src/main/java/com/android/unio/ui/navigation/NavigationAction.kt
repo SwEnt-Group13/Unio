@@ -11,7 +11,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import com.android.unio.R
-import com.android.unio.model.strings.test_tags.BottomNavBarTestTags
+import com.android.unio.model.strings.test_tags.navigation.BottomNavBarTestTags
 
 /**
  * Class that handles navigation actions.

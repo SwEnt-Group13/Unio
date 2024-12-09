@@ -22,7 +22,7 @@ import androidx.compose.ui.unit.dp
 import com.android.unio.R
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.search.SearchViewModel
-import com.android.unio.model.strings.test_tags.UserClaimAssociationTestTags
+import com.android.unio.model.strings.test_tags.user.UserClaimAssociationTestTags
 import com.android.unio.ui.association.AssociationSearchBar
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen

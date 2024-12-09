@@ -13,7 +13,7 @@ import com.android.unio.model.follow.ConcurrentAssociationUserRepositoryFirestor
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.search.SearchRepository
 import com.android.unio.model.search.SearchViewModel
-import com.android.unio.model.strings.test_tags.UserClaimAssociationTestTags
+import com.android.unio.model.strings.test_tags.user.UserClaimAssociationTestTags
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.user.UserClaimAssociationScreen
 import dagger.hilt.android.testing.HiltAndroidRule

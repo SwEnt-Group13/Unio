@@ -6,7 +6,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.test.filters.LargeTest
 import com.android.unio.TearDown
-import com.android.unio.model.strings.test_tags.PictureSelectionToolTestTags
+import com.android.unio.model.strings.test_tags.authentication.PictureSelectionToolTestTags
 import com.android.unio.ui.components.PictureSelectionTool
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth

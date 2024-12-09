@@ -60,7 +60,7 @@ import com.android.unio.model.notification.UnioNotification
 import com.android.unio.model.strings.FormatStrings.DAY_MONTH_FORMAT
 import com.android.unio.model.strings.FormatStrings.HOUR_MINUTE_FORMAT
 import com.android.unio.model.strings.NotificationStrings.EVENT_REMINDER_CHANNEL_ID
-import com.android.unio.model.strings.test_tags.EventCardTestTags
+import com.android.unio.model.strings.test_tags.event.EventCardTestTags
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.image.AsyncImageWrapper
 import com.android.unio.ui.navigation.NavigationAction

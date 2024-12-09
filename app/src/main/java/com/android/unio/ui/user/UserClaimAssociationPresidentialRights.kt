@@ -33,7 +33,7 @@ import androidx.compose.ui.unit.dp
 import com.android.unio.R
 import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationViewModel
-import com.android.unio.model.strings.test_tags.UserClaimAssociationPresidentialRightsTestTags
+import com.android.unio.model.strings.test_tags.user.UserClaimAssociationPresidentialRightsTestTags
 import com.android.unio.model.user.User
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.navigation.NavigationAction
