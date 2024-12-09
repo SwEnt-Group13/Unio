@@ -8,6 +8,14 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ImageViewModel @Inject constructor(private val repository: ImageRepository) : ViewModel() {
+
+  /**
+   * Uploads an image stream to Firebase Storage.
+   *
+   * @param path The path to the image in Firebase Storage.
+   * @param onSuccess The callback that is called when the operation is successful.
+   * @param onFailure The callback that is called when the operation fails.
+   */
   fun uploadImage(
       inputStream: InputStream,
       path: String,

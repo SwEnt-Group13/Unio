@@ -13,6 +13,14 @@ import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import javax.inject.Inject
 
+/**
+ * A Firestore implementation of [ConcurrentAssociationUserRepository]. This class is responsible
+ * for updating the Firestore database with the user's follow status for an association.
+ *
+ * @property db The Firestore database.
+ * @property userRepository The repository for user data.
+ * @property associationRepository The repository for association data.
+ */
 class ConcurrentAssociationUserRepositoryFirestore
 @Inject
 constructor(
@@ -29,6 +37,15 @@ constructor(
     }
   }
 
+  /**
+   * Updates the Firestore database with the user's follow status for an association. This operation
+   * is performed atomically. If the operation fails, the database is not updated.
+   *
+   * @param user The user.
+   * @param association The association.
+   * @param onSuccess The callback that is called when the operation is successful.
+   * @param onFailure The callback that is called when the operation fails.
+   */
   override fun updateFollow(
       user: User,
       association: Association,
