@@ -248,7 +248,8 @@ fun AssociationProfileBottomSheet(
     ) {
       Column {
         TextButton(
-            modifier = Modifier.fillMaxWidth(),
+            modifier =
+                Modifier.fillMaxWidth().testTag(AssociationProfileTestTags.BOTTOM_SHEET_EDIT),
             onClick = {
               onClose()
               onEdit()
@@ -256,7 +257,9 @@ fun AssociationProfileBottomSheet(
               Text(context.getString(R.string.association_edit))
             }
         TextButton(
-            modifier = Modifier.fillMaxWidth(),
+            modifier =
+                Modifier.fillMaxWidth()
+                    .testTag(AssociationProfileTestTags.BOTTOM_SHEET_NOTIFICATION),
             onClick = {
               onClose()
               onOpenNotificationDialog()

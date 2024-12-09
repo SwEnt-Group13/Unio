@@ -10,6 +10,8 @@ object AssociationProfileTestTags {
 
   // BOTTOM SHEET
   const val BOTTOM_SHEET = "associationProfileBottomSheet"
+  const val BOTTOM_SHEET_EDIT = "associationProfileBottomSheetEdit"
+  const val BOTTOM_SHEET_NOTIFICATION = "associationProfileBottomSheetNotification"
 
   // PROFILE CONTENT
   const val SCREEN = "associationScreen"
