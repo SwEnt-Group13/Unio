@@ -127,8 +127,10 @@ fun SettingsContainer(onPasswordChange: (() -> Unit) -> Unit) {
           modifier = Modifier.testTag(AppPreferences.THEME),
           key = AppPreferences.THEME,
           title = { Text(context.getString(R.string.settings_theme_title)) },
-          summary = { Text(AppPreferences.Theme.toDisplayText(it, context)) },
-          valueToText = { AnnotatedString(AppPreferences.Theme.toDisplayText(it, context)) },
+          summary = { Text(context.getString(AppPreferences.Theme.toDisplayText(it))) },
+          valueToText = {
+            AnnotatedString(context.getString(AppPreferences.Theme.toDisplayText(it)))
+          },
           values = AppPreferences.Theme.asList,
           defaultValue = AppPreferences.Theme.default,
           icon = {
