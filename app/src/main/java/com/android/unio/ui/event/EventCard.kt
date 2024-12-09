@@ -44,6 +44,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
@@ -259,7 +260,9 @@ fun EventCardScaffold(
                       onClick = { onClickEditButton() }) {
                         Icon(
                             imageVector = Icons.Outlined.Edit,
-                            contentDescription = context.getString(R.string.event_card_content_description_edit_association),
+                            contentDescription =
+                                context.getString(
+                                    R.string.event_card_content_description_edit_association),
                             tint = Color.White)
                       }
                 }
@@ -294,58 +297,69 @@ fun EventCardScaffold(
 
           // Row containing event title and type label
 
-          Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
-            Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.weight(1f)) {
-              Text(
-                  modifier =
-                      Modifier.padding(vertical = 1.dp, horizontal = 4.dp)
-                          .testTag(EventCardTestTags.EVENT_TITLE)
-                          .wrapContentWidth(),
-                  text = event.title,
-                  style = AppTypography.labelLarge,
-                  color = MaterialTheme.colorScheme.onSurface)
+          Row(
+              verticalAlignment = Alignment.CenterVertically,
+              horizontalArrangement = Arrangement.SpaceBetween,
+              modifier = Modifier.fillMaxWidth()) {
 
-              Spacer(modifier = Modifier.width(6.dp))
-
-              // Display event type (e.g., Music, Sports) with colored background
-
-              val type: EventType =
-                  if (event.types.isEmpty()) {
-                    EventType.OTHER
-                  } else event.types[0]
-              Box(
-                  modifier =
-                      Modifier.clip(RoundedCornerShape(4.dp))
-                          .background(addAlphaToColor(type.color, 200))
-                          .wrapContentWidth()) {
-                    Text(
-                        text = type.text,
-                        modifier =
-                            Modifier.padding(horizontal = 4.dp, vertical = 4.dp)
-                                .testTag(EventCardTestTags.EVENT_MAIN_TYPE),
-                        color = MaterialTheme.colorScheme.scrim,
-                        style = TextStyle(fontSize = 8.sp))
-                  }
-              Spacer(modifier = Modifier.weight(1f))
-              // Organiser associations' logos on the right of the title and type
-              for (i in organisers.indices) {
-                AsyncImageWrapper(
-                    imageUri = organisers[i].image.toUri(),
-                    contentDescription =
-                        context.getString(R.string.event_card_content_description_association_logo),
+                // Title of the event
+                Text(
                     modifier =
-                        Modifier.testTag("${EventCardTestTags.ASSOCIATION_LOGO}$i")
-                            .size(24.dp)
-                            .align(Alignment.CenterVertically)
-                            .padding(end = 3.dp)
-                            .clip(RoundedCornerShape(5.dp)),
-                    contentScale = ContentScale.Crop,
-                    placeholderResourceId = R.drawable.adec,
-                    filterQuality = FilterQuality.None)
+                        Modifier.weight(1f)
+                            .padding(vertical = 1.dp, horizontal = 4.dp)
+                            .testTag(EventCardTestTags.EVENT_TITLE),
+                    text = event.title,
+                    style = AppTypography.labelLarge,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis)
+
+                // Row displaying event type and organiser associations' logos
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.End,
+                    modifier = Modifier.wrapContentWidth()) {
+                      // Display event type (e.g., Music, Sports) with colored background
+
+                      val type: EventType =
+                          if (event.types.isEmpty()) {
+                            EventType.OTHER
+                          } else event.types[0]
+                      Box(
+                          modifier =
+                              Modifier.clip(RoundedCornerShape(4.dp))
+                                  .background(addAlphaToColor(type.color, 200))
+                                  .wrapContentWidth()) {
+                            Text(
+                                text = type.text,
+                                modifier =
+                                    Modifier.padding(horizontal = 4.dp, vertical = 4.dp)
+                                        .testTag(EventCardTestTags.EVENT_MAIN_TYPE),
+                                color = MaterialTheme.colorScheme.scrim,
+                                style = TextStyle(fontSize = 8.sp))
+                          }
+
+                      Spacer(modifier = Modifier.width(6.dp))
+
+                      // Organiser associations' logos on the right of the title and type
+                      for (i in organisers.indices) {
+                        AsyncImageWrapper(
+                            imageUri = organisers[i].image.toUri(),
+                            contentDescription =
+                                context.getString(
+                                    R.string.event_card_content_description_association_logo),
+                            modifier =
+                                Modifier.testTag("${EventCardTestTags.ASSOCIATION_LOGO}$i")
+                                    .size(24.dp)
+                                    .align(Alignment.CenterVertically)
+                                    .padding(end = 3.dp)
+                                    .clip(RoundedCornerShape(5.dp)),
+                            contentScale = ContentScale.Crop,
+                            placeholderResourceId = R.drawable.adec,
+                            filterQuality = FilterQuality.None)
+                      }
+                    }
               }
-            }
-            Spacer(modifier = Modifier.width(6.dp))
-          }
 
           // Row displaying event location and formatted date/time details
 
