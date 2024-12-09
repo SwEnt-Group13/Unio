@@ -10,10 +10,10 @@ import androidx.compose.ui.test.performTextInput
 import androidx.test.filters.LargeTest
 import com.android.unio.assertDisplayComponentInScroll
 import com.android.unio.model.strings.test_tags.authentication.AccountDetailsTestTags
-import com.android.unio.model.strings.test_tags.navigation.BottomNavBarTestTags
 import com.android.unio.model.strings.test_tags.authentication.EmailVerificationTestTags
-import com.android.unio.model.strings.test_tags.home.HomeTestTags
 import com.android.unio.model.strings.test_tags.authentication.InterestsOverlayTestTags
+import com.android.unio.model.strings.test_tags.home.HomeTestTags
+import com.android.unio.model.strings.test_tags.navigation.BottomNavBarTestTags
 import com.android.unio.model.strings.test_tags.user.UserProfileTestTags
 import dagger.hilt.android.testing.HiltAndroidTest
 import okhttp3.OkHttpClient

@@ -10,10 +10,10 @@ import androidx.compose.ui.test.performTextClearance
 import androidx.compose.ui.test.performTextInput
 import androidx.test.filters.LargeTest
 import com.android.unio.addNewUserSocial
-import com.android.unio.model.strings.test_tags.navigation.BottomNavBarTestTags
-import com.android.unio.model.strings.test_tags.home.HomeTestTags
 import com.android.unio.model.strings.test_tags.authentication.InterestsOverlayTestTags
 import com.android.unio.model.strings.test_tags.authentication.SocialsOverlayTestTags
+import com.android.unio.model.strings.test_tags.home.HomeTestTags
+import com.android.unio.model.strings.test_tags.navigation.BottomNavBarTestTags
 import com.android.unio.model.strings.test_tags.user.UserEditionTestTags
 import com.android.unio.model.strings.test_tags.user.UserProfileTestTags
 import dagger.hilt.android.testing.HiltAndroidTest

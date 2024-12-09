@@ -8,12 +8,12 @@ import androidx.compose.ui.test.performTextClearance
 import androidx.compose.ui.test.performTextInput
 import androidx.test.filters.LargeTest
 import com.android.unio.model.preferences.AppPreferences
-import com.android.unio.model.strings.test_tags.navigation.BottomNavBarTestTags
-import com.android.unio.model.strings.test_tags.home.HomeTestTags
 import com.android.unio.model.strings.test_tags.authentication.ResetPasswordTestTags
+import com.android.unio.model.strings.test_tags.authentication.WelcomeTestTags
+import com.android.unio.model.strings.test_tags.home.HomeTestTags
+import com.android.unio.model.strings.test_tags.navigation.BottomNavBarTestTags
 import com.android.unio.model.strings.test_tags.settings.SettingsTestTags
 import com.android.unio.model.strings.test_tags.user.UserProfileTestTags
-import com.android.unio.model.strings.test_tags.authentication.WelcomeTestTags
 import dagger.hilt.android.testing.HiltAndroidTest
 import org.junit.Test
 

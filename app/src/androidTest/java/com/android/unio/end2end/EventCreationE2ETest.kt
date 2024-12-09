@@ -31,11 +31,11 @@ import com.android.unio.model.map.LocationRepository
 import com.android.unio.model.map.nominatim.NominatimApiService
 import com.android.unio.model.map.nominatim.NominatimLocationRepository
 import com.android.unio.model.strings.test_tags.association.AssociationProfileTestTags
-import com.android.unio.model.strings.test_tags.navigation.BottomNavBarTestTags
 import com.android.unio.model.strings.test_tags.event.EventCreationTestTags
 import com.android.unio.model.strings.test_tags.event.EventDetailsTestTags
 import com.android.unio.model.strings.test_tags.explore.ExploreTestTags
 import com.android.unio.model.strings.test_tags.home.HomeTestTags
+import com.android.unio.model.strings.test_tags.navigation.BottomNavBarTestTags
 import dagger.Binds
 import dagger.Module
 import dagger.Provides

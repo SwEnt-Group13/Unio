@@ -24,9 +24,10 @@ import com.android.unio.model.map.nominatim.NominatimLocationRepository
 import com.android.unio.model.map.nominatim.NominatimLocationSearchViewModel
 import com.android.unio.model.search.SearchRepository
 import com.android.unio.model.search.SearchViewModel
-import com.android.unio.model.strings.test_tags.authentication.AccountDetailsTestTags
 import com.android.unio.model.strings.test_tags.association.AssociationProfileTestTags
+import com.android.unio.model.strings.test_tags.authentication.AccountDetailsTestTags
 import com.android.unio.model.strings.test_tags.authentication.EmailVerificationTestTags
+import com.android.unio.model.strings.test_tags.authentication.WelcomeTestTags
 import com.android.unio.model.strings.test_tags.event.EventCreationTestTags
 import com.android.unio.model.strings.test_tags.event.EventDetailsTestTags
 import com.android.unio.model.strings.test_tags.explore.ExploreContentTestTags
@@ -37,7 +38,6 @@ import com.android.unio.model.strings.test_tags.saved.SavedTestTags
 import com.android.unio.model.strings.test_tags.settings.SettingsTestTags
 import com.android.unio.model.strings.test_tags.user.SomeoneElseUserProfileTestTags
 import com.android.unio.model.strings.test_tags.user.UserProfileTestTags
-import com.android.unio.model.strings.test_tags.authentication.WelcomeTestTags
 import com.android.unio.model.user.User
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserViewModel

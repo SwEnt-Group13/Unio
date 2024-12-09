@@ -5,12 +5,12 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.test.filters.LargeTest
-import com.android.unio.model.strings.test_tags.navigation.BottomNavBarTestTags
 import com.android.unio.model.strings.test_tags.authentication.EmailVerificationTestTags
+import com.android.unio.model.strings.test_tags.authentication.WelcomeTestTags
 import com.android.unio.model.strings.test_tags.home.HomeTestTags
+import com.android.unio.model.strings.test_tags.navigation.BottomNavBarTestTags
 import com.android.unio.model.strings.test_tags.user.UserEditionTestTags
 import com.android.unio.model.strings.test_tags.user.UserProfileTestTags
-import com.android.unio.model.strings.test_tags.authentication.WelcomeTestTags
 import dagger.hilt.android.testing.HiltAndroidTest
 import org.junit.Test
 

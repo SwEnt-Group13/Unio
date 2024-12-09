@@ -6,9 +6,9 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import androidx.test.filters.LargeTest
-import com.android.unio.model.strings.test_tags.navigation.BottomNavBarTestTags
 import com.android.unio.model.strings.test_tags.explore.ExploreContentTestTags
 import com.android.unio.model.strings.test_tags.home.HomeTestTags
+import com.android.unio.model.strings.test_tags.navigation.BottomNavBarTestTags
 import com.android.unio.model.strings.test_tags.user.UserClaimAssociationPresidentialRightsTestTags
 import com.android.unio.model.strings.test_tags.user.UserProfileTestTags
 import com.google.firebase.Firebase
