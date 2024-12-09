@@ -120,7 +120,7 @@ service cloud.firestore {
           request.resource.data.description is string &&
           request.resource.data.description.size() <= 300 &&
           request.resource.data.catchyDescription is string &&
-          request.resource.data.catchyDescription.size() <= 100
+          request.resource.data.catchyDescription.size() <= 100 &&
           request.resource.data.price is number &&
           request.resource.data.price >= 0 &&
           request.resource.data.date is timestamp &&
