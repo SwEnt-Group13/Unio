@@ -20,7 +20,6 @@ import com.android.unio.model.user.UserSocial
  * @return Serialized Firestore data.
  */
 fun AssociationRepositoryFirestore.Companion.serialize(association: Association): Map<String, Any> {
-  println(mapRolesToPermission(association.roles))
   return mapOf(
       Association::uid.name to association.uid,
       Association::url.name to association.url,

@@ -41,8 +41,6 @@ constructor(
   private val _refreshState = mutableStateOf(false)
   val refreshState: State<Boolean> = _refreshState
 
-  private val debounceInterval: Long = 500
-
   private var updateJob: Job? = null
   private var initializeWithAuthenticatedUser: Boolean = true
 
@@ -141,7 +139,7 @@ constructor(
    * @param interval The debounce interval in milliseconds. Will take the default value of
    *   [debounceInterval] if not provided.
    */
-  fun updateUserDebounced(user: User, interval: Long = debounceInterval) {
+  fun updateUserDebounced(user: User, interval: Long = DEBOUNCE_INTERVAL) {
     updateJob?.cancel()
     updateJob =
         viewModelScope.launch {
@@ -163,7 +161,7 @@ constructor(
       setupNotification()
     }
     newUser.savedEvents.add(event.uid)
-    updateUser(newUser)
+    updateUserDebounced(newUser)
   }
 
   /**
@@ -175,8 +173,9 @@ constructor(
    */
   fun unsaveEvent(event: Event, removeNotification: () -> Unit) {
     val newUser = _user.value!!.copy()
+    removeNotification()
     newUser.savedEvents.remove(event.uid)
-    updateUser(newUser)
+    updateUserDebounced(newUser)
   }
 
   /**
@@ -268,5 +267,9 @@ constructor(
       Log.e("UserDeletion", "Failed to delete user: ${e.message}", e)
       onFailure(e)
     }
+  }
+
+  companion object {
+    private const val DEBOUNCE_INTERVAL: Long = 500
   }
 }
