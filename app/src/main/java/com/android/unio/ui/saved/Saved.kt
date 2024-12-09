@@ -38,6 +38,13 @@ import com.android.unio.ui.navigation.Screen
 import com.android.unio.ui.theme.AppTypography
 import java.util.Calendar
 
+/**
+ * Saved screen that displays the events that the user has saved.
+ *
+ * @param navigationAction The navigation action to navigate to different screens.
+ * @param eventViewModel The view model for events.
+ * @param userViewModel The view model for the user.
+ */
 @SuppressLint("UnrememberedMutableState")
 @Composable
 fun SavedScreen(

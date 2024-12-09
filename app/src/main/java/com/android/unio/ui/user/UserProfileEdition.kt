@@ -72,6 +72,14 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
+/**
+ * User edit screen that allows the user to edit their profile. This composable simply calls
+ * [UserProfileEditionScreenScaffold] with the necessary parameters.
+ *
+ * @param userViewModel The [UserViewModel] for the user.
+ * @param imageViewModel The [ImageViewModel] for the profile picture.
+ * @param navigationAction The [NavigationAction] to navigate to different screens.
+ */
 @Composable
 fun UserProfileEditionScreen(
     userViewModel: UserViewModel,
@@ -84,7 +92,7 @@ fun UserProfileEditionScreen(
   val user by userViewModel.user.collectAsState()
   val userId = user!!.uid
 
-  UserProfileEditionScreenContent(
+  UserProfileEditionScreenScaffold(
       user = user!!,
       onDiscardChanges = { navigationAction.goBack() },
       onModifyUser = { profilePictureUri, createUser ->
@@ -163,9 +171,21 @@ fun UserProfileEditionScreen(
       })
 }
 
+/**
+ * A scaffold that contains content of the user profile edition screen.
+ *
+ * @param user The user to edit.
+ * @param onDiscardChanges The function to call when the user wants to discard the changes.
+ * @param onModifyUser The function to call when the user wants to modify their profile.
+ * @param onUploadUserOnline The function to call when the user wants to upload their profile
+ *   online.
+ * @param onUploadUserOffline The function to call when the user wants to upload their profile
+ *   offline.
+ * @param onDeleteUser The function to call when the user wants to delete their profile.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun UserProfileEditionScreenContent(
+fun UserProfileEditionScreenScaffold(
     user: User,
     onDiscardChanges: () -> Unit,
     onModifyUser: (MutableState<Uri>, (String) -> Unit) -> Unit,
@@ -330,6 +350,17 @@ fun UserProfileEditionScreenContent(
   }
 }
 
+/**
+ * Edit user text fields for the user to edit their profile.
+ *
+ * @param isErrors The set of errors that the user has made.
+ * @param firstName The first name of the user.
+ * @param lastName The last name of the user.
+ * @param bio The biography of the user.
+ * @param onFirstNameChange The function to call when the user changes their first name.
+ * @param onLastNameChange The function to call when the user changes their last name.
+ * @param onBioChange The function to call when the user changes their biography.
+ */
 @Composable
 private fun EditUserTextFields(
     isErrors: MutableSet<AccountDetailsError>,
@@ -436,6 +467,14 @@ private fun EditUserTextFields(
       value = bio)
 }
 
+/**
+ * The [InterestButtonAndFlowRow] composable contains the button to add interests and display the
+ * row of interests that the user has selected.
+ *
+ * @param interestsFlow The flow of interests coupled with a mutable state of whether the user has
+ *   selected them.
+ * @param onShowInterests The function to call when the user wants to show the interests overlay.
+ */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun InterestButtonAndFlowRow(
@@ -464,6 +503,13 @@ private fun InterestButtonAndFlowRow(
   }
 }
 
+/**
+ * The [SocialButtonAndFlowRow] composable contains the button to add socials and display the row of
+ * socials that the user has selected.
+ *
+ * @param userSocialFlow The flow of socials that the user has selected.
+ * @param onShowSocials The function to call when the user wants to show the socials overlay.
+ */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun SocialButtonAndFlowRow(
@@ -496,6 +542,14 @@ private fun SocialButtonAndFlowRow(
   }
 }
 
+/**
+ * The [UserDeletePrompt] composable contains the dialog that prompts the user to confirm the
+ * deletion of their account.
+ *
+ * @param onDismiss The function to call when the user wants to dismiss the dialog.
+ * @param onConfirmDelete The function to call when the user wants to confirm the deletion of their
+ *   account.
+ */
 @Composable
 fun UserDeletePrompt(
     onDismiss: () -> Unit,
