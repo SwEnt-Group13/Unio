@@ -32,7 +32,10 @@ class NominatimLocationRepository @Inject constructor(private val apiService: No
                     it.address.road,
                     it.address.houseNumber,
                     it.address.postcode,
-                    (it.address.village ?: it.address.town ?: it.address.city ?: it.address.municipality),
+                    (it.address.village
+                        ?: it.address.town
+                        ?: it.address.city
+                        ?: it.address.municipality),
                     (it.address.region ?: it.address.county),
                     it.address.state,
                     it.address.country)
