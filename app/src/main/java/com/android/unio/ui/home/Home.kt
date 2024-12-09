@@ -180,10 +180,10 @@ fun HomeContent(
       }
     } else {
       EventList(
-          navigationAction, searchResults.sortedBy { it.startDate }, userViewModel, eventViewModel)
+          navigationAction, searchResults.sortedWith(compareBy({ it.startDate }, { it.uid })), userViewModel, eventViewModel)
     }
   } else if (events.isNotEmpty()) {
-    EventList(navigationAction, events.sortedBy { it.startDate }, userViewModel, eventViewModel)
+    EventList(navigationAction, events.sortedWith(compareBy({ it.startDate }, { it.uid })), userViewModel, eventViewModel)
   } else {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
       Text(

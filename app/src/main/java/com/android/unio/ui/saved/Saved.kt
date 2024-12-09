@@ -61,7 +61,7 @@ fun SavedScreen(
 
   val allEvents by eventViewModel.events.collectAsState()
   val savedEvents by derivedStateOf {
-    allEvents.filter { user!!.savedEvents.contains(it.uid) }.sortedBy { it.startDate }
+    allEvents.filter { user!!.savedEvents.contains(it.uid) }.sortedWith(compareBy({ it.startDate }, { it.uid }))
   }
 
   val context = LocalContext.current
