@@ -259,7 +259,7 @@ fun EventCardScaffold(
                       onClick = { onClickEditButton() }) {
                         Icon(
                             imageVector = Icons.Outlined.Edit,
-                            contentDescription = "editassociation",
+                            contentDescription = context.getString(R.string.event_card_content_description_edit_association),
                             tint = Color.White)
                       }
                 }

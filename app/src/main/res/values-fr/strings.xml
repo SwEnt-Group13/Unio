@@ -166,6 +166,7 @@
     <string name="event_card_content_description_not_saved_event">Non sauvegardé</string>
     <string name="event_card_content_description_association_logo">Logo de l\'association</string>
     <string name="event_card_interested_string">Intéréssés</string>
+    <string name="event_card_content_description_edit_association">Modifier l\'évènement</string>
 
     <!-- Event Creation Strings -->
     <string name="event_creation_screen">Création d\'un évènement</string>
