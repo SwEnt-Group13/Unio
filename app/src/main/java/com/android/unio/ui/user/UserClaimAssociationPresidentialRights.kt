@@ -163,50 +163,37 @@ fun UserClaimAssociationPresidentialRightsScreenScaffold(
 
               Button(
                   onClick = {
-                    if (association != null) {
-                      if (user != null) {
-                        if (email == association!!.principalEmailAddress) {
-                          isEmailVerified = true
-                          showErrorMessage = false
+                    if (email == association.principalEmailAddress) {
+                      isEmailVerified = true
+                      showErrorMessage = false
 
-                          // send verification email
-                          coroutineScope.launch {
-                            sendVerificationEmail(Firebase.functions, email, association!!.uid)
-                                .addOnCompleteListener { task ->
-                                  if (!task.isSuccessful) {
-                                    val e = task.exception
-                                    if (e is FirebaseFunctionsException) {
-                                      val code = e.code
-                                      val details = e.details
-                                      Log.e(
-                                          "CloudFunctionError",
-                                          "Error Code: $code, Details: $details",
-                                          e)
-                                    } else {
-                                      Log.e(
-                                          "CloudFunctionError",
-                                          context.getString(
-                                              R.string
-                                                  .user_claim_association_presidential_rights_unexpected_error),
-                                          e)
-                                    }
-                                  }
+                      // send verification email
+                      coroutineScope.launch {
+                        sendVerificationEmail(Firebase.functions, email, association!!.uid)
+                            .addOnCompleteListener { task ->
+                              if (!task.isSuccessful) {
+                                val e = task.exception
+                                if (e is FirebaseFunctionsException) {
+                                  val code = e.code
+                                  val details = e.details
+                                  Log.e(
+                                      "CloudFunctionError",
+                                      "Error Code: $code, Details: $details",
+                                      e)
+                                } else {
+                                  Log.e(
+                                      "CloudFunctionError",
+                                      context.getString(
+                                          R.string
+                                              .user_claim_association_presidential_rights_unexpected_error),
+                                      e)
                                 }
-                          }
-                        } else {
-                          // email does not match principalEmailAddress
-                          showErrorMessage = true
-                        }
-                      } else {
-                        showErrorMessage = true
-                        Log.e("UserError", "User does not exist or has no email")
+                              }
+                            }
                       }
                     } else {
-                      // association is null
+                      // email does not match principalEmailAddress
                       showErrorMessage = true
-                      Log.e(
-                          "AssociationError",
-                          "Association does not exist or has no principalEmailAddress")
                     }
                   },
                   modifier =
@@ -242,60 +229,45 @@ fun UserClaimAssociationPresidentialRightsScreenScaffold(
 
               Button(
                   onClick = {
-                    if (association != null) {
-                      if (user != null) {
-                        coroutineScope.launch {
-                          verifyCode(
-                                  Firebase.functions,
-                                  association!!.uid,
-                                  verificationCode,
-                                  user!!.uid)
-                              .addOnCompleteListener { task ->
-                                if (!task.isSuccessful) {
-                                  val e = task.exception
-                                  if (e is FirebaseFunctionsException) {
-                                    val code = e.code
-                                    Log.e("CloudFunctionError", "Error Code: $code", e)
+                    coroutineScope.launch {
+                      verifyCode(
+                              Firebase.functions, association!!.uid, verificationCode, user!!.uid)
+                          .addOnCompleteListener { task ->
+                            if (!task.isSuccessful) {
+                              val e = task.exception
+                              if (e is FirebaseFunctionsException) {
+                                val code = e.code
+                                Log.e("CloudFunctionError", "Error Code: $code", e)
 
-                                    when (code) {
-                                      FirebaseFunctionsException.Code.INVALID_ARGUMENT -> {
-                                        Toast.makeText(
-                                                context,
-                                                context.getString(
-                                                    R.string
-                                                        .user_claim_association_presidential_rights_wrong_code_error),
-                                                Toast.LENGTH_SHORT)
-                                            .show()
-                                      }
-                                      FirebaseFunctionsException.Code.NOT_FOUND -> {
-                                        Toast.makeText(
-                                                context,
-                                                context.getString(
-                                                    R.string
-                                                        .user_claim_association_presidential_rights_verification_request_not_found),
-                                                Toast.LENGTH_SHORT)
-                                            .show()
-                                      }
-                                      FirebaseFunctionsException.Code.UNAVAILABLE -> {
-                                        Toast.makeText(
-                                                context,
-                                                context.getString(
-                                                    R.string
-                                                        .user_claim_association_presidential_rights_service_unavailable),
-                                                Toast.LENGTH_SHORT)
-                                            .show()
-                                      }
-                                      else -> {
-                                        Toast.makeText(
-                                                context,
-                                                context.getString(
-                                                    R.string
-                                                        .user_claim_association_presidential_rights_unexpected_error),
-                                                Toast.LENGTH_SHORT)
-                                            .show()
-                                      }
-                                    }
-                                  } else {
+                                when (code) {
+                                  FirebaseFunctionsException.Code.INVALID_ARGUMENT -> {
+                                    Toast.makeText(
+                                            context,
+                                            context.getString(
+                                                R.string
+                                                    .user_claim_association_presidential_rights_wrong_code_error),
+                                            Toast.LENGTH_SHORT)
+                                        .show()
+                                  }
+                                  FirebaseFunctionsException.Code.NOT_FOUND -> {
+                                    Toast.makeText(
+                                            context,
+                                            context.getString(
+                                                R.string
+                                                    .user_claim_association_presidential_rights_verification_request_not_found),
+                                            Toast.LENGTH_SHORT)
+                                        .show()
+                                  }
+                                  FirebaseFunctionsException.Code.UNAVAILABLE -> {
+                                    Toast.makeText(
+                                            context,
+                                            context.getString(
+                                                R.string
+                                                    .user_claim_association_presidential_rights_service_unavailable),
+                                            Toast.LENGTH_SHORT)
+                                        .show()
+                                  }
+                                  else -> {
                                     Toast.makeText(
                                             context,
                                             context.getString(
@@ -304,40 +276,28 @@ fun UserClaimAssociationPresidentialRightsScreenScaffold(
                                             Toast.LENGTH_SHORT)
                                         .show()
                                   }
-                                } else {
-                                  Toast.makeText(
-                                          context,
-                                          context.getString(
-                                              R.string
-                                                  .user_claim_association_presidential_rights_verified_successfully),
-                                          Toast.LENGTH_SHORT)
-                                      .show()
-
-                                  navigationAction.navigateTo(Screen.MY_PROFILE)
                                 }
+                              } else {
+                                Toast.makeText(
+                                        context,
+                                        context.getString(
+                                            R.string
+                                                .user_claim_association_presidential_rights_unexpected_error),
+                                        Toast.LENGTH_SHORT)
+                                    .show()
                               }
-                        }
-                      } else {
-                        Log.e("UserError", "User does not exist or has no uid")
-                        Toast.makeText(
-                                context,
-                                context.getString(
-                                    R.string
-                                        .user_claim_association_presidential_rights_unexpected_error),
-                                Toast.LENGTH_SHORT)
-                            .show()
-                      }
-                    } else {
-                      Log.e(
-                          "AssociationError",
-                          "Association does not exist or has no principalEmailAddress")
-                      Toast.makeText(
-                              context,
-                              context.getString(
-                                  R.string
-                                      .user_claim_association_presidential_rights_unexpected_error),
-                              Toast.LENGTH_SHORT)
-                          .show()
+                            } else {
+                              Toast.makeText(
+                                      context,
+                                      context.getString(
+                                          R.string
+                                              .user_claim_association_presidential_rights_verified_successfully),
+                                      Toast.LENGTH_SHORT)
+                                  .show()
+
+                              navigationAction.navigateTo(Screen.MY_PROFILE)
+                            }
+                          }
                     }
                   },
                   modifier =

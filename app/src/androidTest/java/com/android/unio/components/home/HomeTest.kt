@@ -45,6 +45,7 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import io.mockk.spyk
 import io.mockk.verify
+import me.zhanghai.compose.preference.ProvidePreferenceLocals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -150,7 +151,10 @@ class HomeTest : TearDown() {
       text = context.getString(R.string.event_no_events_available)
       val eventViewModel =
           EventViewModel(eventRepository, imageRepository, associationRepositoryFirestore)
-      HomeScreen(navigationAction, eventViewModel, userViewModel, searchViewModel)
+
+      ProvidePreferenceLocals {
+        HomeScreen(navigationAction, eventViewModel, userViewModel, searchViewModel)
+      }
     }
     composeTestRule.onNodeWithTag(HomeTestTags.EMPTY_EVENT_PROMPT).assertExists()
     composeTestRule.onNodeWithText(text).assertExists()
@@ -159,7 +163,9 @@ class HomeTest : TearDown() {
   @Test
   fun testEventListAll() {
     composeTestRule.setContent {
-      HomeScreen(navigationAction, eventViewModel, userViewModel, searchViewModel)
+      ProvidePreferenceLocals {
+        HomeScreen(navigationAction, eventViewModel, userViewModel, searchViewModel)
+      }
     }
     composeTestRule.onNodeWithTag(HomeTestTags.TAB_ALL).assertIsDisplayed()
     composeTestRule.onNodeWithTag(HomeTestTags.TAB_ALL).performClick()
@@ -176,7 +182,9 @@ class HomeTest : TearDown() {
   @Test
   fun testEventListFollowed() {
     composeTestRule.setContent {
-      HomeScreen(navigationAction, eventViewModel, userViewModel, searchViewModel)
+      ProvidePreferenceLocals {
+        HomeScreen(navigationAction, eventViewModel, userViewModel, searchViewModel)
+      }
     }
     composeTestRule.onNodeWithTag(HomeTestTags.TAB_FOLLOWING).assertIsDisplayed()
     composeTestRule.onNodeWithTag(HomeTestTags.TAB_FOLLOWING).performClick()
@@ -199,7 +207,10 @@ class HomeTest : TearDown() {
     composeTestRule.setContent {
       val eventViewModel =
           EventViewModel(eventRepository, imageRepository, associationRepositoryFirestore)
-      HomeScreen(navigationAction, eventViewModel, userViewModel, searchViewModel)
+
+      ProvidePreferenceLocals {
+        HomeScreen(navigationAction, eventViewModel, userViewModel, searchViewModel)
+      }
     }
     composeTestRule.onNodeWithTag(HomeTestTags.MAP_BUTTON).assertExists()
     composeTestRule.onNodeWithTag(HomeTestTags.MAP_BUTTON).assertHasClickAction()
@@ -217,7 +228,10 @@ class HomeTest : TearDown() {
     composeTestRule.setContent {
       val eventViewModel =
           EventViewModel(eventRepository, imageRepository, associationRepositoryFirestore)
-      HomeScreen(navigationAction, eventViewModel, userViewModel, searchViewModel)
+
+      ProvidePreferenceLocals {
+        HomeScreen(navigationAction, eventViewModel, userViewModel, searchViewModel)
+      }
     }
 
     composeTestRule.onNodeWithTag(HomeTestTags.TAB_FOLLOWING).assertExists()

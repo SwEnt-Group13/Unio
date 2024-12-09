@@ -11,7 +11,6 @@ object EventCardTestTags {
   const val EVENT_TIME = "event_EventTime"
   const val EVENT_CATCHY_DESCRIPTION = "event_EventCatchyDescription"
   const val EDIT_BUTTON = "event_EditButton"
-  const val EVENT_SAVE_BUTTON = "event_EventSaveButton"
 }
 
 object EventCreationTestTags {
@@ -104,4 +103,6 @@ object EventDetailsTestTags {
   const val LOCATION_ADDRESS = "eventLocation"
   const val MAP_BUTTON = "mapButton"
   const val SIGN_UP_BUTTON = "signUpButton"
+  const val BOTTOM_SHEET = "eventBottomSheet"
+  const val SEND_NOTIFICATION = "eventSendNotification"
 }

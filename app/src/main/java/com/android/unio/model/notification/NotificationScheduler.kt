@@ -24,9 +24,10 @@ import com.android.unio.model.strings.NotificationStrings.NOTIFICATION_SCHEDULER
 import com.android.unio.model.strings.NotificationStrings.NOTIFICATION_SCHEDULER_TYPE_CANCEL
 import com.android.unio.model.strings.NotificationStrings.NOTIFICATION_SCHEDULER_TYPE_CREATE
 
-class NotificationScheduler() : BroadcastReceiver() {
+class NotificationScheduler : BroadcastReceiver() {
 
   companion object {
+
     /**
      * Creates a PendingIntent for the notification.
      *
@@ -50,6 +51,7 @@ class NotificationScheduler() : BroadcastReceiver() {
 
       return pendingIntent
     }
+
     /**
      * Schedules a notification using AlarmManager.
      *
@@ -65,6 +67,7 @@ class NotificationScheduler() : BroadcastReceiver() {
       manager.set(AlarmManager.RTC_WAKEUP, timeMillis, pendingIntent)
       Log.i("NotificationScheduler", "Notification scheduled")
     }
+
     /**
      * Unschedules a previously scheduled notification using AlarmManager.
      *
@@ -153,6 +156,7 @@ class NotificationScheduler() : BroadcastReceiver() {
     }
   }
 }
+
 /**
  * NotificationWorker handles background work for scheduling and unscheduling notifications using
  * WorkManager.
