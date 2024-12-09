@@ -78,6 +78,14 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import kotlinx.coroutines.launch
 
+/**
+ * Composable function that displays the user profile screen. This composable displays the content
+ * of the UserProfileScreenScaffold.
+ *
+ * @param userViewModel The [UserViewModel] that provides the user data.
+ * @param associationViewModel The [AssociationViewModel] that provides the association data.
+ * @param navigationAction The [NavigationAction] that handles navigation.
+ */
 @Composable
 fun UserProfileScreen(
     userViewModel: UserViewModel,
@@ -111,6 +119,17 @@ fun UserProfileScreen(
       })
 }
 
+/**
+ * Composable function that displays the user profile screen scaffold. This composable displays the
+ * top bar, bottom bar, and the content of the UserProfileScreenContent. It also allows the user to
+ * refresh the user data by pulling down the screen.
+ *
+ * @param user The [User] object that contains the user data.
+ * @param navigationAction The [NavigationAction] that handles navigation.
+ * @param refreshState The state of the refresh.
+ * @param onRefresh The function that refreshes the user data.
+ * @param onAssociationClick The function that navigates to the association profile screen.
+ */
 @OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun UserProfileScreenScaffold(
@@ -178,6 +197,14 @@ fun UserProfileScreenScaffold(
   UserProfileBottomSheet(showSheet, navigationAction) { showSheet = false }
 }
 
+/**
+ * Composable function that displays the content of the user profile screen.
+ *
+ * @param user The [User] object that contains the user data.
+ * @param onAssociationClick The function that navigates to the association profile screen.
+ * @param onClaimAssociationClick The function that navigates to the claim association rights
+ *   screen.
+ */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun UserProfileScreenContent(
@@ -300,6 +327,14 @@ fun UserProfileScreenContent(
   }
 }
 
+/**
+ * Composable function that displays the user profile bottom sheet that display extra options for
+ * the user.
+ *
+ * @param showSheet A boolean that indicates whether the bottom sheet should be displayed.
+ * @param navigationAction The [NavigationAction] that handles navigation.
+ * @param onClose The function that closes the bottom sheet.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UserProfileBottomSheet(

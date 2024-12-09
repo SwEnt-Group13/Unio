@@ -13,6 +13,9 @@ import coil.request.ImageRequest
 import com.android.unio.R
 
 /**
+ * A wrapper around AsyncImage composable that builds the imageRequest before passing it to
+ * AsyncImage to load images asynchronously
+ *
  * @param imageUri : Uri of the image
  * @param contentDescription : Content description (accessibility purposes)
  * @param modifier : the modifier to be applied on AsyncImage composable

@@ -55,6 +55,15 @@ import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.theme.AppTypography
 import com.google.firebase.Timestamp
 
+/**
+ * A screen that allows users to create an event.
+ *
+ * @param navigationAction The navigation action to use.
+ * @param searchViewModel The [SearchViewModel] to use.
+ * @param associationViewModel The [AssociationViewModel] to use.
+ * @param eventViewModel The [EventViewModel] to use.
+ * @param locationSearchViewModel The [NominatimLocationSearchViewModel] to use.
+ */
 @Composable
 fun EventCreationScreen(
     navigationAction: NavigationAction,
