@@ -13,6 +13,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -24,6 +25,12 @@ import com.android.unio.model.user.getUserRoleInAssociation
 import com.android.unio.ui.theme.AppTypography
 import kotlin.random.Random
 
+/**
+ * A small association item that can be used in a list of associations.
+ *
+ * @param association The association to display.
+ * @param onClick Callback when the association is clicked.
+ */
 @Composable
 fun AssociationSmall(association: Association, userUid: String, onClick: () -> Unit) {
   val userRoleName = getUserRoleInAssociation(association, userUid)

@@ -120,7 +120,7 @@ class SearchRepositoryTest {
           price = 40.5,
           startDate = Timestamp(GregorianCalendar(2004, 7, 1).time),
           location = Location(1.2345, 2.3455, "Somewhere"),
-          placesRemaining = -1)
+          maxNumberOfPlaces = -1)
   private val event2 =
       Event(
           uid = "2",
@@ -132,7 +132,7 @@ class SearchRepositoryTest {
           price = 40.5,
           startDate = Timestamp(GregorianCalendar(2008, 7, 1).time),
           location = Location(1.2345, 2.3455, "Somewhere"),
-          placesRemaining = -1)
+          maxNumberOfPlaces = -1)
 
   @Before
   fun setUp() {

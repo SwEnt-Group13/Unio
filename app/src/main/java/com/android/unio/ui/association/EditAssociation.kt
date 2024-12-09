@@ -45,8 +45,15 @@ import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.strings.test_tags.EditAssociationTestTags
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
+import com.android.unio.ui.utils.ToastUtils
 import kotlinx.coroutines.launch
 
+/**
+ * Screen for editing an association.
+ *
+ * @param associationViewModel [AssociationViewModel] that provides the association to edit.
+ * @param navigationAction [NavigationAction] that handles navigation.
+ */
 @Composable
 fun EditAssociationScreen(
     associationViewModel: AssociationViewModel,
@@ -73,19 +80,23 @@ fun EditAssociationScreen(
             newAssociation,
             null,
             onSuccess = {
-              Log.d("EditAssociationScreen", "Association saved successfully.")
               associationViewModel.selectAssociation(newAssociation.uid)
               navigationAction.navigateTo(Screen.ASSOCIATION_PROFILE, Screen.EDIT_ASSOCIATION)
             },
             onFailure = {
               Log.e("EditAssociationScreen", "Failed to save association.")
-              Toast.makeText(
-                      context, context.getString(R.string.save_failed_message), Toast.LENGTH_SHORT)
-                  .show()
+              ToastUtils.showToast(context, context.getString(R.string.save_failed_message))
             })
       })
 }
 
+/**
+ * Scaffold for editing an association.
+ *
+ * @param association The [Association] to edit.
+ * @param onCancel Callback when the user cancels the edit.
+ * @param onSave Callback when the user saves the edit.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditAssociationScaffold(

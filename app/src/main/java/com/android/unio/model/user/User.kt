@@ -117,6 +117,12 @@ fun checkNewUser(user: User): MutableSet<AccountDetailsError> {
   return errors
 }
 
+/**
+ * Checks if the uri is empty, local or remote.
+ *
+ * @param uri The uri to check.
+ * @return EMPTY if the uri is empty, LOCAL if the uri is local, REMOTE if the uri is remote.
+ */
 fun checkImageUri(uri: String): ImageUriType {
   if (uri.toUri() == Uri.EMPTY) {
     return ImageUriType.EMPTY
@@ -130,6 +136,14 @@ fun checkImageUri(uri: String): ImageUriType {
   }
 }
 
+/**
+ * Checks the social content for errors.
+ *
+ * @param userSocial The user social to check.
+ * @return [UserSocialError.NONE] if no error is found, [UserSocialError.EMPTY_FIELD] if the content
+ *   is empty, [UserSocialError.INVALID_PHONE_NUMBER] if the phone number is invalid,
+ *   [UserSocialError.INVALID_WEBSITE] if the website is invalid.
+ */
 fun checkSocialContent(userSocial: UserSocial): UserSocialError {
 
   if (userSocial.content.isEmpty() || userSocial.content.isBlank()) {
@@ -157,6 +171,10 @@ fun checkSocialContent(userSocial: UserSocial): UserSocialError {
   }
 }
 
+/**
+ * @param social The social to get the placeholder text for.
+ * @return The placeholder text for the given social.
+ */
 fun getPlaceHolderText(social: Social): String {
   return when (social) {
     Social.FACEBOOK,

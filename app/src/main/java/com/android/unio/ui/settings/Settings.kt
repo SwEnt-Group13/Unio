@@ -44,6 +44,14 @@ import me.zhanghai.compose.preference.listPreference
 import me.zhanghai.compose.preference.preference
 import me.zhanghai.compose.preference.switchPreference
 
+/**
+ * Settings screen that displays the user settings. This composable is a Scaffold whose content is a
+ * SettingsContainer.
+ *
+ * @param navigationAction The navigation action to navigate to different screens.
+ * @param authViewModel The view model for authentication.
+ * @param userViewModel The view model for the user.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
@@ -87,8 +95,12 @@ fun SettingsScreen(
 }
 
 /**
+ * Settings container that displays the user settings and allows the user to change them.
+ *
  * This composable makes use of the ComposePreference API. See
  * https://github.com/zhanghai/ComposePreference
+ *
+ * @param onPasswordChange The callback to reset the password.
  */
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
@@ -156,7 +168,7 @@ fun SettingsContainer(onPasswordChange: (() -> Unit) -> Unit) {
                 contentDescription =
                     context.getString(R.string.settings_notifications_content_description))
           },
-          defaultValue = true)
+          defaultValue = AppPreferences.Notification.default)
       preference(
           modifier = Modifier.testTag(AppPreferences.LOCATION_PERMISSION),
           key = AppPreferences.LOCATION_PERMISSION,

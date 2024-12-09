@@ -14,6 +14,11 @@ import com.google.firebase.firestore.MetadataChanges
 import com.google.firebase.firestore.QuerySnapshot
 import javax.inject.Inject
 
+/**
+ * Firestore implementation of the [AssociationRepository] interface.
+ *
+ * @property db [FirebaseFirestore] : The Firestore database instance. Injected by Hilt.
+ */
 class AssociationRepositoryFirestore @Inject constructor(private val db: FirebaseFirestore) :
     AssociationRepository {
 
@@ -25,10 +30,23 @@ class AssociationRepositoryFirestore @Inject constructor(private val db: Firebas
     }
   }
 
+  /**
+   * Fetches a [DocumentReference] for an [Association] object using the provided [uid].
+   *
+   * @param uid [String] : The uid of the [Association] to fetch.
+   * @return [DocumentReference] : The [DocumentReference] for the [Association] object.
+   */
   override fun getAssociationRef(uid: String): DocumentReference {
     return db.collection(ASSOCIATION_PATH).document(uid)
   }
 
+  /**
+   * Fetches all [Association] objects from Firestore.
+   *
+   * @param onSuccess [(List<Association>) -> Unit] : The callback to call when the [Association]s
+   *   are fetched.
+   *     @param onFailure [(Exception) -> Unit] : The callback to call when the fetch fails.
+   */
   override fun getAssociations(
       onSuccess: (List<Association>) -> Unit,
       onFailure: (Exception) -> Unit
@@ -48,7 +66,7 @@ class AssociationRepositoryFirestore @Inject constructor(private val db: Firebas
             onFailure = { exception -> onFailure(exception) })
   }
 
-  override fun getAssociationsByCategory(
+  fun getAssociationsByCategory(
       category: AssociationCategory,
       onSuccess: (List<Association>) -> Unit,
       onFailure: (Exception) -> Unit
@@ -97,6 +115,13 @@ class AssociationRepositoryFirestore @Inject constructor(private val db: Firebas
     }
   }
 
+  /**
+   * Saves an [Association] object to Firestore.
+   *
+   * @param association [Association] : The [Association] object to save.
+   * @param onSuccess [() -> Unit] : The callback to call when the [Association] is saved.
+   * @param onFailure [(Exception) -> Unit] : The callback to call when the save fails.
+   */
   override fun saveAssociation(
       association: Association,
       onSuccess: () -> Unit,
@@ -107,6 +132,13 @@ class AssociationRepositoryFirestore @Inject constructor(private val db: Firebas
         .performFirestoreOperation(onSuccess = { onSuccess() }, onFailure = onFailure)
   }
 
+  /**
+   * Deletes an [Association] object from Firestore using the provided [associationId].
+   *
+   * @param associationId [String] : The id of the [Association] to delete.
+   * @param onSuccess [() -> Unit] : The callback to call when the [Association] is deleted.
+   * @param onFailure [(Exception) -> Unit] : The callback to call when the delete fails.
+   */
   override fun deleteAssociationById(
       associationId: String,
       onSuccess: () -> Unit,

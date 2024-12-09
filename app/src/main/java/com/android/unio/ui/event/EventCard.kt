@@ -1,12 +1,7 @@
 package com.android.unio.ui.event
 
-import android.Manifest
-import android.content.pm.PackageManager
-import android.os.Build
 import android.util.Log
 import android.widget.Toast
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -23,8 +18,6 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Edit
-import androidx.compose.material.icons.rounded.Favorite
-import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -32,9 +25,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -46,7 +36,6 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import com.android.unio.R
 import com.android.unio.model.association.Association
@@ -55,11 +44,8 @@ import com.android.unio.model.event.EventType
 import com.android.unio.model.event.EventUtils.addAlphaToColor
 import com.android.unio.model.event.EventUtils.formatTimestamp
 import com.android.unio.model.event.EventViewModel
-import com.android.unio.model.notification.NotificationWorker
-import com.android.unio.model.notification.UnioNotification
 import com.android.unio.model.strings.FormatStrings.DAY_MONTH_FORMAT
 import com.android.unio.model.strings.FormatStrings.HOUR_MINUTE_FORMAT
-import com.android.unio.model.strings.NotificationStrings.EVENT_REMINDER_CHANNEL_ID
 import com.android.unio.model.strings.test_tags.EventCardTestTags
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.image.AsyncImageWrapper
@@ -71,6 +57,15 @@ import java.util.Locale
 
 const val SECONDS_IN_AN_HOUR = 3600
 
+/**
+ * A composable function to display an event card.
+ *
+ * @param navigationAction The navigation action to use.
+ * @param event The event to display.
+ * @param userViewModel The [UserViewModel] to use.
+ * @param eventViewModel The [EventViewModel] to use.
+ * @param shouldBeEditable Whether the event card should be editable.
+ */
 @Composable
 fun EventCard(
     navigationAction: NavigationAction,
@@ -83,12 +78,6 @@ fun EventCard(
   val context = LocalContext.current
   val user by userViewModel.user.collectAsState()
   val associations by event.organisers.list.collectAsState()
-  var isNotificationsEnabled by remember { mutableStateOf(false) }
-  when (PackageManager.PERMISSION_GRANTED) {
-    ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) -> {
-      isNotificationsEnabled = true
-    }
-  }
 
   if (user == null) {
     Log.e("EventCard", "User not found.")
@@ -96,93 +85,42 @@ fun EventCard(
     return
   }
 
-  var isSaved by remember { mutableStateOf(user!!.savedEvents.contains(event.uid)) }
-
-  val scheduleReminderNotification = {
-    NotificationWorker.schedule(
-        context,
-        UnioNotification(
-            title = event.title,
-            message = context.getString(R.string.notification_event_reminder),
-            icon = R.drawable.other_icon,
-            channelId = EVENT_REMINDER_CHANNEL_ID,
-            channelName = EVENT_REMINDER_CHANNEL_ID,
-            notificationId = event.uid.hashCode(),
-            // Schedule a notification a few hours before the event's startDate
-            timeMillis = (event.startDate.seconds - 2 * SECONDS_IN_AN_HOUR) * SECONDS_IN_AN_HOUR))
-  }
-
-  val permissionLauncher =
-      rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { permission ->
-        when {
-          permission -> {
-            isNotificationsEnabled = true
-            scheduleReminderNotification()
-          }
-          else -> {
-            isNotificationsEnabled = false
-            Log.e("EventCard", "Notification permission is not granted.")
-          }
-        }
-      }
-  val onClickSaveButton = {
-    if (isSaved) {
-      val newEvent = event.copy(numberOfSaved = event.numberOfSaved - 1)
-      eventViewModel.updateEventWithoutImage(
-          newEvent,
-          onSuccess = {},
-          onFailure = { e -> Log.e("EventCard", "Failed to update event: $e") })
-      userViewModel.unsaveEvent(event) {
-        if (isNotificationsEnabled) {
-          NotificationWorker.unschedule(context, event.uid.hashCode())
-        }
-      }
-    } else {
-      val newEvent = event.copy(numberOfSaved = event.numberOfSaved + 1)
-      eventViewModel.updateEventWithoutImage(
-          newEvent,
-          onSuccess = {},
-          onFailure = { e -> Log.e("EventCard", "Failed to update event: $e") })
-      userViewModel.saveEvent(event) {
-        if (!isNotificationsEnabled) {
-          if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            // this permission requires api 33
-            // We should check how to make notifications work with lower api versions
-            permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-          }
-        } else {
-          scheduleReminderNotification()
-        }
-      }
-    }
-    isSaved = !isSaved
-  }
-
   EventCardScaffold(
       event,
       associations,
-      isSaved,
       onClickEventCard = {
         eventViewModel.selectEvent(event.uid)
         navigationAction.navigateTo(Screen.EVENT_DETAILS)
       },
-      onClickSaveButton = onClickSaveButton,
       onClickEditButton = {
         eventViewModel.selectEvent(event.uid)
         navigationAction.navigateTo(Screen.EDIT_EVENT)
       },
-      shouldBeEditable = shouldBeEditable)
+      shouldBeEditable = shouldBeEditable,
+      eventViewModel = eventViewModel,
+      userViewModel = userViewModel)
 }
 
+/**
+ * The content of the event card.
+ *
+ * @param event The event to display.
+ * @param organisers The list of associations organising the event.
+ * @param isSaved Whether the event is saved.
+ * @param onClickEventCard Callback when the event card is clicked.
+ * @param onClickSaveButton Callback when the save button is clicked.
+ * @param onClickEditButton Callback when the edit button is clicked.
+ * @param shouldBeEditable Whether the event card should be editable.
+ */
 @Composable
 fun EventCardScaffold(
     event: Event,
     organisers: List<Association>,
-    isSaved: Boolean,
     onClickEventCard: () -> Unit,
-    onClickSaveButton: () -> Unit,
     onClickEditButton: () -> Unit,
-    shouldBeEditable: Boolean
+    shouldBeEditable: Boolean,
+    eventViewModel: EventViewModel,
+    userViewModel: UserViewModel
 ) {
   val context = LocalContext.current
   Column(
@@ -245,26 +183,7 @@ fun EventCardScaffold(
                 }
                 Spacer(modifier = Modifier.width(2.dp))
 
-                IconButton(
-                    modifier =
-                        Modifier.size(28.dp)
-                            .clip(RoundedCornerShape(14.dp))
-                            .background(MaterialTheme.colorScheme.inversePrimary)
-                            .padding(4.dp)
-                            .testTag(EventCardTestTags.EVENT_SAVE_BUTTON),
-                    onClick = { onClickSaveButton() }) {
-                      Icon(
-                          imageVector =
-                              if (isSaved) Icons.Rounded.Favorite else Icons.Rounded.FavoriteBorder,
-                          contentDescription =
-                              if (isSaved)
-                                  context.getString(
-                                      R.string.event_card_content_description_saved_event)
-                              else
-                                  context.getString(
-                                      R.string.event_card_content_description_not_saved_event),
-                          tint = if (isSaved) Color.Red else Color.White)
-                    }
+                EventSaveButton(event, eventViewModel, userViewModel)
               }
         }
 

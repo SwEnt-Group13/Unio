@@ -23,7 +23,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.outlined.Share
+import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -67,15 +67,18 @@ import com.android.unio.model.association.Member
 import com.android.unio.model.association.PermissionType
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventViewModel
+import com.android.unio.model.notification.NotificationType
 import com.android.unio.model.strings.test_tags.AssociationProfileTestTags
 import com.android.unio.model.user.User
 import com.android.unio.model.user.UserViewModel
-import com.android.unio.model.utils.Utils
+import com.android.unio.model.utils.NetworkUtils
+import com.android.unio.ui.components.NotificationSender
 import com.android.unio.ui.event.EventCard
 import com.android.unio.ui.image.AsyncImageWrapper
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
 import com.android.unio.ui.theme.AppTypography
+import com.android.unio.ui.utils.ToastUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -185,16 +188,11 @@ fun AssociationProfileScaffold(
             actions = {
               Row {
                 IconButton(
-                    modifier = Modifier.testTag(AssociationProfileTestTags.SHARE_BUTTON),
-                    onClick = {
-                      scope!!.launch {
-                        testSnackbar!!.showSnackbar(
-                            message = DEBUG_MESSAGE, duration = SnackbarDuration.Short)
-                      }
-                    }) {
+                    modifier = Modifier.testTag(AssociationProfileTestTags.MORE_BUTTON),
+                    onClick = { showSheet = true }) {
                       Icon(
-                          Icons.Outlined.Share,
-                          contentDescription = context.getString(R.string.association_share))
+                          Icons.Outlined.MoreVert,
+                          contentDescription = context.getString(R.string.association_more))
                     }
               }
             })
@@ -208,25 +206,38 @@ fun AssociationProfileScaffold(
         }
       })
 
+  var showNotificationDialog by remember { mutableStateOf(false) }
+
+  NotificationSender(
+      context.getString(R.string.association_broadcast_message),
+      NotificationType.ASSOCIATION_FOLLOWERS,
+      association.uid,
+      { mapOf("title" to association.name, "body" to it) },
+      showNotificationDialog,
+      { showNotificationDialog = false })
+
   AssociationProfileBottomSheet(
-      association, showSheet, onClose = { showSheet = false }, onEdit = onEdit)
+      showSheet,
+      onClose = { showSheet = false },
+      onEdit = onEdit,
+      onOpenNotificationDialog = { showNotificationDialog = true })
 }
 
 /**
  * Composable element that contain the bottom sheet of the given association profile screen.
  *
- * @param association [Association] : The association to display
  * @param showSheet [Boolean] : The state of the bottom sheet
  * @param onClose [() -> Unit] : The action to close the bottom sheet
  * @param onEdit [() -> Unit] : The action to edit the association
+ * @param onOpenNotificationDialog [() -> Unit] : The action to open the notification dialog
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AssociationProfileBottomSheet(
-    association: Association,
     showSheet: Boolean,
     onClose: () -> Unit,
-    onEdit: () -> Unit
+    onEdit: () -> Unit,
+    onOpenNotificationDialog: () -> Unit
 ) {
   val sheetState = rememberModalBottomSheetState()
 
@@ -239,16 +250,26 @@ fun AssociationProfileBottomSheet(
         onDismissRequest = onClose,
         properties = ModalBottomSheetProperties(shouldDismissOnBackPress = true),
     ) {
-      Column(modifier = Modifier) {
-        Text(
-            association.uid,
-            color = MaterialTheme.colorScheme.inversePrimary,
-            style = MaterialTheme.typography.bodySmall,
-            modifier = Modifier.align(Alignment.CenterHorizontally))
-
-        TextButton(modifier = Modifier.fillMaxWidth(), onClick = onEdit) {
-          Text(context.getString(R.string.association_edit))
-        }
+      Column {
+        TextButton(
+            modifier =
+                Modifier.fillMaxWidth().testTag(AssociationProfileTestTags.BOTTOM_SHEET_EDIT),
+            onClick = {
+              onClose()
+              onEdit()
+            }) {
+              Text(context.getString(R.string.association_edit))
+            }
+        TextButton(
+            modifier =
+                Modifier.fillMaxWidth()
+                    .testTag(AssociationProfileTestTags.BOTTOM_SHEET_NOTIFICATION),
+            onClick = {
+              onClose()
+              onOpenNotificationDialog()
+            }) {
+              Text(context.getString(R.string.association_broadcast_message))
+            }
       }
     }
   }
@@ -284,7 +305,7 @@ private fun AssociationProfileContent(
     mutableStateOf(user!!.followedAssociations.contains(association!!.uid))
   }
   var enableButton by remember { mutableStateOf(true) }
-  val isConnected = Utils.checkInternetConnection(context)
+  val isConnected = NetworkUtils.checkInternetConnection(context)
 
   val onFollow = {
     if (isConnected) {
@@ -295,9 +316,7 @@ private fun AssociationProfileContent(
       }
       isFollowed = !isFollowed
     } else {
-      Toast.makeText(
-              context, context.getString(R.string.no_internet_connection), Toast.LENGTH_SHORT)
-          .show()
+      ToastUtils.showToast(context, context.getString(R.string.no_internet_connection))
     }
   }
 
@@ -474,7 +493,7 @@ private fun AssociationEvents(
     eventViewModel: EventViewModel
 ) {
   val context = LocalContext.current
-  val isConnected = Utils.checkInternetConnection(context)
+  val isConnected = NetworkUtils.checkInternetConnection(context)
 
   var isSeeMoreClicked by remember { mutableStateOf(false) }
 
@@ -498,7 +517,7 @@ private fun AssociationEvents(
         style = AppTypography.headlineMedium)
     events.sortedBy { it.startDate }
     val first = events.first()
-    Column(modifier = Modifier, horizontalAlignment = Alignment.CenterHorizontally) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
       if (isSeeMoreClicked) {
         events.forEach { event ->
           AssociationEventCard(navigationAction, event, userViewModel, eventViewModel)
@@ -526,9 +545,7 @@ private fun AssociationEvents(
           if (isConnected) {
             navigationAction.navigateTo(Screen.EVENT_CREATION)
           } else {
-            Toast.makeText(
-                    context, context.getString(R.string.no_internet_connection), Toast.LENGTH_SHORT)
-                .show()
+            ToastUtils.showToast(context, context.getString(R.string.no_internet_connection))
           }
         },
         modifier = Modifier.testTag(AssociationProfileTestTags.ADD_EVENT_BUTTON),
@@ -582,9 +599,6 @@ private fun AssociationDescription(association: Association) {
  * Component that display the header of the association profile screen. It display the image of the
  * association, the number of followers and the number of members. It also display a button to
  * follow the association.
- *
- * !!! The follow button do not have any action and should be implemented when follow feature is
- * implemented !!!
  */
 @Composable
 private fun AssociationHeader(

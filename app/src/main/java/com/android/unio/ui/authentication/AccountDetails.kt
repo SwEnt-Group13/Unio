@@ -46,6 +46,8 @@ import com.android.unio.model.user.User
 import com.android.unio.model.user.UserSocial
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.model.user.checkNewUser
+import com.android.unio.model.utils.TextLength
+import com.android.unio.model.utils.Utils
 import com.android.unio.ui.authentication.overlay.InterestOverlay
 import com.android.unio.ui.authentication.overlay.SocialOverlay
 import com.android.unio.ui.components.InterestInputChip
@@ -58,6 +60,14 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import kotlinx.coroutines.flow.MutableStateFlow
 
+/**
+ * The AccountDetailsScreen composable is used to create the account creation screen, and calls the
+ * AccountDetailsContent composable to display the content of the screen.
+ *
+ * @param navigationAction The navigation action to navigate to different screens.
+ * @param userViewModel The view model for the user.
+ * @param imageViewModel The view model for the image.
+ */
 @Composable
 fun AccountDetailsScreen(
     navigationAction: NavigationAction,
@@ -179,13 +189,13 @@ fun AccountDetailsContent(
               modifier = Modifier.testTag(AccountDetailsTestTags.TITLE_TEXT))
 
           UserTextFields(
-              isErrors,
-              firstName,
-              lastName,
-              bio,
-              { firstName = it },
-              { lastName = it },
-              { bio = it })
+              isErrors = isErrors,
+              firstName = firstName,
+              lastName = lastName,
+              bio = bio,
+              onFirstNameChange = { firstName = it },
+              onLastNameChange = { lastName = it },
+              onBioChange = { bio = it })
 
           Row(
               modifier = Modifier.fillMaxWidth().padding(8.dp),
@@ -237,6 +247,18 @@ fun AccountDetailsContent(
   }
 }
 
+/**
+ * The [UserTextFields] composable is used to create the text fields for the user to input their
+ * first name, last name, and biography.
+ *
+ * @param isErrors The set of errors that the user has made.
+ * @param firstName The first name of the user.
+ * @param lastName The last name of the user.
+ * @param bio The biography of the user.
+ * @param onFirstNameChange The lambda function to change the first name.
+ * @param onLastNameChange The lambda function to change the last name.
+ * @param onBioChange The lambda function to change the biography.
+ */
 @Composable
 private fun UserTextFields(
     isErrors: MutableSet<AccountDetailsError>,
@@ -257,9 +279,19 @@ private fun UserTextFields(
               .fillMaxWidth()
               .testTag(AccountDetailsTestTags.FIRST_NAME_TEXT_FIELD),
       label = {
-        Text(
-            context.getString(R.string.account_details_first_name),
-            modifier = Modifier.testTag(AccountDetailsTestTags.FIRST_NAME_TEXT))
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically) {
+              Text(
+                  context.getString(R.string.account_details_first_name),
+                  modifier = Modifier.testTag(AccountDetailsTestTags.FIRST_NAME_TEXT).padding(4.dp))
+              if (Utils.checkInputLengthIsClose(firstName, TextLength.SMALL)) {
+                Text(
+                    text = "${firstName.length}/${TextLength.SMALL.length}",
+                    modifier =
+                        Modifier.testTag(AccountDetailsTestTags.FIRST_NAME_CHARACTER_COUNTER))
+              }
+            }
       },
       isError = (isFirstNameError),
       supportingText = {
@@ -269,7 +301,11 @@ private fun UserTextFields(
               modifier = Modifier.testTag(AccountDetailsTestTags.FIRST_NAME_ERROR_TEXT))
         }
       },
-      onValueChange = onFirstNameChange,
+      onValueChange = {
+        if (Utils.checkInputLength(it, TextLength.SMALL)) {
+          onFirstNameChange(it)
+        }
+      },
       value = firstName)
 
   OutlinedTextField(
@@ -278,9 +314,18 @@ private fun UserTextFields(
               .fillMaxWidth()
               .testTag(AccountDetailsTestTags.LAST_NAME_TEXT_FIELD),
       label = {
-        Text(
-            context.getString(R.string.account_details_last_name),
-            modifier = Modifier.testTag(AccountDetailsTestTags.LAST_NAME_TEXT))
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically) {
+              Text(
+                  context.getString(R.string.account_details_last_name),
+                  modifier = Modifier.testTag(AccountDetailsTestTags.LAST_NAME_TEXT).padding(4.dp))
+              if (Utils.checkInputLengthIsClose(lastName, TextLength.SMALL)) {
+                Text(
+                    text = "${lastName.length}/${TextLength.SMALL.length}",
+                    modifier = Modifier.testTag(AccountDetailsTestTags.LAST_NAME_CHARACTER_COUNTER))
+              }
+            }
       },
       isError = (isLastNameError),
       supportingText = {
@@ -290,7 +335,11 @@ private fun UserTextFields(
               modifier = Modifier.testTag(AccountDetailsTestTags.LAST_NAME_ERROR_TEXT))
         }
       },
-      onValueChange = onLastNameChange,
+      onValueChange = {
+        if (Utils.checkInputLength(it, TextLength.SMALL)) {
+          onLastNameChange(it)
+        }
+      },
       value = lastName)
 
   OutlinedTextField(
@@ -300,14 +349,34 @@ private fun UserTextFields(
               .height(200.dp)
               .testTag(AccountDetailsTestTags.BIOGRAPHY_TEXT_FIELD),
       label = {
-        Text(
-            context.getString(R.string.account_details_bio),
-            modifier = Modifier.testTag(AccountDetailsTestTags.BIOGRAPHY_TEXT))
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically) {
+              Text(
+                  context.getString(R.string.account_details_bio),
+                  modifier = Modifier.testTag(AccountDetailsTestTags.BIOGRAPHY_TEXT))
+              if (Utils.checkInputLengthIsClose(bio, TextLength.LARGE)) {
+                Text(
+                    text = "${bio.length}/${TextLength.LARGE.length}",
+                    modifier = Modifier.testTag(AccountDetailsTestTags.BIOGRAPHY_CHARACTER_COUNTER))
+              }
+            }
       },
-      onValueChange = onBioChange,
+      onValueChange = {
+        if (Utils.checkInputLength(it, TextLength.LARGE)) {
+          onBioChange(it)
+        }
+      },
       value = bio)
 }
 
+/**
+ * The [InterestButtonAndFlowRow] composable contains the button to add interests and display the
+ * row of interests that the user has selected.
+ *
+ * @param interestsFlow The flow of interests that the user has selected.
+ * @param onShowInterests The lambda function to show the interests overlay.
+ */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun InterestButtonAndFlowRow(
@@ -337,6 +406,13 @@ private fun InterestButtonAndFlowRow(
   }
 }
 
+/**
+ * The [SocialButtonAndFlowRow] composable contains the button to add socials and display the row of
+ * socials that the user has selected.
+ *
+ * @param userSocialFlow The flow of socials that the user has selected.
+ * @param onShowSocials The lambda function to show the socials overlay.
+ */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun SocialButtonAndFlowRow(
