@@ -1,4 +1,4 @@
-package com.android.unio.model.strings.test_tags
+package com.android.unio.model.strings.test_tags.event
 
 object EventCardTestTags {
   const val EVENT_ITEM = "event_EventListItem"

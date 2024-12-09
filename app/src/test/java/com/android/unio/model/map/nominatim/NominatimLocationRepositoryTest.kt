@@ -71,7 +71,7 @@ class NominatimLocationRepositoryTest {
     val results = repository.search(query).first()
 
     assertEquals(1, results.size)
-    assertEquals("Test Road, 123, 12345 Test City, Test State, Test Country", results[0].name)
+    assertEquals("Test Road, 123, 12345, Test City, Test State, Test Country", results[0].name)
     assertEquals(45.512331, results[0].latitude, 0.0001)
     assertEquals(7.559331, results[0].longitude, 0.0001)
   }

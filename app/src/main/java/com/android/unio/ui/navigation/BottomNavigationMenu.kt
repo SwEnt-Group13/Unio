@@ -8,7 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
-import com.android.unio.model.strings.test_tags.NavigationActionTestTags
+import com.android.unio.model.strings.test_tags.navigation.NavigationActionTestTags
 
 /**
  * The Bottom Navigation Menu for the app that displays the tabs at the bottom of the screen and

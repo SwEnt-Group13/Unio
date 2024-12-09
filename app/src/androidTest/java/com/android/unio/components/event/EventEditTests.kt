@@ -25,7 +25,7 @@ import com.android.unio.model.map.nominatim.NominatimLocationRepository
 import com.android.unio.model.map.nominatim.NominatimLocationSearchViewModel
 import com.android.unio.model.search.SearchRepository
 import com.android.unio.model.search.SearchViewModel
-import com.android.unio.model.strings.test_tags.EventEditTestTags
+import com.android.unio.model.strings.test_tags.event.EventEditTestTags
 import com.android.unio.ui.event.EventEditScreen
 import com.android.unio.ui.navigation.NavigationAction
 import com.google.firebase.Firebase

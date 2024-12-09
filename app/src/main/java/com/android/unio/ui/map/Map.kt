@@ -38,7 +38,7 @@ import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.map.MapViewModel
 import com.android.unio.model.strings.MapStrings
-import com.android.unio.model.strings.test_tags.MapTestTags
+import com.android.unio.model.strings.test_tags.map.MapTestTags
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.theme.mapUserLocationCircleFiller
