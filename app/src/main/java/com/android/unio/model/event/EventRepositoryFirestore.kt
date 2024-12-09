@@ -67,24 +67,6 @@ class EventRepositoryFirestore @Inject constructor(private val db: FirebaseFires
     }
   }
 
-  override fun getNextEventsFromDateToDate(
-      startDate: Timestamp,
-      endDate: Timestamp,
-      onSuccess: (List<Event>) -> Unit,
-      onFailure: (Exception) -> Unit
-  ) {
-    db.collection(EVENT_PATH)
-        .whereGreaterThanOrEqualTo("date", startDate)
-        .whereLessThan("date", endDate)
-        .get()
-        .performFirestoreOperation(
-            onSuccess = { result ->
-              val events = result.mapNotNull { hydrate(it.data) }
-              onSuccess(events)
-            },
-            onFailure = { exception -> onFailure(exception) })
-  }
-
   /**
    * Fetches all events from Firestore and calls the onSuccess callback with the list of events.
    *

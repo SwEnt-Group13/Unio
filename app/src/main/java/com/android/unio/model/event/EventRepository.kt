@@ -11,13 +11,6 @@ interface EventRepository {
       onFailure: (Exception) -> Unit
   )
 
-  fun getNextEventsFromDateToDate(
-      startDate: Timestamp,
-      endDate: Timestamp,
-      onSuccess: (List<Event>) -> Unit,
-      onFailure: (Exception) -> Unit
-  )
-
   fun getEventWithId(id: String, onSuccess: (Event) -> Unit, onFailure: (Exception) -> Unit)
 
   fun getEvents(onSuccess: (List<Event>) -> Unit, onFailure: (Exception) -> Unit)

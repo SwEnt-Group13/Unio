@@ -204,26 +204,6 @@ class EventRepositoryFirestoreTest {
         onFailure = { e -> throw e })
   }
 
-  /** Asserts that getNextEventsFromDateToDate calls the right methods. */
-  @Test
-  fun testGetNextEventsFromDateToDate() {
-    val startDate = Timestamp(GregorianCalendar(2003, 7, 1).time)
-    val endDate = Timestamp(GregorianCalendar(2005, 7, 1).time)
-    `when`(collectionReference.whereGreaterThanOrEqualTo("date", startDate)).thenReturn(query)
-    `when`(query.whereLessThan("date", endDate)).thenReturn(query)
-    `when`(query.get()).thenReturn(getTask)
-    `when`(querySnapshot.iterator()).thenReturn(mutableListOf(queryDocumentSnapshot1).iterator())
-
-    repository.getNextEventsFromDateToDate(
-        startDate,
-        endDate,
-        { events ->
-          assertEquals(events.size, 1)
-          assertEquals(events[0].uid, event1.uid)
-        },
-        { e -> throw e })
-  }
-
   /** Asserts that db.collection(EVENT_PATH).document(event.uid).set(event) is called */
   @Test
   fun testAddEvent() {
