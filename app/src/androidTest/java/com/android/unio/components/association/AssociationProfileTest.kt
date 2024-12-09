@@ -171,7 +171,7 @@ class AssociationProfileTest : TearDown() {
             )
         }
 
-        `when`(task.addOnFailureListener(any())).thenReturn(task)
+        every { (task.addOnFailureListener(any()))} returns (task)
 
         // Mock the navigation action to do nothing
         every { navigationAction.navigateTo(any<String>()) } returns Unit
