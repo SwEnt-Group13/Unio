@@ -29,6 +29,13 @@ import com.android.unio.ui.navigation.Screen
 import com.android.unio.ui.theme.AppTypography
 import com.android.unio.ui.utils.ToastUtils
 
+/**
+ * Composable allows the user to search for an association and one.
+ *
+ * @param associationViewModel The [AssociationViewModel] for the association.
+ * @param navigationAction The [NavigationAction] to navigate to different screens.
+ * @param searchViewModel The [SearchViewModel] for the search.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UserClaimAssociationScreen(

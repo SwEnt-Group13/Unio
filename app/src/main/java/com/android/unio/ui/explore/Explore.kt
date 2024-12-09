@@ -46,6 +46,14 @@ import com.android.unio.ui.navigation.Route
 import com.android.unio.ui.navigation.Screen
 import com.android.unio.ui.theme.AppTypography
 
+/**
+ * The Explore screen displays a list of associations grouped by category. This simply displays the
+ * ExploreScreenContent and the BottomNavigationBar with a scaffold.
+ *
+ * @param navigationAction The navigation action to use when an association is clicked.
+ * @param associationViewModel The [AssociationViewModel] to use.
+ * @param searchViewModel The [SearchViewModel] to use.
+ */
 @Composable
 fun ExploreScreen(
     navigationAction: NavigationAction,
@@ -185,12 +193,23 @@ fun AssociationItem(association: Association, onClick: () -> Unit) {
       }
 }
 
-/** Returns a list of associations sorted by alphabetical order. */
+/**
+ * Returns a list of associations sorted by alphabetical order. This method should probably be
+ * removed as it does not sufficiently abstract the sorting logic.
+ *
+ * @param associations The list of associations to sort.
+ * @return The sorted list of associations.
+ */
 fun getFilteredAssociationsByAlphabeticalOrder(associations: List<Association>): List<Association> {
   return associations.sortedBy { it.name }
 }
 
-/** Returns the entries of the association map sorted by the key's display name. */
+/**
+ * Returns the entries of the association map sorted by the key's display name.
+ *
+ * @param context The context to use for string resources.
+ * @param associationsByCategory The map of associations by category.
+ */
 fun getSortedEntriesAssociationsByCategory(
     context: Context,
     associationsByCategory: Map<AssociationCategory, List<Association>>
