@@ -15,6 +15,8 @@ import com.google.firebase.messaging.RemoteMessage
  * Enum class representing the different types of notifications that can be broadcasted.
  *
  * @param requiredFields The fields that are required for the notification type.
+ * @param displayName The name of the notification type. This will be shown to the user.
+ * @param description The description of the notification type.
  */
 enum class NotificationType(
     val requiredFields: List<String>,
@@ -38,7 +40,8 @@ enum class NotificationType(
  * @param type The type of notification to broadcast.
  * @param topic The topic to broadcast the message to.
  * @param payload The data to send with the message.
- * @param onSuccess The function to call if the message is successfully sent.
+ * @param onSuccess Callback called if the message is successfully sent.
+ * @param onFailure Callback called if the message fails to send.
  */
 fun broadcastMessage(
     type: NotificationType,

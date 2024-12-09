@@ -226,6 +226,7 @@ fun AssociationProfileScaffold(
  * @param showSheet [Boolean] : The state of the bottom sheet
  * @param onClose [() -> Unit] : The action to close the bottom sheet
  * @param onEdit [() -> Unit] : The action to edit the association
+ * @param onOpenNotificationDialog [() -> Unit] : The action to open the notification dialog
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
