@@ -13,6 +13,11 @@ import androidx.navigation.NavHostController
 import com.android.unio.R
 import com.android.unio.model.strings.test_tags.BottomNavBarTestTags
 
+/**
+ * Class that handles navigation actions.
+ *
+ * @param navController The [NavHostController] to use for navigation
+ */
 open class NavigationAction(val navController: NavHostController) {
 
   /**
