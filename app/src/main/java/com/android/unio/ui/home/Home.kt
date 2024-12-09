@@ -179,10 +179,18 @@ fun HomeContent(
         Text(context.getString(R.string.explore_search_no_results))
       }
     } else {
-      EventList(navigationAction, searchResults, userViewModel, eventViewModel)
+      EventList(
+          navigationAction,
+          searchResults.sortedWith(compareBy({ it.startDate }, { it.uid })),
+          userViewModel,
+          eventViewModel)
     }
   } else if (events.isNotEmpty()) {
-    EventList(navigationAction, events, userViewModel, eventViewModel)
+    EventList(
+        navigationAction,
+        events.sortedWith(compareBy({ it.startDate }, { it.uid })),
+        userViewModel,
+        eventViewModel)
   } else {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
       Text(
