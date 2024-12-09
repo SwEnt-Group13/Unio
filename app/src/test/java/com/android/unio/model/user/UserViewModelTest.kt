@@ -5,10 +5,13 @@ import com.android.unio.mocks.user.MockUser
 import com.android.unio.model.image.ImageRepository
 import com.google.firebase.FirebaseApp
 import io.mockk.MockKAnnotations
+import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
+import io.mockk.unmockkAll
 import io.mockk.verify
 import junit.framework.TestCase.assertEquals
+import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -71,5 +74,12 @@ class UserViewModelTest {
 
     verify { repository.updateUser(user, any(), any()) }
     assertEquals(userViewModel.user.value?.uid, user.uid)
+  }
+
+  @After
+  fun tearDown() {
+    // Clean up
+    unmockkAll()
+    clearAllMocks()
   }
 }

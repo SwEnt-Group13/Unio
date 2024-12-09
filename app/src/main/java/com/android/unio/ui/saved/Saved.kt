@@ -1,5 +1,6 @@
 package com.android.unio.ui.saved
 
+import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -16,6 +17,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
@@ -36,6 +38,7 @@ import com.android.unio.ui.navigation.Screen
 import com.android.unio.ui.theme.AppTypography
 import java.util.Calendar
 
+@SuppressLint("UnrememberedMutableState")
 @Composable
 fun SavedScreen(
     navigationAction: NavigationAction,
@@ -50,12 +53,12 @@ fun SavedScreen(
   }
 
   val allEvents by eventViewModel.events.collectAsState()
-  val savedEvents = allEvents.filter { user!!.savedEvents.contains(it.uid) }
+  val savedEvents by derivedStateOf { allEvents.filter { user!!.savedEvents.contains(it.uid) } }
 
   val context = LocalContext.current
 
   val today = remember { Calendar.getInstance().get(Calendar.DAY_OF_YEAR) }
-  val savedEventsToday = remember {
+  val savedEventsToday by derivedStateOf {
     savedEvents.partition {
       val calendar = Calendar.getInstance()
       calendar.timeInMillis = it.startDate.toDate().time
@@ -111,8 +114,8 @@ fun SavedScreen(
                   }
                   item { HorizontalDivider() }
 
-                  items(savedEventsToday.first) {
-                    EventCard(navigationAction, it, userViewModel, eventViewModel)
+                  items(savedEventsToday.first) { event ->
+                    EventCard(navigationAction, event, userViewModel, eventViewModel)
                   }
                 }
 
@@ -127,8 +130,8 @@ fun SavedScreen(
                   }
                   item { HorizontalDivider() }
 
-                  items(savedEventsToday.second) {
-                    EventCard(navigationAction, it, userViewModel, eventViewModel)
+                  items(savedEventsToday.second) { event ->
+                    EventCard(navigationAction, event, userViewModel, eventViewModel)
                   }
                 }
               }

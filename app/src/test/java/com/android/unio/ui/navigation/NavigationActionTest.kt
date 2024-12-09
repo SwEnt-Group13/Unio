@@ -1,13 +1,9 @@
-package com.android.unio.ui
+package com.android.unio.ui.navigation
 
 import androidx.navigation.NavDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.NavOptionsBuilder
 import androidx.test.espresso.matcher.ViewMatchers.assertThat
-import com.android.unio.ui.navigation.NavigationAction
-import com.android.unio.ui.navigation.Route
-import com.android.unio.ui.navigation.Screen
-import com.android.unio.ui.navigation.TopLevelDestinations
 import org.hamcrest.CoreMatchers.`is`
 import org.junit.Assert.assertEquals
 import org.junit.Before

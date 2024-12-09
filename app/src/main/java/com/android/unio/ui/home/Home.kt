@@ -179,7 +179,8 @@ fun EventList(
 ) {
   LazyColumn(
       contentPadding = PaddingValues(vertical = 8.dp),
-      modifier = Modifier.fillMaxSize().padding(horizontal = 32.dp)) {
+      modifier =
+          Modifier.fillMaxSize().padding(horizontal = 32.dp).testTag(HomeTestTags.EVENT_LIST)) {
         items(events) { event -> EventCard(navigationAction, event, userViewModel, eventViewModel) }
       }
 }

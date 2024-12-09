@@ -110,11 +110,22 @@ fun EventScreen(
 
   val isSaved = user!!.savedEvents.contains(event!!.uid)
 
+  // Save button should be extracted to a utils in the future
   val onClickSaveButton = {
     if (isSaved) {
       user!!.savedEvents.remove(event!!.uid)
+      val newEvent = event!!.copy(numberOfSaved = event!!.numberOfSaved - 1)
+      eventViewModel.updateEventWithoutImage(
+          newEvent,
+          onSuccess = {},
+          onFailure = { e -> Log.e("EventCard", "Failed to update event: $e") })
     } else {
       user!!.savedEvents.add(event!!.uid)
+      val newEvent = event!!.copy(numberOfSaved = event!!.numberOfSaved + 1)
+      eventViewModel.updateEventWithoutImage(
+          newEvent,
+          onSuccess = {},
+          onFailure = { e -> Log.e("EventCard", "Failed to update event: $e") })
     }
     userViewModel.updateUserDebounced(user!!)
   }
@@ -332,8 +343,8 @@ fun EventDetailsBody(
               color = MaterialTheme.colorScheme.onPrimaryContainer)
 
           val placesStr =
-              if (event.placesRemaining >= 0) {
-                "${event.placesRemaining}${context.getString(R.string.event_places_remaining)}"
+              if (event.maxNumberOfPlaces >= 0) {
+                "${event.numberOfSaved}/${event.maxNumberOfPlaces}${context.getString(R.string.event_places_remaining)}"
               } else ""
           Text(
               placesStr,

@@ -1,21 +1,5 @@
 package com.android.unio.model.strings
 
-object AssociationStrings {
-  const val EPFL_BODIES = "EPFL bodies"
-  const val REPRESENTATION = "Representation"
-  const val PROJECTS = "Interdisciplinary projects"
-  const val EPFL_STUDENTS = "EPFL Students"
-  const val COUNTRIES = "Students by country"
-  const val SUSTAINABILITY = "Sustainability"
-  const val SCIENCE_TECH = "Science and technology"
-  const val CULTURE_SOCIETY = "Culture and society"
-  const val ARTS = "Arts"
-  const val ENTERTAINMENT = "Entertainment"
-  const val SPORTS = "Sports"
-  const val GUIDANCE = "Vocational guidance"
-  const val UNKNOWN = "Unknown"
-}
-
 object FirestorePathsStrings {
   const val ASSOCIATION_PATH = "associations"
   const val USER_PATH = "users"
@@ -42,4 +26,19 @@ object NotificationStrings {
   const val NOTIFICATION_SCHEDULER_TYPE_CANCEL = "cancel"
   const val NOTIFICATION_SCHEDULER_TYPE_CREATE = "create"
   const val NOTIFICATION_SCHEDULER_TYPE = "type"
+}
+
+object TextLengthSamples {
+  // 25 characters
+  const val SMALL = "A wonderful serenity has."
+
+  // 90 characters
+  const val MEDIUM =
+      "A wonderful serenity has taken possession of my entire soul, like these sweet mornings of."
+
+  // 280 characters
+  const val LARGE =
+      "A wonderful serenity has taken possession of my entire soul, like these sweet mornings of spring which " +
+          "I enjoy with my whole heart. I am alone, and feel the charm of existence in this spot, " +
+          "which was created for the bliss of souls like mine. I am so happy, my dear friend, so abso"
 }

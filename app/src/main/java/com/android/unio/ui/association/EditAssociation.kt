@@ -45,6 +45,7 @@ import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.strings.test_tags.EditAssociationTestTags
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
+import com.android.unio.ui.utils.ToastUtils
 import kotlinx.coroutines.launch
 
 @Composable
@@ -73,15 +74,12 @@ fun EditAssociationScreen(
             newAssociation,
             null,
             onSuccess = {
-              Log.d("EditAssociationScreen", "Association saved successfully.")
               associationViewModel.selectAssociation(newAssociation.uid)
               navigationAction.navigateTo(Screen.ASSOCIATION_PROFILE, Screen.EDIT_ASSOCIATION)
             },
             onFailure = {
               Log.e("EditAssociationScreen", "Failed to save association.")
-              Toast.makeText(
-                      context, context.getString(R.string.save_failed_message), Toast.LENGTH_SHORT)
-                  .show()
+              ToastUtils.showToast(context, context.getString(R.string.save_failed_message))
             })
       })
 }
@@ -171,13 +169,13 @@ fun EditAssociationScaffold(
                   onClick = { expanded = true },
                   modifier =
                       Modifier.fillMaxWidth().testTag(EditAssociationTestTags.CATEGORY_BUTTON)) {
-                    Text(text = category.displayName)
+                    Text(text = context.getString(category.displayNameId))
                   }
 
               DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
                 AssociationCategory.entries.forEach { categoryOption ->
                   DropdownMenuItem(
-                      text = { Text(text = categoryOption.displayName) },
+                      text = { Text(text = context.getString(categoryOption.displayNameId)) },
                       onClick = {
                         category = categoryOption
                         expanded = false

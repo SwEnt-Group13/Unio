@@ -14,7 +14,7 @@
 
     <!-- Association Strings -->
     <string name="association_toast_error" translatable="true">Une erreur est survenue.</string>
-    <string name="association_upcoming_events">Evenement à venir</string>
+    <string name="association_upcoming_events">Évenements à venir</string>
     <string name="association_go_back">Retour</string>
     <string name="association_see_more">Voir plus</string>
     <string name="association_share">Partager l\'association</string>
@@ -24,10 +24,10 @@
     </string>
     <string name="association_follower">abonnés</string>
     <string name="association_member">membres</string>
-    <string name="association_follow">S\'abonner</string>
+    <string name="association_follow">Suivre</string>
     <string name="association_unfollow">Se désabonner</string>
     <string name="association_join">Rejoindre</string>
-    <string name="association_no_event">Pas d\'événement plannifié pour l\'instant</string>
+    <string name="association_no_event">Pas d\'événement planifié pour l\'instant</string>
     <string name="association_not_found">Erreur : Association introuvable</string>
     <string name="association_content_description_sharing_icon">Icône de partage d\'association</string>
     <string name="association_content_description_add_icon">Icône ajouter</string>
@@ -47,7 +47,7 @@
     <string name="cancel_button_text">Annuler</string>
     <string name="save_button_text">Enregistrer</string>
     <string name="category_button_text">Sélectionner la catégorie</string>
-    <string name="save_failed_message">Échec de la sauvegarde de l\'Association</string>
+    <string name="save_failed_message">Échec de la sauvegarde de l\'association</string>
 
     /**
     * package: authentication
@@ -61,9 +61,8 @@
 
     <!-- Social Overlay Strings -->
     <string name="social_overlay_title" translatable="true">Vos réseaux sociaux</string>
-    <string name="social_overlay_description" translatable="true">
-        Ceux-ci vont être visibles sur votre page personnelle pour que d\'autres étudiants puissent vous contacter</string>
-    <string name="social_overlay_add_social" translatable="true">Ajouter Réseau Social</string>
+    <string name="social_overlay_description" translatable="true">Ceux-ci vont être visibles sur votre page personnelle pour que d\'autres étudiants puissent vous contacter</string>
+    <string name="social_overlay_add_social" translatable="true">Ajouter un réseau</string>
     <string name="social_overlay_save_changes" translatable="true">Sauvegarder les changements</string>
     <string name="social_overlay_empty_field" translatable="true">L\'entrée est vide</string>
     <string name="social_overlay_invalid_phone_number" translatable="true">Le numéro de téléphone a un format incorrect</string>
@@ -80,8 +79,8 @@
     <string name="account_details_add_interests" translatable="true">Ajoutez des centres d\'intérêts</string>
     <string name="account_details_add_socials" translatable="true">Ajoutez des liens à d\'autres réseaux sociaux</string>
     <string name="account_details_continue" translatable="true">Continuer</string>
-    <string name="account_details_first_name_error">Veuillez remplir votre Prénom</string>
-    <string name="account_details_last_name_error">Veuillez remplir votre Nom</string>
+    <string name="account_details_first_name_error">Veuillez remplir votre prénom</string>
+    <string name="account_details_last_name_error">Veuillez remplir votre nom</string>
     <string name="account_details_created_successfully">Compte créé avec succès</string>
     <string name="account_details_image_upload_error">ERREUR: Échec du chargement de l\'image</string>
     <string name="account_details_content_description_account_circle">Cercle de compte</string>
@@ -92,15 +91,6 @@
     <string name="account_details_content_description_remove_pfp">Supprimer la photo de profil</string>
 
     <!-- UserSettings Strings -->
-    <string name="user_edition_content_description_remove_social" translatable="false">Remove User Social</string>
-    <string name="user_edition_first_name" translatable="true">Modifier Prénom</string>
-    <string name="user_edition_last_name" translatable="true">Modifier Nom</string>
-    <string name="user_edition_bio" translatable="true">Modifier Biographie</string>
-    <string name="user_edition_edit_interests" translatable="true">Modifier vos centres d\'intérêts</string>
-    <string name="user_edition_edit_socials" translatable="true">Modifier vos réseaux sociaux</string>
-    <string name="user_edition_discard_changes" translatable="true">Annuler vos modifications</string>
-    <string name="user_edition_save_changes" translatable="true">Sauvegarder vos modifications</string>
-    <string name="user_edition_modified_successfully" translatable="true">Changements correctement modifié</string>
     <string name="user_edition_delete_user" translatable="true">Supprimer le compte</string>
     <string name="user_edition_delete_user_confirmation" translatable="true">Toutes vos données seront supprimées, êtes-vous sûr de poursuivre ?</string>
     <string name="user_edition_delete_user_confirm" translatable="true">Confirmer</string>
@@ -108,11 +98,21 @@
     <string name="user_edition_delete_user_failure" translatable="true">Echec de suppression de compte, veuillez essayer plus tard</string>
     <string name="user_edition_modified_offline" translatable="true">Suppression du compte hors ligne</string>
     <string name="user_edition_delete_user_offline" translatable="true">Veuillez être connecté à l\'Internet pour supprimer votre compte</string>
+    <string name="user_edition_content_description_remove_social" translatable="false">Supprimer le réseau social de l\'utilisateur</string>
+    <string name="user_edition_first_name" translatable="true">Modifier Prénom</string>
+    <string name="user_edition_last_name" translatable="true">Modifier Nom</string>
+    <string name="user_edition_bio" translatable="true">Modifier Biographie</string>
+    <string name="user_edition_edit_interests" translatable="true">Modifier vos centres d\'intérêts</string>
+    <string name="user_edition_edit_socials" translatable="true">Modifier vos réseaux sociaux</string>
+    <string name="user_edition_discard_changes" translatable="true">Annuler vos modifications</string>
+    <string name="user_edition_save_changes" translatable="true">Sauvegarder vos modifications</string>
+    <string name="user_edition_modified_successfully" translatable="true">Changements correctement modifiés</string>
+
 
 
     <!-- EmailVerification Strings -->
-    <string name="email_verification_refresh_failed">Echec de l\'actualisation</string>
-    <string name="email_verification_sent_failed">Echec de l\'envoi de l\'email</string>
+    <string name="email_verification_refresh_failed">Échec de l\'actualisation</string>
+    <string name="email_verification_sent_failed">Échec de l\'envoi de l\'email</string>
     <string name="email_verification_verified">Email vérifié!</string>
     <string name="email_verification_verified_continue">Continuer</string>
     <string name="email_verification_verify_request">Veuillez vérifier votre email</string>
@@ -120,8 +120,9 @@
     <string name="email_verification_email_sent_to_verify">. Veuillez vérifier votre email pour continuer.</string>
     <string name="email_verification_email_resend">Renvoyer l\'email</string>
     <string name="email_verification_email_refresh">Rafraîchir</string>
-    <string name="email_verification_content_description_go_back">Retourner</string>
+    <string name="email_verification_content_description_go_back">Retour</string>
     <string name="email_verification_content_description_refresh">Rafraîchir</string>
+    <string name="email_verification_toast_email_sent">Email envoyé</string>
 
     <!-- Welcome Screen Strings -->
     <string name="welcome_message">La plus grande plateforme de vie universitaire au monde.</string>
@@ -129,7 +130,7 @@
     <string name="welcome_email_enter">Entrez votre adresse email</string>
     <string name="welcome_email_display">john.doe@epfl.ch</string>
     <string name="welcome_password_enter">Entrez votre mot de passe</string>
-    <string name="welcome_password_error_correction">Min. 6 charactères and 1 chiffre</string>
+    <string name="welcome_password_error_correction">Min. 6 caractères and 1 chiffre</string>
     <string name="welcome_malformed_email_password">Email ou mot de passe mal formé.</string>
     <string name="welcome_button_continue">Continuer</string>
     <string name="welcome_toast_invalid_creds">Identifiants invalides</string>
@@ -140,19 +141,31 @@
     <string name="welcome_toast_account_created">Compte créé avec succès</string>
     <string name="welcome_content_description_hide_password">Cacher le mot de passe</string>
     <string name="welcome_content_description_show_password">Montrer le mot de passe</string>
-    <string name="welcome_forgot_password">Oublié votre mot de passe ?</string>
+    <string name="welcome_forgot_password">Oubli de mot de passe ?</string>
+
+    <!-- Picture Selection Tool Strings -->
+    <string name="selection_tool_selected_picture_text">Images sélectionnées</string>
+    <string name="selection_tool_remove_picture">Supprimer l\'image</string>
+    <string name="selection_tool_add_gallery_content_description">Ajouter depuis la galerie</string>
+    <string name="selection_tool_gallery_text">Galerie</string>
+    <string name="selection_tool_take_picture">Prendre une photo</string>
+    <string name="selection_tool_camera_text">Appareil photo</string>
+    <string name="selection_tool_validate_text">Valider</string>
+    <string name="selection_tool_cancel_text">Annuler</string>
+
 
     /**
     * package: event
     */
 
     <!-- Event Card Strings -->
-    <string name="event_event_title">Titre de lévènement</string>
+    <string name="event_event_title">Titre de l\'évènement</string>
     <string name="event_catchy_description">Description accrocheuse</string>
     <string name="event_card_content_description_event_image">Image de l\'évènement</string>
     <string name="event_card_content_description_saved_event">Sauvegardé</string>
     <string name="event_card_content_description_not_saved_event">Non sauvegardé</string>
-    <string name="event_card_content_description_association_logo">Logo d\'association</string>
+    <string name="event_card_content_description_association_logo">Logo de l\'association</string>
+    <string name="event_card_interested_string">Intéréssés</string>
 
     <!-- Event Creation Strings -->
     <string name="event_creation_screen">Création d\'un évènement</string>
@@ -189,11 +202,16 @@
     <string name="event_edit_failed">Echec lors de la modification</string>
     <string name="event_edit_save_button">Sauvegarder</string>
 
+    <!-- Event Edit Component Strings -->
+    <string name="event_edit_date_picker_desc">Sélectionner une date</string>
+    <string name="event_edit_time_picker_desc">Sélectionner une heure</string>
+    <string name="event_edit_toast_more_button">Continuez à taper pour voir plus de résultats</string>
+
     <!-- Associations Overlay Strings -->
     <string name="associations_overlay_coauthors_title" translatable="true">Co-organisateurs</string>
     <string name="associations_overlay_coauthors_description" translatable="true">Choisir quels associations organisent l\'évènement avec vous</string>
     <string name="associations_overlay_tagged_title" translatable="true">Tag associations</string>
-    <string name="associations_overlay_tagged_description" translatable="true">Choisir quels associations seront présentes a l\'évènement</string>
+    <string name="associations_overlay_tagged_description" translatable="true">Choisir quelles associations seront présentes a l\'évènement</string>
     <string name="associations_overlay_search_no_results" translatable="true">Aucun résultat trouvé</string>
     <string name="associations_overlay_remove" translatable="true">Supprimer</string>
 
@@ -202,7 +220,7 @@
     */
 
     <!-- Explore Screen Strings -->
-    <string name="explore_content_screen_title">Explorez nos Associations</string>
+    <string name="explore_content_screen_title">Explorez les Associations</string>
     <string name="search_placeholder">Recherche</string>
     <string name="explore_search_error_message">Une erreur s\'est produite lors de la recherche</string>
     <string name="explore_search_no_results">Aucun résultat trouvé</string>
@@ -255,7 +273,7 @@
     <string name="settings_location_summary_granted">Toutes les permissions de localisation ont été accordées</string>
     <string name="settings_location_summary_denied">Il manque des permissions de localisation</string>
     <string name="settings_location_content_description">Réglages de localisation</string>
-    <string name="settings_language_title">Language</string>
+    <string name="settings_language_title">Langue</string>
     <string name="settings_language_content_description">Réglages de Langue</string>
     <string name="settings_reset_password">Réinitialiser le mot de passe</string>
     <string name="settings_reset_password_sent">L\'email de modification de mot de passe a bien été envoyé</string>
@@ -267,13 +285,16 @@
 
     <!-- UserProfile Strings -->
     <string name="user_profile_toast_error">Une erreur est survenue.</string>
-    <string name="user_profile_your_profile_text">Votre profile</string>
+    <string name="user_profile_your_profile_text">Votre profil</string>
     <string name="user_profile_content_description_more">Voir plus</string>
     <string name="user_profile_content_description_pfp">Photo de Profil</string>
     <string name="user_profile_following_associations_text">Suivis</string>
     <string name="user_profile_bottom_sheet_edit">Modifier le profil</string>
     <string name="user_profile_bottom_sheet_settings">Paramètres</string>
     <string name="user_profile_bottom_sheet_sign_out">Se déconnecter</string>
+    <string name="user_profile_claim_association">Revendiquer l\'association</string>
+    <string name="user_profile_no_associations">Vous n\'êtes membre d\'aucune association pour le moment.</string>
+    <string name="user_profile_association_joined">Rejointe</string>
 
     <!-- UserClaimAssociation Strings -->
     <string name="user_claim_association_association_go_back">Retour</string>
@@ -286,7 +307,7 @@
 
     <!-- UserClaimAssociationPresidentialRights Strings -->
     <string name="user_claim_association_presidential_rights_claim_presidential_rights">Réclamer les droits présidentiels</string>
-    <string name="user_claim_association_presidential_rights_enter_presidential_email">Entrez l\'adresse email présidentielle :</string>
+    <string name="user_claim_association_presidential_rights_enter_presidential_email">Entrez l\'adresse email de présidence :</string>
     <string name="user_claim_association_presidential_rights_email_address">Adresse e-mail</string>
     <string name="user_claim_association_presidential_rights_incorrect_email_error">Adresse e-mail incorrecte. Veuillez réessayer.</string>
     <string name="user_claim_association_presidential_rights_enter_verification_code">Entrez le code envoyé :</string>
@@ -323,7 +344,7 @@
 
     <!-- Event Types Strings from EventType.kt -->
     <string name="event_type_festival">Festival</string>
-    <string name="event_type_aperitif">Aperitif</string>
+    <string name="event_type_aperitif">Apéritif</string>
     <string name="event_type_night_party">Soirée</string>
     <string name="event_type_jam">Jam</string>
     <string name="event_type_networking">Réseautage</string>
@@ -350,7 +371,7 @@
     <string name="interest_science" translatable="true">Science</string>
     <string name="interest_literature" translatable="true">Littérature</string>
     <string name="interest_travel" translatable="true">Voyage</string>
-    <string name="interest_food" translatable="true">Nourritue</string>
+    <string name="interest_food" translatable="true">Nourriture</string>
     <string name="interest_gaming" translatable="true">Gaming</string>
     <string name="interest_festivals" translatable="true">Festivals</string>
     <string name="settings_back_content_description">Retour</string>
@@ -360,17 +381,50 @@
 
     <!-- Reset Password Strings -->
     <string name="reset_password_success_toast">Un email a été envoyé à l\'adresse indiquée</string>
-    <string name="reset_password_error_toast">Echec de l\'envoi de l\'email de réinitialisation</string>
+    <string name="reset_password_error_toast">Echec de l\'envoi de l\'email</string>
     <string name="reset_password_text">Veuillez entrer un mail de récupération</string>
     <string name="reset_password_email_place_holder">Le lien va être envoyé à cette addresse</string>
     <string name="reset_password_button">Confirmer</string>
-    <string name="reset_password_invalid_email">Veuillez entrer un addresse email valide</string>
+    <string name="reset_password_invalid_email">Veuillez entrer une addresse email valide</string>
 
 
 
     <!-- Notification Strings -->
     <string name="notification_event_reminder" translatable="true">L\'évènement va bientôt commencer :)</string>
     <string name="notification_event_reminder_default_message" translatable="true">Un évènement va bientôt avoir lieu</string>
+
+    <string name="event_sign_up">Je viens !</string>
+    <string name="event_not_found">ERREUR: évènement introuvable</string>
+    <string name="event_details_content_description_saved">Sauvegardé</string>
+    <string name="event_details_content_description_not_saved">Non sauvegardé</string>
+    <string name="event_price_free">Gratuite !</string>
+    <string name="event_price">Entrée</string>
+    <string name="event_places_remaining">places restantes</string>
+    <string name="event_location_button_description">Icône pour voir la localisation de l\'évènement</string>
+    <string name="event_signup_button_description">Icône pour s\'inscrire à l\'évènement.</string>
+    <string name="association_image_description">Image de l\'association</string>
+    <string name="reset_password_go_back">Retour à la page d\'accueil</string>
+
+    <!-- Bottom Navigation Strings -->
+    <string name="bottom_nav_home">Accueil</string>
+    <string name="bottom_nav_saved">Sauvegardés</string>
+    <string name="bottom_nav_explore">Découverte</string>
+    <string name="bottom_nav_profile">Profil</string>
+    <string name="nav_auth">Authentification</string>
+
+    <string name="association_category_epfl_bodies">Corps EPFL</string>
+    <string name="association_category_representation">Représentation</string>
+    <string name="association_category_projects">Projets Interdisciplinaires</string>
+    <string name="association_category_epfl_students">Étudiants EPFL</string>
+    <string name="association_category_countries">Étudiants par pays</string>
+    <string name="association_category_sustainability">Durabilité</string>
+    <string name="association_category_science_tech">Science et Technologie</string>
+    <string name="association_category_culture_society">Culture et société</string>
+    <string name="association_category_arts">Arts</string>
+    <string name="association_category_entertainment">Divertissement</string>
+    <string name="association_category_sports">Sports</string>
+    <string name="association_category_guidance">Orientation professionnelle</string>
+    <string name="association_category_unknown">Inconnue</string>
 
 </resources>
 

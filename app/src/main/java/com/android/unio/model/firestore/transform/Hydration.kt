@@ -20,6 +20,14 @@ import com.android.unio.model.user.UserSocial
 import com.google.firebase.Timestamp
 import firestoreReferenceElementWith
 
+// This file contains extension functions for hydrating Firestore data into model objects.
+
+/**
+ * Hydrates Firestore [Association] data into model objects.
+ *
+ * @param data Firestore data to hydrate.
+ * @return Hydrated Association object.
+ */
 fun AssociationRepositoryFirestore.Companion.hydrate(data: Map<String, Any>?): Association {
   val category = data?.get(Association::category.name)
   val events =
@@ -29,7 +37,7 @@ fun AssociationRepositoryFirestore.Companion.hydrate(data: Map<String, Any>?): A
   val permissions = Permissions.NONE
   val roles =
       rolesMap.map { (roleUid, roleData) ->
-        Role.createRole(
+        Role(
             uid = roleUid,
             displayName = roleData[Role::displayName.name] as? String ?: "",
             permissions =
@@ -71,6 +79,12 @@ fun AssociationRepositoryFirestore.Companion.hydrate(data: Map<String, Any>?): A
   )
 }
 
+/**
+ * Hydrates Firestore [User] data into model objects.
+ *
+ * @param data Firestore data to hydrate.
+ * @return Hydrated User object.
+ */
 fun UserRepositoryFirestore.Companion.hydrate(data: Map<String, Any>?): User {
   val followedAssociationsUids =
       data?.get(User::followedAssociations.name) as? List<String> ?: emptyList()
@@ -105,6 +119,12 @@ fun UserRepositoryFirestore.Companion.hydrate(data: Map<String, Any>?): User {
       profilePicture = data?.get(User::profilePicture.name) as? String ?: "")
 }
 
+/**
+ * Hydrates Firestore [Event] data into model objects.
+ *
+ * @param data Firestore data to hydrate.
+ * @return Hydrated Event object.
+ */
 fun EventRepositoryFirestore.Companion.hydrate(data: Map<String, Any>?): Event {
   val organisers =
       Association.firestoreReferenceListWith(
@@ -135,5 +155,6 @@ fun EventRepositoryFirestore.Companion.hydrate(data: Map<String, Any>?): Event {
               longitude = location.get(Location::longitude.name) as? Double ?: 0.0,
               name = location.get(Location::name.name) as? String ?: ""),
       types = types.map { EventType.valueOf(it) },
-      placesRemaining = data?.get(Event::placesRemaining.name) as? Int ?: -1)
+      maxNumberOfPlaces = (data?.get(Event::maxNumberOfPlaces.name) as? Number ?: -1).toInt(),
+      numberOfSaved = (data?.get(Event::numberOfSaved.name) as? Number ?: 0).toInt())
 }

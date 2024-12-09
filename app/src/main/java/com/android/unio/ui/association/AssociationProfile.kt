@@ -67,12 +67,13 @@ import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.strings.test_tags.AssociationProfileTestTags
 import com.android.unio.model.user.User
 import com.android.unio.model.user.UserViewModel
-import com.android.unio.model.utils.Utils
+import com.android.unio.model.utils.NetworkUtils
 import com.android.unio.ui.event.EventCard
 import com.android.unio.ui.image.AsyncImageWrapper
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
 import com.android.unio.ui.theme.AppTypography
+import com.android.unio.ui.utils.ToastUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -281,7 +282,7 @@ private fun AssociationProfileContent(
     mutableStateOf(user!!.followedAssociations.contains(association!!.uid))
   }
   var enableButton by remember { mutableStateOf(true) }
-  val isConnected = Utils.checkInternetConnection(context)
+  val isConnected = NetworkUtils.checkInternetConnection(context)
 
   val onFollow = {
     if (isConnected) {
@@ -292,9 +293,7 @@ private fun AssociationProfileContent(
       }
       isFollowed = !isFollowed
     } else {
-      Toast.makeText(
-              context, context.getString(R.string.no_internet_connection), Toast.LENGTH_SHORT)
-          .show()
+      ToastUtils.showToast(context, context.getString(R.string.no_internet_connection))
     }
   }
 
@@ -458,6 +457,7 @@ private fun AssociationEvents(
     eventViewModel: EventViewModel
 ) {
   val context = LocalContext.current
+  val isConnected = NetworkUtils.checkInternetConnection(context)
 
   var isSeeMoreClicked by remember { mutableStateOf(false) }
 
@@ -496,7 +496,13 @@ private fun AssociationEvents(
   }
   if (isAdmin) {
     Button(
-        onClick = { navigationAction.navigateTo(Screen.EVENT_CREATION) },
+        onClick = {
+          if (isConnected) {
+            navigationAction.navigateTo(Screen.EVENT_CREATION)
+          } else {
+            ToastUtils.showToast(context, context.getString(R.string.no_internet_connection))
+          }
+        },
         modifier = Modifier.testTag(AssociationProfileTestTags.ADD_EVENT_BUTTON),
         contentPadding = ButtonDefaults.ButtonWithIconContentPadding) {
           Icon(

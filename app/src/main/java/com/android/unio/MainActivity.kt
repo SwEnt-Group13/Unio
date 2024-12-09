@@ -18,6 +18,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -26,9 +27,11 @@ import androidx.navigation.navigation
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.authentication.AuthViewModel
 import com.android.unio.model.event.EventViewModel
-import com.android.unio.model.image.ImageRepositoryFirebaseStorage
+import com.android.unio.model.image.ImageViewModel
 import com.android.unio.model.map.MapViewModel
 import com.android.unio.model.map.nominatim.NominatimLocationSearchViewModel
+import com.android.unio.model.preferences.AppPreferences
+import com.android.unio.model.preferences.getOrDefault
 import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.association.AssociationProfileScreen
@@ -56,14 +59,12 @@ import com.android.unio.ui.user.UserProfileEditionScreen
 import com.android.unio.ui.user.UserProfileScreen
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.HiltAndroidApp
-import javax.inject.Inject
+import java.util.Locale
+import me.zhanghai.compose.preference.LocalPreferenceFlow
 import me.zhanghai.compose.preference.ProvidePreferenceLocals
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-
-  @Inject lateinit var imageRepository: ImageRepositoryFirebaseStorage
-
   @RequiresApi(Build.VERSION_CODES.TIRAMISU)
   @SuppressLint("SourceLockedOrientationActivity")
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -72,7 +73,7 @@ class MainActivity : ComponentActivity() {
 
     setContent {
       Surface(modifier = Modifier.fillMaxSize()) {
-        ProvidePreferenceLocals { AppTheme { UnioApp(imageRepository) } }
+        ProvidePreferenceLocals { AppTheme { UnioApp() } }
       }
     }
   }
@@ -81,7 +82,20 @@ class MainActivity : ComponentActivity() {
 @HiltAndroidApp class UnioApplication : Application()
 
 @Composable
-fun UnioApp(imageRepository: ImageRepositoryFirebaseStorage) {
+fun UnioApp() {
+  // Sets language according to LocalPreferences
+  val preferences by LocalPreferenceFlow.current.collectAsState()
+  val context = LocalContext.current
+  val language = preferences.getOrDefault(AppPreferences.LANGUAGE, AppPreferences.Language.default)
+  val locale = Locale(language)
+  Locale.setDefault(locale)
+
+  val configuration = context.resources.configuration
+  configuration.setLocale(locale)
+  configuration.setLayoutDirection(locale)
+  context.createConfigurationContext(configuration)
+  context.resources.updateConfiguration(configuration, context.resources.displayMetrics)
+
   val navController = rememberNavController()
 
   val navigationActions = NavigationAction(navController)
@@ -93,6 +107,7 @@ fun UnioApp(imageRepository: ImageRepositoryFirebaseStorage) {
   val eventViewModel = hiltViewModel<EventViewModel>()
   val mapViewModel = hiltViewModel<MapViewModel>()
   val nominatimLocationSearchViewModel = hiltViewModel<NominatimLocationSearchViewModel>()
+  val imageViewModel = hiltViewModel<ImageViewModel>()
 
   // Observe the authentication state
   val authState by authViewModel.authState.collectAsState()
@@ -115,7 +130,7 @@ fun UnioApp(imageRepository: ImageRepositoryFirebaseStorage) {
         EmailVerificationScreen(navigationActions, userViewModel)
       }
       composable(Screen.ACCOUNT_DETAILS) {
-        AccountDetailsScreen(navigationActions, userViewModel, imageRepository)
+        AccountDetailsScreen(navigationActions, userViewModel, imageViewModel)
       }
       composable(Screen.RESET_PASSWORD) { ResetPasswordScreen(navigationActions, authViewModel) }
     }
@@ -181,7 +196,7 @@ fun UnioApp(imageRepository: ImageRepositoryFirebaseStorage) {
         UserProfileScreen(userViewModel, associationViewModel, navigationActions)
       }
       composable(Screen.EDIT_PROFILE) {
-        UserProfileEditionScreen(userViewModel, imageRepository, navigationActions)
+        UserProfileEditionScreen(userViewModel, imageViewModel, navigationActions)
       }
       composable(Screen.SETTINGS) {
         SettingsScreen(navigationActions, authViewModel, userViewModel)

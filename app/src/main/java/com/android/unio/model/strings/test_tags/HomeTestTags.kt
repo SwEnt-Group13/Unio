@@ -8,4 +8,5 @@ object HomeTestTags {
   const val SEARCH_BAR_INPUT = "searchBarInput"
   const val SEARCH_BAR = "searchBar"
   const val EMPTY_EVENT_PROMPT = "emptyEventPrompt"
+  const val EVENT_LIST = "eventList"
 }

@@ -27,6 +27,7 @@ import com.android.unio.model.map.nominatim.NominatimLocationRepository
 import com.android.unio.model.map.nominatim.NominatimLocationSearchViewModel
 import com.android.unio.model.search.SearchRepository
 import com.android.unio.model.search.SearchViewModel
+import com.android.unio.model.strings.TextLengthSamples
 import com.android.unio.model.strings.test_tags.EventCreationOverlayTestTags
 import com.android.unio.model.strings.test_tags.EventCreationTestTags
 import com.android.unio.ui.event.EventCreationScreen
@@ -225,6 +226,59 @@ class EventCreationTest : TearDown() {
   }
 
   @Test
+  fun testCorrectlyDisplaysCharacterCountForTextFields() {
+    nominatimLocationSearchViewModel =
+        NominatimLocationSearchViewModel(nominatimLocationRepositoryWithoutFunctionality)
+    composeTestRule.setContent {
+      EventCreationScreen(
+          navigationAction,
+          searchViewModel,
+          associationViewModel,
+          eventViewModel,
+          nominatimLocationSearchViewModel)
+    }
+
+    composeTestRule
+        .onNodeWithTag(EventCreationTestTags.EVENT_TITLE)
+        .performScrollTo()
+        .performTextClearance()
+    composeTestRule
+        .onNodeWithTag(EventCreationTestTags.EVENT_TITLE)
+        .performTextInput(TextLengthSamples.SMALL)
+    composeTestRule
+        .onNodeWithTag(EventCreationTestTags.TITLE_CHARACTER_COUNTER, useUnmergedTree = true)
+        .assertExists()
+    composeTestRule.onNodeWithTag(EventCreationTestTags.EVENT_TITLE).performTextClearance()
+
+    composeTestRule
+        .onNodeWithTag(EventCreationTestTags.SHORT_DESCRIPTION)
+        .performScrollTo()
+        .performTextClearance()
+    composeTestRule
+        .onNodeWithTag(EventCreationTestTags.SHORT_DESCRIPTION)
+        .performScrollTo()
+        .performTextInput(TextLengthSamples.MEDIUM)
+    composeTestRule
+        .onNodeWithTag(
+            EventCreationTestTags.SHORT_DESCRIPTION_CHARACTER_COUNTER, useUnmergedTree = true)
+        .assertExists()
+    composeTestRule.onNodeWithTag(EventCreationTestTags.SHORT_DESCRIPTION).performTextClearance()
+
+    composeTestRule
+        .onNodeWithTag(EventCreationTestTags.DESCRIPTION)
+        .performScrollTo()
+        .performTextClearance()
+    composeTestRule
+        .onNodeWithTag(EventCreationTestTags.DESCRIPTION)
+        .performScrollTo()
+        .performTextInput(TextLengthSamples.LARGE)
+    composeTestRule
+        .onNodeWithTag(EventCreationTestTags.DESCRIPTION_CHARACTER_COUNTER, useUnmergedTree = true)
+        .assertExists()
+    composeTestRule.onNodeWithTag(EventCreationTestTags.DESCRIPTION).performTextClearance()
+  }
+
+  @Test
   fun testLocationInputFunctionality() {
     server = MockWebServer()
     server.start()
@@ -280,12 +334,12 @@ class EventCreationTest : TearDown() {
 
     composeTestRule.waitUntil(10000) {
       composeTestRule
-          .onNodeWithTag(EventCreationTestTags.LOCATION_SUGGESTION_ITEM + "45.512331")
+          .onNodeWithTag(EventCreationTestTags.LOCATION_SUGGESTION_ITEM_LATITUDE + "45.512331")
           .isDisplayed()
     }
 
     composeTestRule
-        .onNodeWithTag(EventCreationTestTags.LOCATION_SUGGESTION_ITEM + "45.512331")
+        .onNodeWithTag(EventCreationTestTags.LOCATION_SUGGESTION_ITEM_LATITUDE + "45.512331")
         .performClick()
 
     composeTestRule.waitForIdle()

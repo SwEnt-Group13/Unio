@@ -28,6 +28,7 @@ class SearchViewModel @Inject constructor(private val repository: SearchReposito
 
   val status = MutableStateFlow(Status.IDLE)
 
+  // Used to debounce the search query
   private var searchJob: Job? = null
 
   /**
@@ -43,6 +44,10 @@ class SearchViewModel @Inject constructor(private val repository: SearchReposito
     IDLE
   }
 
+  /**
+   * Enum class representing the type of search to perform. ASSOCIATION for searching associations,
+   * and EVENT for searching events.
+   */
   enum class SearchType {
     ASSOCIATION,
     EVENT
@@ -98,6 +103,7 @@ class SearchViewModel @Inject constructor(private val repository: SearchReposito
     status.value = Status.IDLE
   }
 
+  /** Clears the list of events and sets the search status to [Status.IDLE]. */
   private fun clearEvents() {
     _events.value = emptyList()
     status.value = Status.IDLE

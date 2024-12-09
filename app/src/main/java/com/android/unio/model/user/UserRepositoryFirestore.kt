@@ -3,12 +3,14 @@ package com.android.unio.model.user
 import com.android.unio.model.authentication.registerAuthStateListener
 import com.android.unio.model.firestore.FirestorePaths.USER_PATH
 import com.android.unio.model.firestore.performFirestoreOperation
+import com.android.unio.model.firestore.registerSnapshotListener
 import com.android.unio.model.firestore.transform.hydrate
 import com.android.unio.model.firestore.transform.serialize
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.MetadataChanges
 import javax.inject.Inject
 
 class UserRepositoryFirestore @Inject constructor(private val db: FirebaseFirestore) :
@@ -22,10 +24,22 @@ class UserRepositoryFirestore @Inject constructor(private val db: FirebaseFirest
     }
   }
 
+  /**
+   * Fetches a [DocumentReference] for a [User] object using the provided [uid].
+   *
+   * @param uid [String] : The uid of the [User] to fetch.
+   * @return [DocumentReference] : The [DocumentReference] for the [User] object.
+   */
   override fun getUserRef(uid: String): DocumentReference {
     return db.collection(USER_PATH).document(uid)
   }
 
+  /**
+   * Fetches all [User] objects from Firestore.
+   *
+   * @param onSuccess [(List<User>) -> Unit] : The callback to call when the [User]s are fetched.
+   * @param onFailure [(Exception) -> Unit] : The callback to call when the fetch fails.
+   */
   override fun getUsers(onSuccess: (List<User>) -> Unit, onFailure: (Exception) -> Unit) {
     db.collection(USER_PATH)
         .get()
@@ -37,27 +51,54 @@ class UserRepositoryFirestore @Inject constructor(private val db: FirebaseFirest
             onFailure = onFailure)
   }
 
+  /**
+   * Gets the user with the given id. Here, instead of using success and failure listener directly,
+   * we use a Snapshot Listener that call directly the callback when a read/write are made on the
+   * local (cache) database.
+   *
+   * @param id [String] : the id of the user to get.
+   * @param onSuccess [(User) -> Unit] : the callback to call when the user is found.
+   * @param onFailure [(Exception) -> Unit] : the callback to call when an error occurs.
+   */
   override fun getUserWithId(
       id: String,
       onSuccess: (User) -> Unit,
       onFailure: (Exception) -> Unit
   ) {
-    getUserRef(id)
-        .get()
-        .performFirestoreOperation(
-            onSuccess = { document ->
-              val user = hydrate(document.data)
-              onSuccess(user)
-            },
-            onFailure = onFailure)
+    getUserRef(id).registerSnapshotListener(MetadataChanges.EXCLUDE) { documentSnapshot, exception
+      ->
+      if (exception != null) {
+        onFailure(exception)
+        return@registerSnapshotListener
+      }
+
+      if (documentSnapshot != null && documentSnapshot.exists()) {
+        val user = hydrate(documentSnapshot.data)
+        onSuccess(user)
+      }
+    }
   }
 
+  /**
+   * Saves a [User] object to Firestore.
+   *
+   * @param user [User] : The [User] object to save.
+   * @param onSuccess [() -> Unit] : The callback to call when the [User] is saved.
+   * @param onFailure [(Exception) -> Unit] : The callback to call when the save fails.
+   */
   override fun updateUser(user: User, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
     getUserRef(user.uid)
         .set(serialize(user))
         .performFirestoreOperation(onSuccess = { onSuccess() }, onFailure = onFailure)
   }
 
+  /**
+   * Deletes a [User] object from Firestore.
+   *
+   * @param userId [String] : The id of the [User] to delete.
+   * @param onSuccess [() -> Unit] : The callback to call when the [User] is deleted.
+   * @param onFailure [(Exception) -> Unit] : The callback to call when the delete fails.
+   */
   override fun deleteUserInFirestore(
       userId: String,
       onSuccess: () -> Unit,
@@ -70,6 +111,13 @@ class UserRepositoryFirestore @Inject constructor(private val db: FirebaseFirest
         .addOnFailureListener { onFailure(it) }
   }
 
+  /**
+   * Deletes a [User] object from the authentication system.
+   *
+   * @param userId [String] : The id of the [User] to delete.
+   * @param onSuccess [() -> Unit] : The callback to call when the [User] is deleted.
+   * @param onFailure [(Exception) -> Unit] : The callback to call when the delete fails.
+   */
   override fun deleteUserInAuth(
       userId: String,
       onSuccess: () -> Unit,
