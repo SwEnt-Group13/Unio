@@ -23,7 +23,7 @@ import com.android.unio.model.strings.test_tags.UserEditionTestTags
 import com.android.unio.model.user.User
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
-import com.android.unio.ui.user.UserProfileEditionScreenContent
+import com.android.unio.ui.user.UserProfileEditionScreenScaffold
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import io.mockk.MockKAnnotations
@@ -74,7 +74,7 @@ class UserProfileEditionTest : TearDown() {
     every { getSystemService(any(), ConnectivityManager::class.java) } returns connectivityManager
 
     composeTestRule.setContent {
-      UserProfileEditionScreenContent(
+      UserProfileEditionScreenScaffold(
           user,
           { navigationAction.goBack() },
           { uri, method -> method("") },

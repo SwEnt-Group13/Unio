@@ -13,6 +13,11 @@ import androidx.navigation.NavHostController
 import com.android.unio.R
 import com.android.unio.model.strings.test_tags.BottomNavBarTestTags
 
+/**
+ * Class that handles navigation actions.
+ *
+ * @param navController The [NavHostController] to use for navigation
+ */
 open class NavigationAction(val navController: NavHostController) {
 
   /**
@@ -30,8 +35,8 @@ open class NavigationAction(val navController: NavHostController) {
   /**
    * Navigate to the specified [TopLevelDestination]
    *
-   * @param tld Main destination to navigate to, clearing the back stack when navigating to a new
-   *   one.
+   * @param tld Main [TopLevelDestination] to navigate to, clearing the back stack when navigating
+   *   to a new one.
    */
   open fun navigateTo(tld: TopLevelDestination) {
     navController.navigate(tld.route) {
@@ -40,7 +45,7 @@ open class NavigationAction(val navController: NavHostController) {
         inclusive = true
       }
 
-      // To avoid having multiples copies of the same destination if we reselct the same item
+      // To avoid having multiples copies of the same destination if we reselect the same item
       launchSingleTop = true
 
       if (tld.route != Route.AUTH) {
@@ -94,6 +99,13 @@ val LIST_TOP_LEVEL_DESTINATION =
         TopLevelDestinations.EXPLORE,
         TopLevelDestinations.MY_PROFILE)
 
+/**
+ * Data class representing a top level destination in the app.
+ *
+ * @param route The route to the destination
+ * @param icon The icon to display for the destination
+ * @param textId The text id for the destination
+ */
 data class TopLevelDestination(val route: String, val icon: ImageVector, val textId: String)
 
 object TopLevelDestinations {
@@ -124,6 +136,13 @@ object Route {
   const val SAVED = "Saved"
   const val MY_PROFILE = "Profile"
 
+  /**
+   * Get the translated string for the provided route.
+   *
+   * @param context The context
+   * @param route The route
+   * @return The translated string
+   */
   fun toTranslatedString(context: Context, route: String): String {
 
     val strId =
