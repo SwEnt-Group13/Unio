@@ -14,6 +14,7 @@ class FirestoreReferenceElement<T : UniquelyIdentifiable>(
     private val hydrate: (Map<String, Any>?) -> T
 ) : ReferenceElement<T> {
 
+  // We should consider rewriting this in an efficient manner
   private var _uid: String = ""
 
   override val uid: String
@@ -26,6 +27,12 @@ class FirestoreReferenceElement<T : UniquelyIdentifiable>(
   private val _element = MutableStateFlow<T?>(null)
   override val element: StateFlow<T?> = _element
 
+  /**
+   * Fetches the Firestore document with the current UID and hydrates it into the element.
+   *
+   * @param onSuccess Callback to run after the fetch is successful.
+   * @param lazy If true, the fetch will only be performed if the element is not already hydrated.
+   */
   override fun fetch(onSuccess: () -> Unit, lazy: Boolean) {
     if (lazy && _element.value?.uid == _uid) {
       onSuccess()
@@ -66,7 +73,14 @@ class FirestoreReferenceElement<T : UniquelyIdentifiable>(
       return FirestoreReferenceElement(collectionPath, hydrate)
     }
 
-    /** Creates a [FirestoreReferenceElement] for a specific UID. */
+    /**
+     * Creates a [FirestoreReferenceElement] for a specific UID.
+     *
+     * @param uid UID of the element.
+     * @param collectionPath Path to the Firestore collection.
+     * @param hydrate Function to hydrate Firestore data into the element.
+     * @return FirestoreReferenceElement with the specified UID.
+     */
     fun <T : UniquelyIdentifiable> withUid(
         uid: String,
         collectionPath: String? = null,
@@ -77,12 +91,23 @@ class FirestoreReferenceElement<T : UniquelyIdentifiable>(
   }
 }
 
+/**
+ * Creates an empty [FirestoreReferenceElement] for [User].
+ *
+ * @return Empty FirestoreReferenceElement for User.
+ */
 fun User.Companion.emptyFirestoreReferenceElement(): FirestoreReferenceElement<User> {
   return FirestoreReferenceElement.empty(
       collectionPath = FirestorePaths.USER_PATH,
       hydrate = UserRepositoryFirestore.Companion::hydrate)
 }
 
+/**
+ * Creates a [FirestoreReferenceElement] for [User] with a specific UID.
+ *
+ * @param uid UID of the User.
+ * @return FirestoreReferenceElement for User with the specified UID.
+ */
 fun User.Companion.firestoreReferenceElementWith(uid: String): FirestoreReferenceElement<User> {
   return FirestoreReferenceElement.withUid(
       uid = uid,

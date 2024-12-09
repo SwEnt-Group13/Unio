@@ -74,7 +74,6 @@ fun EditAssociationScreen(
             newAssociation,
             null,
             onSuccess = {
-              Log.d("EditAssociationScreen", "Association saved successfully.")
               associationViewModel.selectAssociation(newAssociation.uid)
               navigationAction.navigateTo(Screen.ASSOCIATION_PROFILE, Screen.EDIT_ASSOCIATION)
             },

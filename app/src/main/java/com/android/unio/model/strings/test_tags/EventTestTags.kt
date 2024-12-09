@@ -37,6 +37,9 @@ object EventCreationTestTags {
   const val END_TIME_FIELD = "eventCreationOverlayEndTimeField"
   const val END_DATE_PICKER = "eventCreationOverlayEndDatePicker"
   const val END_TIME_PICKER = "eventCreationOverlayEndTimePicker"
+  const val TITLE_CHARACTER_COUNTER = "eventCreationNameCharacterCounter"
+  const val SHORT_DESCRIPTION_CHARACTER_COUNTER = "eventCreationShortDescriptionCharacterCounter"
+  const val DESCRIPTION_CHARACTER_COUNTER = "eventCreationDescriptionCharacterCounter"
 }
 
 object EventCreationOverlayTestTags {

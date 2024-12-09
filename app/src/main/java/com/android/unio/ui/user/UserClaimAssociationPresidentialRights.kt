@@ -214,7 +214,11 @@ fun UserClaimAssociationPresidentialRightsScreenScaffold(
               Button(
                   onClick = {
                     coroutineScope.launch {
-                      verifyCode(Firebase.functions, association.uid, verificationCode, user.uid)
+                      verifyCode(
+                              Firebase.functions,
+                              association!!.uid,
+                              verificationCode,
+                              user!!.uid)
                           .addOnCompleteListener { task ->
                             if (!task.isSuccessful) {
                               val e = task.exception
@@ -270,7 +274,6 @@ fun UserClaimAssociationPresidentialRightsScreenScaffold(
                                     .show()
                               }
                             } else {
-                              Log.d("CloudFunction", "OK")
                               Toast.makeText(
                                       context,
                                       context.getString(
