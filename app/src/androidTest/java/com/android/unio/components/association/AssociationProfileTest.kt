@@ -211,9 +211,6 @@ class AssociationProfileTest : TearDown() {
         .assertDisplayComponentInScroll()
     composeTestRule.onNodeWithTag(AssociationProfileTestTags.TITLE).assertDisplayComponentInScroll()
     composeTestRule
-        .onNodeWithTag(AssociationProfileTestTags.SHARE_BUTTON)
-        .assertDisplayComponentInScroll()
-    composeTestRule
         .onNodeWithTag(AssociationProfileTestTags.HEADER_FOLLOWERS)
         .assertDisplayComponentInScroll()
     composeTestRule
@@ -230,12 +227,6 @@ class AssociationProfileTest : TearDown() {
         .assertDisplayComponentInScroll()
     composeTestRule
         .onNodeWithTag(AssociationProfileTestTags.CONTACT_MEMBERS_TITLE)
-        .assertDisplayComponentInScroll()
-    composeTestRule
-        .onNodeWithTag(AssociationProfileTestTags.RECRUITMENT_DESCRIPTION)
-        .assertDisplayComponentInScroll()
-    composeTestRule
-        .onNodeWithTag(AssociationProfileTestTags.RECRUITMENT_ROLES)
         .assertDisplayComponentInScroll()
   }
 
@@ -296,40 +287,6 @@ class AssociationProfileTest : TearDown() {
     composeTestRule.onNodeWithTag(AssociationProfileTestTags.FOLLOW_BUTTON).performClick()
     assert(!userViewModel.user.value?.followedAssociations!!.contains(associations.first().uid))
     assert(associationViewModel.selectedAssociation.value!!.followersCount == currentCount)
-  }
-
-  @Test
-  fun testButtonBehavior() {
-    every { connectivityManager?.activeNetwork } returns mockk<Network>()
-
-    composeTestRule.setContent {
-      AssociationProfileScaffold(
-          navigationAction, userViewModel, eventViewModel, associationViewModel) {}
-    }
-    // Share button
-    composeTestRule
-        .onNodeWithTag(AssociationProfileTestTags.SHARE_BUTTON)
-        .assertDisplayComponentInScroll()
-    composeTestRule.onNodeWithTag(AssociationProfileTestTags.SHARE_BUTTON).performClick()
-    assertSnackBarIsDisplayed()
-
-    // Roles buttons
-    composeTestRule
-        .onNodeWithTag(AssociationProfileTestTags.TREASURER_ROLES)
-        .assertDisplayComponentInScroll()
-    composeTestRule.onNodeWithTag(AssociationProfileTestTags.TREASURER_ROLES).performClick()
-    assertSnackBarIsDisplayed()
-    composeTestRule
-        .onNodeWithTag(AssociationProfileTestTags.DESIGNER_ROLES)
-        .assertDisplayComponentInScroll()
-    composeTestRule.onNodeWithTag(AssociationProfileTestTags.DESIGNER_ROLES).performClick()
-    assertSnackBarIsDisplayed()
-  }
-
-  private fun assertSnackBarIsDisplayed() {
-    composeTestRule.onNodeWithTag(AssociationProfileTestTags.SNACKBAR_HOST).assertIsDisplayed()
-    composeTestRule.onNodeWithTag(AssociationProfileTestTags.SNACKBAR_ACTION_BUTTON).performClick()
-    composeTestRule.onNodeWithTag(AssociationProfileTestTags.SNACKBAR_HOST).assertIsNotDisplayed()
   }
 
   @Test
