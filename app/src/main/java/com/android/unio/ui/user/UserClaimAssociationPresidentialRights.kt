@@ -39,6 +39,12 @@ import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
 import com.android.unio.ui.theme.AppTypography
+import com.android.unio.ui.user.UserClaimAssociationPresidentialRightsParserStrings.ASSOCIATION_UID
+import com.android.unio.ui.user.UserClaimAssociationPresidentialRightsParserStrings.CODE
+import com.android.unio.ui.user.UserClaimAssociationPresidentialRightsParserStrings.EMAIL
+import com.android.unio.ui.user.UserClaimAssociationPresidentialRightsParserStrings.SEND_VERIFICATION_EMAIL
+import com.android.unio.ui.user.UserClaimAssociationPresidentialRightsParserStrings.USER_UID
+import com.android.unio.ui.user.UserClaimAssociationPresidentialRightsParserStrings.VERIFY_CODE
 import com.google.android.gms.tasks.Task
 import com.google.firebase.Firebase
 import com.google.firebase.functions.FirebaseFunctions
@@ -86,12 +92,16 @@ fun UserClaimAssociationPresidentialRightsScreenScaffold(
                   text =
                       context.getString(
                           R.string.user_claim_association_presidential_rights_go_back),
-                  modifier = Modifier.testTag("AssociationProfileTitle"))
+                  modifier =
+                      Modifier.testTag(
+                          UserClaimAssociationPresidentialRightsTestTags.ASSOCIATION_PROFILE_TITLE))
             },
             navigationIcon = {
               IconButton(
                   onClick = { navigationAction.goBack() },
-                  modifier = Modifier.testTag("goBackButton")) {
+                  modifier =
+                      Modifier.testTag(
+                          UserClaimAssociationPresidentialRightsTestTags.GO_BACK_BUTTON)) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
                         contentDescription = context.getString(R.string.association_go_back))
@@ -203,11 +213,17 @@ fun UserClaimAssociationPresidentialRightsScreenScaffold(
                       Modifier.padding(vertical = 8.dp)
                           .testTag(
                               UserClaimAssociationPresidentialRightsTestTags.VERIFY_EMAIL_BUTTON)) {
-                    Text("Verify Email")
+                    Text(
+                        context.getString(
+                            R.string.user_claim_association_presidential_rights_verify_email))
                   }
             } else {
               // Step 2 ->>> If email is verified, ask for the verification code
-              Text("Enter the code sent to $email:", style = AppTypography.bodySmall)
+              Text(
+                  context.getString(
+                      R.string.user_claim_association_presidential_rights_enter_code_sent_to) +
+                      " $email:",
+                  style = AppTypography.bodySmall)
               TextField(
                   value = verificationCode,
                   onValueChange = { verificationCode = it },
@@ -338,6 +354,21 @@ fun UserClaimAssociationPresidentialRightsScreenScaffold(
       })
 }
 
+/** String manager for the verifyCode and sendVerificationEmail functions */
+private object UserClaimAssociationPresidentialRightsParserStrings {
+  // Verification code firebase function
+  const val VERIFY_CODE = "verifyCode"
+  const val CODE = "code"
+  const val USER_UID = "userUid"
+
+  // Send verification email firebase function
+  const val SEND_VERIFICATION_EMAIL = "sendVerificationEmail"
+  const val EMAIL = "email"
+
+  // Common strings
+  const val ASSOCIATION_UID = "associationUid"
+}
+
 /**
  * This function verify if the code given is the right one & update admin rights for the user
  * accordingly It also respects the timing of 10 minutes of validity of a given code
@@ -350,10 +381,10 @@ private fun verifyCode(
 ): Task<String> {
   // the continuation runs on either success or failure :)
   return functions
-      .getHttpsCallable("verifyCode")
-      .call(hashMapOf("associationUid" to associationUid, "code" to code, "userUid" to userUid))
+      .getHttpsCallable(VERIFY_CODE)
+      .call(hashMapOf(ASSOCIATION_UID to associationUid, CODE to code, USER_UID to userUid))
       .continueWith { task ->
-        val result = task.result?.getData() as String
+        val result = task.result?.data as String
         result
       }
 }
@@ -369,10 +400,10 @@ private fun sendVerificationEmail(
 ): Task<String> {
   // the continuation runs on either success or failure :)
   return functions
-      .getHttpsCallable("sendVerificationEmail")
-      .call(hashMapOf("email" to userEmail, "associationUid" to associationUid))
+      .getHttpsCallable(SEND_VERIFICATION_EMAIL)
+      .call(hashMapOf(EMAIL to userEmail, ASSOCIATION_UID to associationUid))
       .continueWith { task ->
-        val result = task.result?.getData() as String
+        val result = task.result?.data as String
         result
       }
 }

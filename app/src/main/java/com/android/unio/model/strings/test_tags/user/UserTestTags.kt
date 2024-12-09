@@ -38,4 +38,6 @@ object UserClaimAssociationPresidentialRightsTestTags {
   const val VERIFY_EMAIL_BUTTON = "userClaimAssociationPresidentialRightsVerifyEmailButton"
   const val CODE = "userClaimAssociationPresidentialRightsCodeText"
   const val SUBMIT_CODE_BUTTON = "userClaimAssociationPresidentialRightsSubmitCodeButton"
+  const val ASSOCIATION_PROFILE_TITLE = "associationProfileTitle"
+  const val GO_BACK_BUTTON = "goBackButton"
 }

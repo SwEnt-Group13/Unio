@@ -320,7 +320,8 @@
     <string name="user_claim_association_presidential_rights_wrong_code_error">Code incorrect, veuillez réessayer</string>
     <string name="user_claim_association_presidential_rights_verification_request_not_found">Demande de vérification introuvable</string>
     <string name="user_claim_association_presidential_rights_service_unavailable">Service indisponible. Veuillez réessayer plus tard</string>
-
+    <string name="user_claim_association_presidential_rights_verify_email">Vérifiez votre Email</string>
+    <string name="user_claim_association_presidential_rights_enter_code_sent_to">Entrez le code envoyé à</string>
     /**
     * Other
     */
