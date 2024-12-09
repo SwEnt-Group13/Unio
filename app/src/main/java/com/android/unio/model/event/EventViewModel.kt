@@ -206,6 +206,7 @@ constructor(
   }
 
     fun addUserPictureToEvent(event:Event, picture: EventUserPicture) {
-        imageRepository.add
+        //TODO: finish function
+        event.eventPictures.add(picture.uid)
     }
 }

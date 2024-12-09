@@ -32,6 +32,5 @@ constructor(
                     repository.addEventUserPicture(eventUserPicture, onSuccess, onFailure)
             },
             { e -> Log.e("ImageRepository", "Failed to store image: $e") })
-
     }
 }

@@ -1,6 +1,7 @@
 package com.android.unio.ui.home
 
 import android.util.Log
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -12,6 +13,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Place
 import androidx.compose.material.icons.filled.Search
@@ -106,17 +109,21 @@ fun HomeScreen(
       },
       modifier = Modifier.testTag(HomeTestTags.SCREEN),
       content = { padding ->
-        HorizontalPager(state = pagerState, modifier = Modifier.fillMaxWidth().padding(padding)) {
-            page ->
-          HomeContent(
-              navigationAction,
-              searchQuery,
-              searchState,
-              searchResults,
-              userViewModel,
-              eventViewModel,
-              page == 1)
-        }
+
+
+              HorizontalPager(state = pagerState, modifier = Modifier.fillMaxWidth().padding(padding)) {
+                      page ->
+
+                  HomeContent(
+                      navigationAction,
+                      searchQuery,
+                      searchState,
+                      searchResults,
+                      userViewModel,
+                      eventViewModel,
+                      page == 1)
+              }
+
       })
 }
 
