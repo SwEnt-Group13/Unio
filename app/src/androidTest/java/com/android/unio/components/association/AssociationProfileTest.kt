@@ -64,442 +64,408 @@ import io.mockk.verify
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.mockito.Mock
-import org.mockito.Mockito.`when`
-import org.mockito.MockitoAnnotations
 import org.mockito.kotlin.any
 
 @HiltAndroidTest
 @UninstallModules(FirebaseModule::class)
 class AssociationProfileTest : TearDown() {
 
-    private lateinit var associations: List<Association>
-    private lateinit var events: List<Event>
+  private lateinit var associations: List<Association>
+  private lateinit var events: List<Event>
 
-    @MockK
-    private lateinit var navigationAction: NavigationAction
-    private lateinit var eventViewModel: EventViewModel
-    private lateinit var userViewModel: UserViewModel
-    private lateinit var associationViewModel: AssociationViewModel
+  @MockK private lateinit var navigationAction: NavigationAction
+  private lateinit var eventViewModel: EventViewModel
+  private lateinit var userViewModel: UserViewModel
+  private lateinit var associationViewModel: AssociationViewModel
 
-    @MockK
-    private lateinit var associationRepository: AssociationRepositoryFirestore
+  @MockK private lateinit var associationRepository: AssociationRepositoryFirestore
 
-    @MockK
-    private lateinit var eventRepository: EventRepositoryFirestore
+  @MockK private lateinit var eventRepository: EventRepositoryFirestore
 
-    @MockK
-    private lateinit var concurrentAssociationUserRepository:
-            ConcurrentAssociationUserRepositoryFirestore
+  @MockK
+  private lateinit var concurrentAssociationUserRepository:
+      ConcurrentAssociationUserRepositoryFirestore
 
-    @MockK
-    private lateinit var userRepository: UserRepositoryFirestore
+  @MockK private lateinit var userRepository: UserRepositoryFirestore
 
-    @MockK
-    private lateinit var imageRepository: ImageRepositoryFirebaseStorage
+  @MockK private lateinit var imageRepository: ImageRepositoryFirebaseStorage
 
-    @MockK
-    private lateinit var connectivityManager: ConnectivityManager
+  @MockK private lateinit var connectivityManager: ConnectivityManager
 
-    @MockK
-    private lateinit var task: Task<QuerySnapshot>
+  @MockK private lateinit var task: Task<QuerySnapshot>
 
-    @MockK
-    private lateinit var querySnapshot: QuerySnapshot
+  @MockK private lateinit var querySnapshot: QuerySnapshot
 
-    @MockK
-    private lateinit var documentSnapshotA: DocumentSnapshot
+  @MockK private lateinit var documentSnapshotA: DocumentSnapshot
 
-    @MockK
-    private lateinit var documentSnapshotB: DocumentSnapshot
+  @MockK private lateinit var documentSnapshotB: DocumentSnapshot
 
-    @get:Rule
-    val composeTestRule = createComposeRule()
+  @get:Rule val composeTestRule = createComposeRule()
 
-    @get:Rule
-    val hiltRule = HiltAndroidRule(this)
+  @get:Rule val hiltRule = HiltAndroidRule(this)
 
-    @Before
-    fun setUp() {
-        MockKAnnotations.init(this)
-        hiltRule.inject()
+  @Before
+  fun setUp() {
+    MockKAnnotations.init(this)
+    hiltRule.inject()
 
-        mockkStatic(FirebaseFirestore::class)
-        mockkStatic(Network::class)
-        mockkStatic(ContextCompat::class)
-        val db = mockk<FirebaseFirestore>()
-        val collection = mockk<CollectionReference>()
-        val query = mockk<Query>()
+    mockkStatic(FirebaseFirestore::class)
+    mockkStatic(Network::class)
+    mockkStatic(ContextCompat::class)
+    val db = mockk<FirebaseFirestore>()
+    val collection = mockk<CollectionReference>()
+    val query = mockk<Query>()
 
-        val eventA = MockEvent.createMockEvent(uid = "a")
-        val eventB = MockEvent.createMockEvent(uid = "b")
+    val eventA = MockEvent.createMockEvent(uid = "a")
+    val eventB = MockEvent.createMockEvent(uid = "b")
 
-        events = listOf(eventA, eventB)
+    events = listOf(eventA, eventB)
 
-        every {
-            getSystemService(
-                any(),
-                ConnectivityManager::class.java
-            )
-        } returns connectivityManager
-        every { Firebase.firestore } returns db
-        every { db.collection(any()) } returns collection
-        every { collection.whereIn(any(FieldPath::class), any()) } returns query
-        every { query.get() } returns task
-        every{task.addOnSuccessListener(any())}.answers{ call ->
-            val callback = call.invocation.args[0] as OnSuccessListener<QuerySnapshot>
-            callback.onSuccess(querySnapshot)
-            task
+    every { getSystemService(any(), ConnectivityManager::class.java) } returns connectivityManager
+    every { Firebase.firestore } returns db
+    every { db.collection(any()) } returns collection
+    every { collection.whereIn(any(FieldPath::class), any()) } returns query
+    every { query.get() } returns task
+    every { task.addOnSuccessListener(any()) }
+        .answers { call ->
+          val callback = call.invocation.args[0] as OnSuccessListener<QuerySnapshot>
+          callback.onSuccess(querySnapshot)
+          task
         }
-        every { querySnapshot.documents } returns listOf(documentSnapshotA, documentSnapshotB)
-        every { documentSnapshotA.data } answers {
-            mapOf(
-                "uid" to eventA.uid,
-                "title" to eventA.title,
-                "description" to eventA.description,
-                "location" to eventA.location,
-                "image" to eventA.image
-            )
+    every { querySnapshot.documents } returns listOf(documentSnapshotA, documentSnapshotB)
+    every { documentSnapshotA.data } answers
+        {
+          mapOf(
+              "uid" to eventA.uid,
+              "title" to eventA.title,
+              "description" to eventA.description,
+              "location" to eventA.location,
+              "image" to eventA.image)
         }
-        every { documentSnapshotB.data } answers {
-            mapOf(
-                "uid" to eventB.uid,
-                "title" to eventB.title,
-                "description" to eventB.description,
-                "location" to eventB.location,
-                "image" to eventB.image
-            )
+    every { documentSnapshotB.data } answers
+        {
+          mapOf(
+              "uid" to eventB.uid,
+              "title" to eventB.title,
+              "description" to eventB.description,
+              "location" to eventB.location,
+              "image" to eventB.image)
         }
 
-        every { (task.addOnFailureListener(any()))} returns (task)
+    every { (task.addOnFailureListener(any())) } returns (task)
 
-        // Mock the navigation action to do nothing
-        every { navigationAction.navigateTo(any<String>()) } returns Unit
-        every { navigationAction.goBack() } returns Unit
+    // Mock the navigation action to do nothing
+    every { navigationAction.navigateTo(any<String>()) } returns Unit
+    every { navigationAction.goBack() } returns Unit
 
-        associations =
-            listOf(
-                MockAssociation.createMockAssociation(
-                    uid = "1",
-                    events = Event.Companion.firestoreReferenceListWith(events.map { it.uid })
-                ),
-                MockAssociation.createMockAssociation(
-                    uid = "2",
-                    events = Event.Companion.firestoreReferenceListWith(events.map { it.uid })
-                )
-            )
-
-        val user =
-            User(
+    associations =
+        listOf(
+            MockAssociation.createMockAssociation(
                 uid = "1",
-                email = "",
-                firstName = "",
-                lastName = "",
-                biography = "",
-                savedEvents = Event.emptyFirestoreReferenceList(),
-                followedAssociations = Association.emptyFirestoreReferenceList(),
-                joinedAssociations = Association.emptyFirestoreReferenceList(),
-                interests = emptyList(),
-                socials = emptyList(),
-                profilePicture = "",
-            )
+                events = Event.Companion.firestoreReferenceListWith(events.map { it.uid })),
+            MockAssociation.createMockAssociation(
+                uid = "2",
+                events = Event.Companion.firestoreReferenceListWith(events.map { it.uid })))
 
-        every { eventRepository.init(any()) } answers { (args[0] as () -> Unit).invoke() }
+    val user =
+        User(
+            uid = "1",
+            email = "",
+            firstName = "",
+            lastName = "",
+            biography = "",
+            savedEvents = Event.emptyFirestoreReferenceList(),
+            followedAssociations = Association.emptyFirestoreReferenceList(),
+            joinedAssociations = Association.emptyFirestoreReferenceList(),
+            interests = emptyList(),
+            socials = emptyList(),
+            profilePicture = "",
+        )
 
-        every { eventRepository.getEvents(any(), any()) } answers
-                {
-                    val onSuccess = args[0] as (List<Event>) -> Unit
-                    onSuccess(events)
-                }
-        eventViewModel = EventViewModel(eventRepository, imageRepository, associationRepository)
+    every { eventRepository.init(any()) } answers { (args[0] as () -> Unit).invoke() }
 
-        every { associationRepository.init(any()) } answers { firstArg<() -> Unit>().invoke() }
-        every { associationRepository.getAssociations(any(), any()) } answers
-                {
-                    val onSuccess = args[0] as (List<Association>) -> Unit
-                    onSuccess(associations)
-                }
-
-        every { eventRepository.getEventsOfAssociation(any(), any(), any()) } answers
-                {
-                    val onSuccess = args[1] as (List<Event>) -> Unit
-                    onSuccess(events)
-                }
-
-        every { userRepository.init(any()) } answers { (args[0] as () -> Unit).invoke() }
-
-        every {
-            concurrentAssociationUserRepository.updateFollow(
-                any(),
-                any(),
-                any(),
-                any()
-            )
-        } answers
-                {
-                    val onSuccess = args[2] as () -> Unit
-                    onSuccess()
-                }
-        every { userRepository.getUserWithId(any(), any(), any()) } answers
-                {
-                    val onSuccess = args[1] as (User) -> Unit
-                    onSuccess(user)
-                }
-        every { userRepository.updateUser(user, any(), any()) } answers
-                {
-                    val onSuccess = args[1] as () -> Unit
-                    onSuccess()
-                }
-
-        userViewModel = UserViewModel(userRepository, imageRepository)
-        userViewModel.addUser(user, {})
-
-        associationViewModel =
-            AssociationViewModel(
-                associationRepository,
-                eventRepository,
-                imageRepository,
-                concurrentAssociationUserRepository
-            )
-        associationViewModel.getAssociations()
-        associationViewModel.selectAssociation(associations.first().uid)
-        assert(associationViewModel.selectedAssociation.value!!.events.uids.isNotEmpty())
-    }
-
-    @Test
-    fun testAssociationProfileDisplayComponent() {
-        every { connectivityManager?.activeNetwork } returns mockk<Network>()
-
-        composeTestRule.setContent {
-            AssociationProfileScaffold(
-                navigationAction, userViewModel, eventViewModel, associationViewModel
-            ) {}
+    every { eventRepository.getEvents(any(), any()) } answers
+        {
+          val onSuccess = args[0] as (List<Event>) -> Unit
+          onSuccess(events)
         }
-        composeTestRule.waitForIdle()
+    eventViewModel = EventViewModel(eventRepository, imageRepository, associationRepository)
 
-        assert(associationViewModel.selectedAssociation.value!!.events.list.value.isNotEmpty())
-
-        composeTestRule
-            .onNodeWithTag(AssociationProfileTestTags.SCREEN)
-            .assertDisplayComponentInScroll()
-        composeTestRule
-            .onNodeWithTag(AssociationProfileTestTags.GO_BACK_BUTTON)
-            .assertDisplayComponentInScroll()
-        composeTestRule
-            .onNodeWithTag(AssociationProfileTestTags.IMAGE_HEADER)
-            .assertDisplayComponentInScroll()
-        composeTestRule.onNodeWithTag(AssociationProfileTestTags.TITLE)
-            .assertDisplayComponentInScroll()
-        composeTestRule
-            .onNodeWithTag(AssociationProfileTestTags.HEADER_FOLLOWERS)
-            .assertDisplayComponentInScroll()
-        composeTestRule
-            .onNodeWithTag(AssociationProfileTestTags.HEADER_MEMBERS)
-            .assertDisplayComponentInScroll()
-        composeTestRule
-            .onNodeWithTag(AssociationProfileTestTags.FOLLOW_BUTTON)
-            .assertDisplayComponentInScroll()
-        composeTestRule
-            .onNodeWithTag(AssociationProfileTestTags.DESCRIPTION)
-            .assertDisplayComponentInScroll()
-        composeTestRule
-            .onNodeWithTag(AssociationProfileTestTags.EVENT_TITLE)
-            .assertDisplayComponentInScroll()
-        composeTestRule
-            .onNodeWithTag(AssociationProfileTestTags.CONTACT_MEMBERS_TITLE)
-            .assertDisplayComponentInScroll()
-    }
-
-    @Test
-    fun testSeeMoreLessButton() {
-        every { connectivityManager?.activeNetwork } returns mockk<Network>()
-        var seeMore = ""
-        var seeLess = ""
-        composeTestRule.setContent {
-            val context = ApplicationProvider.getApplicationContext<Context>()
-            seeMore = context.getString(R.string.association_see_more)
-            seeLess = context.getString(R.string.association_see_less)
-            AssociationProfileScaffold(
-                navigationAction, userViewModel, eventViewModel, associationViewModel
-            ) {}
-        }
-        composeTestRule.onNodeWithTag(AssociationProfileTestTags.EVENT_CARD + "a")
-            .assertDisplayComponentInScroll()
-        composeTestRule.onNodeWithTag(AssociationProfileTestTags.EVENT_CARD + "b")
-            .assertIsNotDisplayed()
-
-        composeTestRule.onNodeWithTag(AssociationProfileTestTags.SEE_MORE_BUTTON)
-            .assertDisplayComponentInScroll()
-        composeTestRule.onNodeWithTag(AssociationProfileTestTags.SEE_MORE_BUTTON)
-            .assertTextContains(seeMore)
-        composeTestRule.onNodeWithTag(AssociationProfileTestTags.SEE_MORE_BUTTON).performClick()
-
-        composeTestRule.onNodeWithTag(AssociationProfileTestTags.EVENT_CARD + "a")
-            .assertDisplayComponentInScroll()
-        composeTestRule.onNodeWithTag(AssociationProfileTestTags.EVENT_CARD + "b")
-            .assertDisplayComponentInScroll()
-
-        composeTestRule.onNodeWithTag(AssociationProfileTestTags.SEE_MORE_BUTTON)
-            .assertDisplayComponentInScroll()
-        composeTestRule.onNodeWithTag(AssociationProfileTestTags.SEE_MORE_BUTTON)
-            .assertTextContains(seeLess)
-        composeTestRule.onNodeWithTag(AssociationProfileTestTags.SEE_MORE_BUTTON).performClick()
-
-        composeTestRule.onNodeWithTag(AssociationProfileTestTags.EVENT_CARD + "a")
-            .assertDisplayComponentInScroll()
-        composeTestRule.onNodeWithTag(AssociationProfileTestTags.EVENT_CARD + "b")
-            .assertIsNotDisplayed()
-    }
-
-    @Test
-    fun testFollowAssociation() {
-        every { connectivityManager?.activeNetwork } returns mockk<Network>()
-
-        val context: Context = ApplicationProvider.getApplicationContext()
-        composeTestRule.setContent {
-            AssociationProfileScaffold(
-                navigationAction, userViewModel, eventViewModel, associationViewModel
-            ) {}
-        }
-        val currentCount = associationViewModel.selectedAssociation.value!!.followersCount
-
-        composeTestRule
-            .onNodeWithTag(AssociationProfileTestTags.FOLLOW_BUTTON)
-            .assertDisplayComponentInScroll()
-        composeTestRule
-            .onNodeWithText(context.getString(R.string.association_follow))
-            .assertIsDisplayed()
-
-        // Follow operation
-        composeTestRule.onNodeWithTag(AssociationProfileTestTags.FOLLOW_BUTTON).performClick()
-        assert(userViewModel.user.value?.followedAssociations!!.contains(associations.first().uid))
-        assert(associationViewModel.selectedAssociation.value!!.followersCount == currentCount + 1)
-        composeTestRule
-            .onNodeWithText(context.getString(R.string.association_unfollow))
-            .assertIsDisplayed()
-        composeTestRule.waitForIdle()
-        // Unfollow operation
-        composeTestRule.onNodeWithTag(AssociationProfileTestTags.FOLLOW_BUTTON).performClick()
-        composeTestRule
-            .onNodeWithText(context.getString(R.string.association_follow))
-            .assertIsDisplayed()
-        assert(!userViewModel.user.value?.followedAssociations!!.contains(associations.first().uid))
-        assert(associationViewModel.selectedAssociation.value!!.followersCount == currentCount)
-    }
-
-    @Test
-    fun testFollowOffline() {
-        val context: Context = ApplicationProvider.getApplicationContext()
-        every { connectivityManager?.activeNetwork } returns null
-        composeTestRule.setContent {
-            AssociationProfileScaffold(
-                navigationAction, userViewModel, eventViewModel, associationViewModel
-            ) {}
-        }
-        // Disable internet connction in the test
-
-        val currentCount = associationViewModel.selectedAssociation.value!!.followersCount
-
-        composeTestRule
-            .onNodeWithTag(AssociationProfileTestTags.FOLLOW_BUTTON)
-            .assertDisplayComponentInScroll()
-        composeTestRule
-            .onNodeWithText(context.getString(R.string.association_follow))
-            .assertIsDisplayed()
-
-        composeTestRule.onNodeWithTag(AssociationProfileTestTags.FOLLOW_BUTTON).performClick()
-        assert(!userViewModel.user.value?.followedAssociations!!.contains(associations.first().uid))
-        assert(associationViewModel.selectedAssociation.value!!.followersCount == currentCount)
-    }
-
-    @Test
-    fun testGoBackButton() {
-        every { connectivityManager?.activeNetwork } returns mockk<Network>()
-
-        composeTestRule.setContent {
-            AssociationProfileScaffold(
-                navigationAction, userViewModel, eventViewModel, associationViewModel
-            ) {}
+    every { associationRepository.init(any()) } answers { firstArg<() -> Unit>().invoke() }
+    every { associationRepository.getAssociations(any(), any()) } answers
+        {
+          val onSuccess = args[0] as (List<Association>) -> Unit
+          onSuccess(associations)
         }
 
-        composeTestRule.onNodeWithTag(AssociationProfileTestTags.GO_BACK_BUTTON).performClick()
-
-        verify { navigationAction.goBack() }
-    }
-
-    @Test
-    fun testAssociationProfileGoodId() {
-        every { connectivityManager?.activeNetwork } returns mockk<Network>()
-
-        composeTestRule.setContent {
-            AssociationProfileScaffold(
-                navigationAction, userViewModel, eventViewModel, associationViewModel
-            ) {}
+    every { eventRepository.getEventsOfAssociation(any(), any(), any()) } answers
+        {
+          val onSuccess = args[1] as (List<Event>) -> Unit
+          onSuccess(events)
         }
 
-        composeTestRule.onNodeWithTag(AssociationProfileTestTags.TITLE)
-            .assertDisplayComponentInScroll()
-        composeTestRule.onNodeWithText(associations.first().name).assertDisplayComponentInScroll()
-    }
+    every { userRepository.init(any()) } answers { (args[0] as () -> Unit).invoke() }
 
-    @Test
-    fun testAssociationProfileNoId() {
-        every { connectivityManager?.activeNetwork } returns mockk<Network>()
-
-        associationViewModel.selectAssociation("3")
-        composeTestRule.setContent {
-            AssociationProfileScreen(
-                navigationAction, associationViewModel, userViewModel, eventViewModel
-            )
+    every { concurrentAssociationUserRepository.updateFollow(any(), any(), any(), any()) } answers
+        {
+          val onSuccess = args[2] as () -> Unit
+          onSuccess()
+        }
+    every { userRepository.getUserWithId(any(), any(), any()) } answers
+        {
+          val onSuccess = args[1] as (User) -> Unit
+          onSuccess(user)
+        }
+    every { userRepository.updateUser(user, any(), any()) } answers
+        {
+          val onSuccess = args[1] as () -> Unit
+          onSuccess()
         }
 
-        composeTestRule.onNodeWithTag(AssociationProfileTestTags.SCREEN).assertIsNotDisplayed()
+    userViewModel = UserViewModel(userRepository, imageRepository)
+    userViewModel.addUser(user, {})
+
+    associationViewModel =
+        AssociationViewModel(
+            associationRepository,
+            eventRepository,
+            imageRepository,
+            concurrentAssociationUserRepository)
+    associationViewModel.getAssociations()
+    associationViewModel.selectAssociation(associations.first().uid)
+    assert(associationViewModel.selectedAssociation.value!!.events.uids.isNotEmpty())
+  }
+
+  @Test
+  fun testAssociationProfileDisplayComponent() {
+    every { connectivityManager?.activeNetwork } returns mockk<Network>()
+
+    composeTestRule.setContent {
+      AssociationProfileScaffold(
+          navigationAction, userViewModel, eventViewModel, associationViewModel) {}
+    }
+    composeTestRule.waitForIdle()
+
+    assert(associationViewModel.selectedAssociation.value!!.events.list.value.isNotEmpty())
+
+    composeTestRule
+        .onNodeWithTag(AssociationProfileTestTags.SCREEN)
+        .assertDisplayComponentInScroll()
+    composeTestRule
+        .onNodeWithTag(AssociationProfileTestTags.GO_BACK_BUTTON)
+        .assertDisplayComponentInScroll()
+    composeTestRule
+        .onNodeWithTag(AssociationProfileTestTags.IMAGE_HEADER)
+        .assertDisplayComponentInScroll()
+    composeTestRule.onNodeWithTag(AssociationProfileTestTags.TITLE).assertDisplayComponentInScroll()
+    composeTestRule
+        .onNodeWithTag(AssociationProfileTestTags.HEADER_FOLLOWERS)
+        .assertDisplayComponentInScroll()
+    composeTestRule
+        .onNodeWithTag(AssociationProfileTestTags.HEADER_MEMBERS)
+        .assertDisplayComponentInScroll()
+    composeTestRule
+        .onNodeWithTag(AssociationProfileTestTags.FOLLOW_BUTTON)
+        .assertDisplayComponentInScroll()
+    composeTestRule
+        .onNodeWithTag(AssociationProfileTestTags.DESCRIPTION)
+        .assertDisplayComponentInScroll()
+    composeTestRule
+        .onNodeWithTag(AssociationProfileTestTags.EVENT_TITLE)
+        .assertDisplayComponentInScroll()
+    composeTestRule
+        .onNodeWithTag(AssociationProfileTestTags.CONTACT_MEMBERS_TITLE)
+        .assertDisplayComponentInScroll()
+  }
+
+  @Test
+  fun testSeeMoreLessButton() {
+    every { connectivityManager?.activeNetwork } returns mockk<Network>()
+    var seeMore = ""
+    var seeLess = ""
+    composeTestRule.setContent {
+      val context = ApplicationProvider.getApplicationContext<Context>()
+      seeMore = context.getString(R.string.association_see_more)
+      seeLess = context.getString(R.string.association_see_less)
+      AssociationProfileScaffold(
+          navigationAction, userViewModel, eventViewModel, associationViewModel) {}
+    }
+    composeTestRule
+        .onNodeWithTag(AssociationProfileTestTags.EVENT_CARD + "a")
+        .assertDisplayComponentInScroll()
+    composeTestRule
+        .onNodeWithTag(AssociationProfileTestTags.EVENT_CARD + "b")
+        .assertIsNotDisplayed()
+
+    composeTestRule
+        .onNodeWithTag(AssociationProfileTestTags.SEE_MORE_BUTTON)
+        .assertDisplayComponentInScroll()
+    composeTestRule
+        .onNodeWithTag(AssociationProfileTestTags.SEE_MORE_BUTTON)
+        .assertTextContains(seeMore)
+    composeTestRule.onNodeWithTag(AssociationProfileTestTags.SEE_MORE_BUTTON).performClick()
+
+    composeTestRule
+        .onNodeWithTag(AssociationProfileTestTags.EVENT_CARD + "a")
+        .assertDisplayComponentInScroll()
+    composeTestRule
+        .onNodeWithTag(AssociationProfileTestTags.EVENT_CARD + "b")
+        .assertDisplayComponentInScroll()
+
+    composeTestRule
+        .onNodeWithTag(AssociationProfileTestTags.SEE_MORE_BUTTON)
+        .assertDisplayComponentInScroll()
+    composeTestRule
+        .onNodeWithTag(AssociationProfileTestTags.SEE_MORE_BUTTON)
+        .assertTextContains(seeLess)
+    composeTestRule.onNodeWithTag(AssociationProfileTestTags.SEE_MORE_BUTTON).performClick()
+
+    composeTestRule
+        .onNodeWithTag(AssociationProfileTestTags.EVENT_CARD + "a")
+        .assertDisplayComponentInScroll()
+    composeTestRule
+        .onNodeWithTag(AssociationProfileTestTags.EVENT_CARD + "b")
+        .assertIsNotDisplayed()
+  }
+
+  @Test
+  fun testFollowAssociation() {
+    every { connectivityManager?.activeNetwork } returns mockk<Network>()
+
+    val context: Context = ApplicationProvider.getApplicationContext()
+    composeTestRule.setContent {
+      AssociationProfileScaffold(
+          navigationAction, userViewModel, eventViewModel, associationViewModel) {}
+    }
+    val currentCount = associationViewModel.selectedAssociation.value!!.followersCount
+
+    composeTestRule
+        .onNodeWithTag(AssociationProfileTestTags.FOLLOW_BUTTON)
+        .assertDisplayComponentInScroll()
+    composeTestRule
+        .onNodeWithText(context.getString(R.string.association_follow))
+        .assertIsDisplayed()
+
+    // Follow operation
+    composeTestRule.onNodeWithTag(AssociationProfileTestTags.FOLLOW_BUTTON).performClick()
+    assert(userViewModel.user.value?.followedAssociations!!.contains(associations.first().uid))
+    assert(associationViewModel.selectedAssociation.value!!.followersCount == currentCount + 1)
+    composeTestRule
+        .onNodeWithText(context.getString(R.string.association_unfollow))
+        .assertIsDisplayed()
+    composeTestRule.waitForIdle()
+    // Unfollow operation
+    composeTestRule.onNodeWithTag(AssociationProfileTestTags.FOLLOW_BUTTON).performClick()
+    composeTestRule
+        .onNodeWithText(context.getString(R.string.association_follow))
+        .assertIsDisplayed()
+    assert(!userViewModel.user.value?.followedAssociations!!.contains(associations.first().uid))
+    assert(associationViewModel.selectedAssociation.value!!.followersCount == currentCount)
+  }
+
+  @Test
+  fun testFollowOffline() {
+    val context: Context = ApplicationProvider.getApplicationContext()
+    every { connectivityManager?.activeNetwork } returns null
+    composeTestRule.setContent {
+      AssociationProfileScaffold(
+          navigationAction, userViewModel, eventViewModel, associationViewModel) {}
+    }
+    // Disable internet connction in the test
+
+    val currentCount = associationViewModel.selectedAssociation.value!!.followersCount
+
+    composeTestRule
+        .onNodeWithTag(AssociationProfileTestTags.FOLLOW_BUTTON)
+        .assertDisplayComponentInScroll()
+    composeTestRule
+        .onNodeWithText(context.getString(R.string.association_follow))
+        .assertIsDisplayed()
+
+    composeTestRule.onNodeWithTag(AssociationProfileTestTags.FOLLOW_BUTTON).performClick()
+    assert(!userViewModel.user.value?.followedAssociations!!.contains(associations.first().uid))
+    assert(associationViewModel.selectedAssociation.value!!.followersCount == currentCount)
+  }
+
+  @Test
+  fun testGoBackButton() {
+    every { connectivityManager?.activeNetwork } returns mockk<Network>()
+
+    composeTestRule.setContent {
+      AssociationProfileScaffold(
+          navigationAction, userViewModel, eventViewModel, associationViewModel) {}
     }
 
-    @Test
-    fun testAddEventButtonOnline() {
-        every { connectivityManager?.activeNetwork } returns mockk<Network>()
+    composeTestRule.onNodeWithTag(AssociationProfileTestTags.GO_BACK_BUTTON).performClick()
 
-        composeTestRule.setContent {
-            AssociationProfileScaffold(
-                navigationAction, userViewModel, eventViewModel, associationViewModel
-            ) {}
-        }
+    verify { navigationAction.goBack() }
+  }
 
-        composeTestRule.onNodeWithTag(AssociationProfileTestTags.ADD_EVENT_BUTTON)
-            .assertIsDisplayed()
-        composeTestRule
-            .onNodeWithTag(AssociationProfileTestTags.ADD_EVENT_BUTTON)
-            .performScrollTo()
-            .performClick()
+  @Test
+  fun testAssociationProfileGoodId() {
+    every { connectivityManager?.activeNetwork } returns mockk<Network>()
 
-        verify { navigationAction.navigateTo(Screen.EVENT_CREATION) }
+    composeTestRule.setContent {
+      AssociationProfileScaffold(
+          navigationAction, userViewModel, eventViewModel, associationViewModel) {}
     }
 
-    @Test
-    fun testAddEventButtonOffline() {
-        every { connectivityManager?.activeNetwork } returns null
+    composeTestRule.onNodeWithTag(AssociationProfileTestTags.TITLE).assertDisplayComponentInScroll()
+    composeTestRule.onNodeWithText(associations.first().name).assertDisplayComponentInScroll()
+  }
 
-        composeTestRule.setContent {
-            AssociationProfileScaffold(
-                navigationAction, userViewModel, eventViewModel, associationViewModel
-            ) {}
-        }
+  @Test
+  fun testAssociationProfileNoId() {
+    every { connectivityManager?.activeNetwork } returns mockk<Network>()
 
-        composeTestRule.onNodeWithTag(AssociationProfileTestTags.ADD_EVENT_BUTTON)
-            .assertIsDisplayed()
-        composeTestRule
-            .onNodeWithTag(AssociationProfileTestTags.ADD_EVENT_BUTTON)
-            .performScrollTo()
-            .performClick()
-
-        verify(exactly = 0) { navigationAction.navigateTo(Screen.EVENT_CREATION) }
+    associationViewModel.selectAssociation("3")
+    composeTestRule.setContent {
+      AssociationProfileScreen(
+          navigationAction, associationViewModel, userViewModel, eventViewModel)
     }
 
-    @Module
-    @InstallIn(SingletonComponent::class)
-    object FirebaseTestModule {
-        @Provides
-        fun provideFirestore(): FirebaseFirestore = mockk()
+    composeTestRule.onNodeWithTag(AssociationProfileTestTags.SCREEN).assertIsNotDisplayed()
+  }
+
+  @Test
+  fun testAddEventButtonOnline() {
+    every { connectivityManager?.activeNetwork } returns mockk<Network>()
+
+    composeTestRule.setContent {
+      AssociationProfileScaffold(
+          navigationAction, userViewModel, eventViewModel, associationViewModel) {}
     }
+
+    composeTestRule.onNodeWithTag(AssociationProfileTestTags.ADD_EVENT_BUTTON).assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag(AssociationProfileTestTags.ADD_EVENT_BUTTON)
+        .performScrollTo()
+        .performClick()
+
+    verify { navigationAction.navigateTo(Screen.EVENT_CREATION) }
+  }
+
+  @Test
+  fun testAddEventButtonOffline() {
+    every { connectivityManager?.activeNetwork } returns null
+
+    composeTestRule.setContent {
+      AssociationProfileScaffold(
+          navigationAction, userViewModel, eventViewModel, associationViewModel) {}
+    }
+
+    composeTestRule.onNodeWithTag(AssociationProfileTestTags.ADD_EVENT_BUTTON).assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag(AssociationProfileTestTags.ADD_EVENT_BUTTON)
+        .performScrollTo()
+        .performClick()
+
+    verify(exactly = 0) { navigationAction.navigateTo(Screen.EVENT_CREATION) }
+  }
+
+  @Module
+  @InstallIn(SingletonComponent::class)
+  object FirebaseTestModule {
+    @Provides fun provideFirestore(): FirebaseFirestore = mockk()
+  }
 }

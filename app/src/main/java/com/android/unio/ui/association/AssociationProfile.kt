@@ -104,17 +104,18 @@ fun AssociationProfileScreen(
     Log.e("AssociationProfileScreen", "Association not found.")
     Toast.makeText(context, context.getString(R.string.association_toast_error), Toast.LENGTH_SHORT)
         .show()
-  }else{
+  } else {
 
-  AssociationProfileScaffold(
-      navigationAction = navigationAction,
-      userViewModel = userViewModel,
-      eventViewModel = eventViewModel,
-      associationViewModel = associationViewModel,
-      onEdit = {
-        associationViewModel.selectAssociation(association!!.uid)
-        navigationAction.navigateTo(Screen.EDIT_ASSOCIATION)
-      })}
+    AssociationProfileScaffold(
+        navigationAction = navigationAction,
+        userViewModel = userViewModel,
+        eventViewModel = eventViewModel,
+        associationViewModel = associationViewModel,
+        onEdit = {
+          associationViewModel.selectAssociation(association!!.uid)
+          navigationAction.navigateTo(Screen.EDIT_ASSOCIATION)
+        })
+  }
 }
 
 /**
