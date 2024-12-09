@@ -105,7 +105,6 @@ fun SettingsScreen(
 @Composable
 fun SettingsContainer(onPasswordChange: (() -> Unit) -> Unit) {
   val context = LocalContext.current
-  val preferences by LocalPreferenceFlow.current.collectAsState()
 
   /** Location Permissions * */
   val locationPermissions =
