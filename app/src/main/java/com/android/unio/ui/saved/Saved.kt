@@ -45,7 +45,6 @@ import java.util.Calendar
  * @param eventViewModel The view model for events.
  * @param userViewModel The view model for the user.
  */
-@SuppressLint("UnrememberedMutableState")
 @Composable
 fun SavedScreen(
     navigationAction: NavigationAction,
