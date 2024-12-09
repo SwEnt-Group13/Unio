@@ -1,7 +1,5 @@
 package com.android.unio.model.event
 
-import com.google.firebase.Timestamp
-
 interface EventRepository {
   fun init(onSuccess: () -> Unit)
 
