@@ -21,8 +21,8 @@ import com.android.unio.model.event.EventType
 import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.notification.NotificationWorker
-import com.android.unio.model.strings.test_tags.EventCardTestTags
-import com.android.unio.model.strings.test_tags.EventDetailsTestTags
+import com.android.unio.model.strings.test_tags.event.EventCardTestTags
+import com.android.unio.model.strings.test_tags.event.EventDetailsTestTags
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.event.EventCard

@@ -30,7 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.android.unio.R
-import com.android.unio.model.strings.test_tags.InterestsOverlayTestTags
+import com.android.unio.model.strings.test_tags.authentication.InterestsOverlayTestTags
 import com.android.unio.model.user.Interest
 import com.android.unio.ui.theme.AppTypography
 

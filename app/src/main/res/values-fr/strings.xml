@@ -168,6 +168,7 @@
     <string name="event_card_content_description_not_saved_event">Non sauvegardé</string>
     <string name="event_card_content_description_association_logo">Logo de l\'association</string>
     <string name="event_card_interested_string">Intéréssés</string>
+    <string name="event_card_content_description_edit_association">Modifier l\'évènement</string>
 
     <!-- Event Creation Strings -->
     <string name="event_creation_screen">Création d\'un évènement</string>
@@ -250,6 +251,13 @@
     <string name="map_content_description_center_on_user">Centrer sur l\'utilisateur</string>
 
     /**
+    * package: preferences
+    */
+    <string name="app_preferences_theme_text_display_light">Clair</string>
+    <string name="app_preferences_theme_text_display_dark">Obscur</string>
+    <string name="app_preferences_theme_text_display_system_default_auto">Automatique</string>
+
+    /**
     * package: saved
     */
 
@@ -322,7 +330,8 @@
     <string name="user_claim_association_presidential_rights_wrong_code_error">Code incorrect, veuillez réessayer</string>
     <string name="user_claim_association_presidential_rights_verification_request_not_found">Demande de vérification introuvable</string>
     <string name="user_claim_association_presidential_rights_service_unavailable">Service indisponible. Veuillez réessayer plus tard</string>
-
+    <string name="user_claim_association_presidential_rights_verify_email">Vérifiez votre Email</string>
+    <string name="user_claim_association_presidential_rights_enter_code_sent_to">Entrez le code envoyé à</string>
     /**
     * Other
     */

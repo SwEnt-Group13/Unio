@@ -1,4 +1,4 @@
-package com.android.unio.model.strings.test_tags
+package com.android.unio.model.strings.test_tags.map
 
 object MapTestTags {
   const val SCREEN = "mapScreen"

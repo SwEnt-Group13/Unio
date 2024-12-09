@@ -50,7 +50,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.android.unio.R
-import com.android.unio.model.strings.test_tags.SocialsOverlayTestTags
+import com.android.unio.model.strings.test_tags.authentication.SocialsOverlayTestTags
 import com.android.unio.model.user.Social
 import com.android.unio.model.user.UserSocial
 import com.android.unio.model.user.UserSocialError

@@ -22,7 +22,7 @@ import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.map.MapViewModel
 import com.android.unio.model.strings.FormatStrings.DAY_MONTH_FORMAT
-import com.android.unio.model.strings.test_tags.EventDetailsTestTags
+import com.android.unio.model.strings.test_tags.event.EventDetailsTestTags
 import com.android.unio.model.user.User
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserViewModel

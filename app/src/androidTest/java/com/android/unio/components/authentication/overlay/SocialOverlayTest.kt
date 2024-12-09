@@ -7,7 +7,7 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import com.android.unio.TearDown
 import com.android.unio.addNewUserSocial
-import com.android.unio.model.strings.test_tags.SocialsOverlayTestTags
+import com.android.unio.model.strings.test_tags.authentication.SocialsOverlayTestTags
 import com.android.unio.model.user.UserSocial
 import com.android.unio.ui.authentication.overlay.SocialOverlay
 import org.junit.Before

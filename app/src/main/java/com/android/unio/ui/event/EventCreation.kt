@@ -43,7 +43,7 @@ import com.android.unio.model.firestore.firestoreReferenceListWith
 import com.android.unio.model.map.Location
 import com.android.unio.model.map.nominatim.NominatimLocationSearchViewModel
 import com.android.unio.model.search.SearchViewModel
-import com.android.unio.model.strings.test_tags.EventCreationTestTags
+import com.android.unio.model.strings.test_tags.event.EventCreationTestTags
 import com.android.unio.model.utils.TextLength
 import com.android.unio.model.utils.Utils
 import com.android.unio.ui.components.AssociationChips
