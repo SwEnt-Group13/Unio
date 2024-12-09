@@ -133,11 +133,11 @@ fun NotificationSender(
                               onClose()
                             },
                         ) {
-                          Text("Send")
                         }
                       }
                 }
           }
     }
+                              Text(context.getString(R.string.send_button_text))
   }
 }

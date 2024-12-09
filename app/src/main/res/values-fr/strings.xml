@@ -46,6 +46,7 @@
     <string name="url_explanation">Fournissez l\'URL de la page web ou de la présence en ligne de l\'association.</string>
     <string name="principal_email_address_explanation">Fournissez l\'addresse email de la présidence de l\'association; ex : presidents@association.com</string>
     <string name="cancel_button_text">Annuler</string>
+    <string name="send_button_text">Envoyer</string>
     <string name="save_button_text">Enregistrer</string>
     <string name="category_button_text">Sélectionner la catégorie</string>
     <string name="save_failed_message">Échec de la sauvegarde de l\'association</string>

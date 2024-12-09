@@ -52,6 +52,7 @@
     <string name="url_explanation">Provide the URL of the association\'s webpage or online presence.</string>
     <string name="principal_email_address_explanation">Provide the email address of the presidency of your association; ex : presidents@association.com</string>
     <string name="cancel_button_text">Cancel</string>
+    <string name="send_button_text">Send</string>
     <string name="save_button_text">Save</string>
     <string name="category_button_text">Select Category</string>
     <string name="save_failed_message">Failed to save association</string>
