@@ -2,7 +2,6 @@ package com.android.unio.model.association
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
-import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventRepository
 import com.android.unio.model.follow.ConcurrentAssociationUserRepository
 import com.android.unio.model.image.ImageRepository
@@ -50,18 +49,6 @@ constructor(
 
   init {
     associationRepository.init { getAssociations() }
-  }
-
-  fun getEventsForAssociation(association: Association, onSuccess: (List<Event>) -> Unit) {
-    eventRepository.getEventsOfAssociation(
-        association.uid,
-        onSuccess = onSuccess,
-        onFailure = { exception ->
-          Log.e(
-              "ExploreViewModel",
-              "Failed to get events for association ${association.fullName}",
-              exception)
-        })
   }
 
   /**

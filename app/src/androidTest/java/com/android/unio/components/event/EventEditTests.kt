@@ -127,11 +127,6 @@ class EventEditTests : TearDown() {
     associationViewModel.selectAssociation(associations.first().uid)
 
     every { associationViewModel.findAssociationById(any()) } returns associations.first()
-    every { associationViewModel.getEventsForAssociation(any(), any()) } answers
-        {
-          val onSuccess = args[1] as (List<Event>) -> Unit
-          onSuccess(emptyList())
-        }
   }
 
   @Test

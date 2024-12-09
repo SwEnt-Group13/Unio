@@ -7,7 +7,6 @@ import com.android.unio.model.firestore.registerSnapshotListener
 import com.android.unio.model.firestore.transform.hydrate
 import com.android.unio.model.firestore.transform.serialize
 import com.google.firebase.Firebase
-import com.google.firebase.Timestamp
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.MetadataChanges
@@ -22,22 +21,6 @@ class EventRepositoryFirestore @Inject constructor(private val db: FirebaseFires
         onSuccess()
       }
     }
-  }
-
-  override fun getEventsOfAssociation(
-      association: String,
-      onSuccess: (List<Event>) -> Unit,
-      onFailure: (Exception) -> Unit
-  ) {
-    db.collection(EVENT_PATH)
-        .whereArrayContains("organisers", association)
-        .get()
-        .performFirestoreOperation(
-            onSuccess = { result ->
-              val events = result.mapNotNull { hydrate(it.data) }
-              onSuccess(events)
-            },
-            onFailure = { exception -> onFailure(exception) })
   }
 
   /**
@@ -65,24 +48,6 @@ class EventRepositoryFirestore @Inject constructor(private val db: FirebaseFires
         onSuccess(hydrate(documentSnapshot.data))
       }
     }
-  }
-
-  override fun getNextEventsFromDateToDate(
-      startDate: Timestamp,
-      endDate: Timestamp,
-      onSuccess: (List<Event>) -> Unit,
-      onFailure: (Exception) -> Unit
-  ) {
-    db.collection(EVENT_PATH)
-        .whereGreaterThanOrEqualTo("date", startDate)
-        .whereLessThan("date", endDate)
-        .get()
-        .performFirestoreOperation(
-            onSuccess = { result ->
-              val events = result.mapNotNull { hydrate(it.data) }
-              onSuccess(events)
-            },
-            onFailure = { exception -> onFailure(exception) })
   }
 
   /**

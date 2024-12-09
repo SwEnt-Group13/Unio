@@ -1,6 +1,7 @@
 package com.android.unio.ui.map
 
 import android.Manifest
+import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -56,11 +57,6 @@ import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
 import java.util.Calendar
 import java.util.concurrent.TimeUnit
-
-val EPFL_COORDINATES = LatLng(46.518831258, 6.559331096)
-const val APPROXIMATE_CIRCLE_RADIUS = 30.0
-const val APPROXIMATE_CIRCLE_OUTLINE_WIDTH = 2f
-const val INITIAL_ZOOM_LEVEL = 15f
 
 /**
  * The MapScreen composable displays a map with markers for events. This composable is a Scaffold
@@ -141,13 +137,13 @@ fun MapScreen(
 
       if (centerLocation != null) {
         cameraPositionState.position =
-            CameraPosition.fromLatLngZoom(centerLocation!!, INITIAL_ZOOM_LEVEL)
+            CameraPosition.fromLatLngZoom(centerLocation!!, MapCst.INITIAL_ZOOM_LEVEL)
       } else if (userLocation != null) {
         cameraPositionState.position =
-            CameraPosition.fromLatLngZoom(userLocation!!, INITIAL_ZOOM_LEVEL)
+            CameraPosition.fromLatLngZoom(userLocation!!, MapCst.INITIAL_ZOOM_LEVEL)
       } else {
         cameraPositionState.position =
-            CameraPosition.fromLatLngZoom(EPFL_COORDINATES, INITIAL_ZOOM_LEVEL)
+            CameraPosition.fromLatLngZoom(MapCst.EPFL_COORDINATES, MapCst.INITIAL_ZOOM_LEVEL)
       }
       initialCentered = true
     }
@@ -182,7 +178,8 @@ fun MapScreen(
             modifier = Modifier.padding(bottom = 80.dp).testTag(MapTestTags.CENTER_ON_USER_FAB),
             onClick = {
               userLocation?.let {
-                cameraPositionState.position = CameraPosition.fromLatLngZoom(it, 15f)
+                cameraPositionState.position =
+                    CameraPosition.fromLatLngZoom(it, MapCst.INITIAL_ZOOM_LEVEL)
               }
             }) {
               Icon(
@@ -239,10 +236,10 @@ fun EventMap(
         if (showApproximateCircle && userLocation != null) {
           Circle(
               center = userLocation,
-              radius = APPROXIMATE_CIRCLE_RADIUS,
+              radius = MapCst.APPROXIMATE_CIRCLE_RADIUS,
               fillColor = mapUserLocationCircleFiller,
               strokeColor = mapUserLocationCircleStroke,
-              strokeWidth = APPROXIMATE_CIRCLE_OUTLINE_WIDTH,
+              strokeWidth = MapCst.APPROXIMATE_CIRCLE_OUTLINE_WIDTH,
               tag = MapTestTags.LOCATION_APPROXIMATE_CIRCLE)
         }
 
@@ -274,22 +271,27 @@ fun EventMap(
  */
 @Composable
 fun DisplayEventMarker(event: Event, customIconResId: Int?) {
-  val timer = timeUntilEvent(event.startDate)
+  val context = LocalContext.current
+  val timer = timeUntilEvent(event.startDate, context)
   event.location.let { location ->
     val pinPointIcon =
         if (customIconResId != null) {
           val bitmap = BitmapFactory.decodeResource(LocalContext.current.resources, customIconResId)
-          val scaledBitmap = Bitmap.createScaledBitmap(bitmap, 96, 96, false)
+          val scaledBitmap =
+              Bitmap.createScaledBitmap(bitmap, MapCst.DESIRED_WIDTH, MapCst.DESIRED_HEIGHT, false)
           BitmapDescriptorFactory.fromBitmap(scaledBitmap)
         } else {
           BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)
         }
 
     Marker(
-        contentDescription = "Event: ${event.title}",
+        contentDescription = context.getString(R.string.map_event_marker_prefix) + event.title,
         state = MarkerState(position = LatLng(location.latitude, location.longitude)),
         title = event.title,
-        snippet = "$timer - ${event.description}",
+        snippet =
+            timer +
+                context.getString(R.string.map_event_marker_snippet_separator) +
+                event.description,
         icon = pinPointIcon)
   }
 }
@@ -300,13 +302,32 @@ fun DisplayEventMarker(event: Event, customIconResId: Int?) {
  * @param eventTimestamp the timestamp of the event
  * @return a string giving information about the time until the event occurs
  */
-fun timeUntilEvent(eventTimestamp: Timestamp): String {
+fun timeUntilEvent(eventTimestamp: Timestamp, context: Context): String {
   val currentTime = Timestamp.now()
   val timeDifference = eventTimestamp.seconds - currentTime.seconds
 
   if (timeDifference < 0) return MapStrings.EVENT_ALREADY_OCCURED
 
   val days = TimeUnit.SECONDS.toDays(timeDifference)
-  val hours = TimeUnit.SECONDS.toHours(timeDifference) % 24
-  return if (days > 0) "In $days days, $hours hours" else "In $hours hours"
+  val hours = TimeUnit.SECONDS.toHours(timeDifference) % MapCst.HOURS_IN_DAY
+  return if (days > 0)
+      (context.getString(R.string.map_event_marker_time_remaining_prefix) +
+          days +
+          context.getString(R.string.map_event_marker_time_remaining_days) +
+          hours +
+          context.getString(R.string.map_event_marker_time_remaining_hours))
+  else
+      (context.getString(R.string.map_event_marker_time_remaining_prefix) +
+          days +
+          context.getString(R.string.map_event_marker_time_remaining_days))
+}
+
+object MapCst {
+  val EPFL_COORDINATES = LatLng(46.518831258, 6.559331096)
+  const val APPROXIMATE_CIRCLE_RADIUS = 30.0
+  const val APPROXIMATE_CIRCLE_OUTLINE_WIDTH = 2f
+  const val INITIAL_ZOOM_LEVEL = 15f
+  const val DESIRED_WIDTH = 96
+  const val DESIRED_HEIGHT = 96
+  const val HOURS_IN_DAY = 24
 }

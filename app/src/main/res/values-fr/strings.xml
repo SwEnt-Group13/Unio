@@ -237,16 +237,20 @@
     <!-- Home Screen Strings -->
     <string name="home_content_description_map_button">Bouton de la carte</string>
     <string name="home_content_description_search_icon">Icône de recherche</string>
-
+    <string name="home_tab_all">Tout</string>
+    <string name="home_tab_following">Suivis</string>
     /**
     * package: map
     */
 
     <!-- Map Screen Strings -->
-    <string name="home_tab_all">Tout</string>
-    <string name="home_tab_following">Suivis</string>
+
     <string name="map_event_go_back_button">Retour</string>
     <string name="map_event_title">Carte d\'évènements</string>
+    <string name="map_event_marker_time_remaining_prefix">Dans </string>
+    <string name="map_event_marker_time_remaining_days">jours, </string>
+    <string name="map_event_marker_time_remaining_hours">heures</string>
+    <string name="map_event_marker_prefix">Evénements : </string>
     <string name="map_content_description_center_on_user">Centrer sur l\'utilisateur</string>
 
     /**

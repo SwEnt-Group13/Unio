@@ -186,11 +186,6 @@ class ScreenDisplayingTest : TearDown() {
     val associations = MockAssociation.createAllMockAssociations(size = 2)
 
     every { associationViewModel.findAssociationById(any()) } returns associations.first()
-    every { associationViewModel.getEventsForAssociation(any(), any()) } answers
-        {
-          val onSuccess = args[1] as (List<Event>) -> Unit
-          onSuccess(emptyList())
-        }
 
     // Mocking the Firebase.auth object and its behaviour
     mockkStatic(FirebaseAuth::class)
