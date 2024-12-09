@@ -58,20 +58,24 @@ fun SavedScreen(
   }
 
   val allEvents by eventViewModel.events.collectAsState()
-  val savedEvents by derivedStateOf {
-    allEvents
-        .filter { user!!.savedEvents.contains(it.uid) }
-        .sortedWith(compareBy({ it.startDate }, { it.uid }))
+  val savedEvents by remember {
+    derivedStateOf {
+      allEvents
+          .filter { user!!.savedEvents.contains(it.uid) }
+          .sortedWith(compareBy({ it.startDate }, { it.uid }))
+    }
   }
 
   val context = LocalContext.current
 
   val today = remember { Calendar.getInstance().get(Calendar.DAY_OF_YEAR) }
-  val savedEventsToday by derivedStateOf {
-    savedEvents.partition {
-      val calendar = Calendar.getInstance()
-      calendar.timeInMillis = it.startDate.toDate().time
-      calendar.get(Calendar.DAY_OF_YEAR) == today
+  val savedEventsToday by remember {
+    derivedStateOf {
+      savedEvents.partition {
+        val calendar = Calendar.getInstance()
+        calendar.timeInMillis = it.startDate.toDate().time
+        calendar.get(Calendar.DAY_OF_YEAR) == today
+      }
     }
   }
 
