@@ -248,6 +248,13 @@
     <string name="map_content_description_center_on_user">Centrer sur l\'utilisateur</string>
 
     /**
+    * package: preferences
+    */
+    <string name="app_preferences_theme_text_display_light">Clair</string>
+    <string name="app_preferences_theme_text_display_dark">Obscur</string>
+    <string name="app_preferences_theme_text_display_system_default_auto">Automatique</string>
+
+    /**
     * package: saved
     */
 

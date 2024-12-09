@@ -1,5 +1,7 @@
 package com.android.unio.model.preferences
 
+import android.content.Context
+import com.android.unio.R
 import me.zhanghai.compose.preference.Preferences
 
 /**
@@ -23,11 +25,12 @@ object AppPreferences {
 
     val asList = listOf(LIGHT, DARK, SYSTEM)
 
-    fun toDisplayText(theme: String) =
+    fun toDisplayText(theme: String, context: Context) =
         when (theme) {
-          LIGHT -> "Light"
-          DARK -> "Dark"
-          SYSTEM -> "System Default"
+          LIGHT -> context.getString(R.string.app_preferences_theme_text_display_light)
+          DARK -> context.getString(R.string.app_preferences_theme_text_display_dark)
+          SYSTEM ->
+              context.getString(R.string.app_preferences_theme_text_display_system_default_auto)
           else -> theme
         }
   }

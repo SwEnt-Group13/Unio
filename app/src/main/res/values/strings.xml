@@ -262,6 +262,13 @@
     <string name="map_content_description_center_on_user">Center on User</string>
 
     /**
+    * package: preferences
+    */
+    <string name="app_preferences_theme_text_display_light">Light</string>
+    <string name="app_preferences_theme_text_display_dark">Dark</string>
+    <string name="app_preferences_theme_text_display_system_default_auto">Automatic</string>
+
+    /**
     * package: navigation
     */
 
