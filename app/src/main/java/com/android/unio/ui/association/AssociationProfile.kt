@@ -295,7 +295,6 @@ private fun AssociationProfileContent(
         AssociationDescription(association!!)
         AssociationEvents(navigationAction, association!!, userViewModel, eventViewModel)
         AssociationMembers(associationViewModel, association!!.members, onMemberClick)
-        //        AssociationRecruitment(association!!)
       }
 }
 
