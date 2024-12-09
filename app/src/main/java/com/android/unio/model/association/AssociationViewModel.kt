@@ -52,18 +52,6 @@ constructor(
     associationRepository.init { getAssociations() }
   }
 
-  fun getEventsForAssociation(association: Association, onSuccess: (List<Event>) -> Unit) {
-    eventRepository.getEventsOfAssociation(
-        association.uid,
-        onSuccess = onSuccess,
-        onFailure = { exception ->
-          Log.e(
-              "ExploreViewModel",
-              "Failed to get events for association ${association.fullName}",
-              exception)
-        })
-  }
-
   /**
    * Get the user from a member
    *

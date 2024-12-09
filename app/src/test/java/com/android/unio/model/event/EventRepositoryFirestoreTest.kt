@@ -173,37 +173,6 @@ class EventRepositoryFirestoreTest {
         onFailure = { e -> throw e })
   }
 
-  /** Asserts that getEventsOfAssociation calls the right methods. */
-  @Test
-  fun testGetEventsOfAssociation() {
-    val asso1 = "Balelec"
-    val asso2 = "EPFL"
-    `when`(collectionReference.whereArrayContains("organisers", asso1)).thenReturn(query)
-    `when`(query.get()).thenReturn(getTask)
-    `when`(querySnapshot.iterator()).thenReturn(mutableListOf(queryDocumentSnapshot1).iterator())
-
-    repository.getEventsOfAssociation(
-        "Balelec",
-        onSuccess = { events ->
-          assertEquals(1, events.size)
-          assertEquals(event1.uid, events[0].uid)
-        },
-        onFailure = { e -> throw e })
-
-    `when`(collectionReference.whereArrayContains("organisers", asso2)).thenReturn(query)
-    `when`(querySnapshot.iterator())
-        .thenReturn(mutableListOf(queryDocumentSnapshot1, queryDocumentSnapshot3).iterator())
-
-    repository.getEventsOfAssociation(
-        "EPFL",
-        onSuccess = { events ->
-          assertEquals(2, events.size)
-          assert(events.any { it.uid == event1.uid })
-          assert(events.any { it.uid == event3.uid })
-        },
-        onFailure = { e -> throw e })
-  }
-
   /** Asserts that db.collection(EVENT_PATH).document(event.uid).set(event) is called */
   @Test
   fun testAddEvent() {

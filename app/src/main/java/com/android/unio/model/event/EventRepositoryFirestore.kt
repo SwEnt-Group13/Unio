@@ -24,22 +24,6 @@ class EventRepositoryFirestore @Inject constructor(private val db: FirebaseFires
     }
   }
 
-  override fun getEventsOfAssociation(
-      association: String,
-      onSuccess: (List<Event>) -> Unit,
-      onFailure: (Exception) -> Unit
-  ) {
-    db.collection(EVENT_PATH)
-        .whereArrayContains("organisers", association)
-        .get()
-        .performFirestoreOperation(
-            onSuccess = { result ->
-              val events = result.mapNotNull { hydrate(it.data) }
-              onSuccess(events)
-            },
-            onFailure = { exception -> onFailure(exception) })
-  }
-
   /**
    * Gets the event with the given id. Here, instead of using success and failure listener directly,
    * we use a Snapshot Listener that call directly the callback when a read/write are made on the

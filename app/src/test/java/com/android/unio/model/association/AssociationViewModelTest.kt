@@ -299,33 +299,4 @@ class AssociationViewModelTest {
     verify(onFailure).invoke(failureException)
   }
 
-  @Test
-  fun testGetEventsForAssociationSuccess() {
-    val association = MockAssociation.createMockAssociation(uid = "1", name = "ACM")
-    val testEvents =
-        listOf(MockEvent.createMockEvent(organisers = listOf(association), title = "Event 1"))
-    `when`(eventRepository.getEventsOfAssociation(eq("1"), any(), any())).thenAnswer { invocation ->
-      val onSuccess = invocation.arguments[1] as (List<Event>) -> Unit
-      onSuccess(testEvents)
-    }
-
-    viewModel.getEventsForAssociation(association) { events -> assertEquals(testEvents, events) }
-
-    verify(eventRepository).getEventsOfAssociation(eq("1"), any(), any())
-  }
-
-  @Test
-  fun testGetEventsForAssociationFailure() {
-    val association = MockAssociation.createMockAssociation(uid = "1", name = "ACM")
-    `when`(eventRepository.getEventsOfAssociation(eq("1"), any(), any())).thenAnswer { invocation ->
-      val onFailure = invocation.arguments[2] as (Exception) -> Unit
-      onFailure(Exception("Fake exception"))
-    }
-
-    viewModel.getEventsForAssociation(association) { events ->
-      assertEquals(emptyList<Event>(), events)
-    }
-
-    verify(eventRepository).getEventsOfAssociation(eq("1"), any(), any())
-  }
 }

@@ -154,12 +154,6 @@ class AssociationProfileTest : TearDown() {
           onSuccess(associations)
         }
 
-    every { eventRepository.getEventsOfAssociation(any(), any(), any()) } answers
-        {
-          val onSuccess = args[1] as (List<Event>) -> Unit
-          onSuccess(events)
-        }
-
     every { userRepository.init(any()) } answers { (args[0] as () -> Unit).invoke() }
 
     every { concurrentAssociationUserRepository.updateFollow(any(), any(), any(), any()) } answers
