@@ -13,6 +13,11 @@ object AppPreferences {
   const val LANGUAGE = "language"
   const val RESET_PASSWORD = "reset_password"
 
+  object Notification {
+    val default
+      get() = true
+  }
+
   object Theme {
     const val LIGHT = "light"
     const val DARK = "dark"

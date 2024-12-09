@@ -168,7 +168,7 @@ fun SettingsContainer(onPasswordChange: (() -> Unit) -> Unit) {
                 contentDescription =
                     context.getString(R.string.settings_notifications_content_description))
           },
-          defaultValue = true)
+          defaultValue = AppPreferences.Notification.default)
       preference(
           modifier = Modifier.testTag(AppPreferences.LOCATION_PERMISSION),
           key = AppPreferences.LOCATION_PERMISSION,

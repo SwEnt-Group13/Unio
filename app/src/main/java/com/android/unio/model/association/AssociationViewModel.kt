@@ -7,6 +7,8 @@ import com.android.unio.model.event.EventRepository
 import com.android.unio.model.follow.ConcurrentAssociationUserRepository
 import com.android.unio.model.image.ImageRepository
 import com.android.unio.model.user.User
+import com.google.firebase.Firebase
+import com.google.firebase.messaging.messaging
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.io.InputStream
 import javax.inject.Inject
@@ -122,9 +124,11 @@ constructor(
       val updatedFollowCount = if (target.followersCount - 1 >= 0) target.followersCount - 1 else 0
       updatedAssociation = target.copy(followersCount = updatedFollowCount)
       updatedUser.followedAssociations.remove(target.uid)
+      Firebase.messaging.unsubscribeFromTopic(target.uid)
     } else {
       updatedAssociation = target.copy(followersCount = target.followersCount + 1)
       updatedUser.followedAssociations.add(target.uid)
+      Firebase.messaging.subscribeToTopic(target.uid)
     }
     concurrentAssociationUserRepository.updateFollow(
         updatedUser,
