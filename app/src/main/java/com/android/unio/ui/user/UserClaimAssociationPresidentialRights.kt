@@ -215,10 +215,7 @@ fun UserClaimAssociationPresidentialRightsScreenScaffold(
                   onClick = {
                     coroutineScope.launch {
                       verifyCode(
-                              Firebase.functions,
-                              association!!.uid,
-                              verificationCode,
-                              user!!.uid)
+                              Firebase.functions, association!!.uid, verificationCode, user!!.uid)
                           .addOnCompleteListener { task ->
                             if (!task.isSuccessful) {
                               val e = task.exception
