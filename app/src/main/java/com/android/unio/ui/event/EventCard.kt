@@ -66,6 +66,7 @@ import com.android.unio.ui.image.AsyncImageWrapper
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
 import com.android.unio.ui.theme.AppTypography
+import java.lang.ref.Reference
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -78,17 +79,19 @@ fun EventCard(
     userViewModel: UserViewModel,
     eventViewModel: EventViewModel,
     shouldBeEditable: Boolean =
-        false // To be changed in the future once permissions are implemented
+        true // To be changed in the future once permissions are implemented
 ) {
   val context = LocalContext.current
   val user by userViewModel.user.collectAsState()
   val associations by event.organisers.list.collectAsState()
+
   var isNotificationsEnabled by remember { mutableStateOf(false) }
   when (PackageManager.PERMISSION_GRANTED) {
     ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) -> {
       isNotificationsEnabled = true
     }
   }
+
 
   if (user == null) {
     Log.e("EventCard", "User not found.")
@@ -153,7 +156,8 @@ fun EventCard(
       associations,
       isSaved,
       onClickEventCard = {
-        eventViewModel.selectEvent(event.uid)
+
+        eventViewModel.selectEvent(event.uid, true)
         navigationAction.navigateTo(Screen.EVENT_DETAILS)
       },
       onClickSaveButton = onClickSaveButton,

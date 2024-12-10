@@ -17,7 +17,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.itemsIndexed
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -26,6 +30,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.DirectionsWalk
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.filled.Place
+import androidx.compose.material.icons.filled.Upload
 import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material.icons.rounded.Favorite
@@ -65,6 +70,7 @@ import androidx.core.net.toUri
 import com.android.unio.R
 import com.android.unio.model.association.Association
 import com.android.unio.model.event.Event
+import com.android.unio.model.event.EventUserPicture
 import com.android.unio.model.event.EventUtils.formatTimestamp
 import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.map.MapViewModel
@@ -77,6 +83,7 @@ import com.android.unio.ui.image.AsyncImageWrapper
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
 import com.android.unio.ui.theme.AppTypography
+import com.google.firebase.Timestamp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
@@ -93,6 +100,7 @@ private val ASSOCIATION_ICON_SIZE = 24.dp
 
 private var testSnackbar: SnackbarHostState? = null
 private var scope: CoroutineScope? = null
+
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -112,6 +120,8 @@ fun EventScreen(
         Toast.makeText(LocalContext.current, "An error occurred.", Toast.LENGTH_SHORT).show()
         return
     }
+
+
     val associations by event!!.organisers.list.collectAsState()
 
     val isSaved = user!!.savedEvents.contains(event!!.uid)
@@ -140,10 +150,25 @@ fun EventScreenScaffold(
     isSaved: Boolean,
     onClickSaveButton: () -> Unit
 ) {
+    val nbOfTabs = 2
+    val pagerState = rememberPagerState(initialPage = 0) { nbOfTabs }
     val context = LocalContext.current
     testSnackbar = remember { SnackbarHostState() }
     scope = rememberCoroutineScope()
     Scaffold(
+        floatingActionButton = {
+            if (pagerState.currentPage == 1) {
+                FloatingActionButton(
+                    onClick = {  },
+                    modifier = Modifier.testTag("onch").padding(15.dp)) {
+                    Icon(
+                        imageVector = Icons.Filled.Upload,
+                        contentDescription =
+                        context.getString(R.string.home_content_description_map_button))
+                }
+            }
+
+        },
         modifier = Modifier.testTag(EventDetailsTestTags.SCREEN),
         snackbarHost = {
             SnackbarHost(
@@ -205,7 +230,7 @@ fun EventScreenScaffold(
                 })
         },
         content = { padding ->
-            EventScreenContent(navigationAction, mapViewModel, event, associations, padding)
+            EventScreenContent(navigationAction, mapViewModel, event, associations, padding, pagerState)
         })
 }
 
@@ -215,7 +240,8 @@ fun EventScreenContent(
     mapViewModel: MapViewModel,
     event: Event,
     associations: List<Association>,
-    padding: PaddingValues
+    padding: PaddingValues,
+    pagerState: PagerState
 ) {
     val context = LocalContext.current
     Column(
@@ -237,12 +263,10 @@ fun EventScreenContent(
         }
 
         EventInformationCard(event, associations, context)
-        val nbOfTabs = 2
-        val pagerState = rememberPagerState(initialPage = 0) { nbOfTabs }
+
         HorizontalPager(state = pagerState, modifier = Modifier.fillMaxSize().padding(padding).padding(9.dp)) { page ->
 
             EventDetailsBody(navigationAction, mapViewModel, event, context, page)
-
 
         }
 
@@ -366,20 +390,32 @@ fun EventDetailsBody(
     context: Context,
     page: Int
 ) {
+    val eventPictures by event.eventPictures.list.collectAsState()
     if (page == 0) {
         EventDetailsDescriptionTab(navigationAction, mapViewModel, event, context)
     } else if (page == 1) {
-        EventDetailsPicturesTab()
-    }
-    Column(verticalArrangement = Arrangement.Center, modifier = Modifier.fillMaxSize()) {
+        EventDetailsPicturesTab(event, eventPictures)
     }
 }
 
 @Composable
-fun EventDetailsPicturesTab() {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text("PICTUUUUURES")
+fun EventDetailsPicturesTab(event: Event, eventPictures: List<EventUserPicture>) {
+    if (event.startDate.seconds > Timestamp.now().seconds) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Text("You have to wait for the event to start to upload pictures :)")
+        }
+    } else if (eventPictures.isEmpty()) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Text("The event has no user pictures yet :/")
+        }
+    } else {
+        LazyVerticalStaggeredGrid(columns = StaggeredGridCells.Fixed(2)) {
+            itemsIndexed(eventPictures) { index, item ->
+                AsyncImageWrapper(item.image.toUri(), contentDescription = "")
+            }
+        }
     }
+
 }
 
 @Composable
