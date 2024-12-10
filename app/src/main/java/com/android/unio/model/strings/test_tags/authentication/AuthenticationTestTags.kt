@@ -1,4 +1,4 @@
-package com.android.unio.model.strings.test_tags
+package com.android.unio.model.strings.test_tags.authentication
 
 object AccountDetailsTestTags {
   // TITLE
@@ -9,15 +9,18 @@ object AccountDetailsTestTags {
   const val FIRST_NAME_TEXT_FIELD = "accountDetailsFirstNameTextField"
   const val FIRST_NAME_TEXT = "accountDetailsFirstNameText"
   const val FIRST_NAME_ERROR_TEXT = "accountDetailsFirstNameErrorText"
+  const val FIRST_NAME_CHARACTER_COUNTER = "accountDetailsFirstNameCharacterCounter"
 
   // LAST NAME TEXT FIELD
   const val LAST_NAME_TEXT_FIELD = "accountDetailsLastNameTextField"
   const val LAST_NAME_TEXT = "accountDetailsLastNameText"
   const val LAST_NAME_ERROR_TEXT = "accountDetailsLastNameErrorText"
+  const val LAST_NAME_CHARACTER_COUNTER = "accountDetailsLastNameCharacterCounter"
 
   // BIOGRAPHY TEXT FIELD
   const val BIOGRAPHY_TEXT_FIELD = "accountDetailsBioTextField"
   const val BIOGRAPHY_TEXT = "accountDetailsBioText"
+  const val BIOGRAPHY_CHARACTER_COUNTER = "accountDetailsBiographyCharacterCounter"
 
   // PROFILE PICTURE
   const val PROFILE_PICTURE_TEXT = "accountDetailsProfilePictureText"
@@ -93,4 +96,15 @@ object WelcomeTestTags {
   const val PASSWORD = "welcomePassword"
   const val BUTTON = "welcomeButton"
   const val FORGOT_PASSWORD = "welcomeForgotPassword"
+}
+
+object PictureSelectionToolTestTags {
+  const val SELECTED_PICTURE = "pictureSelectionToolSelectedPicture"
+  const val REMOVE_PICTURE = "pictureSelectionToolRemovePicture"
+  const val GALLERY_ADD = "pictureSelectionToolGalleryAdd"
+  const val CAMERA_ADD = "pictureSelectionToolCameraAdd"
+  const val VALIDATE_BUTTON = "pictureSelectionToolValidateButton"
+  const val CANCEL_BUTTON = "pictureSelectionToolCancelButton"
+  const val NEW_PROFILE_PICTURE = "new_profile_picture.jpg"
+  const val IMAGE_JPEG = "image/jpeg"
 }

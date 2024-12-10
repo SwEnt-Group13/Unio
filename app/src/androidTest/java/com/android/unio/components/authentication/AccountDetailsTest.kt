@@ -7,13 +7,16 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
+import androidx.compose.ui.test.performTextClearance
 import androidx.compose.ui.test.performTextInput
 import com.android.unio.TearDown
 import com.android.unio.addNewUserSocial
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
-import com.android.unio.model.strings.test_tags.AccountDetailsTestTags
-import com.android.unio.model.strings.test_tags.InterestsOverlayTestTags
-import com.android.unio.model.strings.test_tags.SocialsOverlayTestTags
+import com.android.unio.model.image.ImageViewModel
+import com.android.unio.model.strings.TextLengthSamples
+import com.android.unio.model.strings.test_tags.authentication.AccountDetailsTestTags
+import com.android.unio.model.strings.test_tags.authentication.InterestsOverlayTestTags
+import com.android.unio.model.strings.test_tags.authentication.SocialsOverlayTestTags
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.authentication.AccountDetailsScreen
 import com.android.unio.ui.navigation.NavigationAction
@@ -44,6 +47,8 @@ class AccountDetailsTest : TearDown() {
   @MockK private lateinit var userViewModel: UserViewModel
   @MockK private lateinit var imageRepository: ImageRepositoryFirebaseStorage
 
+  private lateinit var imageViewModel: ImageViewModel
+
   // This is the implementation of the abstract method getUid() from FirebaseUser.
   // Because it is impossible to mock abstract method, this is the only way to mock it.
   @MockK private lateinit var mockFirebaseUser: zzac
@@ -73,8 +78,10 @@ class AccountDetailsTest : TearDown() {
     navigationAction = mock(NavigationAction::class.java)
     `when`(navigationAction.getCurrentRoute()).thenReturn(Screen.ACCOUNT_DETAILS)
 
+    imageViewModel = ImageViewModel(imageRepository)
+
     composeTestRule.setContent {
-      AccountDetailsScreen(navigationAction, userViewModel, imageRepository)
+      AccountDetailsScreen(navigationAction, userViewModel, imageViewModel)
     }
   }
 
@@ -161,6 +168,9 @@ class AccountDetailsTest : TearDown() {
         .performClick()
     addNewUserSocial(composeTestRule, "facebook_username", "Facebook")
     addNewUserSocial(composeTestRule, "instagram_username", "Instagram")
+
+    composeTestRule.waitForIdle()
+
     composeTestRule
         .onNodeWithTag(SocialsOverlayTestTags.SAVE_BUTTON)
         .performScrollTo()
@@ -194,6 +204,42 @@ class AccountDetailsTest : TearDown() {
     composeTestRule
         .onNodeWithTag(AccountDetailsTestTags.LAST_NAME_ERROR_TEXT, useUnmergedTree = true)
         .assertIsDisplayed()
+  }
+
+  @Test
+  fun testCorrectlyDisplaysCharacterCountForTextFields() {
+    composeTestRule
+        .onNodeWithTag(AccountDetailsTestTags.FIRST_NAME_TEXT_FIELD)
+        .performScrollTo()
+        .performTextInput(TextLengthSamples.SMALL)
+    composeTestRule
+        .onNodeWithTag(AccountDetailsTestTags.FIRST_NAME_CHARACTER_COUNTER, useUnmergedTree = true)
+        .assertExists()
+    composeTestRule
+        .onNodeWithTag(AccountDetailsTestTags.FIRST_NAME_TEXT_FIELD)
+        .performTextClearance()
+
+    composeTestRule
+        .onNodeWithTag(AccountDetailsTestTags.LAST_NAME_TEXT_FIELD)
+        .performScrollTo()
+        .performTextInput(TextLengthSamples.SMALL)
+    composeTestRule
+        .onNodeWithTag(AccountDetailsTestTags.LAST_NAME_CHARACTER_COUNTER, useUnmergedTree = true)
+        .assertExists()
+    composeTestRule
+        .onNodeWithTag(AccountDetailsTestTags.LAST_NAME_TEXT_FIELD)
+        .performTextClearance()
+
+    composeTestRule
+        .onNodeWithTag(AccountDetailsTestTags.BIOGRAPHY_TEXT_FIELD)
+        .performScrollTo()
+        .performTextInput(TextLengthSamples.LARGE)
+    composeTestRule
+        .onNodeWithTag(AccountDetailsTestTags.BIOGRAPHY_CHARACTER_COUNTER, useUnmergedTree = true)
+        .assertExists()
+    composeTestRule
+        .onNodeWithTag(AccountDetailsTestTags.BIOGRAPHY_TEXT_FIELD)
+        .performTextClearance()
   }
 
   @Test

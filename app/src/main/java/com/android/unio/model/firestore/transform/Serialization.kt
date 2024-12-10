@@ -14,8 +14,15 @@ import com.android.unio.model.user.User
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserSocial
 
+// This file contains extension functions for serializing model objects into Firestore data.
+
+/**
+ * Serializes [Association] data into Firestore data.
+ *
+ * @param association Association to serialize.
+ * @return Serialized Firestore data.
+ */
 fun AssociationRepositoryFirestore.Companion.serialize(association: Association): Map<String, Any> {
-  println(mapRolesToPermission(association.roles))
   return mapOf(
       Association::uid.name to association.uid,
       Association::url.name to association.url,
@@ -31,10 +38,22 @@ fun AssociationRepositoryFirestore.Companion.serialize(association: Association)
       Association::principalEmailAddress.name to association.principalEmailAddress)
 }
 
+/**
+ * Maps a list of [Member] to a map of user UIDs to role UIDs.
+ *
+ * @param members Members to map.
+ * @return Map of user UIDs to role UIDs.
+ */
 fun mapUsersToRoles(members: List<Member>): Map<String, String> {
   return members.associate { member -> member.user.uid to member.role.uid }
 }
 
+/**
+ * Maps a list of [Role] to a map of role UIDs to role data.
+ *
+ * @param roles Roles to map.
+ * @return Map of role UIDs to role data.
+ */
 fun mapRolesToPermission(roles: List<Role>): Map<String, Map<String, Any>> {
   return roles.associate { role ->
     role.uid to
@@ -45,6 +64,12 @@ fun mapRolesToPermission(roles: List<Role>): Map<String, Map<String, Any>> {
   }
 }
 
+/**
+ * Serializes [User] data into Firestore data.
+ *
+ * @param user User to serialize.
+ * @return Serialized Firestore data.
+ */
 fun UserRepositoryFirestore.Companion.serialize(user: User): Map<String, Any> {
   return mapOf(
       User::uid.name to user.uid,
@@ -64,6 +89,12 @@ fun UserRepositoryFirestore.Companion.serialize(user: User): Map<String, Any> {
       User::savedEvents.name to user.savedEvents.uids)
 }
 
+/**
+ * Serializes [Event] data into Firestore data.
+ *
+ * @param event Event to serialize.
+ * @return Serialized Firestore data.
+ */
 fun EventRepositoryFirestore.Companion.serialize(event: Event): Map<String, Any> {
   return mapOf(
       Event::uid.name to event.uid,
@@ -82,7 +113,8 @@ fun EventRepositoryFirestore.Companion.serialize(event: Event): Map<String, Any>
               Location::longitude.name to event.location.longitude,
               Location::name.name to event.location.name),
       Event::types.name to event.types.map { it.name },
-      Event::placesRemaining.name to event.placesRemaining)
+      Event::maxNumberOfPlaces.name to event.maxNumberOfPlaces,
+      Event::numberOfSaved.name to event.numberOfSaved)
 }
 fun EventUserPictureRepositoryFirestore.Companion.serialize(eventUserPicture: EventUserPicture): Map<String, Any> {
     return mapOf(

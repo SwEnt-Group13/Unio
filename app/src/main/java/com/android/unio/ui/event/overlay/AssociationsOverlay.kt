@@ -41,9 +41,19 @@ import androidx.wear.compose.material.Text
 import com.android.unio.R
 import com.android.unio.model.association.Association
 import com.android.unio.model.search.SearchViewModel
-import com.android.unio.model.strings.test_tags.EventCreationOverlayTestTags
+import com.android.unio.model.strings.test_tags.event.EventCreationOverlayTestTags
 import com.android.unio.ui.theme.AppTypography
 
+/**
+ * A dialog that allows users to select associations.
+ *
+ * @param onDismiss Callback when the dialog is dismissed.
+ * @param onSave Callback when the changes are saved.
+ * @param associations The list of pairs of [Association] and their selected state.
+ * @param searchViewModel The [SearchViewModel] to use.
+ * @param headerText The text to display as the header.
+ * @param bodyText The text to display as the body.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AssociationsOverlay(
@@ -173,6 +183,11 @@ fun AssociationsOverlay(
   }
 }
 
+/**
+ * A list of associations with checkboxes.
+ *
+ * @param associations The list of pairs of [Association] and their selected state.
+ */
 @Composable
 fun AssociationsList(
     associations: List<Pair<Association, MutableState<Boolean>>>,

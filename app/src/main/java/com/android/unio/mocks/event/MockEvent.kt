@@ -97,7 +97,7 @@ class MockEvent {
         startDate: Timestamp = Timestamp(Date(System.currentTimeMillis() + 86400001)),
         endDate: Timestamp = Timestamp(Date(System.currentTimeMillis() + 86400002)),
         location: Location = MockLocation.createMockLocation(),
-        types: List<EventType> = listOf(EventType.TRIP),
+        types: List<EventType> = listOf(EventType.TRIP)
     ): Event {
       return Event(
           uid = uid,
@@ -112,7 +112,7 @@ class MockEvent {
           endDate = endDate,
           location = location,
           types = types,
-          placesRemaining = -1,
+          maxNumberOfPlaces = -1,
           eventPictures = MockReferenceList())
     }
 

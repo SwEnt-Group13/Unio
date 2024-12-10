@@ -9,6 +9,7 @@ import com.android.unio.model.association.compareMemberLists
 import com.android.unio.model.association.compareRoleLists
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventRepositoryFirestore
+import com.android.unio.model.event.EventUserPicture
 import com.android.unio.model.firestore.transform.hydrate
 import com.android.unio.model.firestore.transform.mapRolesToPermission
 import com.android.unio.model.firestore.transform.mapUsersToRoles
@@ -72,8 +73,9 @@ class HydrationAndSerializationTest {
           startDate = Timestamp.now(),
           endDate = Timestamp.now(),
           location = Location(latitude = 0.0, longitude = 0.0, name = "Example Location"),
-          placesRemaining = -1,
-          eventPictures = emptyList<String>())
+          maxNumberOfPlaces = -1,
+          numberOfSaved = 3,
+          eventPictures = EventUserPicture.emptyFirestoreReferenceList())
 
   /** Round-trip tests for serialization and hydration of user, association, and event instances. */
   @Test
@@ -152,7 +154,8 @@ class HydrationAndSerializationTest {
         event.location.longitude, (serialized["location"] as Map<String, Any>)["longitude"])
     assertEquals(event.organisers.uids, serialized["organisers"])
     assertEquals(event.taggedAssociations.uids, serialized["taggedAssociations"])
-    assertEquals(event.placesRemaining, serialized["placesRemaining"])
+    assertEquals(event.maxNumberOfPlaces, serialized["maxNumberOfPlaces"])
+    assertEquals(event.numberOfSaved, serialized["numberOfSaved"])
 
     val hydrated = EventRepositoryFirestore.hydrate(serialized)
 
@@ -167,7 +170,8 @@ class HydrationAndSerializationTest {
     assertEquals(event.location, hydrated.location)
     assertEquals(event.organisers.uids, hydrated.organisers.uids)
     assertEquals(event.taggedAssociations.uids, hydrated.taggedAssociations.uids)
-    assertEquals(event.placesRemaining, hydrated.placesRemaining)
+    assertEquals(event.maxNumberOfPlaces, hydrated.maxNumberOfPlaces)
+    assertEquals(event.numberOfSaved, hydrated.numberOfSaved)
   }
 
   /** Test hydration when the map misses fields. */
@@ -222,7 +226,8 @@ class HydrationAndSerializationTest {
     assertEquals(Location(), hydrated.location)
     assertEquals(emptyList<Association>(), hydrated.organisers.list.value)
     assertEquals(emptyList<Association>(), hydrated.taggedAssociations.list.value)
-    assertEquals(-1, hydrated.placesRemaining)
+    assertEquals(-1, hydrated.maxNumberOfPlaces)
+    assertEquals(0, hydrated.numberOfSaved)
   }
 
   /** Test that serialization includes all data class fields. */

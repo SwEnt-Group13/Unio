@@ -9,6 +9,7 @@ import com.google.firebase.Firebase
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.auth
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
@@ -95,7 +96,7 @@ class EventRepositoryFirestoreTest {
     every { db.collection(EVENT_PATH) } returns collectionReference
 
     mockkStatic(FirebaseAuth::class)
-    every { FirebaseAuth.getInstance() } returns auth
+    every { Firebase.auth } returns auth
 
     `when`(collectionReference.get()).thenReturn(getTask)
 
@@ -170,57 +171,6 @@ class EventRepositoryFirestoreTest {
           assertEquals(event3.uid, events[2].uid)
         },
         onFailure = { e -> throw e })
-  }
-
-  /** Asserts that getEventsOfAssociation calls the right methods. */
-  @Test
-  fun testGetEventsOfAssociation() {
-    val asso1 = "Balelec"
-    val asso2 = "EPFL"
-    `when`(collectionReference.whereArrayContains("organisers", asso1)).thenReturn(query)
-    `when`(query.get()).thenReturn(getTask)
-    `when`(querySnapshot.iterator()).thenReturn(mutableListOf(queryDocumentSnapshot1).iterator())
-
-    repository.getEventsOfAssociation(
-        "Balelec",
-        onSuccess = { events ->
-          assertEquals(1, events.size)
-          assertEquals(event1.uid, events[0].uid)
-        },
-        onFailure = { e -> throw e })
-
-    `when`(collectionReference.whereArrayContains("organisers", asso2)).thenReturn(query)
-    `when`(querySnapshot.iterator())
-        .thenReturn(mutableListOf(queryDocumentSnapshot1, queryDocumentSnapshot3).iterator())
-
-    repository.getEventsOfAssociation(
-        "EPFL",
-        onSuccess = { events ->
-          assertEquals(2, events.size)
-          assert(events.any { it.uid == event1.uid })
-          assert(events.any { it.uid == event3.uid })
-        },
-        onFailure = { e -> throw e })
-  }
-
-  /** Asserts that getNextEventsFromDateToDate calls the right methods. */
-  @Test
-  fun testGetNextEventsFromDateToDate() {
-    val startDate = Timestamp(GregorianCalendar(2003, 7, 1).time)
-    val endDate = Timestamp(GregorianCalendar(2005, 7, 1).time)
-    `when`(collectionReference.whereGreaterThanOrEqualTo("date", startDate)).thenReturn(query)
-    `when`(query.whereLessThan("date", endDate)).thenReturn(query)
-    `when`(query.get()).thenReturn(getTask)
-    `when`(querySnapshot.iterator()).thenReturn(mutableListOf(queryDocumentSnapshot1).iterator())
-
-    repository.getNextEventsFromDateToDate(
-        startDate,
-        endDate,
-        { events ->
-          assertEquals(events.size, 1)
-          assertEquals(events[0].uid, event1.uid)
-        },
-        { e -> throw e })
   }
 
   /** Asserts that db.collection(EVENT_PATH).document(event.uid).set(event) is called */

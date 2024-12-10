@@ -84,7 +84,6 @@ class AssociationRepositoryFirestoreTest {
     every { db.collection(USER_PATH) } returns userCollectionReference
 
     mockkStatic(FirebaseAuth::class)
-    every { FirebaseAuth.getInstance() } returns auth
     every { Firebase.auth } returns auth
     every { auth.addAuthStateListener(any<AuthStateListener>()) } answers
         { call ->
@@ -313,6 +312,8 @@ class AssociationRepositoryFirestoreTest {
     assert(success)
   }
 
+  // We should remove this test, but it is kept to make the testAddAssociationSuccess test pass
+  // It looks like there is a bug with the serialization of the roles
   @Test
   fun testGetAssociationsByCategory() {
     every { queryDocumentSnapshot2.data } returns (map2)

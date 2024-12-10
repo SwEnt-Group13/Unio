@@ -17,7 +17,8 @@
     <string name="association_upcoming_events">Évenements à venir</string>
     <string name="association_go_back">Retour</string>
     <string name="association_see_more">Voir plus</string>
-    <string name="association_share">Partager l\'association</string>
+    <string name="association_more">Plus</string>
+    <string name="association_broadcast_message">Envoyer un message aux abonnés</string>
     <string name="association_contact_members">Membres à contacter</string>
     <string name="association_help_us">
         Voici comment vous pouvez nous aider. Cliquez sur une fonction pour en savoir plus
@@ -45,6 +46,7 @@
     <string name="url_explanation">Fournissez l\'URL de la page web ou de la présence en ligne de l\'association.</string>
     <string name="principal_email_address_explanation">Fournissez l\'addresse email de la présidence de l\'association; ex : presidents@association.com</string>
     <string name="cancel_button_text">Annuler</string>
+    <string name="send_button_text">Envoyer</string>
     <string name="save_button_text">Enregistrer</string>
     <string name="category_button_text">Sélectionner la catégorie</string>
     <string name="save_failed_message">Échec de la sauvegarde de l\'association</string>
@@ -122,6 +124,7 @@
     <string name="email_verification_email_refresh">Rafraîchir</string>
     <string name="email_verification_content_description_go_back">Retour</string>
     <string name="email_verification_content_description_refresh">Rafraîchir</string>
+    <string name="email_verification_toast_email_sent">Email envoyé</string>
 
     <!-- Welcome Screen Strings -->
     <string name="welcome_message">La plus grande plateforme de vie universitaire au monde.</string>
@@ -142,6 +145,17 @@
     <string name="welcome_content_description_show_password">Montrer le mot de passe</string>
     <string name="welcome_forgot_password">Oubli de mot de passe ?</string>
 
+    <!-- Picture Selection Tool Strings -->
+    <string name="selection_tool_selected_picture_text">Images sélectionnées</string>
+    <string name="selection_tool_remove_picture">Supprimer l\'image</string>
+    <string name="selection_tool_add_gallery_content_description">Ajouter depuis la galerie</string>
+    <string name="selection_tool_gallery_text">Galerie</string>
+    <string name="selection_tool_take_picture">Prendre une photo</string>
+    <string name="selection_tool_camera_text">Appareil photo</string>
+    <string name="selection_tool_validate_text">Valider</string>
+    <string name="selection_tool_cancel_text">Annuler</string>
+
+
     /**
     * package: event
     */
@@ -153,6 +167,8 @@
     <string name="event_card_content_description_saved_event">Sauvegardé</string>
     <string name="event_card_content_description_not_saved_event">Non sauvegardé</string>
     <string name="event_card_content_description_association_logo">Logo de l\'association</string>
+    <string name="event_card_interested_string">Intéréssés</string>
+    <string name="event_card_content_description_edit_association">Modifier l\'évènement</string>
 
     <!-- Event Creation Strings -->
     <string name="event_creation_screen">Création d\'un évènement</string>
@@ -189,6 +205,11 @@
     <string name="event_edit_failed">Echec lors de la modification</string>
     <string name="event_edit_save_button">Sauvegarder</string>
 
+    <!-- Event Edit Component Strings -->
+    <string name="event_edit_date_picker_desc">Sélectionner une date</string>
+    <string name="event_edit_time_picker_desc">Sélectionner une heure</string>
+    <string name="event_edit_toast_more_button">Continuez à taper pour voir plus de résultats</string>
+
     <!-- Associations Overlay Strings -->
     <string name="associations_overlay_coauthors_title" translatable="true">Co-organisateurs</string>
     <string name="associations_overlay_coauthors_description" translatable="true">Choisir quels associations organisent l\'évènement avec vous</string>
@@ -217,17 +238,28 @@
     <!-- Home Screen Strings -->
     <string name="home_content_description_map_button">Bouton de la carte</string>
     <string name="home_content_description_search_icon">Icône de recherche</string>
-
+    <string name="home_tab_all">Tout</string>
+    <string name="home_tab_following">Suivis</string>
     /**
     * package: map
     */
 
     <!-- Map Screen Strings -->
-    <string name="home_tab_all">Tout</string>
-    <string name="home_tab_following">Suivis</string>
+
     <string name="map_event_go_back_button">Retour</string>
     <string name="map_event_title">Carte d\'évènements</string>
+    <string name="map_event_marker_time_remaining_prefix">Dans </string>
+    <string name="map_event_marker_time_remaining_days">jours, </string>
+    <string name="map_event_marker_time_remaining_hours">heures</string>
+    <string name="map_event_marker_prefix">Evénements : </string>
     <string name="map_content_description_center_on_user">Centrer sur l\'utilisateur</string>
+
+    /**
+    * package: preferences
+    */
+    <string name="app_preferences_theme_text_display_light">Clair</string>
+    <string name="app_preferences_theme_text_display_dark">Obscur</string>
+    <string name="app_preferences_theme_text_display_system_default_auto">Automatique</string>
 
     /**
     * package: saved
@@ -302,7 +334,8 @@
     <string name="user_claim_association_presidential_rights_wrong_code_error">Code incorrect, veuillez réessayer</string>
     <string name="user_claim_association_presidential_rights_verification_request_not_found">Demande de vérification introuvable</string>
     <string name="user_claim_association_presidential_rights_service_unavailable">Service indisponible. Veuillez réessayer plus tard</string>
-
+    <string name="user_claim_association_presidential_rights_verify_email">Vérifiez votre Email</string>
+    <string name="user_claim_association_presidential_rights_enter_code_sent_to">Entrez le code envoyé à</string>
     /**
     * Other
     */
@@ -322,7 +355,7 @@
     <string name="event_map_button_description">Ouvrir la carte pour ajouter un évènement</string>
     <string name="event_image_description">Image de l\'évènement</string>
     <string name="event_save_button_description">Icone pour sauvegarder un évènement</string>
-    <string name="event_share_button_description">Icone pour partager un évènement</string>
+    <string name="event_more_button_description">Icone pour partager un évènement</string>
 
     <!-- Event Types Strings from EventType.kt -->
     <string name="event_type_festival">Festival</string>
@@ -369,15 +402,15 @@
     <string name="reset_password_button">Confirmer</string>
     <string name="reset_password_invalid_email">Veuillez entrer une addresse email valide</string>
 
-
-
     <!-- Notification Strings -->
     <string name="notification_event_reminder" translatable="true">L\'évènement va bientôt commencer :)</string>
     <string name="notification_event_reminder_default_message" translatable="true">Un évènement va bientôt avoir lieu</string>
+    <string name="event_send_notification">Envoyer une notification aux participants</string>
+    <string name="notification_broadcast_message">Message</string>
+    <string name="notification_broadcast_success">La notification a été envoyée avec succès</string>
+    <string name="notification_broadcast_failure">Une erreur est survenue lors de l\'envoi de la notification.</string>
+    <string name="notification_empty_message">Veuillez entrer un message pour envoyer une notification</string>
 
-
-    <string name="event_edit_date_picker_desc">Sélectionner une date</string>
-    <string name="event_edit_time_picker_desc">Sélectionner une heure</string>
     <string name="event_sign_up">Je viens !</string>
     <string name="event_not_found">ERREUR: évènement introuvable</string>
     <string name="event_details_content_description_saved">Sauvegardé</string>

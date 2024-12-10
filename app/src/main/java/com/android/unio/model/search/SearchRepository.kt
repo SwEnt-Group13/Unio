@@ -26,9 +26,16 @@ import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.guava.await
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
 
-/** Repository for searching associations and events */
+/**
+ * Repository for searching associations and events
+ *
+ * @property appContext the application context
+ * @property associationRepository the repository for associations
+ * @property eventRepository the repository for events
+ */
 class SearchRepository
 @Inject
 constructor(
@@ -71,8 +78,7 @@ constructor(
 
   /**
    * Calls the [AssociationRepository] to fetch all associations and adds them to the search
-   * database. If the call fails, logs the exception. TODO Should be refactored to use a single call
-   * to fetch the data alongside the AssociationViewModel
+   * database. If the call fails, logs the exception.
    */
   fun fetchAssociations() {
     associationRepository.getAssociations(
@@ -84,8 +90,7 @@ constructor(
 
   /**
    * Calls the [EventRepository] to fetch all events and adds them to the search database. If the
-   * call fails, logs the exception. TODO Should be refactored to use a single call to fetch the
-   * data alongside the EventViewModel
+   * call fails, logs the exception.
    */
   fun fetchEvents() {
     eventRepository.getEvents(
@@ -190,33 +195,55 @@ constructor(
     }
   }
 
-  /** Converts the given [AssociationDocument] to an [Association]. */
+  /**
+   * Converts the given [AssociationDocument] to an [Association].
+   *
+   * @param associationDocument the [AssociationDocument] to convert
+   * @return the [Association] converted from the [AssociationDocument]
+   */
   private suspend fun associationDocumentToAssociation(
       associationDocument: AssociationDocument
   ): Association {
     return suspendCoroutine { continuation ->
       associationRepository.getAssociationWithId(
           id = associationDocument.uid,
-          onSuccess = { association -> continuation.resume(association) },
+          onSuccess = { association ->
+            if (continuation.context.isActive) {
+              continuation.resume(association)
+            }
+          },
           onFailure = { exception ->
             Log.e(
                 "SearchRepository",
                 "failed to convert associationDocumentation to association ",
                 exception)
-            continuation.resumeWithException(exception)
+            if (continuation.context.isActive) {
+              continuation.resumeWithException(exception)
+            }
           })
     }
   }
 
-  /** Converts the given [EventDocument] to an [Event]. */
+  /**
+   * Converts the given [EventDocument] to an [Event].
+   *
+   * @param eventDocument the [EventDocument] to convert
+   * @return the [Event] converted from the [EventDocument]
+   */
   private suspend fun eventDocumentToEvent(eventDocument: EventDocument): Event {
     return suspendCoroutine { continuation ->
       eventRepository.getEventWithId(
           id = eventDocument.uid,
-          onSuccess = { association -> continuation.resume(association) },
+          onSuccess = { association ->
+            if (continuation.context.isActive) {
+              continuation.resume(association)
+            }
+          },
           onFailure = { exception ->
             Log.e("SearchRepository", "failed to convert eventDocumentation to event ", exception)
-            continuation.resumeWithException(exception)
+            if (continuation.context.isActive) {
+              continuation.resumeWithException(exception)
+            }
           })
     }
   }

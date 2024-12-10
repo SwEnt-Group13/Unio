@@ -25,7 +25,7 @@ import com.android.unio.model.map.nominatim.NominatimLocationRepository
 import com.android.unio.model.map.nominatim.NominatimLocationSearchViewModel
 import com.android.unio.model.search.SearchRepository
 import com.android.unio.model.search.SearchViewModel
-import com.android.unio.model.strings.test_tags.EventEditTestTags
+import com.android.unio.model.strings.test_tags.event.EventEditTestTags
 import com.android.unio.ui.event.EventEditScreen
 import com.android.unio.ui.navigation.NavigationAction
 import com.google.firebase.Firebase
@@ -127,11 +127,6 @@ class EventEditTests : TearDown() {
     associationViewModel.selectAssociation(associations.first().uid)
 
     every { associationViewModel.findAssociationById(any()) } returns associations.first()
-    every { associationViewModel.getEventsForAssociation(any(), any()) } answers
-        {
-          val onSuccess = args[1] as (List<Event>) -> Unit
-          onSuccess(emptyList())
-        }
   }
 
   @Test

@@ -19,6 +19,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 import com.android.unio.model.preferences.AppPreferences
+import com.android.unio.model.preferences.getOrDefault
 import me.zhanghai.compose.preference.LocalPreferenceFlow
 
 private val lightScheme =
@@ -266,6 +267,10 @@ data class ColorFamily(
 val unspecified_scheme =
     ColorFamily(Color.Unspecified, Color.Unspecified, Color.Unspecified, Color.Unspecified)
 
+/**
+ * Unio's theme that changes based on the user's preferences. The theme can be light, dark, or
+ * system default, and the contrast can be high, medium, or low.
+ */
 @Composable
 fun AppTheme(
     // Dynamic color is available on Android 12+
@@ -274,9 +279,7 @@ fun AppTheme(
 ) {
   val preferences by LocalPreferenceFlow.current.collectAsState()
 
-  val theme = (preferences.asMap().getOrDefault(AppPreferences.THEME, AppPreferences.Theme.SYSTEM))
-  val language =
-      preferences.asMap().getOrDefault(AppPreferences.LANGUAGE, AppPreferences.Language.default)
+  val theme = preferences.getOrDefault(AppPreferences.THEME, AppPreferences.Theme.SYSTEM)
 
   val colorScheme =
       when {

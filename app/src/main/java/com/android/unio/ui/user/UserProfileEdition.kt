@@ -1,12 +1,12 @@
 package com.android.unio.ui.user
 
 import android.net.Uri
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -45,9 +45,9 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.core.net.toUri
 import com.android.unio.R
-import com.android.unio.model.image.ImageRepository
+import com.android.unio.model.image.ImageViewModel
 import com.android.unio.model.strings.StoragePathsStrings
-import com.android.unio.model.strings.test_tags.UserEditionTestTags
+import com.android.unio.model.strings.test_tags.user.UserEditionTestTags
 import com.android.unio.model.user.AccountDetailsError
 import com.android.unio.model.user.ImageUriType
 import com.android.unio.model.user.Interest
@@ -56,6 +56,8 @@ import com.android.unio.model.user.UserSocial
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.model.user.checkImageUri
 import com.android.unio.model.user.checkNewUser
+import com.android.unio.model.utils.NetworkUtils
+import com.android.unio.model.utils.TextLength
 import com.android.unio.model.utils.Utils
 import com.android.unio.ui.authentication.overlay.InterestOverlay
 import com.android.unio.ui.authentication.overlay.SocialOverlay
@@ -70,10 +72,18 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
+/**
+ * User edit screen that allows the user to edit their profile. This composable simply calls
+ * [UserProfileEditionScreenScaffold] with the necessary parameters.
+ *
+ * @param userViewModel The [UserViewModel] for the user.
+ * @param imageViewModel The [ImageViewModel] for the profile picture.
+ * @param navigationAction The [NavigationAction] to navigate to different screens.
+ */
 @Composable
 fun UserProfileEditionScreen(
     userViewModel: UserViewModel,
-    imageRepository: ImageRepository,
+    imageViewModel: ImageViewModel,
     navigationAction: NavigationAction
 ) {
 
@@ -82,7 +92,7 @@ fun UserProfileEditionScreen(
   val user by userViewModel.user.collectAsState()
   val userId = user!!.uid
 
-  UserProfileEditionScreenContent(
+  UserProfileEditionScreenScaffold(
       user = user!!,
       onDiscardChanges = { navigationAction.goBack() },
       onModifyUser = { profilePictureUri, createUser ->
@@ -94,12 +104,11 @@ fun UserProfileEditionScreen(
               createUser(user!!.profilePicture) // create a user with the same URI
           ImageUriType.LOCAL -> { // create a user with a new URI and upload the image to storage
             val inputStream = context.contentResolver.openInputStream(profilePictureUri.value)
-            imageRepository.uploadImage(
+            imageViewModel.uploadImage(
                 inputStream!!,
                 StoragePathsStrings.USER_IMAGES + userId,
                 onSuccess = { imageUrl -> createUser(imageUrl) },
-                onFailure = { exception ->
-                  Log.e("UserSettings", "Error uploading image: $exception")
+                onFailure = {
                   Toast.makeText(
                           context,
                           context.getString(R.string.account_details_image_upload_error),
@@ -162,9 +171,21 @@ fun UserProfileEditionScreen(
       })
 }
 
+/**
+ * A scaffold that contains content of the user profile edition screen.
+ *
+ * @param user The user to edit.
+ * @param onDiscardChanges The function to call when the user wants to discard the changes.
+ * @param onModifyUser The function to call when the user wants to modify their profile.
+ * @param onUploadUserOnline The function to call when the user wants to upload their profile
+ *   online.
+ * @param onUploadUserOffline The function to call when the user wants to upload their profile
+ *   offline.
+ * @param onDeleteUser The function to call when the user wants to delete their profile.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun UserProfileEditionScreenContent(
+fun UserProfileEditionScreenScaffold(
     user: User,
     onDiscardChanges: () -> Unit,
     onModifyUser: (MutableState<Uri>, (String) -> Unit) -> Unit,
@@ -207,7 +228,7 @@ fun UserProfileEditionScreenContent(
    * simply be copied from the user.
    */
   val createUser: (String) -> Unit = { uri ->
-    val hasInternet = Utils.checkInternetConnection(context)
+    val hasInternet = NetworkUtils.checkInternetConnection(context)
     val newUser =
         User(
             uid = user.uid,
@@ -283,7 +304,7 @@ fun UserProfileEditionScreenContent(
 
           Button(
               onClick = {
-                if (Utils.checkInternetConnection(context)) {
+                if (NetworkUtils.checkInternetConnection(context)) {
                   showDeleteUserPrompt = true
                 } else {
                   Toast.makeText(
@@ -329,6 +350,17 @@ fun UserProfileEditionScreenContent(
   }
 }
 
+/**
+ * Edit user text fields for the user to edit their profile.
+ *
+ * @param isErrors The set of errors that the user has made.
+ * @param firstName The first name of the user.
+ * @param lastName The last name of the user.
+ * @param bio The biography of the user.
+ * @param onFirstNameChange The function to call when the user changes their first name.
+ * @param onLastNameChange The function to call when the user changes their last name.
+ * @param onBioChange The function to call when the user changes their biography.
+ */
 @Composable
 private fun EditUserTextFields(
     isErrors: MutableSet<AccountDetailsError>,
@@ -346,27 +378,53 @@ private fun EditUserTextFields(
   OutlinedTextField(
       modifier = Modifier.padding(4.dp).testTag(UserEditionTestTags.FIRST_NAME_TEXT_FIELD),
       label = {
-        Text(
-            context.getString(R.string.user_edition_first_name),
-            modifier = Modifier.testTag(UserEditionTestTags.FIRST_NAME_TEXT))
+        Row(
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+          Text(
+              context.getString(R.string.user_edition_first_name),
+              modifier = Modifier.testTag(UserEditionTestTags.FIRST_NAME_TEXT))
+
+          if (Utils.checkInputLengthIsClose(firstName, TextLength.SMALL)) {
+            Text(
+                text = "${firstName.length}/${TextLength.SMALL.length}",
+                modifier = Modifier.testTag(UserEditionTestTags.FIRST_NAME_CHARACTER_COUNTER))
+          }
+        }
       },
       isError = (isFirstNameError),
       supportingText = {
         if (isFirstNameError) {
           Text(
               context.getString(AccountDetailsError.EMPTY_FIRST_NAME.errorMessage),
-              modifier = Modifier.testTag(UserEditionTestTags.FIRST_NAME_ERROR_TEXT))
+              modifier = Modifier.testTag(UserEditionTestTags.FIRST_NAME_ERROR_TEXT).padding(4.dp))
         }
       },
-      onValueChange = onFirstNameChange,
+      onValueChange = {
+        if (Utils.checkInputLength(it, TextLength.SMALL)) {
+          onFirstNameChange(it)
+        }
+      },
       value = firstName)
 
   OutlinedTextField(
       modifier = Modifier.padding(4.dp).testTag(UserEditionTestTags.LAST_NAME_TEXT_FIELD),
       label = {
-        Text(
-            context.getString(R.string.user_edition_last_name),
-            modifier = Modifier.testTag(UserEditionTestTags.LAST_NAME_TEXT))
+        Row(
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+          Text(
+              context.getString(R.string.user_edition_last_name),
+              modifier = Modifier.testTag(UserEditionTestTags.LAST_NAME_TEXT).padding(4.dp))
+
+          if (Utils.checkInputLengthIsClose(lastName, TextLength.SMALL)) {
+            Text(
+                text = "${lastName.length}/${TextLength.SMALL.length}",
+                modifier = Modifier.testTag(UserEditionTestTags.LAST_NAME_CHARACTER_COUNTER))
+          }
+        }
       },
       isError = (isLastNameError),
       supportingText = {
@@ -376,7 +434,11 @@ private fun EditUserTextFields(
               modifier = Modifier.testTag(UserEditionTestTags.LAST_NAME_ERROR_TEXT))
         }
       },
-      onValueChange = onLastNameChange,
+      onValueChange = {
+        if (Utils.checkInputLength(it, TextLength.SMALL)) {
+          onLastNameChange(it)
+        }
+      },
       value = lastName)
 
   OutlinedTextField(
@@ -386,14 +448,33 @@ private fun EditUserTextFields(
               .height(200.dp)
               .testTag(UserEditionTestTags.BIOGRAPHY_TEXT_FIELD),
       label = {
-        Text(
-            context.getString(R.string.user_edition_bio),
-            modifier = Modifier.testTag(UserEditionTestTags.BIOGRAPHY_TEXT))
+        Row(
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+          Text(
+              context.getString(R.string.user_edition_bio),
+              modifier = Modifier.testTag(UserEditionTestTags.BIOGRAPHY_TEXT).padding(4.dp))
+
+          if (Utils.checkInputLengthIsClose(bio, TextLength.LARGE)) {
+            Text(
+                text = "${bio.length}/${TextLength.LARGE.length}",
+                modifier = Modifier.testTag(UserEditionTestTags.BIOGRAPHY_CHARACTER_COUNTER))
+          }
+        }
       },
       onValueChange = onBioChange,
       value = bio)
 }
 
+/**
+ * The [InterestButtonAndFlowRow] composable contains the button to add interests and display the
+ * row of interests that the user has selected.
+ *
+ * @param interestsFlow The flow of interests coupled with a mutable state of whether the user has
+ *   selected them.
+ * @param onShowInterests The function to call when the user wants to show the interests overlay.
+ */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun InterestButtonAndFlowRow(
@@ -422,6 +503,13 @@ private fun InterestButtonAndFlowRow(
   }
 }
 
+/**
+ * The [SocialButtonAndFlowRow] composable contains the button to add socials and display the row of
+ * socials that the user has selected.
+ *
+ * @param userSocialFlow The flow of socials that the user has selected.
+ * @param onShowSocials The function to call when the user wants to show the socials overlay.
+ */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun SocialButtonAndFlowRow(
@@ -454,6 +542,14 @@ private fun SocialButtonAndFlowRow(
   }
 }
 
+/**
+ * The [UserDeletePrompt] composable contains the dialog that prompts the user to confirm the
+ * deletion of their account.
+ *
+ * @param onDismiss The function to call when the user wants to dismiss the dialog.
+ * @param onConfirmDelete The function to call when the user wants to confirm the deletion of their
+ *   account.
+ */
 @Composable
 fun UserDeletePrompt(
     onDismiss: () -> Unit,

@@ -12,23 +12,33 @@ import com.android.unio.TearDown
 import com.android.unio.assertDisplayComponentInScroll
 import com.android.unio.mocks.association.MockAssociation
 import com.android.unio.mocks.event.MockEvent
+import com.android.unio.mocks.user.MockUser
 import com.android.unio.model.association.Association
+import com.android.unio.model.association.AssociationRepositoryFirestore
 import com.android.unio.model.event.Event
+import com.android.unio.model.event.EventRepositoryFirestore
 import com.android.unio.model.event.EventUtils.formatTimestamp
+import com.android.unio.model.event.EventViewModel
+import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.map.MapViewModel
 import com.android.unio.model.strings.FormatStrings.DAY_MONTH_FORMAT
-import com.android.unio.model.strings.test_tags.EventDetailsTestTags
+import com.android.unio.model.strings.test_tags.event.EventDetailsTestTags
+import com.android.unio.model.user.User
+import com.android.unio.model.user.UserRepositoryFirestore
+import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.event.EventScreenScaffold
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.firebase.Timestamp
 import io.mockk.MockKAnnotations
+import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.verify
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import me.zhanghai.compose.preference.ProvidePreferenceLocals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -43,6 +53,14 @@ class EventDetailsTest : TearDown() {
 
   private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
   private lateinit var mapViewModel: MapViewModel
+
+  @MockK private lateinit var eventRepository: EventRepositoryFirestore
+  @MockK private lateinit var associationRepository: AssociationRepositoryFirestore
+  @MockK private lateinit var userRepository: UserRepositoryFirestore
+  @MockK private lateinit var imageRepository: ImageRepositoryFirebaseStorage
+
+  private lateinit var eventViewModel: EventViewModel
+  private lateinit var userViewModel: UserViewModel
 
   @get:Rule val composeTestRule = createComposeRule()
 
@@ -67,12 +85,26 @@ class EventDetailsTest : TearDown() {
     navigationAction = NavigationAction(navHostController)
     fusedLocationProviderClient = mock()
     mapViewModel = MapViewModel(fusedLocationProviderClient)
+
+    eventViewModel = EventViewModel(eventRepository, imageRepository, associationRepository)
+
+    every { userRepository.init(any()) } returns Unit
+    every { userRepository.getUserWithId("uid", any(), any()) } answers
+        {
+          (it.invocation.args[1] as (User) -> Unit)((MockUser.createMockUser()))
+        }
+
+    userViewModel = UserViewModel(userRepository, imageRepository)
+    userViewModel.getUserByUid("uid")
   }
 
   private fun setEventScreen(event: Event) {
 
     composeTestRule.setContent {
-      EventScreenScaffold(navigationAction, mapViewModel, event, associations, true) {}
+      ProvidePreferenceLocals {
+        EventScreenScaffold(
+            navigationAction, mapViewModel, event, associations, eventViewModel, userViewModel)
+      }
     }
   }
 
@@ -166,8 +198,6 @@ class EventDetailsTest : TearDown() {
     composeTestRule
         .onNodeWithTag(EventDetailsTestTags.SHARE_BUTTON)
         .assertDisplayComponentInScroll()
-    composeTestRule.onNodeWithTag(EventDetailsTestTags.SHARE_BUTTON).performClick()
-    assertSnackBarIsDisplayed()
 
     // Save button
     composeTestRule.onNodeWithTag(EventDetailsTestTags.SAVE_BUTTON).assertDisplayComponentInScroll()
@@ -182,8 +212,6 @@ class EventDetailsTest : TearDown() {
     composeTestRule
         .onNodeWithTag(EventDetailsTestTags.SIGN_UP_BUTTON)
         .assertDisplayComponentInScroll()
-    composeTestRule.onNodeWithTag(EventDetailsTestTags.SIGN_UP_BUTTON).performClick()
-    assertSnackBarIsDisplayed()
   }
 
   private fun assertSnackBarIsDisplayed() {

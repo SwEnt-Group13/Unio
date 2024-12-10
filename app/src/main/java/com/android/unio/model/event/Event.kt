@@ -37,8 +37,9 @@ import java.util.Date
  * @property endDate event end date
  * @property location event location
  * @property types list of event types
- * @property placesRemaining number of remaining places
- * @property eventPictures number of remaining places
+ * @property maxNumberOfPlaces max number of places available for the event
+ * @property numberOfSaved number of users that saved the event
+ * * @property eventPictures number of remaining places
  */
 data class Event(
     override var uid: String = "",
@@ -53,12 +54,19 @@ data class Event(
     val endDate: Timestamp = Timestamp(Date()),
     val location: Location = Location(),
     val types: List<EventType> = mutableListOf(EventType.OTHER),
-    val placesRemaining: Int = -1,
+    val maxNumberOfPlaces: Int = -1,
+    val numberOfSaved: Int = 0,
     val eventPictures: ReferenceList<EventUserPicture>,
 ) : UniquelyIdentifiable {
   companion object
 }
 
+/**
+ * Enum class that represents the different types of events
+ *
+ * @property color event type color
+ * @property text event type text
+ */
 enum class EventType(val color: Color, val text: String) {
   FESTIVAL(eventTypeFestival, "festival"),
   APERITIF(eventTypeAperitif, "aperitif"),
@@ -70,6 +78,17 @@ enum class EventType(val color: Color, val text: String) {
   OTHER(eventTypeOther, "other")
 }
 
+/**
+ * A class representing the event document for AppSearch indexing. It allows the search engine to
+ * search on the event title, description, catchy description and location name.
+ *
+ * @property namespace namespace of the event document
+ * @property uid event id
+ * @property title event title
+ * @property description event description
+ * @property catchyDescription event catchy description
+ * @property locationName event location name
+ */
 @Document
 data class EventDocument(
     @Namespace val namespace: String = "",
@@ -82,9 +101,13 @@ data class EventDocument(
     val catchyDescription: String = "",
     @StringProperty(indexingType = StringPropertyConfig.INDEXING_TYPE_PREFIXES)
     val locationName: String = ""
-    // TODO Need to add organisers and taggedAssociations
 )
 
+/**
+ * Extension function to convert an Event object to an EventDocument object
+ *
+ * @return EventDocument object
+ */
 fun Event.toEventDocument(): EventDocument {
   return EventDocument(
       uid = this.uid,

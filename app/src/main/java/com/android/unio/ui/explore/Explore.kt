@@ -2,6 +2,7 @@ package com.android.unio.ui.explore
 
 import android.content.Context
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -13,17 +14,19 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
@@ -34,8 +37,8 @@ import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationCategory
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.search.SearchViewModel
-import com.android.unio.model.strings.test_tags.ExploreContentTestTags
-import com.android.unio.model.strings.test_tags.ExploreTestTags
+import com.android.unio.model.strings.test_tags.explore.ExploreContentTestTags
+import com.android.unio.model.strings.test_tags.explore.ExploreTestTags
 import com.android.unio.ui.association.AssociationSearchBar
 import com.android.unio.ui.image.AsyncImageWrapper
 import com.android.unio.ui.navigation.BottomNavigationMenu
@@ -45,6 +48,14 @@ import com.android.unio.ui.navigation.Route
 import com.android.unio.ui.navigation.Screen
 import com.android.unio.ui.theme.AppTypography
 
+/**
+ * The Explore screen displays a list of associations grouped by category. This simply displays the
+ * ExploreScreenContent and the BottomNavigationBar with a scaffold.
+ *
+ * @param navigationAction The navigation action to use when an association is clicked.
+ * @param associationViewModel The [AssociationViewModel] to use.
+ * @param searchViewModel The [SearchViewModel] to use.
+ */
 @Composable
 fun ExploreScreen(
     navigationAction: NavigationAction,
@@ -77,14 +88,17 @@ fun ExploreScreenContent(
     searchViewModel: SearchViewModel
 ) {
   val associationsByCategory by associationViewModel.associationsByCategory.collectAsState()
-  var searchQuery by remember { mutableStateOf("") }
-  var expanded by rememberSaveable { mutableStateOf(false) }
-  val assocationResults by searchViewModel.associations.collectAsState()
-  val searchState by searchViewModel.status.collectAsState()
   val context = LocalContext.current
+  var shouldCloseExpandable by rememberSaveable { mutableStateOf(false) }
 
   Column(
-      modifier = Modifier.padding(padding).fillMaxWidth(),
+      modifier =
+          Modifier.padding(padding).fillMaxWidth().pointerInput(shouldCloseExpandable) {
+            detectTapGestures {
+              // Collapse the component when clicking outside
+              shouldCloseExpandable = true
+            }
+          },
       horizontalAlignment = Alignment.CenterHorizontally) {
         Text(
             text = context.getString(R.string.explore_content_screen_title),
@@ -99,7 +113,9 @@ fun ExploreScreenContent(
             onAssociationSelected = { association ->
               associationViewModel.selectAssociation(association.uid)
               navigationAction.navigateTo(Screen.ASSOCIATION_PROFILE)
-            })
+            },
+            shouldCloseExpandable,
+            onOutsideClickHandled = { shouldCloseExpandable = false })
 
         LazyColumn(
             modifier = Modifier.fillMaxSize().testTag(ExploreContentTestTags.CATEGORIES_LIST),
@@ -163,20 +179,10 @@ fun AssociationItem(association: Association, onClick: () -> Unit) {
         AsyncImageWrapper(
             imageUri = association.image.toUri(),
             contentDescription = context.getString(R.string.explore_content_description_image),
-            modifier = Modifier.size(124.dp),
-            placeholderResourceId = R.drawable.adec,
+            modifier = Modifier.size(124.dp).clip(RoundedCornerShape(12.dp)),
+            placeholderResourceId = R.drawable.association_logo_placeholder,
             contentScale = ContentScale.Crop)
 
-        /**
-         * The following code is commented out because all images are not available in the Firestore
-         * database. Uncomment the code when all images are available, and remove the placeholder
-         * image.
-         *
-         * AsyncImage( model = association.image.toUri(), contentDescription =
-         * context.getString(R.string.explore_content_description_async_image), modifier =
-         * Modifier.size(124.dp).testTag("associationImage"), contentScale = ContentScale.Crop //
-         * crop the image to fit )
-         */
         Spacer(modifier = Modifier.height(8.dp))
 
         Text(
@@ -189,12 +195,23 @@ fun AssociationItem(association: Association, onClick: () -> Unit) {
       }
 }
 
-/** Returns a list of associations sorted by alphabetical order. */
+/**
+ * Returns a list of associations sorted by alphabetical order. This method should probably be
+ * removed as it does not sufficiently abstract the sorting logic.
+ *
+ * @param associations The list of associations to sort.
+ * @return The sorted list of associations.
+ */
 fun getFilteredAssociationsByAlphabeticalOrder(associations: List<Association>): List<Association> {
   return associations.sortedBy { it.name }
 }
 
-/** Returns the entries of the association map sorted by the key's display name. */
+/**
+ * Returns the entries of the association map sorted by the key's display name.
+ *
+ * @param context The context to use for string resources.
+ * @param associationsByCategory The map of associations by category.
+ */
 fun getSortedEntriesAssociationsByCategory(
     context: Context,
     associationsByCategory: Map<AssociationCategory, List<Association>>

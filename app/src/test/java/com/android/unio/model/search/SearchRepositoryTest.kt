@@ -21,6 +21,7 @@ import com.android.unio.model.association.toAssociationDocument
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventDocument
 import com.android.unio.model.event.EventRepository
+import com.android.unio.model.event.EventUserPicture
 import com.android.unio.model.event.toEventDocument
 import com.android.unio.model.firestore.emptyFirestoreReferenceList
 import com.android.unio.model.firestore.firestoreReferenceListWith
@@ -69,11 +70,13 @@ class SearchRepositoryTest {
   private val testScope = TestScope(testDispatcher)
 
   @MockK private lateinit var firebaseAuth: FirebaseAuth
+
   @MockK private lateinit var firebaseUser: FirebaseUser
 
   @MockK private lateinit var mockSession: AppSearchSession
 
   @MockK private lateinit var mockAssociationRepository: AssociationRepository
+
   @MockK private lateinit var mockEventRepository: EventRepository
 
   private lateinit var searchRepository: SearchRepository
@@ -120,8 +123,8 @@ class SearchRepositoryTest {
           price = 40.5,
           startDate = Timestamp(GregorianCalendar(2004, 7, 1).time),
           location = Location(1.2345, 2.3455, "Somewhere"),
-          placesRemaining = -1,
-          eventPictures = emptyList<String>())
+          maxNumberOfPlaces = -1,
+          eventPictures =  EventUserPicture.emptyFirestoreReferenceList())
   private val event2 =
       Event(
           uid = "2",
@@ -133,8 +136,8 @@ class SearchRepositoryTest {
           price = 40.5,
           startDate = Timestamp(GregorianCalendar(2008, 7, 1).time),
           location = Location(1.2345, 2.3455, "Somewhere"),
-          placesRemaining = -1,
-          eventPictures = emptyList<String>())
+          maxNumberOfPlaces = -1,
+          eventPictures =  EventUserPicture.emptyFirestoreReferenceList())
 
   @Before
   fun setUp() {

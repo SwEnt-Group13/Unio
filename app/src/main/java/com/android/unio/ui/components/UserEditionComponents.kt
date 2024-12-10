@@ -1,9 +1,6 @@
 package com.android.unio.ui.components
 
 import android.net.Uri
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.PickVisualMediaRequest
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -14,11 +11,19 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.rounded.AccountCircle
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.InputChip
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -33,7 +38,14 @@ import com.android.unio.model.user.Interest
 import com.android.unio.model.user.UserSocial
 import com.android.unio.ui.image.AsyncImageWrapper
 import com.android.unio.ui.theme.primaryLight
+import kotlinx.coroutines.launch
 
+/**
+ * A composable function to display the profile picture with the option to remove it.
+ *
+ * @param profilePictureUri The URI of the profile picture.
+ * @param onRemove Lambda to handle the removal of the profile picture.
+ */
 @Composable
 private fun ProfilePictureWithRemoveIcon(
     profilePictureUri: Uri,
@@ -58,6 +70,14 @@ private fun ProfilePictureWithRemoveIcon(
   }
 }
 
+/**
+ * A composable function that allows the user to select a profile picture.
+ *
+ * @param profilePictureUri The URI of the profile picture.
+ * @param onProfilePictureUriChange Lambda to handle the change of the profile picture URI.
+ * @param testTag The test tag to use for the icon.
+ */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfilePicturePicker(
     profilePictureUri: MutableState<Uri>,
@@ -65,31 +85,58 @@ fun ProfilePicturePicker(
     testTag: String
 ) {
   val context = LocalContext.current
-  val pickMedia =
-      rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
-        if (uri != null) {
-          profilePictureUri.value = uri
-        }
-      }
+  val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+  val scope = rememberCoroutineScope()
+  var showSheet by remember { mutableStateOf(false) }
 
   if (profilePictureUri.value == Uri.EMPTY) {
     Icon(
         imageVector = Icons.Rounded.AccountCircle,
         contentDescription = context.getString(R.string.account_details_content_description_add),
         tint = primaryLight,
-        modifier =
-            Modifier.clickable {
-                  pickMedia.launch(
-                      PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
-                }
-                .size(100.dp)
-                .testTag(testTag))
+        modifier = Modifier.clickable { showSheet = true }.size(100.dp).testTag(testTag))
   } else {
     ProfilePictureWithRemoveIcon(
         profilePictureUri = profilePictureUri.value, onRemove = onProfilePictureUriChange)
   }
+
+  if (showSheet) {
+    ModalBottomSheet(
+        sheetState = sheetState,
+        onDismissRequest = {
+          scope.launch {
+            sheetState.hide()
+            showSheet = false
+          }
+        },
+        content = {
+          PictureSelectionTool(
+              maxPictures = 1,
+              allowGallery = true,
+              allowCamera = true,
+              onValidate = { uris ->
+                if (uris.isNotEmpty()) {
+                  profilePictureUri.value =
+                      uris.first() // Use the first selected as the profile picture
+                }
+                scope.launch { sheetState.hide() }
+                showSheet = false
+              },
+              onCancel = {
+                scope.launch { sheetState.hide() }
+                showSheet = false
+              },
+              initialSelectedPictures = emptyList())
+        })
+  }
 }
 
+/**
+ * A specific implementation of the [InputChip] for interests.
+ *
+ * @param pair The pair of [Interest] and its selected state.
+ * @param testTag The test tag to use for the chip.
+ */
 @Composable
 fun InterestInputChip(pair: Pair<Interest, MutableState<Boolean>>, testTag: String) {
   val context = LocalContext.current
@@ -107,6 +154,13 @@ fun InterestInputChip(pair: Pair<Interest, MutableState<Boolean>>, testTag: Stri
       })
 }
 
+/**
+ * A specific implementation of the [InputChip] for [UserSocial]s.
+ *
+ * @param userSocial The [UserSocial] to display.
+ * @param onRemove Lambda to handle the removal of the social.
+ * @param testTag The test tag to use for the chip.
+ */
 @Composable
 fun SocialInputChip(userSocial: UserSocial, onRemove: () -> Unit, testTag: String) {
   val context = LocalContext.current

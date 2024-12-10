@@ -18,25 +18,26 @@ import com.android.unio.model.event.EventRepositoryFirestore
 import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.follow.ConcurrentAssociationUserRepositoryFirestore
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
+import com.android.unio.model.image.ImageViewModel
 import com.android.unio.model.map.MapViewModel
 import com.android.unio.model.map.nominatim.NominatimLocationRepository
 import com.android.unio.model.map.nominatim.NominatimLocationSearchViewModel
 import com.android.unio.model.search.SearchRepository
 import com.android.unio.model.search.SearchViewModel
-import com.android.unio.model.strings.test_tags.AccountDetailsTestTags
-import com.android.unio.model.strings.test_tags.AssociationProfileTestTags
-import com.android.unio.model.strings.test_tags.EmailVerificationTestTags
-import com.android.unio.model.strings.test_tags.EventCreationTestTags
-import com.android.unio.model.strings.test_tags.EventDetailsTestTags
-import com.android.unio.model.strings.test_tags.ExploreContentTestTags
-import com.android.unio.model.strings.test_tags.ExploreTestTags
-import com.android.unio.model.strings.test_tags.HomeTestTags
-import com.android.unio.model.strings.test_tags.MapTestTags
-import com.android.unio.model.strings.test_tags.SavedTestTags
-import com.android.unio.model.strings.test_tags.SettingsTestTags
-import com.android.unio.model.strings.test_tags.SomeoneElseUserProfileTestTags
-import com.android.unio.model.strings.test_tags.UserProfileTestTags
-import com.android.unio.model.strings.test_tags.WelcomeTestTags
+import com.android.unio.model.strings.test_tags.association.AssociationProfileTestTags
+import com.android.unio.model.strings.test_tags.authentication.AccountDetailsTestTags
+import com.android.unio.model.strings.test_tags.authentication.EmailVerificationTestTags
+import com.android.unio.model.strings.test_tags.authentication.WelcomeTestTags
+import com.android.unio.model.strings.test_tags.event.EventCreationTestTags
+import com.android.unio.model.strings.test_tags.event.EventDetailsTestTags
+import com.android.unio.model.strings.test_tags.explore.ExploreContentTestTags
+import com.android.unio.model.strings.test_tags.explore.ExploreTestTags
+import com.android.unio.model.strings.test_tags.home.HomeTestTags
+import com.android.unio.model.strings.test_tags.map.MapTestTags
+import com.android.unio.model.strings.test_tags.saved.SavedTestTags
+import com.android.unio.model.strings.test_tags.settings.SettingsTestTags
+import com.android.unio.model.strings.test_tags.user.SomeoneElseUserProfileTestTags
+import com.android.unio.model.strings.test_tags.user.UserProfileTestTags
 import com.android.unio.model.user.User
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserViewModel
@@ -109,6 +110,8 @@ class ScreenDisplayingTest : TearDown() {
 
   @MockK private lateinit var associationRepositoryFirestore: AssociationRepositoryFirestore
   @MockK private lateinit var imageRepositoryFirestore: ImageRepositoryFirebaseStorage
+
+  private lateinit var imageViewModel: ImageViewModel
 
   @MockK private lateinit var firebaseAuth: FirebaseAuth
 
@@ -183,11 +186,6 @@ class ScreenDisplayingTest : TearDown() {
     val associations = MockAssociation.createAllMockAssociations(size = 2)
 
     every { associationViewModel.findAssociationById(any()) } returns associations.first()
-    every { associationViewModel.getEventsForAssociation(any(), any()) } answers
-        {
-          val onSuccess = args[1] as (List<Event>) -> Unit
-          onSuccess(emptyList())
-        }
 
     // Mocking the Firebase.auth object and its behaviour
     mockkStatic(FirebaseAuth::class)
@@ -196,6 +194,8 @@ class ScreenDisplayingTest : TearDown() {
     associationViewModel.selectAssociation(associations.first().uid)
 
     nominatimLocationSearchViewModel = NominatimLocationSearchViewModel(nominatimLocationRepository)
+
+    imageViewModel = ImageViewModel(imageRepositoryFirestore)
   }
 
   @Test
@@ -213,7 +213,7 @@ class ScreenDisplayingTest : TearDown() {
   @Test
   fun testAccountDetailsDisplayed() {
     composeTestRule.setContent {
-      AccountDetailsScreen(navigationAction, userViewModel, imageRepositoryFirestore)
+      AccountDetailsScreen(navigationAction, userViewModel, imageViewModel)
     }
     composeTestRule.onNodeWithTag(AccountDetailsTestTags.ACCOUNT_DETAILS).assertIsDisplayed()
   }
@@ -221,7 +221,9 @@ class ScreenDisplayingTest : TearDown() {
   @Test
   fun testHomeDisplayed() {
     composeTestRule.setContent {
-      HomeScreen(navigationAction, eventViewModel, userViewModel, searchViewModel)
+      ProvidePreferenceLocals {
+        HomeScreen(navigationAction, eventViewModel, userViewModel, searchViewModel)
+      }
     }
     composeTestRule.onNodeWithTag(HomeTestTags.SCREEN).assertIsDisplayed()
     composeTestRule.onNodeWithTag(HomeTestTags.SEARCH_BAR).assertIsDisplayed()
@@ -248,11 +250,13 @@ class ScreenDisplayingTest : TearDown() {
   @Test
   fun testEventDisplayed() {
     composeTestRule.setContent {
-      EventScreen(
-          navigationAction = navigationAction,
-          eventViewModel = eventViewModel,
-          userViewModel = userViewModel,
-          mapViewModel = mapViewModel)
+      ProvidePreferenceLocals {
+        EventScreen(
+            navigationAction = navigationAction,
+            eventViewModel = eventViewModel,
+            userViewModel = userViewModel,
+            mapViewModel = mapViewModel)
+      }
     }
     composeTestRule.onNodeWithTag(EventDetailsTestTags.SCREEN).assertIsDisplayed()
   }
@@ -273,15 +277,19 @@ class ScreenDisplayingTest : TearDown() {
   @Test
   fun testAssociationProfileDisplayed() {
     composeTestRule.setContent {
-      AssociationProfileScaffold(
-          navigationAction, userViewModel, eventViewModel, associationViewModel) {}
+      ProvidePreferenceLocals {
+        AssociationProfileScaffold(
+            navigationAction, userViewModel, eventViewModel, associationViewModel) {}
+      }
     }
     composeTestRule.onNodeWithTag(AssociationProfileTestTags.SCREEN).assertIsDisplayed()
   }
 
   @Test
   fun testSavedDisplayed() {
-    composeTestRule.setContent { SavedScreen(navigationAction, eventViewModel, userViewModel) }
+    composeTestRule.setContent {
+      ProvidePreferenceLocals { SavedScreen(navigationAction, eventViewModel, userViewModel) }
+    }
     composeTestRule.onNodeWithTag(SavedTestTags.SCREEN).assertIsDisplayed()
   }
 

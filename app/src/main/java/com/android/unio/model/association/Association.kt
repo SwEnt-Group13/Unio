@@ -52,7 +52,7 @@ data class Association(
 /**
  * Enum representing different categories of associations.
  *
- * @property displayName A human-readable name for the category.
+ * @property displayNameId A human-readable name for the category.
  */
 enum class AssociationCategory(val displayNameId: Int) {
   EPFL_BODIES(R.string.association_category_epfl_bodies),
@@ -107,11 +107,6 @@ class Role(val displayName: String, val permissions: Permissions, override val u
             "Committee")
     val MEMBER = Role("Member", Permissions.NONE, "Member")
     val GUEST = Role("Guest", Permissions.NONE, "Guest")
-
-    // Factory method to create new roles
-    fun createRole(displayName: String, permissions: Permissions, uid: String): Role {
-      return Role(displayName, permissions, uid)
-    }
   }
 }
 
@@ -122,34 +117,60 @@ class Role(val displayName: String, val permissions: Permissions, override val u
  */
 class Permissions private constructor(private val grantedPermissions: MutableSet<PermissionType>) {
 
+  /** Returns true if the permission is granted, false otherwise. */
   fun hasPermission(permission: PermissionType): Boolean {
     return grantedPermissions.contains(permission) ||
         grantedPermissions.contains(PermissionType.FULL_RIGHTS)
   }
 
+  /** Returns a set of all permissions granted by this set. */
   fun getGrantedPermissions(): Set<PermissionType> = grantedPermissions.toSet()
 
+  /**
+   * Adds a permission to the set grantedPermissions.
+   *
+   * @param permission Permission to add.
+   * @return A new Permissions object with the added permission.
+   */
   fun addPermission(permission: PermissionType): Permissions {
     grantedPermissions.add(permission)
     return this.copy()
   }
 
+  /**
+   * Adds a list of permissions to the set.
+   *
+   * @param permissionList List of permissions to add.
+   * @return A new Permissions object with the added permissions.
+   */
   fun addPermissions(permissionList: List<PermissionType>): Permissions {
     grantedPermissions.addAll(permissionList)
     return this.copy()
   }
 
+  /**
+   * Deletes a permission from the set.
+   *
+   * @param permission Permission to delete.
+   * @return A new Permissions object with the deleted permission.
+   */
   fun deletePermission(permission: PermissionType): Permissions {
     grantedPermissions.remove(permission)
     return this.copy()
   }
 
+  /**
+   * Deletes a list of permissions from the set.
+   *
+   * @param permissionList List of permissions to delete.
+   * @return A new Permissions object with the deleted permissions.
+   */
   fun deleteAllPermissions(permissionList: List<PermissionType>): Permissions {
     grantedPermissions.removeAll(permissionList)
     return this.copy()
   }
 
-  // create and return a copy of the current Permissions object with updated permissions
+  /** Create and return a copy of the current Permissions object with updated permissions */
   private fun copy(): Permissions {
     return Permissions(grantedPermissions.toMutableSet())
   }
@@ -160,23 +181,37 @@ class Permissions private constructor(private val grantedPermissions: MutableSet
     val NONE = Permissions(mutableSetOf())
   }
 
-  // PermissionsBuilder class to create Permissions with a list of roles/permissions
+  /** PermissionsBuilder class to create Permissions with a list of roles/permissions */
   class PermissionsBuilder {
     private val permissions = mutableSetOf<PermissionType>()
 
-    // Add a specific permission to the permissions set
+    /**
+     * Add a specific permission to the permissions set
+     *
+     * @param permission Permission to add
+     * @return The PermissionsBuilder object with the added permission
+     */
     fun addPermission(permission: PermissionType): PermissionsBuilder {
       permissions.add(permission)
       return this
     }
 
-    // Add a list of permissions to the permissions set
+    /**
+     * Add a list of permissions to the permissions set
+     *
+     * @param permissionList List of permissions to add
+     * @return The PermissionsBuilder object with the added permissions
+     */
     fun addPermissions(permissionList: List<PermissionType>): PermissionsBuilder {
       permissions.addAll(permissionList)
       return this
     }
 
-    // Build and return the Permissions object
+    /**
+     * Build and return the Permissions object
+     *
+     * @return The Permissions object with the permissions added
+     */
     fun build(): Permissions {
       // Ensure that FULL_RIGHTS is not included explicitly
       if (permissions.contains(PermissionType.FULL_RIGHTS)) {
@@ -187,6 +222,11 @@ class Permissions private constructor(private val grantedPermissions: MutableSet
   }
 }
 
+/**
+ * Enum representing different types of permissions that can be granted to a role.
+ *
+ * @property stringName A human-readable name for the permission.
+ */
 enum class PermissionType(val stringName: String) {
   FULL_RIGHTS("Full rights"), // Special permission granting all rights
   VIEW_MEMBERS("View members"),
@@ -197,6 +237,15 @@ enum class PermissionType(val stringName: String) {
   DELETE_EVENTS("Delete Events")
 }
 
+/**
+ * A class representing the association document for AppSearch indexing. It allows the search engine
+ * to search on the name, fullName and description fields.
+ *
+ * @param namespace The namespace of the document: "unio" for our app
+ * @param uid The unique identifier of the document
+ * @param name The name of the association
+ * @param fullName The full name of the association
+ */
 @Document
 data class AssociationDocument(
     @Namespace val namespace: String = "unio",
@@ -209,6 +258,11 @@ data class AssociationDocument(
     val description: String = ""
 )
 
+/**
+ * Extension function to convert an Association object to an AssociationDocument object
+ *
+ * @return The AssociationDocument object created from the Association object
+ */
 fun Association.toAssociationDocument(): AssociationDocument {
   return AssociationDocument(
       uid = this.uid, name = this.name, fullName = this.fullName, description = this.description)

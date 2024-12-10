@@ -1,5 +1,8 @@
 package com.android.unio.model.preferences
 
+import com.android.unio.R
+import me.zhanghai.compose.preference.Preferences
+
 /**
  * Constants for the app preferences. The object contains string constants for the keys of the app
  * preferences, as well as nested objects for specific values of the preferences.
@@ -10,6 +13,11 @@ object AppPreferences {
   const val LOCATION_PERMISSION = "location_permission"
   const val LANGUAGE = "language"
   const val RESET_PASSWORD = "reset_password"
+
+  object Notification {
+    val default
+      get() = true
+  }
 
   object Theme {
     const val LIGHT = "light"
@@ -23,10 +31,9 @@ object AppPreferences {
 
     fun toDisplayText(theme: String) =
         when (theme) {
-          LIGHT -> "Light"
-          DARK -> "Dark"
-          SYSTEM -> "System Default"
-          else -> theme
+          LIGHT -> R.string.app_preferences_theme_text_display_light
+          DARK -> R.string.app_preferences_theme_text_display_dark
+          else -> R.string.app_preferences_theme_text_display_system_default_auto
         }
   }
 
@@ -46,4 +53,8 @@ object AppPreferences {
           else -> language
         }
   }
+}
+
+inline fun <reified T> Preferences.getOrDefault(key: String, defaultValue: T): T {
+  return this.asMap().getOrDefault(key, defaultValue) as? T ?: defaultValue
 }

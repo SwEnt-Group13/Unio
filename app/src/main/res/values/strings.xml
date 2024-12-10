@@ -19,8 +19,9 @@
     <string name="association_upcoming_events" translatable="true">Upcoming Events</string>
     <string name="association_go_back" translatable="true">Go Back</string>
     <string name="association_see_more" translatable="true">See More</string>
-    <string name="association_share" translatable="true">Share Association</string>
+    <string name="association_more" translatable="true">More</string>
     <string name="association_edit" translatable="true">Edit Association</string>
+    <string name="association_broadcast_message">Broadcast a message</string>
     <string name="association_contact_members" translatable="true">Contact Members</string>
     <string name="association_contact_member_profile_picture" translatable="true">Contact Member Profile Picture</string>
     <string name="association_help_us" translatable="true">
@@ -51,6 +52,7 @@
     <string name="url_explanation">Provide the URL of the association\'s webpage or online presence.</string>
     <string name="principal_email_address_explanation">Provide the email address of the presidency of your association; ex : presidents@association.com</string>
     <string name="cancel_button_text">Cancel</string>
+    <string name="send_button_text">Send</string>
     <string name="save_button_text">Save</string>
     <string name="category_button_text">Select Category</string>
     <string name="save_failed_message">Failed to save association</string>
@@ -97,7 +99,7 @@
     <string name="account_details_content_description_remove_pfp">Remove Profile Picture</string>
 
     <!-- UserSettings Strings -->
-    <string name="user_edition_content_description_remove_social" translatable="false">Remove User Social</string>
+    <string name="user_edition_content_description_remove_social">Remove User Social</string>
     <string name="user_edition_first_name" translatable="true">Edit First name</string>
     <string name="user_edition_last_name" translatable="true">Edit Last name</string>
     <string name="user_edition_bio" translatable="true">Edit Biography</string>
@@ -127,6 +129,7 @@
     <string name="email_verification_email_refresh">Refresh</string>
     <string name="email_verification_content_description_go_back">Go back</string>
     <string name="email_verification_content_description_refresh">Refresh</string>
+    <string name="email_verification_toast_email_sent">Email sent</string>
 
     <!-- Welcome Screen Strings -->
     <string name="welcome_message">The world’s largest campus life platform.</string>
@@ -147,6 +150,16 @@
     <string name="welcome_content_description_show_password">Show password</string>
     <string name="welcome_forgot_password">Forgot your password ?</string>
 
+    <!-- Picture Selection Tool Strings -->
+    <string name="selection_tool_selected_picture_text">Selected Pictures</string>
+    <string name="selection_tool_remove_picture">Remove Picture</string>
+    <string name="selection_tool_add_gallery_content_description">Add from Gallery</string>
+    <string name="selection_tool_gallery_text">Gallery</string>
+    <string name="selection_tool_take_picture">Take Picture</string>
+    <string name="selection_tool_camera_text">Camera</string>
+    <string name="selection_tool_validate_text">Validate</string>
+    <string name="selection_tool_cancel_text">Cancel</string>
+
     /**
     * package: event
     */
@@ -158,6 +171,8 @@
     <string name="event_card_content_description_saved_event">Saved</string>
     <string name="event_card_content_description_not_saved_event">Not saved</string>
     <string name="event_card_content_description_association_logo">Association logo</string>
+    <string name="event_card_interested_string">Interested</string>
+    <string name="event_card_content_description_edit_association">Edit event</string>
 
     <!-- Event Creation Strings -->
     <string name="event_creation_screen">Event creation</string>
@@ -197,6 +212,7 @@
     <!-- Event Edit Component Strings -->
     <string name="event_edit_date_picker_desc">Select date</string>
     <string name="event_edit_time_picker_desc">Select time</string>
+    <string name="event_edit_toast_more_button">Continue typing to see more results</string>
 
     <!-- Associations Overlay Strings -->
     <string name="associations_overlay_coauthors_title" translatable="true">Coauthors</string>
@@ -210,6 +226,7 @@
     <!-- Event Details Strings -->
     <string name="event_sign_up">I\'m going !</string>
     <string name="event_not_found">ERROR : event not found.</string>
+    <string name="event_send_notification">Send a notification to attendees</string>
     <string name="event_details_content_description_saved">Saved</string>
     <string name="event_details_content_description_not_saved">Not saved</string>
     <string name="event_price_free">Free !</string>
@@ -246,7 +263,19 @@
     <!-- Map Screen Strings -->
     <string name="map_event_go_back_button">Go back</string>
     <string name="map_event_title">Event map</string>
+    <string name="map_event_marker_time_remaining_prefix">In </string>
+    <string name="map_event_marker_time_remaining_days">days, </string>
+    <string name="map_event_marker_time_remaining_hours">hours</string>
+    <string name="map_event_marker_prefix">Event: </string>
+    <string name="map_event_marker_snippet_separator" translatable="false"> - </string>
     <string name="map_content_description_center_on_user">Center on User</string>
+
+    /**
+    * package: preferences
+    */
+    <string name="app_preferences_theme_text_display_light">Light</string>
+    <string name="app_preferences_theme_text_display_dark">Dark</string>
+    <string name="app_preferences_theme_text_display_system_default_auto">Automatic</string>
 
     /**
     * package: navigation
@@ -337,6 +366,8 @@
     <string name="user_claim_association_presidential_rights_wrong_code_error">Wrong code, please try again</string>
     <string name="user_claim_association_presidential_rights_verification_request_not_found">Verification request not found</string>
     <string name="user_claim_association_presidential_rights_service_unavailable">Service unavailable. Please try later</string>
+    <string name="user_claim_association_presidential_rights_verify_email">Verify Email</string>
+    <string name="user_claim_association_presidential_rights_enter_code_sent_to">Enter the code sent to</string>
 
     /**
     * Other
@@ -357,7 +388,7 @@
     <string name="event_map_button_description">Open Map to Add Event</string>
     <string name="event_image_description">Event Image</string>
     <string name="event_save_button_description">Icon for saving event</string>
-    <string name="event_share_button_description">Icon for sharing event</string>
+    <string name="event_more_button_description">Icon for sharing event</string>
     <string name="event_association_icon_description" translatable="false">Icon of the event\'s organiser</string>
     <string name="event_location_button_description">Icon for seeing event\'s location</string>
     <string name="event_signup_button_description">Icon to sign up to the event</string>
@@ -424,6 +455,10 @@
     <string name="notification_event_reminder" translatable="true">The event is about to begin :)</string>
     <string name="notification_event_reminder_default_message" translatable="true">"An event will occur soon"</string>
     <string name="notification_event_reminder_default_title" translatable="false">Unio</string>
+    <string name="notification_broadcast_message">Message</string>
+    <string name="notification_broadcast_success" translatable="true">Notification sent successfully</string>
+    <string name="notification_broadcast_failure" translatable="true">Failed to send notification</string>
+    <string name="notification_empty_message" translatable="true">The message is empty. Please write a message before sending.</string>
 
     <!-- Bottom Navigation Strings -->
     <string name="bottom_nav_home">Home</string>

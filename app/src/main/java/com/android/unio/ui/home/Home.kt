@@ -55,7 +55,7 @@ import com.android.unio.R
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.search.SearchViewModel
-import com.android.unio.model.strings.test_tags.HomeTestTags
+import com.android.unio.model.strings.test_tags.home.HomeTestTags
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.event.EventCard
 import com.android.unio.ui.navigation.BottomNavigationMenu
@@ -65,6 +65,16 @@ import com.android.unio.ui.navigation.Route
 import com.android.unio.ui.navigation.Screen
 import kotlinx.coroutines.launch
 
+/**
+ * The Home screen displays a list of events sorted by some logic (date, if the user follows an
+ * association, or the result of the user search query). This simply calls the composables
+ * HomeContent, TopBar BottomNavigationMenu, FAB with a scaffold.
+ *
+ * @param navigationAction The navigation action to use when an event is clicked.
+ * @param eventViewModel The [EventViewModel] to use.
+ * @param userViewModel The [UserViewModel] to use.
+ * @param searchViewModel The [SearchViewModel] to use.
+ */
 @Composable
 fun HomeScreen(
     navigationAction: NavigationAction,
@@ -127,6 +137,18 @@ fun HomeScreen(
       })
 }
 
+/**
+ * The content of the Home screen. It calls EventList to displays a list of events sorted by some
+ * logic, or some text result if there are no events to display.
+ *
+ * @param navigationAction The navigation action to use when an event is clicked.
+ * @param searchQuery The search query of the user.
+ * @param searchState The [SearchViewModel.Status] that represents the state of the search.
+ * @param searchResults The search results to display.
+ * @param userViewModel The [UserViewModel] to use.
+ * @param eventViewModel The [EventViewModel] to use.
+ * @param isOnFollowScreen Whether the user is on the follow screen or not.
+ */
 @Composable
 fun HomeContent(
     navigationAction: NavigationAction,
@@ -164,10 +186,18 @@ fun HomeContent(
         Text(context.getString(R.string.explore_search_no_results))
       }
     } else {
-      EventList(navigationAction, searchResults, userViewModel, eventViewModel)
+      EventList(
+          navigationAction,
+          searchResults.sortedWith(compareBy({ it.startDate }, { it.uid })),
+          userViewModel,
+          eventViewModel)
     }
   } else if (events.isNotEmpty()) {
-    EventList(navigationAction, events, userViewModel, eventViewModel)
+    EventList(
+        navigationAction,
+        events.sortedWith(compareBy({ it.startDate }, { it.uid })),
+        userViewModel,
+        eventViewModel)
   } else {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
       Text(
@@ -177,6 +207,14 @@ fun HomeContent(
   }
 }
 
+/**
+ * The list of events to display.
+ *
+ * @param navigationAction The navigation action to use when an event is clicked.
+ * @param events The list of events to display.
+ * @param userViewModel The [UserViewModel] to use.
+ * @param eventViewModel The [EventViewModel] to use.
+ */
 @Composable
 fun EventList(
     navigationAction: NavigationAction,
@@ -192,6 +230,15 @@ fun EventList(
       }
 }
 
+/**
+ * The top bar of the Home screen. It displays a search bar and a tab menu to switch between the
+ * "All" and "Following" tabs.
+ *
+ * @param searchState The [SearchViewModel.Status] that represents the state of the search.
+ * @param searchQuery The search query of the user.
+ * @param pagerState The [PagerState] to use.
+ * @param onSearch The lambda to call when the user searches.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopBar(

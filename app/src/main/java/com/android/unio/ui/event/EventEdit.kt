@@ -46,7 +46,7 @@ import com.android.unio.model.firestore.firestoreReferenceListWith
 import com.android.unio.model.map.Location
 import com.android.unio.model.map.nominatim.NominatimLocationSearchViewModel
 import com.android.unio.model.search.SearchViewModel
-import com.android.unio.model.strings.test_tags.EventEditTestTags
+import com.android.unio.model.strings.test_tags.event.EventEditTestTags
 import com.android.unio.model.user.ImageUriType
 import com.android.unio.model.user.checkImageUri
 import com.android.unio.ui.components.AssociationChips

@@ -1,6 +1,7 @@
 package com.android.unio.ui.map
 
 import android.Manifest
+import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -37,7 +38,7 @@ import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.map.MapViewModel
 import com.android.unio.model.strings.MapStrings
-import com.android.unio.model.strings.test_tags.MapTestTags
+import com.android.unio.model.strings.test_tags.map.MapTestTags
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.theme.mapUserLocationCircleFiller
@@ -57,11 +58,16 @@ import com.google.maps.android.compose.rememberCameraPositionState
 import java.util.Calendar
 import java.util.concurrent.TimeUnit
 
-val EPFL_COORDINATES = LatLng(46.518831258, 6.559331096)
-const val APPROXIMATE_CIRCLE_RADIUS = 30.0
-const val APPROXIMATE_CIRCLE_OUTLINE_WIDTH = 2f
-const val INITIAL_ZOOM_LEVEL = 15f
-
+/**
+ * The MapScreen composable displays a map with markers for events. This composable is a Scaffold
+ * that handles the permission logic and displays the TopAppBar and FloatingActionButton. The
+ * EventMap composable is used to display the GoogleMap and markers.
+ *
+ * @param navigationAction the navigation action to use to navigate back
+ * @param eventViewModel the EventViewModel to get the events
+ * @param userViewModel the UserViewModel to get the user and saved events
+ * @param mapViewModel the MapViewModel to get the center and user location
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MapScreen(
@@ -131,13 +137,13 @@ fun MapScreen(
 
       if (centerLocation != null) {
         cameraPositionState.position =
-            CameraPosition.fromLatLngZoom(centerLocation!!, INITIAL_ZOOM_LEVEL)
+            CameraPosition.fromLatLngZoom(centerLocation!!, MapCst.INITIAL_ZOOM_LEVEL)
       } else if (userLocation != null) {
         cameraPositionState.position =
-            CameraPosition.fromLatLngZoom(userLocation!!, INITIAL_ZOOM_LEVEL)
+            CameraPosition.fromLatLngZoom(userLocation!!, MapCst.INITIAL_ZOOM_LEVEL)
       } else {
         cameraPositionState.position =
-            CameraPosition.fromLatLngZoom(EPFL_COORDINATES, INITIAL_ZOOM_LEVEL)
+            CameraPosition.fromLatLngZoom(MapCst.EPFL_COORDINATES, MapCst.INITIAL_ZOOM_LEVEL)
       }
       initialCentered = true
     }
@@ -172,7 +178,8 @@ fun MapScreen(
             modifier = Modifier.padding(bottom = 80.dp).testTag(MapTestTags.CENTER_ON_USER_FAB),
             onClick = {
               userLocation?.let {
-                cameraPositionState.position = CameraPosition.fromLatLngZoom(it, 15f)
+                cameraPositionState.position =
+                    CameraPosition.fromLatLngZoom(it, MapCst.INITIAL_ZOOM_LEVEL)
               }
             }) {
               Icon(
@@ -192,13 +199,25 @@ fun MapScreen(
       }
 }
 
+/**
+ * The EventMap composable displays the GoogleMap with markers for events. It also displays the
+ * user's approximate location if only coarse location is available.
+ *
+ * @param pd the padding values to apply to the GoogleMap
+ * @param eventViewModel the EventViewModel to get the events
+ * @param userViewModel the UserViewModel to get the user and saved events
+ * @param cameraPositionState the CameraPositionState to use for the GoogleMap
+ * @param isMyLocationEnabled whether the user's location is enabled
+ * @param showApproximateCircle whether to show the approximate circle
+ * @param userLocation the user's location
+ */
 @Composable
 fun EventMap(
     pd: PaddingValues,
     eventViewModel: EventViewModel,
     userViewModel: UserViewModel,
     cameraPositionState: CameraPositionState,
-    isMyLocatonEnabled: Boolean,
+    isMyLocationEnabled: Boolean,
     showApproximateCircle: Boolean,
     userLocation: LatLng?
 ) {
@@ -211,16 +230,16 @@ fun EventMap(
   GoogleMap(
       modifier = Modifier.padding(pd).testTag(MapTestTags.GOOGLE_MAPS),
       cameraPositionState = cameraPositionState,
-      properties = MapProperties(isMyLocationEnabled = isMyLocatonEnabled),
+      properties = MapProperties(isMyLocationEnabled = isMyLocationEnabled),
       uiSettings = MapUiSettings(myLocationButtonEnabled = false)) {
         // Display the user's approximate location if only coarse location is available
         if (showApproximateCircle && userLocation != null) {
           Circle(
               center = userLocation,
-              radius = APPROXIMATE_CIRCLE_RADIUS,
+              radius = MapCst.APPROXIMATE_CIRCLE_RADIUS,
               fillColor = mapUserLocationCircleFiller,
               strokeColor = mapUserLocationCircleStroke,
-              strokeWidth = APPROXIMATE_CIRCLE_OUTLINE_WIDTH,
+              strokeWidth = MapCst.APPROXIMATE_CIRCLE_OUTLINE_WIDTH,
               tag = MapTestTags.LOCATION_APPROXIMATE_CIRCLE)
         }
 
@@ -252,22 +271,27 @@ fun EventMap(
  */
 @Composable
 fun DisplayEventMarker(event: Event, customIconResId: Int?) {
-  val timer = timeUntilEvent(event.startDate)
+  val context = LocalContext.current
+  val timer = timeUntilEvent(event.startDate, context)
   event.location.let { location ->
     val pinPointIcon =
         if (customIconResId != null) {
           val bitmap = BitmapFactory.decodeResource(LocalContext.current.resources, customIconResId)
-          val scaledBitmap = Bitmap.createScaledBitmap(bitmap, 96, 96, false)
+          val scaledBitmap =
+              Bitmap.createScaledBitmap(bitmap, MapCst.DESIRED_WIDTH, MapCst.DESIRED_HEIGHT, false)
           BitmapDescriptorFactory.fromBitmap(scaledBitmap)
         } else {
           BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)
         }
 
     Marker(
-        contentDescription = "Event: ${event.title}",
+        contentDescription = context.getString(R.string.map_event_marker_prefix) + event.title,
         state = MarkerState(position = LatLng(location.latitude, location.longitude)),
         title = event.title,
-        snippet = "$timer - ${event.description}",
+        snippet =
+            timer +
+                context.getString(R.string.map_event_marker_snippet_separator) +
+                event.description,
         icon = pinPointIcon)
   }
 }
@@ -278,13 +302,32 @@ fun DisplayEventMarker(event: Event, customIconResId: Int?) {
  * @param eventTimestamp the timestamp of the event
  * @return a string giving information about the time until the event occurs
  */
-fun timeUntilEvent(eventTimestamp: Timestamp): String {
+fun timeUntilEvent(eventTimestamp: Timestamp, context: Context): String {
   val currentTime = Timestamp.now()
   val timeDifference = eventTimestamp.seconds - currentTime.seconds
 
   if (timeDifference < 0) return MapStrings.EVENT_ALREADY_OCCURED
 
   val days = TimeUnit.SECONDS.toDays(timeDifference)
-  val hours = TimeUnit.SECONDS.toHours(timeDifference) % 24
-  return if (days > 0) "In $days days, $hours hours" else "In $hours hours"
+  val hours = TimeUnit.SECONDS.toHours(timeDifference) % MapCst.HOURS_IN_DAY
+  return if (days > 0)
+      (context.getString(R.string.map_event_marker_time_remaining_prefix) +
+          days +
+          context.getString(R.string.map_event_marker_time_remaining_days) +
+          hours +
+          context.getString(R.string.map_event_marker_time_remaining_hours))
+  else
+      (context.getString(R.string.map_event_marker_time_remaining_prefix) +
+          days +
+          context.getString(R.string.map_event_marker_time_remaining_days))
+}
+
+object MapCst {
+  val EPFL_COORDINATES = LatLng(46.518831258, 6.559331096)
+  const val APPROXIMATE_CIRCLE_RADIUS = 30.0
+  const val APPROXIMATE_CIRCLE_OUTLINE_WIDTH = 2f
+  const val INITIAL_ZOOM_LEVEL = 15f
+  const val DESIRED_WIDTH = 96
+  const val DESIRED_HEIGHT = 96
+  const val HOURS_IN_DAY = 24
 }

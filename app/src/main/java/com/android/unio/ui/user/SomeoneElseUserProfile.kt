@@ -1,6 +1,5 @@
 package com.android.unio.ui.user
 
-import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -23,12 +22,18 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import com.android.unio.R
 import com.android.unio.model.association.AssociationViewModel
-import com.android.unio.model.strings.test_tags.SomeoneElseUserProfileTestTags
+import com.android.unio.model.strings.test_tags.user.SomeoneElseUserProfileTestTags
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+/**
+ * Composable that displays the user profile of another user.
+ *
+ * @param navigationAction The [NavigationAction] to navigate to different screens.
+ * @param userViewModel The [UserViewModel] for the user.
+ * @param associationViewModel The [AssociationViewModel] for the association.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SomeoneElseUserProfileScreen(
