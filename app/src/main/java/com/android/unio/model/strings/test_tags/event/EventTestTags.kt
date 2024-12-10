@@ -105,4 +105,6 @@ object EventDetailsTestTags {
   const val SIGN_UP_BUTTON = "signUpButton"
   const val BOTTOM_SHEET = "eventBottomSheet"
   const val SEND_NOTIFICATION = "eventSendNotification"
+  const val GALLERY_GRID = "eventGallery"
+  const val USER_EVENT_PICTURE = "eventPicture"
 }

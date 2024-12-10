@@ -13,7 +13,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -77,7 +76,6 @@ import androidx.core.net.toUri
 import com.android.unio.R
 import com.android.unio.model.association.Association
 import com.android.unio.model.event.Event
-import com.android.unio.model.event.EventUserPicture
 import com.android.unio.model.event.EventUtils.formatTimestamp
 import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.map.MapViewModel
@@ -158,6 +156,7 @@ fun EventScreen(
  * @param isSaved Whether the event is saved.
  * @param onClickSaveButton Lambda to handle the save button click.
  */
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EventScreenScaffold(
@@ -222,8 +221,8 @@ fun EventScreenScaffold(
                   }
             })
       },
-      content = { padding ->
-        EventScreenContent(navigationAction, mapViewModel, event, organisers, padding, pagerState)
+      content = {
+        EventScreenContent(navigationAction, mapViewModel, event, organisers, pagerState)
       })
 
   NotificationSender(
@@ -253,7 +252,6 @@ fun EventScreenContent(
     mapViewModel: MapViewModel,
     event: Event,
     organisers: List<Association>,
-    padding: PaddingValues,
     pagerState: PagerState
 ) {
   val context = LocalContext.current
@@ -392,40 +390,57 @@ fun EventDetailsBody(
     context: Context,
     page: Int
 ) {
-  val eventPictures by event.eventPictures.list.collectAsState()
   if (page == 0) {
     EventDetailsDescriptionTab(navigationAction, mapViewModel, event, context)
   } else if (page == 1) {
-    EventDetailsPicturesTab(event, eventPictures)
+    EventDetailsPicturesTab(event, context)
   }
 }
 
+/**
+ * The second page of the EventDetails horizontal scroll menu.
+ *
+ * @param event The event to display.
+ */
 @Composable
-fun EventDetailsPicturesTab(event: Event, eventPictures: List<EventUserPicture>) {
+fun EventDetailsPicturesTab(event: Event, context: Context) {
+  val eventPictures by event.eventPictures.list.collectAsState()
   if (event.startDate.seconds > Timestamp.now().seconds) {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-      Text("You have to wait for the event to start to upload pictures :)")
+      Text(context.getString(R.string.event_pictures_before_start_date))
     }
   } else if (eventPictures.isEmpty()) {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-      Text("The event has no user pictures yet :/")
+      Text(context.getString(R.string.event_no_user_pictures))
     }
   } else {
     LazyVerticalStaggeredGrid(
-        columns = StaggeredGridCells.Adaptive(100.dp), modifier = Modifier.fillMaxSize()) {
+        columns = StaggeredGridCells.Adaptive(100.dp),
+        modifier = Modifier.fillMaxSize().testTag(EventDetailsTestTags.GALLERY_GRID)) {
           itemsIndexed(eventPictures) { index, item ->
             AsyncImageWrapper(
                 item.image.toUri(),
-                contentDescription = "",
+                contentDescription =
+                    context.getString(R.string.event_details_user_picture_content_description),
                 filterQuality = FilterQuality.High,
                 placeholderResourceId = 0,
                 contentScale = ContentScale.Crop,
-                modifier = Modifier.padding(3.dp).clip(RoundedCornerShape(10)))
+                modifier =
+                    Modifier.padding(3.dp)
+                        .clip(RoundedCornerShape(10))
+                        .testTag(EventDetailsTestTags.USER_EVENT_PICTURE + item.uid))
           }
         }
   }
 }
-
+/**
+ * The first page of the EventDetails horizontal scroll menu.
+ *
+ * @param navigationAction The navigation action to use.
+ * @param mapViewModel The [MapViewModel] to use.
+ * @param event The event to display.
+ * @param context The context to use.
+ */
 @Composable
 fun EventDetailsDescriptionTab(
     navigationAction: NavigationAction,
