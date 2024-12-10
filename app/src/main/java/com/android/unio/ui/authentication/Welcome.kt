@@ -42,6 +42,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign.Companion.Center
 import androidx.compose.ui.unit.dp
 import com.android.unio.R
+import com.android.unio.model.authentication.AuthViewModel
 import com.android.unio.model.strings.test_tags.WelcomeTestTags
 import com.android.unio.model.user.SignInState
 import com.android.unio.model.user.UserViewModel
@@ -64,7 +65,7 @@ import com.google.firebase.auth.auth
  * @param userViewModel The [UserViewModel] to use.
  */
 @Composable
-fun WelcomeScreen(navigationAction: NavigationAction, userViewModel: UserViewModel) {
+fun WelcomeScreen(navigationAction: NavigationAction, authViewModel: AuthViewModel) {
   val context = LocalContext.current
 
   var email by remember { mutableStateOf("") }
@@ -168,8 +169,8 @@ fun WelcomeScreen(navigationAction: NavigationAction, userViewModel: UserViewMod
                       ToastUtils.showToast(
                           context, context.getString(R.string.welcome_malformed_email_password))
                     } else {
-                      userViewModel.setCredential(EmailAuthProvider.getCredential(email, password))
-                      handleAuthentication(email, password, context)
+                      authViewModel.setCredential(EmailAuthProvider.getCredential(email, password))
+                      handleAuthentication(email, password, context, navigationAction)
                     }
                   },
                   enabled = enabled) {
@@ -186,7 +187,7 @@ fun WelcomeScreen(navigationAction: NavigationAction, userViewModel: UserViewMod
  * @param password The password to use.
  * @param context The context to use.
  */
-fun handleAuthentication(email: String, password: String, context: Context) {
+fun handleAuthentication(email: String, password: String, context: Context, navigationAction: NavigationAction) {
 
   // Check internet connectivity
   val isConnected = checkInternetConnection(context)
@@ -209,16 +210,17 @@ fun handleAuthentication(email: String, password: String, context: Context) {
         ToastUtils.showToast(context, context.getString(R.string.welcome_toast_sign_in))
 
         if (signInResult.user?.isEmailVerified == false) {
-          signInResult.user.sendEmailVerification().addOnCompleteListener {
-            if (it.isSuccessful) {
-              ToastUtils.showToast(
-                  context, context.getString(R.string.welcome_toast_verification_sent))
-            } else {
-              ToastUtils.showToast(
-                  context, context.getString(R.string.welcome_toast_verification_sent_failed))
-              Log.e("WelcomeScreen", "Failed to send verification email", it.exception)
-            }
-          }
+            navigationAction.navigateTo(Screen.EMAIL_VERIFICATION)
+//          signInResult.user.sendEmailVerification().addOnCompleteListener {
+//            if (it.isSuccessful) {
+//              ToastUtils.showToast(
+//                  context, context.getString(R.string.welcome_toast_verification_sent))
+//            } else {
+//              ToastUtils.showToast(
+//                  context, context.getString(R.string.welcome_toast_verification_sent_failed))
+//              Log.e("WelcomeScreen", "Failed to send verification email", it.exception)
+//            }
+//          }
         }
       }
       SignInState.SUCCESS_CREATE_ACCOUNT -> {
