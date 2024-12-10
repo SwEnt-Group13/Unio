@@ -56,6 +56,7 @@ fun mapRolesToPermission(roles: List<Role>): Map<String, Map<String, Any>> {
     role.uid to
         mapOf(
             Role::displayName.name to role.displayName,
+            Role::color.name to role.color,
             Role::permissions.name to
                 role.permissions.getGrantedPermissions().map { it.stringName })
   }

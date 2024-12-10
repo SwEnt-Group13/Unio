@@ -40,6 +40,7 @@ fun AssociationRepositoryFirestore.Companion.hydrate(data: Map<String, Any>?): A
         Role(
             uid = roleUid,
             displayName = roleData[Role::displayName.name] as? String ?: "",
+            color = roleData[Role::color.name] as? Long ?: 0xFFFF0000,
             permissions =
                 permissions.addPermissions(
                     (roleData[Role::permissions.name] as? List<String> ?: emptyList()).mapNotNull {

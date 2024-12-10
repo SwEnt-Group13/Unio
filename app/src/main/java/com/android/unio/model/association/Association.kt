@@ -11,6 +11,7 @@ import com.android.unio.model.firestore.ReferenceElement
 import com.android.unio.model.firestore.ReferenceList
 import com.android.unio.model.firestore.UniquelyIdentifiable
 import com.android.unio.model.user.User
+import com.android.unio.ui.theme.badgeColorBlue
 
 /**
  * Represents an association within the system. This class holds various details about the
@@ -90,12 +91,16 @@ data class Member(val user: ReferenceElement<User>, val role: Role) : UniquelyId
  * @property permissions Set of permissions assigned to this role.
  * @property uid Unique identifier for the role.
  */
-class Role(val displayName: String, val permissions: Permissions, override val uid: String) :
-    UniquelyIdentifiable {
+class Role(
+    val displayName: String,
+    val permissions: Permissions,
+    val color: Long,
+    override val uid: String
+) : UniquelyIdentifiable {
 
   companion object {
     // Predefined roles
-    val ADMIN = Role("Administrator", Permissions.FULL_RIGHTS, "Administrator")
+    val ADMIN = Role("Administrator", Permissions.FULL_RIGHTS, badgeColorBlue, "Administrator")
     val COMITE =
         Role(
             "Committee",
@@ -104,9 +109,10 @@ class Role(val displayName: String, val permissions: Permissions, override val u
                 .addPermission(PermissionType.EDIT_MEMBERS)
                 .addPermission(PermissionType.VIEW_EVENTS)
                 .build(),
+            0xFF0000FF,
             "Committee")
-    val MEMBER = Role("Member", Permissions.NONE, "Member")
-    val GUEST = Role("Guest", Permissions.NONE, "Guest")
+    val MEMBER = Role("Member", Permissions.NONE, badgeColorBlue, "Member")
+    val GUEST = Role("Guest", Permissions.NONE, badgeColorBlue, "Guest")
   }
 }
 
@@ -234,7 +240,8 @@ enum class PermissionType(val stringName: String) {
   DELETE_MEMBERS("Delete members"),
   VIEW_EVENTS("View events"),
   EDIT_EVENTS("Edit events"),
-  DELETE_EVENTS("Delete Events")
+  DELETE_EVENTS("Delete Events"),
+  ADD_EVENTS("Add Events")
 }
 
 /**
