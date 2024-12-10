@@ -155,7 +155,10 @@ class AssociationRepositoryFirestoreTest {
             "roles" to
                 mapOf(
                     "Guest" to
-                        mapOf("displayName" to "Guest", "color" to 0xFF0000FF, "permissions" to listOf("Full rights")),
+                        mapOf(
+                            "displayName" to "Guest",
+                            "color" to 0xFF0000FF,
+                            "permissions" to listOf("Full rights")),
                     "Administrator" to
                         mapOf(
                             "displayName" to "Administrator",
@@ -178,7 +181,10 @@ class AssociationRepositoryFirestoreTest {
             "roles" to
                 mapOf(
                     "Guest" to
-                        mapOf("displayName" to "Guest", "color" to 0xFF0000FF, "permissions" to listOf("Full rights")),
+                        mapOf(
+                            "displayName" to "Guest",
+                            "color" to 0xFF0000FF,
+                            "permissions" to listOf("Full rights")),
                     "Administrator" to
                         mapOf(
                             "displayName" to "Administrator",
