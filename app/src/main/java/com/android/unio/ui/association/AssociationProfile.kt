@@ -426,6 +426,7 @@ private fun AssociationEvents(
   // To be changed when we have a functional admin system
   var isAdmin by remember { mutableStateOf(true) }
 
+  // Display the upcoming events if any
   if (events.isNotEmpty()) {
     Text(
         context.getString(R.string.association_upcoming_events),
@@ -434,38 +435,25 @@ private fun AssociationEvents(
     events.sortedBy { it.startDate }
     val first = events.first()
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
+
+      // See more clicked, display all events
       if (isSeeMoreClicked) {
         events.forEach { event ->
           AssociationEventCard(navigationAction, event, userViewModel, eventViewModel)
         }
+        // Display the first event only
       } else {
         AssociationEventCard(navigationAction, first, userViewModel, eventViewModel)
       }
     }
+    // Display the see more button if there are more than one event
     if (events.size > 1) {
-      if (isSeeMoreClicked) {
-        OutlinedButton(
-            onClick = { isSeeMoreClicked = false },
-            modifier = Modifier.testTag(AssociationProfileTestTags.SEE_MORE_BUTTON)) {
-              Icon(
-                  Icons.AutoMirrored.Filled.ArrowBack,
-                  contentDescription = context.getString(R.string.association_see_less))
-              Spacer(Modifier.width(2.dp))
-              Text(context.getString(R.string.association_see_less))
-            }
-      } else {
-        OutlinedButton(
-            onClick = { isSeeMoreClicked = true },
-            modifier = Modifier.testTag(AssociationProfileTestTags.SEE_MORE_BUTTON)) {
-              Icon(
-                  Icons.AutoMirrored.Filled.ArrowForward,
-                  contentDescription = context.getString(R.string.association_see_more))
-              Spacer(Modifier.width(2.dp))
-              Text(context.getString(R.string.association_see_more))
-            }
-      }
+      AssociationProfileSeeMoreButton(
+          { isSeeMoreClicked = false }, { isSeeMoreClicked = true }, isSeeMoreClicked)
     }
   }
+
+  // Display the add event button if the user is an admin of the Association
   if (isAdmin) {
     Button(
         onClick = {
@@ -483,6 +471,36 @@ private fun AssociationEvents(
               modifier = Modifier.size(ButtonDefaults.IconSize))
           Spacer(Modifier.size(ButtonDefaults.IconSpacing))
           Text(context.getString(R.string.association_profile_add_event_button))
+        }
+  }
+}
+
+@Composable
+fun AssociationProfileSeeMoreButton(
+    onSeeMore: () -> Unit,
+    onSeeLess: () -> Unit,
+    isSeeMoreClicked: Boolean
+) {
+  val context = LocalContext.current
+  if (isSeeMoreClicked) {
+    OutlinedButton(
+        onClick = { onSeeMore() },
+        modifier = Modifier.testTag(AssociationProfileTestTags.SEE_MORE_BUTTON)) {
+          Icon(
+              Icons.AutoMirrored.Filled.ArrowBack,
+              contentDescription = context.getString(R.string.association_see_less))
+          Spacer(Modifier.width(2.dp))
+          Text(context.getString(R.string.association_see_less))
+        }
+  } else {
+    OutlinedButton(
+        onClick = { onSeeLess() },
+        modifier = Modifier.testTag(AssociationProfileTestTags.SEE_MORE_BUTTON)) {
+          Icon(
+              Icons.AutoMirrored.Filled.ArrowForward,
+              contentDescription = context.getString(R.string.association_see_more))
+          Spacer(Modifier.width(2.dp))
+          Text(context.getString(R.string.association_see_more))
         }
   }
 }
