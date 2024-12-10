@@ -345,7 +345,7 @@
     <!-- UserClaimAssociation Strings -->
     <string name="user_claim_association_association_go_back">Go back</string>
     <string name="user_claim_association_association_see_more">See more</string>
-    <string name="user_claim_association_you_can_either">You can either</string>
+    <string name="user_claim_association_you_can_do_the_following">You can do the following</string>
     <string name="user_claim_association_create_new_association">Create a new association</string>
     <string name="user_claim_association_not_implemented_yet">Not implemented yet</string>
     <string name="user_claim_association_create_association">Create association</string>

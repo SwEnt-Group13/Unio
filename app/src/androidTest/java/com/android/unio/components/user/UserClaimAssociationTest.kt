@@ -1,11 +1,12 @@
 package com.android.unio.components.user
 
-import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.navigation.NavHostController
 import com.android.unio.TearDown
+import com.android.unio.assertDisplayComponentInScroll
 import com.android.unio.model.association.AssociationRepositoryFirestore
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.event.EventRepositoryFirestore
@@ -13,14 +14,18 @@ import com.android.unio.model.follow.ConcurrentAssociationUserRepositoryFirestor
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.search.SearchRepository
 import com.android.unio.model.search.SearchViewModel
+import com.android.unio.model.strings.test_tags.explore.ExploreContentTestTags
 import com.android.unio.model.strings.test_tags.user.UserClaimAssociationTestTags
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.user.UserClaimAssociationScreen
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import io.mockk.MockKAnnotations
+import io.mockk.Runs
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
+import io.mockk.just
+import io.mockk.mockkStatic
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -40,6 +45,8 @@ class UserClaimAssociationTest : TearDown() {
   @MockK private lateinit var searchRepository: SearchRepository
   @MockK private lateinit var navHostController: NavHostController
 
+  @MockK private lateinit var focusRequester: FocusRequester
+
   @MockK private lateinit var navigationAction: NavigationAction
   private lateinit var associationViewModel: AssociationViewModel
   private lateinit var searchViewModel: SearchViewModel
@@ -50,6 +57,9 @@ class UserClaimAssociationTest : TearDown() {
     hiltRule.inject()
 
     every { navigationAction.navigateTo(any<String>()) } returns Unit
+
+    mockkStatic(FocusRequester::class)
+    every { focusRequester.requestFocus() } just Runs
 
     associationViewModel =
         AssociationViewModel(
@@ -69,11 +79,15 @@ class UserClaimAssociationTest : TearDown() {
       UserClaimAssociationScreen(associationViewModel, navigationAction, searchViewModel)
     }
 
-    composeTestRule.onNodeWithTag(UserClaimAssociationTestTags.SCREEN).assertIsDisplayed()
-    composeTestRule.onNodeWithTag(UserClaimAssociationTestTags.BACK_BUTTON).assertIsDisplayed()
     composeTestRule
-        .onNodeWithTag(UserClaimAssociationTestTags.NEW_ASSOCIATION_BUTTON)
-        .assertIsDisplayed()
+        .onNodeWithTag(UserClaimAssociationTestTags.SCREEN)
+        .assertDisplayComponentInScroll()
+    composeTestRule
+        .onNodeWithTag(ExploreContentTestTags.SEARCH_BAR_INPUT)
+        .assertDisplayComponentInScroll()
+    composeTestRule
+        .onNodeWithTag(UserClaimAssociationTestTags.BACK_BUTTON)
+        .assertDisplayComponentInScroll()
   }
 
   @Test
@@ -81,17 +95,9 @@ class UserClaimAssociationTest : TearDown() {
     composeTestRule.setContent {
       UserClaimAssociationScreen(associationViewModel, navigationAction, searchViewModel)
     }
-
+    composeTestRule
+        .onNodeWithTag(UserClaimAssociationTestTags.BACK_BUTTON)
+        .assertDisplayComponentInScroll()
     composeTestRule.onNodeWithTag(UserClaimAssociationTestTags.BACK_BUTTON).performClick()
-  }
-
-  @Test
-  fun testCreateNewAssociationButtonShowsToast() {
-    composeTestRule.setContent {
-      UserClaimAssociationScreen(associationViewModel, navigationAction, searchViewModel)
-    }
-
-    val button = composeTestRule.onNodeWithTag(UserClaimAssociationTestTags.NEW_ASSOCIATION_BUTTON)
-    button.performClick()
   }
 }
