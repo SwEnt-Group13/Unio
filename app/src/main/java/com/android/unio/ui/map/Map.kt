@@ -301,7 +301,7 @@ fun DisplayEventMarker(
     customIconResId: Int?,
     onMarkerCreated: (String, MarkerState) -> Unit
 ) {
-    val context = LocalContext.current
+  val context = LocalContext.current
   val timer = timeUntilEvent(event.startDate, context)
   event.location.let { location ->
     val pinPointIcon =
