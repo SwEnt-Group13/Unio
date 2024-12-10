@@ -9,6 +9,4 @@ interface EventUserPictureRepository {
   )
 
   fun getNewUid(): String
-
-  fun getEventUserPictures(event: Event, onSuccess: () -> Unit, onFailure: (Exception) -> Unit)
 }

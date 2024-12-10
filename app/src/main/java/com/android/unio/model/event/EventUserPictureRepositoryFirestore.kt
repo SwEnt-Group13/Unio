@@ -12,14 +12,6 @@ class EventUserPictureRepositoryFirestore @Inject constructor(private val db: Fi
     return db.collection(EVENT_USER_PICTURES_PATH).document().id
   }
 
-  override fun getEventUserPictures(
-      event: Event,
-      onSuccess: () -> Unit,
-      onFailure: (Exception) -> Unit
-  ) {
-    TODO("Not yet implemented")
-  }
-
   override fun addEventUserPicture(
       eventUserPicture: EventUserPicture,
       onSuccess: () -> Unit,
