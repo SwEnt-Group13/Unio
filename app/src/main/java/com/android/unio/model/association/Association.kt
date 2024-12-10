@@ -11,7 +11,6 @@ import com.android.unio.model.firestore.ReferenceElement
 import com.android.unio.model.firestore.ReferenceList
 import com.android.unio.model.firestore.UniquelyIdentifiable
 import com.android.unio.model.user.User
-import com.android.unio.ui.theme.badgeColorBlack
 import com.android.unio.ui.theme.badgeColorBlue
 
 /**
