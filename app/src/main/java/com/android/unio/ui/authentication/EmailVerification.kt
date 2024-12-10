@@ -31,6 +31,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.android.unio.R
+import com.android.unio.model.authentication.AuthViewModel
 import com.android.unio.model.strings.test_tags.EmailVerificationTestTags
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.navigation.NavigationAction
@@ -48,7 +49,7 @@ import com.google.firebase.auth.auth
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EmailVerificationScreen(navigationAction: NavigationAction, userViewModel: UserViewModel) {
+fun EmailVerificationScreen(navigationAction: NavigationAction, authViewModel: AuthViewModel) {
 
   val user by remember { mutableStateOf(Firebase.auth.currentUser) }
   if (user == null) {
@@ -61,17 +62,19 @@ fun EmailVerificationScreen(navigationAction: NavigationAction, userViewModel: U
   val context = LocalContext.current
 
   val checkEmailVerification = {
+      Log.d("NavigationAuthScreen", "here are my credentials :) : ${authViewModel.credential.toString()}")
+
     Firebase.auth.currentUser?.reload()?.addOnCompleteListener {
       if (it.isSuccessful) {
         if (Firebase.auth.currentUser?.isEmailVerified == true) {
-          if (userViewModel.credential == null) {
+          if (authViewModel.credential == null) {
             Log.e("EmailVerificationScreen", "Credential is null")
           } else {
             Firebase.auth.currentUser
-                ?.reauthenticate(userViewModel.credential!!)
+                ?.reauthenticate(authViewModel.credential!!)
                 ?.addOnSuccessListener {
                   success = true
-                  userViewModel.setCredential(null)
+                    authViewModel.setCredential(null)
                 }
           }
         }
