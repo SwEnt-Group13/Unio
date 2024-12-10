@@ -26,14 +26,11 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.DirectionsWalk
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material.icons.rounded.FavoriteBorder
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -413,7 +410,7 @@ fun EventDetailsBody(
             verticalArrangement = Arrangement.spacedBy(20.dp)) {
               OutlinedButton(
                   onClick = {
-                    mapViewModel.setCenterLocation(event.location)
+                    mapViewModel.setHighlightedEvent(event.uid, event.location)
                     navigationAction.navigateTo(Screen.MAP)
                   },
                   modifier =
@@ -431,25 +428,6 @@ fun EventDetailsBody(
                         contentDescription =
                             context.getString(R.string.event_location_button_description),
                     )
-                  }
-
-              Button(
-                  onClick = DEBUG_LAMBDA,
-                  modifier =
-                      Modifier.testTag(EventDetailsTestTags.SIGN_UP_BUTTON)
-                          .align(Alignment.CenterHorizontally)
-                          .height(56.dp),
-                  shape = CircleShape,
-                  colors =
-                      ButtonDefaults.buttonColors(
-                          containerColor = MaterialTheme.colorScheme.inversePrimary,
-                          contentColor = MaterialTheme.colorScheme.primary)) {
-                    Icon(
-                        Icons.AutoMirrored.Filled.DirectionsWalk,
-                        contentDescription =
-                            context.getString(R.string.event_signup_button_description),
-                    )
-                    Text(context.getString(R.string.event_sign_up))
                   }
             }
       }

@@ -27,6 +27,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -43,8 +44,8 @@ import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.theme.mapUserLocationCircleFiller
 import com.android.unio.ui.theme.mapUserLocationCircleStroke
+import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
-import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.Timestamp
 import com.google.maps.android.compose.CameraPositionState
@@ -57,6 +58,7 @@ import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
 import java.util.Calendar
 import java.util.concurrent.TimeUnit
+import kotlinx.coroutines.launch
 
 /**
  * The MapScreen composable displays a map with markers for events. This composable is a Scaffold
@@ -78,11 +80,10 @@ fun MapScreen(
 ) {
   val context = LocalContext.current
   val cameraPositionState = rememberCameraPositionState()
-  val centerLocation by mapViewModel.centerLocation.collectAsState()
   val userLocation by mapViewModel.userLocation.collectAsState()
-  var initialCentered = false
   var isMyLocationEnabled by remember { mutableStateOf(false) }
   var showApproximateCircle by remember { mutableStateOf(false) }
+  val scope = rememberCoroutineScope()
 
   val permissionLauncher =
       rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
@@ -131,24 +132,7 @@ fun MapScreen(
     }
   }
 
-  // Center map on the center location initially if available
-  LaunchedEffect(userLocation) {
-    if (!initialCentered) {
-
-      if (centerLocation != null) {
-        cameraPositionState.position =
-            CameraPosition.fromLatLngZoom(centerLocation!!, MapCst.INITIAL_ZOOM_LEVEL)
-      } else if (userLocation != null) {
-        cameraPositionState.position =
-            CameraPosition.fromLatLngZoom(userLocation!!, MapCst.INITIAL_ZOOM_LEVEL)
-      } else {
-        cameraPositionState.position =
-            CameraPosition.fromLatLngZoom(MapCst.EPFL_COORDINATES, MapCst.INITIAL_ZOOM_LEVEL)
-      }
-      initialCentered = true
-    }
-  }
-
+  /** Stop location updates when the screen is disposed. */
   DisposableEffect(Unit) { onDispose { mapViewModel.stopLocationUpdates() } }
 
   Scaffold(
@@ -163,7 +147,7 @@ fun MapScreen(
             navigationIcon = {
               IconButton(
                   onClick = {
-                    mapViewModel.setCenterLocation(null)
+                    mapViewModel.clearHighlightedEvent()
                     navigationAction.goBack()
                   },
                   modifier = Modifier.testTag(MapTestTags.GO_BACK_BUTTON)) {
@@ -178,8 +162,10 @@ fun MapScreen(
             modifier = Modifier.padding(bottom = 80.dp).testTag(MapTestTags.CENTER_ON_USER_FAB),
             onClick = {
               userLocation?.let {
-                cameraPositionState.position =
-                    CameraPosition.fromLatLngZoom(it, MapCst.INITIAL_ZOOM_LEVEL)
+                scope.launch {
+                  cameraPositionState.animate(
+                      CameraUpdateFactory.newLatLngZoom(it, MapCst.INITIAL_ZOOM_LEVEL))
+                }
               }
             }) {
               Icon(
@@ -195,7 +181,8 @@ fun MapScreen(
             cameraPositionState,
             isMyLocationEnabled,
             showApproximateCircle,
-            userLocation)
+            userLocation,
+            mapViewModel)
       }
 }
 
@@ -219,12 +206,13 @@ fun EventMap(
     cameraPositionState: CameraPositionState,
     isMyLocationEnabled: Boolean,
     showApproximateCircle: Boolean,
-    userLocation: LatLng?
+    userLocation: LatLng?,
+    mapViewModel: MapViewModel
 ) {
-  val events = eventViewModel.events.collectAsState()
-
   val user by userViewModel.user.collectAsState()
   val savedEvents by user!!.savedEvents.list.collectAsState()
+  val events by eventViewModel.events.collectAsState()
+  val markerStates = remember { mutableMapOf<String, MarkerState>() }
   LaunchedEffect(user) { user?.savedEvents?.requestAll() }
 
   GoogleMap(
@@ -246,20 +234,56 @@ fun EventMap(
         // Display saved events
         savedEvents.forEach { event ->
           if (event.startDate.toDate() > Calendar.getInstance().time) {
-            DisplayEventMarker(event, R.drawable.favorite_pinpoint)
+            DisplayEventMarker(event, R.drawable.favorite_pinpoint) { uid, markerState ->
+              markerStates[uid] = markerState
+            }
           }
         }
 
         // Display all events (should refactor to the ones that are soon to happen when more events
         // are added)
-        events.value
+        events
             .filterNot { event -> savedEvents.any { it.uid == event.uid } }
             .forEach { event ->
               if (event.startDate.toDate() > Calendar.getInstance().time) {
-                DisplayEventMarker(event, null)
+                DisplayEventMarker(event, null) { uid, markerState ->
+                  markerStates[uid] = markerState
+                }
               }
             }
       }
+
+  val centerLocation by mapViewModel.centerLocation.collectAsState()
+  val highlightedEventUid by mapViewModel.highlightedEventUid.collectAsState()
+  var initialCentered = false
+  val scope = rememberCoroutineScope()
+
+  // Center the map on the user's location or the center location.
+  LaunchedEffect(userLocation, centerLocation, highlightedEventUid) {
+    if (!initialCentered) {
+      if (centerLocation != null) {
+        scope.launch {
+          cameraPositionState.animate(
+              CameraUpdateFactory.newLatLngZoom(centerLocation!!, MapCst.INITIAL_ZOOM_LEVEL))
+
+          // Highlight the event with the given uid if the map is opened from and event details'
+          // page.
+          highlightedEventUid?.let { markerStates[it]?.showInfoWindow() }
+        }
+      } else if (userLocation != null) {
+        scope.launch {
+          cameraPositionState.animate(
+              CameraUpdateFactory.newLatLngZoom(userLocation, MapCst.INITIAL_ZOOM_LEVEL))
+        }
+      } else {
+        scope.launch {
+          cameraPositionState.animate(
+              CameraUpdateFactory.newLatLngZoom(MapCst.EPFL_COORDINATES, MapCst.INITIAL_ZOOM_LEVEL))
+        }
+      }
+      initialCentered = true
+    }
+  }
 }
 
 /**
@@ -267,10 +291,16 @@ fun EventMap(
  *
  * @param event the event to display
  * @param customIconResId the resource id of the custom icon to use for the marker
+ * @param onMarkerCreated the callback to call when the marker is created, defined to allow passing
+ *   the marker state to the caller
  * @return a marker for the event
  */
 @Composable
-fun DisplayEventMarker(event: Event, customIconResId: Int?) {
+fun DisplayEventMarker(
+    event: Event,
+    customIconResId: Int?,
+    onMarkerCreated: (String, MarkerState) -> Unit
+) {
   val context = LocalContext.current
   val timer = timeUntilEvent(event.startDate, context)
   event.location.let { location ->
@@ -284,9 +314,12 @@ fun DisplayEventMarker(event: Event, customIconResId: Int?) {
           BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)
         }
 
+    val markerState = MarkerState(position = LatLng(location.latitude, location.longitude))
+    onMarkerCreated(event.uid, markerState)
+
     Marker(
         contentDescription = context.getString(R.string.map_event_marker_prefix) + event.title,
-        state = MarkerState(position = LatLng(location.latitude, location.longitude)),
+        state = markerState,
         title = event.title,
         snippet =
             timer +
