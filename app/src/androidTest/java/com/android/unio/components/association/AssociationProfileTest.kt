@@ -280,15 +280,17 @@ class AssociationProfileTest : TearDown() {
 
   @Test
   fun testSeeMoreLessButton() {
-    every { connectivityManager?.activeNetwork } returns mockk<Network>()
+    every { connectivityManager.activeNetwork } returns mockk<Network>()
     var seeMore = ""
     var seeLess = ""
     composeTestRule.setContent {
-      val context = ApplicationProvider.getApplicationContext<Context>()
-      seeMore = context.getString(R.string.association_see_more)
-      seeLess = context.getString(R.string.association_see_less)
-      AssociationProfileScaffold(
-          navigationAction, userViewModel, eventViewModel, associationViewModel) {}
+      ProvidePreferenceLocals {
+        val context = ApplicationProvider.getApplicationContext<Context>()
+        seeMore = context.getString(R.string.association_see_more)
+        seeLess = context.getString(R.string.association_see_less)
+        AssociationProfileScaffold(
+            navigationAction, userViewModel, eventViewModel, associationViewModel) {}
+      }
     }
     composeTestRule
         .onNodeWithTag(AssociationProfileTestTags.EVENT_CARD + "a")
