@@ -198,7 +198,9 @@ class EventCreationE2ETest : EndToEndTest() {
     composeTestRule.waitUntil(10000) {
       composeTestRule.onNodeWithTag(AssociationProfileTestTags.SCREEN).isDisplayed()
     }
-
+      composeTestRule.waitUntil(10000) {
+          composeTestRule.onNodeWithTag(AssociationProfileTestTags.ADD_EVENT_BUTTON).isDisplayed()
+      }
     // Click on the "Add Event" button
     composeTestRule.onNodeWithTag(AssociationProfileTestTags.ADD_EVENT_BUTTON).performClick()
     composeTestRule.waitUntil(10000) {
