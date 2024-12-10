@@ -1,6 +1,5 @@
 package com.android.unio.components.user
 
-import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
@@ -71,9 +70,15 @@ class UserClaimAssociationTest : TearDown() {
       UserClaimAssociationScreen(associationViewModel, navigationAction, searchViewModel)
     }
 
-    composeTestRule.onNodeWithTag(UserClaimAssociationTestTags.SCREEN).assertDisplayComponentInScroll()
-    composeTestRule.onNodeWithTag(ExploreContentTestTags.SEARCH_BAR_INPUT).assertDisplayComponentInScroll()
-    composeTestRule.onNodeWithTag(UserClaimAssociationTestTags.BACK_BUTTON).assertDisplayComponentInScroll()
+    composeTestRule
+        .onNodeWithTag(UserClaimAssociationTestTags.SCREEN)
+        .assertDisplayComponentInScroll()
+    composeTestRule
+        .onNodeWithTag(ExploreContentTestTags.SEARCH_BAR_INPUT)
+        .assertDisplayComponentInScroll()
+    composeTestRule
+        .onNodeWithTag(UserClaimAssociationTestTags.BACK_BUTTON)
+        .assertDisplayComponentInScroll()
   }
 
   @Test
