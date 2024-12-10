@@ -13,8 +13,6 @@ import emptyFirestoreReferenceElement
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
-import io.mockk.just
-import io.mockk.runs
 import java.io.InputStream
 import java.util.GregorianCalendar
 import junit.framework.TestCase.assertEquals
@@ -40,8 +38,8 @@ class EventViewModelTest {
 
   @MockK lateinit var imageRepository: ImageRepositoryFirebaseStorage
   @MockK private lateinit var associationRepositoryFirestore: AssociationRepositoryFirestore
-  @Mock private lateinit var eventUserPictureRepositoryFirestore: EventUserPictureRepositoryFirestore
-
+  @Mock
+  private lateinit var eventUserPictureRepositoryFirestore: EventUserPictureRepositoryFirestore
 
   private lateinit var eventViewModel: EventViewModel
 
@@ -78,11 +76,18 @@ class EventViewModelTest {
 
     every { associationRepositoryFirestore.getAssociations(any(), any()) } answers {}
     every { associationRepositoryFirestore.saveAssociation(any(), any(), any()) } answers {}
-    `when`(eventUserPictureRepositoryFirestore.addEventUserPicture(any(), any(), any())).thenAnswer {invocation ->
-      val onSuccess = invocation.arguments[1] as () -> Unit
-      onSuccess()}
+    `when`(eventUserPictureRepositoryFirestore.addEventUserPicture(any(), any(), any()))
+        .thenAnswer { invocation ->
+          val onSuccess = invocation.arguments[1] as () -> Unit
+          onSuccess()
+        }
 
-    eventViewModel = EventViewModel(repository, imageRepository,associationRepositoryFirestore, eventUserPictureRepositoryFirestore)
+    eventViewModel =
+        EventViewModel(
+            repository,
+            imageRepository,
+            associationRepositoryFirestore,
+            eventUserPictureRepositoryFirestore)
   }
 
   @Test
@@ -169,7 +174,8 @@ class EventViewModelTest {
   @Test
   fun testAddEventUserPicture() {
     `when`(eventUserPictureRepositoryFirestore.getNewUid()).thenReturn("1")
-    val picture = EventUserPicture("0", "http://real-image.com", User.emptyFirestoreReferenceElement(), 0)
+    val picture =
+        EventUserPicture("0", "http://real-image.com", User.emptyFirestoreReferenceElement(), 0)
     eventViewModel.addEventUserPicture(inputStream, testEvents[0], picture)
     verify(eventUserPictureRepositoryFirestore).addEventUserPicture(any(), any(), any())
   }

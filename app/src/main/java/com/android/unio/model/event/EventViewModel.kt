@@ -223,12 +223,13 @@ constructor(
     })
   }
 
-    /**
-     * Add an EventUserPicture to the database and updates the related event.
-     * @param pictureInputStream The inputStream of the image to add.
-     * @param event The event the picture is related to.
-     * @param picture The EventUserPicture object, with number of likes and author.
-     */
+  /**
+   * Add an EventUserPicture to the database and updates the related event.
+   *
+   * @param pictureInputStream The inputStream of the image to add.
+   * @param event The event the picture is related to.
+   * @param picture The EventUserPicture object, with number of likes and author.
+   */
   fun addEventUserPicture(
       pictureInputStream: InputStream,
       event: Event,
