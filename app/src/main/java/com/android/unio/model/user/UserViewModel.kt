@@ -44,10 +44,6 @@ constructor(
   private var updateJob: Job? = null
   private var initializeWithAuthenticatedUser: Boolean = true
 
-  private var _credential: AuthCredential? = null
-  val credential: AuthCredential?
-    get() = _credential
-
   constructor(
       userRepository: UserRepository,
       imageRepository: ImageRepository,
@@ -199,15 +195,6 @@ constructor(
    */
   fun setSomeoneElseUser(user: User) {
     _selectedSomeoneElseUser.value = user
-  }
-
-  /**
-   * Sets the [AuthCredential] object to be used for linking accounts.
-   *
-   * @param credential The [AuthCredential] object to set.
-   */
-  fun setCredential(credential: AuthCredential?) {
-    _credential = credential
   }
 
   /**

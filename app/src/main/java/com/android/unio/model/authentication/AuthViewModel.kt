@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import com.android.unio.model.user.UserRepository
 import com.android.unio.ui.navigation.Route
 import com.android.unio.ui.navigation.Screen
+import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestoreException
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -31,6 +32,19 @@ constructor(private val firebaseAuth: FirebaseAuth, private val userRepository: 
   private val _authState = MutableStateFlow<String?>(null)
   val authState: StateFlow<String?>
     get() = _authState.asStateFlow()
+
+  private var _credential: AuthCredential? = null
+  val credential: AuthCredential?
+    get() = _credential
+
+  /**
+   * Sets the [AuthCredential] object to be used for linking accounts.
+   *
+   * @param credential The [AuthCredential] object to set.
+   */
+  fun setCredential(credential: AuthCredential?) {
+    _credential = credential
+  }
 
   init {
     addAuthStateVerifier()
@@ -64,26 +78,27 @@ constructor(private val firebaseAuth: FirebaseAuth, private val userRepository: 
       Log.d("NavigationAuthScreen", "${auth.currentUser?.uid}")
 
       val user = auth.currentUser
+      Log.d("NavigationAuthScreen", "${auth.currentUser?.uid} : mail is verified")
       if (user != null) {
         if (user.isEmailVerified) {
-          Log.d("NavigationAuthScreen", "${auth.currentUser?.uid} : mail is verified")
           userRepository.getUserWithId(
               user.uid,
               onSuccess = {
                 _authState.value = Screen.HOME
               },
               onFailure =  { error ->
-                Log.d("NavigationAuthScreen", "We are in a good start : $error")
-
                 if(error is FirebaseFirestoreException && error.code == FirebaseFirestoreException.Code.NOT_FOUND){
                   _authState.value = Screen.ACCOUNT_DETAILS
                 }else{
-                  Log.e("UnioApp", "Error fetching account details: $error")
                   _authState.value = Screen.WELCOME
                 }
               })
         } else {
-          _authState.value = Screen.EMAIL_VERIFICATION
+          if( _credential == null){
+            _authState.value = Route.AUTH
+          }else{
+            _authState.value = Screen.EMAIL_VERIFICATION
+          }
         }
       } else {
         _authState.value = Route.AUTH
