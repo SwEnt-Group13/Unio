@@ -104,4 +104,6 @@ object EventDetailsTestTags {
   const val MAP_BUTTON = "mapButton"
   const val BOTTOM_SHEET = "eventBottomSheet"
   const val SEND_NOTIFICATION = "eventSendNotification"
+  const val GALLERY_GRID = "eventGallery"
+  const val USER_EVENT_PICTURE = "eventPicture"
 }

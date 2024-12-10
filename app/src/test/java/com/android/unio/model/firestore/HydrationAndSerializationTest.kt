@@ -9,6 +9,7 @@ import com.android.unio.model.association.compareMemberLists
 import com.android.unio.model.association.compareRoleLists
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventRepositoryFirestore
+import com.android.unio.model.event.EventUserPicture
 import com.android.unio.model.firestore.transform.hydrate
 import com.android.unio.model.firestore.transform.mapRolesToPermission
 import com.android.unio.model.firestore.transform.mapUsersToRoles
@@ -73,7 +74,8 @@ class HydrationAndSerializationTest {
           endDate = Timestamp.now(),
           location = Location(latitude = 0.0, longitude = 0.0, name = "Example Location"),
           maxNumberOfPlaces = -1,
-          numberOfSaved = 3)
+          numberOfSaved = 3,
+          eventPictures = EventUserPicture.emptyFirestoreReferenceList())
 
   /** Round-trip tests for serialization and hydration of user, association, and event instances. */
   @Test

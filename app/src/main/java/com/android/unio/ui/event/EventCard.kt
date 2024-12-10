@@ -90,7 +90,7 @@ fun EventCard(
       event,
       associations,
       onClickEventCard = {
-        eventViewModel.selectEvent(event.uid)
+        eventViewModel.selectEvent(event.uid, true)
         navigationAction.navigateTo(Screen.EVENT_DETAILS)
       },
       onClickEditButton = {

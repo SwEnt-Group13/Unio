@@ -17,6 +17,7 @@ import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationRepositoryFirestore
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventRepositoryFirestore
+import com.android.unio.model.event.EventUserPictureRepositoryFirestore
 import com.android.unio.model.event.EventUtils.formatTimestamp
 import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
@@ -58,6 +59,8 @@ class EventDetailsTest : TearDown() {
   @MockK private lateinit var associationRepository: AssociationRepositoryFirestore
   @MockK private lateinit var userRepository: UserRepositoryFirestore
   @MockK private lateinit var imageRepository: ImageRepositoryFirebaseStorage
+  @MockK
+  private lateinit var eventUserPictureRepositoryFirestore: EventUserPictureRepositoryFirestore
 
   private lateinit var eventViewModel: EventViewModel
   private lateinit var userViewModel: UserViewModel
@@ -86,7 +89,12 @@ class EventDetailsTest : TearDown() {
     fusedLocationProviderClient = mock()
     mapViewModel = MapViewModel(fusedLocationProviderClient)
 
-    eventViewModel = EventViewModel(eventRepository, imageRepository, associationRepository)
+    eventViewModel =
+        EventViewModel(
+            eventRepository,
+            imageRepository,
+            associationRepository,
+            eventUserPictureRepositoryFirestore)
 
     every { userRepository.init(any()) } returns Unit
     every { userRepository.getUserWithId("uid", any(), any()) } answers

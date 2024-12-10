@@ -10,6 +10,7 @@ import com.android.unio.mocks.user.MockUser
 import com.android.unio.model.association.AssociationRepositoryFirestore
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventRepositoryFirestore
+import com.android.unio.model.event.EventUserPictureRepositoryFirestore
 import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.strings.test_tags.saved.SavedTestTags
@@ -44,6 +45,8 @@ class SavedTest : TearDown() {
   @MockK private lateinit var navigationAction: NavigationAction
   @MockK private lateinit var associationRepositoryFirestore: AssociationRepositoryFirestore
   @MockK private lateinit var imageRepository: ImageRepositoryFirebaseStorage
+  @MockK
+  private lateinit var eventUserPictureRepositoryFirestore: EventUserPictureRepositoryFirestore
 
   private lateinit var eventViewModel: EventViewModel
 
@@ -88,7 +91,11 @@ class SavedTest : TearDown() {
         }
 
     eventViewModel =
-        EventViewModel(eventRepository, imageRepository, associationRepositoryFirestore)
+        EventViewModel(
+            eventRepository,
+            imageRepository,
+            associationRepositoryFirestore,
+            eventUserPictureRepositoryFirestore)
   }
 
   @Test

@@ -19,6 +19,7 @@ import com.android.unio.model.association.AssociationRepositoryFirestore
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventRepositoryFirestore
+import com.android.unio.model.event.EventUserPictureRepositoryFirestore
 import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.follow.ConcurrentAssociationUserRepositoryFirestore
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
@@ -77,6 +78,8 @@ class EventCreationTest : TearDown() {
   @MockK private lateinit var eventRepositoryFirestore: EventRepositoryFirestore
   @MockK private lateinit var imageRepositoryFirestore: ImageRepositoryFirebaseStorage
   @MockK
+  private lateinit var eventUserPictureRepositoryFirestore: EventUserPictureRepositoryFirestore
+  @MockK
   private lateinit var concurrentAssociationUserRepositoryFirestore:
       ConcurrentAssociationUserRepositoryFirestore
 
@@ -104,7 +107,11 @@ class EventCreationTest : TearDown() {
           onSuccess(events)
         }
     eventViewModel =
-        EventViewModel(eventRepository, imageRepositoryFirestore, associationRepositoryFirestore)
+        EventViewModel(
+            eventRepository,
+            imageRepositoryFirestore,
+            associationRepositoryFirestore,
+            eventUserPictureRepositoryFirestore)
 
     searchViewModel = spyk(SearchViewModel(searchRepository))
     associationViewModel =

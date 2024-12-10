@@ -6,6 +6,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import com.android.unio.TearDown
 import com.android.unio.model.association.AssociationRepositoryFirestore
 import com.android.unio.model.event.EventRepository
+import com.android.unio.model.event.EventUserPictureRepositoryFirestore
 import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.search.SearchRepository
@@ -33,6 +34,8 @@ class BottomNavigationTest : TearDown() {
 
   @MockK private lateinit var imageRepository: ImageRepositoryFirebaseStorage
   @MockK private lateinit var associationRepositoryFirestore: AssociationRepositoryFirestore
+  @MockK
+  private lateinit var eventUserPictureRepositoryFirestore: EventUserPictureRepositoryFirestore
 
   private lateinit var userRepository: UserRepository
   private lateinit var userViewModel: UserViewModel
@@ -47,7 +50,11 @@ class BottomNavigationTest : TearDown() {
     MockKAnnotations.init(this)
     eventRepository = mock { EventRepository::class.java }
     eventViewModel =
-        EventViewModel(eventRepository, imageRepository, associationRepositoryFirestore)
+        EventViewModel(
+            eventRepository,
+            imageRepository,
+            associationRepositoryFirestore,
+            eventUserPictureRepositoryFirestore)
 
     userRepository = mock { UserRepositoryFirestore::class.java }
     userViewModel = UserViewModel(userRepository, imageRepository)
