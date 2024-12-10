@@ -20,6 +20,8 @@
     <string name="association_go_back" translatable="true">Go Back</string>
     <string name="association_see_more" translatable="true">See More</string>
     <string name="association_more" translatable="true">More</string>
+    <string name="association_see_less" translatable="true">See Less</string>
+    <string name="association_share" translatable="true">Share Association</string>
     <string name="association_edit" translatable="true">Edit Association</string>
     <string name="association_broadcast_message">Broadcast a message</string>
     <string name="association_contact_members" translatable="true">Contact Members</string>

@@ -20,6 +20,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.filled.Add
@@ -35,7 +36,6 @@ import androidx.compose.material3.ModalBottomSheetProperties
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Snackbar
-import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
@@ -77,7 +77,6 @@ import com.android.unio.ui.navigation.Screen
 import com.android.unio.ui.theme.AppTypography
 import com.android.unio.ui.utils.ToastUtils
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 
 // These variable are only here for testing purpose. They should be deleted when the screen is
 // linked to the backend
@@ -108,18 +107,18 @@ fun AssociationProfileScreen(
     Log.e("AssociationProfileScreen", "Association not found.")
     Toast.makeText(context, context.getString(R.string.association_toast_error), Toast.LENGTH_SHORT)
         .show()
-    return
-  }
+  } else {
 
-  AssociationProfileScaffold(
-      navigationAction = navigationAction,
-      userViewModel = userViewModel,
-      eventViewModel = eventViewModel,
-      associationViewModel = associationViewModel,
-      onEdit = {
-        associationViewModel.selectAssociation(association!!.uid)
-        navigationAction.navigateTo(Screen.EDIT_ASSOCIATION)
-      })
+    AssociationProfileScaffold(
+        navigationAction = navigationAction,
+        userViewModel = userViewModel,
+        eventViewModel = eventViewModel,
+        associationViewModel = associationViewModel,
+        onEdit = {
+          associationViewModel.selectAssociation(association!!.uid)
+          navigationAction.navigateTo(Screen.EDIT_ASSOCIATION)
+        })
+  }
 }
 
 /**
@@ -334,66 +333,7 @@ private fun AssociationProfileContent(
         AssociationDescription(association!!)
         AssociationEvents(navigationAction, association!!, userViewModel, eventViewModel)
         AssociationMembers(associationViewModel, association!!.members, onMemberClick)
-        AssociationRecruitment(association!!)
       }
-}
-
-/**
- * Composable element that contain the recruitment part of the association profile screen. It
- * display the recruitment title, the recruitment description, the roles that are needed and the
- * users that are already in the association.
- *
- * !!! This element is only a placeholder and should be replaced by the real recruitment system when
- * implemented !!!
- *
- * @param association (Association) : The association currently displayed
- */
-@OptIn(ExperimentalLayoutApi::class)
-@Composable
-private fun AssociationRecruitment(association: Association) {
-  val context = LocalContext.current
-
-  Text(
-      text = context.getString(R.string.association_join) + " ${association.name} ?",
-      style = AppTypography.headlineMedium,
-      modifier = Modifier.testTag(AssociationProfileTestTags.RECRUITMENT_TITLE))
-  Text(
-      text = context.getString(R.string.association_help_us),
-      style = AppTypography.bodySmall,
-      modifier = Modifier.testTag(AssociationProfileTestTags.RECRUITMENT_DESCRIPTION))
-  FlowRow(
-      modifier = Modifier.testTag(AssociationProfileTestTags.RECRUITMENT_ROLES),
-      horizontalArrangement = Arrangement.spacedBy(8.dp),
-  ) {
-    OutlinedButton(
-        modifier = Modifier.testTag(AssociationProfileTestTags.DESIGNER_ROLES),
-        onClick = {
-          scope!!.launch {
-            testSnackbar!!.showSnackbar(message = DEBUG_MESSAGE, duration = SnackbarDuration.Short)
-          }
-        },
-        enabled = true) {
-          Icon(
-              Icons.Filled.Add,
-              contentDescription = context.getString(R.string.association_recruitment))
-          Spacer(Modifier.width(2.dp))
-          Text("Graphic Designer")
-        }
-    OutlinedButton(
-        modifier = Modifier.testTag(AssociationProfileTestTags.TREASURER_ROLES),
-        onClick = {
-          scope!!.launch {
-            testSnackbar!!.showSnackbar(message = DEBUG_MESSAGE, duration = SnackbarDuration.Short)
-          }
-        },
-        enabled = true) {
-          Icon(
-              Icons.Filled.Add,
-              contentDescription = context.getString(R.string.association_recruitment))
-          Spacer(Modifier.width(2.dp))
-          Text("Treasurer")
-        }
-  }
 }
 
 /**
@@ -503,15 +443,27 @@ private fun AssociationEvents(
       }
     }
     if (events.size > 1) {
-      OutlinedButton(
-          onClick = { isSeeMoreClicked = true },
-          modifier = Modifier.testTag(AssociationProfileTestTags.SEE_MORE_BUTTON)) {
-            Icon(
-                Icons.AutoMirrored.Filled.ArrowForward,
-                contentDescription = context.getString(R.string.association_see_more))
-            Spacer(Modifier.width(2.dp))
-            Text(context.getString(R.string.association_see_more))
-          }
+      if (isSeeMoreClicked) {
+        OutlinedButton(
+            onClick = { isSeeMoreClicked = false },
+            modifier = Modifier.testTag(AssociationProfileTestTags.SEE_MORE_BUTTON)) {
+              Icon(
+                  Icons.AutoMirrored.Filled.ArrowBack,
+                  contentDescription = context.getString(R.string.association_see_less))
+              Spacer(Modifier.width(2.dp))
+              Text(context.getString(R.string.association_see_less))
+            }
+      } else {
+        OutlinedButton(
+            onClick = { isSeeMoreClicked = true },
+            modifier = Modifier.testTag(AssociationProfileTestTags.SEE_MORE_BUTTON)) {
+              Icon(
+                  Icons.AutoMirrored.Filled.ArrowForward,
+                  contentDescription = context.getString(R.string.association_see_more))
+              Spacer(Modifier.width(2.dp))
+              Text(context.getString(R.string.association_see_more))
+            }
+      }
     }
   }
   if (isAdmin) {
