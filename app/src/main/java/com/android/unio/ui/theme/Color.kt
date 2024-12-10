@@ -230,3 +230,14 @@ val eventTypeOther = Color.Gray // Default Color
 // Colors for the approximate user location circle on the map
 val mapUserLocationCircleFiller = Color(0x2200A0FF)
 val mapUserLocationCircleStroke = Color(0xAA00A0FF)
+
+// Colors for the role badges
+val badgeColorBlack = 0xFF000000 // Opaque Black
+val badgeColorWhite = 0xFFFFFFFF // Opaque White
+val badgeColorRed = 0xFFFF0000   // Opaque Red
+val badgeColorGreen = 0xFF00FF00 // Opaque Green
+val badgeColorBlue = 0xFF0000FF  // Opaque Blue
+val badgeColorYellow = 0xFFFFFF00 // Opaque Yellow
+val badgeColorCyan = 0xFF00FFFF  // Opaque Cyan
+val badgeColorMagenta = 0xFFFF00FF // Opaque Magenta
+
