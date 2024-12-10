@@ -4,6 +4,7 @@ import android.net.Uri
 import androidx.core.net.toUri
 import com.android.unio.R
 import com.android.unio.model.association.Association
+import com.android.unio.model.association.Role
 import com.android.unio.model.event.Event
 import com.android.unio.model.firestore.ReferenceList
 import com.android.unio.model.firestore.UniquelyIdentifiable
@@ -187,7 +188,7 @@ fun getPlaceHolderText(social: Social): String {
   }
 }
 
-fun getUserRoleInAssociation(association: Association, userUid: String): String {
+fun getUserRoleInAssociation(association: Association, userUid: String): Role? {
   val member = association.members.find { it.user.uid == userUid }
-  return member?.role?.displayName ?: "No Role"
+  return member?.role
 }

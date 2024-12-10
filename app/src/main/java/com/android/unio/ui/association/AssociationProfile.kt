@@ -461,7 +461,8 @@ private fun AssociationMembers(
                     Box(
                         modifier =
                             Modifier.background(
-                                    color = getRandomBadgeColor(), shape = RoundedCornerShape(8.dp))
+                                    color = Color(member.role.color),
+                                    shape = RoundedCornerShape(8.dp))
                                 .padding(horizontal = 8.dp, vertical = 4.dp)) {
                           Text(
                               text = member.role.displayName,
