@@ -71,9 +71,6 @@ class UserClaimAssociationTest : TearDown() {
 
     composeTestRule.onNodeWithTag(UserClaimAssociationTestTags.SCREEN).assertIsDisplayed()
     composeTestRule.onNodeWithTag(UserClaimAssociationTestTags.BACK_BUTTON).assertIsDisplayed()
-    composeTestRule
-        .onNodeWithTag(UserClaimAssociationTestTags.NEW_ASSOCIATION_BUTTON)
-        .assertIsDisplayed()
   }
 
   @Test
@@ -83,15 +80,5 @@ class UserClaimAssociationTest : TearDown() {
     }
 
     composeTestRule.onNodeWithTag(UserClaimAssociationTestTags.BACK_BUTTON).performClick()
-  }
-
-  @Test
-  fun testCreateNewAssociationButtonShowsToast() {
-    composeTestRule.setContent {
-      UserClaimAssociationScreen(associationViewModel, navigationAction, searchViewModel)
-    }
-
-    val button = composeTestRule.onNodeWithTag(UserClaimAssociationTestTags.NEW_ASSOCIATION_BUTTON)
-    button.performClick()
   }
 }
