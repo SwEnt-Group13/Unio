@@ -15,7 +15,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -47,10 +49,6 @@ fun UserClaimAssociationScreen(
     searchViewModel: SearchViewModel
 ) {
   val context = LocalContext.current
-
-  val focusRequester = remember { FocusRequester() }
-
-  LaunchedEffect(Unit) { focusRequester.requestFocus() }
 
   Scaffold(
       modifier = Modifier.testTag(UserClaimAssociationTestTags.SCREEN),
@@ -84,6 +82,10 @@ fun UserClaimAssociationScreen(
             Text(
                 context.getString(R.string.user_claim_association_claim_president_rights),
                 style = AppTypography.bodySmall)
+
+            val focusRequester = remember { FocusRequester() }
+
+            LaunchedEffect(Unit) { focusRequester.requestFocus() }
 
             Box(modifier = Modifier.focusRequester(focusRequester)) {
               AssociationSearchBar(
