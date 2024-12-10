@@ -313,7 +313,7 @@
     <!-- UserClaimAssociation Strings -->
     <string name="user_claim_association_association_go_back">Retour</string>
     <string name="user_claim_association_association_see_more">Voir plus</string>
-    <string name="user_claim_association_you_can_either">Vous pouvez soit</string>
+    <string name="user_claim_association_you_can_do_the_following">Vous pouvez procéder comme suit</string>
     <string name="user_claim_association_create_new_association">Créer une nouvelle association</string>
     <string name="user_claim_association_not_implemented_yet">Pas encore implémenté</string>
     <string name="user_claim_association_create_association">Créer une association</string>

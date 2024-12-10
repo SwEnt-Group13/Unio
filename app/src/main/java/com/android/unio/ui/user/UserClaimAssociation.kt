@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -27,7 +26,6 @@ import com.android.unio.ui.association.AssociationSearchBar
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
 import com.android.unio.ui.theme.AppTypography
-import com.android.unio.ui.utils.ToastUtils
 
 /**
  * Composable allows the user to search for an association and one.
@@ -66,26 +64,12 @@ fun UserClaimAssociationScreen(
         ) {
           Column(
               modifier = Modifier.padding(16.dp),
-              verticalArrangement = Arrangement.spacedBy(6.dp),
+              verticalArrangement = Arrangement.spacedBy(12.dp),
               horizontalAlignment = Alignment.CenterHorizontally,
           ) {
             Text(
-                context.getString(R.string.user_claim_association_you_can_either),
+                context.getString(R.string.user_claim_association_you_can_do_the_following),
                 style = AppTypography.headlineSmall)
-
-            Text(
-                context.getString(R.string.user_claim_association_create_new_association),
-                style = AppTypography.bodySmall)
-
-            Button(
-                onClick = {
-                  ToastUtils.showToast(
-                      context,
-                      context.getString(R.string.user_claim_association_not_implemented_yet))
-                },
-                modifier = Modifier.testTag(UserClaimAssociationTestTags.NEW_ASSOCIATION_BUTTON)) {
-                  Text(context.getString(R.string.user_claim_association_create_association))
-                }
 
             Text(
                 context.getString(R.string.user_claim_association_claim_president_rights),
