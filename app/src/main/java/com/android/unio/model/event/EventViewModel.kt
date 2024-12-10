@@ -64,22 +64,6 @@ constructor(
         })
   }
 
-  /*//TODO: add javadoc
-  fun loadSelectedEventPictures() {
-      if (selectedEvent.value != null && selectedEvent.value!!.eventPictures.uids.isNotEmpty()) {
-          eventPicturesRepository.getEventUserPictures(
-              selectedEvent.value!!,
-              onSuccess = { eventList ->
-                  eventList.forEach { event -> event.organisers.requestAll() }
-                  _.value = eventList
-              },
-              onFailure = { exception ->
-                  Log.e("EventViewModel", "An error occurred while loading events: $exception")
-                  _events.value = emptyList()
-              })
-      }
-  }*/
-
   /**
    * Updates the selected event in the ViewModel.
    *
@@ -239,6 +223,12 @@ constructor(
     })
   }
 
+    /**
+     * Add an EventUserPicture to the database and updates the related event.
+     * @param pictureInputStream The inputStream of the image to add.
+     * @param event The event the picture is related to.
+     * @param picture The EventUserPicture object, with number of likes and author.
+     */
   fun addEventUserPicture(
       pictureInputStream: InputStream,
       event: Event,
