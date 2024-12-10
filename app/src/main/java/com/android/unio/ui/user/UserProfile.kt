@@ -75,6 +75,7 @@ import com.android.unio.ui.navigation.Route
 import com.android.unio.ui.navigation.Screen
 import com.android.unio.ui.theme.AppTypography
 import com.google.firebase.Firebase
+import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.auth
 import kotlinx.coroutines.launch
 
@@ -109,6 +110,7 @@ fun UserProfileScreen(
   val refreshState by userViewModel.refreshState
 
   UserProfileScreenScaffold(
+      userViewModel,
       user!!,
       navigationAction,
       refreshState,
@@ -133,6 +135,7 @@ fun UserProfileScreen(
 @OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun UserProfileScreenScaffold(
+    userViewModel: UserViewModel,
     user: User,
     navigationAction: NavigationAction,
     refreshState: Boolean,
@@ -178,6 +181,7 @@ fun UserProfileScreenScaffold(
                       .fillMaxHeight()
                       .verticalScroll(rememberScrollState())) {
                 UserProfileScreenContent(
+                    userViewModel,
                     user,
                     onAssociationClick,
                     onClaimAssociationClick = {
@@ -208,6 +212,7 @@ fun UserProfileScreenScaffold(
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun UserProfileScreenContent(
+    userViewModel: UserViewModel,
     user: User,
     onAssociationClick: (String) -> Unit,
     onClaimAssociationClick: () -> Unit
@@ -307,6 +312,18 @@ fun UserProfileScreenContent(
                 modifier = Modifier.testTag(UserProfileTestTags.CLAIMING_BUTTON)) {
                   Text(context.getString(R.string.user_profile_claim_association))
                 }
+
+              Button(
+                  onClick = {
+                      Firebase.auth.currentUser
+                          ?.reauthenticate(EmailAuthProvider.getCredential("haha@gmail.com", "123456"))
+                          ?.addOnSuccessListener {
+                              userViewModel.setCredential(null)
+                          }
+                  }
+              ){
+                  Text("ReAuth Test")
+              }
           }
 
           // Display the associations that the user is following.
