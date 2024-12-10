@@ -36,6 +36,7 @@ class EventViewModelTest {
 
   @MockK lateinit var imageRepository: ImageRepositoryFirebaseStorage
   @MockK private lateinit var associationRepositoryFirestore: AssociationRepositoryFirestore
+  @MockK private lateinit var eventUserPictureRepositoryFirestore: EventUserPictureRepositoryFirestore
 
   private lateinit var eventViewModel: EventViewModel
 
@@ -73,7 +74,7 @@ class EventViewModelTest {
     every { associationRepositoryFirestore.getAssociations(any(), any()) } answers {}
     every { associationRepositoryFirestore.saveAssociation(any(), any(), any()) } answers {}
 
-    eventViewModel = EventViewModel(repository, imageRepository, associationRepositoryFirestore)
+    eventViewModel = EventViewModel(repository, imageRepository,associationRepositoryFirestore, eventUserPictureRepositoryFirestore)
   }
 
   @Test

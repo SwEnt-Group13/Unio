@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.itemsIndexed
@@ -33,7 +34,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.DirectionsWalk
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
-import androidx.compose.material.icons.filled.Upload
 import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material.icons.rounded.Favorite
@@ -41,7 +41,6 @@ import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -173,6 +172,7 @@ fun EventScreenScaffold(
   val pagerState = rememberPagerState(initialPage = 0) { nbOfTabs }
   val context = LocalContext.current
   var showSheet by remember { mutableStateOf(false) }
+  val user by userViewModel.user.collectAsState()
 
   var showNotificationDialog by remember { mutableStateOf(false) }
   testSnackbar = remember { SnackbarHostState() }
@@ -180,12 +180,7 @@ fun EventScreenScaffold(
   Scaffold(
       floatingActionButton = {
         if (pagerState.currentPage == 1) {
-          FloatingActionButton(onClick = {}, modifier = Modifier.testTag("onch").padding(15.dp)) {
-            Icon(
-                imageVector = Icons.Filled.Upload,
-                contentDescription =
-                    context.getString(R.string.home_content_description_map_button))
-          }
+          EventDetailsPicturePicker(event, eventViewModel, user!!) // Asserted non null above
         }
       },
       modifier = Modifier.testTag(EventDetailsTestTags.SCREEN),
@@ -262,25 +257,21 @@ fun EventScreenContent(
     pagerState: PagerState
 ) {
   val context = LocalContext.current
-  Column(
-      modifier =
-          Modifier.testTag(EventDetailsTestTags.DETAILS_PAGE).padding(padding).fillMaxSize()) {
-        Column(verticalArrangement = Arrangement.Center, modifier = Modifier.height(200.dp)) {
-          AsyncImageWrapper(
-              imageUri = event.image.toUri(),
-              contentDescription = context.getString(R.string.event_image_description),
-              modifier = Modifier.fillMaxWidth().testTag(EventDetailsTestTags.DETAILS_IMAGE),
-              contentScale = ContentScale.Crop)
-        }
+  Column(modifier = Modifier.testTag(EventDetailsTestTags.DETAILS_PAGE).fillMaxSize()) {
+    Column(modifier = Modifier.height(200.dp)) {
+      AsyncImageWrapper(
+          imageUri = event.image.toUri(),
+          contentDescription = context.getString(R.string.event_image_description),
+          modifier = Modifier.fillMaxWidth().testTag(EventDetailsTestTags.DETAILS_IMAGE),
+          contentScale = ContentScale.Crop)
+    }
 
-        EventInformationCard(event, organisers, context)
+    EventInformationCard(event, organisers, context)
 
-        HorizontalPager(
-            state = pagerState, modifier = Modifier.fillMaxSize().padding(padding).padding(9.dp)) {
-                page ->
-              EventDetailsBody(navigationAction, mapViewModel, event, context, page)
-            }
-      }
+    HorizontalPager(state = pagerState, modifier = Modifier.fillMaxSize().padding(9.dp)) { page ->
+      EventDetailsBody(navigationAction, mapViewModel, event, context, page)
+    }
+  }
 }
 
 /**
@@ -420,11 +411,18 @@ fun EventDetailsPicturesTab(event: Event, eventPictures: List<EventUserPicture>)
       Text("The event has no user pictures yet :/")
     }
   } else {
-    LazyVerticalStaggeredGrid(columns = StaggeredGridCells.Fixed(2)) {
-      itemsIndexed(eventPictures) { index, item ->
-        AsyncImageWrapper(item.image.toUri(), contentDescription = "")
-      }
-    }
+    LazyVerticalStaggeredGrid(
+        columns = StaggeredGridCells.Adaptive(100.dp), modifier = Modifier.fillMaxSize()) {
+          itemsIndexed(eventPictures) { index, item ->
+            AsyncImageWrapper(
+                item.image.toUri(),
+                contentDescription = "",
+                filterQuality = FilterQuality.High,
+                placeholderResourceId = 0,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.padding(3.dp).clip(RoundedCornerShape(10)))
+          }
+        }
   }
 }
 
@@ -436,7 +434,8 @@ fun EventDetailsDescriptionTab(
     context: Context
 ) {
   Column(
-      modifier = Modifier.testTag(EventDetailsTestTags.DETAILS_BODY).fillMaxHeight(),
+      modifier =
+          Modifier.testTag(EventDetailsTestTags.DETAILS_BODY).fillMaxHeight().padding(top = 30.dp),
       verticalArrangement = Arrangement.spacedBy(30.dp)) {
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
           val priceStr =

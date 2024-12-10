@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.android.unio.model.association.AssociationRepository
 import com.android.unio.model.image.ImageRepository
+import com.android.unio.model.strings.StoragePathsStrings
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.io.InputStream
 import javax.inject.Inject
@@ -26,7 +27,8 @@ class EventViewModel
 constructor(
     private val repository: EventRepository,
     private val imageRepository: ImageRepository,
-    private val associationRepository: AssociationRepository
+    private val associationRepository: AssociationRepository,
+    private val eventUserPictureRepository: EventUserPictureRepository,
 ) : ViewModel() {
 
   /**
@@ -235,5 +237,34 @@ constructor(
         it.events.requestAll()
       }
     })
+  }
+
+  fun addEventUserPicture(
+      pictureInputStream: InputStream,
+      event: Event,
+      picture: EventUserPicture
+  ) {
+    val picId = eventUserPictureRepository.getNewUid()
+    imageRepository.uploadImage(
+        pictureInputStream,
+        StoragePathsStrings.EVENT_PICTURES + picId,
+        onSuccess = { imageUri ->
+          val newEventPicture = picture.copy(uid = picId, image = imageUri)
+          eventUserPictureRepository.addEventUserPicture(
+              newEventPicture,
+              {
+                event.eventPictures.add(newEventPicture.uid)
+                updateEventWithoutImage(
+                    event,
+                    {},
+                    { e ->
+                      Log.e("EventViewModel", "An error occurred while updating an event: $e")
+                    })
+              },
+              { e ->
+                Log.e("EventViewModel", "An error occurred while adding an event picture: $e")
+              })
+        },
+        onFailure = { e -> Log.e("ImageRepository", "Failed to store image: $e") })
   }
 }

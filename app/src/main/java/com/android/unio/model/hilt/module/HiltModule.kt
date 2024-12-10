@@ -5,6 +5,8 @@ import com.android.unio.model.association.AssociationRepository
 import com.android.unio.model.association.AssociationRepositoryFirestore
 import com.android.unio.model.event.EventRepository
 import com.android.unio.model.event.EventRepositoryFirestore
+import com.android.unio.model.event.EventUserPictureRepository
+import com.android.unio.model.event.EventUserPictureRepositoryFirestore
 import com.android.unio.model.follow.ConcurrentAssociationUserRepository
 import com.android.unio.model.follow.ConcurrentAssociationUserRepositoryFirestore
 import com.android.unio.model.image.ImageRepository
@@ -45,6 +47,16 @@ abstract class EventModule {
   abstract fun bindEventRepository(
       eventRepositoryFirestore: EventRepositoryFirestore
   ): EventRepository
+}
+
+@Module
+@InstallIn(SingletonComponent::class)
+abstract class EventUserPictureModule {
+
+  @Binds
+  abstract fun bindEventUserPictureRepository(
+      eventUserPictureRepositoryFirestore: EventUserPictureRepositoryFirestore
+  ): EventUserPictureRepository
 }
 
 @Module

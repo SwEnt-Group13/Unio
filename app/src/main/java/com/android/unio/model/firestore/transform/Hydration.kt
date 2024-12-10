@@ -1,6 +1,5 @@
 package com.android.unio.model.firestore.transform
 
-import com.android.unio.mocks.user.MockUser
 import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationCategory
 import com.android.unio.model.association.AssociationRepositoryFirestore
@@ -169,12 +168,10 @@ fun EventRepositoryFirestore.Companion.hydrate(data: Map<String, Any>?): Event {
 fun EventUserPictureRepositoryFirestore.Companion.hydrate(
     data: Map<String, Any>?
 ): EventUserPicture {
-
   return EventUserPicture(
       uid = data?.get(EventUserPicture::uid.name) as? String ?: "",
       author =
-          data?.get(EventUserPicture::author.name) as? User
-              ?: MockUser.createMockUser(), // TODO: see if there's another way to implement this
+          User.firestoreReferenceElementWith(data?.get(EventUserPicture::author.name) as String),
       image = data?.get(EventUserPicture::image.name) as? String ?: "",
       likes = data?.get(EventUserPicture::likes.name) as? Int ?: 0,
   )

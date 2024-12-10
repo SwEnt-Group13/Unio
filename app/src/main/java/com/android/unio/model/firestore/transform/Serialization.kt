@@ -113,7 +113,8 @@ fun EventRepositoryFirestore.Companion.serialize(event: Event): Map<String, Any>
               Location::name.name to event.location.name),
       Event::types.name to event.types.map { it.name },
       Event::maxNumberOfPlaces.name to event.maxNumberOfPlaces,
-      Event::numberOfSaved.name to event.numberOfSaved)
+      Event::numberOfSaved.name to event.numberOfSaved,
+      Event::eventPictures.name to event.eventPictures.uids)
 }
 
 fun EventUserPictureRepositoryFirestore.Companion.serialize(
@@ -122,6 +123,6 @@ fun EventUserPictureRepositoryFirestore.Companion.serialize(
   return mapOf(
       EventUserPicture::uid.name to eventUserPicture.uid,
       EventUserPicture::image.name to eventUserPicture.image,
-      EventUserPicture::author.name to eventUserPicture.author,
+      EventUserPicture::author.name to eventUserPicture.author.uid,
       EventUserPicture::likes.name to eventUserPicture.likes)
 }
