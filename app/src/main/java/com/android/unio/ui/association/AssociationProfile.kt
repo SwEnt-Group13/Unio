@@ -509,8 +509,6 @@ private fun AssociationEvents(
 
   // Check if the user has the "ADD_EVENTS" permission using the Permissions class
   val hasAddEventsPermission = userPermissions?.hasPermission(PermissionType.ADD_EVENTS) == true
-  Log.d("permissions", userPermissions?.getGrantedPermissions()?.size.toString())
-
   if (events.isNotEmpty()) {
     Text(
         context.getString(R.string.association_upcoming_events),
