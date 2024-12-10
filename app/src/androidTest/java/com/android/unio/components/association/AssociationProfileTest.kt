@@ -24,7 +24,6 @@ import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationRepositoryFirestore
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.association.Member
-import com.android.unio.model.association.Permissions
 import com.android.unio.model.association.Role
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventRepositoryFirestore
@@ -56,7 +55,6 @@ import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.UninstallModules
 import dagger.hilt.components.SingletonComponent
-import firestoreReferenceElementWith
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
@@ -122,8 +120,6 @@ class AssociationProfileTest : TearDown() {
     every { navigationAction.navigateTo(any<String>()) } returns Unit
     every { navigationAction.goBack() } returns Unit
 
-
-
     events = listOf(MockEvent.createMockEvent(uid = "a"), MockEvent.createMockEvent(uid = "b"))
 
     val user =
@@ -141,13 +137,27 @@ class AssociationProfileTest : TearDown() {
             profilePicture = "",
         )
 
-
-      associations =
-          listOf(
-              MockAssociation.createMockAssociation(uid = "a1", userDependency = true, members = listOf(Member(MockReferenceElement(MockUser.createMockUser(uid = "1", associationDependency = true)), Role.ADMIN))),
-              MockAssociation.createMockAssociation(uid = "a2", userDependency = true, members = listOf(Member(MockReferenceElement(MockUser.createMockUser(uid = "1", associationDependency = true)), Role.ADMIN))),
-          )
-
+    associations =
+        listOf(
+            MockAssociation.createMockAssociation(
+                uid = "a1",
+                userDependency = true,
+                members =
+                    listOf(
+                        Member(
+                            MockReferenceElement(
+                                MockUser.createMockUser(uid = "1", associationDependency = true)),
+                            Role.ADMIN))),
+            MockAssociation.createMockAssociation(
+                uid = "a2",
+                userDependency = true,
+                members =
+                    listOf(
+                        Member(
+                            MockReferenceElement(
+                                MockUser.createMockUser(uid = "1", associationDependency = true)),
+                            Role.ADMIN))),
+        )
 
     every { eventRepository.init(any()) } answers { (args[0] as () -> Unit).invoke() }
 
