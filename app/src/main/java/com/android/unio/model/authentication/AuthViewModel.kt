@@ -6,6 +6,7 @@ import com.android.unio.model.user.UserRepository
 import com.android.unio.ui.navigation.Route
 import com.android.unio.ui.navigation.Screen
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestoreException
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -60,22 +61,26 @@ constructor(private val firebaseAuth: FirebaseAuth, private val userRepository: 
    */
   private fun addAuthStateVerifier() {
     firebaseAuth.registerAuthStateListener { auth ->
+      Log.d("NavigationAuthScreen", "${auth.currentUser?.uid}")
+
       val user = auth.currentUser
       if (user != null) {
         if (user.isEmailVerified) {
+          Log.d("NavigationAuthScreen", "${auth.currentUser?.uid} : mail is verified")
           userRepository.getUserWithId(
               user.uid,
-              {
-                _authState.value =
-                    if (it.firstName.isNotEmpty()) {
-                      Screen.HOME
-                    } else {
-                      Screen.ACCOUNT_DETAILS
-                    }
+              onSuccess = {
+                _authState.value = Screen.HOME
               },
-              {
-                Log.e("UnioApp", "Error fetching account details: $it")
-                _authState.value = Screen.WELCOME
+              onFailure =  { error ->
+                Log.d("NavigationAuthScreen", "We are in a good start : $error")
+
+                if(error is FirebaseFirestoreException && error.code == FirebaseFirestoreException.Code.NOT_FOUND){
+                  _authState.value = Screen.ACCOUNT_DETAILS
+                }else{
+                  Log.e("UnioApp", "Error fetching account details: $error")
+                  _authState.value = Screen.WELCOME
+                }
               })
         } else {
           _authState.value = Screen.EMAIL_VERIFICATION
