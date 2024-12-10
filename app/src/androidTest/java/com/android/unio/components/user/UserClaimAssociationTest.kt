@@ -58,8 +58,8 @@ class UserClaimAssociationTest : TearDown() {
 
     every { navigationAction.navigateTo(any<String>()) } returns Unit
 
-      mockkStatic(FocusRequester::class)
-      every { focusRequester.requestFocus()} just Runs
+    mockkStatic(FocusRequester::class)
+    every { focusRequester.requestFocus() } just Runs
 
     associationViewModel =
         AssociationViewModel(
@@ -95,7 +95,9 @@ class UserClaimAssociationTest : TearDown() {
     composeTestRule.setContent {
       UserClaimAssociationScreen(associationViewModel, navigationAction, searchViewModel)
     }
-      composeTestRule.onNodeWithTag(UserClaimAssociationTestTags.BACK_BUTTON).assertDisplayComponentInScroll()
+    composeTestRule
+        .onNodeWithTag(UserClaimAssociationTestTags.BACK_BUTTON)
+        .assertDisplayComponentInScroll()
     composeTestRule.onNodeWithTag(UserClaimAssociationTestTags.BACK_BUTTON).performClick()
   }
 }
