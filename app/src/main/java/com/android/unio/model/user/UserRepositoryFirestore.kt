@@ -10,6 +10,7 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.MetadataChanges
 import javax.inject.Inject
 
@@ -67,14 +68,23 @@ class UserRepositoryFirestore @Inject constructor(private val db: FirebaseFirest
   ) {
     getUserRef(id).registerSnapshotListener(MetadataChanges.EXCLUDE) { documentSnapshot, exception
       ->
-      if (exception != null) {
+        if (exception != null) {
         onFailure(exception)
         return@registerSnapshotListener
       }
 
-      if (documentSnapshot != null && documentSnapshot.exists()) {
-        val user = hydrate(documentSnapshot.data)
-        onSuccess(user)
+      if (documentSnapshot != null) {
+          if (documentSnapshot.exists()) {
+              val user = hydrate(documentSnapshot.data)
+              onSuccess(user)
+          } else {
+              onFailure(
+                  FirebaseFirestoreException(
+                      FirebaseFirestoreException.Code.NOT_FOUND.name,
+                      FirebaseFirestoreException.Code.NOT_FOUND
+                  )
+              )
+          }
       }
     }
   }
