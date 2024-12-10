@@ -13,5 +13,10 @@ interface EventRepository {
 
   fun deleteEventById(id: String, onSuccess: () -> Unit, onFailure: (Exception) -> Unit)
 
-    fun addPictureToEvent(event: Event, eventPicture: EventUserPicture, onSuccess: () -> Unit, onFailure: (Exception) -> Unit)
+  fun addPictureToEvent(
+      event: Event,
+      eventPicture: EventUserPicture,
+      onSuccess: () -> Unit,
+      onFailure: (Exception) -> Unit
+  )
 }

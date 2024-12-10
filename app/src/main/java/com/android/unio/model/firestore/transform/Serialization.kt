@@ -7,7 +7,6 @@ import com.android.unio.model.association.Role
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventRepositoryFirestore
 import com.android.unio.model.event.EventUserPicture
-import com.android.unio.model.event.EventUserPictureRepository
 import com.android.unio.model.event.EventUserPictureRepositoryFirestore
 import com.android.unio.model.map.Location
 import com.android.unio.model.user.User
@@ -116,10 +115,13 @@ fun EventRepositoryFirestore.Companion.serialize(event: Event): Map<String, Any>
       Event::maxNumberOfPlaces.name to event.maxNumberOfPlaces,
       Event::numberOfSaved.name to event.numberOfSaved)
 }
-fun EventUserPictureRepositoryFirestore.Companion.serialize(eventUserPicture: EventUserPicture): Map<String, Any> {
-    return mapOf(
-        EventUserPicture::uid.name to eventUserPicture.uid,
-        EventUserPicture::image.name to eventUserPicture.image,
-        EventUserPicture::author.name to eventUserPicture.author,
-        EventUserPicture::likes.name to eventUserPicture.likes)
+
+fun EventUserPictureRepositoryFirestore.Companion.serialize(
+    eventUserPicture: EventUserPicture
+): Map<String, Any> {
+  return mapOf(
+      EventUserPicture::uid.name to eventUserPicture.uid,
+      EventUserPicture::image.name to eventUserPicture.image,
+      EventUserPicture::author.name to eventUserPicture.author,
+      EventUserPicture::likes.name to eventUserPicture.likes)
 }

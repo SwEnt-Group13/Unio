@@ -4,6 +4,7 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
+import android.os.Build
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -27,15 +28,14 @@ import androidx.compose.foundation.lazy.staggeredgrid.itemsIndexed
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.DirectionsWalk
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
+import androidx.compose.material.icons.filled.Upload
 import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material.icons.outlined.MoreVert
-import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.material3.Button
@@ -44,7 +44,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.ModalBottomSheetProperties
@@ -79,6 +78,7 @@ import androidx.core.net.toUri
 import com.android.unio.R
 import com.android.unio.model.association.Association
 import com.android.unio.model.event.Event
+import com.android.unio.model.event.EventUserPicture
 import com.android.unio.model.event.EventUtils.formatTimestamp
 import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.map.MapViewModel
@@ -89,7 +89,6 @@ import com.android.unio.model.preferences.AppPreferences
 import com.android.unio.model.strings.FormatStrings.DAY_MONTH_FORMAT
 import com.android.unio.model.strings.FormatStrings.HOUR_MINUTE_FORMAT
 import com.android.unio.model.strings.NotificationStrings.EVENT_REMINDER_CHANNEL_ID
-import com.android.unio.model.strings.test_tags.EventDetailsTestTags
 import com.android.unio.model.strings.test_tags.event.EventDetailsTestTags
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.components.NotificationSender
@@ -97,7 +96,9 @@ import com.android.unio.ui.image.AsyncImageWrapper
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
 import com.android.unio.ui.theme.AppTypography
+import com.google.firebase.Firebase
 import com.google.firebase.Timestamp
+import com.google.firebase.messaging.messaging
 import java.text.SimpleDateFormat
 import java.util.Locale
 import kotlinx.coroutines.CoroutineScope
@@ -106,16 +107,15 @@ import me.zhanghai.compose.preference.LocalPreferenceFlow
 
 private const val DEBUG_MESSAGE = "<DEBUG> Not implemented yet"
 private val DEBUG_LAMBDA: () -> Unit = {
-    scope!!.launch {
-        testSnackbar!!.showSnackbar(message = DEBUG_MESSAGE, duration = SnackbarDuration.Short)
-    }
+  scope!!.launch {
+    testSnackbar!!.showSnackbar(message = DEBUG_MESSAGE, duration = SnackbarDuration.Short)
+  }
 }
 
 private val ASSOCIATION_ICON_SIZE = 24.dp
 
 private var testSnackbar: SnackbarHostState? = null
 private var scope: CoroutineScope? = null
-
 
 /**
  * A screen that displays the details of an event. This screen is filled with EventScreenScaffold.
@@ -134,9 +134,9 @@ fun EventScreen(
     mapViewModel: MapViewModel,
 ) {
 
-    val event by eventViewModel.selectedEvent.collectAsState()
+  val event by eventViewModel.selectedEvent.collectAsState()
 
-    val user by userViewModel.user.collectAsState()
+  val user by userViewModel.user.collectAsState()
 
   if (event == null || user == null) {
     Log.e("EventScreen", "Event or user is null")
@@ -169,80 +169,67 @@ fun EventScreenScaffold(
     eventViewModel: EventViewModel,
     userViewModel: UserViewModel
 ) {
-    val nbOfTabs = 2
-    val pagerState = rememberPagerState(initialPage = 0) { nbOfTabs }
-    val context = LocalContext.current
-    var showSheet by remember { mutableStateOf(false) }
+  val nbOfTabs = 2
+  val pagerState = rememberPagerState(initialPage = 0) { nbOfTabs }
+  val context = LocalContext.current
+  var showSheet by remember { mutableStateOf(false) }
 
-    var showNotificationDialog by remember { mutableStateOf(false) }
-    testSnackbar = remember { SnackbarHostState() }
-    scope = rememberCoroutineScope()
-    Scaffold(
-        floatingActionButton = {
-            if (pagerState.currentPage == 1) {
-                FloatingActionButton(
-                    onClick = {  },
-                    modifier = Modifier.testTag("onch").padding(15.dp)) {
+  var showNotificationDialog by remember { mutableStateOf(false) }
+  testSnackbar = remember { SnackbarHostState() }
+  scope = rememberCoroutineScope()
+  Scaffold(
+      floatingActionButton = {
+        if (pagerState.currentPage == 1) {
+          FloatingActionButton(onClick = {}, modifier = Modifier.testTag("onch").padding(15.dp)) {
+            Icon(
+                imageVector = Icons.Filled.Upload,
+                contentDescription =
+                    context.getString(R.string.home_content_description_map_button))
+          }
+        }
+      },
+      modifier = Modifier.testTag(EventDetailsTestTags.SCREEN),
+      snackbarHost = {
+        SnackbarHost(
+            hostState = testSnackbar!!,
+            modifier = Modifier.testTag(EventDetailsTestTags.SNACKBAR_HOST),
+            snackbar = { data ->
+              Snackbar {
+                TextButton(
+                    onClick = { testSnackbar!!.currentSnackbarData?.dismiss() },
+                    modifier = Modifier.testTag(EventDetailsTestTags.SNACKBAR_ACTION_BUTTON)) {
+                      Text(text = DEBUG_MESSAGE)
+                    }
+              }
+            })
+      },
+      topBar = {
+        TopAppBar(
+            title = {},
+            navigationIcon = {
+              IconButton(
+                  onClick = { navigationAction.goBack() },
+                  modifier = Modifier.testTag(EventDetailsTestTags.GO_BACK_BUTTON)) {
                     Icon(
-                        imageVector = Icons.Filled.Upload,
+                        imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
+                        contentDescription = context.getString(R.string.association_go_back))
+                  }
+            },
+            actions = {
+              EventSaveButton(event, eventViewModel, userViewModel)
+              IconButton(
+                  modifier = Modifier.testTag(EventDetailsTestTags.SHARE_BUTTON),
+                  onClick = { showSheet = true }) {
+                    Icon(
+                        Icons.Outlined.MoreVert,
                         contentDescription =
-                        context.getString(R.string.home_content_description_map_button))
-                }
-            }
-
-        },
-        modifier = Modifier.testTag(EventDetailsTestTags.SCREEN),
-        snackbarHost = {
-            SnackbarHost(
-                hostState = testSnackbar!!,
-                modifier = Modifier.testTag(EventDetailsTestTags.SNACKBAR_HOST),
-                snackbar = { data ->
-                    Snackbar {
-                        TextButton(
-                            onClick = { testSnackbar!!.currentSnackbarData?.dismiss() },
-                            modifier = Modifier.testTag(EventDetailsTestTags.SNACKBAR_ACTION_BUTTON)
-                        ) {
-                            Text(text = DEBUG_MESSAGE)
-                        }
-                    }
-                })
-        },
-        topBar = {
-            TopAppBar(
-                title = {},
-                navigationIcon = {
-                    IconButton(
-                        onClick = { navigationAction.goBack() },
-                        modifier = Modifier.testTag(EventDetailsTestTags.GO_BACK_BUTTON)
-                    ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
-                            contentDescription = context.getString(R.string.association_go_back)
-                        )
-                    }
-                },actions = {
-                    EventSaveButton(event, eventViewModel, userViewModel)
-                    IconButton(
-                        modifier = Modifier.testTag(EventDetailsTestTags.SHARE_BUTTON),
-                        onClick = { showSheet = true }) {
-                        Icon(
-                            Icons.Outlined.MoreVert,
-                            contentDescription =
                             context.getString(R.string.event_more_button_description))
-                    }
-                }))},
-        content = { padding ->
-            EventScreenContent(
-                navigationAction,
-                mapViewModel,
-                event,
-                organisers,
-                padding,
-                pagerState
-            )
-        })
-
-
+                  }
+            })
+      },
+      content = { padding ->
+        EventScreenContent(navigationAction, mapViewModel, event, organisers, padding, pagerState)
+      })
 
   NotificationSender(
       dialogTitle = context.getString(R.string.event_send_notification),
@@ -274,34 +261,26 @@ fun EventScreenContent(
     padding: PaddingValues,
     pagerState: PagerState
 ) {
-    val context = LocalContext.current
-    Column(
-        modifier =
-        Modifier
-            .testTag(EventDetailsTestTags.DETAILS_PAGE)
-            .padding(padding)
-            .fillMaxSize()
-    ) {
+  val context = LocalContext.current
+  Column(
+      modifier =
+          Modifier.testTag(EventDetailsTestTags.DETAILS_PAGE).padding(padding).fillMaxSize()) {
         Column(verticalArrangement = Arrangement.Center, modifier = Modifier.height(200.dp)) {
-            AsyncImageWrapper(
-                imageUri = event.image.toUri(),
-                contentDescription = context.getString(R.string.event_image_description),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .testTag(EventDetailsTestTags.DETAILS_IMAGE),
-                contentScale = ContentScale.Crop
-            )
+          AsyncImageWrapper(
+              imageUri = event.image.toUri(),
+              contentDescription = context.getString(R.string.event_image_description),
+              modifier = Modifier.fillMaxWidth().testTag(EventDetailsTestTags.DETAILS_IMAGE),
+              contentScale = ContentScale.Crop)
         }
 
         EventInformationCard(event, organisers, context)
 
-        HorizontalPager(state = pagerState, modifier = Modifier.fillMaxSize().padding(padding).padding(9.dp)) { page ->
-
-            EventDetailsBody(navigationAction, mapViewModel, event, context, page)
-
-        }
-
-    }
+        HorizontalPager(
+            state = pagerState, modifier = Modifier.fillMaxSize().padding(padding).padding(9.dp)) {
+                page ->
+              EventDetailsBody(navigationAction, mapViewModel, event, context, page)
+            }
+      }
 }
 
 /**
@@ -313,24 +292,19 @@ fun EventScreenContent(
  */
 @Composable
 fun EventInformationCard(event: Event, organisers: List<Association>, context: Context) {
-    Column(
-        modifier =
-        Modifier
-            .testTag(EventDetailsTestTags.DETAILS_INFORMATION_CARD)
-            .background(MaterialTheme.colorScheme.primary)
-            .padding(12.dp)
-            .fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
+  Column(
+      modifier =
+          Modifier.testTag(EventDetailsTestTags.DETAILS_INFORMATION_CARD)
+              .background(MaterialTheme.colorScheme.primary)
+              .padding(12.dp)
+              .fillMaxWidth(),
+      horizontalAlignment = Alignment.CenterHorizontally) {
         Text(
             event.title,
             modifier =
-            Modifier
-                .testTag(EventDetailsTestTags.TITLE)
-                .align(Alignment.CenterHorizontally),
+                Modifier.testTag(EventDetailsTestTags.TITLE).align(Alignment.CenterHorizontally),
             style = AppTypography.displayMedium,
-            color = MaterialTheme.colorScheme.onPrimary
-        )
+            color = MaterialTheme.colorScheme.onPrimary)
 
         Row(modifier = Modifier.align(Alignment.Start)) {
           for (i in organisers.indices) {
@@ -359,10 +333,10 @@ fun EventInformationCard(event: Event, organisers: List<Association>, context: C
                       style = AppTypography.bodySmall,
                       color = MaterialTheme.colorScheme.onPrimary)
                 }
-            }
+          }
         }
         EventDate(event)
-    }
+      }
 }
 
 /**
@@ -392,25 +366,22 @@ fun EventDate(event: Event) {
           modifier = Modifier.testTag(EventDetailsTestTags.HOUR),
           color = MaterialTheme.colorScheme.onPrimary)
 
-            Text(
-                formattedStartDateDay,
-                modifier = Modifier.testTag(EventDetailsTestTags.START_DATE),
-                color = MaterialTheme.colorScheme.onPrimary
-            )
-        } else {
-            Text(
-                "$formattedStartDateDay - $formattedStartDateHour",
-                modifier = Modifier.testTag(EventDetailsTestTags.START_DATE),
-                color = MaterialTheme.colorScheme.onPrimary
-            )
+      Text(
+          formattedStartDateDay,
+          modifier = Modifier.testTag(EventDetailsTestTags.START_DATE),
+          color = MaterialTheme.colorScheme.onPrimary)
+    } else {
+      Text(
+          "$formattedStartDateDay - $formattedStartDateHour",
+          modifier = Modifier.testTag(EventDetailsTestTags.START_DATE),
+          color = MaterialTheme.colorScheme.onPrimary)
 
-            Text(
-                "$formattedEndDateDay - $formattedEndDateHour",
-                modifier = Modifier.testTag(EventDetailsTestTags.END_DATE),
-                color = MaterialTheme.colorScheme.onPrimary
-            )
-        }
+      Text(
+          "$formattedEndDateDay - $formattedEndDateHour",
+          modifier = Modifier.testTag(EventDetailsTestTags.END_DATE),
+          color = MaterialTheme.colorScheme.onPrimary)
     }
+  }
 }
 
 /**
@@ -430,32 +401,31 @@ fun EventDetailsBody(
     context: Context,
     page: Int
 ) {
-    val eventPictures by event.eventPictures.list.collectAsState()
-    if (page == 0) {
-        EventDetailsDescriptionTab(navigationAction, mapViewModel, event, context)
-    } else if (page == 1) {
-        EventDetailsPicturesTab(event, eventPictures)
-    }
+  val eventPictures by event.eventPictures.list.collectAsState()
+  if (page == 0) {
+    EventDetailsDescriptionTab(navigationAction, mapViewModel, event, context)
+  } else if (page == 1) {
+    EventDetailsPicturesTab(event, eventPictures)
+  }
 }
 
 @Composable
 fun EventDetailsPicturesTab(event: Event, eventPictures: List<EventUserPicture>) {
-    if (event.startDate.seconds > Timestamp.now().seconds) {
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text("You have to wait for the event to start to upload pictures :)")
-        }
-    } else if (eventPictures.isEmpty()) {
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text("The event has no user pictures yet :/")
-        }
-    } else {
-        LazyVerticalStaggeredGrid(columns = StaggeredGridCells.Fixed(2)) {
-            itemsIndexed(eventPictures) { index, item ->
-                AsyncImageWrapper(item.image.toUri(), contentDescription = "")
-            }
-        }
+  if (event.startDate.seconds > Timestamp.now().seconds) {
+    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+      Text("You have to wait for the event to start to upload pictures :)")
     }
-
+  } else if (eventPictures.isEmpty()) {
+    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+      Text("The event has no user pictures yet :/")
+    }
+  } else {
+    LazyVerticalStaggeredGrid(columns = StaggeredGridCells.Fixed(2)) {
+      itemsIndexed(eventPictures) { index, item ->
+        AsyncImageWrapper(item.image.toUri(), contentDescription = "")
+      }
+    }
+  }
 }
 
 @Composable
@@ -465,25 +435,21 @@ fun EventDetailsDescriptionTab(
     event: Event,
     context: Context
 ) {
-    Column(
-        modifier = Modifier
-            .testTag(EventDetailsTestTags.DETAILS_BODY)
-            .fillMaxHeight(),
-        verticalArrangement = Arrangement.spacedBy(30.dp)
-    ) {
+  Column(
+      modifier = Modifier.testTag(EventDetailsTestTags.DETAILS_BODY).fillMaxHeight(),
+      verticalArrangement = Arrangement.spacedBy(30.dp)) {
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            val priceStr =
-                if (event.price > 0) {
-                    "${context.getString(R.string.event_price)}${event.price}.-"
-                } else
-                    "${context.getString(R.string.event_price)} ${context.getString(R.string.event_price_free)}"
+          val priceStr =
+              if (event.price > 0) {
+                "${context.getString(R.string.event_price)}${event.price}.-"
+              } else
+                  "${context.getString(R.string.event_price)} ${context.getString(R.string.event_price_free)}"
 
-            Text(
-                priceStr,
-                modifier = Modifier.testTag(EventDetailsTestTags.PRICE_TEXT),
-                style = AppTypography.bodyLarge,
-                color = MaterialTheme.colorScheme.onPrimaryContainer
-            )
+          Text(
+              priceStr,
+              modifier = Modifier.testTag(EventDetailsTestTags.PRICE_TEXT),
+              style = AppTypography.bodyLarge,
+              color = MaterialTheme.colorScheme.onPrimaryContainer)
 
           val placesStr =
               if (event.maxNumberOfPlaces >= 0) {
@@ -498,66 +464,53 @@ fun EventDetailsDescriptionTab(
 
         Text(
             event.description,
-            modifier = Modifier
-                .testTag(EventDetailsTestTags.DESCRIPTION)
-                .padding(6.dp),
-            style = AppTypography.bodyMedium
-        )
+            modifier = Modifier.testTag(EventDetailsTestTags.DESCRIPTION).padding(6.dp),
+            style = AppTypography.bodyMedium)
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(top = 30.dp),
-            verticalArrangement = Arrangement.spacedBy(20.dp)
-        ) {
-            OutlinedButton(
-                onClick = {
+            modifier = Modifier.fillMaxSize().padding(top = 30.dp),
+            verticalArrangement = Arrangement.spacedBy(20.dp)) {
+              OutlinedButton(
+                  onClick = {
                     mapViewModel.setCenterLocation(event.location)
                     navigationAction.navigateTo(Screen.MAP)
-                },
-                modifier =
-                Modifier
-                    .testTag(EventDetailsTestTags.MAP_BUTTON)
-                    .align(Alignment.CenterHorizontally)
-                    .wrapContentSize(),
-                shape = CircleShape
-            ) {
-                Text(
-                    event.location.name,
-                    modifier =
-                    Modifier
-                        .testTag(EventDetailsTestTags.LOCATION_ADDRESS)
-                        .padding(end = 5.dp)
-                )
-                Icon(
-                    Icons.Outlined.LocationOn,
-                    contentDescription =
-                    context.getString(R.string.event_location_button_description),
-                )
-            }
+                  },
+                  modifier =
+                      Modifier.testTag(EventDetailsTestTags.MAP_BUTTON)
+                          .align(Alignment.CenterHorizontally)
+                          .wrapContentSize(),
+                  shape = CircleShape) {
+                    Text(
+                        event.location.name,
+                        modifier =
+                            Modifier.testTag(EventDetailsTestTags.LOCATION_ADDRESS)
+                                .padding(end = 5.dp))
+                    Icon(
+                        Icons.Outlined.LocationOn,
+                        contentDescription =
+                            context.getString(R.string.event_location_button_description),
+                    )
+                  }
 
-            Button(
-                onClick = DEBUG_LAMBDA,
-                modifier =
-                Modifier
-                    .testTag(EventDetailsTestTags.SIGN_UP_BUTTON)
-                    .align(Alignment.CenterHorizontally)
-                    .height(56.dp),
-                shape = CircleShape,
-                colors =
-                ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.inversePrimary,
-                    contentColor = MaterialTheme.colorScheme.primary
-                )
-            ) {
-                Icon(
-                    Icons.AutoMirrored.Filled.DirectionsWalk,
-                    contentDescription =
-                    context.getString(R.string.event_signup_button_description),
-                )
-                Text(context.getString(R.string.event_sign_up))
+              Button(
+                  onClick = DEBUG_LAMBDA,
+                  modifier =
+                      Modifier.testTag(EventDetailsTestTags.SIGN_UP_BUTTON)
+                          .align(Alignment.CenterHorizontally)
+                          .height(56.dp),
+                  shape = CircleShape,
+                  colors =
+                      ButtonDefaults.buttonColors(
+                          containerColor = MaterialTheme.colorScheme.inversePrimary,
+                          contentColor = MaterialTheme.colorScheme.primary)) {
+                    Icon(
+                        Icons.AutoMirrored.Filled.DirectionsWalk,
+                        contentDescription =
+                            context.getString(R.string.event_signup_button_description),
+                    )
+                    Text(context.getString(R.string.event_sign_up))
+                  }
             }
-        }
-    }
+      }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -635,8 +588,7 @@ fun EventSaveButton(event: Event, eventViewModel: EventViewModel, userViewModel:
               channelName = EVENT_REMINDER_CHANNEL_ID,
               notificationId = event.uid.hashCode(),
               // Schedule a notification a few hours before the event's startDate
-              timeMillis = (event.startDate.seconds - 2 * SECONDS_IN_AN_HOUR) * SECONDS_IN_AN_HOUR)
-      )
+              timeMillis = (event.startDate.seconds - 2 * SECONDS_IN_AN_HOUR) * SECONDS_IN_AN_HOUR))
     }
   }
 

@@ -124,7 +124,7 @@ class SearchRepositoryTest {
           startDate = Timestamp(GregorianCalendar(2004, 7, 1).time),
           location = Location(1.2345, 2.3455, "Somewhere"),
           maxNumberOfPlaces = -1,
-          eventPictures =  EventUserPicture.emptyFirestoreReferenceList())
+          eventPictures = EventUserPicture.emptyFirestoreReferenceList())
   private val event2 =
       Event(
           uid = "2",
@@ -137,7 +137,7 @@ class SearchRepositoryTest {
           startDate = Timestamp(GregorianCalendar(2008, 7, 1).time),
           location = Location(1.2345, 2.3455, "Somewhere"),
           maxNumberOfPlaces = -1,
-          eventPictures =  EventUserPicture.emptyFirestoreReferenceList())
+          eventPictures = EventUserPicture.emptyFirestoreReferenceList())
 
   @Before
   fun setUp() {
