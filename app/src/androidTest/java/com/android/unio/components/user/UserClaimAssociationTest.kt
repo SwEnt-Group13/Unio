@@ -1,5 +1,6 @@
 package com.android.unio.components.user
 
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
@@ -20,8 +21,11 @@ import com.android.unio.ui.user.UserClaimAssociationScreen
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import io.mockk.MockKAnnotations
+import io.mockk.Runs
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
+import io.mockk.just
+import io.mockk.mockkStatic
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -41,6 +45,8 @@ class UserClaimAssociationTest : TearDown() {
   @MockK private lateinit var searchRepository: SearchRepository
   @MockK private lateinit var navHostController: NavHostController
 
+  @MockK private lateinit var focusRequester: FocusRequester
+
   @MockK private lateinit var navigationAction: NavigationAction
   private lateinit var associationViewModel: AssociationViewModel
   private lateinit var searchViewModel: SearchViewModel
@@ -51,6 +57,9 @@ class UserClaimAssociationTest : TearDown() {
     hiltRule.inject()
 
     every { navigationAction.navigateTo(any<String>()) } returns Unit
+
+      mockkStatic(FocusRequester::class)
+      every { focusRequester.requestFocus()} just Runs
 
     associationViewModel =
         AssociationViewModel(
@@ -86,7 +95,7 @@ class UserClaimAssociationTest : TearDown() {
     composeTestRule.setContent {
       UserClaimAssociationScreen(associationViewModel, navigationAction, searchViewModel)
     }
-
+      composeTestRule.onNodeWithTag(UserClaimAssociationTestTags.BACK_BUTTON).assertDisplayComponentInScroll()
     composeTestRule.onNodeWithTag(UserClaimAssociationTestTags.BACK_BUTTON).performClick()
   }
 }

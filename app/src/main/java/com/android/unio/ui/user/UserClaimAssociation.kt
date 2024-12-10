@@ -50,7 +50,6 @@ fun UserClaimAssociationScreen(
   val context = LocalContext.current
 
   val focusRequester = remember { FocusRequester() }
-  val focusManager = LocalFocusManager.current
 
   LaunchedEffect(Unit) { focusRequester.requestFocus() }
 
