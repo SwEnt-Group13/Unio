@@ -1,6 +1,7 @@
 package com.android.unio.ui.user
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -13,9 +14,14 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.android.unio.R
@@ -42,6 +48,12 @@ fun UserClaimAssociationScreen(
     searchViewModel: SearchViewModel
 ) {
   val context = LocalContext.current
+
+  val focusRequester = remember { FocusRequester() }
+  val focusManager = LocalFocusManager.current
+
+  LaunchedEffect(Unit) { focusRequester.requestFocus() }
+
   Scaffold(
       modifier = Modifier.testTag(UserClaimAssociationTestTags.SCREEN),
       topBar = {
@@ -75,14 +87,16 @@ fun UserClaimAssociationScreen(
                 context.getString(R.string.user_claim_association_claim_president_rights),
                 style = AppTypography.bodySmall)
 
-            AssociationSearchBar(
-                searchViewModel = searchViewModel,
-                onAssociationSelected = { association ->
-                  associationViewModel.selectAssociation(association.uid)
-                  navigationAction.navigateTo(Screen.CLAIM_ASSOCIATION_PRESIDENTIAL_RIGHTS)
-                },
-                false,
-                {})
+            Box(modifier = Modifier.focusRequester(focusRequester)) {
+              AssociationSearchBar(
+                  searchViewModel = searchViewModel,
+                  onAssociationSelected = { association ->
+                    associationViewModel.selectAssociation(association.uid)
+                    navigationAction.navigateTo(Screen.CLAIM_ASSOCIATION_PRESIDENTIAL_RIGHTS)
+                  },
+                  false,
+                  {})
+            }
           }
         }
       })
