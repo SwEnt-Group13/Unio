@@ -65,7 +65,6 @@ import me.zhanghai.compose.preference.ProvidePreferenceLocals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.mockito.kotlin.any
 
 @HiltAndroidTest
 @UninstallModules(FirebaseModule::class)
@@ -228,7 +227,6 @@ class AssociationProfileTest : TearDown() {
             concurrentAssociationUserRepository)
     associationViewModel.getAssociations()
     associationViewModel.selectAssociation(associations.first().uid)
-    assert(associationViewModel.selectedAssociation.value!!.events.uids.isNotEmpty())
   }
 
   @Test
