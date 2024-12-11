@@ -120,10 +120,10 @@ class AssociationProfileTest : TearDown() {
     val collection = mockk<CollectionReference>()
     val query = mockk<Query>()
 
-      val eventA = MockEvent.createMockEvent(uid = "a")
-      val eventB = MockEvent.createMockEvent(uid = "b")
+    val eventA = MockEvent.createMockEvent(uid = "a")
+    val eventB = MockEvent.createMockEvent(uid = "b")
 
-      events = listOf(eventA, eventB)
+    events = listOf(eventA, eventB)
 
     every { getSystemService(any(), ConnectivityManager::class.java) } returns connectivityManager
     every { Firebase.firestore } returns db
@@ -163,14 +163,13 @@ class AssociationProfileTest : TearDown() {
     every { navigationAction.goBack() } returns Unit
 
     /*associations =
-        listOf(
-            MockAssociation.createMockAssociation(
-                uid = "1",
-                events = Event.Companion.firestoreReferenceListWith(events.map { it.uid })),
-            MockAssociation.createMockAssociation(
-                uid = "2",
-                events = Event.Companion.firestoreReferenceListWith(events.map { it.uid })))*/
-
+    listOf(
+        MockAssociation.createMockAssociation(
+            uid = "1",
+            events = Event.Companion.firestoreReferenceListWith(events.map { it.uid })),
+        MockAssociation.createMockAssociation(
+            uid = "2",
+            events = Event.Companion.firestoreReferenceListWith(events.map { it.uid })))*/
 
     val user =
         User(
@@ -312,9 +311,8 @@ class AssociationProfileTest : TearDown() {
     var seeLess = ""
     composeTestRule.setContent {
       ProvidePreferenceLocals {
-
         val context = ApplicationProvider.getApplicationContext<Context>()
-          seeMore = context.getString(R.string.association_see_more)
+        seeMore = context.getString(R.string.association_see_more)
 
         seeLess = context.getString(R.string.association_see_less)
         AssociationProfileScaffold(

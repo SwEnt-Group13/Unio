@@ -447,7 +447,6 @@ private fun AssociationEvents(
   // Retrieve the member's permissions if they are part of the association
   val userPermissions = association.members.find { it.uid == user?.uid }?.role?.permissions
 
-
   // Check if the user has the "ADD_EVENTS" permission using the Permissions class
   val hasAddEventsPermission = userPermissions?.hasPermission(PermissionType.ADD_EVENTS) == true
   if (events.isNotEmpty()) {
