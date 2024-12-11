@@ -13,8 +13,8 @@ import com.android.unio.model.user.User
  * @param likes number of people who liked the picture.
  */
 data class EventUserPicture(
-    override var uid: String,
-    var image: String,
+    override val uid: String,
+    val image: String,
     val author: ReferenceElement<User>,
     val likes: Int
 ) : UniquelyIdentifiable {
