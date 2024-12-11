@@ -219,6 +219,26 @@ constructor(
           Log.e("EventViewModel", "An error occured while deleting event banner: $exception")
         })
 
+    event.eventPictures.uids.forEach { uid ->
+      imageRepository.deleteImage(
+          StoragePathsStrings.EVENT_USER_PICTURES + uid,
+          {
+            eventUserPictureRepository.deleteEventUserPictureById(
+                uid,
+                {},
+                { exception ->
+                  Log.e(
+                      "EventViewModel",
+                      "An error occured while deleting event's user pictures from Firestore: $exception")
+                })
+          },
+          { exception ->
+            Log.e(
+                "EventViewModel",
+                "An error occured while deleting event's user pictures from Firebase Storage: $exception")
+          })
+    }
+
     event.organisers.requestAll({
       event.organisers.list.value.forEach {
         it.events.remove(event.uid)
@@ -246,7 +266,7 @@ constructor(
     val picId = eventUserPictureRepository.getNewUid()
     imageRepository.uploadImage(
         pictureInputStream,
-        StoragePathsStrings.EVENT_PICTURES + picId,
+        StoragePathsStrings.EVENT_USER_PICTURES + picId,
         onSuccess = { imageUri ->
           val newEventPicture = picture.copy(uid = picId, image = imageUri)
           eventUserPictureRepository.addEventUserPicture(
