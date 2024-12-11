@@ -299,16 +299,6 @@ fun UserProfileScreenContent(
                 AssociationSmall(it, user.uid) { onAssociationClick(it.uid) }
               }
             }
-          } else {
-            Text(
-                context.getString(R.string.user_profile_no_associations),
-                style = AppTypography.bodySmall)
-
-            Button(
-                onClick = onClaimAssociationClick,
-                modifier = Modifier.testTag(UserProfileTestTags.CLAIMING_BUTTON)) {
-                  Text(context.getString(R.string.user_profile_claim_association))
-                }
           }
 
           // Display the associations that the user is following.
@@ -382,6 +372,17 @@ fun UserProfileBottomSheet(
             }) {
               Text(context.getString(R.string.user_profile_bottom_sheet_settings))
             }
+          TextButton(
+              modifier = Modifier.fillMaxWidth().testTag(UserProfileTestTags.CLAIM_ASSOCIATION),
+              onClick = {
+                  scope.launch {
+                      sheetState.hide()
+                      onClose()
+                      navigationAction.navigateTo(Screen.CLAIM_ASSOCIATION_PRESIDENTIAL_RIGHTS)
+                  }
+              }) {
+              Text(context.getString(R.string.user_claim_association_claim_president_rights))
+          }
         TextButton(
             modifier = Modifier.fillMaxWidth().testTag(UserProfileTestTags.SIGN_OUT),
             onClick = {
