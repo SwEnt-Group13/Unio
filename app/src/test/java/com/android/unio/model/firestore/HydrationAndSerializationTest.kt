@@ -9,7 +9,11 @@ import com.android.unio.model.association.compareMemberLists
 import com.android.unio.model.association.compareRoleLists
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventRepositoryFirestore
+import com.android.unio.model.event.EventUserPicture
+import com.android.unio.model.event.EventUserPictureRepositoryFirestore
 import com.android.unio.model.firestore.transform.hydrate
+import com.android.unio.model.firestore.transform.mapRolesToPermission
+import com.android.unio.model.firestore.transform.mapUsersToRoles
 import com.android.unio.model.firestore.transform.serialize
 import com.android.unio.model.map.Location
 import com.android.unio.model.user.Interest
@@ -25,6 +29,13 @@ import kotlin.reflect.full.memberProperties
 import org.junit.Test
 
 class HydrationAndSerializationTest {
+
+  private val eventUserPicture =
+      EventUserPicture(
+          uid = "1",
+          image = "http://image.fr",
+          author = User.firestoreReferenceElementWith("1"),
+          likes = 2)
 
   private val user =
       User(
@@ -71,7 +82,8 @@ class HydrationAndSerializationTest {
           endDate = Timestamp.now(),
           location = Location(latitude = 0.0, longitude = 0.0, name = "Example Location"),
           maxNumberOfPlaces = -1,
-          numberOfSaved = 3)
+          numberOfSaved = 3,
+          eventPictures = EventUserPicture.emptyFirestoreReferenceList())
 
   /** Round-trip tests for serialization and hydration of user, association, and event instances. */
   @Test
@@ -114,18 +126,8 @@ class HydrationAndSerializationTest {
     assertEquals(association.name, serialized["name"])
     assertEquals(association.fullName, serialized["fullName"])
     assertEquals(association.description, serialized["description"])
-    assertEquals(
-        association.members.associate { member -> member.user.uid to member.role.uid },
-        serialized["members"])
-    assertEquals(
-        association.roles.associate { role ->
-          role.uid to
-              mapOf(
-                  Role::displayName.name to role.displayName,
-                  Role::permissions.name to
-                      role.permissions.getGrantedPermissions().map { it.stringName })
-        },
-        serialized["roles"])
+    assertEquals(mapUsersToRoles(association.members), serialized["members"])
+    assertEquals(mapRolesToPermission(association.roles), serialized["roles"])
     assertEquals(association.image, serialized["image"])
     assertEquals(association.events.uids, serialized["events"])
 
@@ -178,6 +180,23 @@ class HydrationAndSerializationTest {
     assertEquals(event.taggedAssociations.uids, hydrated.taggedAssociations.uids)
     assertEquals(event.maxNumberOfPlaces, hydrated.maxNumberOfPlaces)
     assertEquals(event.numberOfSaved, hydrated.numberOfSaved)
+  }
+
+  @Test
+  fun testEventUserPictureHydrationAndSerialization() {
+    val serialized = EventUserPictureRepositoryFirestore.serialize(eventUserPicture)
+
+    assertEquals(eventUserPicture.uid, serialized["uid"])
+    assertEquals(eventUserPicture.image, serialized["image"])
+    assertEquals(eventUserPicture.likes, serialized["likes"])
+    assertEquals(eventUserPicture.author.uid, serialized["author"])
+
+    val hydrated = EventUserPictureRepositoryFirestore.hydrate(serialized)
+
+    assertEquals(eventUserPicture.uid, hydrated.uid)
+    assertEquals(eventUserPicture.image, hydrated.image)
+    assertEquals(eventUserPicture.likes, hydrated.likes)
+    assertEquals(eventUserPicture.author.uid, hydrated.author.uid)
   }
 
   /** Test hydration when the map misses fields. */
@@ -236,6 +255,18 @@ class HydrationAndSerializationTest {
     assertEquals(0, hydrated.numberOfSaved)
   }
 
+  @Test
+  fun testEventUserPictureHydrationWithMissingFields() {
+    val serialized = emptyMap<String, Any>()
+
+    val hydrated = EventUserPictureRepositoryFirestore.hydrate(serialized)
+
+    assertEquals("", hydrated.uid)
+    assertEquals("", hydrated.image)
+    assertEquals(0, hydrated.likes)
+    assertEquals("", hydrated.author.uid)
+  }
+
   /** Test that serialization includes all data class fields. */
   @Test
   fun testUserSerializationHasAllFields() {
@@ -267,6 +298,18 @@ class HydrationAndSerializationTest {
 
     classMembers.forEach {
       assertTrue("Event serialization is missing field '$it'.", serialized.containsKey(it))
+    }
+  }
+
+  @Test
+  fun testEventUserPictureSerializationHasAllFields() {
+    val classMembers = EventUserPicture::class.memberProperties.map { it.name }
+
+    val serialized = EventUserPictureRepositoryFirestore.serialize(eventUserPicture)
+
+    classMembers.forEach {
+      assertTrue(
+          "EventUserPicture serialization is missing field '$it'.", serialized.containsKey(it))
     }
   }
 }

@@ -62,6 +62,7 @@ import com.android.unio.R
 import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.association.Member
+import com.android.unio.model.association.PermissionType
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.notification.NotificationType
@@ -70,6 +71,7 @@ import com.android.unio.model.user.User
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.model.utils.NetworkUtils
 import com.android.unio.ui.components.NotificationSender
+import com.android.unio.ui.components.RoleBadge
 import com.android.unio.ui.event.EventCard
 import com.android.unio.ui.image.AsyncImageWrapper
 import com.android.unio.ui.navigation.NavigationAction
@@ -392,7 +394,10 @@ private fun AssociationMembers(
                   val firstName = it
                   user.value?.lastName?.let {
                     val lastName = it
-                    Text("${firstName} ${lastName}")
+                    Text("$firstName $lastName")
+
+                    // Role Badge
+                    RoleBadge(member.role)
                   }
                 }
               }
@@ -422,11 +427,20 @@ private fun AssociationEvents(
   var isSeeMoreClicked by remember { mutableStateOf(false) }
 
   val events by association.events.list.collectAsState()
+  val user by userViewModel.user.collectAsState()
 
-  // To be changed when we have a functional admin system
-  var isAdmin by remember { mutableStateOf(true) }
+  if (user == null) {
+    return
+  }
 
-  // Display the upcoming events if any
+  // Check if the user is a member of the association
+  val isMember = association.members.any { it.uid == user!!.uid }
+
+  // Retrieve the member's permissions if they are part of the association
+  val userPermissions = association.members.find { it.uid == user!!.uid }?.role?.permissions
+
+  // Check if the user has the "ADD_EVENTS" permission using the Permissions class
+  val hasAddEventsPermission = userPermissions?.hasPermission(PermissionType.ADD_EVENTS) == true
   if (events.isNotEmpty()) {
     Text(
         context.getString(R.string.association_upcoming_events),
@@ -452,9 +466,8 @@ private fun AssociationEvents(
           { isSeeMoreClicked = false }, { isSeeMoreClicked = true }, isSeeMoreClicked)
     }
   }
-
-  // Display the add event button if the user is an admin of the Association
-  if (isAdmin) {
+  // Show the "Add Event" button only if the user is a member and has the "ADD_EVENTS" permission
+  if (isMember && hasAddEventsPermission) {
     Button(
         onClick = {
           if (isConnected) {
