@@ -1,14 +1,18 @@
 package com.android.unio.ui.association
 
+import android.net.Uri
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -21,11 +25,13 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -35,9 +41,12 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
+import coil.compose.rememberAsyncImagePainter
 import com.android.unio.R
 import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationCategory
@@ -45,10 +54,13 @@ import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.event.Event
 import com.android.unio.model.firestore.emptyFirestoreReferenceList
 import com.android.unio.model.strings.test_tags.association.EditAssociationTestTags
+import com.android.unio.model.strings.test_tags.event.EventDetailsTestTags
+import com.android.unio.ui.components.PictureSelectionTool
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
 import com.android.unio.ui.utils.ToastUtils
 import kotlinx.coroutines.launch
+import java.io.InputStream
 
 /**
  * Screen for editing an association.
@@ -84,10 +96,10 @@ fun SaveAssociationScreen(
                 navigationAction.navigateTo(Screen.ASSOCIATION_PROFILE, Screen.SAVE_ASSOCIATION)
             }
         },
-        onSave = { newAssociation ->
+        onSave = { newAssociation, imageStream ->
             associationViewModel.saveAssociation(
                 newAssociation,
-                null,
+                imageStream,
                 onSuccess = {
                     if(isNewAssociation){
                         navigationAction.navigateTo(Screen.MY_PROFILE, Screen.SAVE_ASSOCIATION)
@@ -117,7 +129,7 @@ fun SaveAssociationScreen(
 fun SaveAssociationScaffold(
     association: Association,
     onCancel: () -> Unit,
-    onSave: (Association) -> Unit,
+    onSave: (Association, InputStream?) -> Unit,
     isNewAssociation: Boolean
 ) {
     val context = LocalContext.current
@@ -128,8 +140,13 @@ fun SaveAssociationScaffold(
     var description by remember { mutableStateOf(association.description) }
     var principalEmailAddress by remember { mutableStateOf(association.principalEmailAddress) }
 
+    var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
+
     var expanded by remember { mutableStateOf(false) }
     var category by remember { mutableStateOf(association.category) }
+
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    var showSheet by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -231,6 +248,61 @@ fun SaveAssociationScaffold(
 
             Spacer(modifier = Modifier.height(16.dp))
 
+            // Image selection tool
+            Text(
+                text = "BLABLAEXPLANATION",
+                style = MaterialTheme.typography.bodySmall
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            if (selectedImageUri != null) {
+                Image(
+                    painter = rememberAsyncImagePainter(selectedImageUri),
+                    contentDescription = "Selected Image",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .size(100.dp)
+                        .align(Alignment.CenterHorizontally)
+                        .clip(MaterialTheme.shapes.medium)
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+            }
+
+            Button(
+                onClick = { showSheet = true },
+                modifier = Modifier.align(Alignment.CenterHorizontally)
+            ) {
+                Text(text = "select_image_button_text")
+            }
+
+            if (showSheet) {
+                ModalBottomSheet(
+                    modifier = Modifier.testTag(EventDetailsTestTags.PICTURE_SELECTION_SHEET),
+                    sheetState = sheetState,
+                    onDismissRequest = {
+                        scope.launch {
+                            sheetState.hide()
+                            showSheet = false
+                        }
+                    },
+                    content = {
+                PictureSelectionTool(
+                    maxPictures = 1,
+                    allowGallery = true,
+                    allowCamera = true,
+                    onValidate = { uris ->
+                        selectedImageUri = uris.firstOrNull()
+                        scope.launch { sheetState.hide(); showSheet = false}
+                    },
+                    onCancel = {
+                        scope.launch { sheetState.hide(); showSheet = false }
+                    },
+                    initialSelectedPictures = listOfNotNull(selectedImageUri)
+                )})
+            }
+
+
             // Explanation for "URL"
             Text(
                 text = context.getString(R.string.url_explanation),
@@ -286,7 +358,7 @@ fun SaveAssociationScaffold(
                                     description = description,
                                     category = category,
                                     url = url,
-                                    principalEmailAddress = principalEmailAddress))
+                                    principalEmailAddress = principalEmailAddress), null)
                         }
                     },
                     modifier = Modifier.testTag(EditAssociationTestTags.SAVE_BUTTON)) {
