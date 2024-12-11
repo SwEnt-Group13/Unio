@@ -139,7 +139,12 @@ fun UnioApp() {
     navigation(startDestination = Screen.WELCOME, route = Route.AUTH) {
       composable(Screen.WELCOME) { WelcomeScreen(navigationActions, authViewModel) }
       composable(Screen.EMAIL_VERIFICATION) {
-        EmailVerificationScreen(navigationActions, authViewModel)
+        EmailVerificationScreen(navigationActions, authViewModel,
+          onEmailVerified = {
+            associationViewModel.getAssociations()
+            eventViewModel.loadEvents()
+//            searchViewModel.relaod()
+          })
       }
       composable(Screen.ACCOUNT_DETAILS) {
         AccountDetailsScreen(navigationActions, userViewModel, imageViewModel)

@@ -43,7 +43,6 @@ import androidx.compose.ui.text.style.TextAlign.Companion.Center
 import androidx.compose.ui.unit.dp
 import com.android.unio.R
 import com.android.unio.model.authentication.AuthViewModel
-import com.android.unio.model.strings.test_tags.WelcomeTestTags
 import com.android.unio.model.strings.test_tags.authentication.WelcomeTestTags
 import com.android.unio.model.user.SignInState
 import com.android.unio.model.user.UserViewModel
