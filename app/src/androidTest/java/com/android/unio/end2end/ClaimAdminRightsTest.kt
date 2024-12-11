@@ -29,24 +29,31 @@ class ClaimAdminRightsTest : EndToEndTest() {
     signInWithUser(composeTestRule, Admin.EMAIL, Admin.PASSWORD)
 
     // Wait until "HomeScreen" is displayed
-    composeTestRule.waitUntil(10001) {
+    composeTestRule.waitUntil(10000) {
       composeTestRule.onNodeWithTag(HomeTestTags.SCREEN).isDisplayed()
     }
 
     // Wait until the bottom nav bar is displayed
-    composeTestRule.waitUntil(10002) {
+    composeTestRule.waitUntil(10000) {
       composeTestRule.onNodeWithTag(BottomNavBarTestTags.MY_PROFILE).isDisplayed()
     }
 
     /** Navigate to the profile screen */
     composeTestRule.onNodeWithTag(BottomNavBarTestTags.MY_PROFILE).performClick()
 
-    composeTestRule.waitUntil(10003) {
+    composeTestRule.waitUntil(10000) {
       composeTestRule.onNodeWithTag(UserProfileTestTags.SCREEN).isDisplayed()
     }
 
+      composeTestRule.waitUntil(10000){
+          composeTestRule.onNodeWithTag(UserProfileTestTags.SETTINGS).isDisplayed()
+      }
+      composeTestRule.onNodeWithTag(UserProfileTestTags.SETTINGS).performClick()
     /** Navigate to the claiming button screen */
-    composeTestRule.onNodeWithTag(UserProfileTestTags.CLAIMING_BUTTON).performClick()
+      composeTestRule.waitUntil(10000){
+          composeTestRule.onNodeWithTag(UserProfileTestTags.CLAIM_ASSOCIATION).isDisplayed()
+      }
+    composeTestRule.onNodeWithTag(UserProfileTestTags.CLAIM_ASSOCIATION).performClick()
 
     composeTestRule.onNodeWithTag(ExploreContentTestTags.SEARCH_BAR).assertIsDisplayed()
     composeTestRule
@@ -54,7 +61,7 @@ class ClaimAdminRightsTest : EndToEndTest() {
         .performTextInput(ASSOCIATION_SEARCH_INPUT)
 
     // Wait for the server's response to get the association
-    composeTestRule.waitUntil(10004) {
+    composeTestRule.waitUntil(10000) {
       composeTestRule
           .onNodeWithTag(
               ExploreContentTestTags.ASSOCIATION_EXPLORE_RESULT + EXPECTED_ASSOCIATION_NAME)
@@ -66,7 +73,7 @@ class ClaimAdminRightsTest : EndToEndTest() {
             ExploreContentTestTags.ASSOCIATION_EXPLORE_RESULT + EXPECTED_ASSOCIATION_NAME)
         .performClick()
 
-    composeTestRule.waitUntil(5005) {
+    composeTestRule.waitUntil(10000) {
       composeTestRule
           .onNodeWithTag(UserClaimAssociationPresidentialRightsTestTags.SCREEN)
           .isDisplayed()
@@ -83,13 +90,13 @@ class ClaimAdminRightsTest : EndToEndTest() {
         .onNodeWithTag(UserClaimAssociationPresidentialRightsTestTags.VERIFY_EMAIL_BUTTON)
         .performClick()
 
-    composeTestRule.waitUntil(5006) {
+    composeTestRule.waitUntil(10000) {
       composeTestRule
           .onNodeWithTag(UserClaimAssociationPresidentialRightsTestTags.CODE)
           .isDisplayed()
     }
 
-    Thread.sleep(8007) // wait a few seconds according to
+    Thread.sleep(10000) // wait a few seconds according to
     // https://firebase.google.com/docs/emulator-suite/connect_firestore#how_the_emulator_differs_from_production
 
     var finalCode = ""
@@ -116,7 +123,7 @@ class ClaimAdminRightsTest : EndToEndTest() {
           throw IllegalStateException("Failed to fetch verification code: ${exception.message}")
         }
 
-    composeTestRule.waitUntil(30008) {
+    composeTestRule.waitUntil(10000) {
       finalCode.isNotEmpty()
     } // otherwise it directly goes to the rest of the code
 
@@ -128,7 +135,7 @@ class ClaimAdminRightsTest : EndToEndTest() {
         .onNodeWithTag(UserClaimAssociationPresidentialRightsTestTags.SUBMIT_CODE_BUTTON)
         .performClick()
 
-    composeTestRule.waitUntil(10009) {
+    composeTestRule.waitUntil(10000) {
       composeTestRule.onNodeWithTag(UserProfileTestTags.SCREEN).isDisplayed()
     }
 

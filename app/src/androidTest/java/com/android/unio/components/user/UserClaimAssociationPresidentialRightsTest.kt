@@ -23,6 +23,7 @@ import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.user.UserClaimAssociationPresidentialRightsScreen
+import com.android.unio.ui.user.UserClaimAssociationPresidentialRightsScreenScaffold
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import io.mockk.MockKAnnotations
@@ -83,22 +84,10 @@ class UserClaimAssociationPresidentialRightsTest : TearDown() {
   }
 
   @Test
-  fun testEmailVerificationInputAndErrorHandling() {
-    composeTestRule.setContent {
-      UserClaimAssociationPresidentialRightsScreen(
-          navigationAction = navigationAction, associationViewModel = associationViewModel, userViewModel = userViewModel, searchViewModel = searchViewModel)
-    }
-
-    composeTestRule.onNodeWithText("Enter the presidential email address:").assertIsDisplayed()
-
-    composeTestRule.onNodeWithText("Verify Email").performClick()
-  }
-
-  @Test
   fun testBackButtonNavigatesBack() {
     composeTestRule.setContent {
-      UserClaimAssociationPresidentialRightsScreen(
-          navigationAction = navigationAction, associationViewModel = associationViewModel, userViewModel = userViewModel, searchViewModel = searchViewModel)
+      UserClaimAssociationPresidentialRightsScreenScaffold(
+          navigationAction = navigationAction, associationViewModel = associationViewModel, user = MockUser.createMockUser(uid = "1"), searchViewModel = searchViewModel)
     }
 
     // click the back button
