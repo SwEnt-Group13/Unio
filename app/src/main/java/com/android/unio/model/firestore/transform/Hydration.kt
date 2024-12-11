@@ -168,10 +168,10 @@ fun EventRepositoryFirestore.Companion.hydrate(data: Map<String, Any>?): Event {
 fun EventUserPictureRepositoryFirestore.Companion.hydrate(
     data: Map<String, Any>?
 ): EventUserPicture {
+  val author = data?.get(EventUserPicture::author.name) as? String ?: ""
   return EventUserPicture(
       uid = data?.get(EventUserPicture::uid.name) as? String ?: "",
-      author =
-          User.firestoreReferenceElementWith(data?.get(EventUserPicture::author.name) as String),
+      author = User.firestoreReferenceElementWith(author),
       image = data?.get(EventUserPicture::image.name) as? String ?: "",
       likes = data?.get(EventUserPicture::likes.name) as? Int ?: 0,
   )
