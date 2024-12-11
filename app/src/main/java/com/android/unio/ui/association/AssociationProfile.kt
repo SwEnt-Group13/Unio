@@ -337,8 +337,8 @@ private fun AssociationProfileContent(
 }
 
 /**
- * Component that display the users that are in the association that can be contacted. It display
- * the title of the section and then display the different users in the association.
+ * Component that displays the users that are in the association that can be contacted. It displays
+ * the title of the section and then displays the different users in the association.
  *
  * @param members (List<User>) : The list of users in the association that can be contacted
  */
