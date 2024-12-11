@@ -202,7 +202,7 @@ fun UnioApp() {
       }
       composable(Screen.CLAIM_ASSOCIATION_PRESIDENTIAL_RIGHTS) {
         UserClaimAssociationPresidentialRightsScreen(
-          navigationActions, associationViewModel, userViewModel, searchViewModel)
+            navigationActions, associationViewModel, userViewModel, searchViewModel)
       }
     }
   }

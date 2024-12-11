@@ -45,14 +45,14 @@ class ClaimAdminRightsTest : EndToEndTest() {
       composeTestRule.onNodeWithTag(UserProfileTestTags.SCREEN).isDisplayed()
     }
 
-      composeTestRule.waitUntil(10000){
-          composeTestRule.onNodeWithTag(UserProfileTestTags.SETTINGS).isDisplayed()
-      }
-      composeTestRule.onNodeWithTag(UserProfileTestTags.SETTINGS).performClick()
+    composeTestRule.waitUntil(10000) {
+      composeTestRule.onNodeWithTag(UserProfileTestTags.SETTINGS).isDisplayed()
+    }
+    composeTestRule.onNodeWithTag(UserProfileTestTags.SETTINGS).performClick()
     /** Navigate to the claiming button screen */
-      composeTestRule.waitUntil(10000){
-          composeTestRule.onNodeWithTag(UserProfileTestTags.CLAIM_ASSOCIATION).isDisplayed()
-      }
+    composeTestRule.waitUntil(10000) {
+      composeTestRule.onNodeWithTag(UserProfileTestTags.CLAIM_ASSOCIATION).isDisplayed()
+    }
     composeTestRule.onNodeWithTag(UserProfileTestTags.CLAIM_ASSOCIATION).performClick()
 
     composeTestRule.onNodeWithTag(ExploreContentTestTags.SEARCH_BAR).assertIsDisplayed()

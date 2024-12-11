@@ -35,7 +35,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.android.unio.R
-import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.strings.test_tags.user.UserClaimAssociationPresidentialRightsTestTags
@@ -58,285 +57,286 @@ import com.google.firebase.functions.FirebaseFunctionsException
 import com.google.firebase.functions.functions
 import kotlinx.coroutines.launch
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UserClaimAssociationPresidentialRightsScreen(
     navigationAction: NavigationAction,
-    associationViewModel : AssociationViewModel,
+    associationViewModel: AssociationViewModel,
     userViewModel: UserViewModel,
     searchViewModel: SearchViewModel
 ) {
-    val user by userViewModel.user.collectAsState()
-    if (user == null){
-        return
-    }
-    UserClaimAssociationPresidentialRightsScreenScaffold(navigationAction, associationViewModel,
-        user!!, searchViewModel)
+  val user by userViewModel.user.collectAsState()
+  if (user == null) {
+    return
+  }
+  UserClaimAssociationPresidentialRightsScreenScaffold(
+      navigationAction, associationViewModel, user!!, searchViewModel)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UserClaimAssociationPresidentialRightsScreenScaffold(
     navigationAction: NavigationAction,
-    associationViewModel : AssociationViewModel,
+    associationViewModel: AssociationViewModel,
     user: User,
     searchViewModel: SearchViewModel
-){
-    val context = LocalContext.current
-    val association by associationViewModel.selectedAssociation.collectAsState()
+) {
+  val context = LocalContext.current
+  val association by associationViewModel.selectedAssociation.collectAsState()
 
+  // State variables to hold the user input and verification status
+  var email by remember { mutableStateOf("") }
+  var isEmailVerified by remember { mutableStateOf(false) }
+  var isAssociationChosen by remember { mutableStateOf(false) }
+  var verificationCode by remember { mutableStateOf("") }
+  var showErrorMessage by remember { mutableStateOf(false) }
 
-    // State variables to hold the user input and verification status
-    var email by remember { mutableStateOf("") }
-    var isEmailVerified by remember { mutableStateOf(false) }
-    var isAssociationChosen by remember { mutableStateOf(false) }
-    var verificationCode by remember { mutableStateOf("") }
-    var showErrorMessage by remember { mutableStateOf(false) }
+  Scaffold(
+      modifier = Modifier.testTag(UserClaimAssociationPresidentialRightsTestTags.SCREEN),
+      topBar = {
+        TopAppBar(
+            title = {
+              Text(
+                  text =
+                      context.getString(
+                          R.string.user_claim_association_presidential_rights_go_back),
+                  modifier =
+                      Modifier.testTag(
+                          UserClaimAssociationPresidentialRightsTestTags.ASSOCIATION_PROFILE_TITLE))
+            },
+            navigationIcon = {
+              IconButton(
+                  onClick = { navigationAction.goBack() },
+                  modifier =
+                      Modifier.testTag(
+                          UserClaimAssociationPresidentialRightsTestTags.GO_BACK_BUTTON)) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
+                        contentDescription = context.getString(R.string.association_go_back))
+                  }
+            })
+      },
+      content = { padding ->
+        Surface(
+            modifier = Modifier.fillMaxWidth().padding(padding),
+        ) {
+          Column(
+              modifier = Modifier.padding(16.dp),
+              horizontalAlignment = Alignment.CenterHorizontally,
+          ) {
+            Text(
+                context.getString(
+                    R.string.user_claim_association_presidential_rights_claim_presidential_rights),
+                style = AppTypography.headlineSmall)
 
-    Scaffold(
-        modifier = Modifier.testTag(UserClaimAssociationPresidentialRightsTestTags.SCREEN),
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        text =
-                        context.getString(
-                            R.string.user_claim_association_presidential_rights_go_back),
-                        modifier =
-                        Modifier.testTag(
-                            UserClaimAssociationPresidentialRightsTestTags.ASSOCIATION_PROFILE_TITLE))
-                },
-                navigationIcon = {
-                    IconButton(
-                        onClick = { navigationAction.goBack()},
-                        modifier =
-                        Modifier.testTag(
-                            UserClaimAssociationPresidentialRightsTestTags.GO_BACK_BUTTON)) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
-                            contentDescription = context.getString(R.string.association_go_back))
-                    }
-                })
-        },
-        content = { padding ->
-            Surface(
-                modifier = Modifier.fillMaxWidth().padding(padding),
-            ) {
-                Column(
-                    modifier = Modifier.padding(16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    Text(
-                        context.getString(
-                            R.string.user_claim_association_presidential_rights_claim_presidential_rights),
-                        style = AppTypography.headlineSmall)
+            Spacer(modifier = Modifier.height(16.dp))
 
-                    Spacer(modifier = Modifier.height(16.dp))
+            if (!isAssociationChosen) {
+              val focusRequester = remember { FocusRequester() }
 
-                    if (! isAssociationChosen){
-                        val focusRequester = remember { FocusRequester() }
+              LaunchedEffect(Unit) { focusRequester.requestFocus() }
 
-                        LaunchedEffect(Unit) { focusRequester.requestFocus() }
+              Box(modifier = Modifier.focusRequester(focusRequester)) {
+                AssociationSearchBar(
+                    searchViewModel = searchViewModel,
+                    onAssociationSelected = { association ->
+                      associationViewModel.selectAssociation(association.uid)
+                      isAssociationChosen = true
+                    },
+                    false,
+                    {})
+              }
+            } else {
+              if (association == null) {
+                isAssociationChosen = false
+              }
+              // Step 1 ->>> Ask for the presidential email address if it hasn't been verified
+              if (!isEmailVerified) {
+                Text(
+                    context.getString(
+                        R.string
+                            .user_claim_association_presidential_rights_enter_presidential_email),
+                    style = AppTypography.bodySmall)
+                TextField(
+                    value = email,
+                    onValueChange = { email = it },
+                    placeholder = {
+                      Text(
+                          context.getString(
+                              R.string.user_claim_association_presidential_rights_email_address))
+                    },
+                    isError = showErrorMessage,
+                    modifier =
+                        Modifier.padding(vertical = 8.dp)
+                            .testTag(UserClaimAssociationPresidentialRightsTestTags.EMAIL_ADDRESS))
+                Spacer(modifier = Modifier.height(8.dp))
 
-                        Box(modifier = Modifier.focusRequester(focusRequester)) {
-                            AssociationSearchBar(
-                                searchViewModel = searchViewModel,
-                                onAssociationSelected = { association ->
-                                    associationViewModel.selectAssociation(association.uid)
-                                    isAssociationChosen = true
-                                },
-                                false,
-                                {})
-                        }
-                    }else{
-                        if (association == null){
-                            isAssociationChosen = false
-                        }
-                        // Step 1 ->>> Ask for the presidential email address if it hasn't been verified
-                        if (!isEmailVerified) {
-                            Text(
-                                context.getString(
-                                    R.string.user_claim_association_presidential_rights_enter_presidential_email),
-                                style = AppTypography.bodySmall)
-                            TextField(
-                                value = email,
-                                onValueChange = { email = it },
-                                placeholder = {
-                                    Text(
-                                        context.getString(
-                                            R.string.user_claim_association_presidential_rights_email_address))
-                                },
-                                isError = showErrorMessage,
-                                modifier =
-                                Modifier.padding(vertical = 8.dp)
-                                    .testTag(UserClaimAssociationPresidentialRightsTestTags.EMAIL_ADDRESS))
-                            Spacer(modifier = Modifier.height(8.dp))
+                // if the email is incorrect
+                if (showErrorMessage) {
+                  Text(
+                      text =
+                          context.getString(
+                              R.string
+                                  .user_claim_association_presidential_rights_incorrect_email_error),
+                      color = androidx.compose.ui.graphics.Color.Red,
+                      style = AppTypography.bodySmall)
+                }
+                val coroutineScope = rememberCoroutineScope()
 
-                            // if the email is incorrect
-                            if (showErrorMessage) {
-                                Text(
-                                    text =
-                                    context.getString(
-                                        R.string
-                                            .user_claim_association_presidential_rights_incorrect_email_error),
-                                    color = androidx.compose.ui.graphics.Color.Red,
-                                    style = AppTypography.bodySmall)
-                            }
-                            val coroutineScope = rememberCoroutineScope()
+                Button(
+                    onClick = {
+                      if (email == association!!.principalEmailAddress) {
+                        isEmailVerified = true
+                        showErrorMessage = false
 
-                            Button(
-                                onClick = {
-                                    if (email == association!!.principalEmailAddress) {
-                                        isEmailVerified = true
-                                        showErrorMessage = false
-
-                                        // send verification email
-                                        coroutineScope.launch {
-                                            sendVerificationEmail(Firebase.functions, email, association!!.uid)
-                                                .addOnCompleteListener { task ->
-                                                    if (!task.isSuccessful) {
-                                                        val e = task.exception
-                                                        if (e is FirebaseFunctionsException) {
-                                                            val code = e.code
-                                                            val details = e.details
-                                                            Log.e(
-                                                                "CloudFunctionError",
-                                                                "Error Code: $code, Details: $details",
-                                                                e)
-                                                        } else {
-                                                            Log.e(
-                                                                "CloudFunctionError",
-                                                                context.getString(
-                                                                    R.string
-                                                                        .user_claim_association_presidential_rights_unexpected_error),
-                                                                e)
-                                                        }
-                                                    }
-                                                }
-                                        }
-                                    } else {
-                                        // email does not match principalEmailAddress
-                                        showErrorMessage = true
-                                    }
-                                },
-                                modifier =
-                                Modifier.padding(vertical = 8.dp)
-                                    .testTag(
-                                        UserClaimAssociationPresidentialRightsTestTags.VERIFY_EMAIL_BUTTON)) {
-                                Text(
-                                    context.getString(
-                                        R.string.user_claim_association_presidential_rights_verify_email))
-                            }
-                        } else {
-                            // Step 2 ->>> If email is verified, ask for the verification code
-                            Text(
-                                context.getString(
-                                    R.string.user_claim_association_presidential_rights_enter_code_sent_to) +
-                                        " $email:",
-                                style = AppTypography.bodySmall)
-                            TextField(
-                                value = verificationCode,
-                                onValueChange = { verificationCode = it },
-                                placeholder = {
-                                    Text(
+                        // send verification email
+                        coroutineScope.launch {
+                          sendVerificationEmail(Firebase.functions, email, association!!.uid)
+                              .addOnCompleteListener { task ->
+                                if (!task.isSuccessful) {
+                                  val e = task.exception
+                                  if (e is FirebaseFunctionsException) {
+                                    val code = e.code
+                                    val details = e.details
+                                    Log.e(
+                                        "CloudFunctionError",
+                                        "Error Code: $code, Details: $details",
+                                        e)
+                                  } else {
+                                    Log.e(
+                                        "CloudFunctionError",
                                         context.getString(
                                             R.string
-                                                .user_claim_association_presidential_rights_enter_verification_code))
-                                },
-                                modifier =
-                                Modifier.padding(vertical = 8.dp)
-                                    .testTag(UserClaimAssociationPresidentialRightsTestTags.CODE))
-                            Spacer(modifier = Modifier.height(8.dp))
-
-                            val coroutineScope = rememberCoroutineScope()
-
-                            Button(
-                                onClick = {
-                                    coroutineScope.launch {
-                                        verifyCode(
-                                            Firebase.functions, association!!.uid, verificationCode, user!!.uid)
-                                            .addOnCompleteListener { task ->
-                                                if (!task.isSuccessful) {
-                                                    val e = task.exception
-                                                    if (e is FirebaseFunctionsException) {
-                                                        val code = e.code
-                                                        Log.e("CloudFunctionError", "Error Code: $code", e)
-
-                                                        when (code) {
-                                                            FirebaseFunctionsException.Code.INVALID_ARGUMENT -> {
-                                                                Toast.makeText(
-                                                                    context,
-                                                                    context.getString(
-                                                                        R.string
-                                                                            .user_claim_association_presidential_rights_wrong_code_error),
-                                                                    Toast.LENGTH_SHORT)
-                                                                    .show()
-                                                            }
-                                                            FirebaseFunctionsException.Code.NOT_FOUND -> {
-                                                                Toast.makeText(
-                                                                    context,
-                                                                    context.getString(
-                                                                        R.string
-                                                                            .user_claim_association_presidential_rights_verification_request_not_found),
-                                                                    Toast.LENGTH_SHORT)
-                                                                    .show()
-                                                            }
-                                                            FirebaseFunctionsException.Code.UNAVAILABLE -> {
-                                                                Toast.makeText(
-                                                                    context,
-                                                                    context.getString(
-                                                                        R.string
-                                                                            .user_claim_association_presidential_rights_service_unavailable),
-                                                                    Toast.LENGTH_SHORT)
-                                                                    .show()
-                                                            }
-                                                            else -> {
-                                                                Toast.makeText(
-                                                                    context,
-                                                                    context.getString(
-                                                                        R.string
-                                                                            .user_claim_association_presidential_rights_unexpected_error),
-                                                                    Toast.LENGTH_SHORT)
-                                                                    .show()
-                                                            }
-                                                        }
-                                                    } else {
-                                                        Toast.makeText(
-                                                            context,
-                                                            context.getString(
-                                                                R.string
-                                                                    .user_claim_association_presidential_rights_unexpected_error),
-                                                            Toast.LENGTH_SHORT)
-                                                            .show()
-                                                    }
-                                                } else {
-                                                    Toast.makeText(
-                                                        context,
-                                                        context.getString(
-                                                            R.string
-                                                                .user_claim_association_presidential_rights_verified_successfully),
-                                                        Toast.LENGTH_SHORT)
-                                                        .show()
-
-                                                    navigationAction.navigateTo(Screen.MY_PROFILE)
-                                                }
-                                            }
-                                    }
-                                },
-                                modifier =
-                                Modifier.padding(vertical = 8.dp)
-                                    .testTag(
-                                        UserClaimAssociationPresidentialRightsTestTags.SUBMIT_CODE_BUTTON)) {
-                                Text(
-                                    context.getString(
-                                        R.string.user_claim_association_presidential_rights_submit_code))
-                            }
+                                                .user_claim_association_presidential_rights_unexpected_error),
+                                        e)
+                                  }
+                                }
+                              }
                         }
+                      } else {
+                        // email does not match principalEmailAddress
+                        showErrorMessage = true
+                      }
+                    },
+                    modifier =
+                        Modifier.padding(vertical = 8.dp)
+                            .testTag(
+                                UserClaimAssociationPresidentialRightsTestTags
+                                    .VERIFY_EMAIL_BUTTON)) {
+                      Text(
+                          context.getString(
+                              R.string.user_claim_association_presidential_rights_verify_email))
                     }
-                }
+              } else {
+                // Step 2 ->>> If email is verified, ask for the verification code
+                Text(
+                    context.getString(
+                        R.string.user_claim_association_presidential_rights_enter_code_sent_to) +
+                        " $email:",
+                    style = AppTypography.bodySmall)
+                TextField(
+                    value = verificationCode,
+                    onValueChange = { verificationCode = it },
+                    placeholder = {
+                      Text(
+                          context.getString(
+                              R.string
+                                  .user_claim_association_presidential_rights_enter_verification_code))
+                    },
+                    modifier =
+                        Modifier.padding(vertical = 8.dp)
+                            .testTag(UserClaimAssociationPresidentialRightsTestTags.CODE))
+                Spacer(modifier = Modifier.height(8.dp))
+
+                val coroutineScope = rememberCoroutineScope()
+
+                Button(
+                    onClick = {
+                      coroutineScope.launch {
+                        verifyCode(
+                                Firebase.functions, association!!.uid, verificationCode, user!!.uid)
+                            .addOnCompleteListener { task ->
+                              if (!task.isSuccessful) {
+                                val e = task.exception
+                                if (e is FirebaseFunctionsException) {
+                                  val code = e.code
+                                  Log.e("CloudFunctionError", "Error Code: $code", e)
+
+                                  when (code) {
+                                    FirebaseFunctionsException.Code.INVALID_ARGUMENT -> {
+                                      Toast.makeText(
+                                              context,
+                                              context.getString(
+                                                  R.string
+                                                      .user_claim_association_presidential_rights_wrong_code_error),
+                                              Toast.LENGTH_SHORT)
+                                          .show()
+                                    }
+                                    FirebaseFunctionsException.Code.NOT_FOUND -> {
+                                      Toast.makeText(
+                                              context,
+                                              context.getString(
+                                                  R.string
+                                                      .user_claim_association_presidential_rights_verification_request_not_found),
+                                              Toast.LENGTH_SHORT)
+                                          .show()
+                                    }
+                                    FirebaseFunctionsException.Code.UNAVAILABLE -> {
+                                      Toast.makeText(
+                                              context,
+                                              context.getString(
+                                                  R.string
+                                                      .user_claim_association_presidential_rights_service_unavailable),
+                                              Toast.LENGTH_SHORT)
+                                          .show()
+                                    }
+                                    else -> {
+                                      Toast.makeText(
+                                              context,
+                                              context.getString(
+                                                  R.string
+                                                      .user_claim_association_presidential_rights_unexpected_error),
+                                              Toast.LENGTH_SHORT)
+                                          .show()
+                                    }
+                                  }
+                                } else {
+                                  Toast.makeText(
+                                          context,
+                                          context.getString(
+                                              R.string
+                                                  .user_claim_association_presidential_rights_unexpected_error),
+                                          Toast.LENGTH_SHORT)
+                                      .show()
+                                }
+                              } else {
+                                Toast.makeText(
+                                        context,
+                                        context.getString(
+                                            R.string
+                                                .user_claim_association_presidential_rights_verified_successfully),
+                                        Toast.LENGTH_SHORT)
+                                    .show()
+
+                                navigationAction.navigateTo(Screen.MY_PROFILE)
+                              }
+                            }
+                      }
+                    },
+                    modifier =
+                        Modifier.padding(vertical = 8.dp)
+                            .testTag(
+                                UserClaimAssociationPresidentialRightsTestTags
+                                    .SUBMIT_CODE_BUTTON)) {
+                      Text(
+                          context.getString(
+                              R.string.user_claim_association_presidential_rights_submit_code))
+                    }
+              }
             }
-        })
+          }
+        }
+      })
 }
 
 /** String manager for the verifyCode and sendVerificationEmail functions */

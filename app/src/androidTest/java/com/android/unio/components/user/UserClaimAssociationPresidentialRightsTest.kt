@@ -2,10 +2,8 @@
 
 package com.android.unio.components.user
 
-import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
-import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.navigation.NavHostController
 import com.android.unio.TearDown
@@ -18,11 +16,9 @@ import com.android.unio.model.follow.ConcurrentAssociationUserRepositoryFirestor
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.search.SearchRepository
 import com.android.unio.model.search.SearchViewModel
-import com.android.unio.model.user.UserRepository
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.navigation.NavigationAction
-import com.android.unio.ui.user.UserClaimAssociationPresidentialRightsScreen
 import com.android.unio.ui.user.UserClaimAssociationPresidentialRightsScreenScaffold
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
@@ -42,8 +38,8 @@ class UserClaimAssociationPresidentialRightsTest : TearDown() {
   @MockK private lateinit var associationRepository: AssociationRepositoryFirestore
   @MockK private lateinit var eventRepository: EventRepositoryFirestore
   @MockK private lateinit var imageRepository: ImageRepositoryFirebaseStorage
-    @MockK private lateinit var userRepository: UserRepositoryFirestore
-    @MockK private lateinit var searchRepository: SearchRepository
+  @MockK private lateinit var userRepository: UserRepositoryFirestore
+  @MockK private lateinit var searchRepository: SearchRepository
   @MockK
   private lateinit var concurrentAssociationUserRepositoryFirestore:
       ConcurrentAssociationUserRepositoryFirestore
@@ -52,9 +48,9 @@ class UserClaimAssociationPresidentialRightsTest : TearDown() {
   private lateinit var associationViewModel: AssociationViewModel
   @MockK private lateinit var navigationAction: NavigationAction
 
-    private lateinit var searchViewModel: SearchViewModel
+  private lateinit var searchViewModel: SearchViewModel
 
-    private lateinit var userViewModel: UserViewModel
+  private lateinit var userViewModel: UserViewModel
 
   // test data
   private val testAssociation =
@@ -78,16 +74,19 @@ class UserClaimAssociationPresidentialRightsTest : TearDown() {
             concurrentAssociationUserRepositoryFirestore)
     navigationAction = NavigationAction(navHostController)
 
-      userViewModel = UserViewModel(userRepository = userRepository, imageRepository)
+    userViewModel = UserViewModel(userRepository = userRepository, imageRepository)
 
-      searchViewModel = SearchViewModel(searchRepository)
+    searchViewModel = SearchViewModel(searchRepository)
   }
 
   @Test
   fun testBackButtonNavigatesBack() {
     composeTestRule.setContent {
       UserClaimAssociationPresidentialRightsScreenScaffold(
-          navigationAction = navigationAction, associationViewModel = associationViewModel, user = MockUser.createMockUser(uid = "1"), searchViewModel = searchViewModel)
+          navigationAction = navigationAction,
+          associationViewModel = associationViewModel,
+          user = MockUser.createMockUser(uid = "1"),
+          searchViewModel = searchViewModel)
     }
 
     // click the back button

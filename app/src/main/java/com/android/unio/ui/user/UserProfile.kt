@@ -25,7 +25,6 @@ import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
-import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -372,17 +371,17 @@ fun UserProfileBottomSheet(
             }) {
               Text(context.getString(R.string.user_profile_bottom_sheet_settings))
             }
-          TextButton(
-              modifier = Modifier.fillMaxWidth().testTag(UserProfileTestTags.CLAIM_ASSOCIATION),
-              onClick = {
-                  scope.launch {
-                      sheetState.hide()
-                      onClose()
-                      navigationAction.navigateTo(Screen.CLAIM_ASSOCIATION_PRESIDENTIAL_RIGHTS)
-                  }
-              }) {
+        TextButton(
+            modifier = Modifier.fillMaxWidth().testTag(UserProfileTestTags.CLAIM_ASSOCIATION),
+            onClick = {
+              scope.launch {
+                sheetState.hide()
+                onClose()
+                navigationAction.navigateTo(Screen.CLAIM_ASSOCIATION_PRESIDENTIAL_RIGHTS)
+              }
+            }) {
               Text(context.getString(R.string.user_claim_association_claim_president_rights))
-          }
+            }
         TextButton(
             modifier = Modifier.fillMaxWidth().testTag(UserProfileTestTags.SIGN_OUT),
             onClick = {
