@@ -53,11 +53,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import com.android.unio.R
@@ -73,6 +71,7 @@ import com.android.unio.model.user.User
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.model.utils.NetworkUtils
 import com.android.unio.ui.components.NotificationSender
+import com.android.unio.ui.components.RoleBadge
 import com.android.unio.ui.event.EventCard
 import com.android.unio.ui.image.AsyncImageWrapper
 import com.android.unio.ui.navigation.NavigationAction
@@ -395,21 +394,10 @@ private fun AssociationMembers(
                   val firstName = it
                   user.value?.lastName?.let {
                     val lastName = it
-                    Text("${firstName} ${lastName}")
+                    Text("$firstName $lastName")
 
                     // Role Badge
-                    Box(
-                        modifier =
-                            Modifier.background(
-                                    color = Color(member.role.color),
-                                    shape = RoundedCornerShape(8.dp))
-                                .padding(horizontal = 8.dp, vertical = 4.dp)) {
-                          Text(
-                              text = member.role.displayName,
-                              style = MaterialTheme.typography.bodySmall,
-                              color = Color.White,
-                              textAlign = TextAlign.Center)
-                        }
+                    RoleBadge(member.role)
                   }
                 }
               }
@@ -441,11 +429,15 @@ private fun AssociationEvents(
   val events by association.events.list.collectAsState()
   val user by userViewModel.user.collectAsState()
 
+  if (user == null) {
+    return
+  }
+
   // Check if the user is a member of the association
-  val isMember = association.members.any { it.uid == user?.uid }
+  val isMember = association.members.any { it.uid == user!!.uid }
 
   // Retrieve the member's permissions if they are part of the association
-  val userPermissions = association.members.find { it.uid == user?.uid }?.role?.permissions
+  val userPermissions = association.members.find { it.uid == user!!.uid }?.role?.permissions
 
   // Check if the user has the "ADD_EVENTS" permission using the Permissions class
   val hasAddEventsPermission = userPermissions?.hasPermission(PermissionType.ADD_EVENTS) == true
