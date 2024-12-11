@@ -146,4 +146,9 @@ class MapScreenTest : TearDown() {
     assert(mapViewModel.userLocation.value!!.latitude == location.latitude)
     assert(mapViewModel.userLocation.value!!.longitude == location.longitude)
   }
+
+  @Test
+  fun whenFineLocationEnabledNoApproximateCircleIsDisplayed() {
+    composeTestRule.onNodeWithTag(MapTestTags.LOCATION_APPROXIMATE_CIRCLE).assertDoesNotExist()
+  }
 }

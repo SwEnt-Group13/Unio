@@ -212,9 +212,6 @@ class EventDetailsTest : TearDown() {
         .assertDisplayComponentInScroll()
     composeTestRule.onNodeWithTag(EventDetailsTestTags.MAP_BUTTON).assertDisplayComponentInScroll()
     composeTestRule
-        .onNodeWithTag(EventDetailsTestTags.SIGN_UP_BUTTON)
-        .assertDisplayComponentInScroll()
-    composeTestRule
         .onNodeWithTag(EventDetailsTestTags.EVENT_DETAILS_PAGER)
         .assertDisplayComponentInScroll()
     composeTestRule.onNodeWithTag(EventDetailsTestTags.EVENT_DETAILS_PAGER).performScrollToIndex(1)
@@ -222,7 +219,6 @@ class EventDetailsTest : TearDown() {
         .onNodeWithTag(EventDetailsTestTags.UPLOAD_PICTURE_BUTTON)
         .assertDisplayComponentInScroll()
 
-    // composeTestRule.onNodeWithTag(EventDetailsTestTags.GALLERY_GRID).assertDisplayComponentInScroll()
   }
 
   @Test
@@ -241,11 +237,9 @@ class EventDetailsTest : TearDown() {
     composeTestRule.onNodeWithTag(EventDetailsTestTags.MAP_BUTTON).assertDisplayComponentInScroll()
     composeTestRule.onNodeWithTag(EventDetailsTestTags.MAP_BUTTON).performClick()
     verify { navigationAction.navigateTo(Screen.MAP) }
-
-    // Sign-up button
-    composeTestRule
-        .onNodeWithTag(EventDetailsTestTags.SIGN_UP_BUTTON)
-        .assertDisplayComponentInScroll()
+    assert(mapViewModel.highlightedEventUid.value == events[0].uid)
+    assert(mapViewModel.centerLocation.value!!.latitude == events[0].location.latitude)
+    assert(mapViewModel.centerLocation.value!!.longitude == events[0].location.longitude)
   }
 
   private fun assertSnackBarIsDisplayed() {
