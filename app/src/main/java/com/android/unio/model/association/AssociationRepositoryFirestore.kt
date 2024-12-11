@@ -24,7 +24,7 @@ class AssociationRepositoryFirestore @Inject constructor(private val db: Firebas
 
   override fun init(onSuccess: () -> Unit) {
     Firebase.auth.registerAuthStateListener {
-      if (it.currentUser != null) {
+      if (it.currentUser != null && it.currentUser!!.isEmailVerified) {
         onSuccess()
       }
     }
