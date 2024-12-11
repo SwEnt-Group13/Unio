@@ -35,7 +35,7 @@ import com.android.unio.model.preferences.getOrDefault
 import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.association.AssociationProfileScreen
-import com.android.unio.ui.association.EditAssociationScreen
+import com.android.unio.ui.association.SaveAssociationScreen
 import com.android.unio.ui.authentication.AccountDetailsScreen
 import com.android.unio.ui.authentication.EmailVerificationScreen
 import com.android.unio.ui.authentication.ResetPasswordScreen
@@ -156,8 +156,8 @@ fun UnioApp() {
         AssociationProfileScreen(
             navigationActions, associationViewModel, userViewModel, eventViewModel)
       }
-      composable(Screen.EDIT_ASSOCIATION) {
-        EditAssociationScreen(associationViewModel, navigationActions)
+      composable(Screen.SAVE_ASSOCIATION) {
+        SaveAssociationScreen(associationViewModel, navigationActions, isNewAssociation = false)
       }
       composable(Screen.EVENT_CREATION) {
         EventCreationScreen(
@@ -199,6 +199,10 @@ fun UnioApp() {
       }
       composable(Screen.SETTINGS) {
         SettingsScreen(navigationActions, authViewModel, userViewModel)
+      }
+      composable(Screen.SAVE_ASSOCIATION) {
+        associationViewModel.selectNullAssociation()
+        SaveAssociationScreen(associationViewModel, navigationActions, isNewAssociation = true)
       }
       composable(Screen.CLAIM_ASSOCIATION_PRESIDENTIAL_RIGHTS) {
         UserClaimAssociationPresidentialRightsScreen(
