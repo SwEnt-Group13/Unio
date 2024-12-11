@@ -14,6 +14,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.android.unio.model.association.Association
+import com.android.unio.model.user.getUserRoleInAssociation
+import com.android.unio.ui.components.RoleBadge
 import com.android.unio.ui.theme.AppTypography
 
 /**
@@ -23,13 +25,18 @@ import com.android.unio.ui.theme.AppTypography
  * @param onClick Callback when the association is clicked.
  */
 @Composable
-fun AssociationSmall(association: Association, onClick: () -> Unit) {
+fun AssociationSmall(association: Association, userUid: String, onClick: () -> Unit) {
+  val userRole = getUserRoleInAssociation(association, userUid)
   TextButton(onClick = onClick, modifier = Modifier.fillMaxWidth()) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
         modifier = Modifier.fillMaxWidth()) {
           Text(text = association.name, style = AppTypography.bodyMedium)
+          // Role Badge
+          if (userRole != null) {
+            RoleBadge(userRole)
+          }
           Icon(
               modifier = Modifier.size(18.dp),
               imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,

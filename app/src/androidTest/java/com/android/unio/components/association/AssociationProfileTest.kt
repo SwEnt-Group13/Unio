@@ -19,11 +19,16 @@ import com.android.unio.TearDown
 import com.android.unio.assertDisplayComponentInScroll
 import com.android.unio.mocks.association.MockAssociation
 import com.android.unio.mocks.event.MockEvent
+import com.android.unio.mocks.firestore.MockReferenceElement
+import com.android.unio.mocks.user.MockUser
 import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationRepositoryFirestore
 import com.android.unio.model.association.AssociationViewModel
+import com.android.unio.model.association.Member
+import com.android.unio.model.association.Role
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventRepositoryFirestore
+import com.android.unio.model.event.EventUserPictureRepositoryFirestore
 import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.firestore.emptyFirestoreReferenceList
 import com.android.unio.model.firestore.firestoreReferenceListWith
@@ -89,6 +94,8 @@ class AssociationProfileTest : TearDown() {
   @MockK private lateinit var userRepository: UserRepositoryFirestore
 
   @MockK private lateinit var imageRepository: ImageRepositoryFirebaseStorage
+  @MockK
+  private lateinit var eventUserPictureRepositoryFirestore: EventUserPictureRepositoryFirestore
 
   @MockK private lateinit var connectivityManager: ConnectivityManager
 
@@ -158,15 +165,6 @@ class AssociationProfileTest : TearDown() {
     every { navigationAction.navigateTo(any<String>()) } returns Unit
     every { navigationAction.goBack() } returns Unit
 
-    associations =
-        listOf(
-            MockAssociation.createMockAssociation(
-                uid = "1",
-                events = Event.Companion.firestoreReferenceListWith(events.map { it.uid })),
-            MockAssociation.createMockAssociation(
-                uid = "2",
-                events = Event.Companion.firestoreReferenceListWith(events.map { it.uid })))
-
     val user =
         User(
             uid = "1",
@@ -182,6 +180,30 @@ class AssociationProfileTest : TearDown() {
             profilePicture = "",
         )
 
+    associations =
+        listOf(
+            MockAssociation.createMockAssociation(
+                uid = "a1",
+                userDependency = true,
+                members =
+                    listOf(
+                        Member(
+                            MockReferenceElement(
+                                MockUser.createMockUser(uid = "1", associationDependency = true)),
+                            Role.ADMIN)),
+                events = Event.Companion.firestoreReferenceListWith(events.map { it.uid })),
+            MockAssociation.createMockAssociation(
+                uid = "a2",
+                userDependency = true,
+                members =
+                    listOf(
+                        Member(
+                            MockReferenceElement(
+                                MockUser.createMockUser(uid = "1", associationDependency = true)),
+                            Role.ADMIN)),
+                events = Event.Companion.firestoreReferenceListWith(events.map { it.uid })),
+        )
+
     every { eventRepository.init(any()) } answers { (args[0] as () -> Unit).invoke() }
 
     every { eventRepository.getEvents(any(), any()) } answers
@@ -189,7 +211,12 @@ class AssociationProfileTest : TearDown() {
           val onSuccess = args[0] as (List<Event>) -> Unit
           onSuccess(events)
         }
-    eventViewModel = EventViewModel(eventRepository, imageRepository, associationRepository)
+    eventViewModel =
+        EventViewModel(
+            eventRepository,
+            imageRepository,
+            associationRepository,
+            eventUserPictureRepositoryFirestore)
 
     every { associationRepository.init(any()) } answers { firstArg<() -> Unit>().invoke() }
     every { associationRepository.getAssociations(any(), any()) } answers
@@ -285,6 +312,7 @@ class AssociationProfileTest : TearDown() {
       ProvidePreferenceLocals {
         val context = ApplicationProvider.getApplicationContext<Context>()
         seeMore = context.getString(R.string.association_see_more)
+
         seeLess = context.getString(R.string.association_see_less)
         AssociationProfileScaffold(
             navigationAction, userViewModel, eventViewModel, associationViewModel) {}

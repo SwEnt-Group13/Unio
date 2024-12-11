@@ -20,34 +20,21 @@ import androidx.compose.material3.DockedSearchBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SearchBarDefaults
-import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.android.unio.R
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventViewModel
@@ -60,7 +47,7 @@ import com.android.unio.ui.navigation.LIST_TOP_LEVEL_DESTINATION
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Route
 import com.android.unio.ui.navigation.Screen
-import kotlinx.coroutines.launch
+import com.android.unio.ui.navigation.SmoothTopBarNavigationMenu
 
 /**
  * The Home screen displays a list of events sorted by some logic (date, if the user follows an
@@ -245,19 +232,6 @@ fun TopBar(
   Column(
       horizontalAlignment = CenterHorizontally,
       modifier = Modifier.padding(top = 20.dp).fillMaxWidth()) {
-        val list =
-            listOf(
-                context.getString(R.string.home_tab_all),
-                context.getString(R.string.home_tab_following))
-        val scope = rememberCoroutineScope()
-
-        val sizeList = remember { mutableStateMapOf<Int, Pair<Float, Float>>() }
-
-        val progressFromFirstPage by remember {
-          derivedStateOf { pagerState.currentPageOffsetFraction + pagerState.currentPage.dp.value }
-        }
-        val colorScheme = MaterialTheme.colorScheme
-
         DockedSearchBar(
             inputField = {
               SearchBarDefaults.InputField(
@@ -285,66 +259,10 @@ fun TopBar(
             modifier = Modifier.padding(horizontal = 16.dp).testTag(HomeTestTags.SEARCH_BAR)) {}
 
         // Tab Menu at the top of the page
-        TabRow(
-            selectedTabIndex = pagerState.currentPage,
-            contentColor = colorScheme.primary,
-            divider = {},
-            indicator = {
-              // method that draws the indicator bar below the tab menu
-              Box(
-                  modifier =
-                      Modifier.fillMaxSize().drawBehind {
-                        val tabWidth: Float
-                        val height: Float
-                        if (sizeList[0] == null) {
-                          Log.e(
-                              "Home Page", "The size values of tabs are null, should not happen !")
-                          // hardcoded values in case sizeList[0] is null
-                          tabWidth = 576.0F
-                          height = 92.0F
-                        } else {
-                          tabWidth = sizeList[0]!!.first
-                          height = sizeList[0]!!.second
-                        }
-                        val startOffset =
-                            Offset(
-                                x = progressFromFirstPage * tabWidth + tabWidth / 3,
-                                y = height - 25)
-                        val endOffset =
-                            Offset(
-                                x = progressFromFirstPage * tabWidth + tabWidth * 2 / 3,
-                                y = height - 25)
-
-                        drawLine(
-                            start = startOffset,
-                            end = endOffset,
-                            color = colorScheme.primary,
-                            strokeWidth = Stroke.DefaultMiter)
-                      })
-            }) {
-              val tabTestTags = listOf(HomeTestTags.TAB_ALL, HomeTestTags.TAB_FOLLOWING)
-              list.forEachIndexed { index, str ->
-                Tab(
-                    selected = index == pagerState.currentPage,
-                    // animate pager if click on tab
-                    onClick = { scope.launch { pagerState.animateScrollToPage(index) } },
-                    modifier =
-                        Modifier.testTag(tabTestTags[index]).onSizeChanged {
-                          sizeList[index] = Pair(it.width.toFloat(), it.height.toFloat())
-                        },
-                    selectedContentColor = colorScheme.primary) {
-                      Text(
-                          text = str,
-                          style =
-                              TextStyle(
-                                  fontWeight = FontWeight.Bold,
-                                  fontSize = 12.sp,
-                              ),
-                          modifier =
-                              Modifier.align(CenterHorizontally)
-                                  .padding(horizontal = 32.dp, vertical = 16.dp))
-                    }
-              }
-            }
+        val tabList =
+            listOf(
+                context.getString(R.string.home_tab_all),
+                context.getString(R.string.home_tab_following))
+        SmoothTopBarNavigationMenu(tabList, pagerState)
       }
 }

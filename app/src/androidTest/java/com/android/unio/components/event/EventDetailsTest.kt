@@ -7,16 +7,20 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollToIndex
 import androidx.navigation.NavHostController
 import com.android.unio.TearDown
 import com.android.unio.assertDisplayComponentInScroll
 import com.android.unio.mocks.association.MockAssociation
 import com.android.unio.mocks.event.MockEvent
+import com.android.unio.mocks.firestore.MockReferenceList
 import com.android.unio.mocks.user.MockUser
 import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationRepositoryFirestore
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventRepositoryFirestore
+import com.android.unio.model.event.EventUserPicture
+import com.android.unio.model.event.EventUserPictureRepositoryFirestore
 import com.android.unio.model.event.EventUtils.formatTimestamp
 import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
@@ -31,6 +35,7 @@ import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.firebase.Timestamp
+import emptyFirestoreReferenceElement
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
@@ -49,6 +54,7 @@ class EventDetailsTest : TearDown() {
   private lateinit var navigationAction: NavigationAction
 
   private lateinit var events: List<Event>
+  private lateinit var eventPictures: List<EventUserPicture>
   private lateinit var associations: List<Association>
 
   private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
@@ -58,6 +64,8 @@ class EventDetailsTest : TearDown() {
   @MockK private lateinit var associationRepository: AssociationRepositoryFirestore
   @MockK private lateinit var userRepository: UserRepositoryFirestore
   @MockK private lateinit var imageRepository: ImageRepositoryFirebaseStorage
+  @MockK
+  private lateinit var eventUserPictureRepositoryFirestore: EventUserPictureRepositoryFirestore
 
   private lateinit var eventViewModel: EventViewModel
   private lateinit var userViewModel: UserViewModel
@@ -67,16 +75,28 @@ class EventDetailsTest : TearDown() {
   @Before
   fun setUp() {
     MockKAnnotations.init(this, relaxed = true)
+    eventPictures =
+        listOf(
+            EventUserPicture("12", "http:image.com", User.emptyFirestoreReferenceElement(), 0),
+            EventUserPicture("34", "http:image.com", User.emptyFirestoreReferenceElement(), 3))
     events =
         listOf(
             MockEvent.createMockEvent(
                 uid = "a",
                 startDate = Timestamp(Date(2024 - 1900, 6, 20)),
-                endDate = Timestamp(Date(2024 - 1900, 6, 21))),
+                endDate = Timestamp(Date(2024 - 1900, 6, 21)),
+                eventPictures = MockReferenceList(eventPictures)),
             MockEvent.createMockEvent(
                 uid = "b",
-                startDate = Timestamp(Date(2025 - 1900, 6, 20)),
-                endDate = Timestamp(Date(2025 - 1900, 6, 20))))
+                startDate = Timestamp(Date(2040 - 1900, 6, 20)),
+                endDate = Timestamp(Date(2040 - 1900, 6, 20)),
+                eventPictures = MockReferenceList(eventPictures)),
+            MockEvent.createMockEvent(
+                uid = "a",
+                startDate = Timestamp(Date(2024 - 1900, 6, 20)),
+                endDate = Timestamp(Date(2024 - 1900, 6, 21)),
+                eventPictures = MockReferenceList()))
+
     associations =
         listOf(
             MockAssociation.createMockAssociation(uid = "c"),
@@ -86,7 +106,12 @@ class EventDetailsTest : TearDown() {
     fusedLocationProviderClient = mock()
     mapViewModel = MapViewModel(fusedLocationProviderClient)
 
-    eventViewModel = EventViewModel(eventRepository, imageRepository, associationRepository)
+    eventViewModel =
+        EventViewModel(
+            eventRepository,
+            imageRepository,
+            associationRepository,
+            eventUserPictureRepositoryFirestore)
 
     every { userRepository.init(any()) } returns Unit
     every { userRepository.getUserWithId("uid", any(), any()) } answers
@@ -186,6 +211,13 @@ class EventDetailsTest : TearDown() {
         .assertTextEquals(event.location.name)
         .assertDisplayComponentInScroll()
     composeTestRule.onNodeWithTag(EventDetailsTestTags.MAP_BUTTON).assertDisplayComponentInScroll()
+    composeTestRule
+        .onNodeWithTag(EventDetailsTestTags.EVENT_DETAILS_PAGER)
+        .assertDisplayComponentInScroll()
+    composeTestRule.onNodeWithTag(EventDetailsTestTags.EVENT_DETAILS_PAGER).performScrollToIndex(1)
+    composeTestRule
+        .onNodeWithTag(EventDetailsTestTags.UPLOAD_PICTURE_BUTTON)
+        .assertDisplayComponentInScroll()
   }
 
   @Test
@@ -230,5 +262,43 @@ class EventDetailsTest : TearDown() {
     composeTestRule.onNodeWithText(event.description).assertDisplayComponentInScroll()
     composeTestRule.onNodeWithText(event.location.name).assertDisplayComponentInScroll()
     composeTestRule.onNodeWithTag(EventDetailsTestTags.START_DATE).assertDisplayComponentInScroll()
+  }
+
+  @Test
+  fun testGalleryDisplays() {
+    setEventScreen(events[0])
+    composeTestRule
+        .onNodeWithTag(EventDetailsTestTags.EVENT_DETAILS_PAGER)
+        .assertDisplayComponentInScroll()
+    composeTestRule.onNodeWithTag(EventDetailsTestTags.EVENT_DETAILS_PAGER).performScrollToIndex(1)
+    composeTestRule
+        .onNodeWithTag(EventDetailsTestTags.GALLERY_GRID)
+        .assertDisplayComponentInScroll()
+  }
+
+  @Test
+  fun testGalleryDoesNotDisplayWhenFutureStartDate() {
+    setEventScreen(events[1])
+    composeTestRule
+        .onNodeWithTag(EventDetailsTestTags.EVENT_DETAILS_PAGER)
+        .assertDisplayComponentInScroll()
+    composeTestRule.onNodeWithTag(EventDetailsTestTags.EVENT_DETAILS_PAGER).performScrollToIndex(1)
+    composeTestRule.onNodeWithTag(EventDetailsTestTags.GALLERY_GRID).assertIsNotDisplayed()
+    composeTestRule
+        .onNodeWithTag(EventDetailsTestTags.EVENT_NOT_STARTED_TEXT)
+        .assertDisplayComponentInScroll()
+  }
+
+  @Test
+  fun testGalleryDoesNotDisplayWhenNoPictures() {
+    setEventScreen(events[2])
+    composeTestRule
+        .onNodeWithTag(EventDetailsTestTags.EVENT_DETAILS_PAGER)
+        .assertDisplayComponentInScroll()
+    composeTestRule.onNodeWithTag(EventDetailsTestTags.EVENT_DETAILS_PAGER).performScrollToIndex(1)
+    composeTestRule.onNodeWithTag(EventDetailsTestTags.GALLERY_GRID).assertIsNotDisplayed()
+    composeTestRule
+        .onNodeWithTag(EventDetailsTestTags.EVENT_NO_PICTURES_TEXT)
+        .assertDisplayComponentInScroll()
   }
 }
