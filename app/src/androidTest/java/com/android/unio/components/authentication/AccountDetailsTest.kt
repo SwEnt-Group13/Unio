@@ -14,9 +14,9 @@ import com.android.unio.addNewUserSocial
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.image.ImageViewModel
 import com.android.unio.model.strings.TextLengthSamples
-import com.android.unio.model.strings.test_tags.AccountDetailsTestTags
-import com.android.unio.model.strings.test_tags.InterestsOverlayTestTags
-import com.android.unio.model.strings.test_tags.SocialsOverlayTestTags
+import com.android.unio.model.strings.test_tags.authentication.AccountDetailsTestTags
+import com.android.unio.model.strings.test_tags.authentication.InterestsOverlayTestTags
+import com.android.unio.model.strings.test_tags.authentication.SocialsOverlayTestTags
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.authentication.AccountDetailsScreen
 import com.android.unio.ui.navigation.NavigationAction

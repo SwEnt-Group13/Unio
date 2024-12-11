@@ -18,8 +18,8 @@ import com.android.unio.model.follow.ConcurrentAssociationUserRepositoryFirestor
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.search.SearchRepository
 import com.android.unio.model.search.SearchViewModel
-import com.android.unio.model.strings.test_tags.ExploreContentTestTags
-import com.android.unio.model.strings.test_tags.ExploreTestTags
+import com.android.unio.model.strings.test_tags.explore.ExploreContentTestTags
+import com.android.unio.model.strings.test_tags.explore.ExploreTestTags
 import com.android.unio.ui.explore.ExploreScreen
 import com.android.unio.ui.explore.getFilteredAssociationsByAlphabeticalOrder
 import com.android.unio.ui.explore.getSortedEntriesAssociationsByCategory

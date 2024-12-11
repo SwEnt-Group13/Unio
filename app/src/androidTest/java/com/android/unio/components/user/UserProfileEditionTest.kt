@@ -17,9 +17,9 @@ import com.android.unio.addNewUserSocial
 import com.android.unio.assertDisplayComponentInScroll
 import com.android.unio.mocks.user.MockUser
 import com.android.unio.model.strings.TextLengthSamples
-import com.android.unio.model.strings.test_tags.InterestsOverlayTestTags
-import com.android.unio.model.strings.test_tags.SocialsOverlayTestTags
-import com.android.unio.model.strings.test_tags.UserEditionTestTags
+import com.android.unio.model.strings.test_tags.authentication.InterestsOverlayTestTags
+import com.android.unio.model.strings.test_tags.authentication.SocialsOverlayTestTags
+import com.android.unio.model.strings.test_tags.user.UserEditionTestTags
 import com.android.unio.model.user.User
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen

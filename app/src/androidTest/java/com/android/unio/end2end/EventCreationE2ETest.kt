@@ -30,12 +30,12 @@ import com.android.unio.model.hilt.module.NetworkModule
 import com.android.unio.model.map.LocationRepository
 import com.android.unio.model.map.nominatim.NominatimApiService
 import com.android.unio.model.map.nominatim.NominatimLocationRepository
-import com.android.unio.model.strings.test_tags.AssociationProfileTestTags
-import com.android.unio.model.strings.test_tags.BottomNavBarTestTags
-import com.android.unio.model.strings.test_tags.EventCreationTestTags
-import com.android.unio.model.strings.test_tags.EventDetailsTestTags
-import com.android.unio.model.strings.test_tags.ExploreTestTags
-import com.android.unio.model.strings.test_tags.HomeTestTags
+import com.android.unio.model.strings.test_tags.association.AssociationProfileTestTags
+import com.android.unio.model.strings.test_tags.event.EventCreationTestTags
+import com.android.unio.model.strings.test_tags.event.EventDetailsTestTags
+import com.android.unio.model.strings.test_tags.explore.ExploreTestTags
+import com.android.unio.model.strings.test_tags.home.HomeTestTags
+import com.android.unio.model.strings.test_tags.navigation.BottomNavBarTestTags
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -342,7 +342,7 @@ class EventCreationE2ETest : EndToEndTest() {
     const val EVENT_TITLE = "Test Event"
     const val EVENT_SHORT_DESCRIPTION = "This is a short description."
     const val EVENT_DESCRIPTION = "This is a detailed description of the test event."
-    const val EVENT_FORMATTED_ADDRESS = "Test Road, 123, 12345 Test City, Test State, Test Country"
+    const val EVENT_FORMATTED_ADDRESS = "Test Road, 123, 12345, Test City, Test State, Test Country"
     const val EVENT_LATITUDE = "45.512331"
   }
 

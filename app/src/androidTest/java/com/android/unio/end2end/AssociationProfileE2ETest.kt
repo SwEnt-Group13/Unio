@@ -7,11 +7,11 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.filters.LargeTest
 import com.android.unio.assertDisplayComponentInScroll
-import com.android.unio.model.strings.test_tags.AssociationProfileTestTags
-import com.android.unio.model.strings.test_tags.BottomNavBarTestTags
-import com.android.unio.model.strings.test_tags.ExploreTestTags
-import com.android.unio.model.strings.test_tags.HomeTestTags
-import com.android.unio.model.strings.test_tags.SomeoneElseUserProfileTestTags
+import com.android.unio.model.strings.test_tags.association.AssociationProfileTestTags
+import com.android.unio.model.strings.test_tags.explore.ExploreTestTags
+import com.android.unio.model.strings.test_tags.home.HomeTestTags
+import com.android.unio.model.strings.test_tags.navigation.BottomNavBarTestTags
+import com.android.unio.model.strings.test_tags.user.SomeoneElseUserProfileTestTags
 import dagger.hilt.android.testing.HiltAndroidTest
 import org.junit.Test
 

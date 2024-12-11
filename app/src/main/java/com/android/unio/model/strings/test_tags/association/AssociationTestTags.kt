@@ -1,4 +1,4 @@
-package com.android.unio.model.strings.test_tags
+package com.android.unio.model.strings.test_tags.association
 
 object AssociationProfileTestTags {
   // SCAFFOLD
@@ -15,13 +15,6 @@ object AssociationProfileTestTags {
 
   // PROFILE CONTENT
   const val SCREEN = "associationScreen"
-
-  // RECRUITMENT
-  const val RECRUITMENT_TITLE = "associationRecruitmentTitle"
-  const val RECRUITMENT_DESCRIPTION = "associationRecruitmentDescription"
-  const val RECRUITMENT_ROLES = "associationRecruitmentRoles"
-  const val DESIGNER_ROLES = "associationDesignerRoles"
-  const val TREASURER_ROLES = "associationTreasurerRoles"
 
   // MEMBERS
   const val CONTACT_MEMBERS_TITLE = "associationContactMembersTitle"

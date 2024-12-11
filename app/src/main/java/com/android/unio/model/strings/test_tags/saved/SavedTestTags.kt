@@ -1,4 +1,4 @@
-package com.android.unio.model.strings.test_tags
+package com.android.unio.model.strings.test_tags.saved
 
 object SavedTestTags {
   const val SCREEN = "savedScreen"

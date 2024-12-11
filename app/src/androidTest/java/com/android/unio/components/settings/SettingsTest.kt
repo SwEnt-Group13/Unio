@@ -8,7 +8,7 @@ import com.android.unio.mocks.user.MockUser
 import com.android.unio.model.authentication.AuthViewModel
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.preferences.AppPreferences
-import com.android.unio.model.strings.test_tags.SettingsTestTags
+import com.android.unio.model.strings.test_tags.settings.SettingsTestTags
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.navigation.NavigationAction

@@ -32,11 +32,14 @@ data class NominatimLocationResponse(
  */
 data class Address(
     @SerializedName("house_number") val houseNumber: String?,
-    val road: String,
-    val city: String?,
-    val town: String?,
+    val road: String?,
     val village: String?,
-    val state: String,
-    val postcode: String,
-    val country: String
+    val town: String?,
+    val city: String?,
+    val municipality: String?,
+    val region: String?,
+    val county: String?,
+    val state: String?,
+    val postcode: String?,
+    val country: String?
 )

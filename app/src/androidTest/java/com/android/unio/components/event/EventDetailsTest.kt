@@ -22,7 +22,7 @@ import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.map.MapViewModel
 import com.android.unio.model.strings.FormatStrings.DAY_MONTH_FORMAT
-import com.android.unio.model.strings.test_tags.EventDetailsTestTags
+import com.android.unio.model.strings.test_tags.event.EventDetailsTestTags
 import com.android.unio.model.user.User
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserViewModel
@@ -186,9 +186,6 @@ class EventDetailsTest : TearDown() {
         .assertTextEquals(event.location.name)
         .assertDisplayComponentInScroll()
     composeTestRule.onNodeWithTag(EventDetailsTestTags.MAP_BUTTON).assertDisplayComponentInScroll()
-    composeTestRule
-        .onNodeWithTag(EventDetailsTestTags.SIGN_UP_BUTTON)
-        .assertDisplayComponentInScroll()
   }
 
   @Test
@@ -207,11 +204,9 @@ class EventDetailsTest : TearDown() {
     composeTestRule.onNodeWithTag(EventDetailsTestTags.MAP_BUTTON).assertDisplayComponentInScroll()
     composeTestRule.onNodeWithTag(EventDetailsTestTags.MAP_BUTTON).performClick()
     verify { navigationAction.navigateTo(Screen.MAP) }
-
-    // Sign-up button
-    composeTestRule
-        .onNodeWithTag(EventDetailsTestTags.SIGN_UP_BUTTON)
-        .assertDisplayComponentInScroll()
+    assert(mapViewModel.highlightedEventUid.value == events[0].uid)
+    assert(mapViewModel.centerLocation.value!!.latitude == events[0].location.latitude)
+    assert(mapViewModel.centerLocation.value!!.longitude == events[0].location.longitude)
   }
 
   private fun assertSnackBarIsDisplayed() {

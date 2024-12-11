@@ -1,4 +1,4 @@
-package com.android.unio.model.strings.test_tags
+package com.android.unio.model.strings.test_tags.navigation
 
 object BottomNavBarTestTags {
   const val HOME = "Home"
