@@ -120,10 +120,10 @@ class AssociationProfileTest : TearDown() {
     val collection = mockk<CollectionReference>()
     val query = mockk<Query>()
 
-    val eventA = MockEvent.createMockEvent(uid = "a")
-    val eventB = MockEvent.createMockEvent(uid = "b")
+      val eventA = MockEvent.createMockEvent(uid = "a")
+      val eventB = MockEvent.createMockEvent(uid = "b")
 
-    events = listOf(eventA, eventB)
+      events = listOf(eventA, eventB)
 
     every { getSystemService(any(), ConnectivityManager::class.java) } returns connectivityManager
     every { Firebase.firestore } returns db
@@ -162,16 +162,14 @@ class AssociationProfileTest : TearDown() {
     every { navigationAction.navigateTo(any<String>()) } returns Unit
     every { navigationAction.goBack() } returns Unit
 
-
-    events = listOf(MockEvent.createMockEvent(uid = "a"), MockEvent.createMockEvent(uid = "b"))
-    associations =
+    /*associations =
         listOf(
             MockAssociation.createMockAssociation(
                 uid = "1",
                 events = Event.Companion.firestoreReferenceListWith(events.map { it.uid })),
             MockAssociation.createMockAssociation(
                 uid = "2",
-                events = Event.Companion.firestoreReferenceListWith(events.map { it.uid })))
+                events = Event.Companion.firestoreReferenceListWith(events.map { it.uid })))*/
 
 
     val user =
@@ -199,7 +197,8 @@ class AssociationProfileTest : TearDown() {
                         Member(
                             MockReferenceElement(
                                 MockUser.createMockUser(uid = "1", associationDependency = true)),
-                            Role.ADMIN))),
+                            Role.ADMIN)),
+                events = Event.Companion.firestoreReferenceListWith(events.map { it.uid })),
             MockAssociation.createMockAssociation(
                 uid = "a2",
                 userDependency = true,
@@ -208,7 +207,8 @@ class AssociationProfileTest : TearDown() {
                         Member(
                             MockReferenceElement(
                                 MockUser.createMockUser(uid = "1", associationDependency = true)),
-                            Role.ADMIN))),
+                            Role.ADMIN)),
+                events = Event.Companion.firestoreReferenceListWith(events.map { it.uid })),
         )
 
     every { eventRepository.init(any()) } answers { (args[0] as () -> Unit).invoke() }
@@ -312,8 +312,10 @@ class AssociationProfileTest : TearDown() {
     var seeLess = ""
     composeTestRule.setContent {
       ProvidePreferenceLocals {
+
         val context = ApplicationProvider.getApplicationContext<Context>()
-        seeMore = context.getString(R.string.association_see_more)
+          seeMore = context.getString(R.string.association_see_more)
+
         seeLess = context.getString(R.string.association_see_less)
         AssociationProfileScaffold(
             navigationAction, userViewModel, eventViewModel, associationViewModel) {}
