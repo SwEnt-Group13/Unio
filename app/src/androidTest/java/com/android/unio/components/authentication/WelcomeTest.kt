@@ -10,7 +10,7 @@ import androidx.compose.ui.test.performTextInput
 import com.android.unio.TearDown
 import com.android.unio.mocks.user.MockUser
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
-import com.android.unio.model.strings.test_tags.WelcomeTestTags
+import com.android.unio.model.strings.test_tags.authentication.WelcomeTestTags
 import com.android.unio.model.user.User
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserViewModel

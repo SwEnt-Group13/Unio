@@ -1,12 +1,11 @@
 package com.android.unio.components.association
 
-import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import com.android.unio.TearDown
-import com.android.unio.model.strings.test_tags.AssociationProfileTestTags
+import com.android.unio.model.strings.test_tags.association.AssociationProfileTestTags
 import com.android.unio.ui.association.AssociationProfileBottomSheet
 import org.junit.Rule
 import org.junit.Test

@@ -17,7 +17,7 @@ import com.android.unio.model.event.EventRepositoryFirestore
 import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.map.MapViewModel
-import com.android.unio.model.strings.test_tags.MapTestTags
+import com.android.unio.model.strings.test_tags.map.MapTestTags
 import com.android.unio.model.user.User
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserViewModel
@@ -138,5 +138,10 @@ class MapScreenTest : TearDown() {
     assert(mapViewModel.userLocation.value != null)
     assert(mapViewModel.userLocation.value!!.latitude == location.latitude)
     assert(mapViewModel.userLocation.value!!.longitude == location.longitude)
+  }
+
+  @Test
+  fun whenFineLocationEnabledNoApproximateCircleIsDisplayed() {
+    composeTestRule.onNodeWithTag(MapTestTags.LOCATION_APPROXIMATE_CIRCLE).assertDoesNotExist()
   }
 }

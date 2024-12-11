@@ -172,6 +172,7 @@
     <string name="event_card_content_description_not_saved_event">Not saved</string>
     <string name="event_card_content_description_association_logo">Association logo</string>
     <string name="event_card_interested_string">Interested</string>
+    <string name="event_card_content_description_edit_association">Edit event</string>
 
     <!-- Event Creation Strings -->
     <string name="event_creation_screen">Event creation</string>
@@ -262,7 +263,19 @@
     <!-- Map Screen Strings -->
     <string name="map_event_go_back_button">Go back</string>
     <string name="map_event_title">Event map</string>
+    <string name="map_event_marker_time_remaining_prefix">In </string>
+    <string name="map_event_marker_time_remaining_days">days, </string>
+    <string name="map_event_marker_time_remaining_hours">hours</string>
+    <string name="map_event_marker_prefix">Event: </string>
+    <string name="map_event_marker_snippet_separator" translatable="false"> - </string>
     <string name="map_content_description_center_on_user">Center on User</string>
+
+    /**
+    * package: preferences
+    */
+    <string name="app_preferences_theme_text_display_light">Light</string>
+    <string name="app_preferences_theme_text_display_dark">Dark</string>
+    <string name="app_preferences_theme_text_display_system_default_auto">Automatic</string>
 
     /**
     * package: navigation
@@ -353,6 +366,8 @@
     <string name="user_claim_association_presidential_rights_wrong_code_error">Wrong code, please try again</string>
     <string name="user_claim_association_presidential_rights_verification_request_not_found">Verification request not found</string>
     <string name="user_claim_association_presidential_rights_service_unavailable">Service unavailable. Please try later</string>
+    <string name="user_claim_association_presidential_rights_verify_email">Verify Email</string>
+    <string name="user_claim_association_presidential_rights_enter_code_sent_to">Enter the code sent to</string>
 
     /**
     * Other

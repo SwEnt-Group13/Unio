@@ -28,7 +28,7 @@ import com.android.unio.model.firestore.emptyFirestoreReferenceList
 import com.android.unio.model.follow.ConcurrentAssociationUserRepositoryFirestore
 import com.android.unio.model.hilt.module.FirebaseModule
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
-import com.android.unio.model.strings.test_tags.AssociationProfileTestTags
+import com.android.unio.model.strings.test_tags.association.AssociationProfileTestTags
 import com.android.unio.model.user.User
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserViewModel
@@ -152,12 +152,6 @@ class AssociationProfileTest : TearDown() {
         {
           val onSuccess = args[0] as (List<Association>) -> Unit
           onSuccess(associations)
-        }
-
-    every { eventRepository.getEventsOfAssociation(any(), any(), any()) } answers
-        {
-          val onSuccess = args[1] as (List<Event>) -> Unit
-          onSuccess(events)
         }
 
     every { userRepository.init(any()) } answers { (args[0] as () -> Unit).invoke() }

@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -24,6 +25,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -35,8 +37,8 @@ import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationCategory
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.search.SearchViewModel
-import com.android.unio.model.strings.test_tags.ExploreContentTestTags
-import com.android.unio.model.strings.test_tags.ExploreTestTags
+import com.android.unio.model.strings.test_tags.explore.ExploreContentTestTags
+import com.android.unio.model.strings.test_tags.explore.ExploreTestTags
 import com.android.unio.ui.association.AssociationSearchBar
 import com.android.unio.ui.image.AsyncImageWrapper
 import com.android.unio.ui.navigation.BottomNavigationMenu
@@ -177,8 +179,8 @@ fun AssociationItem(association: Association, onClick: () -> Unit) {
         AsyncImageWrapper(
             imageUri = association.image.toUri(),
             contentDescription = context.getString(R.string.explore_content_description_image),
-            modifier = Modifier.size(124.dp),
-            placeholderResourceId = R.drawable.adec,
+            modifier = Modifier.size(124.dp).clip(RoundedCornerShape(12.dp)),
+            placeholderResourceId = R.drawable.association_logo_placeholder,
             contentScale = ContentScale.Crop)
 
         Spacer(modifier = Modifier.height(8.dp))

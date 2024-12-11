@@ -29,7 +29,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.android.unio.R
 import com.android.unio.model.authentication.AuthViewModel
-import com.android.unio.model.strings.test_tags.ResetPasswordTestTags
+import com.android.unio.model.strings.test_tags.authentication.ResetPasswordTestTags
 import com.android.unio.model.user.isValidEmail
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.theme.AppTypography

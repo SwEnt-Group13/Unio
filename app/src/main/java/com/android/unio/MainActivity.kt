@@ -82,6 +82,7 @@ class MainActivity : ComponentActivity() {
     Firebase.functions.useEmulator(host, 5001)
     Firebase.storage.useEmulator(host, 9199)
 
+
     setContent {
       Surface(modifier = Modifier.fillMaxSize()) {
         ProvidePreferenceLocals { AppTheme { UnioApp() } }

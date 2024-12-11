@@ -27,7 +27,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.android.unio.R
-import com.android.unio.model.strings.test_tags.PictureSelectionToolTestTags
+import com.android.unio.model.strings.test_tags.authentication.PictureSelectionToolTestTags
 
 /**
  * A composable function to select and display pictures from the gallery or camera. It allows the

@@ -9,7 +9,7 @@ import com.android.unio.TearDown
 import com.android.unio.mocks.user.MockUser
 import com.android.unio.model.search.SearchRepository
 import com.android.unio.model.search.SearchViewModel
-import com.android.unio.model.strings.test_tags.UserProfileTestTags
+import com.android.unio.model.strings.test_tags.user.UserProfileTestTags
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.user.UserProfileBottomSheet
 import com.android.unio.ui.user.UserProfileScreenScaffold
