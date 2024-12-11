@@ -40,6 +40,7 @@
     <string name="association_profile_add_event_button">Ajouter un événement</string>
 
     <!-- EditAssociation strings -->
+    <string name="create_association_title">Créer l\'Association</string>
     <string name="edit_association_title">Modifier l\'Association</string>
     <string name="name_explanation">Le nom de l\'association. Il s\'agit généralement d\'un identifiant court ou d\'un acronyme.</string>
     <string name="full_name_explanation">Le nom complet de l\'association. Il peut s\'agir du nom officiel complet.</string>

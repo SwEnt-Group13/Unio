@@ -45,7 +45,8 @@
     <string name="association_profile_add_event_button">Add event</string>
 
 
-    <!-- EditAssociation strings -->
+    <!-- SaveAssociation strings -->
+    <string name="create_association_title">Create Association</string>
     <string name="edit_association_title">Edit Association</string>
     <string name="name_explanation">The name of the association. This is typically a short identifier or acronym.</string>
     <string name="full_name_explanation">The full name of the association. This can be the official long-form name.</string>
