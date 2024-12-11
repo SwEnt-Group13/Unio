@@ -29,33 +29,33 @@ class AssociationProfileE2ETest : EndToEndTest() {
     composeTestRule.onNodeWithTag(BottomNavBarTestTags.EXPLORE).assertIsDisplayed()
     composeTestRule.onNodeWithTag(BottomNavBarTestTags.EXPLORE).performClick()
 
-    composeTestRule.waitUntil(10000) {
+    composeTestRule.waitUntil(10001) {
       composeTestRule.onNodeWithTag(ExploreTestTags.EXPLORE_SCAFFOLD_TITLE).isDisplayed()
     }
 
     composeTestRule.onNodeWithText(ASSOCIATION_NAME).assertDisplayComponentInScroll()
     composeTestRule.onNodeWithText(ASSOCIATION_NAME).performClick()
 
-    composeTestRule.waitUntil(10000) {
+    composeTestRule.waitUntil(10002) {
       composeTestRule.onNodeWithTag(AssociationProfileTestTags.SCREEN).isDisplayed()
     }
     Thread.sleep(1000)
     composeTestRule.onNodeWithText(ASSOCIATION_MEMBERS).assertDisplayComponentInScroll()
     composeTestRule.onNodeWithText(ASSOCIATION_MEMBERS).performClick()
 
-    composeTestRule.waitUntil(10000) {
+    composeTestRule.waitUntil(10003) {
       composeTestRule.onNodeWithTag(SomeoneElseUserProfileTestTags.SCREEN).isDisplayed()
     }
 
     composeTestRule.onNodeWithTag(SomeoneElseUserProfileTestTags.NAME).assertIsDisplayed()
 
-    composeTestRule.waitUntil(10000) {
+    composeTestRule.waitUntil(10004) {
       composeTestRule.onNodeWithTag(SomeoneElseUserProfileTestTags.GO_BACK).isDisplayed()
     }
 
     composeTestRule.onNodeWithTag(SomeoneElseUserProfileTestTags.GO_BACK).performClick()
 
-    composeTestRule.waitUntil(10000) {
+    composeTestRule.waitUntil(10005) {
       composeTestRule.onNodeWithTag(AssociationProfileTestTags.GO_BACK_BUTTON).isDisplayed()
     }
 
