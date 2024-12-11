@@ -19,6 +19,8 @@
     <string name="association_see_more">Voir plus</string>
     <string name="association_more">Plus</string>
     <string name="association_broadcast_message">Envoyer un message aux abonnés</string>
+    <string name="association_see_less">Voir moins</string>
+    <string name="association_share">Partager l\'association</string>
     <string name="association_contact_members">Membres à contacter</string>
     <string name="association_help_us">
         Voici comment vous pouvez nous aider. Cliquez sur une fonction pour en savoir plus
@@ -445,4 +447,3 @@
     <string name="association_category_unknown">Inconnue</string>
 
 </resources>
-
