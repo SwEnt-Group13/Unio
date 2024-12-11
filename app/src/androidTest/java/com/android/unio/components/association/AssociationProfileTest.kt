@@ -162,15 +162,6 @@ class AssociationProfileTest : TearDown() {
     every { navigationAction.navigateTo(any<String>()) } returns Unit
     every { navigationAction.goBack() } returns Unit
 
-    /*associations =
-    listOf(
-        MockAssociation.createMockAssociation(
-            uid = "1",
-            events = Event.Companion.firestoreReferenceListWith(events.map { it.uid })),
-        MockAssociation.createMockAssociation(
-            uid = "2",
-            events = Event.Companion.firestoreReferenceListWith(events.map { it.uid })))*/
-
     val user =
         User(
             uid = "1",
