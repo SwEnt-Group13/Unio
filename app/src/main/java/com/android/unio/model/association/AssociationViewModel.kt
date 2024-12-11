@@ -205,4 +205,13 @@ constructor(
           it?.members?.forEach { fetchUserFromMember(it) }
         }
   }
+
+    /**
+     * Put a null association in the selector and updates the [_selectedAssociation] state flow.
+     *
+     * @param associationId The ID of the association to select.
+     */
+    fun selectNullAssociation() {
+        _selectedAssociation.value = null
+    }
 }
