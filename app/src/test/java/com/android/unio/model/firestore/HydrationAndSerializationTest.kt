@@ -116,9 +116,9 @@ class HydrationAndSerializationTest {
     assertEquals(association.name, serialized["name"])
     assertEquals(association.fullName, serialized["fullName"])
     assertEquals(association.description, serialized["description"])
-      assertEquals(mapUsersToRoles(association.members), serialized["members"])
-      assertEquals(mapRolesToPermission(association.roles), serialized["roles"])
-      assertEquals(association.image, serialized["image"])
+    assertEquals(mapUsersToRoles(association.members), serialized["members"])
+    assertEquals(mapRolesToPermission(association.roles), serialized["roles"])
+    assertEquals(association.image, serialized["image"])
     assertEquals(association.events.uids, serialized["events"])
 
     val hydrated = AssociationRepositoryFirestore.hydrate(serialized)
