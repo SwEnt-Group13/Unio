@@ -42,7 +42,7 @@ import com.android.unio.R
 import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationCategory
 import com.android.unio.model.association.AssociationViewModel
-import com.android.unio.model.strings.test_tags.EditAssociationTestTags
+import com.android.unio.model.strings.test_tags.association.EditAssociationTestTags
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
 import com.android.unio.ui.utils.ToastUtils

@@ -1,4 +1,4 @@
-package com.android.unio.model.strings.test_tags
+package com.android.unio.model.strings.test_tags.authentication
 
 object ResetPasswordTestTags {
   const val SCREEN = "resetPasswordScreen"

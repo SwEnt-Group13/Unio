@@ -1,6 +1,5 @@
 package com.android.unio.ui.saved
 
-import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -27,7 +26,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.android.unio.R
 import com.android.unio.model.event.EventViewModel
-import com.android.unio.model.strings.test_tags.SavedTestTags
+import com.android.unio.model.strings.test_tags.saved.SavedTestTags
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.event.EventCard
 import com.android.unio.ui.navigation.BottomNavigationMenu
@@ -45,7 +44,6 @@ import java.util.Calendar
  * @param eventViewModel The view model for events.
  * @param userViewModel The view model for the user.
  */
-@SuppressLint("UnrememberedMutableState")
 @Composable
 fun SavedScreen(
     navigationAction: NavigationAction,
@@ -60,20 +58,24 @@ fun SavedScreen(
   }
 
   val allEvents by eventViewModel.events.collectAsState()
-  val savedEvents by derivedStateOf {
-    allEvents
-        .filter { user!!.savedEvents.contains(it.uid) }
-        .sortedWith(compareBy({ it.startDate }, { it.uid }))
+  val savedEvents by remember {
+    derivedStateOf {
+      allEvents
+          .filter { user!!.savedEvents.contains(it.uid) }
+          .sortedWith(compareBy({ it.startDate }, { it.uid }))
+    }
   }
 
   val context = LocalContext.current
 
   val today = remember { Calendar.getInstance().get(Calendar.DAY_OF_YEAR) }
-  val savedEventsToday by derivedStateOf {
-    savedEvents.partition {
-      val calendar = Calendar.getInstance()
-      calendar.timeInMillis = it.startDate.toDate().time
-      calendar.get(Calendar.DAY_OF_YEAR) == today
+  val savedEventsToday by remember {
+    derivedStateOf {
+      savedEvents.partition {
+        val calendar = Calendar.getInstance()
+        calendar.timeInMillis = it.startDate.toDate().time
+        calendar.get(Calendar.DAY_OF_YEAR) == today
+      }
     }
   }
 

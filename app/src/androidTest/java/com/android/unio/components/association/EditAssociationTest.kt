@@ -8,7 +8,7 @@ import com.android.unio.assertDisplayComponentInScroll
 import com.android.unio.mocks.association.MockAssociation
 import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationRepository
-import com.android.unio.model.strings.test_tags.EditAssociationTestTags
+import com.android.unio.model.strings.test_tags.association.EditAssociationTestTags
 import com.android.unio.ui.association.EditAssociationScaffold
 import com.android.unio.ui.navigation.NavigationAction
 import com.google.firebase.firestore.CollectionReference

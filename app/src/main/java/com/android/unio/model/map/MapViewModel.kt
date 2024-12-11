@@ -30,22 +30,35 @@ constructor(private val fusedLocationClient: FusedLocationProviderClient) : View
   private val _userLocation = MutableStateFlow<LatLng?>(null)
   val userLocation: StateFlow<LatLng?> = _userLocation.asStateFlow()
 
+  /** Callback for location updates, which parses the location and updates the [_userLocation]. */
   private var locationCallback: LocationCallback? = null
 
+  /**
+   * State flow that holds the center location of the map desired, mainly used for opening the map
+   * from an event detail page.
+   */
   private val _centerLocation = MutableStateFlow<LatLng?>(null)
   val centerLocation: StateFlow<LatLng?> = _centerLocation.asStateFlow()
 
+  /** State flow that holds the uid of the event to highlight on the map. */
+  private val _highlightedEventUid = MutableStateFlow<String?>(null)
+  val highlightedEventUid: StateFlow<String?> = _highlightedEventUid.asStateFlow()
+
   /**
-   * Sets a center location for the map given a location
+   * Sets a highlighted event on the map given a uid and location.
    *
-   * @param location the location to center the map on.
+   * @param uid the uid of the event to highlight.
+   * @param location the location of the event to center the map on.
    */
-  fun setCenterLocation(location: Location?) {
-    if (location != null) {
-      _centerLocation.value = LatLng(location.latitude, location.longitude)
-    } else {
-      _centerLocation.value = null
-    }
+  fun setHighlightedEvent(uid: String?, location: Location?) {
+    uid?.let { _highlightedEventUid.value = uid }
+    location?.let { _centerLocation.value = LatLng(it.latitude, it.longitude) }
+  }
+
+  /** Clears the highlighted event on the map. */
+  fun clearHighlightedEvent() {
+    _highlightedEventUid.value = null
+    _centerLocation.value = null
   }
 
   /** Fetches the user's location and updates the [_userLocation] state flow. */
@@ -63,6 +76,11 @@ constructor(private val fusedLocationClient: FusedLocationProviderClient) : View
     }
   }
 
+  /**
+   * Starts location updates which automatically update the [_userLocation] state flow.
+   *
+   * @param context the context to use for requesting location updates.
+   */
   fun startLocationUpdates(context: Context) {
     if (hasLocationPermissions(context)) {
       val locationRequest =
@@ -91,10 +109,17 @@ constructor(private val fusedLocationClient: FusedLocationProviderClient) : View
     }
   }
 
+  /** Stops location updates. */
   fun stopLocationUpdates() {
     locationCallback?.let { fusedLocationClient.removeLocationUpdates(it) }
   }
 
+  /**
+   * Checks if the app has location permissions.
+   *
+   * @param context the context to check for location permissions.
+   * @return true if the used has given location permissions, false otherwise.
+   */
   fun hasLocationPermissions(context: Context): Boolean {
     return ContextCompat.checkSelfPermission(
         context, android.Manifest.permission.ACCESS_FINE_LOCATION) ==

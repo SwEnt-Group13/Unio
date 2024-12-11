@@ -63,7 +63,7 @@ import androidx.core.net.toUri
 import com.android.unio.R
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.firestore.unregisterAllSnapshotListeners
-import com.android.unio.model.strings.test_tags.UserProfileTestTags
+import com.android.unio.model.strings.test_tags.user.UserProfileTestTags
 import com.android.unio.model.user.User
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.association.AssociationSmall

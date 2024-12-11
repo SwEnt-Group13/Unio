@@ -31,7 +31,7 @@ import androidx.compose.ui.unit.dp
 import com.android.unio.R
 import com.android.unio.model.association.Association
 import com.android.unio.model.search.SearchViewModel
-import com.android.unio.model.strings.test_tags.ExploreContentTestTags
+import com.android.unio.model.strings.test_tags.explore.ExploreContentTestTags
 import com.android.unio.ui.theme.AppTypography
 
 /**

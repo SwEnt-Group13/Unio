@@ -38,6 +38,9 @@ class MapViewModelTest {
   @MockK private lateinit var fusedLocationClient: FusedLocationProviderClient
   @MockK private lateinit var locationTask: Task<Location>
 
+  private val eventUid = "xWAwid234WDSaw"
+  private val location = MockLocation.createMockLocation(latitude = 10.0, longitude = 34.7)
+
   private lateinit var mapViewModel: MapViewModel
 
   @Before
@@ -207,10 +210,19 @@ class MapViewModelTest {
   }
 
   @Test
-  fun testSetCenterLocation() {
-    val location = MockLocation.createMockLocation(latitude = 10.0, longitude = 34.7)
-    mapViewModel.setCenterLocation(location)
+  fun testSetHighlightedEvent() {
+    mapViewModel.setHighlightedEvent(eventUid, location)
+    assertEquals(eventUid, mapViewModel.highlightedEventUid.value)
     assertEquals(location.latitude, mapViewModel.centerLocation.value?.latitude)
     assertEquals(location.longitude, mapViewModel.centerLocation.value?.longitude)
+  }
+
+  @Test
+  fun testClearHighlightedEvent() {
+    mapViewModel.setHighlightedEvent(eventUid, location)
+
+    mapViewModel.clearHighlightedEvent()
+    assertNull(mapViewModel.highlightedEventUid.value)
+    assertNull(mapViewModel.centerLocation.value)
   }
 }
