@@ -88,6 +88,7 @@ import com.android.unio.ui.components.NotificationSender
 import com.android.unio.ui.image.AsyncImageWrapper
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
+import com.android.unio.ui.navigation.SmoothTopBarNavigationMenu
 import com.android.unio.ui.theme.AppTypography
 import com.google.firebase.Firebase
 import com.google.firebase.Timestamp
@@ -238,8 +239,7 @@ fun EventScreenScaffold(
  * @param navigationAction The navigation action to use.
  * @param mapViewModel The [MapViewModel] to use.
  * @param event The event to display.
- * @param associations The list of associations organizing the event.
- * @param padding The padding to use.
+ * @param organisers The list of associations organizing the event.
  * @param pagerState The PagerState of the Horizontal menu
  */
 @Composable
@@ -261,7 +261,8 @@ fun EventScreenContent(
     }
 
     EventInformationCard(event, organisers, context)
-
+    val tabList = listOf("Description", "Event pictures")
+    SmoothTopBarNavigationMenu(tabList, pagerState)
     HorizontalPager(
         state = pagerState,
         modifier =

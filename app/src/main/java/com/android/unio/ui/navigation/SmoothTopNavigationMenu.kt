@@ -30,7 +30,11 @@ import com.android.unio.model.strings.test_tags.home.HomeTestTags
 import kotlinx.coroutines.launch
 
 @Composable
-fun SmoothTopBarNavigationMenu(tabList: List<String>, pagerState: PagerState) {
+fun SmoothTopBarNavigationMenu(
+    tabList: List<String>,
+    pagerState: PagerState,
+    modifier: Modifier = Modifier
+) {
 
   val scope = rememberCoroutineScope()
   val colorScheme = MaterialTheme.colorScheme
