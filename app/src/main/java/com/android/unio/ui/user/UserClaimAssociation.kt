@@ -75,9 +75,6 @@ fun UserClaimAssociationScreen(
               verticalArrangement = Arrangement.spacedBy(12.dp),
               horizontalAlignment = Alignment.CenterHorizontally,
           ) {
-            Text(
-                context.getString(R.string.user_claim_association_you_can_do_the_following),
-                style = AppTypography.headlineSmall)
 
             Text(
                 context.getString(R.string.user_claim_association_claim_president_rights),
