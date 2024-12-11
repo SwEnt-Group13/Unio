@@ -54,7 +54,6 @@ import com.android.unio.ui.settings.SettingsScreen
 import com.android.unio.ui.theme.AppTheme
 import com.android.unio.ui.user.SomeoneElseUserProfileScreen
 import com.android.unio.ui.user.UserClaimAssociationPresidentialRightsScreen
-import com.android.unio.ui.user.UserClaimAssociationScreen
 import com.android.unio.ui.user.UserProfileEditionScreen
 import com.android.unio.ui.user.UserProfileScreen
 import dagger.hilt.android.AndroidEntryPoint
@@ -201,12 +200,9 @@ fun UnioApp() {
       composable(Screen.SETTINGS) {
         SettingsScreen(navigationActions, authViewModel, userViewModel)
       }
-      composable(Screen.CLAIM_ASSOCIATION_RIGHTS) {
-        UserClaimAssociationScreen(associationViewModel, navigationActions, searchViewModel)
-      }
       composable(Screen.CLAIM_ASSOCIATION_PRESIDENTIAL_RIGHTS) {
         UserClaimAssociationPresidentialRightsScreen(
-            associationViewModel, navigationActions, userViewModel)
+          navigationActions, associationViewModel, userViewModel, searchViewModel)
       }
     }
   }
