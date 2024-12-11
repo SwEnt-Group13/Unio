@@ -12,6 +12,9 @@ import com.android.unio.model.firestore.ReferenceList
 import com.android.unio.model.firestore.UniquelyIdentifiable
 import com.android.unio.model.user.User
 import com.android.unio.ui.theme.badgeColorBlue
+import com.android.unio.ui.theme.badgeColorCyan
+import com.android.unio.ui.theme.badgeColorRed
+import com.android.unio.ui.theme.badgeColorYellow
 
 /**
  * Represents an association within the system. This class holds various details about the
@@ -100,7 +103,7 @@ class Role(
 
   companion object {
     // Predefined roles
-    val ADMIN = Role("Administrator", Permissions.FULL_RIGHTS, badgeColorBlue, "Administrator")
+    val ADMIN = Role("Administrator", Permissions.FULL_RIGHTS, badgeColorCyan, "Administrator")
     val COMITE =
         Role(
             "Committee",
@@ -109,9 +112,9 @@ class Role(
                 .addPermission(PermissionType.EDIT_MEMBERS)
                 .addPermission(PermissionType.VIEW_EVENTS)
                 .build(),
-            0xFF0000FF,
+            badgeColorYellow,
             "Committee")
-    val MEMBER = Role("Member", Permissions.NONE, badgeColorBlue, "Member")
+    val MEMBER = Role("Member", Permissions.NONE, badgeColorRed, "Member")
     val GUEST = Role("Guest", Permissions.NONE, badgeColorBlue, "Guest")
   }
 }
