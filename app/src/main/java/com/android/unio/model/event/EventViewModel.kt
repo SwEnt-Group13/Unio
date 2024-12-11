@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.android.unio.model.association.AssociationRepository
 import com.android.unio.model.image.ImageRepository
+import com.android.unio.model.strings.StoragePathsStrings
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.io.InputStream
 import javax.inject.Inject
@@ -99,7 +100,7 @@ constructor(
     event.uid = repository.getNewUid() // Generate a new UID for the event
     imageRepository.uploadImage(
         inputStream,
-        "images/events/${event.uid}",
+        StoragePathsStrings.EVENT_IMAGES + event.uid,
         { uri ->
           event.image = uri
           repository.addEvent(event, onSuccess, onFailure)
@@ -135,7 +136,8 @@ constructor(
   ) {
     imageRepository.uploadImage(
         inputStream,
-        "images/events/${event.uid}",
+        // no need to delete the old image as it will be replaced by the new one
+        StoragePathsStrings.EVENT_IMAGES + event.uid,
         { uri ->
           event.image = uri
           repository.addEvent(event, onSuccess, onFailure)
@@ -200,6 +202,13 @@ constructor(
         },
         onFailure = { exception ->
           Log.e("EventViewModel", "An error occurred while deleting event: $exception")
+          onFailure(exception)
+        })
+    imageRepository.deleteImage(
+        StoragePathsStrings.EVENT_IMAGES + event.uid,
+        {},
+        { exception ->
+          Log.e("EventViewModel", "An error occured while deleting event banner: $exception")
         })
 
     event.organisers.requestAll({

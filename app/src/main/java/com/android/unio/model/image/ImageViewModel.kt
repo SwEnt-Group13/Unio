@@ -34,6 +34,7 @@ class ImageViewModel @Inject constructor(private val repository: ImageRepository
    * @param onSuccess The callback that is called when the operation is successful.
    * @param onFailure The callback that is called when the operation fails.
    */
+  // TODO: add test
   fun deleteImage(path: String, onSuccess: () -> Unit, onFailure: () -> Unit) {
     repository.deleteImage(path, onSuccess) { exception ->
       Log.e("ImageViewModel", "Error deleting image: $exception")

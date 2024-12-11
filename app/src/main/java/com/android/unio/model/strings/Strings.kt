@@ -8,7 +8,8 @@ object FirestorePathsStrings {
 
 object StoragePathsStrings {
   const val USER_IMAGES = "images/users/"
-  const val ASSOCIATION_IMAGES = "images/associations"
+  const val ASSOCIATION_IMAGES = "images/associations/"
+  const val EVENT_IMAGES = "images/events/"
 }
 
 object MapStrings {
