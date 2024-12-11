@@ -10,6 +10,8 @@ import com.android.unio.model.association.compareRoleLists
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventRepositoryFirestore
 import com.android.unio.model.firestore.transform.hydrate
+import com.android.unio.model.firestore.transform.mapRolesToPermission
+import com.android.unio.model.firestore.transform.mapUsersToRoles
 import com.android.unio.model.firestore.transform.serialize
 import com.android.unio.model.map.Location
 import com.android.unio.model.user.Interest
@@ -114,18 +116,8 @@ class HydrationAndSerializationTest {
     assertEquals(association.name, serialized["name"])
     assertEquals(association.fullName, serialized["fullName"])
     assertEquals(association.description, serialized["description"])
-    assertEquals(
-        association.members.associate { member -> member.user.uid to member.role.uid },
-        serialized["members"])
-    assertEquals(
-        association.roles.associate { role ->
-          role.uid to
-              mapOf(
-                  Role::displayName.name to role.displayName,
-                  Role::permissions.name to
-                      role.permissions.getGrantedPermissions().map { it.stringName })
-        },
-        serialized["roles"])
+    assertEquals(mapUsersToRoles(association.members), serialized["members"])
+    assertEquals(mapRolesToPermission(association.roles), serialized["roles"])
     assertEquals(association.image, serialized["image"])
     assertEquals(association.events.uids, serialized["events"])
 

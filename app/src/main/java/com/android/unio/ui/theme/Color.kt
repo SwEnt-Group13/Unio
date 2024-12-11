@@ -1,5 +1,6 @@
 package com.android.unio.ui.theme
 
+import androidx.annotation.ColorInt
 import androidx.compose.ui.graphics.Color
 
 val primaryLight = Color(0xFF595992)
@@ -230,3 +231,36 @@ val eventTypeOther = Color.Gray // Default Color
 // Colors for the approximate user location circle on the map
 val mapUserLocationCircleFiller = Color(0x2200A0FF)
 val mapUserLocationCircleStroke = Color(0xAA00A0FF)
+
+// Colors for the role badges
+val badgeColorBlack = 0xFF000000 // Opaque Black
+val badgeColorWhite = 0xFFFFFFFF // Opaque White
+val badgeColorRed = 0xFFFF0000 // Opaque Red
+val badgeColorGreen = 0xFF00FF00 // Opaque Green
+val badgeColorBlue = 0xFF0000FF // Opaque Blue
+val badgeColorYellow = 0xFFFFFF00 // Opaque Yellow
+val badgeColorCyan = 0xFF00FFFF // Opaque Cyan
+val badgeColorMagenta = 0xFFFF00FF // Opaque Magenta
+
+// Helper function to calculate the luminance of a color
+fun calculateLuminance(@ColorInt color: Long): Double {
+  val red = ((color shr 16) and 0xFF) / 255.0
+  val green = ((color shr 8) and 0xFF) / 255.0
+  val blue = (color and 0xFF) / 255.0
+
+  val r = if (red <= 0.03928) red / 12.92 else Math.pow((red + 0.055) / 1.055, 2.4)
+  val g = if (green <= 0.03928) green / 12.92 else Math.pow((green + 0.055) / 1.055, 2.4)
+  val b = if (blue <= 0.03928) blue / 12.92 else Math.pow((blue + 0.055) / 1.055, 2.4)
+
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b
+}
+
+// Function to get a readable text color based on the badge color
+fun getReadableTextColor(@ColorInt badgeColor: Long): Long {
+  val luminance = calculateLuminance(badgeColor)
+  val whiteContrast = (1.0 + 0.05) / (luminance + 0.05)
+  val blackContrast = (luminance + 0.05) / (0.0 + 0.05)
+
+  // Return white color if it provides better contrast, else return black color
+  return if (whiteContrast >= blackContrast) 0xFFFFFFFF else 0xFF000000
+}
