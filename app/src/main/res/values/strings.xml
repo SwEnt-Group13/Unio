@@ -237,6 +237,8 @@
     <string name="event_pictures_before_start_date">You have to wait for the event to start to upload pictures :)</string>
     <string name="event_no_user_pictures">The event has no user pictures yet :/</string>
     <string name="event_details_user_picture_content_description">A picture uploaded by a user</string>
+    <string name="event_details_description_tab">Description</string>
+    <string name="event_details_pictures_tab">Event pictures</string>
 
     /**
     * package: explore
