@@ -15,6 +15,7 @@ object UserProfileTestTags {
   const val USER_SETTINGS = "userProfileUserSettings"
   const val SIGN_OUT = "userProfileSignOut"
   const val CLAIMING_BUTTON = "userClaimingButton"
+  const val CLAIM_ASSOCIATION = "userProfileClaimAssociation"
 
   // BOTTOM SHEET
   const val BOTTOM_SHEET = "userProfileBottomSheet"
