@@ -6,6 +6,8 @@ import com.android.unio.mocks.map.MockLocation
 import com.android.unio.model.association.Association
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventType
+import com.android.unio.model.event.EventUserPicture
+import com.android.unio.model.firestore.ReferenceList
 import com.android.unio.model.map.Location
 import com.google.firebase.Timestamp
 import java.util.Date
@@ -97,7 +99,9 @@ class MockEvent {
         startDate: Timestamp = Timestamp(Date(System.currentTimeMillis() + 86400001)),
         endDate: Timestamp = Timestamp(Date(System.currentTimeMillis() + 86400002)),
         location: Location = MockLocation.createMockLocation(),
-        types: List<EventType> = listOf(EventType.TRIP)
+        types: List<EventType> = listOf(EventType.TRIP),
+        maxNumberOfPlaces: Int = -1,
+        eventPictures: ReferenceList<EventUserPicture> = MockReferenceList()
     ): Event {
       return Event(
           uid = uid,
@@ -112,8 +116,8 @@ class MockEvent {
           endDate = endDate,
           location = location,
           types = types,
-          maxNumberOfPlaces = -1,
-          eventPictures = MockReferenceList())
+          maxNumberOfPlaces = maxNumberOfPlaces,
+          eventPictures = eventPictures)
     }
 
     /** Creates a list of mock Events with default properties */

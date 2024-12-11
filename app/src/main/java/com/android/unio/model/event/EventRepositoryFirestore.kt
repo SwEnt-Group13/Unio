@@ -110,15 +110,6 @@ class EventRepositoryFirestore @Inject constructor(private val db: FirebaseFires
             onSuccess = { onSuccess() }, onFailure = { exception -> onFailure(exception) })
   }
 
-  override fun addPictureToEvent(
-      event: Event,
-      eventPicture: EventUserPicture,
-      onSuccess: () -> Unit,
-      onFailure: (Exception) -> Unit
-  ) {
-    TODO()
-  }
-
   // Note: the following line is needed to add external methods to the companion object
   companion object
 }

@@ -21,7 +21,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.itemsIndexed
@@ -266,9 +265,14 @@ fun EventScreenContent(
 
     EventInformationCard(event, organisers, context)
 
-    HorizontalPager(state = pagerState, modifier = Modifier.fillMaxSize().padding(9.dp)) { page ->
-      EventDetailsBody(navigationAction, mapViewModel, event, context, page)
-    }
+    HorizontalPager(
+        state = pagerState,
+        modifier =
+            Modifier.fillMaxSize()
+                .padding(9.dp)
+                .testTag(EventDetailsTestTags.EVENT_DETAILS_PAGER)) { page ->
+          EventDetailsBody(navigationAction, mapViewModel, event, context, page)
+        }
   }
 }
 
@@ -407,11 +411,15 @@ fun EventDetailsPicturesTab(event: Event, context: Context) {
   val eventPictures by event.eventPictures.list.collectAsState()
   if (event.startDate.seconds > Timestamp.now().seconds) {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-      Text(context.getString(R.string.event_pictures_before_start_date))
+      Text(
+          context.getString(R.string.event_pictures_before_start_date),
+          modifier = Modifier.testTag(EventDetailsTestTags.EVENT_NOT_STARTED_TEXT))
     }
   } else if (eventPictures.isEmpty()) {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-      Text(context.getString(R.string.event_no_user_pictures))
+      Text(
+          context.getString(R.string.event_no_user_pictures),
+          modifier = Modifier.testTag(EventDetailsTestTags.EVENT_NO_PICTURES_TEXT))
     }
   } else {
     LazyVerticalStaggeredGrid(

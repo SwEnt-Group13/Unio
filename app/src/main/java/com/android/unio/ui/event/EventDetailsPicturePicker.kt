@@ -23,6 +23,7 @@ import com.android.unio.R
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventUserPicture
 import com.android.unio.model.event.EventViewModel
+import com.android.unio.model.strings.test_tags.event.EventDetailsTestTags
 import com.android.unio.model.user.User
 import com.android.unio.ui.components.PictureSelectionTool
 import firestoreReferenceElementWith
@@ -38,7 +39,8 @@ fun EventDetailsPicturePicker(event: Event, eventViewModel: EventViewModel, user
   var showSheet by remember { mutableStateOf(false) }
 
   FloatingActionButton(
-      onClick = { showSheet = true }, modifier = Modifier.testTag("onch").padding(15.dp)) {
+      onClick = { showSheet = true },
+      modifier = Modifier.testTag(EventDetailsTestTags.UPLOAD_PICTURE_BUTTON).padding(15.dp)) {
         Icon(
             imageVector = Icons.Filled.Upload,
             contentDescription = context.getString(R.string.home_content_description_map_button))
@@ -46,6 +48,7 @@ fun EventDetailsPicturePicker(event: Event, eventViewModel: EventViewModel, user
 
   if (showSheet) {
     ModalBottomSheet(
+        modifier = Modifier.testTag(EventDetailsTestTags.PICTURE_SELECTION_SHEET),
         sheetState = sheetState,
         onDismissRequest = {
           scope.launch {

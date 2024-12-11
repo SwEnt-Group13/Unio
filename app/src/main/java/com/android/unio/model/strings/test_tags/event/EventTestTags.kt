@@ -107,4 +107,9 @@ object EventDetailsTestTags {
   const val SEND_NOTIFICATION = "eventSendNotification"
   const val GALLERY_GRID = "eventGallery"
   const val USER_EVENT_PICTURE = "eventPicture"
+  const val UPLOAD_PICTURE_BUTTON = "uploadActionButton"
+  const val PICTURE_SELECTION_SHEET = "pictureSelectionBottomSheet"
+  const val EVENT_DETAILS_PAGER = "eventDetailsPager"
+  const val EVENT_NOT_STARTED_TEXT = "eventNotStartedText"
+  const val EVENT_NO_PICTURES_TEXT = "eventNoPicturesText"
 }
