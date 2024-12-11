@@ -30,11 +30,9 @@ import com.android.unio.model.strings.test_tags.home.HomeTestTags
 import kotlinx.coroutines.launch
 
 @Composable
-fun SmoothTopBarNavigationMenu(
-    tabList: List<String>,
-    pagerState: PagerState,
-    modifier: Modifier = Modifier
-) {
+fun SmoothTopBarNavigationMenu(tabList: List<String>, pagerState: PagerState) {
+  val defaultTabWidth = 576.0F
+  val defaultTabHeight = 92.0F
 
   val scope = rememberCoroutineScope()
   val colorScheme = MaterialTheme.colorScheme
@@ -57,8 +55,8 @@ fun SmoothTopBarNavigationMenu(
                   if (sizeList[0] == null) {
                     Log.e("Home Page", "The size values of tabs are null, should not happen !")
                     // hardcoded values in case sizeList[0] is null
-                    tabWidth = 576.0F
-                    height = 92.0F
+                    tabWidth = defaultTabWidth
+                    height = defaultTabHeight
                   } else {
                     tabWidth = sizeList[0]!!.first
                     height = sizeList[0]!!.second

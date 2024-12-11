@@ -149,9 +149,9 @@ fun EventScreen(
  * @param navigationAction The navigation action to use.
  * @param mapViewModel The [MapViewModel] to use.
  * @param event The event to display.
- * @param associations The list of associations organizing the event.
- * @param isSaved Whether the event is saved.
- * @param onClickSaveButton Lambda to handle the save button click.
+ * @param organisers The list of associations organizing the event.
+ * @param eventViewModel The [EventViewModel] to use.
+ * @param userViewModel The [UserViewModel] to use.
  */
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -164,8 +164,9 @@ fun EventScreenScaffold(
     eventViewModel: EventViewModel,
     userViewModel: UserViewModel
 ) {
-  val nbOfTabs = 2
-  val pagerState = rememberPagerState(initialPage = 0) { nbOfTabs }
+
+  val tabList = listOf("Description", "Event pictures")
+  val pagerState = rememberPagerState(initialPage = 0) { tabList.size }
   val context = LocalContext.current
   var showSheet by remember { mutableStateOf(false) }
   val user by userViewModel.user.collectAsState()
@@ -219,7 +220,7 @@ fun EventScreenScaffold(
             })
       },
       content = {
-        EventScreenContent(navigationAction, mapViewModel, event, organisers, pagerState)
+        EventScreenContent(navigationAction, mapViewModel, event, organisers, pagerState, tabList)
       })
 
   NotificationSender(
@@ -248,7 +249,8 @@ fun EventScreenContent(
     mapViewModel: MapViewModel,
     event: Event,
     organisers: List<Association>,
-    pagerState: PagerState
+    pagerState: PagerState,
+    tabList: List<String>
 ) {
   val context = LocalContext.current
   Column(modifier = Modifier.testTag(EventDetailsTestTags.DETAILS_PAGE).fillMaxSize()) {
@@ -261,7 +263,7 @@ fun EventScreenContent(
     }
 
     EventInformationCard(event, organisers, context)
-    val tabList = listOf("Description", "Event pictures")
+
     SmoothTopBarNavigationMenu(tabList, pagerState)
     HorizontalPager(
         state = pagerState,
@@ -278,7 +280,7 @@ fun EventScreenContent(
  * A card that displays the information of the event.
  *
  * @param event The event to display.
- * @param associations The list of associations organizing the event.
+ * @param organisers The list of associations organizing the event.
  * @param context The context to use.
  */
 @Composable
