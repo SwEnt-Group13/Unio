@@ -27,4 +27,17 @@ class ImageViewModel @Inject constructor(private val repository: ImageRepository
       onFailure()
     }
   }
+  /**
+   * Deletes an image from Firebase Storage.
+   *
+   * @param path The path to the image in Firebase Storage.
+   * @param onSuccess The callback that is called when the operation is successful.
+   * @param onFailure The callback that is called when the operation fails.
+   */
+  fun deleteImage(path: String, onSuccess: () -> Unit, onFailure: () -> Unit) {
+    repository.deleteImage(path, onSuccess) { exception ->
+      Log.e("ImageViewModel", "Error deleting image: $exception")
+      onFailure()
+    }
+  }
 }
