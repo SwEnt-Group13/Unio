@@ -413,6 +413,7 @@
     <string name="notification_broadcast_failure">Une erreur est survenue lors de l\'envoi de la notification.</string>
     <string name="notification_empty_message">Veuillez entrer un message pour envoyer une notification</string>
 
+    <!-- Event Details Strings -->
     <string name="event_sign_up">Je viens !</string>
     <string name="event_not_found">ERREUR: évènement introuvable</string>
     <string name="event_details_content_description_saved">Sauvegardé</string>
@@ -424,6 +425,11 @@
     <string name="event_signup_button_description">Icône pour s\'inscrire à l\'évènement.</string>
     <string name="association_image_description">Image de l\'association</string>
     <string name="reset_password_go_back">Retour à la page d\'accueil</string>
+    <string name="event_pictures_before_start_date">Attendez le début de l\'évènement avant de télécharger vos photos :)</string>
+    <string name="event_no_user_pictures">Il n\'y a pas encore de photos de l\'évènement :/</string>
+    <string name="event_details_user_picture_content_description">Une photo téléchargée par un utilisateur</string>
+    <string name="event_details_description_tab">Description</string>
+    <string name="event_details_pictures_tab">Photos de l\'évènement</string>
 
     <!-- Bottom Navigation Strings -->
     <string name="bottom_nav_home">Accueil</string>

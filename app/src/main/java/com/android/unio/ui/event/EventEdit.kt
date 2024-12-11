@@ -37,6 +37,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import com.android.unio.R
+import com.android.unio.mocks.firestore.MockReferenceList
 import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.event.Event
@@ -290,6 +291,7 @@ fun EventEditScreen(
                               startDate = startTimestamp!!,
                               endDate = endTimestamp!!,
                               location = selectedLocation!!,
+                              eventPictures = MockReferenceList(),
                           )
                       // This should be extracted to a util
                       if (checkImageUri(eventBannerUri.toString()) == ImageUriType.LOCAL) {

@@ -28,6 +28,7 @@ import com.android.unio.model.association.Member
 import com.android.unio.model.association.Role
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventRepositoryFirestore
+import com.android.unio.model.event.EventUserPictureRepositoryFirestore
 import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.firestore.emptyFirestoreReferenceList
 import com.android.unio.model.firestore.firestoreReferenceListWith
@@ -93,6 +94,8 @@ class AssociationProfileTest : TearDown() {
   @MockK private lateinit var userRepository: UserRepositoryFirestore
 
   @MockK private lateinit var imageRepository: ImageRepositoryFirebaseStorage
+  @MockK
+  private lateinit var eventUserPictureRepositoryFirestore: EventUserPictureRepositoryFirestore
 
   @MockK private lateinit var connectivityManager: ConnectivityManager
 
@@ -208,7 +211,12 @@ class AssociationProfileTest : TearDown() {
           val onSuccess = args[0] as (List<Event>) -> Unit
           onSuccess(events)
         }
-    eventViewModel = EventViewModel(eventRepository, imageRepository, associationRepository)
+    eventViewModel =
+        EventViewModel(
+            eventRepository,
+            imageRepository,
+            associationRepository,
+            eventUserPictureRepositoryFirestore)
 
     every { associationRepository.init(any()) } answers { firstArg<() -> Unit>().invoke() }
     every { associationRepository.getAssociations(any(), any()) } answers

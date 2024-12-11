@@ -18,6 +18,7 @@ import com.android.unio.mocks.user.MockUser
 import com.android.unio.model.association.AssociationRepositoryFirestore
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventRepositoryFirestore
+import com.android.unio.model.event.EventUserPictureRepositoryFirestore
 import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.hilt.module.FirebaseModule
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
@@ -71,6 +72,8 @@ class HomeTest : TearDown() {
   @MockK private lateinit var imageRepository: ImageRepositoryFirebaseStorage
   @MockK private lateinit var navigationAction: NavigationAction
   @MockK private lateinit var associationRepositoryFirestore: AssociationRepositoryFirestore
+  @MockK
+  private lateinit var eventUserPictureRepositoryFirestore: EventUserPictureRepositoryFirestore
 
   private lateinit var eventViewModel: EventViewModel
   private lateinit var searchViewModel: SearchViewModel
@@ -129,7 +132,11 @@ class HomeTest : TearDown() {
           onSuccess(eventList)
         }
     eventViewModel =
-        EventViewModel(eventRepository, imageRepository, associationRepositoryFirestore)
+        EventViewModel(
+            eventRepository,
+            imageRepository,
+            associationRepositoryFirestore,
+            eventUserPictureRepositoryFirestore)
     eventListFollowed = asso.let { eventList.filter { event -> event.organisers.contains(it.uid) } }
   }
 
@@ -150,7 +157,11 @@ class HomeTest : TearDown() {
       val context = LocalContext.current
       text = context.getString(R.string.event_no_events_available)
       val eventViewModel =
-          EventViewModel(eventRepository, imageRepository, associationRepositoryFirestore)
+          EventViewModel(
+              eventRepository,
+              imageRepository,
+              associationRepositoryFirestore,
+              eventUserPictureRepositoryFirestore)
 
       ProvidePreferenceLocals {
         HomeScreen(navigationAction, eventViewModel, userViewModel, searchViewModel)
@@ -206,7 +217,11 @@ class HomeTest : TearDown() {
   fun testMapButton() {
     composeTestRule.setContent {
       val eventViewModel =
-          EventViewModel(eventRepository, imageRepository, associationRepositoryFirestore)
+          EventViewModel(
+              eventRepository,
+              imageRepository,
+              associationRepositoryFirestore,
+              eventUserPictureRepositoryFirestore)
 
       ProvidePreferenceLocals {
         HomeScreen(navigationAction, eventViewModel, userViewModel, searchViewModel)
@@ -227,7 +242,11 @@ class HomeTest : TearDown() {
   fun testClickFollowingAndAdd() {
     composeTestRule.setContent {
       val eventViewModel =
-          EventViewModel(eventRepository, imageRepository, associationRepositoryFirestore)
+          EventViewModel(
+              eventRepository,
+              imageRepository,
+              associationRepositoryFirestore,
+              eventUserPictureRepositoryFirestore)
 
       ProvidePreferenceLocals {
         HomeScreen(navigationAction, eventViewModel, userViewModel, searchViewModel)

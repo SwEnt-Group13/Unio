@@ -10,6 +10,8 @@ import com.android.unio.model.association.Role
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventRepositoryFirestore
 import com.android.unio.model.event.EventType
+import com.android.unio.model.event.EventUserPicture
+import com.android.unio.model.event.EventUserPictureRepositoryFirestore
 import com.android.unio.model.firestore.firestoreReferenceListWith
 import com.android.unio.model.map.Location
 import com.android.unio.model.user.Interest
@@ -138,6 +140,9 @@ fun EventRepositoryFirestore.Companion.hydrate(data: Map<String, Any>?): Event {
   val types = (data?.get(Event::types.name) as? List<String> ?: emptyList())
 
   val location = data?.get(Event::location.name) as? Map<String, Any> ?: emptyMap()
+  val eventPictures =
+      EventUserPicture.firestoreReferenceListWith(
+          data?.get(Event::eventPictures.name) as? List<String> ?: emptyList())
 
   return Event(
       uid = data?.get(Event::uid.name) as? String ?: "",
@@ -157,5 +162,18 @@ fun EventRepositoryFirestore.Companion.hydrate(data: Map<String, Any>?): Event {
               name = location.get(Location::name.name) as? String ?: ""),
       types = types.map { EventType.valueOf(it) },
       maxNumberOfPlaces = (data?.get(Event::maxNumberOfPlaces.name) as? Number ?: -1).toInt(),
-      numberOfSaved = (data?.get(Event::numberOfSaved.name) as? Number ?: 0).toInt())
+      numberOfSaved = (data?.get(Event::numberOfSaved.name) as? Number ?: 0).toInt(),
+      eventPictures = eventPictures)
+}
+
+fun EventUserPictureRepositoryFirestore.Companion.hydrate(
+    data: Map<String, Any>?
+): EventUserPicture {
+  val author = data?.get(EventUserPicture::author.name) as? String ?: ""
+  return EventUserPicture(
+      uid = data?.get(EventUserPicture::uid.name) as? String ?: "",
+      author = User.firestoreReferenceElementWith(author),
+      image = data?.get(EventUserPicture::image.name) as? String ?: "",
+      likes = data?.get(EventUserPicture::likes.name) as? Int ?: 0,
+  )
 }

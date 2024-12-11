@@ -39,6 +39,7 @@ import java.util.Date
  * @property types list of event types
  * @property maxNumberOfPlaces max number of places available for the event
  * @property numberOfSaved number of users that saved the event
+ * * @property eventPictures number of remaining places
  */
 data class Event(
     override var uid: String = "",
@@ -54,7 +55,8 @@ data class Event(
     val location: Location = Location(),
     val types: List<EventType> = mutableListOf(EventType.OTHER),
     val maxNumberOfPlaces: Int = -1,
-    val numberOfSaved: Int = 0
+    val numberOfSaved: Int = 0,
+    val eventPictures: ReferenceList<EventUserPicture>,
 ) : UniquelyIdentifiable {
   companion object
 }

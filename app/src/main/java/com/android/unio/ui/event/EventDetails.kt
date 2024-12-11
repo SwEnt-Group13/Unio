@@ -11,8 +11,8 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -21,10 +21,14 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.itemsIndexed
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.LocationOn
@@ -84,8 +88,10 @@ import com.android.unio.ui.components.NotificationSender
 import com.android.unio.ui.image.AsyncImageWrapper
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
+import com.android.unio.ui.navigation.SmoothTopBarNavigationMenu
 import com.android.unio.ui.theme.AppTypography
 import com.google.firebase.Firebase
+import com.google.firebase.Timestamp
 import com.google.firebase.messaging.messaging
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -121,6 +127,7 @@ fun EventScreen(
     userViewModel: UserViewModel,
     mapViewModel: MapViewModel,
 ) {
+
   val event by eventViewModel.selectedEvent.collectAsState()
 
   val user by userViewModel.user.collectAsState()
@@ -142,10 +149,11 @@ fun EventScreen(
  * @param navigationAction The navigation action to use.
  * @param mapViewModel The [MapViewModel] to use.
  * @param event The event to display.
- * @param associations The list of associations organizing the event.
- * @param isSaved Whether the event is saved.
- * @param onClickSaveButton Lambda to handle the save button click.
+ * @param organisers The list of associations organizing the event.
+ * @param eventViewModel The [EventViewModel] to use.
+ * @param userViewModel The [UserViewModel] to use.
  */
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EventScreenScaffold(
@@ -156,22 +164,28 @@ fun EventScreenScaffold(
     eventViewModel: EventViewModel,
     userViewModel: UserViewModel
 ) {
+
+  val tabList = listOf("Description", "Event pictures")
+  val pagerState = rememberPagerState(initialPage = 0) { tabList.size }
   val context = LocalContext.current
-
-  testSnackbar = remember { SnackbarHostState() }
-  scope = rememberCoroutineScope()
-
   var showSheet by remember { mutableStateOf(false) }
+  val user by userViewModel.user.collectAsState()
 
   var showNotificationDialog by remember { mutableStateOf(false) }
-
+  testSnackbar = remember { SnackbarHostState() }
+  scope = rememberCoroutineScope()
   Scaffold(
+      floatingActionButton = {
+        if (pagerState.currentPage == 1) {
+          EventDetailsPicturePicker(event, eventViewModel, user!!) // Asserted non null above
+        }
+      },
       modifier = Modifier.testTag(EventDetailsTestTags.SCREEN),
       snackbarHost = {
         SnackbarHost(
             hostState = testSnackbar!!,
             modifier = Modifier.testTag(EventDetailsTestTags.SNACKBAR_HOST),
-            snackbar = {
+            snackbar = { data ->
               Snackbar {
                 TextButton(
                     onClick = { testSnackbar!!.currentSnackbarData?.dismiss() },
@@ -205,8 +219,8 @@ fun EventScreenScaffold(
                   }
             })
       },
-      content = { padding ->
-        EventScreenContent(navigationAction, mapViewModel, event, organisers, padding)
+      content = {
+        EventScreenContent(navigationAction, mapViewModel, event, organisers, pagerState, tabList)
       })
 
   NotificationSender(
@@ -226,8 +240,8 @@ fun EventScreenScaffold(
  * @param navigationAction The navigation action to use.
  * @param mapViewModel The [MapViewModel] to use.
  * @param event The event to display.
- * @param associations The list of associations organizing the event.
- * @param padding The padding to use.
+ * @param organisers The list of associations organizing the event.
+ * @param pagerState The PagerState of the Horizontal menu
  */
 @Composable
 fun EventScreenContent(
@@ -235,34 +249,38 @@ fun EventScreenContent(
     mapViewModel: MapViewModel,
     event: Event,
     organisers: List<Association>,
-    padding: PaddingValues
+    pagerState: PagerState,
+    tabList: List<String>
 ) {
   val context = LocalContext.current
-  Column(
-      modifier =
-          Modifier.testTag(EventDetailsTestTags.DETAILS_PAGE)
-              .verticalScroll(rememberScrollState())
-              .padding(padding)
-              .fillMaxSize()) {
-        Column(verticalArrangement = Arrangement.Center, modifier = Modifier.height(200.dp)) {
-          AsyncImageWrapper(
-              imageUri = event.image.toUri(),
-              contentDescription = context.getString(R.string.event_image_description),
-              modifier = Modifier.fillMaxWidth().testTag(EventDetailsTestTags.DETAILS_IMAGE),
-              contentScale = ContentScale.Crop)
+  Column(modifier = Modifier.testTag(EventDetailsTestTags.DETAILS_PAGE).fillMaxSize()) {
+    Column(modifier = Modifier.height(200.dp)) {
+      AsyncImageWrapper(
+          imageUri = event.image.toUri(),
+          contentDescription = context.getString(R.string.event_image_description),
+          modifier = Modifier.fillMaxWidth().testTag(EventDetailsTestTags.DETAILS_IMAGE),
+          contentScale = ContentScale.Crop)
+    }
+
+    EventInformationCard(event, organisers, context)
+
+    SmoothTopBarNavigationMenu(tabList, pagerState)
+    HorizontalPager(
+        state = pagerState,
+        modifier =
+            Modifier.fillMaxSize()
+                .padding(9.dp)
+                .testTag(EventDetailsTestTags.EVENT_DETAILS_PAGER)) { page ->
+          EventDetailsBody(navigationAction, mapViewModel, event, context, page)
         }
-
-        EventInformationCard(event, organisers, context)
-
-        EventDetailsBody(navigationAction, mapViewModel, event, context)
-      }
+  }
 }
 
 /**
  * A card that displays the information of the event.
  *
  * @param event The event to display.
- * @param associations The list of associations organizing the event.
+ * @param organisers The list of associations organizing the event.
  * @param context The context to use.
  */
 @Composable
@@ -272,7 +290,7 @@ fun EventInformationCard(event: Event, organisers: List<Association>, context: C
           Modifier.testTag(EventDetailsTestTags.DETAILS_INFORMATION_CARD)
               .background(MaterialTheme.colorScheme.primary)
               .padding(12.dp)
-              .fillMaxSize(),
+              .fillMaxWidth(),
       horizontalAlignment = Alignment.CenterHorizontally) {
         Text(
             event.title,
@@ -366,16 +384,81 @@ fun EventDate(event: Event) {
  * @param mapViewModel The [MapViewModel] to use.
  * @param event The event to display.
  * @param context The context to use.
+ * @param page: The index of the current page of the horizontal menu.
  */
 @Composable
 fun EventDetailsBody(
     navigationAction: NavigationAction,
     mapViewModel: MapViewModel,
     event: Event,
+    context: Context,
+    page: Int
+) {
+  if (page == 0) {
+    EventDetailsDescriptionTab(navigationAction, mapViewModel, event, context)
+  } else if (page == 1) {
+    EventDetailsPicturesTab(event, context)
+  }
+}
+
+/**
+ * The second page of the EventDetails horizontal scroll menu.
+ *
+ * @param event The event to display.
+ */
+@Composable
+fun EventDetailsPicturesTab(event: Event, context: Context) {
+  val eventPictures by event.eventPictures.list.collectAsState()
+  if (event.startDate.seconds > Timestamp.now().seconds) {
+    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+      Text(
+          context.getString(R.string.event_pictures_before_start_date),
+          modifier = Modifier.testTag(EventDetailsTestTags.EVENT_NOT_STARTED_TEXT))
+    }
+  } else if (eventPictures.isEmpty()) {
+    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+      Text(
+          context.getString(R.string.event_no_user_pictures),
+          modifier = Modifier.testTag(EventDetailsTestTags.EVENT_NO_PICTURES_TEXT))
+    }
+  } else {
+    LazyVerticalStaggeredGrid(
+        columns = StaggeredGridCells.Adaptive(100.dp),
+        modifier = Modifier.fillMaxSize().testTag(EventDetailsTestTags.GALLERY_GRID)) {
+          itemsIndexed(eventPictures) { index, item ->
+            AsyncImageWrapper(
+                item.image.toUri(),
+                contentDescription =
+                    context.getString(R.string.event_details_user_picture_content_description),
+                filterQuality = FilterQuality.High,
+                placeholderResourceId = 0,
+                contentScale = ContentScale.Crop,
+                modifier =
+                    Modifier.padding(3.dp)
+                        .clip(RoundedCornerShape(10))
+                        .testTag(EventDetailsTestTags.USER_EVENT_PICTURE + item.uid))
+          }
+        }
+  }
+}
+/**
+ * The first page of the EventDetails horizontal scroll menu.
+ *
+ * @param navigationAction The navigation action to use.
+ * @param mapViewModel The [MapViewModel] to use.
+ * @param event The event to display.
+ * @param context The context to use.
+ */
+@Composable
+fun EventDetailsDescriptionTab(
+    navigationAction: NavigationAction,
+    mapViewModel: MapViewModel,
+    event: Event,
     context: Context
 ) {
   Column(
-      modifier = Modifier.testTag(EventDetailsTestTags.DETAILS_BODY).padding(9.dp).fillMaxHeight(),
+      modifier =
+          Modifier.testTag(EventDetailsTestTags.DETAILS_BODY).fillMaxHeight().padding(top = 30.dp),
       verticalArrangement = Arrangement.spacedBy(30.dp)) {
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
           val priceStr =
