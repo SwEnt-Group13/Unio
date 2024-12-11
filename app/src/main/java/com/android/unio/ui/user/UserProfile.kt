@@ -181,7 +181,6 @@ fun UserProfileScreenScaffold(
                       .fillMaxHeight()
                       .verticalScroll(rememberScrollState())) {
                 UserProfileScreenContent(
-                    userViewModel,
                     user,
                     onAssociationClick,
                     onClaimAssociationClick = {
@@ -212,7 +211,6 @@ fun UserProfileScreenScaffold(
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun UserProfileScreenContent(
-    userViewModel: UserViewModel,
     user: User,
     onAssociationClick: (String) -> Unit,
     onClaimAssociationClick: () -> Unit
@@ -312,18 +310,6 @@ fun UserProfileScreenContent(
                 modifier = Modifier.testTag(UserProfileTestTags.CLAIMING_BUTTON)) {
                   Text(context.getString(R.string.user_profile_claim_association))
                 }
-
-              Button(
-                  onClick = {
-                      Firebase.auth.currentUser
-                          ?.reauthenticate(EmailAuthProvider.getCredential("haha@gmail.com", "123456"))
-                          ?.addOnSuccessListener {
-                              userViewModel.setCredential(null)
-                          }
-                  }
-              ){
-                  Text("ReAuth Test")
-              }
           }
 
           // Display the associations that the user is following.

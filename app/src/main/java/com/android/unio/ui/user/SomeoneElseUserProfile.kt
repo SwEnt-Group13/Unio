@@ -70,7 +70,6 @@ fun SomeoneElseUserProfileScreen(
               modifier =
                   Modifier.padding(padding).fillMaxHeight().verticalScroll(rememberScrollState())) {
                 UserProfileScreenContent(
-                    userViewModel,
                     user!!,
                     onAssociationClick = {
                       associationViewModel.selectAssociation(it)
