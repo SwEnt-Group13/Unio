@@ -2,6 +2,7 @@ package com.android.unio.ui.user
 
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,6 +20,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -27,15 +29,19 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.android.unio.R
 import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationViewModel
+import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.strings.test_tags.user.UserClaimAssociationPresidentialRightsTestTags
 import com.android.unio.model.user.User
 import com.android.unio.model.user.UserViewModel
+import com.android.unio.ui.association.AssociationSearchBar
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
 import com.android.unio.ui.theme.AppTypography
@@ -52,34 +58,26 @@ import com.google.firebase.functions.FirebaseFunctionsException
 import com.google.firebase.functions.functions
 import kotlinx.coroutines.launch
 
-@Composable
-fun UserClaimAssociationPresidentialRightsScreen(
-    associationViewModel: AssociationViewModel,
-    navigationAction: NavigationAction,
-    userViewModel: UserViewModel
-) {
-  val association by associationViewModel.selectedAssociation.collectAsState()
-  val user by userViewModel.user.collectAsState()
-
-  association?.let {
-    user?.let { it1 ->
-      UserClaimAssociationPresidentialRightsScreenScaffold(navigationAction, it, it1)
-    } ?: Log.e("YourTag", "User is null")
-  } ?: Log.e("YourTag", "Association is null")
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun UserClaimAssociationPresidentialRightsScreenScaffold(
+fun UserClaimAssociationPresidentialRightsScreen(
     navigationAction: NavigationAction,
-    association: Association,
-    user: User
+    associationViewModel : AssociationViewModel,
+    userViewModel: UserViewModel,
+    searchViewModel: SearchViewModel
 ) {
   val context = LocalContext.current
+    val association by associationViewModel.selectedAssociation.collectAsState()
+    val user by userViewModel.user.collectAsState()
+    if (user == null){
+        return
+    }
 
   // State variables to hold the user input and verification status
   var email by remember { mutableStateOf("") }
   var isEmailVerified by remember { mutableStateOf(false) }
+    var isAssociationChosen by remember { mutableStateOf(false) }
   var verificationCode by remember { mutableStateOf("") }
   var showErrorMessage by remember { mutableStateOf(false) }
 
@@ -98,7 +96,7 @@ fun UserClaimAssociationPresidentialRightsScreenScaffold(
             },
             navigationIcon = {
               IconButton(
-                  onClick = { navigationAction.goBack() },
+                  onClick = { navigationAction.goBack()},
                   modifier =
                       Modifier.testTag(
                           UserClaimAssociationPresidentialRightsTestTags.GO_BACK_BUTTON)) {
@@ -123,6 +121,25 @@ fun UserClaimAssociationPresidentialRightsScreenScaffold(
 
             Spacer(modifier = Modifier.height(16.dp))
 
+              if (! isAssociationChosen){
+                  val focusRequester = remember { FocusRequester() }
+
+                  LaunchedEffect(Unit) { focusRequester.requestFocus() }
+
+                  Box(modifier = Modifier.focusRequester(focusRequester)) {
+                      AssociationSearchBar(
+                          searchViewModel = searchViewModel,
+                          onAssociationSelected = { association ->
+                              associationViewModel.selectAssociation(association.uid)
+                              isAssociationChosen = true
+                          },
+                          false,
+                          {})
+                  }
+              }else{
+                  if (association == null){
+                      isAssociationChosen = false
+                  }
             // Step 1 ->>> Ask for the presidential email address if it hasn't been verified
             if (!isEmailVerified) {
               Text(
@@ -157,7 +174,7 @@ fun UserClaimAssociationPresidentialRightsScreenScaffold(
 
               Button(
                   onClick = {
-                    if (email == association.principalEmailAddress) {
+                    if (email == association!!.principalEmailAddress) {
                       isEmailVerified = true
                       showErrorMessage = false
 
@@ -303,6 +320,7 @@ fun UserClaimAssociationPresidentialRightsScreenScaffold(
                             R.string.user_claim_association_presidential_rights_submit_code))
                   }
             }
+              }
           }
         }
       })

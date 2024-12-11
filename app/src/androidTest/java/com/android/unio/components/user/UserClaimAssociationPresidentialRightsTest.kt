@@ -16,8 +16,13 @@ import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.event.EventRepositoryFirestore
 import com.android.unio.model.follow.ConcurrentAssociationUserRepositoryFirestore
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
+import com.android.unio.model.search.SearchRepository
+import com.android.unio.model.search.SearchViewModel
+import com.android.unio.model.user.UserRepository
+import com.android.unio.model.user.UserRepositoryFirestore
+import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.navigation.NavigationAction
-import com.android.unio.ui.user.UserClaimAssociationPresidentialRightsScreenScaffold
+import com.android.unio.ui.user.UserClaimAssociationPresidentialRightsScreen
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import io.mockk.MockKAnnotations
@@ -36,6 +41,8 @@ class UserClaimAssociationPresidentialRightsTest : TearDown() {
   @MockK private lateinit var associationRepository: AssociationRepositoryFirestore
   @MockK private lateinit var eventRepository: EventRepositoryFirestore
   @MockK private lateinit var imageRepository: ImageRepositoryFirebaseStorage
+    @MockK private lateinit var userRepository: UserRepositoryFirestore
+    @MockK private lateinit var searchRepository: SearchRepository
   @MockK
   private lateinit var concurrentAssociationUserRepositoryFirestore:
       ConcurrentAssociationUserRepositoryFirestore
@@ -43,6 +50,10 @@ class UserClaimAssociationPresidentialRightsTest : TearDown() {
 
   private lateinit var associationViewModel: AssociationViewModel
   @MockK private lateinit var navigationAction: NavigationAction
+
+    private lateinit var searchViewModel: SearchViewModel
+
+    private lateinit var userViewModel: UserViewModel
 
   // test data
   private val testAssociation =
@@ -65,13 +76,17 @@ class UserClaimAssociationPresidentialRightsTest : TearDown() {
             imageRepository,
             concurrentAssociationUserRepositoryFirestore)
     navigationAction = NavigationAction(navHostController)
+
+      userViewModel = UserViewModel(userRepository = userRepository, imageRepository)
+
+      searchViewModel = SearchViewModel(searchRepository)
   }
 
   @Test
   fun testEmailVerificationInputAndErrorHandling() {
     composeTestRule.setContent {
-      UserClaimAssociationPresidentialRightsScreenScaffold(
-          association = testAssociation, user = testUser, navigationAction = navigationAction)
+      UserClaimAssociationPresidentialRightsScreen(
+          navigationAction = navigationAction, associationViewModel = associationViewModel, userViewModel = userViewModel, searchViewModel = searchViewModel)
     }
 
     composeTestRule.onNodeWithText("Enter the presidential email address:").assertIsDisplayed()
@@ -82,8 +97,8 @@ class UserClaimAssociationPresidentialRightsTest : TearDown() {
   @Test
   fun testBackButtonNavigatesBack() {
     composeTestRule.setContent {
-      UserClaimAssociationPresidentialRightsScreenScaffold(
-          association = testAssociation, user = testUser, navigationAction = navigationAction)
+      UserClaimAssociationPresidentialRightsScreen(
+          navigationAction = navigationAction, associationViewModel = associationViewModel, userViewModel = userViewModel, searchViewModel = searchViewModel)
     }
 
     // click the back button
