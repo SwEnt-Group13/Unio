@@ -46,6 +46,8 @@ import com.google.firebase.auth.auth
  *
  * @param navigationAction The navigation action to use.
  * @param userViewModel The [UserViewModel] to use.
+ * @param onEmailVerified The callback that is called upon when the user re-authenticates with a
+ *   verified account. This simply calls the fetch methods of the Repositories.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

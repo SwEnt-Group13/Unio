@@ -62,7 +62,7 @@ import com.google.firebase.auth.auth
  * A screen that allows users to sign in or sign up.
  *
  * @param navigationAction The navigation action to use.
- * @param userViewModel The [UserViewModel] to use.
+ * @param authViewModel The [UserViewModel] to use.
  */
 @Composable
 fun WelcomeScreen(navigationAction: NavigationAction, authViewModel: AuthViewModel) {
@@ -186,6 +186,8 @@ fun WelcomeScreen(navigationAction: NavigationAction, authViewModel: AuthViewMod
  * @param email The email to use.
  * @param password The password to use.
  * @param context The context to use.
+ * @param navigationAction The navigation actions to be able to navigate in the case where the
+ *   user's email is not verified
  */
 fun handleAuthentication(
     email: String,

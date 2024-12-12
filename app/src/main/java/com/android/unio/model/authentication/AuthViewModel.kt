@@ -60,6 +60,17 @@ constructor(private val firebaseAuth: FirebaseAuth, private val userRepository: 
   /**
    * Verifies the authentication state of the user. If the user should be redirected, the
    * [authState] is updated.
+   *
+   * In the edge case where the user signs out of the application when he hasn't yet verified his
+   * email but has created his account in firebase auth, and then restarts the app, the user will be
+   * redirected to the welcome screen as the credentials are necessary to the login process of the
+   * user (the credentials are equal to the ones inputted by the user in the Welcome screen)
+   *
+   * In the edge case that the user leaves the app after verifying his email, but has not yet
+   * entered his account details, the user will be redirected straight to the Account Details
+   * screen. This is done by handling the error given by FirebaseFirestore, if the document is not
+   * found, but the user exists in auth with a verified email, this means that he hasn't yet
+   * inputted his account details.
    */
   private fun addAuthStateVerifier() {
     firebaseAuth.registerAuthStateListener { auth ->
