@@ -26,4 +26,10 @@ interface AssociationRepository {
       onSuccess: () -> Unit,
       onFailure: (Exception) -> Unit
   )
+
+  fun getAssociationWithId(
+    id: String,
+    onSuccess: (Association) -> Unit,
+    onFailure: (Exception) -> Unit
+  )
 }
