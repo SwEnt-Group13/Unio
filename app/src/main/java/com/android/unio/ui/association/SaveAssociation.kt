@@ -93,7 +93,7 @@ fun SaveAssociationScreen(
                     .collection(ASSOCIATION_PATH)
                     .document()
                     .id, // creates a new document reference and retrieve the randomly generated
-                         // Firestore UID
+            // Firestore UID
             url = "",
             name = "",
             fullName = "",
