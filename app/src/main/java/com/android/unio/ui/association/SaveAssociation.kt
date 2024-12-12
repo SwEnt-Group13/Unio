@@ -55,9 +55,11 @@ import com.android.unio.model.event.Event
 import com.android.unio.model.firestore.FirestorePaths.ASSOCIATION_PATH
 import com.android.unio.model.firestore.emptyFirestoreReferenceList
 import com.android.unio.model.strings.test_tags.association.SaveAssociationTestTags
+import com.android.unio.model.strings.test_tags.association.SaveAssociationTestTags.PICTURE_BUTTON
 import com.android.unio.model.strings.test_tags.association.SaveAssociationTestTags.PRINCIPAL_EMAIL_ADDRESS_EXPLANATION_TEXT
 import com.android.unio.model.strings.test_tags.association.SaveAssociationTestTags.PRINCIPAL_EMAIL_ADDRESS_TEXT
 import com.android.unio.model.strings.test_tags.event.EventDetailsTestTags
+import com.android.unio.model.strings.test_tags.user.UserProfileTestTags
 import com.android.unio.ui.components.PictureSelectionTool
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
@@ -137,8 +139,9 @@ fun SaveAssociationScreen(
                           Screen.ASSOCIATION_PROFILE, Screen.SAVE_ASSOCIATION)
                     }
                   },
-                  onFailure = {
+                  onFailure = {error ->
                     Log.e("SaveAssociationScreen", context.getString(R.string.save_failed_message))
+                      Log.e("SaveAssociationScreen", "Save failed: ${error.message}", error)
                     ToastUtils.showToast(context, context.getString(R.string.save_failed_message))
                   })
             },
@@ -185,6 +188,7 @@ fun SaveAssociationScaffold(
   var showSheet by remember { mutableStateOf(false) }
 
   Scaffold(
+      modifier = Modifier.testTag(SaveAssociationTestTags.SCREEN),
       topBar = {
         TopAppBar(
             navigationIcon = {
@@ -310,7 +314,7 @@ fun SaveAssociationScaffold(
 
               Button(
                   onClick = { showSheet = true },
-                  modifier = Modifier.align(Alignment.CenterHorizontally)) {
+                  modifier = Modifier.align(Alignment.CenterHorizontally).testTag(PICTURE_BUTTON)) {
                     Text(text = context.getString(R.string.field_association_image))
                   }
 
