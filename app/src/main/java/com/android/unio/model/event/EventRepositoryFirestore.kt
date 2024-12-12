@@ -17,7 +17,7 @@ class EventRepositoryFirestore @Inject constructor(private val db: FirebaseFires
 
   override fun init(onSuccess: () -> Unit) {
     Firebase.auth.registerAuthStateListener {
-      if (it.currentUser != null) {
+      if (it.currentUser != null && it.currentUser!!.isEmailVerified) {
         onSuccess()
       }
     }

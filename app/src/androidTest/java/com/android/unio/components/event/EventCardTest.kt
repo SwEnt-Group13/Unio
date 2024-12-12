@@ -18,6 +18,7 @@ import com.android.unio.model.association.AssociationRepositoryFirestore
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventRepositoryFirestore
 import com.android.unio.model.event.EventType
+import com.android.unio.model.event.EventUserPictureRepositoryFirestore
 import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.notification.NotificationWorker
@@ -74,6 +75,8 @@ class EventCardTest : TearDown() {
   @MockK private lateinit var eventRepository: EventRepositoryFirestore
   @MockK private lateinit var imageRepository: ImageRepositoryFirebaseStorage
   @MockK private lateinit var associationRepository: AssociationRepositoryFirestore
+  @MockK
+  private lateinit var eventUserPictureRepositoryFirestore: EventUserPictureRepositoryFirestore
   private lateinit var context: Context
 
   @Before
@@ -85,7 +88,13 @@ class EventCardTest : TearDown() {
     val user = MockUser.createMockUser(followedAssociations = associations, savedEvents = listOf())
     every { NotificationWorker.schedule(any(), any()) } just runs
     every { NotificationWorker.unschedule(any(), any()) } just runs
-    eventViewModel = spyk(EventViewModel(eventRepository, imageRepository, associationRepository))
+    eventViewModel =
+        spyk(
+            EventViewModel(
+                eventRepository,
+                imageRepository,
+                associationRepository,
+                eventUserPictureRepositoryFirestore))
     userViewModel = UserViewModel(userRepository, imageRepository)
     every { userRepository.updateUser(user, any(), any()) } answers
         {

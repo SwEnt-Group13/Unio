@@ -7,6 +7,8 @@ import com.android.unio.model.firestore.FirestorePaths.ASSOCIATION_PATH
 import com.android.unio.model.firestore.FirestorePaths.USER_PATH
 import com.android.unio.model.firestore.emptyFirestoreReferenceList
 import com.android.unio.model.user.User
+import com.android.unio.ui.theme.badgeColorBlue
+import com.android.unio.ui.theme.badgeColorCyan
 import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
@@ -155,10 +157,14 @@ class AssociationRepositoryFirestoreTest {
             "roles" to
                 mapOf(
                     "Guest" to
-                        mapOf("displayName" to "Guest", "permissions" to listOf("Full rights")),
+                        mapOf(
+                            "displayName" to "Guest",
+                            "color" to badgeColorBlue,
+                            "permissions" to listOf("Full rights")),
                     "Administrator" to
                         mapOf(
                             "displayName" to "Administrator",
+                            "color" to badgeColorCyan,
                             "permissions" to listOf("Full rights"))),
             "followersCount" to association1.followersCount,
             "image" to association1.image,
@@ -177,10 +183,14 @@ class AssociationRepositoryFirestoreTest {
             "roles" to
                 mapOf(
                     "Guest" to
-                        mapOf("displayName" to "Guest", "permissions" to listOf("Full rights")),
+                        mapOf(
+                            "displayName" to "Guest",
+                            "color" to badgeColorBlue,
+                            "permissions" to listOf("Full rights")),
                     "Administrator" to
                         mapOf(
                             "displayName" to "Administrator",
+                            "color" to badgeColorCyan,
                             "permissions" to listOf("Full rights"))),
             "followersCount" to association2.followersCount,
             "image" to association2.image,
@@ -195,6 +205,7 @@ class AssociationRepositoryFirestoreTest {
   @Test
   fun testInitUserAuthenticated() {
     every { auth.currentUser } returns (firebaseUser)
+    every { firebaseUser.isEmailVerified } returns true
     var onSuccessCalled = false
     val onSuccess = { onSuccessCalled = true }
 

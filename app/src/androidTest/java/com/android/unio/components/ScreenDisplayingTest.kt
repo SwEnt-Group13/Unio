@@ -15,6 +15,7 @@ import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.authentication.AuthViewModel
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventRepositoryFirestore
+import com.android.unio.model.event.EventUserPictureRepositoryFirestore
 import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.follow.ConcurrentAssociationUserRepositoryFirestore
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
@@ -110,6 +111,8 @@ class ScreenDisplayingTest : TearDown() {
 
   @MockK private lateinit var associationRepositoryFirestore: AssociationRepositoryFirestore
   @MockK private lateinit var imageRepositoryFirestore: ImageRepositoryFirebaseStorage
+  @MockK
+  private lateinit var eventUserPictureRepositoryFirestore: EventUserPictureRepositoryFirestore
 
   private lateinit var imageViewModel: ImageViewModel
 
@@ -154,7 +157,11 @@ class ScreenDisplayingTest : TearDown() {
           onSuccess(events)
         }
     eventViewModel =
-        EventViewModel(eventRepository, imageRepositoryFirestore, associationRepositoryFirestore)
+        EventViewModel(
+            eventRepository,
+            imageRepositoryFirestore,
+            associationRepositoryFirestore,
+            eventUserPictureRepositoryFirestore)
     eventViewModel.loadEvents()
     eventViewModel.selectEvent(events.first().uid)
 
@@ -200,13 +207,15 @@ class ScreenDisplayingTest : TearDown() {
 
   @Test
   fun testWelcomeDisplayed() {
-    composeTestRule.setContent { WelcomeScreen(navigationAction, userViewModel) }
+    composeTestRule.setContent { WelcomeScreen(navigationAction, authViewModel) }
     composeTestRule.onNodeWithTag(WelcomeTestTags.SCREEN).assertIsDisplayed()
   }
 
   @Test
   fun testEmailVerificationDisplayed() {
-    composeTestRule.setContent { EmailVerificationScreen(navigationAction, userViewModel) }
+    composeTestRule.setContent {
+      EmailVerificationScreen(navigationAction, authViewModel, onEmailVerified = {})
+    }
     composeTestRule.onNodeWithTag(EmailVerificationTestTags.SCREEN).assertIsDisplayed()
   }
 

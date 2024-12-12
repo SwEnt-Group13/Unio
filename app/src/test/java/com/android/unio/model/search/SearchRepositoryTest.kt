@@ -21,6 +21,7 @@ import com.android.unio.model.association.toAssociationDocument
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventDocument
 import com.android.unio.model.event.EventRepository
+import com.android.unio.model.event.EventUserPicture
 import com.android.unio.model.event.toEventDocument
 import com.android.unio.model.firestore.emptyFirestoreReferenceList
 import com.android.unio.model.firestore.firestoreReferenceListWith
@@ -122,7 +123,8 @@ class SearchRepositoryTest {
           price = 40.5,
           startDate = Timestamp(GregorianCalendar(2004, 7, 1).time),
           location = Location(1.2345, 2.3455, "Somewhere"),
-          maxNumberOfPlaces = -1)
+          maxNumberOfPlaces = -1,
+          eventPictures = EventUserPicture.emptyFirestoreReferenceList())
   private val event2 =
       Event(
           uid = "2",
@@ -134,7 +136,8 @@ class SearchRepositoryTest {
           price = 40.5,
           startDate = Timestamp(GregorianCalendar(2008, 7, 1).time),
           location = Location(1.2345, 2.3455, "Somewhere"),
-          maxNumberOfPlaces = -1)
+          maxNumberOfPlaces = -1,
+          eventPictures = EventUserPicture.emptyFirestoreReferenceList())
 
   @Before
   fun setUp() {
@@ -172,6 +175,7 @@ class SearchRepositoryTest {
   @Test
   fun `test init fetches event and association data`() =
       testScope.runTest {
+        every { firebaseUser.isEmailVerified } returns true
         every { mockSession.setSchemaAsync(any()) } returns
             immediateFuture(SetSchemaResponse.Builder().build())
         every { mockSession.putAsync(any()) } returns
