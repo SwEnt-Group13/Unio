@@ -160,7 +160,7 @@ open class EndToEndTest : FirebaseEmulatorFunctions {
   }
 
   object UnverifiedUser {
-    const val EMAIL = "example@gmail.com"
+    const val EMAIL = "unverifiedUser@gmail.com"
     const val PWD = "123456"
 
     const val FIRST_NAME = "John"

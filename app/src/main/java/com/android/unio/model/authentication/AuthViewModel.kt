@@ -1,11 +1,12 @@
 package com.android.unio.model.authentication
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.android.unio.model.user.UserRepository
 import com.android.unio.ui.navigation.Route
 import com.android.unio.ui.navigation.Screen
+import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestoreException
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -30,6 +31,8 @@ constructor(private val firebaseAuth: FirebaseAuth, private val userRepository: 
   private val _authState = MutableStateFlow<String?>(null)
   val authState: StateFlow<String?>
     get() = _authState.asStateFlow()
+
+  var credential: AuthCredential? = null
 
   init {
     addAuthStateVerifier()
@@ -57,6 +60,17 @@ constructor(private val firebaseAuth: FirebaseAuth, private val userRepository: 
   /**
    * Verifies the authentication state of the user. If the user should be redirected, the
    * [authState] is updated.
+   *
+   * In the edge case where the user signs out of the application when he hasn't yet verified his
+   * email but has created his account in firebase auth, and then restarts the app, the user will be
+   * redirected to the welcome screen as the credentials are necessary to the login process of the
+   * user (the credentials are equal to the ones inputted by the user in the Welcome screen)
+   *
+   * In the edge case that the user leaves the app after verifying his email, but has not yet
+   * entered his account details, the user will be redirected straight to the Account Details
+   * screen. This is done by handling the error given by FirebaseFirestore, if the document is not
+   * found, but the user exists in auth with a verified email, this means that he hasn't yet
+   * inputted his account details.
    */
   private fun addAuthStateVerifier() {
     firebaseAuth.registerAuthStateListener { auth ->
@@ -65,20 +79,21 @@ constructor(private val firebaseAuth: FirebaseAuth, private val userRepository: 
         if (user.isEmailVerified) {
           userRepository.getUserWithId(
               user.uid,
-              {
-                _authState.value =
-                    if (it.firstName.isNotEmpty()) {
-                      Screen.HOME
-                    } else {
-                      Screen.ACCOUNT_DETAILS
-                    }
-              },
-              {
-                Log.e("UnioApp", "Error fetching account details: $it")
-                _authState.value = Screen.WELCOME
+              onSuccess = { _authState.value = Screen.HOME },
+              onFailure = { error ->
+                if (error is FirebaseFirestoreException &&
+                    error.code == FirebaseFirestoreException.Code.NOT_FOUND) {
+                  _authState.value = Screen.ACCOUNT_DETAILS
+                } else {
+                  _authState.value = Screen.WELCOME
+                }
               })
         } else {
-          _authState.value = Screen.EMAIL_VERIFICATION
+          if (credential == null) {
+            _authState.value = Route.AUTH
+          } else {
+            _authState.value = Screen.EMAIL_VERIFICATION
+          }
         }
       } else {
         _authState.value = Route.AUTH

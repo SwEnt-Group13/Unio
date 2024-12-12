@@ -207,13 +207,15 @@ class ScreenDisplayingTest : TearDown() {
 
   @Test
   fun testWelcomeDisplayed() {
-    composeTestRule.setContent { WelcomeScreen(navigationAction, userViewModel) }
+    composeTestRule.setContent { WelcomeScreen(navigationAction, authViewModel) }
     composeTestRule.onNodeWithTag(WelcomeTestTags.SCREEN).assertIsDisplayed()
   }
 
   @Test
   fun testEmailVerificationDisplayed() {
-    composeTestRule.setContent { EmailVerificationScreen(navigationAction, userViewModel) }
+    composeTestRule.setContent {
+      EmailVerificationScreen(navigationAction, authViewModel, onEmailVerified = {})
+    }
     composeTestRule.onNodeWithTag(EmailVerificationTestTags.SCREEN).assertIsDisplayed()
   }
 

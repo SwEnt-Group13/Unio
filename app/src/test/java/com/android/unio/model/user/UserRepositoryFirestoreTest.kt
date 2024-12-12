@@ -182,6 +182,7 @@ class UserRepositoryFirestoreTest {
   @Test
   fun testInitUserAuthenticated() {
     every { (auth.currentUser) } returns (firebaseUser)
+    every { firebaseUser.isEmailVerified } returns true
     var onSuccessCalled = false
     val onSuccess = { onSuccessCalled = true }
 
