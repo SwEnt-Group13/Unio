@@ -282,7 +282,9 @@ fun SaveAssociationScaffold(
               Spacer(modifier = Modifier.height(16.dp))
 
               // Image selection tool
-              Text(text = context.getString(R.string.association_image_explanation), style = MaterialTheme.typography.bodySmall)
+              Text(
+                  text = context.getString(R.string.association_image_explanation),
+                  style = MaterialTheme.typography.bodySmall)
 
               Spacer(modifier = Modifier.height(8.dp))
 
