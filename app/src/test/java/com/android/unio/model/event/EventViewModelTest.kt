@@ -186,10 +186,8 @@ class EventViewModelTest {
             any(),
             any())
       }
-      verify(exactly = 1) {
-        eventUserPictureRepositoryFirestore.deleteEventUserPictureById(
-            testEventPictures[index].uid, any(), any())
-      }
+      verify(eventUserPictureRepositoryFirestore)
+          .deleteEventUserPictureById(eq(testEventPictures[index].uid), any(), any())
     }
   }
 
