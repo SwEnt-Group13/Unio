@@ -124,6 +124,9 @@ fun EventCardScaffold(
     userViewModel: UserViewModel
 ) {
   val context = LocalContext.current
+
+  val events by eventViewModel.events.collectAsState()
+
   Column(
       modifier =
           Modifier.fillMaxWidth()
@@ -156,7 +159,7 @@ fun EventCardScaffold(
                         .clip(RoundedCornerShape(4.dp))
                         .background(MaterialTheme.colorScheme.surfaceContainer)) {
                   Text(
-                      " ${event.numberOfSaved} " +
+                      " ${events.first{it.uid == event.uid}.numberOfSaved} " +
                           context.getString(R.string.event_card_interested_string) +
                           " ",
                       color = MaterialTheme.colorScheme.onSecondaryContainer)

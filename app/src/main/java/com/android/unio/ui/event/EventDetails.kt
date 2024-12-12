@@ -91,9 +91,8 @@ import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
 import com.android.unio.ui.navigation.SmoothTopBarNavigationMenu
 import com.android.unio.ui.theme.AppTypography
-import com.google.firebase.Firebase
+import com.android.unio.ui.utils.ToastUtils
 import com.google.firebase.Timestamp
-import com.google.firebase.messaging.messaging
 import java.text.SimpleDateFormat
 import java.util.Locale
 import kotlinx.coroutines.CoroutineScope
@@ -160,7 +159,7 @@ fun EventScreen(
 fun EventScreenScaffold(
     navigationAction: NavigationAction,
     mapViewModel: MapViewModel,
-    event: Event,
+    event: Event?,
     organisers: List<Association>,
     eventViewModel: EventViewModel,
     userViewModel: UserViewModel
@@ -178,7 +177,7 @@ fun EventScreenScaffold(
   Scaffold(
       floatingActionButton = {
         if (pagerState.currentPage == 1) {
-          EventDetailsPicturePicker(event, eventViewModel, user!!) // Asserted non null above
+          EventDetailsPicturePicker(event!!, eventViewModel, user!!) // Asserted non null above
         }
       },
       modifier = Modifier.testTag(EventDetailsTestTags.SCREEN),
@@ -209,7 +208,7 @@ fun EventScreenScaffold(
                   }
             },
             actions = {
-              EventSaveButton(event, eventViewModel, userViewModel)
+              EventSaveButton(event!!, eventViewModel, userViewModel)
               IconButton(
                   modifier = Modifier.testTag(EventDetailsTestTags.SHARE_BUTTON),
                   onClick = { showSheet = true }) {
@@ -221,13 +220,13 @@ fun EventScreenScaffold(
             })
       },
       content = {
-        EventScreenContent(navigationAction, mapViewModel, event, organisers, pagerState, tabList)
+        EventScreenContent(navigationAction, mapViewModel, event!!, organisers, pagerState, tabList)
       })
 
   NotificationSender(
       dialogTitle = context.getString(R.string.event_send_notification),
       notificationType = NotificationType.EVENT_SAVERS,
-      topic = event.uid,
+      topic = event!!.uid,
       notificationContent = { mapOf("title" to event.title, "body" to it) },
       showNotificationDialog = showNotificationDialog,
       onClose = { showNotificationDialog = false })
@@ -555,17 +554,18 @@ fun EventDetailsBottomSheet(
 }
 
 @Composable
-fun EventSaveButton(event: Event, eventViewModel: EventViewModel, userViewModel: UserViewModel) {
+fun EventSaveButton(event: Event?, eventViewModel: EventViewModel, userViewModel: UserViewModel) {
   val context = LocalContext.current
 
   val user by userViewModel.user.collectAsState()
+  val events by eventViewModel.events.collectAsState()
 
   if (user == null) {
     Log.e("EventCard", "User is null")
     return
   }
 
-  var isSaved by remember { mutableStateOf(user!!.savedEvents.contains(event.uid)) }
+  var isSaved by remember { mutableStateOf(user!!.savedEvents.contains(event!!.uid)) }
 
   var notificationPermissionsEnabled by remember { mutableStateOf(false) }
   when (PackageManager.PERMISSION_GRANTED) {
@@ -586,12 +586,12 @@ fun EventSaveButton(event: Event, eventViewModel: EventViewModel, userViewModel:
       NotificationWorker.schedule(
           context,
           UnioNotification(
-              title = event.title,
+              title = event!!.title,
               message = context.getString(R.string.notification_event_reminder),
               icon = R.drawable.other_icon,
               channelId = EVENT_REMINDER_CHANNEL_ID,
               channelName = EVENT_REMINDER_CHANNEL_ID,
-              notificationId = event.uid.hashCode(),
+              notificationId = event!!.uid.hashCode(),
               // Schedule a notification a few hours before the event's startDate
               timeMillis = (event.startDate.seconds - 2 * SECONDS_IN_AN_HOUR) * SECONDS_IN_AN_HOUR))
     }
@@ -613,13 +613,13 @@ fun EventSaveButton(event: Event, eventViewModel: EventViewModel, userViewModel:
   var enableButton by remember { mutableStateOf(true) }
   val isConnected = NetworkUtils.checkInternetConnection(context)
   val onClickSaveButton = {
+    enableButton = false
     if (isConnected) {
-      enableButton = false
-      eventViewModel.updateSave(event, user!!, isSaved) {
+      eventViewModel.updateSave(events.first { it.uid == event!!.uid }, user!!, isSaved) {
         userViewModel.refreshUser()
         if (isSaved) {
           if (notificationPermissionsEnabled) {
-            NotificationWorker.unschedule(context, event.uid.hashCode())
+            NotificationWorker.unschedule(context, event!!.uid.hashCode())
           }
         } else {
           if (!notificationPermissionsEnabled) {
@@ -632,43 +632,12 @@ fun EventSaveButton(event: Event, eventViewModel: EventViewModel, userViewModel:
             scheduleReminderNotification()
           }
         }
-        enableButton = true
         isSaved = !isSaved
+        enableButton = true
       }
-    }
-
-    if (isSaved) {
-      val newEvent = event.copy(numberOfSaved = event.numberOfSaved - 1)
-      eventViewModel.updateEventWithoutImage(
-          newEvent,
-          onSuccess = {},
-          onFailure = { e -> Log.e("EventCard", "Failed to update event: $e") })
-      userViewModel.unsaveEvent(event) {
-        if (notificationPermissionsEnabled) {
-          NotificationWorker.unschedule(context, event.uid.hashCode())
-        }
-      }
-      Firebase.messaging.unsubscribeFromTopic(event.uid)
     } else {
-      val newEvent = event.copy(numberOfSaved = event.numberOfSaved + 1)
-      eventViewModel.updateEventWithoutImage(
-          newEvent,
-          onSuccess = {},
-          onFailure = { e -> Log.e("EventCard", "Failed to update event: $e") })
-      userViewModel.saveEvent(event) {
-        if (!notificationPermissionsEnabled) {
-          if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            // this permission requires api 33
-            // We should check how to make notifications work with lower api versions
-            permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-          }
-        } else {
-          scheduleReminderNotification()
-        }
-      }
-      Firebase.messaging.subscribeToTopic(event.uid)
+      ToastUtils.showToast(context, context.getString(R.string.no_internet_connection))
     }
-    isSaved = !isSaved
   }
 
   IconButton(
@@ -678,7 +647,8 @@ fun EventSaveButton(event: Event, eventViewModel: EventViewModel, userViewModel:
               .background(MaterialTheme.colorScheme.inversePrimary)
               .padding(4.dp)
               .testTag(EventDetailsTestTags.SAVE_BUTTON),
-      onClick = { onClickSaveButton() }) {
+      onClick = { onClickSaveButton() },
+      enabled = enableButton) {
         Icon(
             imageVector = if (isSaved) Icons.Rounded.Favorite else Icons.Rounded.FavoriteBorder,
             contentDescription =

@@ -275,24 +275,27 @@ constructor(
    * saved events. If the user is has not yet saved the event, the event's interested count is
    * incremented and the event is added to the user's saved events.
    *
-   * @param target The association to update the follow status for.
-   * @param user The user to update the follow status for.
-   * @param isUnsaveAction A boolean indicating whether the user is unfollowing the association.
+   * @param target The event to update the saved status for.
+   * @param user The user to update the saved status for.
+   * @param isUnsaveAction A boolean indicating whether the user is unsave the event.
    * @param updateUser A callback to update the user in the repository.
    */
   fun updateSave(target: Event, user: User, isUnsaveAction: Boolean, updateUser: () -> Unit) {
     val updatedEvent: Event
     val updatedUser: User = user.copy()
+
     if (isUnsaveAction) {
       val updatedSavedCount = if (target.numberOfSaved - 1 >= 0) target.numberOfSaved - 1 else 0
       updatedEvent = target.copy(numberOfSaved = updatedSavedCount)
-      updatedUser.followedAssociations.remove(target.uid)
+      updatedUser.savedEvents.remove(target.uid)
       Firebase.messaging.unsubscribeFromTopic(target.uid)
     } else {
       updatedEvent = target.copy(numberOfSaved = target.numberOfSaved + 1)
       updatedUser.savedEvents.add(target.uid)
       Firebase.messaging.subscribeToTopic(target.uid)
     }
+    println("target ${target.numberOfSaved}")
+    println(updatedEvent.numberOfSaved)
     concurrentEventUserRepository.updateSave(
         updatedUser,
         updatedEvent,
