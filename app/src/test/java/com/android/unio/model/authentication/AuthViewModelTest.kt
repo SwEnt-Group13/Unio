@@ -155,7 +155,7 @@ class AuthViewModelTest {
     every { firebaseUser.isEmailVerified } returns false
 
     authViewModel = AuthViewModel(firebaseAuth, userRepository)
-    authViewModel.setCredential(EmailAuthProvider.getCredential("test@gmail.com", "123456"))
+    authViewModel.credential = EmailAuthProvider.getCredential("test@gmail.com", "123456")
 
     triggerAuthStateListener(firebaseAuth)
 
