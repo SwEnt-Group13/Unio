@@ -64,7 +64,6 @@ import com.google.firebase.ktx.Firebase
 import java.io.InputStream
 import kotlinx.coroutines.launch
 
-
 /**
  * Screen for editing an association.
  *
@@ -89,7 +88,12 @@ fun SaveAssociationScreen(
 
   (if (association == null) {
         Association(
-            uid = Firebase.firestore.collection(ASSOCIATION_PATH).document().id, // creates a new document reference and retrieve the randomly generated Firestore UID
+            uid =
+                Firebase.firestore
+                    .collection(ASSOCIATION_PATH)
+                    .document()
+                    .id, // creates a new document reference and retrieve the randomly generated
+                         // Firestore UID
             url = "",
             name = "",
             fullName = "",
@@ -120,8 +124,9 @@ fun SaveAssociationScreen(
                   newAssociation,
                   imageStream,
                   onSuccess = {
-                      if (isNewAssociation) {
-                          ToastUtils.showToast(context, "Your new association is created and available !")
+                    if (isNewAssociation) {
+                      ToastUtils.showToast(
+                          context, "Your new association is created and available !")
                       navigationAction.navigateTo(Screen.MY_PROFILE, Screen.SAVE_ASSOCIATION)
                     } else {
                       associationViewModel.selectAssociation(newAssociation.uid)
@@ -375,10 +380,11 @@ fun SaveAssociationScaffold(
                     Button(
                         onClick = {
                           scope.launch {
-                              val inputStream = selectedImageUri?.let { uri ->
+                            val inputStream =
+                                selectedImageUri?.let { uri ->
                                   context.contentResolver.openInputStream(uri)
-                              }
-                              Log.d("SaveAssociationLog",  inputStream.toString())
+                                }
+                            Log.d("SaveAssociationLog", inputStream.toString())
                             onSave(
                                 association.copy(
                                     name = name,
