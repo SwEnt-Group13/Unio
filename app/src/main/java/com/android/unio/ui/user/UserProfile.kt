@@ -109,7 +109,6 @@ fun UserProfileScreen(
   val refreshState by userViewModel.refreshState
 
   UserProfileScreenScaffold(
-      userViewModel,
       user!!,
       navigationAction,
       refreshState,
@@ -134,7 +133,6 @@ fun UserProfileScreen(
 @OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun UserProfileScreenScaffold(
-    userViewModel: UserViewModel,
     user: User,
     navigationAction: NavigationAction,
     refreshState: Boolean,
