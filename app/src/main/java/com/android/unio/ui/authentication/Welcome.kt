@@ -169,7 +169,7 @@ fun WelcomeScreen(navigationAction: NavigationAction, authViewModel: AuthViewMod
                       ToastUtils.showToast(
                           context, context.getString(R.string.welcome_malformed_email_password))
                     } else {
-                      authViewModel.setCredential(EmailAuthProvider.getCredential(email, password))
+                      authViewModel.credential = EmailAuthProvider.getCredential(email, password)
                       handleAuthentication(email, password, context, navigationAction)
                     }
                   },

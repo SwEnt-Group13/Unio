@@ -32,18 +32,7 @@ constructor(private val firebaseAuth: FirebaseAuth, private val userRepository: 
   val authState: StateFlow<String?>
     get() = _authState.asStateFlow()
 
-  private var _credential: AuthCredential? = null
-  val credential: AuthCredential?
-    get() = _credential
-
-  /**
-   * Sets the [AuthCredential] object to be used for linking accounts.
-   *
-   * @param credential The [AuthCredential] object to set.
-   */
-  fun setCredential(credential: AuthCredential?) {
-    _credential = credential
-  }
+  var credential: AuthCredential? = null
 
   init {
     addAuthStateVerifier()
@@ -89,7 +78,7 @@ constructor(private val firebaseAuth: FirebaseAuth, private val userRepository: 
                 }
               })
         } else {
-          if (_credential == null) {
+          if (credential == null) {
             _authState.value = Route.AUTH
           } else {
             _authState.value = Screen.EMAIL_VERIFICATION

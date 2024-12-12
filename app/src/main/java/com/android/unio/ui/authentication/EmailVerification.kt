@@ -76,7 +76,7 @@ fun EmailVerificationScreen(
                 ?.reauthenticate(authViewModel.credential!!)
                 ?.addOnSuccessListener {
                   success = true
-                  authViewModel.setCredential(null)
+                  authViewModel.credential = null
                 }
           }
         }
