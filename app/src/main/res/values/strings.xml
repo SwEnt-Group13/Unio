@@ -19,7 +19,9 @@
     <string name="association_upcoming_events" translatable="true">Upcoming Events</string>
     <string name="association_go_back" translatable="true">Go Back</string>
     <string name="association_see_more" translatable="true">See More</string>
+    <string name="association_see_less" translatable="true">See Less</string>
     <string name="association_more" translatable="true">More</string>
+    <string name="association_share" translatable="true">Share Association</string>
     <string name="association_edit" translatable="true">Edit Association</string>
     <string name="association_broadcast_message">Broadcast a message</string>
     <string name="association_contact_members" translatable="true">Contact Members</string>
@@ -232,6 +234,11 @@
     <string name="event_price_free">Free !</string>
     <string name="event_price">Entry: </string>
     <string name="event_places_remaining"> places remaining</string>
+    <string name="event_pictures_before_start_date">You have to wait for the event to start to upload pictures :)</string>
+    <string name="event_no_user_pictures">The event has no user pictures yet :/</string>
+    <string name="event_details_user_picture_content_description">A picture uploaded by a user</string>
+    <string name="event_details_description_tab">Description</string>
+    <string name="event_details_pictures_tab">Event pictures</string>
 
     /**
     * package: explore
@@ -345,7 +352,7 @@
     <!-- UserClaimAssociation Strings -->
     <string name="user_claim_association_association_go_back">Go back</string>
     <string name="user_claim_association_association_see_more">See more</string>
-    <string name="user_claim_association_you_can_either">You can either</string>
+    <string name="user_claim_association_you_can_do_the_following">You can do the following</string>
     <string name="user_claim_association_create_new_association">Create a new association</string>
     <string name="user_claim_association_not_implemented_yet">Not implemented yet</string>
     <string name="user_claim_association_create_association">Create association</string>
@@ -491,4 +498,3 @@
         diam nec consequat hendrerit.
     </string>
 </resources>
-

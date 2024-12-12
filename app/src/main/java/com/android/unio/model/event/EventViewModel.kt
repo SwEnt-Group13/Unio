@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.android.unio.model.association.AssociationRepository
 import com.android.unio.model.image.ImageRepository
+import com.android.unio.model.strings.StoragePathsStrings
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.io.InputStream
 import javax.inject.Inject
@@ -26,7 +27,8 @@ class EventViewModel
 constructor(
     private val repository: EventRepository,
     private val imageRepository: ImageRepository,
-    private val associationRepository: AssociationRepository
+    private val associationRepository: AssociationRepository,
+    private val eventUserPictureRepository: EventUserPictureRepository,
 ) : ViewModel() {
 
   /**
@@ -66,9 +68,16 @@ constructor(
    * Updates the selected event in the ViewModel.
    *
    * @param eventId the ID of the event to select.
+   * @param loadPictures if true, loads the user pictures from firestore
    */
-  fun selectEvent(eventId: String) {
-    _selectedEvent.value = findEventById(eventId).also { it?.taggedAssociations?.requestAll() }
+  fun selectEvent(eventId: String, loadPictures: Boolean = false) {
+    _selectedEvent.value =
+        findEventById(eventId).also {
+          it?.taggedAssociations?.requestAll()
+          if (loadPictures) {
+            it?.eventPictures?.requestAll()
+          }
+        }
   }
 
   /**
@@ -212,5 +221,41 @@ constructor(
         it.events.requestAll()
       }
     })
+  }
+
+  /**
+   * Add an EventUserPicture to the database and updates the related event.
+   *
+   * @param pictureInputStream The inputStream of the image to add.
+   * @param event The event the picture is related to.
+   * @param picture The EventUserPicture object, with number of likes and author.
+   */
+  fun addEventUserPicture(
+      pictureInputStream: InputStream,
+      event: Event,
+      picture: EventUserPicture
+  ) {
+    val picId = eventUserPictureRepository.getNewUid()
+    imageRepository.uploadImage(
+        pictureInputStream,
+        StoragePathsStrings.EVENT_PICTURES + picId,
+        onSuccess = { imageUri ->
+          val newEventPicture = picture.copy(uid = picId, image = imageUri)
+          eventUserPictureRepository.addEventUserPicture(
+              newEventPicture,
+              {
+                event.eventPictures.add(newEventPicture.uid)
+                updateEventWithoutImage(
+                    event,
+                    { event.eventPictures.requestAll(lazy = true) },
+                    { e ->
+                      Log.e("EventViewModel", "An error occurred while updating an event: $e")
+                    })
+              },
+              { e ->
+                Log.e("EventViewModel", "An error occurred while adding an event picture: $e")
+              })
+        },
+        onFailure = { e -> Log.e("ImageRepository", "Failed to store image: $e") })
   }
 }
