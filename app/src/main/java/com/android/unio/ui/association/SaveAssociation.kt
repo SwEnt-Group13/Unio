@@ -59,7 +59,6 @@ import com.android.unio.model.strings.test_tags.association.SaveAssociationTestT
 import com.android.unio.model.strings.test_tags.association.SaveAssociationTestTags.PRINCIPAL_EMAIL_ADDRESS_EXPLANATION_TEXT
 import com.android.unio.model.strings.test_tags.association.SaveAssociationTestTags.PRINCIPAL_EMAIL_ADDRESS_TEXT
 import com.android.unio.model.strings.test_tags.event.EventDetailsTestTags
-import com.android.unio.model.strings.test_tags.user.UserProfileTestTags
 import com.android.unio.ui.components.PictureSelectionTool
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
@@ -139,9 +138,9 @@ fun SaveAssociationScreen(
                           Screen.ASSOCIATION_PROFILE, Screen.SAVE_ASSOCIATION)
                     }
                   },
-                  onFailure = {error ->
+                  onFailure = { error ->
                     Log.e("SaveAssociationScreen", context.getString(R.string.save_failed_message))
-                      Log.e("SaveAssociationScreen", "Save failed: ${error.message}", error)
+                    Log.e("SaveAssociationScreen", "Save failed: ${error.message}", error)
                     ToastUtils.showToast(context, context.getString(R.string.save_failed_message))
                   })
             },
