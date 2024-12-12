@@ -67,7 +67,7 @@
     <string name="save_button_text">Save</string>
     <string name="category_button_text">Select Category</string>
     <string name="save_failed_message">Failed to save association</string>
-    <string name="save_association_success">Your new association is created and available !</string>
+    <string name="save_association_success">Your new association is created and will be reviewed by the owners of the app !</string>
 
     /**
     * package: authentication

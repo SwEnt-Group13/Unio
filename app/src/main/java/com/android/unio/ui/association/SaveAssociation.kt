@@ -125,6 +125,7 @@ fun SaveAssociationScreen(
             },
             onSave = { newAssociation, imageStream ->
               associationViewModel.saveAssociation(
+                  isNewAssociation = true,
                   newAssociation,
                   imageStream,
                   onSuccess = {

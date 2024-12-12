@@ -2,6 +2,7 @@ package com.android.unio.model.strings
 
 object FirestorePathsStrings {
   const val ASSOCIATION_PATH = "associations"
+  const val ASSOCIATION_REQUEST_PATH = "associationsRequest"
   const val USER_PATH = "users"
   const val EVENT_PATH = "events"
   const val EVENT_USER_PICTURES_PATH = "eventUserPictures"

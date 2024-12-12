@@ -54,7 +54,7 @@ constructor(
   ) {
     db.runBatch { batch ->
           val userRef = userRepository.getUserRef(user.uid)
-          val associationRef = associationRepository.getAssociationRef(association.uid)
+          val associationRef = associationRepository.getAssociationRef(association.uid, isNewAssociation = false)
 
           batch.set(associationRef, AssociationRepositoryFirestore.serialize(association))
           batch.set(userRef, UserRepositoryFirestore.serialize(user))

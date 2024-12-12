@@ -61,7 +61,7 @@
     <string name="save_button_text">Enregistrer</string>
     <string name="category_button_text">Sélectionner la catégorie</string>
     <string name="save_failed_message">Échec de la sauvegarde de l\'association</string>
-    <string name="save_association_success">Votre nouvelle association est crée et disponible !</string>
+    <string name="save_association_success">Votre nouvelle association est crée et va être approuver par les créateurs de l\'application !</string>
 
     /**
     * package: authentication
