@@ -2,6 +2,7 @@ package com.android.unio.model.association
 
 import com.android.unio.model.authentication.registerAuthStateListener
 import com.android.unio.model.firestore.FirestorePaths.ASSOCIATION_PATH
+import com.android.unio.model.firestore.FirestorePaths.ASSOCIATION_REQUEST_PATH
 import com.android.unio.model.firestore.performFirestoreOperation
 import com.android.unio.model.firestore.registerSnapshotListener
 import com.android.unio.model.firestore.transform.hydrate
@@ -38,7 +39,7 @@ class AssociationRepositoryFirestore @Inject constructor(private val db: Firebas
    */
   override fun getAssociationRef(uid: String, isNewAssociation: Boolean): DocumentReference {
     if (isNewAssociation) {
-      return db.collection(ASSOCIATION_PATH).document(uid)
+      return db.collection(ASSOCIATION_REQUEST_PATH).document(uid)
     } else {
       return db.collection(ASSOCIATION_PATH).document(uid)
     }
