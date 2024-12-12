@@ -9,6 +9,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performTextInput
 import com.android.unio.TearDown
 import com.android.unio.mocks.user.MockUser
+import com.android.unio.model.authentication.AuthViewModel
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.strings.test_tags.authentication.WelcomeTestTags
 import com.android.unio.model.user.User
@@ -16,10 +17,16 @@ import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.authentication.WelcomeScreen
 import com.android.unio.ui.navigation.NavigationAction
+import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.auth
 import io.mockk.MockKAnnotations
 import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
+import io.mockk.just
+import io.mockk.mockkStatic
+import io.mockk.runs
 import io.mockk.unmockkAll
 import org.junit.After
 import org.junit.Before
@@ -34,19 +41,20 @@ class WelcomeTest : TearDown() {
   val user = MockUser.createMockUser()
 
   private lateinit var userViewModel: UserViewModel
+  private lateinit var authViewModel: AuthViewModel
   @MockK private lateinit var navigationAction: NavigationAction
   @MockK private lateinit var userRepository: UserRepositoryFirestore
   @MockK private lateinit var imageRepository: ImageRepositoryFirebaseStorage
-  //  @MockK private lateinit var firebaseAuth: FirebaseAuth
+  @MockK private lateinit var firebaseAuth: FirebaseAuth
 
   @Before
   fun setUp() {
     MockKAnnotations.init(this)
 
-    //    mockkStatic(FirebaseAuth::class)
-    //    every { Firebase.auth } returns firebaseAuth
-    //    every { firebaseAuth.addAuthStateListener(any()) } just runs
-    //    every { firebaseAuth.removeAuthStateListener(any()) } just runs
+    mockkStatic(FirebaseAuth::class)
+    every { Firebase.auth } returns firebaseAuth
+    every { firebaseAuth.addAuthStateListener(any()) } just runs
+    every { firebaseAuth.removeAuthStateListener(any()) } just runs
 
     // Call first callback when init is called
     every { userRepository.init(any()) } answers { firstArg<() -> Unit>().invoke() }
@@ -58,11 +66,12 @@ class WelcomeTest : TearDown() {
 
     navigationAction = mock(NavigationAction::class.java)
     userViewModel = UserViewModel(userRepository, imageRepository)
+    authViewModel = AuthViewModel(firebaseAuth, userRepository)
   }
 
   @Test
   fun testWelcomeIsDisplayed() {
-    composeTestRule.setContent { WelcomeScreen(navigationAction, userViewModel) }
+    composeTestRule.setContent { WelcomeScreen(navigationAction, authViewModel) }
     composeTestRule.onNodeWithTag(WelcomeTestTags.EMAIL).assertIsDisplayed()
     composeTestRule.onNodeWithTag(WelcomeTestTags.PASSWORD).assertIsDisplayed()
     composeTestRule.onNodeWithTag(WelcomeTestTags.BUTTON).assertIsDisplayed()
@@ -72,7 +81,7 @@ class WelcomeTest : TearDown() {
 
   @Test
   fun testButtonEnables() {
-    composeTestRule.setContent { WelcomeScreen(navigationAction, userViewModel) }
+    composeTestRule.setContent { WelcomeScreen(navigationAction, authViewModel) }
     composeTestRule.onNodeWithTag(WelcomeTestTags.BUTTON).assertIsNotEnabled()
 
     composeTestRule.onNodeWithTag(WelcomeTestTags.EMAIL).performTextInput("john.doe@epfl.ch")

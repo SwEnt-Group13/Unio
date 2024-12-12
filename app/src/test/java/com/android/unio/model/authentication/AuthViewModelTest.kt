@@ -131,24 +131,26 @@ class AuthViewModelTest {
     every { firebaseUser.isEmailVerified } returns true
     every { userRepository.getUserWithId(any(), any(), any()) } answers
         {
-            val exception = FirebaseFirestoreException( FirebaseFirestoreException.Code.NOT_FOUND.name, FirebaseFirestoreException.Code.NOT_FOUND)
-            val onFailure = it.invocation.args[2] as (Exception) -> Unit
+          val exception =
+              FirebaseFirestoreException(
+                  FirebaseFirestoreException.Code.NOT_FOUND.name,
+                  FirebaseFirestoreException.Code.NOT_FOUND)
+          val onFailure = it.invocation.args[2] as (Exception) -> Unit
           onFailure(exception)
         }
 
     authViewModel = AuthViewModel(firebaseAuth, userRepository)
 
-      triggerAuthStateListener(firebaseAuth)
+    triggerAuthStateListener(firebaseAuth)
 
     assertEquals(Screen.ACCOUNT_DETAILS, authViewModel.authState.value)
   }
 
-
-    /**
-     * In this case the user is supposed to navigate to email verification as his credentials
-     * have been filled in in the welcome screen
-     */
-    @Test
+  /**
+   * In this case the user is supposed to navigate to email verification as his credentials have
+   * been filled in in the welcome screen
+   */
+  @Test
   fun testUserIsAuthenticatedAndEmailNotVerifiedAndCredentialsAreNotNull() {
     every { firebaseUser.isEmailVerified } returns false
 
@@ -160,22 +162,20 @@ class AuthViewModelTest {
     assertEquals(Screen.EMAIL_VERIFICATION, authViewModel.authState.value)
   }
 
+  /**
+   * Here as his credentials are null, the user must go through the Welcome screen as the
+   * credentials must be filled in to be able to reauthenticate
+   */
+  @Test
+  fun testUserIsAuthenticateAndEmailIsNotVerifiedAndCredentialsAreNull() {
+    every { firebaseUser.isEmailVerified } returns false
 
-    /**
-     * Here as his credentials are null, the user must go through the
-     * Welcome screen as the credentials must be filled in to be able to
-     * reauthenticate
-     */
-    @Test
-    fun testUserIsAuthenticateAndEmailIsNotVerifiedAndCredentialsAreNull(){
-        every { firebaseUser.isEmailVerified } returns false
+    authViewModel = AuthViewModel(firebaseAuth, userRepository)
 
-        authViewModel = AuthViewModel(firebaseAuth, userRepository)
+    triggerAuthStateListener(firebaseAuth)
 
-        triggerAuthStateListener(firebaseAuth)
-
-        assertEquals(Route.AUTH, authViewModel.authState.value)
-    }
+    assertEquals(Route.AUTH, authViewModel.authState.value)
+  }
 
   @Test
   fun testErrorFetchingAccountDetails() {
