@@ -84,6 +84,7 @@ import com.android.unio.model.strings.FormatStrings.HOUR_MINUTE_FORMAT
 import com.android.unio.model.strings.NotificationStrings.EVENT_REMINDER_CHANNEL_ID
 import com.android.unio.model.strings.test_tags.event.EventDetailsTestTags
 import com.android.unio.model.user.UserViewModel
+import com.android.unio.model.utils.NetworkUtils
 import com.android.unio.ui.components.NotificationSender
 import com.android.unio.ui.image.AsyncImageWrapper
 import com.android.unio.ui.navigation.NavigationAction
@@ -609,8 +610,33 @@ fun EventSaveButton(event: Event, eventViewModel: EventViewModel, userViewModel:
           }
         }
       }
-
+  var enableButton by remember { mutableStateOf(true) }
+  val isConnected = NetworkUtils.checkInternetConnection(context)
   val onClickSaveButton = {
+    if (isConnected) {
+      enableButton = false
+      eventViewModel.updateSave(event, user!!, isSaved) {
+        userViewModel.refreshUser()
+        if (isSaved) {
+          if (notificationPermissionsEnabled) {
+            NotificationWorker.unschedule(context, event.uid.hashCode())
+          }
+        } else {
+          if (!notificationPermissionsEnabled) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+              // this permission requires api 33
+              // We should check how to make notifications work with lower api versions
+              permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            }
+          } else {
+            scheduleReminderNotification()
+          }
+        }
+        enableButton = true
+        isSaved = !isSaved
+      }
+    }
+
     if (isSaved) {
       val newEvent = event.copy(numberOfSaved = event.numberOfSaved - 1)
       eventViewModel.updateEventWithoutImage(
