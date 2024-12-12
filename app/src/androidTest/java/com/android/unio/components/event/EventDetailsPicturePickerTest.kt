@@ -23,7 +23,6 @@ import io.mockk.impl.annotations.MockK
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.mockito.Mock
 
 class EventDetailsPicturePickerTest : TearDown() {
 
@@ -35,7 +34,7 @@ class EventDetailsPicturePickerTest : TearDown() {
   @MockK private lateinit var associationRepository: AssociationRepositoryFirestore
   @MockK
   private lateinit var eventUserPictureRepositoryFirestore: EventUserPictureRepositoryFirestore
-  @Mock
+  @MockK
   private lateinit var concurrentEventUserRepositoryFirestore:
       ConcurrentEventUserRepositoryFirestore
 

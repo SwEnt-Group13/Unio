@@ -76,7 +76,6 @@ import me.zhanghai.compose.preference.ProvidePreferenceLocals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.mockito.Mock
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
 import org.mockito.kotlin.any
@@ -115,7 +114,7 @@ class ScreenDisplayingTest : TearDown() {
   @MockK private lateinit var imageRepositoryFirestore: ImageRepositoryFirebaseStorage
   @MockK
   private lateinit var eventUserPictureRepositoryFirestore: EventUserPictureRepositoryFirestore
-  @Mock
+  @MockK
   private lateinit var concurrentEventUserRepositoryFirestore:
       ConcurrentEventUserRepositoryFirestore
 

@@ -45,7 +45,6 @@ import io.mockk.spyk
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.mockito.Mock
 
 @HiltAndroidTest
 class EventEditTests : TearDown() {
@@ -73,7 +72,7 @@ class EventEditTests : TearDown() {
   @MockK private lateinit var imageRepositoryFirestore: ImageRepositoryFirebaseStorage
   @MockK
   private lateinit var eventUserPictureRepositoryFirestore: EventUserPictureRepositoryFirestore
-  @Mock
+  @MockK
   private lateinit var concurrentEventUserRepositoryFirestore:
       ConcurrentEventUserRepositoryFirestore
   @MockK

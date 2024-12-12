@@ -71,7 +71,6 @@ import me.zhanghai.compose.preference.ProvidePreferenceLocals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.mockito.Mock
 
 @HiltAndroidTest
 @UninstallModules(FirebaseModule::class)
@@ -98,7 +97,7 @@ class AssociationProfileTest : TearDown() {
   @MockK private lateinit var imageRepository: ImageRepositoryFirebaseStorage
   @MockK
   private lateinit var eventUserPictureRepositoryFirestore: EventUserPictureRepositoryFirestore
-  @Mock
+  @MockK
   private lateinit var concurrentEventUserRepositoryFirestore:
       ConcurrentEventUserRepositoryFirestore
 

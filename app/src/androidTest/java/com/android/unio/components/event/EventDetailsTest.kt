@@ -48,7 +48,6 @@ import me.zhanghai.compose.preference.ProvidePreferenceLocals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.mockito.Mock
 import org.mockito.Mockito.mock
 
 class EventDetailsTest : TearDown() {
@@ -68,7 +67,7 @@ class EventDetailsTest : TearDown() {
   @MockK private lateinit var imageRepository: ImageRepositoryFirebaseStorage
   @MockK
   private lateinit var eventUserPictureRepositoryFirestore: EventUserPictureRepositoryFirestore
-  @Mock
+  @MockK
   private lateinit var concurrentEventUserRepositoryFirestore:
       ConcurrentEventUserRepositoryFirestore
 
@@ -119,6 +118,10 @@ class EventDetailsTest : TearDown() {
             eventUserPictureRepositoryFirestore,
             concurrentEventUserRepositoryFirestore)
 
+    every { eventRepository.getEvents(any(), any()) } answers
+        {
+          (it.invocation.args[0] as (List<Event>) -> Unit)(events)
+        }
     every { userRepository.init(any()) } returns Unit
     every { userRepository.getUserWithId("uid", any(), any()) } answers
         {
@@ -229,12 +232,15 @@ class EventDetailsTest : TearDown() {
   @Test
   fun testButtonBehavior() {
     setEventScreen(events[0])
+    eventViewModel.loadEvents()
     // Share button
     composeTestRule
         .onNodeWithTag(EventDetailsTestTags.SHARE_BUTTON)
         .assertDisplayComponentInScroll()
 
     // Save button
+    println(events[0].uid)
+    println(eventViewModel.events.value)
     composeTestRule.onNodeWithTag(EventDetailsTestTags.SAVE_BUTTON).assertDisplayComponentInScroll()
     composeTestRule.onNodeWithTag(EventDetailsTestTags.SAVE_BUTTON).performClick()
 
