@@ -37,12 +37,11 @@ class AssociationRepositoryFirestore @Inject constructor(private val db: Firebas
    * @return [DocumentReference] : The [DocumentReference] for the [Association] object.
    */
   override fun getAssociationRef(uid: String, isNewAssociation: Boolean): DocumentReference {
-      if (isNewAssociation){
-          return db.collection(ASSOCIATION_PATH).document(uid)
-      }else{
-          return db.collection(ASSOCIATION_PATH).document(uid)
-      }
-
+    if (isNewAssociation) {
+      return db.collection(ASSOCIATION_PATH).document(uid)
+    } else {
+      return db.collection(ASSOCIATION_PATH).document(uid)
+    }
   }
 
   /**
@@ -107,17 +106,16 @@ class AssociationRepositoryFirestore @Inject constructor(private val db: Firebas
       onSuccess: (Association) -> Unit,
       onFailure: (Exception) -> Unit
   ) {
-    getAssociationRef(id, isNewAssociation = false).registerSnapshotListener(MetadataChanges.EXCLUDE) {
-        documentSnapshot,
-        exception ->
-      if (exception != null) {
-        onFailure(exception)
-        return@registerSnapshotListener
-      }
-      if (documentSnapshot != null && documentSnapshot.exists()) {
-        onSuccess(hydrate(documentSnapshot.data))
-      }
-    }
+    getAssociationRef(id, isNewAssociation = false).registerSnapshotListener(
+        MetadataChanges.EXCLUDE) { documentSnapshot, exception ->
+          if (exception != null) {
+            onFailure(exception)
+            return@registerSnapshotListener
+          }
+          if (documentSnapshot != null && documentSnapshot.exists()) {
+            onSuccess(hydrate(documentSnapshot.data))
+          }
+        }
   }
 
   /**
