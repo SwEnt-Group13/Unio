@@ -307,7 +307,11 @@ fun EventCreationScreen(
                         location = selectedLocation!!,
                         eventPictures = MockReferenceList(),
                     ),
-                    onSuccess = { navigationAction.goBack() },
+                    onSuccess = {
+                      // TODO: Remove the following line when a fix is found
+                      associationViewModel.refreshAssociation()
+                      navigationAction.goBack()
+                    },
                     onFailure = {
                       Toast.makeText(
                               context,
