@@ -31,6 +31,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.android.unio.R
+import com.android.unio.model.authentication.AuthViewModel
 import com.android.unio.model.strings.test_tags.authentication.EmailVerificationTestTags
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.navigation.NavigationAction
@@ -45,10 +46,16 @@ import com.google.firebase.auth.auth
  *
  * @param navigationAction The navigation action to use.
  * @param userViewModel The [UserViewModel] to use.
+ * @param onEmailVerified The callback that is called upon when the user re-authenticates with a
+ *   verified account. This simply calls the fetch methods of the Repositories.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EmailVerificationScreen(navigationAction: NavigationAction, userViewModel: UserViewModel) {
+fun EmailVerificationScreen(
+    navigationAction: NavigationAction,
+    authViewModel: AuthViewModel,
+    onEmailVerified: () -> Unit
+) {
 
   val user by remember { mutableStateOf(Firebase.auth.currentUser) }
   if (user == null) {
@@ -64,14 +71,14 @@ fun EmailVerificationScreen(navigationAction: NavigationAction, userViewModel: U
     Firebase.auth.currentUser?.reload()?.addOnCompleteListener {
       if (it.isSuccessful) {
         if (Firebase.auth.currentUser?.isEmailVerified == true) {
-          if (userViewModel.credential == null) {
+          if (authViewModel.credential == null) {
             Log.e("EmailVerificationScreen", "Credential is null")
           } else {
             Firebase.auth.currentUser
-                ?.reauthenticate(userViewModel.credential!!)
+                ?.reauthenticate(authViewModel.credential!!)
                 ?.addOnSuccessListener {
                   success = true
-                  userViewModel.setCredential(null)
+                  authViewModel.credential = null
                 }
           }
         }
@@ -119,7 +126,10 @@ fun EmailVerificationScreen(navigationAction: NavigationAction, userViewModel: U
                     style = AppTypography.titleLarge)
                 Button(
                     modifier = Modifier.testTag(EmailVerificationTestTags.CONTINUE),
-                    onClick = { navigationAction.navigateTo(Screen.ACCOUNT_DETAILS) },
+                    onClick = {
+                      navigationAction.navigateTo(Screen.ACCOUNT_DETAILS)
+                      onEmailVerified()
+                    },
                 ) {
                   Text(context.getString(R.string.email_verification_verified_continue))
                 }

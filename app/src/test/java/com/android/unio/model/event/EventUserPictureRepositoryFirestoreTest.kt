@@ -64,4 +64,13 @@ class EventUserPictureRepositoryFirestoreTest {
     `when`(documentReference.id).thenReturn(testUid)
     assertEquals(eventUserPictureRepository.getNewUid(), testUid)
   }
+
+  @Test
+  fun testDeleteEventById() {
+    `when`(collectionReference.document(eventUserPicture.uid)).thenReturn(documentReference)
+    `when`(voidTask.addOnSuccessListener(any())).thenReturn(voidTask)
+    `when`(documentReference.delete()).thenReturn(voidTask)
+    eventUserPictureRepository.deleteEventUserPictureById(
+        eventUserPicture.uid, {}, { e -> throw e })
+  }
 }

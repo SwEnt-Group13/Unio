@@ -2,18 +2,20 @@ package com.android.unio.model.event
 
 import androidx.test.core.app.ApplicationProvider
 import com.android.unio.mocks.event.MockEvent
+import com.android.unio.mocks.firestore.MockReferenceList
 import com.android.unio.model.association.AssociationRepositoryFirestore
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
-import com.android.unio.model.save.ConcurrentEventUserRepositoryFirestore
 import com.android.unio.model.user.User
 import com.google.firebase.FirebaseApp
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
 import emptyFirestoreReferenceElement
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
+import io.mockk.verify
 import java.io.InputStream
 import java.util.GregorianCalendar
 import junit.framework.TestCase.assertEquals
@@ -34,6 +36,7 @@ import org.robolectric.RobolectricTestRunner
 class EventViewModelTest {
   @Mock private lateinit var repository: EventRepositoryFirestore
   @Mock private lateinit var db: FirebaseFirestore
+  @Mock private lateinit var storage: FirebaseStorage
   @Mock private lateinit var collectionReference: CollectionReference
   @Mock private lateinit var inputStream: InputStream
 
@@ -47,20 +50,29 @@ class EventViewModelTest {
 
   private lateinit var eventViewModel: EventViewModel
 
+  private val testEventPictures =
+      listOf(
+          EventUserPicture(
+              uid = "1", image = "http://image.com", User.emptyFirestoreReferenceElement(), 0),
+          EventUserPicture(
+              uid = "2", image = "http://image2.com", User.emptyFirestoreReferenceElement(), 0))
   private val testEvents =
       listOf(
           MockEvent.createMockEvent(
               uid = "1",
               title = "Balelec",
               price = 40.5,
+              image = "http://imageevent.com",
               startDate = Timestamp(GregorianCalendar(2004, 7, 1).time),
               endDate = Timestamp(GregorianCalendar(2005, 7, 1).time)),
           MockEvent.createMockEvent(
               uid = "2",
               title = "Tremplin Sysmic",
+              image = "http://imageevent.com",
               price = 40.5,
               startDate = Timestamp(GregorianCalendar(2004, 7, 1).time),
-              endDate = Timestamp(GregorianCalendar(2005, 7, 1).time)))
+              endDate = Timestamp(GregorianCalendar(2005, 7, 1).time),
+              eventPictures = MockReferenceList(testEventPictures)))
 
   @Before
   fun setUp() {
@@ -70,6 +82,7 @@ class EventViewModelTest {
     if (FirebaseApp.getApps(ApplicationProvider.getApplicationContext()).isEmpty()) {
       FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext())
     }
+
     `when`(db.collection(any())).thenReturn(collectionReference)
 
     every { imageRepository.uploadImage(any(), any(), any(), any()) } answers
@@ -97,7 +110,7 @@ class EventViewModelTest {
 
   @Test
   fun addEventandUpdateTest() {
-    val event = testEvents.get(0)
+    val event = testEvents[0]
     `when`(repository.addEvent(eq(event), any(), any())).thenAnswer { invocation ->
       val onSuccess = invocation.arguments[1] as () -> Unit
       onSuccess()
@@ -109,7 +122,7 @@ class EventViewModelTest {
 
   @Test
   fun updateEventTest() {
-    val event = testEvents.get(0)
+    val event = testEvents[0]
     `when`(repository.addEvent(eq(event), any(), any())).thenAnswer { invocation ->
       val onSuccess = invocation.arguments[1] as () -> Unit
       onSuccess()
@@ -120,7 +133,7 @@ class EventViewModelTest {
 
   @Test
   fun updateEventWithoutImageTest() {
-    val event = testEvents.get(0)
+    val event = testEvents[0]
     `when`(repository.addEvent(eq(event), any(), any())).thenAnswer { invocation ->
       val onSuccess = invocation.arguments[1] as () -> Unit
       onSuccess()
@@ -131,13 +144,54 @@ class EventViewModelTest {
 
   @Test
   fun deleteEventTest() {
-    val event = testEvents.get(0)
+    val event = testEvents[0]
     `when`(repository.deleteEventById(eq(event.uid), any(), any())).thenAnswer { invocation ->
       val onSuccess = invocation.arguments[1] as () -> Unit
       onSuccess()
     }
-    eventViewModel.deleteEvent(
-        event, { verify(repository).deleteEventById(eq(event.uid), any(), any()) }, {})
+
+    every { imageRepository.deleteImage(any(), any(), any()) } answers
+        {
+          val onSuccess = args[1] as () -> Unit
+          onSuccess()
+        }
+    eventViewModel.deleteEvent(event, {}, {})
+    verify(repository).deleteEventById(eq(event.uid), any(), any())
+    verify(exactly = 1) {
+      imageRepository.deleteImage(eq(StoragePathsStrings.EVENT_IMAGES + event.uid), any(), any())
+    }
+  }
+
+  @Test
+  fun testDeleteEventWithEventPictures() {
+    val event = testEvents[1]
+    `when`(repository.deleteEventById(eq(event.uid), any(), any())).thenAnswer { invocation ->
+      val onSuccess = invocation.arguments[1] as () -> Unit
+      onSuccess()
+    }
+
+    every { imageRepository.deleteImage(any(), any(), any()) } answers
+        {
+          val onSuccess = args[1] as () -> Unit
+          onSuccess()
+        }
+    eventViewModel.deleteEvent(event, {}, {})
+
+    verify(repository).deleteEventById(eq(event.uid), any(), any())
+    verify(exactly = 1) {
+      imageRepository.deleteImage(eq(StoragePathsStrings.EVENT_IMAGES + event.uid), any(), any())
+    }
+
+    event.eventPictures.uids.forEachIndexed { index, _ ->
+      verify(exactly = 1) {
+        imageRepository.deleteImage(
+            eq(StoragePathsStrings.EVENT_USER_PICTURES + testEventPictures[index].uid),
+            any(),
+            any())
+      }
+      verify(eventUserPictureRepositoryFirestore)
+          .deleteEventUserPictureById(eq(testEventPictures[index].uid), any(), any())
+    }
   }
 
   @Test

@@ -175,6 +175,7 @@ class SearchRepositoryTest {
   @Test
   fun `test init fetches event and association data`() =
       testScope.runTest {
+        every { firebaseUser.isEmailVerified } returns true
         every { mockSession.setSchemaAsync(any()) } returns
             immediateFuture(SetSchemaResponse.Builder().build())
         every { mockSession.putAsync(any()) } returns
