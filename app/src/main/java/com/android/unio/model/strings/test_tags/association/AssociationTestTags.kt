@@ -39,7 +39,7 @@ object AssociationProfileTestTags {
   const val FOLLOW_BUTTON = "associationFollowButton"
 }
 
-object EditAssociationTestTags {
+object SaveAssociationTestTags {
   // SCAFFOLD
   const val TITLE = "editAssociationTitle"
   const val NAME_EXPLANATION_TEXT = "nameExplanationText"
@@ -54,4 +54,6 @@ object EditAssociationTestTags {
   const val URL_TEXT_FIELD = "urlTextField"
   const val CANCEL_BUTTON = "cancelButton"
   const val SAVE_BUTTON = "saveButton"
+  const val PRINCIPAL_EMAIL_ADDRESS_TEXT = "PrincipalEmailAddressTextField"
+  const val PRINCIPAL_EMAIL_ADDRESS_EXPLANATION_TEXT = "PrincipalEmailAddressExplanationText"
 }
