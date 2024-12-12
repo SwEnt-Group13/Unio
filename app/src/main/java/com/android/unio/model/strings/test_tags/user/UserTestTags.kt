@@ -14,7 +14,6 @@ object UserProfileTestTags {
   const val SETTINGS = "userProfileSettings"
   const val USER_SETTINGS = "userProfileUserSettings"
   const val SIGN_OUT = "userProfileSignOut"
-  const val CLAIMING_BUTTON = "userClaimingButton"
   const val CLAIM_ASSOCIATION = "userProfileClaimAssociation"
   const val SAVE_ASSOCIATION = "userProfileSaveAssociation"
 
@@ -26,12 +25,6 @@ object SomeoneElseUserProfileTestTags {
   const val SCREEN = "someoneElseUserProfileScreen"
   const val NAME = "someoneElseUserProfileName"
   const val GO_BACK = "someoneElseUserProfileGoBack"
-}
-
-object UserClaimAssociationTestTags {
-  const val SCREEN = "userClaimAssociationScreen"
-  const val BACK_BUTTON = "userClaimAssociationBackButton"
-  const val NEW_ASSOCIATION_BUTTON = "userClaimAssociationCreateNewAssociationButton"
 }
 
 object UserClaimAssociationPresidentialRightsTestTags {
