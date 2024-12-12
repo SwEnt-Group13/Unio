@@ -20,7 +20,7 @@ class UserRepositoryFirestore @Inject constructor(private val db: FirebaseFirest
   override fun init(onSuccess: () -> Unit) {
     Firebase.auth.registerAuthStateListener {
       if (it.currentUser != null && it.currentUser!!.isEmailVerified) {
-          onSuccess()
+        onSuccess()
       }
     }
   }
@@ -68,23 +68,21 @@ class UserRepositoryFirestore @Inject constructor(private val db: FirebaseFirest
   ) {
     getUserRef(id).registerSnapshotListener(MetadataChanges.EXCLUDE) { documentSnapshot, exception
       ->
-        if (exception != null) {
+      if (exception != null) {
         onFailure(exception)
         return@registerSnapshotListener
       }
 
       if (documentSnapshot != null) {
-          if (documentSnapshot.exists()) {
-              val user = hydrate(documentSnapshot.data)
-              onSuccess(user)
-          } else {
-              onFailure(
-                  FirebaseFirestoreException(
-                      FirebaseFirestoreException.Code.NOT_FOUND.name,
-                      FirebaseFirestoreException.Code.NOT_FOUND
-                  )
-              )
-          }
+        if (documentSnapshot.exists()) {
+          val user = hydrate(documentSnapshot.data)
+          onSuccess(user)
+        } else {
+          onFailure(
+              FirebaseFirestoreException(
+                  FirebaseFirestoreException.Code.NOT_FOUND.name,
+                  FirebaseFirestoreException.Code.NOT_FOUND))
+        }
       }
     }
   }

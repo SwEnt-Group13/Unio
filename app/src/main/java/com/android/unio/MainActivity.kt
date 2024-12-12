@@ -82,7 +82,6 @@ class MainActivity : ComponentActivity() {
     Firebase.functions.useEmulator(host, 5001)
     Firebase.storage.useEmulator(host, 9199)
 
-
     setContent {
       Surface(modifier = Modifier.fillMaxSize()) {
         ProvidePreferenceLocals { AppTheme { UnioApp() } }
@@ -139,12 +138,13 @@ fun UnioApp() {
     navigation(startDestination = Screen.WELCOME, route = Route.AUTH) {
       composable(Screen.WELCOME) { WelcomeScreen(navigationActions, authViewModel) }
       composable(Screen.EMAIL_VERIFICATION) {
-        EmailVerificationScreen(navigationActions, authViewModel,
-          onEmailVerified = {
-            associationViewModel.getAssociations()
-            eventViewModel.loadEvents()
-//            searchViewModel.relaod()
-          })
+        EmailVerificationScreen(
+            navigationActions,
+            authViewModel,
+            onEmailVerified = {
+              associationViewModel.getAssociations()
+              eventViewModel.loadEvents()
+            })
       }
       composable(Screen.ACCOUNT_DETAILS) {
         AccountDetailsScreen(navigationActions, userViewModel, imageViewModel)

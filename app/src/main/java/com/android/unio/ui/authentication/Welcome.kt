@@ -187,7 +187,12 @@ fun WelcomeScreen(navigationAction: NavigationAction, authViewModel: AuthViewMod
  * @param password The password to use.
  * @param context The context to use.
  */
-fun handleAuthentication(email: String, password: String, context: Context, navigationAction: NavigationAction) {
+fun handleAuthentication(
+    email: String,
+    password: String,
+    context: Context,
+    navigationAction: NavigationAction
+) {
 
   // Check internet connectivity
   val isConnected = checkInternetConnection(context)
@@ -210,7 +215,7 @@ fun handleAuthentication(email: String, password: String, context: Context, navi
         ToastUtils.showToast(context, context.getString(R.string.welcome_toast_sign_in))
 
         if (signInResult.user?.isEmailVerified == false) {
-            navigationAction.navigateTo(Screen.EMAIL_VERIFICATION)
+          navigationAction.navigateTo(Screen.EMAIL_VERIFICATION)
         }
       }
       SignInState.SUCCESS_CREATE_ACCOUNT -> {

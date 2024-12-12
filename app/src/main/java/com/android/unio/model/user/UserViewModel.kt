@@ -12,7 +12,6 @@ import com.android.unio.model.strings.StoragePathsStrings
 import com.android.unio.ui.event.SECONDS_IN_AN_HOUR
 import com.google.firebase.Firebase
 import com.google.firebase.Timestamp
-import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.auth
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject

@@ -1,6 +1,5 @@
 package com.android.unio.model.authentication
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.android.unio.model.user.UserRepository
 import com.android.unio.ui.navigation.Route
@@ -9,10 +8,10 @@ import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestoreException
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import javax.inject.Inject
 
 /**
  * ViewModel class that manages the authentication state of the user. It uses a [FirebaseAuth] to
@@ -75,28 +74,24 @@ constructor(private val firebaseAuth: FirebaseAuth, private val userRepository: 
    */
   private fun addAuthStateVerifier() {
     firebaseAuth.registerAuthStateListener { auth ->
-      Log.d("NavigationAuthScreen", "${auth.currentUser?.uid}")
-
       val user = auth.currentUser
-      Log.d("NavigationAuthScreen", "${auth.currentUser?.uid} : mail is verified")
       if (user != null) {
         if (user.isEmailVerified) {
           userRepository.getUserWithId(
               user.uid,
-              onSuccess = {
-                _authState.value = Screen.HOME
-              },
-              onFailure =  { error ->
-                if(error is FirebaseFirestoreException && error.code == FirebaseFirestoreException.Code.NOT_FOUND){
+              onSuccess = { _authState.value = Screen.HOME },
+              onFailure = { error ->
+                if (error is FirebaseFirestoreException &&
+                    error.code == FirebaseFirestoreException.Code.NOT_FOUND) {
                   _authState.value = Screen.ACCOUNT_DETAILS
-                }else{
+                } else {
                   _authState.value = Screen.WELCOME
                 }
               })
         } else {
-          if( _credential == null){
+          if (_credential == null) {
             _authState.value = Route.AUTH
-          }else{
+          } else {
             _authState.value = Screen.EMAIL_VERIFICATION
           }
         }

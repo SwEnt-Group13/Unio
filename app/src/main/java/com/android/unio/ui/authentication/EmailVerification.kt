@@ -49,8 +49,11 @@ import com.google.firebase.auth.auth
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EmailVerificationScreen(navigationAction: NavigationAction, authViewModel: AuthViewModel,
-                            onEmailVerified: () -> Unit) {
+fun EmailVerificationScreen(
+    navigationAction: NavigationAction,
+    authViewModel: AuthViewModel,
+    onEmailVerified: () -> Unit
+) {
 
   val user by remember { mutableStateOf(Firebase.auth.currentUser) }
   if (user == null) {
@@ -73,7 +76,7 @@ fun EmailVerificationScreen(navigationAction: NavigationAction, authViewModel: A
                 ?.reauthenticate(authViewModel.credential!!)
                 ?.addOnSuccessListener {
                   success = true
-                    authViewModel.setCredential(null)
+                  authViewModel.setCredential(null)
                 }
           }
         }
@@ -121,8 +124,10 @@ fun EmailVerificationScreen(navigationAction: NavigationAction, authViewModel: A
                     style = AppTypography.titleLarge)
                 Button(
                     modifier = Modifier.testTag(EmailVerificationTestTags.CONTINUE),
-                    onClick = { navigationAction.navigateTo(Screen.ACCOUNT_DETAILS)
-                              onEmailVerified()},
+                    onClick = {
+                      navigationAction.navigateTo(Screen.ACCOUNT_DETAILS)
+                      onEmailVerified()
+                    },
                 ) {
                   Text(context.getString(R.string.email_verification_verified_continue))
                 }
