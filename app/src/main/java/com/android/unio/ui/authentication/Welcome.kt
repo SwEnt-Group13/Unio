@@ -211,16 +211,6 @@ fun handleAuthentication(email: String, password: String, context: Context, navi
 
         if (signInResult.user?.isEmailVerified == false) {
             navigationAction.navigateTo(Screen.EMAIL_VERIFICATION)
-//          signInResult.user.sendEmailVerification().addOnCompleteListener {
-//            if (it.isSuccessful) {
-//              ToastUtils.showToast(
-//                  context, context.getString(R.string.welcome_toast_verification_sent))
-//            } else {
-//              ToastUtils.showToast(
-//                  context, context.getString(R.string.welcome_toast_verification_sent_failed))
-//              Log.e("WelcomeScreen", "Failed to send verification email", it.exception)
-//            }
-//          }
         }
       }
       SignInState.SUCCESS_CREATE_ACCOUNT -> {
