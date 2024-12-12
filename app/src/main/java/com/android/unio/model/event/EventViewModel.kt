@@ -212,12 +212,14 @@ constructor(
           Log.e("EventViewModel", "An error occurred while deleting event: $exception")
           onFailure(exception)
         })
-    imageRepository.deleteImage(
-        StoragePathsStrings.EVENT_IMAGES + event.uid,
-        {},
-        { exception ->
-          Log.e("EventViewModel", "An error occured while deleting event banner: $exception")
-        })
+    if (event.image.isNotBlank()) {
+      imageRepository.deleteImage(
+          StoragePathsStrings.EVENT_IMAGES + event.uid,
+          {},
+          { exception ->
+            Log.e("EventViewModel", "An error occured while deleting event banner: $exception")
+          })
+    }
 
     event.eventPictures.uids.forEach { uid ->
       imageRepository.deleteImage(

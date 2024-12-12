@@ -131,6 +131,11 @@ class EventViewModelTest {
       val onSuccess = invocation.arguments[1] as () -> Unit
       onSuccess()
     }
+
+    `when`(imageRepository.deleteImage(any(), any(), any())).thenAnswer { invocation ->
+      val onSuccess = invocation.arguments[1] as () -> Unit
+      onSuccess()
+    }
     eventViewModel.deleteEvent(
         event, { verify(repository).deleteEventById(eq(event.uid), any(), any()) }, {})
   }
