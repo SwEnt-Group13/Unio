@@ -179,8 +179,8 @@ fun EventScreenScaffold(
 
   val refreshState by eventViewModel.refreshState
   val pullRefreshState =
-    rememberPullRefreshState(
-      refreshing = refreshState, onRefresh = { eventViewModel.refreshEvent() })
+      rememberPullRefreshState(
+          refreshing = refreshState, onRefresh = { eventViewModel.refreshEvent() })
 
   var showNotificationDialog by remember { mutableStateOf(false) }
   testSnackbar = remember { SnackbarHostState() }
@@ -231,13 +231,14 @@ fun EventScreenScaffold(
             })
       }) { padding ->
         Box(
-          modifier =
-          Modifier.padding(padding)
-            .pullRefresh(pullRefreshState)
-            .fillMaxHeight()
-            .verticalScroll(rememberScrollState())) {
-          EventScreenContent(navigationAction, mapViewModel, event, organisers, pagerState, tabList)
-        }
+            modifier =
+                Modifier.padding(padding)
+                    .pullRefresh(pullRefreshState)
+                    .fillMaxHeight()
+                    .verticalScroll(rememberScrollState())) {
+              EventScreenContent(
+                  navigationAction, mapViewModel, event, organisers, pagerState, tabList)
+            }
       }
 
   NotificationSender(
@@ -252,9 +253,9 @@ fun EventScreenScaffold(
 
   Box {
     PullRefreshIndicator(
-      refreshing = refreshState,
-      state = pullRefreshState,
-      modifier = Modifier.align(Alignment.TopCenter))
+        refreshing = refreshState,
+        state = pullRefreshState,
+        modifier = Modifier.align(Alignment.TopCenter))
   }
 }
 
