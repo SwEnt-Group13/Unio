@@ -53,7 +53,9 @@ import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.event.Event
 import com.android.unio.model.firestore.FirestorePaths.ASSOCIATION_PATH
 import com.android.unio.model.firestore.emptyFirestoreReferenceList
-import com.android.unio.model.strings.test_tags.association.EditAssociationTestTags
+import com.android.unio.model.strings.test_tags.association.SaveAssociationTestTags
+import com.android.unio.model.strings.test_tags.association.SaveAssociationTestTags.PRINCIPAL_EMAIL_ADDRESS_EXPLANATION_TEXT
+import com.android.unio.model.strings.test_tags.association.SaveAssociationTestTags.PRINCIPAL_EMAIL_ADDRESS_TEXT
 import com.android.unio.model.strings.test_tags.event.EventDetailsTestTags
 import com.android.unio.ui.components.PictureSelectionTool
 import com.android.unio.ui.navigation.NavigationAction
@@ -126,7 +128,7 @@ fun SaveAssociationScreen(
                   onSuccess = {
                     if (isNewAssociation) {
                       ToastUtils.showToast(
-                          context, "Your new association is created and available !")
+                          context, context.getString(R.string.save_association_success))
                       navigationAction.navigateTo(Screen.MY_PROFILE, Screen.SAVE_ASSOCIATION)
                     } else {
                       associationViewModel.selectAssociation(newAssociation.uid)
@@ -135,7 +137,7 @@ fun SaveAssociationScreen(
                     }
                   },
                   onFailure = {
-                    Log.e("SaveAssociationScreen", "Failed to save association.")
+                    Log.e("SaveAssociationScreen", context.getString(R.string.save_failed_message))
                     ToastUtils.showToast(context, context.getString(R.string.save_failed_message))
                   })
             },
@@ -193,7 +195,7 @@ fun SaveAssociationScaffold(
                         context.getString(R.string.edit_association_title)
                       },
                   style = MaterialTheme.typography.headlineMedium,
-                  modifier = Modifier.testTag(EditAssociationTestTags.TITLE))
+                  modifier = Modifier.testTag(SaveAssociationTestTags.TITLE))
             })
       }) { padding ->
         Column(
@@ -205,15 +207,15 @@ fun SaveAssociationScaffold(
               Text(
                   text = context.getString(R.string.name_explanation),
                   style = MaterialTheme.typography.bodySmall,
-                  modifier = Modifier.testTag(EditAssociationTestTags.NAME_EXPLANATION_TEXT))
+                  modifier = Modifier.testTag(SaveAssociationTestTags.NAME_EXPLANATION_TEXT))
 
               Spacer(modifier = Modifier.height(8.dp))
               OutlinedTextField(
                   value = name,
                   onValueChange = { name = it },
-                  label = { Text("Name") },
+                  label = { Text(context.getString(R.string.field_name)) },
                   modifier =
-                      Modifier.fillMaxWidth().testTag(EditAssociationTestTags.NAME_TEXT_FIELD))
+                      Modifier.fillMaxWidth().testTag(SaveAssociationTestTags.NAME_TEXT_FIELD))
 
               Spacer(modifier = Modifier.height(16.dp))
 
@@ -221,15 +223,15 @@ fun SaveAssociationScaffold(
               Text(
                   text = context.getString(R.string.full_name_explanation),
                   style = MaterialTheme.typography.bodySmall,
-                  modifier = Modifier.testTag(EditAssociationTestTags.FULL_NAME_EXPLANATION_TEXT))
+                  modifier = Modifier.testTag(SaveAssociationTestTags.FULL_NAME_EXPLANATION_TEXT))
 
               Spacer(modifier = Modifier.height(8.dp))
               OutlinedTextField(
                   value = fullName,
                   onValueChange = { fullName = it },
-                  label = { Text("Full Name") },
+                  label = { Text(context.getString(R.string.field_full_name)) },
                   modifier =
-                      Modifier.fillMaxWidth().testTag(EditAssociationTestTags.FULL_NAME_TEXT_FIELD))
+                      Modifier.fillMaxWidth().testTag(SaveAssociationTestTags.FULL_NAME_TEXT_FIELD))
 
               Spacer(modifier = Modifier.height(16.dp))
 
@@ -237,7 +239,7 @@ fun SaveAssociationScaffold(
               Text(
                   text = context.getString(R.string.category_explanation),
                   style = MaterialTheme.typography.bodySmall,
-                  modifier = Modifier.testTag(EditAssociationTestTags.CATEGORY_EXPLANATION_TEXT))
+                  modifier = Modifier.testTag(SaveAssociationTestTags.CATEGORY_EXPLANATION_TEXT))
 
               Spacer(modifier = Modifier.height(8.dp))
 
@@ -245,7 +247,7 @@ fun SaveAssociationScaffold(
               Button(
                   onClick = { expanded = true },
                   modifier =
-                      Modifier.fillMaxWidth().testTag(EditAssociationTestTags.CATEGORY_BUTTON)) {
+                      Modifier.fillMaxWidth().testTag(SaveAssociationTestTags.CATEGORY_BUTTON)) {
                     Text(text = context.getString(category.displayNameId))
                   }
 
@@ -266,28 +268,28 @@ fun SaveAssociationScaffold(
               Text(
                   text = context.getString(R.string.description_explanation),
                   style = MaterialTheme.typography.bodySmall,
-                  modifier = Modifier.testTag(EditAssociationTestTags.DESCRIPTION_EXPLANATION_TEXT))
+                  modifier = Modifier.testTag(SaveAssociationTestTags.DESCRIPTION_EXPLANATION_TEXT))
 
               Spacer(modifier = Modifier.height(8.dp))
               OutlinedTextField(
                   value = description,
                   onValueChange = { description = it },
-                  label = { Text("Description") },
+                  label = { Text(context.getString(R.string.field_description)) },
                   modifier =
                       Modifier.fillMaxWidth()
-                          .testTag(EditAssociationTestTags.DESCRIPTION_TEXT_FIELD))
+                          .testTag(SaveAssociationTestTags.DESCRIPTION_TEXT_FIELD))
 
               Spacer(modifier = Modifier.height(16.dp))
 
               // Image selection tool
-              Text(text = "BLABLAEXPLANATION", style = MaterialTheme.typography.bodySmall)
+              Text(text = context.getString(R.string.association_image_explanation), style = MaterialTheme.typography.bodySmall)
 
               Spacer(modifier = Modifier.height(8.dp))
 
               if (selectedImageUri != null) {
                 Image(
                     painter = rememberAsyncImagePainter(selectedImageUri),
-                    contentDescription = "Selected Image",
+                    contentDescription = context.getString(R.string.field_selected_image),
                     contentScale = ContentScale.Crop,
                     modifier =
                         Modifier.size(100.dp)
@@ -299,7 +301,7 @@ fun SaveAssociationScaffold(
               Button(
                   onClick = { showSheet = true },
                   modifier = Modifier.align(Alignment.CenterHorizontally)) {
-                    Text(text = "select_image_button_text")
+                    Text(text = context.getString(R.string.field_association_image))
                   }
 
               if (showSheet) {
@@ -338,30 +340,30 @@ fun SaveAssociationScaffold(
               Text(
                   text = context.getString(R.string.url_explanation),
                   style = MaterialTheme.typography.bodySmall,
-                  modifier = Modifier.testTag(EditAssociationTestTags.URL_EXPLANATION_TEXT))
+                  modifier = Modifier.testTag(SaveAssociationTestTags.URL_EXPLANATION_TEXT))
 
               Spacer(modifier = Modifier.height(8.dp))
               OutlinedTextField(
                   value = url,
                   onValueChange = { url = it },
-                  label = { Text("URL") },
+                  label = { Text(context.getString(R.string.field_url)) },
                   modifier =
-                      Modifier.fillMaxWidth().testTag(EditAssociationTestTags.URL_TEXT_FIELD))
+                      Modifier.fillMaxWidth().testTag(SaveAssociationTestTags.URL_TEXT_FIELD))
 
               Spacer(modifier = Modifier.height(16.dp))
 
               Text(
                   text = context.getString(R.string.principal_email_address_explanation),
                   style = MaterialTheme.typography.bodySmall,
-                  modifier = Modifier.testTag("PrincipalEmailAddressExplanationText"))
+                  modifier = Modifier.testTag(PRINCIPAL_EMAIL_ADDRESS_EXPLANATION_TEXT))
 
               Spacer(modifier = Modifier.height(8.dp))
 
               OutlinedTextField(
                   value = principalEmailAddress,
                   onValueChange = { principalEmailAddress = it },
-                  label = { Text("Principal Email Address") },
-                  modifier = Modifier.fillMaxWidth().testTag("PrincipalEmailAddressTextField"))
+                  label = { Text(context.getString(R.string.field_principal_email_address)) },
+                  modifier = Modifier.fillMaxWidth().testTag(PRINCIPAL_EMAIL_ADDRESS_TEXT))
 
               Spacer(modifier = Modifier.height(24.dp))
 
@@ -371,7 +373,7 @@ fun SaveAssociationScaffold(
                   modifier = Modifier.fillMaxWidth()) {
                     TextButton(
                         onClick = onCancel,
-                        modifier = Modifier.testTag(EditAssociationTestTags.CANCEL_BUTTON)) {
+                        modifier = Modifier.testTag(SaveAssociationTestTags.CANCEL_BUTTON)) {
                           Text(context.getString(R.string.cancel_button_text))
                         }
 
@@ -384,7 +386,6 @@ fun SaveAssociationScaffold(
                                 selectedImageUri?.let { uri ->
                                   context.contentResolver.openInputStream(uri)
                                 }
-                            Log.d("SaveAssociationLog", inputStream.toString())
                             onSave(
                                 association.copy(
                                     name = name,
@@ -396,7 +397,7 @@ fun SaveAssociationScaffold(
                                 inputStream)
                           }
                         },
-                        modifier = Modifier.testTag(EditAssociationTestTags.SAVE_BUTTON)) {
+                        modifier = Modifier.testTag(SaveAssociationTestTags.SAVE_BUTTON)) {
                           Text(context.getString(R.string.save_button_text))
                         }
                   }

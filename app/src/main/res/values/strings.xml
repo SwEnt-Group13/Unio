@@ -46,6 +46,14 @@
 
 
     <!-- SaveAssociation strings -->
+    <string name="association_image_explanation">Provide a picture as the logo of the association</string>
+    <string name="field_association_image">Choose Association Image</string>
+    <string name="field_name">Name</string>
+    <string name="field_full_name">Full Name</string>
+    <string name="field_description">Description</string>
+    <string name="field_selected_image">Selected Image</string>
+    <string name="field_url">URL</string>
+    <string name="field_principal_email_address">Principal Email Address</string>
     <string name="create_association_title">Create Association</string>
     <string name="edit_association_title">Edit Association</string>
     <string name="name_explanation">The name of the association. This is typically a short identifier or acronym.</string>
@@ -59,6 +67,7 @@
     <string name="save_button_text">Save</string>
     <string name="category_button_text">Select Category</string>
     <string name="save_failed_message">Failed to save association</string>
+    <string name="save_association_success">Your new association is created and available !</string>
 
     /**
     * package: authentication
