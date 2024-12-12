@@ -8,8 +8,8 @@ import com.android.unio.assertDisplayComponentInScroll
 import com.android.unio.mocks.association.MockAssociation
 import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationRepository
-import com.android.unio.model.strings.test_tags.association.EditAssociationTestTags
-import com.android.unio.ui.association.EditAssociationScaffold
+import com.android.unio.model.strings.test_tags.association.SaveAssociationTestTags
+import com.android.unio.ui.association.SaveAssociationScaffold
 import com.android.unio.ui.navigation.NavigationAction
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
@@ -56,27 +56,32 @@ class EditAssociationTest : TearDown() {
 
   @Test
   fun testEditAssociationScreenDisplaysCorrectly() {
-    composeTestRule.setContent {
-      EditAssociationScaffold(
-          MockAssociation.createMockAssociation(uid = "1"), onCancel = {}, onSave = {})
-    }
+      composeTestRule.setContent {
+          SaveAssociationScaffold(
+              association = MockAssociation.createMockAssociation(uid = "1"),
+              onCancel = {},
+              onSave = { _, _ -> },
+              isNewAssociation = false
+          )
+      }
+
 
     composeTestRule.waitForIdle()
 
     composeTestRule
-        .onNodeWithTag(EditAssociationTestTags.NAME_TEXT_FIELD)
+        .onNodeWithTag(SaveAssociationTestTags.NAME_TEXT_FIELD)
         .assertDisplayComponentInScroll()
     composeTestRule
-        .onNodeWithTag(EditAssociationTestTags.FULL_NAME_TEXT_FIELD)
+        .onNodeWithTag(SaveAssociationTestTags.FULL_NAME_TEXT_FIELD)
         .assertDisplayComponentInScroll()
     composeTestRule
-        .onNodeWithTag(EditAssociationTestTags.CATEGORY_BUTTON)
+        .onNodeWithTag(SaveAssociationTestTags.CATEGORY_BUTTON)
         .assertDisplayComponentInScroll()
     composeTestRule
-        .onNodeWithTag(EditAssociationTestTags.DESCRIPTION_TEXT_FIELD)
+        .onNodeWithTag(SaveAssociationTestTags.DESCRIPTION_TEXT_FIELD)
         .assertDisplayComponentInScroll()
     composeTestRule
-        .onNodeWithTag(EditAssociationTestTags.URL_TEXT_FIELD)
+        .onNodeWithTag(SaveAssociationTestTags.URL_TEXT_FIELD)
         .assertDisplayComponentInScroll()
   }
 }
