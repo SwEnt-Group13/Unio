@@ -232,7 +232,8 @@ class AssociationViewModelTest {
       onSuccess(imageUrl)
     }
 
-    `when`(associationRepository.saveAssociation(eq(false), any(), any(), any())).thenAnswer { invocation ->
+    `when`(associationRepository.saveAssociation(eq(false), any(), any(), any())).thenAnswer {
+        invocation ->
       val onSuccess = invocation.getArgument(2) as () -> Unit
       onSuccess()
     }
@@ -269,7 +270,8 @@ class AssociationViewModelTest {
   fun testSaveAssociationNoImageStreamSuccess() {
     val association = testAssociations[0]
 
-    `when`(associationRepository.saveAssociation(eq(false), any(), any(), any())).thenAnswer { invocation ->
+    `when`(associationRepository.saveAssociation(eq(false), any(), any(), any())).thenAnswer {
+        invocation ->
       val onSuccess = invocation.getArgument(2) as () -> Unit
       onSuccess()
     }
@@ -286,7 +288,8 @@ class AssociationViewModelTest {
     val association = testAssociations[0]
     val failureException = Exception("Save failed")
 
-    `when`(associationRepository.saveAssociation(eq(false),any(), any(), any())).thenAnswer { invocation ->
+    `when`(associationRepository.saveAssociation(eq(false), any(), any(), any())).thenAnswer {
+        invocation ->
       val onFailure = invocation.getArgument(3) as (Exception) -> Unit
       onFailure(failureException)
     }

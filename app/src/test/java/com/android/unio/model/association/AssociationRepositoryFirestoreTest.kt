@@ -346,8 +346,11 @@ class AssociationRepositoryFirestoreTest {
   fun testAddAssociationSuccess() {
     every { documentReference.set(map1) } returns (Tasks.forResult(null))
 
-    repository.saveAssociation(isNewAssociation = false,
-        association1, onSuccess = { assert(true) }, onFailure = { assert(false) })
+    repository.saveAssociation(
+        isNewAssociation = false,
+        association1,
+        onSuccess = { assert(true) },
+        onFailure = { assert(false) })
 
     verify { documentReference.set(map1) }
   }
@@ -356,8 +359,11 @@ class AssociationRepositoryFirestoreTest {
   fun testAddAssociationFailure() {
     every { documentReference.set(any()) } returns (Tasks.forException(Exception()))
 
-    repository.saveAssociation(isNewAssociation = false,
-        association1, onSuccess = { assert(false) }, onFailure = { assert(true) })
+    repository.saveAssociation(
+        isNewAssociation = false,
+        association1,
+        onSuccess = { assert(false) },
+        onFailure = { assert(true) })
 
     verify { documentReference.set(map1) }
   }
@@ -366,8 +372,11 @@ class AssociationRepositoryFirestoreTest {
   fun testUpdateAssociationSuccess() {
     every { documentReference.set(any()) } returns (Tasks.forResult(null))
 
-    repository.saveAssociation(isNewAssociation = false,
-        association1, onSuccess = { assert(true) }, onFailure = { assert(false) })
+    repository.saveAssociation(
+        isNewAssociation = false,
+        association1,
+        onSuccess = { assert(true) },
+        onFailure = { assert(false) })
 
     verify { documentReference.set(map1) }
   }
@@ -376,8 +385,11 @@ class AssociationRepositoryFirestoreTest {
   fun testUpdateAssociationFailure() {
     every { documentReference.set(any()) } returns (Tasks.forException(Exception()))
 
-    repository.saveAssociation(isNewAssociation = false,
-        association1, onSuccess = { assert(false) }, onFailure = { assert(true) })
+    repository.saveAssociation(
+        isNewAssociation = false,
+        association1,
+        onSuccess = { assert(false) },
+        onFailure = { assert(true) })
 
     verify { documentReference.set(map1) }
   }
