@@ -9,12 +9,11 @@ import com.google.firebase.FirebaseApp
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
 import emptyFirestoreReferenceElement
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
-import java.io.InputStream
-import java.util.GregorianCalendar
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
@@ -28,11 +27,14 @@ import org.mockito.MockitoAnnotations
 import org.mockito.kotlin.any
 import org.mockito.kotlin.eq
 import org.robolectric.RobolectricTestRunner
+import java.io.InputStream
+import java.util.GregorianCalendar
 
 @RunWith(RobolectricTestRunner::class)
 class EventViewModelTest {
   @Mock private lateinit var repository: EventRepositoryFirestore
   @Mock private lateinit var db: FirebaseFirestore
+  @Mock private lateinit var storage: FirebaseStorage
   @Mock private lateinit var collectionReference: CollectionReference
   @Mock private lateinit var inputStream: InputStream
 
@@ -66,6 +68,7 @@ class EventViewModelTest {
     if (FirebaseApp.getApps(ApplicationProvider.getApplicationContext()).isEmpty()) {
       FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext())
     }
+
     `when`(db.collection(any())).thenReturn(collectionReference)
 
     every { imageRepository.uploadImage(any(), any(), any(), any()) } answers
@@ -132,10 +135,11 @@ class EventViewModelTest {
       onSuccess()
     }
 
-    `when`(imageRepository.deleteImage(any(), any(), any())).thenAnswer { invocation ->
-      val onSuccess = invocation.arguments[1] as () -> Unit
-      onSuccess()
-    }
+    every { imageRepository.deleteImage(any(), any(), any()) } answers
+        {
+          val onSuccess = args[1] as () -> Unit
+          onSuccess()
+        }
     eventViewModel.deleteEvent(
         event, { verify(repository).deleteEventById(eq(event.uid), any(), any()) }, {})
   }
