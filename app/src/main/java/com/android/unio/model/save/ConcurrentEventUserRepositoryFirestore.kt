@@ -52,6 +52,7 @@ constructor(
       onSuccess: () -> Unit,
       onFailure: (Exception) -> Unit
   ) {
+    // TODO: test method
     db.runBatch { batch ->
           val userRef = userRepository.getUserRef(user.uid)
           val eventRef = eventRepository.getEventRef(event.uid)
