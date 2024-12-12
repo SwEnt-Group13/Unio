@@ -81,7 +81,7 @@ class EventCreationTest : TearDown() {
   @MockK private lateinit var imageRepositoryFirestore: ImageRepositoryFirebaseStorage
   @MockK
   private lateinit var eventUserPictureRepositoryFirestore: EventUserPictureRepositoryFirestore
-  @Mock
+  @MockK
   private lateinit var concurrentEventUserRepositoryFirestore:
       ConcurrentEventUserRepositoryFirestore
   @MockK
