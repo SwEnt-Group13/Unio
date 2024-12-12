@@ -431,7 +431,7 @@ fun EventDetailsPicturesTab(event: Event, context: Context) {
                 item.image.toUri(),
                 contentDescription =
                     context.getString(R.string.event_details_user_picture_content_description),
-                filterQuality = FilterQuality.High,
+                filterQuality = FilterQuality.Medium,
                 placeholderResourceId = 0,
                 contentScale = ContentScale.Crop,
                 modifier =
