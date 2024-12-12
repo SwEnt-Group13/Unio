@@ -5,6 +5,8 @@ import com.android.unio.mocks.event.MockEvent
 import com.android.unio.mocks.firestore.MockReferenceList
 import com.android.unio.model.association.AssociationRepositoryFirestore
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
+import com.android.unio.model.save.ConcurrentEventUserRepositoryFirestore
+import com.android.unio.model.strings.StoragePathsStrings
 import com.android.unio.model.user.User
 import com.google.firebase.FirebaseApp
 import com.google.firebase.Timestamp
@@ -36,7 +38,6 @@ import org.robolectric.RobolectricTestRunner
 class EventViewModelTest {
   @Mock private lateinit var repository: EventRepositoryFirestore
   @Mock private lateinit var db: FirebaseFirestore
-  @Mock private lateinit var storage: FirebaseStorage
   @Mock private lateinit var collectionReference: CollectionReference
   @Mock private lateinit var inputStream: InputStream
 
