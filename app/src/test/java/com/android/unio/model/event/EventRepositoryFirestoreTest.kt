@@ -129,6 +129,7 @@ class EventRepositoryFirestoreTest {
   @Test
   fun testInitUserAuthenticated() {
     `when`(auth.currentUser).thenReturn(firebaseUser)
+    `when`(firebaseUser.isEmailVerified).thenReturn(true)
     var onSuccessCalled = false
     val onSuccess = { onSuccessCalled = true }
 
