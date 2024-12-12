@@ -51,6 +51,7 @@ import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationCategory
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.event.Event
+import com.android.unio.model.firestore.FirestorePaths.ASSOCIATION_PATH
 import com.android.unio.model.firestore.emptyFirestoreReferenceList
 import com.android.unio.model.strings.test_tags.association.EditAssociationTestTags
 import com.android.unio.model.strings.test_tags.event.EventDetailsTestTags
@@ -58,8 +59,11 @@ import com.android.unio.ui.components.PictureSelectionTool
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
 import com.android.unio.ui.utils.ToastUtils
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import java.io.InputStream
 import kotlinx.coroutines.launch
+
 
 /**
  * Screen for editing an association.
@@ -85,7 +89,7 @@ fun SaveAssociationScreen(
 
   (if (association == null) {
         Association(
-            uid = "1234",
+            uid = Firebase.firestore.collection(ASSOCIATION_PATH).document().id, // creates a new document reference and retrieve the randomly generated Firestore UID
             url = "",
             name = "",
             fullName = "",
@@ -116,7 +120,8 @@ fun SaveAssociationScreen(
                   newAssociation,
                   imageStream,
                   onSuccess = {
-                    if (isNewAssociation) {
+                      if (isNewAssociation) {
+                          ToastUtils.showToast(context, "Your new association is created and available !")
                       navigationAction.navigateTo(Screen.MY_PROFILE, Screen.SAVE_ASSOCIATION)
                     } else {
                       associationViewModel.selectAssociation(newAssociation.uid)
@@ -370,8 +375,10 @@ fun SaveAssociationScaffold(
                     Button(
                         onClick = {
                           scope.launch {
-                            Log.d("SaveAssociation", "ok" + "name")
-                            Log.d("SaveAssociation", "ok$name")
+                              val inputStream = selectedImageUri?.let { uri ->
+                                  context.contentResolver.openInputStream(uri)
+                              }
+                              Log.d("SaveAssociationLog",  inputStream.toString())
                             onSave(
                                 association.copy(
                                     name = name,
@@ -380,7 +387,7 @@ fun SaveAssociationScaffold(
                                     category = category,
                                     url = url,
                                     principalEmailAddress = principalEmailAddress),
-                                null)
+                                inputStream)
                           }
                         },
                         modifier = Modifier.testTag(EditAssociationTestTags.SAVE_BUTTON)) {
