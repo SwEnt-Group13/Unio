@@ -97,7 +97,7 @@ class AssociationRepositoryFirestore @Inject constructor(private val db: Firebas
    *   fetched.
    * @param onFailure [(Exception) -> Unit] : The callback to call when the fetch fails.
    */
-  override fun getAssociationWithId(
+  override fun registerAssociationListener(
       id: String,
       onSuccess: (Association) -> Unit,
       onFailure: (Exception) -> Unit

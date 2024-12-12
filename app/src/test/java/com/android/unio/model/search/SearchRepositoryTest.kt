@@ -291,7 +291,7 @@ class SearchRepositoryTest {
             immediateFuture(listOf(mockSearchResult))
         every { mockSearchResults.nextPageAsync } returns mockFuture
 
-        every { mockAssociationRepository.getAssociationWithId(any(), any(), any()) } answers
+        every { mockAssociationRepository.registerAssociationListener(any(), any(), any()) } answers
             {
               val id = firstArg<String>()
               val onSuccess = secondArg<(Association) -> Unit>()
@@ -331,7 +331,7 @@ class SearchRepositoryTest {
             immediateFuture(listOf(mockSearchResult))
         every { mockSearchResults.nextPageAsync } returns mockFuture
 
-        every { mockAssociationRepository.getAssociationWithId(any(), any(), any()) } answers
+        every { mockAssociationRepository.registerAssociationListener(any(), any(), any()) } answers
             {
               val id = firstArg<String>()
               val onSuccess = secondArg<(Association) -> Unit>()

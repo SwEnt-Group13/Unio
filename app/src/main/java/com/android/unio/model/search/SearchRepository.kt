@@ -205,7 +205,7 @@ constructor(
       associationDocument: AssociationDocument
   ): Association {
     return suspendCoroutine { continuation ->
-      associationRepository.getAssociationWithId(
+      associationRepository.registerAssociationListener(
           id = associationDocument.uid,
           onSuccess = { association ->
             if (continuation.context.isActive) {
