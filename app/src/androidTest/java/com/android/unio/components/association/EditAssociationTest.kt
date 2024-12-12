@@ -56,15 +56,13 @@ class EditAssociationTest : TearDown() {
 
   @Test
   fun testEditAssociationScreenDisplaysCorrectly() {
-      composeTestRule.setContent {
-          SaveAssociationScaffold(
-              association = MockAssociation.createMockAssociation(uid = "1"),
-              onCancel = {},
-              onSave = { _, _ -> },
-              isNewAssociation = false
-          )
-      }
-
+    composeTestRule.setContent {
+      SaveAssociationScaffold(
+          association = MockAssociation.createMockAssociation(uid = "1"),
+          onCancel = {},
+          onSave = { _, _ -> },
+          isNewAssociation = false)
+    }
 
     composeTestRule.waitForIdle()
 
