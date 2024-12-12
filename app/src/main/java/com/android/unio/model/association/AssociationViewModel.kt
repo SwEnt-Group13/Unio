@@ -1,6 +1,8 @@
 package com.android.unio.model.association
 
 import android.util.Log
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.android.unio.model.event.EventRepository
 import com.android.unio.model.follow.ConcurrentAssociationUserRepository
@@ -47,6 +49,9 @@ constructor(
   private val _selectedAssociation = MutableStateFlow<Association?>(null)
   val selectedAssociation: StateFlow<Association?> = _selectedAssociation
 
+  private val _refreshState = mutableStateOf(false)
+  val refreshState: State<Boolean> = _refreshState
+
   init {
     associationRepository.init { getAssociations() }
   }
@@ -84,6 +89,32 @@ constructor(
         onFailure = { exception ->
           _associations.value = emptyList()
           Log.e("ExploreViewModel", "Failed to fetch associations", exception)
+        })
+  }
+
+  fun refreshAssociation() {
+    if (_selectedAssociation.value == null) {
+      return
+    }
+
+    _refreshState.value = true
+    associationRepository.getAssociationWithId(
+        _selectedAssociation.value!!.uid,
+        onSuccess = { fetchedAssociation ->
+          _selectedAssociation.value = fetchedAssociation
+          _selectedAssociation.value?.events?.requestAll()
+          _selectedAssociation.value?.members?.forEach { fetchUserFromMember(it) }
+
+          _associations.value =
+              _associations.value.map {
+                if (it.uid == fetchedAssociation.uid) fetchedAssociation else it
+              }
+          _associationsByCategory.value = _associations.value.groupBy { it.category }
+          _refreshState.value = false
+        },
+        onFailure = { exception ->
+          Log.e("AssociationViewModel", "Failed to fetch association", exception)
+          _refreshState.value = false
         })
   }
 
