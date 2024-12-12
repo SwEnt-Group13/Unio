@@ -14,7 +14,6 @@ import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.forEach
 
 /**
  * ViewModel class that manages the association list data and provides it to the UI. It exposes a
