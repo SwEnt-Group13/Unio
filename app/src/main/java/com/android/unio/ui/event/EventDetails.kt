@@ -27,14 +27,20 @@ import androidx.compose.foundation.lazy.staggeredgrid.itemsIndexed
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material.icons.rounded.FavoriteBorder
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -154,7 +160,7 @@ fun EventScreen(
  * @param userViewModel The [UserViewModel] to use.
  */
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun EventScreenScaffold(
     navigationAction: NavigationAction,
@@ -170,6 +176,11 @@ fun EventScreenScaffold(
   val context = LocalContext.current
   var showSheet by remember { mutableStateOf(false) }
   val user by userViewModel.user.collectAsState()
+
+  val refreshState by eventViewModel.refreshState
+  val pullRefreshState =
+    rememberPullRefreshState(
+      refreshing = refreshState, onRefresh = { eventViewModel.refreshEvent() })
 
   var showNotificationDialog by remember { mutableStateOf(false) }
   testSnackbar = remember { SnackbarHostState() }
@@ -218,10 +229,16 @@ fun EventScreenScaffold(
                             context.getString(R.string.event_more_button_description))
                   }
             })
-      },
-      content = {
-        EventScreenContent(navigationAction, mapViewModel, event, organisers, pagerState, tabList)
-      })
+      }) { padding ->
+        Box(
+          modifier =
+          Modifier.padding(padding)
+            .pullRefresh(pullRefreshState)
+            .fillMaxHeight()
+            .verticalScroll(rememberScrollState())) {
+          EventScreenContent(navigationAction, mapViewModel, event, organisers, pagerState, tabList)
+        }
+      }
 
   NotificationSender(
       dialogTitle = context.getString(R.string.event_send_notification),
@@ -232,6 +249,13 @@ fun EventScreenScaffold(
       onClose = { showNotificationDialog = false })
 
   EventDetailsBottomSheet(showSheet, { showNotificationDialog = true }) { showSheet = false }
+
+  Box {
+    PullRefreshIndicator(
+      refreshing = refreshState,
+      state = pullRefreshState,
+      modifier = Modifier.align(Alignment.TopCenter))
+  }
 }
 
 /**
