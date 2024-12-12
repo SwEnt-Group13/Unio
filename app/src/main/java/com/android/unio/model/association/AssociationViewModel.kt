@@ -14,6 +14,7 @@ import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.forEach
 
 /**
  * ViewModel class that manages the association list data and provides it to the UI. It exposes a
@@ -201,7 +202,11 @@ constructor(
   fun selectAssociation(associationId: String) {
     _selectedAssociation.value =
         findAssociationById(associationId).also { it ->
-          it?.events?.requestAll()
+          it?.events?.requestAll(
+              {
+                it.events.list.value.forEach { event -> event.organisers.requestAll(lazy = true) }
+              },
+              lazy = true)
           it?.members?.forEach { fetchUserFromMember(it) }
         }
   }

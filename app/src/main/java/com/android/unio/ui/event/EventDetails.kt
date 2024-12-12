@@ -312,11 +312,12 @@ fun EventInformationCard(event: Event, organisers: List<Association>, context: C
                           context.getString(R.string.event_association_icon_description),
                       modifier =
                           Modifier.size(ASSOCIATION_ICON_SIZE)
-                              .clip(CircleShape)
+                              .clip(RoundedCornerShape(5.dp))
                               .align(Alignment.CenterVertically)
                               .testTag("${EventDetailsTestTags.ASSOCIATION_LOGO}$i"),
                       placeholderResourceId = R.drawable.adec,
-                      filterQuality = FilterQuality.None)
+                      filterQuality = FilterQuality.None,
+                      contentScale = ContentScale.Crop)
 
                   Text(
                       organisers[i].name,
