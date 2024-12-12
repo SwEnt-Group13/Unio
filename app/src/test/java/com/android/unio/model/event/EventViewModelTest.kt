@@ -12,7 +12,6 @@ import com.google.firebase.FirebaseApp
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.storage.FirebaseStorage
 import emptyFirestoreReferenceElement
 import io.mockk.MockKAnnotations
 import io.mockk.every
