@@ -162,6 +162,7 @@ constructor(
    * @param onFailure A callback that is called when an error occurs while saving the association.
    */
   fun saveAssociation(
+      isNewAssociation: Boolean,
       association: Association,
       imageStream: InputStream?,
       onSuccess: () -> Unit,
@@ -174,6 +175,7 @@ constructor(
           onSuccess = { imageUrl ->
             val updatedAssociation = association.copy(image = imageUrl)
             associationRepository.saveAssociation(
+                isNewAssociation,
                 updatedAssociation,
                 {
                   _associations.value =
@@ -191,6 +193,7 @@ constructor(
           })
     } else {
       associationRepository.saveAssociation(
+          isNewAssociation,
           association,
           {
             _associations.value =

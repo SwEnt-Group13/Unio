@@ -36,8 +36,13 @@ class AssociationRepositoryFirestore @Inject constructor(private val db: Firebas
    * @param uid [String] : The uid of the [Association] to fetch.
    * @return [DocumentReference] : The [DocumentReference] for the [Association] object.
    */
-  override fun getAssociationRef(uid: String): DocumentReference {
-    return db.collection(ASSOCIATION_PATH).document(uid)
+  override fun getAssociationRef(uid: String, isNewAssociation: Boolean): DocumentReference {
+      if (isNewAssociation){
+          return db.collection(ASSOCIATION_PATH).document(uid)
+      }else{
+          return db.collection(ASSOCIATION_PATH).document(uid)
+      }
+
   }
 
   /**
@@ -102,7 +107,7 @@ class AssociationRepositoryFirestore @Inject constructor(private val db: Firebas
       onSuccess: (Association) -> Unit,
       onFailure: (Exception) -> Unit
   ) {
-    getAssociationRef(id).registerSnapshotListener(MetadataChanges.EXCLUDE) {
+    getAssociationRef(id, isNewAssociation = false).registerSnapshotListener(MetadataChanges.EXCLUDE) {
         documentSnapshot,
         exception ->
       if (exception != null) {
@@ -123,11 +128,12 @@ class AssociationRepositoryFirestore @Inject constructor(private val db: Firebas
    * @param onFailure [(Exception) -> Unit] : The callback to call when the save fails.
    */
   override fun saveAssociation(
+      isNewAssociation: Boolean,
       association: Association,
       onSuccess: () -> Unit,
       onFailure: (Exception) -> Unit
   ) {
-    getAssociationRef(association.uid)
+    getAssociationRef(association.uid, isNewAssociation)
         .set(serialize(association))
         .performFirestoreOperation(onSuccess = { onSuccess() }, onFailure = onFailure)
   }
@@ -144,7 +150,7 @@ class AssociationRepositoryFirestore @Inject constructor(private val db: Firebas
       onSuccess: () -> Unit,
       onFailure: (Exception) -> Unit
   ) {
-    getAssociationRef(associationId)
+    getAssociationRef(associationId, isNewAssociation = false)
         .delete()
         .performFirestoreOperation(onSuccess = { onSuccess() }, onFailure = onFailure)
   }
