@@ -108,7 +108,7 @@ constructor(
     event.uid = repository.getNewUid() // Generate a new UID for the event
     imageRepository.uploadImage(
         inputStream,
-        "images/events/${event.uid}",
+        StoragePathsStrings.EVENT_IMAGES + event.uid,
         { uri ->
           event.image = uri
           repository.addEvent(event, onSuccess, onFailure)
@@ -144,7 +144,8 @@ constructor(
   ) {
     imageRepository.uploadImage(
         inputStream,
-        "images/events/${event.uid}",
+        // no need to delete the old image as it will be replaced by the new one
+        StoragePathsStrings.EVENT_IMAGES + event.uid,
         { uri ->
           event.image = uri
           repository.addEvent(event, onSuccess, onFailure)
@@ -209,7 +210,36 @@ constructor(
         },
         onFailure = { exception ->
           Log.e("EventViewModel", "An error occurred while deleting event: $exception")
+          onFailure(exception)
         })
+    if (event.image.isNotBlank()) {
+      imageRepository.deleteImage(
+          StoragePathsStrings.EVENT_IMAGES + event.uid,
+          {},
+          { exception ->
+            Log.e("EventViewModel", "An error occured while deleting event banner: $exception")
+          })
+    }
+
+    event.eventPictures.uids.forEach { uid ->
+      imageRepository.deleteImage(
+          StoragePathsStrings.EVENT_USER_PICTURES + uid,
+          {
+            eventUserPictureRepository.deleteEventUserPictureById(
+                uid,
+                {},
+                { exception ->
+                  Log.e(
+                      "EventViewModel",
+                      "An error occured while deleting event's user pictures from Firestore: $exception")
+                })
+          },
+          { exception ->
+            Log.e(
+                "EventViewModel",
+                "An error occured while deleting event's user pictures from Firebase Storage: $exception")
+          })
+    }
 
     event.organisers.requestAll({
       event.organisers.list.value.forEach {
@@ -238,7 +268,7 @@ constructor(
     val picId = eventUserPictureRepository.getNewUid()
     imageRepository.uploadImage(
         pictureInputStream,
-        StoragePathsStrings.EVENT_PICTURES + picId,
+        StoragePathsStrings.EVENT_USER_PICTURES + picId,
         onSuccess = { imageUri ->
           val newEventPicture = picture.copy(uid = picId, image = imageUri)
           eventUserPictureRepository.addEventUserPicture(
