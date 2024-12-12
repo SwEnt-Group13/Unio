@@ -45,7 +45,7 @@ class AssociationRepositoryFirestore @Inject constructor(private val db: Firebas
    *
    * @param onSuccess [(List<Association>) -> Unit] : The callback to call when the [Association]s
    *   are fetched.
-   *     @param onFailure [(Exception) -> Unit] : The callback to call when the fetch fails.
+   * @param onFailure [(Exception) -> Unit] : The callback to call when the fetch fails.
    */
   override fun getAssociations(
       onSuccess: (List<Association>) -> Unit,
@@ -66,6 +66,14 @@ class AssociationRepositoryFirestore @Inject constructor(private val db: Firebas
             onFailure = { exception -> onFailure(exception) })
   }
 
+  /**
+   * Fetches all [Association] objects from Firestore that belong to the provided [category].
+   *
+   * @param category [AssociationCategory] : The category of the [Association]s to fetch.
+   * @param onSuccess [(List<Association>) -> Unit] : The callback to call when the [Association]s
+   *   are fetched.
+   * @param onFailure [(Exception) -> Unit] : The callback to call when the fetch fails.
+   */
   fun getAssociationsByCategory(
       category: AssociationCategory,
       onSuccess: (List<Association>) -> Unit,
