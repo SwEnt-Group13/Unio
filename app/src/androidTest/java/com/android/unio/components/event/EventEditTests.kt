@@ -24,6 +24,7 @@ import com.android.unio.model.follow.ConcurrentAssociationUserRepositoryFirestor
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.map.nominatim.NominatimLocationRepository
 import com.android.unio.model.map.nominatim.NominatimLocationSearchViewModel
+import com.android.unio.model.save.ConcurrentEventUserRepositoryFirestore
 import com.android.unio.model.search.SearchRepository
 import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.strings.test_tags.event.EventEditTestTags
@@ -44,6 +45,7 @@ import io.mockk.spyk
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.mockito.Mock
 
 @HiltAndroidTest
 class EventEditTests : TearDown() {
@@ -71,6 +73,9 @@ class EventEditTests : TearDown() {
   @MockK private lateinit var imageRepositoryFirestore: ImageRepositoryFirebaseStorage
   @MockK
   private lateinit var eventUserPictureRepositoryFirestore: EventUserPictureRepositoryFirestore
+  @Mock
+  private lateinit var concurrentEventUserRepositoryFirestore:
+      ConcurrentEventUserRepositoryFirestore
   @MockK
   private lateinit var concurrentAssociationUserRepositoryFirestore:
       ConcurrentAssociationUserRepositoryFirestore
@@ -113,7 +118,8 @@ class EventEditTests : TearDown() {
                 eventRepository,
                 imageRepositoryFirestore,
                 associationRepositoryFirestore,
-                eventUserPictureRepositoryFirestore))
+                eventUserPictureRepositoryFirestore,
+                concurrentEventUserRepositoryFirestore))
 
     every { eventViewModel.findEventById(any()) } returns mockEvent
     eventViewModel.selectEvent(mockEvent.uid)

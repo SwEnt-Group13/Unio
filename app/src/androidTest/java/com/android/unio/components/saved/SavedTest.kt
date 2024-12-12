@@ -13,6 +13,7 @@ import com.android.unio.model.event.EventRepositoryFirestore
 import com.android.unio.model.event.EventUserPictureRepositoryFirestore
 import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
+import com.android.unio.model.save.ConcurrentEventUserRepositoryFirestore
 import com.android.unio.model.strings.test_tags.saved.SavedTestTags
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserViewModel
@@ -47,6 +48,9 @@ class SavedTest : TearDown() {
   @MockK private lateinit var imageRepository: ImageRepositoryFirebaseStorage
   @MockK
   private lateinit var eventUserPictureRepositoryFirestore: EventUserPictureRepositoryFirestore
+  @MockK
+  private lateinit var concurrentEventUserRepositoryFirestore:
+      ConcurrentEventUserRepositoryFirestore
 
   private lateinit var eventViewModel: EventViewModel
 
@@ -95,7 +99,8 @@ class SavedTest : TearDown() {
             eventRepository,
             imageRepository,
             associationRepositoryFirestore,
-            eventUserPictureRepositoryFirestore)
+            eventUserPictureRepositoryFirestore,
+            concurrentEventUserRepositoryFirestore)
   }
 
   @Test

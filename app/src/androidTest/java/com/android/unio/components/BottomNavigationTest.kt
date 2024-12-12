@@ -9,6 +9,7 @@ import com.android.unio.model.event.EventRepository
 import com.android.unio.model.event.EventUserPictureRepositoryFirestore
 import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
+import com.android.unio.model.save.ConcurrentEventUserRepositoryFirestore
 import com.android.unio.model.search.SearchRepository
 import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.strings.test_tags.navigation.NavigationActionTestTags
@@ -23,6 +24,7 @@ import io.mockk.spyk
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.mockito.Mock
 import org.mockito.kotlin.mock
 
 class BottomNavigationTest : TearDown() {
@@ -36,6 +38,9 @@ class BottomNavigationTest : TearDown() {
   @MockK private lateinit var associationRepositoryFirestore: AssociationRepositoryFirestore
   @MockK
   private lateinit var eventUserPictureRepositoryFirestore: EventUserPictureRepositoryFirestore
+  @Mock
+  private lateinit var concurrentEventUserRepositoryFirestore:
+      ConcurrentEventUserRepositoryFirestore
 
   private lateinit var userRepository: UserRepository
   private lateinit var userViewModel: UserViewModel
@@ -54,7 +59,8 @@ class BottomNavigationTest : TearDown() {
             eventRepository,
             imageRepository,
             associationRepositoryFirestore,
-            eventUserPictureRepositoryFirestore)
+            eventUserPictureRepositoryFirestore,
+            concurrentEventUserRepositoryFirestore)
 
     userRepository = mock { UserRepositoryFirestore::class.java }
     userViewModel = UserViewModel(userRepository, imageRepository)

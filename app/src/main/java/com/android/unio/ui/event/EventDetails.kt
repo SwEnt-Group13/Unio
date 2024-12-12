@@ -554,7 +554,7 @@ fun EventDetailsBottomSheet(
 }
 
 @Composable
-fun EventSaveButton(event: Event?, eventViewModel: EventViewModel, userViewModel: UserViewModel) {
+fun EventSaveButton(event: Event, eventViewModel: EventViewModel, userViewModel: UserViewModel) {
   val context = LocalContext.current
 
   val user by userViewModel.user.collectAsState()
@@ -565,7 +565,7 @@ fun EventSaveButton(event: Event?, eventViewModel: EventViewModel, userViewModel
     return
   }
 
-  var isSaved by remember { mutableStateOf(user!!.savedEvents.contains(event!!.uid)) }
+  var isSaved by remember { mutableStateOf(user!!.savedEvents.contains(event.uid)) }
 
   var notificationPermissionsEnabled by remember { mutableStateOf(false) }
   when (PackageManager.PERMISSION_GRANTED) {
@@ -586,12 +586,12 @@ fun EventSaveButton(event: Event?, eventViewModel: EventViewModel, userViewModel
       NotificationWorker.schedule(
           context,
           UnioNotification(
-              title = event!!.title,
+              title = event.title,
               message = context.getString(R.string.notification_event_reminder),
               icon = R.drawable.other_icon,
               channelId = EVENT_REMINDER_CHANNEL_ID,
               channelName = EVENT_REMINDER_CHANNEL_ID,
-              notificationId = event!!.uid.hashCode(),
+              notificationId = event.uid.hashCode(),
               // Schedule a notification a few hours before the event's startDate
               timeMillis = (event.startDate.seconds - 2 * SECONDS_IN_AN_HOUR) * SECONDS_IN_AN_HOUR))
     }
@@ -615,11 +615,11 @@ fun EventSaveButton(event: Event?, eventViewModel: EventViewModel, userViewModel
   val onClickSaveButton = {
     enableButton = false
     if (isConnected) {
-      eventViewModel.updateSave(events.first { it.uid == event!!.uid }, user!!, isSaved) {
+      eventViewModel.updateSave(events.first { it.uid == event.uid }, user!!, isSaved) {
         userViewModel.refreshUser()
         if (isSaved) {
           if (notificationPermissionsEnabled) {
-            NotificationWorker.unschedule(context, event!!.uid.hashCode())
+            NotificationWorker.unschedule(context, event.uid.hashCode())
           }
         } else {
           if (!notificationPermissionsEnabled) {

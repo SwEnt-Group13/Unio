@@ -14,6 +14,7 @@ import com.android.unio.model.event.EventRepositoryFirestore
 import com.android.unio.model.event.EventUserPictureRepositoryFirestore
 import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
+import com.android.unio.model.save.ConcurrentEventUserRepositoryFirestore
 import com.android.unio.model.strings.test_tags.event.EventDetailsTestTags
 import com.android.unio.model.user.User
 import com.android.unio.ui.event.EventDetailsPicturePicker
@@ -22,6 +23,7 @@ import io.mockk.impl.annotations.MockK
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.mockito.Mock
 
 class EventDetailsPicturePickerTest : TearDown() {
 
@@ -33,6 +35,9 @@ class EventDetailsPicturePickerTest : TearDown() {
   @MockK private lateinit var associationRepository: AssociationRepositoryFirestore
   @MockK
   private lateinit var eventUserPictureRepositoryFirestore: EventUserPictureRepositoryFirestore
+  @Mock
+  private lateinit var concurrentEventUserRepositoryFirestore:
+      ConcurrentEventUserRepositoryFirestore
 
   private lateinit var eventViewModel: EventViewModel
 
@@ -51,7 +56,8 @@ class EventDetailsPicturePickerTest : TearDown() {
             eventRepository,
             imageRepository,
             associationRepository,
-            eventUserPictureRepositoryFirestore)
+            eventUserPictureRepositoryFirestore,
+            concurrentEventUserRepositoryFirestore)
   }
 
   @Test

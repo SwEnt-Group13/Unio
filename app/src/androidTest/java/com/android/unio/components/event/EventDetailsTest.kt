@@ -25,6 +25,7 @@ import com.android.unio.model.event.EventUtils.formatTimestamp
 import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.map.MapViewModel
+import com.android.unio.model.save.ConcurrentEventUserRepositoryFirestore
 import com.android.unio.model.strings.FormatStrings.DAY_MONTH_FORMAT
 import com.android.unio.model.strings.test_tags.event.EventDetailsTestTags
 import com.android.unio.model.user.User
@@ -47,6 +48,7 @@ import me.zhanghai.compose.preference.ProvidePreferenceLocals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.mockito.Mock
 import org.mockito.Mockito.mock
 
 class EventDetailsTest : TearDown() {
@@ -66,6 +68,9 @@ class EventDetailsTest : TearDown() {
   @MockK private lateinit var imageRepository: ImageRepositoryFirebaseStorage
   @MockK
   private lateinit var eventUserPictureRepositoryFirestore: EventUserPictureRepositoryFirestore
+  @Mock
+  private lateinit var concurrentEventUserRepositoryFirestore:
+      ConcurrentEventUserRepositoryFirestore
 
   private lateinit var eventViewModel: EventViewModel
   private lateinit var userViewModel: UserViewModel
@@ -111,7 +116,8 @@ class EventDetailsTest : TearDown() {
             eventRepository,
             imageRepository,
             associationRepository,
-            eventUserPictureRepositoryFirestore)
+            eventUserPictureRepositoryFirestore,
+            concurrentEventUserRepositoryFirestore)
 
     every { userRepository.init(any()) } returns Unit
     every { userRepository.getUserWithId("uid", any(), any()) } answers

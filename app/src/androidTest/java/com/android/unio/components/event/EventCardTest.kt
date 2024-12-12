@@ -22,6 +22,7 @@ import com.android.unio.model.event.EventUserPictureRepositoryFirestore
 import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.notification.NotificationWorker
+import com.android.unio.model.save.ConcurrentEventUserRepositoryFirestore
 import com.android.unio.model.strings.test_tags.event.EventCardTestTags
 import com.android.unio.model.strings.test_tags.event.EventDetailsTestTags
 import com.android.unio.model.user.UserRepositoryFirestore
@@ -45,6 +46,7 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.mockito.Mock
 
 class EventCardTest : TearDown() {
 
@@ -77,6 +79,9 @@ class EventCardTest : TearDown() {
   @MockK private lateinit var associationRepository: AssociationRepositoryFirestore
   @MockK
   private lateinit var eventUserPictureRepositoryFirestore: EventUserPictureRepositoryFirestore
+  @Mock
+  private lateinit var concurrentEventUserRepositoryFirestore:
+      ConcurrentEventUserRepositoryFirestore
   private lateinit var context: Context
 
   @Before
@@ -94,7 +99,8 @@ class EventCardTest : TearDown() {
                 eventRepository,
                 imageRepository,
                 associationRepository,
-                eventUserPictureRepositoryFirestore))
+                eventUserPictureRepositoryFirestore,
+                concurrentEventUserRepositoryFirestore))
     userViewModel = UserViewModel(userRepository, imageRepository)
     every { userRepository.updateUser(user, any(), any()) } answers
         {

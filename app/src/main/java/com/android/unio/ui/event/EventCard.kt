@@ -124,7 +124,6 @@ fun EventCardScaffold(
     userViewModel: UserViewModel
 ) {
   val context = LocalContext.current
-
   val events by eventViewModel.events.collectAsState()
 
   Column(
