@@ -57,16 +57,11 @@ import com.android.unio.ui.user.UserClaimAssociationPresidentialRightsScreen
 import com.android.unio.ui.user.UserClaimAssociationScreen
 import com.android.unio.ui.user.UserProfileEditionScreen
 import com.android.unio.ui.user.UserProfileScreen
-import com.google.firebase.Firebase
-import com.google.firebase.auth.auth
-import com.google.firebase.firestore.firestore
-import com.google.firebase.functions.functions
-import com.google.firebase.storage.storage
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.HiltAndroidApp
-import java.util.Locale
 import me.zhanghai.compose.preference.LocalPreferenceFlow
 import me.zhanghai.compose.preference.ProvidePreferenceLocals
+import java.util.Locale
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -75,12 +70,6 @@ class MainActivity : ComponentActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
     super.onCreate(savedInstanceState)
-
-    val host = "10.0.2.2"
-    Firebase.firestore.useEmulator(host, 8080)
-    Firebase.auth.useEmulator(host, 9099)
-    Firebase.functions.useEmulator(host, 5001)
-    Firebase.storage.useEmulator(host, 9199)
 
     setContent {
       Surface(modifier = Modifier.fillMaxSize()) {
