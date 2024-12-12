@@ -169,7 +169,14 @@ fun SaveAssociationScaffold(
   var description by remember { mutableStateOf(association.description) }
   var principalEmailAddress by remember { mutableStateOf(association.principalEmailAddress) }
 
-  var selectedImageUri by remember { mutableStateOf<Uri?>(if(isNewAssociation){null}else{association.image.toUri()}) }
+  var selectedImageUri by remember {
+    mutableStateOf<Uri?>(
+        if (isNewAssociation) {
+          null
+        } else {
+          association.image.toUri()
+        })
+  }
 
   var expanded by remember { mutableStateOf(false) }
   var category by remember { mutableStateOf(association.category) }
