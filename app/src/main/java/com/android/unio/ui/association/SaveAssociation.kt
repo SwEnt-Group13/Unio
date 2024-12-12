@@ -45,6 +45,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import coil.compose.rememberAsyncImagePainter
 import com.android.unio.R
 import com.android.unio.model.association.Association
@@ -168,7 +169,7 @@ fun SaveAssociationScaffold(
   var description by remember { mutableStateOf(association.description) }
   var principalEmailAddress by remember { mutableStateOf(association.principalEmailAddress) }
 
-  var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
+  var selectedImageUri by remember { mutableStateOf<Uri?>(if(isNewAssociation){null}else{association.image.toUri()}) }
 
   var expanded by remember { mutableStateOf(false) }
   var category by remember { mutableStateOf(association.category) }
