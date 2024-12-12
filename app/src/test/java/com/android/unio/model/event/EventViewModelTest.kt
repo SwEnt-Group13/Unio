@@ -14,6 +14,8 @@ import emptyFirestoreReferenceElement
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
+import java.io.InputStream
+import java.util.GregorianCalendar
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
@@ -27,8 +29,6 @@ import org.mockito.MockitoAnnotations
 import org.mockito.kotlin.any
 import org.mockito.kotlin.eq
 import org.robolectric.RobolectricTestRunner
-import java.io.InputStream
-import java.util.GregorianCalendar
 
 @RunWith(RobolectricTestRunner::class)
 class EventViewModelTest {
