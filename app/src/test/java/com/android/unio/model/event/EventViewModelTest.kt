@@ -70,7 +70,7 @@ class EventViewModelTest {
               price = 40.5,
               startDate = Timestamp(GregorianCalendar(2004, 7, 1).time),
               endDate = Timestamp(GregorianCalendar(2005, 7, 1).time),
-              eventPictures = MockReferenceList<EventUserPicture>(testEventPictures)))
+              eventPictures = MockReferenceList(testEventPictures)))
 
   @Before
   fun setUp() {
@@ -107,7 +107,7 @@ class EventViewModelTest {
 
   @Test
   fun addEventandUpdateTest() {
-    val event = testEvents.get(0)
+    val event = testEvents[0]
     `when`(repository.addEvent(eq(event), any(), any())).thenAnswer { invocation ->
       val onSuccess = invocation.arguments[1] as () -> Unit
       onSuccess()
@@ -119,7 +119,7 @@ class EventViewModelTest {
 
   @Test
   fun updateEventTest() {
-    val event = testEvents.get(0)
+    val event = testEvents[0]
     `when`(repository.addEvent(eq(event), any(), any())).thenAnswer { invocation ->
       val onSuccess = invocation.arguments[1] as () -> Unit
       onSuccess()
@@ -130,7 +130,7 @@ class EventViewModelTest {
 
   @Test
   fun updateEventWithoutImageTest() {
-    val event = testEvents.get(0)
+    val event = testEvents[0]
     `when`(repository.addEvent(eq(event), any(), any())).thenAnswer { invocation ->
       val onSuccess = invocation.arguments[1] as () -> Unit
       onSuccess()
@@ -141,7 +141,7 @@ class EventViewModelTest {
 
   @Test
   fun deleteEventTest() {
-    val event = testEvents.get(0)
+    val event = testEvents[0]
     `when`(repository.deleteEventById(eq(event.uid), any(), any())).thenAnswer { invocation ->
       val onSuccess = invocation.arguments[1] as () -> Unit
       onSuccess()
@@ -185,6 +185,10 @@ class EventViewModelTest {
             eq(StoragePathsStrings.EVENT_USER_PICTURES + testEventPictures[index].uid),
             any(),
             any())
+      }
+      verify(exactly = 1) {
+        eventUserPictureRepositoryFirestore.deleteEventUserPictureById(
+            testEventPictures[index].uid, any(), any())
       }
     }
   }
