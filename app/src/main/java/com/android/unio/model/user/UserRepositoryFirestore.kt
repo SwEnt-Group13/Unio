@@ -19,7 +19,7 @@ class UserRepositoryFirestore @Inject constructor(private val db: FirebaseFirest
 
   override fun init(onSuccess: () -> Unit) {
     Firebase.auth.registerAuthStateListener {
-      if (it.currentUser != null && it.currentUser!!.isEmailVerified) {
+      if (it.currentUser!!.isEmailVerified) {
         onSuccess()
       }
     }

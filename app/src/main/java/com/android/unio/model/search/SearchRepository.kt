@@ -54,7 +54,7 @@ constructor(
   suspend fun init() {
     withContext(Dispatchers.IO) {
       Firebase.auth.registerAuthStateListener {
-        if (it.currentUser != null && it.currentUser!!.isEmailVerified) {
+        if (it.currentUser!!.isEmailVerified) {
           try {
             val sessionFutures =
                 LocalStorage.createSearchSessionAsync(
