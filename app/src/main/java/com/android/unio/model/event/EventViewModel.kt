@@ -323,8 +323,6 @@ constructor(
       updatedUser.savedEvents.add(target.uid)
       Firebase.messaging.subscribeToTopic(target.uid)
     }
-    println("target ${target.numberOfSaved}")
-    println(updatedEvent.numberOfSaved)
     concurrentEventUserRepository.updateSave(
         updatedUser,
         updatedEvent,
