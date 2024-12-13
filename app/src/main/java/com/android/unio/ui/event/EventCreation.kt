@@ -283,31 +283,32 @@ fun EventCreationScreen(
                       selectedLocation != null,
               onClick = {
                 val inputStream = context.contentResolver.openInputStream(eventBannerUri.value)!!
+                  val newEvent = Event(
+                      uid = "", // This gets overwritten by eventViewModel.addEvent
+                      title = name,
+                      organisers =
+                      Association.firestoreReferenceListWith(
+                          (coauthorsAndBoolean
+                              .filter { it.second.value }
+                              .map { it.first.uid } +
+                                  associationViewModel.selectedAssociation.value!!.uid)
+                              .distinct()),
+                      taggedAssociations =
+                      Association.firestoreReferenceListWith(
+                          taggedAndBoolean.filter { it.second.value }.map { it.first.uid }),
+                      image = eventBannerUri.value.toString(),
+                      description = longDescription,
+                      catchyDescription = shortDescription,
+                      price = 0.0,
+                      startDate = startTimestamp!!,
+                      endDate = endTimestamp!!,
+                      location = selectedLocation!!,
+                      eventPictures = MockReferenceList(),
+                  )
                 eventViewModel.addEvent(
                     inputStream,
-                    Event(
-                        uid = "", // This gets overwritten by eventViewModel.addEvent
-                        title = name,
-                        organisers =
-                            Association.firestoreReferenceListWith(
-                                (coauthorsAndBoolean
-                                        .filter { it.second.value }
-                                        .map { it.first.uid } +
-                                        associationViewModel.selectedAssociation.value!!.uid)
-                                    .distinct()),
-                        taggedAssociations =
-                            Association.firestoreReferenceListWith(
-                                taggedAndBoolean.filter { it.second.value }.map { it.first.uid }),
-                        image = eventBannerUri.value.toString(),
-                        description = longDescription,
-                        catchyDescription = shortDescription,
-                        price = 0.0,
-                        startDate = startTimestamp!!,
-                        endDate = endTimestamp!!,
-                        location = selectedLocation!!,
-                        eventPictures = MockReferenceList(),
-                    ),
-                    onSuccess = { navigationAction.goBack() },
+                    newEvent,
+                    onSuccess = { associationViewModel.addEventLocally(newEvent); navigationAction.goBack() },
                     onFailure = {
                       Toast.makeText(
                               context,
