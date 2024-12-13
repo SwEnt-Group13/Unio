@@ -35,7 +35,8 @@ class AssociationRepositoryFirestore @Inject constructor(private val db: Firebas
    * Fetches a [DocumentReference] for an [Association] object using the provided [uid].
    *
    * @param uid [String] : The uid of the [Association] to fetch.
-   * @param isNewAssociation [Boolean] : The boolean that explains if the Association is newly created or not
+   * @param isNewAssociation [Boolean] : The boolean that explains if the Association is newly
+   *   created or not
    * @return [DocumentReference] : The [DocumentReference] for the [Association] object.
    */
   override fun getAssociationRef(uid: String, isNewAssociation: Boolean): DocumentReference {
@@ -124,7 +125,8 @@ class AssociationRepositoryFirestore @Inject constructor(private val db: Firebas
    * Saves an [Association] object to Firestore.
    *
    * @param association [Association] : The [Association] object to save.
-   * @param isNewAssociation [Boolean] : The boolean that explains if the Association is newly created or not
+   * @param isNewAssociation [Boolean] : The boolean that explains if the Association is newly
+   *   created or not
    * @param onSuccess [() -> Unit] : The callback to call when the [Association] is saved.
    * @param onFailure [(Exception) -> Unit] : The callback to call when the save fails.
    */

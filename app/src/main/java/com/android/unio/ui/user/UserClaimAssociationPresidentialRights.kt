@@ -75,12 +75,13 @@ fun UserClaimAssociationPresidentialRightsScreen(
 }
 
 /**
- * Composable function that displays the main UI scaffold for the "Claim Association Presidential Rights" screen.
+ * Composable function that displays the main UI scaffold for the "Claim Association Presidential
+ * Rights" screen.
  *
- * This function provides the structure and logic for the user to claim presidential rights
- * for an association. It includes steps for selecting an association, verifying the user's
- * email address, and entering a verification code. Upon successful verification, the user
- * is granted the appropriate administrative rights.
+ * This function provides the structure and logic for the user to claim presidential rights for an
+ * association. It includes steps for selecting an association, verifying the user's email address,
+ * and entering a verification code. Upon successful verification, the user is granted the
+ * appropriate administrative rights.
  *
  * @param navigationAction Provides navigation actions to navigate between screens.
  * @param associationViewModel ViewModel for managing the association's state and interactions.

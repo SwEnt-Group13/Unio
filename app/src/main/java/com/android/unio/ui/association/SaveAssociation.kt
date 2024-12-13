@@ -64,8 +64,6 @@ import com.android.unio.ui.components.PictureSelectionTool
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
 import com.android.unio.ui.utils.ToastUtils
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
 import java.io.InputStream
 import kotlinx.coroutines.launch
 
@@ -73,7 +71,8 @@ import kotlinx.coroutines.launch
  * Screen for editing an association.
  *
  * @param associationViewModel [AssociationViewModel] that provides the association to edit.
- * @param isNewAssociation [Boolean] : The boolean that explains if the Association is newly created or not
+ * @param isNewAssociation [Boolean] : The boolean that explains if the Association is newly created
+ *   or not
  * @param navigationAction [NavigationAction] that handles navigation.
  */
 @Composable
@@ -94,8 +93,7 @@ fun SaveAssociationScreen(
 
   (if (association == null) {
         Association(
-            uid =
-                createFirebaseUid(ASSOCIATION_PATH),
+            uid = createFirebaseUid(ASSOCIATION_PATH),
             // Firestore UID
             url = "",
             name = "",
@@ -154,8 +152,8 @@ fun SaveAssociationScreen(
  * @param association The [Association] to edit.
  * @param onCancel Callback when the user cancels the edit.
  * @param onSave Callback when the user saves the edit.
- * @param isNewAssociation [Boolean] : The boolean that explains if the Association is newly created or not
- *
+ * @param isNewAssociation [Boolean] : The boolean that explains if the Association is newly created
+ *   or not
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

@@ -157,7 +157,8 @@ constructor(
    * the association is saved without an image.
    *
    * @param association The association to save.
-   * @param isNewAssociation [Boolean] : The boolean that explains if the Association is newly created or not
+   * @param isNewAssociation [Boolean] : The boolean that explains if the Association is newly
+   *   created or not
    * @param imageStream The image stream to upload to Firebase Storage.
    * @param onSuccess A callback that is called when the association is successfully saved.
    * @param onFailure A callback that is called when an error occurs while saving the association.
