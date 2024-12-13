@@ -60,6 +60,17 @@ class FirestoreReferenceList<T : UniquelyIdentifiable>(
     _uids.add(uid)
   }
 
+    /**
+     * Adds an element to the list.
+     *
+     * @param element The element to add.
+     */
+    override fun add(element : T){
+        add(element.uid)
+        Log.d("DELETEEVENTLOCALLY", "je rajoute ${element.uid}")
+        _list.value += element
+    }
+
   /**
    * Adds a list of UIDs to the list.
    *
@@ -75,7 +86,9 @@ class FirestoreReferenceList<T : UniquelyIdentifiable>(
    * @param uid The UID to remove.
    */
   override fun remove(uid: String) {
-    _uids.remove(uid)
+      if (_uids.remove(uid)) {
+          _list.value = _list.value.filter { it.uid != uid }
+      }
   }
 
   /**

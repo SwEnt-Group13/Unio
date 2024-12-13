@@ -8,6 +8,8 @@ interface ReferenceList<T> {
 
   fun add(uid: String)
 
+  fun add(element: T)
+
   fun addAll(uids: List<String>)
 
   fun remove(uid: String)
