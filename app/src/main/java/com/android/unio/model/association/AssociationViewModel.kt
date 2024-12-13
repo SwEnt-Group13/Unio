@@ -147,7 +147,7 @@ constructor(
       if (eventToDelete != null) {
         selectedAssociation.events.remove(
             eventId) // check the definition of remove to see that it does not fetch the database ;
-                     // )
+        // )
       } else {
         Log.e("AssociationViewModel", "Event with ID $eventId not found")
       }
