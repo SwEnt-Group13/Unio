@@ -2,6 +2,7 @@ package com.android.unio.model.association
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
+import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventRepository
 import com.android.unio.model.follow.ConcurrentAssociationUserRepository
 import com.android.unio.model.image.ImageRepository
@@ -133,7 +134,48 @@ constructor(
         { exception -> Log.e("AssociationViewModel", "Failed to update follow", exception) })
   }
 
-  /**
+    /**
+     * Deletes an event from the events list of the selected association locally.
+     *
+     * @param eventId The ID of the event to be deleted.
+     */
+    fun deleteEventLocally(eventId: String) {
+        val selectedAssociation = _selectedAssociation.value
+        if (selectedAssociation != null) {
+            val eventToDelete = selectedAssociation.events.uids.find { it == eventId }
+            // if event exists ->  remove it from the events list
+            if (eventToDelete != null) {
+                selectedAssociation.events.remove(eventId) //check the definition of remove to see that it does not fetch the database ; )
+            } else {
+                Log.e("AssociationViewModel", "Event with ID $eventId not found")
+            }
+        } else {
+            Log.e("AssociationViewModel", "No association selected to delete event from")
+        }
+    }
+
+    /**
+     * Adds an event to the events list of the selected association locally.
+     *
+     * @param eventId The ID of the event to be added.
+     */
+    fun addEventLocally(event: Event) {
+        val selectedAssociation = _selectedAssociation.value
+        if (selectedAssociation != null) {
+            val eventAlreadyExists = selectedAssociation.events.uids.contains(event.uid)
+            // Check if the event already exists in the events list
+            if (!eventAlreadyExists) {
+                selectedAssociation.events.add(event) // Ensure `add` does not fetch the database
+            } else {
+                Log.w("AssociationViewModel", "Event with ID ${event.uid} already exists")
+            }
+        } else {
+            Log.e("AssociationViewModel", "No association selected to add event to")
+        }
+    }
+
+
+    /**
    * Saves an association to the repository. If an image stream is provided, the image is uploaded
    * to Firebase Storage and the image URL is saved to the association. If the image stream is null,
    * the association is saved without an image.
