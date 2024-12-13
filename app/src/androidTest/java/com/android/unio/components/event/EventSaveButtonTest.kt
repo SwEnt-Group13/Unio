@@ -96,7 +96,7 @@ class EventSaveButtonTest : TearDown() {
 
   @Test
   fun testEventCardSaveAndUnsaveEventOnline() {
-    var indicator = false //saved indicator
+    var indicator = false // saved indicator
     every { concurrentEventUserRepositoryFirestore.updateSave(any(), any(), any(), any()) } answers
         {
           val onSuccess = args[2] as () -> Unit
