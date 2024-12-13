@@ -59,6 +59,7 @@ import com.android.unio.model.strings.test_tags.association.SaveAssociationTestT
 import com.android.unio.model.strings.test_tags.association.SaveAssociationTestTags.PRINCIPAL_EMAIL_ADDRESS_EXPLANATION_TEXT
 import com.android.unio.model.strings.test_tags.association.SaveAssociationTestTags.PRINCIPAL_EMAIL_ADDRESS_TEXT
 import com.android.unio.model.strings.test_tags.event.EventDetailsTestTags
+import com.android.unio.model.utils.createFirebaseUid
 import com.android.unio.ui.components.PictureSelectionTool
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
@@ -72,6 +73,7 @@ import kotlinx.coroutines.launch
  * Screen for editing an association.
  *
  * @param associationViewModel [AssociationViewModel] that provides the association to edit.
+ * @param isNewAssociation [Boolean] : The boolean that explains if the Association is newly created or not
  * @param navigationAction [NavigationAction] that handles navigation.
  */
 @Composable
@@ -93,10 +95,7 @@ fun SaveAssociationScreen(
   (if (association == null) {
         Association(
             uid =
-                Firebase.firestore
-                    .collection(ASSOCIATION_PATH)
-                    .document()
-                    .id, // creates a new document reference and retrieve the randomly generated
+                createFirebaseUid(ASSOCIATION_PATH),
             // Firestore UID
             url = "",
             name = "",
@@ -155,6 +154,8 @@ fun SaveAssociationScreen(
  * @param association The [Association] to edit.
  * @param onCancel Callback when the user cancels the edit.
  * @param onSave Callback when the user saves the edit.
+ * @param isNewAssociation [Boolean] : The boolean that explains if the Association is newly created or not
+ *
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
