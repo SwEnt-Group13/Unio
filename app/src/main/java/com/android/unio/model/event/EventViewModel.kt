@@ -185,18 +185,22 @@ constructor(
   fun updateEventWithoutImage(event: Event, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
     repository.addEvent(event, onSuccess, onFailure)
 
-    event.organisers.requestAll({
-      event.organisers.list.value.forEach {
-        if (it.events.contains(event.uid)) it.events.remove(event.uid)
-        it.events.add(event.uid)
-        associationRepository.saveAssociation(
-            isNewAssociation = false,
-            it,
-            {},
-            { e -> Log.e("EventViewModel", "An error occurred while loading associations: $e") })
-        it.events.requestAll()
-      }
-    }, lazy = true)
+    event.organisers.requestAll(
+        {
+          event.organisers.list.value.forEach {
+            if (it.events.contains(event.uid)) it.events.remove(event.uid)
+            it.events.add(event.uid)
+            associationRepository.saveAssociation(
+                isNewAssociation = false,
+                it,
+                {},
+                { e ->
+                  Log.e("EventViewModel", "An error occurred while loading associations: $e")
+                })
+            it.events.requestAll()
+          }
+        },
+        lazy = true)
 
     _events.value = _events.value.filter { it.uid != event.uid } // Remove the outdated event
     _events.value += event
