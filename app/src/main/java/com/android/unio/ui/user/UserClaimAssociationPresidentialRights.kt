@@ -44,6 +44,7 @@ import com.android.unio.ui.association.AssociationSearchBar
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
 import com.android.unio.ui.theme.AppTypography
+import com.android.unio.ui.theme.errorLight
 import com.android.unio.ui.user.UserClaimAssociationPresidentialRightsParserStrings.ASSOCIATION_UID
 import com.android.unio.ui.user.UserClaimAssociationPresidentialRightsParserStrings.CODE
 import com.android.unio.ui.user.UserClaimAssociationPresidentialRightsParserStrings.EMAIL
@@ -73,6 +74,19 @@ fun UserClaimAssociationPresidentialRightsScreen(
       navigationAction, associationViewModel, user!!, searchViewModel)
 }
 
+/**
+ * Composable function that displays the main UI scaffold for the "Claim Association Presidential Rights" screen.
+ *
+ * This function provides the structure and logic for the user to claim presidential rights
+ * for an association. It includes steps for selecting an association, verifying the user's
+ * email address, and entering a verification code. Upon successful verification, the user
+ * is granted the appropriate administrative rights.
+ *
+ * @param navigationAction Provides navigation actions to navigate between screens.
+ * @param associationViewModel ViewModel for managing the association's state and interactions.
+ * @param user The current user interacting with the screen.
+ * @param searchViewModel ViewModel for managing the search functionality for associations.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UserClaimAssociationPresidentialRightsScreenScaffold(
@@ -178,7 +192,7 @@ fun UserClaimAssociationPresidentialRightsScreenScaffold(
                           context.getString(
                               R.string
                                   .user_claim_association_presidential_rights_incorrect_email_error),
-                      color = androidx.compose.ui.graphics.Color.Red,
+                      color = errorLight,
                       style = AppTypography.bodySmall)
                 }
                 val coroutineScope = rememberCoroutineScope()
