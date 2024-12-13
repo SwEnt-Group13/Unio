@@ -14,6 +14,7 @@ import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.notification.NotificationWorker
 import com.android.unio.model.notification.UnioNotification
+import com.android.unio.model.save.ConcurrentEventUserRepositoryFirestore
 import com.android.unio.model.search.SearchRepository
 import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.user.UserRepositoryFirestore
@@ -52,6 +53,9 @@ class NotificationTest : TearDown() {
   @MockK private lateinit var userRepository: UserRepositoryFirestore
   @MockK
   private lateinit var eventUserPictureRepositoryFirestore: EventUserPictureRepositoryFirestore
+  @MockK
+  private lateinit var concurrentEventUserRepositoryFirestore:
+      ConcurrentEventUserRepositoryFirestore
   private lateinit var eventViewModel: EventViewModel
   private lateinit var searchViewModel: SearchViewModel
   private lateinit var context: Context
@@ -78,7 +82,8 @@ class NotificationTest : TearDown() {
             eventRepository,
             imageRepository,
             associationRepository,
-            eventUserPictureRepositoryFirestore)
+            eventUserPictureRepositoryFirestore,
+            concurrentEventUserRepositoryFirestore)
     userViewModel = spyk(UserViewModel(userRepository, imageRepository))
   }
 

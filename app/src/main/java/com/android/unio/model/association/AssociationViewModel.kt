@@ -225,7 +225,11 @@ constructor(
   fun selectAssociation(associationId: String) {
     _selectedAssociation.value =
         findAssociationById(associationId).also { it ->
-          it?.events?.requestAll()
+          it?.events?.requestAll(
+              {
+                it.events.list.value.forEach { event -> event.organisers.requestAll(lazy = true) }
+              },
+              lazy = true)
           it?.members?.forEach { fetchUserFromMember(it) }
         }
   }

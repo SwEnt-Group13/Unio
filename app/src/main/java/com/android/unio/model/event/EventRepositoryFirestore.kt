@@ -8,6 +8,7 @@ import com.android.unio.model.firestore.transform.hydrate
 import com.android.unio.model.firestore.transform.serialize
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
+import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.MetadataChanges
 import javax.inject.Inject
@@ -48,6 +49,16 @@ class EventRepositoryFirestore @Inject constructor(private val db: FirebaseFires
         onSuccess(hydrate(documentSnapshot.data))
       }
     }
+  }
+
+  /**
+   * Fetches a [DocumentReference] for an [Event] object using the provided [uid].
+   *
+   * @param uid [String] : The uid of the [Event] to fetch.
+   * @return [DocumentReference] : The [DocumentReference] for the [Event] object.
+   */
+  override fun getEventRef(uid: String): DocumentReference {
+    return db.collection(EVENT_PATH).document(uid)
   }
 
   /**

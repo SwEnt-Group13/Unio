@@ -4,7 +4,11 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.android.unio.model.association.AssociationRepository
 import com.android.unio.model.image.ImageRepository
+import com.android.unio.model.save.ConcurrentEventUserRepository
 import com.android.unio.model.strings.StoragePathsStrings
+import com.android.unio.model.user.User
+import com.google.firebase.Firebase
+import com.google.firebase.messaging.messaging
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.io.InputStream
 import javax.inject.Inject
@@ -29,6 +33,7 @@ constructor(
     private val imageRepository: ImageRepository,
     private val associationRepository: AssociationRepository,
     private val eventUserPictureRepository: EventUserPictureRepository,
+    private val concurrentEventUserRepository: ConcurrentEventUserRepository
 ) : ViewModel() {
 
   /**
@@ -180,18 +185,22 @@ constructor(
   fun updateEventWithoutImage(event: Event, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
     repository.addEvent(event, onSuccess, onFailure)
 
-    event.organisers.requestAll({
-      event.organisers.list.value.forEach {
-        if (it.events.contains(event.uid)) it.events.remove(event.uid)
-        it.events.add(event.uid)
-        associationRepository.saveAssociation(
-            isNewAssociation = false,
-            it,
-            {},
-            { e -> Log.e("EventViewModel", "An error occurred while loading associations: $e") })
-        it.events.requestAll()
-      }
-    })
+    event.organisers.requestAll(
+        {
+          event.organisers.list.value.forEach {
+            if (it.events.contains(event.uid)) it.events.remove(event.uid)
+            it.events.add(event.uid)
+            associationRepository.saveAssociation(
+                isNewAssociation = false,
+                it,
+                {},
+                { e ->
+                  Log.e("EventViewModel", "An error occurred while loading associations: $e")
+                })
+            it.events.requestAll()
+          }
+        },
+        lazy = true)
 
     _events.value = _events.value.filter { it.uid != event.uid } // Remove the outdated event
     _events.value += event
@@ -291,5 +300,46 @@ constructor(
               })
         },
         onFailure = { e -> Log.e("ImageRepository", "Failed to store image: $e") })
+  }
+
+  /**
+   * Updates the save status of the user for the target event. If the user has already saved the
+   * event, the event's interested count is decremented and the event is removed from the user's
+   * saved events. If the user is has not yet saved the event, the event's interested count is
+   * incremented and the event is added to the user's saved events.
+   *
+   * @param target The event to update the saved status for.
+   * @param user The user to update the saved status for.
+   * @param isUnsaveAction A boolean indicating whether the user is unsave the event.
+   * @param updateUser A callback to update the user in the repository.
+   */
+  fun updateSave(target: Event, user: User, isUnsaveAction: Boolean, updateUser: () -> Unit) {
+    val updatedEvent: Event
+    val updatedUser: User = user.copy()
+
+    if (isUnsaveAction) {
+      val updatedSavedCount = if (target.numberOfSaved - 1 >= 0) target.numberOfSaved - 1 else 0
+      updatedEvent = target.copy(numberOfSaved = updatedSavedCount)
+      updatedUser.savedEvents.remove(target.uid)
+      Firebase.messaging.unsubscribeFromTopic(target.uid)
+    } else {
+      updatedEvent = target.copy(numberOfSaved = target.numberOfSaved + 1)
+      updatedUser.savedEvents.add(target.uid)
+      Firebase.messaging.subscribeToTopic(target.uid)
+    }
+    concurrentEventUserRepository.updateSave(
+        updatedUser,
+        updatedEvent,
+        {
+          _events.value =
+              _events.value.map {
+                if (it.uid == target.uid) {
+                  updatedEvent
+                } else it
+              }
+          _selectedEvent.value = updatedEvent
+          updateUser()
+        },
+        { exception -> Log.e("EventViewModel", "Failed to update save", exception) })
   }
 }

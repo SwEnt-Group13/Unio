@@ -18,6 +18,7 @@ import com.android.unio.model.event.EventUserPictureRepositoryFirestore
 import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.map.MapViewModel
+import com.android.unio.model.save.ConcurrentEventUserRepositoryFirestore
 import com.android.unio.model.strings.test_tags.map.MapTestTags
 import com.android.unio.model.user.User
 import com.android.unio.model.user.UserRepositoryFirestore
@@ -59,6 +60,9 @@ class MapScreenTest : TearDown() {
   @MockK private lateinit var associationRepositoryFirestore: AssociationRepositoryFirestore
   @MockK
   private lateinit var eventUserPictureRepositoryFirestore: EventUserPictureRepositoryFirestore
+  @MockK
+  private lateinit var concurrentEventUserRepositoryFirestore:
+      ConcurrentEventUserRepositoryFirestore
 
   private lateinit var locationTask: Task<Location>
   private lateinit var context: Context
@@ -86,7 +90,8 @@ class MapScreenTest : TearDown() {
             eventRepository,
             imageRepository,
             associationRepositoryFirestore,
-            eventUserPictureRepositoryFirestore)
+            eventUserPictureRepositoryFirestore,
+            concurrentEventUserRepositoryFirestore)
 
     every { userRepository.init(any()) } returns Unit
     every { userRepository.getUserWithId("123", any(), any()) } answers

@@ -26,6 +26,7 @@ import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.map.nominatim.NominatimApiService
 import com.android.unio.model.map.nominatim.NominatimLocationRepository
 import com.android.unio.model.map.nominatim.NominatimLocationSearchViewModel
+import com.android.unio.model.save.ConcurrentEventUserRepositoryFirestore
 import com.android.unio.model.search.SearchRepository
 import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.strings.TextLengthSamples
@@ -80,6 +81,9 @@ class EventCreationTest : TearDown() {
   @MockK
   private lateinit var eventUserPictureRepositoryFirestore: EventUserPictureRepositoryFirestore
   @MockK
+  private lateinit var concurrentEventUserRepositoryFirestore:
+      ConcurrentEventUserRepositoryFirestore
+  @MockK
   private lateinit var concurrentAssociationUserRepositoryFirestore:
       ConcurrentAssociationUserRepositoryFirestore
 
@@ -111,7 +115,8 @@ class EventCreationTest : TearDown() {
             eventRepository,
             imageRepositoryFirestore,
             associationRepositoryFirestore,
-            eventUserPictureRepositoryFirestore)
+            eventUserPictureRepositoryFirestore,
+            concurrentEventUserRepositoryFirestore)
 
     searchViewModel = spyk(SearchViewModel(searchRepository))
     associationViewModel =
