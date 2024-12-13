@@ -348,7 +348,10 @@ class AssociationRepositoryFirestoreTest {
     every { documentReference.set(map1) } returns (Tasks.forResult(null))
 
     repository.saveAssociation(
-        association1, onSuccess = { assert(true) }, onFailure = { assert(false) })
+        isNewAssociation = false,
+        association1,
+        onSuccess = { assert(true) },
+        onFailure = { assert(false) })
 
     verify { documentReference.set(map1) }
   }
@@ -358,7 +361,10 @@ class AssociationRepositoryFirestoreTest {
     every { documentReference.set(any()) } returns (Tasks.forException(Exception()))
 
     repository.saveAssociation(
-        association1, onSuccess = { assert(false) }, onFailure = { assert(true) })
+        isNewAssociation = false,
+        association1,
+        onSuccess = { assert(false) },
+        onFailure = { assert(true) })
 
     verify { documentReference.set(map1) }
   }
@@ -368,7 +374,10 @@ class AssociationRepositoryFirestoreTest {
     every { documentReference.set(any()) } returns (Tasks.forResult(null))
 
     repository.saveAssociation(
-        association1, onSuccess = { assert(true) }, onFailure = { assert(false) })
+        isNewAssociation = false,
+        association1,
+        onSuccess = { assert(true) },
+        onFailure = { assert(false) })
 
     verify { documentReference.set(map1) }
   }
@@ -378,7 +387,10 @@ class AssociationRepositoryFirestoreTest {
     every { documentReference.set(any()) } returns (Tasks.forException(Exception()))
 
     repository.saveAssociation(
-        association1, onSuccess = { assert(false) }, onFailure = { assert(true) })
+        isNewAssociation = false,
+        association1,
+        onSuccess = { assert(false) },
+        onFailure = { assert(true) })
 
     verify { documentReference.set(map1) }
   }

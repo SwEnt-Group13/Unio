@@ -232,17 +232,18 @@ class AssociationViewModelTest {
       onSuccess(imageUrl)
     }
 
-    `when`(associationRepository.saveAssociation(any(), any(), any())).thenAnswer { invocation ->
-      val onSuccess = invocation.getArgument(1) as () -> Unit
+    `when`(associationRepository.saveAssociation(eq(false), any(), any(), any())).thenAnswer {
+        invocation ->
+      val onSuccess = invocation.getArgument(2) as () -> Unit
       onSuccess()
     }
 
     val onSuccess = mock<() -> Unit>()
-    viewModel.saveAssociation(association, inputStream, onSuccess, {})
+    viewModel.saveAssociation(isNewAssociation = false, association, inputStream, onSuccess, {})
 
     verify(imageRepository).uploadImage(eq(inputStream), any(), any(), any())
     verify(associationRepository)
-        .saveAssociation(eq(association.copy(image = imageUrl)), any(), any())
+        .saveAssociation(eq(false), eq(association.copy(image = imageUrl)), any(), any())
     verify(onSuccess).invoke()
   }
 
@@ -257,11 +258,11 @@ class AssociationViewModelTest {
     }
 
     val onFailure = mock<(Exception) -> Unit>()
-    viewModel.saveAssociation(association, inputStream, {}, onFailure)
+    viewModel.saveAssociation(isNewAssociation = false, association, inputStream, {}, onFailure)
 
     verify(imageRepository)
         .uploadImage(eq(inputStream), eq("images/associations/${association.uid}"), any(), any())
-    verify(associationRepository, never()).saveAssociation(any(), any(), any())
+    verify(associationRepository, never()).saveAssociation(eq(false), any(), any(), any())
     verify(onFailure).invoke(failureException)
   }
 
@@ -269,15 +270,16 @@ class AssociationViewModelTest {
   fun testSaveAssociationNoImageStreamSuccess() {
     val association = testAssociations[0]
 
-    `when`(associationRepository.saveAssociation(any(), any(), any())).thenAnswer { invocation ->
-      val onSuccess = invocation.getArgument(1) as () -> Unit
+    `when`(associationRepository.saveAssociation(eq(false), any(), any(), any())).thenAnswer {
+        invocation ->
+      val onSuccess = invocation.getArgument(2) as () -> Unit
       onSuccess()
     }
 
     val onSuccess = mock<() -> Unit>()
-    viewModel.saveAssociation(association, null, onSuccess, {})
+    viewModel.saveAssociation(isNewAssociation = false, association, null, onSuccess, {})
 
-    verify(associationRepository).saveAssociation(eq(association), any(), any())
+    verify(associationRepository).saveAssociation(eq(false), eq(association), any(), any())
     verify(onSuccess).invoke()
   }
 
@@ -286,15 +288,16 @@ class AssociationViewModelTest {
     val association = testAssociations[0]
     val failureException = Exception("Save failed")
 
-    `when`(associationRepository.saveAssociation(any(), any(), any())).thenAnswer { invocation ->
-      val onFailure = invocation.getArgument(2) as (Exception) -> Unit
+    `when`(associationRepository.saveAssociation(eq(false), any(), any(), any())).thenAnswer {
+        invocation ->
+      val onFailure = invocation.getArgument(3) as (Exception) -> Unit
       onFailure(failureException)
     }
 
     val onFailure = mock<(Exception) -> Unit>()
-    viewModel.saveAssociation(association, null, {}, onFailure)
+    viewModel.saveAssociation(isNewAssociation = false, association, null, {}, onFailure)
 
-    verify(associationRepository).saveAssociation(eq(association), any(), any())
+    verify(associationRepository).saveAssociation(eq(false), eq(association), any(), any())
     verify(onFailure).invoke(failureException)
   }
 }
