@@ -159,7 +159,7 @@ fun EventScreen(
 fun EventScreenScaffold(
     navigationAction: NavigationAction,
     mapViewModel: MapViewModel,
-    event: Event?,
+    event: Event,
     organisers: List<Association>,
     eventViewModel: EventViewModel,
     userViewModel: UserViewModel
@@ -177,7 +177,7 @@ fun EventScreenScaffold(
   Scaffold(
       floatingActionButton = {
         if (pagerState.currentPage == 1) {
-          EventDetailsPicturePicker(event!!, eventViewModel, user!!) // Asserted non null above
+          EventDetailsPicturePicker(event, eventViewModel, user!!) // Asserted non null above
         }
       },
       modifier = Modifier.testTag(EventDetailsTestTags.SCREEN),
@@ -208,7 +208,7 @@ fun EventScreenScaffold(
                   }
             },
             actions = {
-              EventSaveButton(event!!, eventViewModel, userViewModel)
+              EventSaveButton(event, eventViewModel, userViewModel)
               IconButton(
                   modifier = Modifier.testTag(EventDetailsTestTags.SHARE_BUTTON),
                   onClick = { showSheet = true }) {
@@ -220,13 +220,13 @@ fun EventScreenScaffold(
             })
       },
       content = {
-        EventScreenContent(navigationAction, mapViewModel, event!!, organisers, pagerState, tabList)
+        EventScreenContent(navigationAction, mapViewModel, event, organisers, pagerState, tabList)
       })
 
   NotificationSender(
       dialogTitle = context.getString(R.string.event_send_notification),
       notificationType = NotificationType.EVENT_SAVERS,
-      topic = event!!.uid,
+      topic = event.uid,
       notificationContent = { mapOf("title" to event.title, "body" to it) },
       showNotificationDialog = showNotificationDialog,
       onClose = { showNotificationDialog = false })
