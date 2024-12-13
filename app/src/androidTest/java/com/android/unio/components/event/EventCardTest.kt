@@ -93,7 +93,6 @@ class EventCardTest : TearDown() {
     every { NotificationWorker.schedule(any(), any()) } just runs
     every { NotificationWorker.unschedule(any(), any()) } just runs
 
-
     eventViewModel =
         spyk(
             EventViewModel(
@@ -112,8 +111,6 @@ class EventCardTest : TearDown() {
 
     every { navigationAction.navigateTo(Screen.EVENT_DETAILS) } just runs
     every { eventRepository.getEvents(any(), any()) }
-
-
   }
 
   private fun setEventScreen(event: Event) {
@@ -124,20 +121,18 @@ class EventCardTest : TearDown() {
     }
   }
 
-    private fun setEventViewModel(events: List<Event>) {
-        every { eventRepository.getEvents(any(), any()) } answers
-                {
-                    (it.invocation.args[0] as (List<Event>) -> Unit)(events)
-                }
-        eventViewModel.loadEvents()
-    }
+  private fun setEventViewModel(events: List<Event>) {
+    every { eventRepository.getEvents(any(), any()) } answers
+        {
+          (it.invocation.args[0] as (List<Event>) -> Unit)(events)
+        }
+    eventViewModel.loadEvents()
+  }
 
   @Test
   fun testEventCardElementsExist() {
-      setEventViewModel(listOf(sampleEvent))
+    setEventViewModel(listOf(sampleEvent))
     setEventScreen(sampleEvent)
-
-
 
     composeTestRule
         .onNodeWithTag(EventCardTestTags.EVENT_TITLE, useUnmergedTree = true)
@@ -179,7 +174,7 @@ class EventCardTest : TearDown() {
 
   @Test
   fun testClickOnEventCard() {
-      setEventViewModel(listOf(sampleEvent))
+    setEventViewModel(listOf(sampleEvent))
     setEventScreen(sampleEvent)
 
     composeTestRule
@@ -191,9 +186,8 @@ class EventCardTest : TearDown() {
 
   @Test
   fun testImageFallbackDisplayed() {
-      setEventViewModel(listOf(sampleEvent))
+    setEventViewModel(listOf(sampleEvent))
     setEventScreen(sampleEvent)
-
 
     // Check if the fallback image is displayed when no image is provided
     composeTestRule
@@ -204,7 +198,7 @@ class EventCardTest : TearDown() {
   @Test
   fun testEventCardWithEmptyUid() {
     val event = MockEvent.createMockEvent(uid = MockEvent.Companion.EdgeCaseUid.EMPTY.value)
-      setEventViewModel(listOf(event))
+    setEventViewModel(listOf(event))
     setEventScreen(event)
 
     composeTestRule
@@ -215,7 +209,7 @@ class EventCardTest : TearDown() {
   @Test
   fun testEventCardWithEmptyTitle() {
     val event = MockEvent.createMockEvent(title = MockEvent.Companion.EdgeCaseTitle.EMPTY.value)
-      setEventViewModel(listOf(event))
+    setEventViewModel(listOf(event))
     setEventScreen(event)
 
     composeTestRule
@@ -226,7 +220,7 @@ class EventCardTest : TearDown() {
   @Test
   fun testEventCardWithInvalidImage() {
     val event = MockEvent.createMockEvent(image = MockEvent.Companion.EdgeCaseImage.INVALID.value)
-      setEventViewModel(listOf(event))
+    setEventViewModel(listOf(event))
     setEventScreen(event)
 
     composeTestRule
@@ -237,7 +231,7 @@ class EventCardTest : TearDown() {
   @Test
   fun testEventCardWithValidImage() {
     val event = MockEvent.createMockEvent(image = imgUrl)
-      setEventViewModel(listOf(event))
+    setEventViewModel(listOf(event))
     setEventScreen(event)
 
     composeTestRule
@@ -250,7 +244,7 @@ class EventCardTest : TearDown() {
     val event =
         MockEvent.createMockEvent(
             catchyDescription = MockEvent.Companion.EdgeCaseCatchyDescription.EMPTY.value)
-      setEventViewModel(listOf(event))
+    setEventViewModel(listOf(event))
     setEventScreen(event)
 
     composeTestRule
@@ -264,7 +258,7 @@ class EventCardTest : TearDown() {
         MockEvent.createMockEvent(
             catchyDescription =
                 MockEvent.Companion.EdgeCaseCatchyDescription.SPECIAL_CHARACTERS.value)
-      setEventViewModel(listOf(event))
+    setEventViewModel(listOf(event))
     setEventScreen(event)
 
     composeTestRule
@@ -279,7 +273,7 @@ class EventCardTest : TearDown() {
             startDate = MockEvent.Companion.EdgeCaseDate.PAST.value,
             endDate = MockEvent.Companion.EdgeCaseDate.PAST.value)
 
-      setEventViewModel(listOf(event))
+    setEventViewModel(listOf(event))
     setEventScreen(event)
 
     composeTestRule
@@ -290,7 +284,7 @@ class EventCardTest : TearDown() {
   @Test
   fun testEventCardWithTodayStartDate() {
     val event = MockEvent.createMockEvent(startDate = MockEvent.Companion.EdgeCaseDate.TODAY.value)
-      setEventViewModel(listOf(event))
+    setEventViewModel(listOf(event))
     setEventScreen(event)
 
     composeTestRule
@@ -301,7 +295,7 @@ class EventCardTest : TearDown() {
   @Test
   fun testEventCardWithFutureStartDate() {
     val event = MockEvent.createMockEvent(startDate = MockEvent.Companion.EdgeCaseDate.FUTURE.value)
-      setEventViewModel(listOf(event))
+    setEventViewModel(listOf(event))
     setEventScreen(event)
 
     composeTestRule
