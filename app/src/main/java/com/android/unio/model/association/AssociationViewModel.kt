@@ -159,7 +159,7 @@ constructor(
   /**
    * Adds an event to the events list of the selected association locally.
    *
-   * @param eventId The ID of the event to be added.
+   * @param event The event to be added.
    */
   fun addEventLocally(event: Event) {
     val selectedAssociation = _selectedAssociation.value

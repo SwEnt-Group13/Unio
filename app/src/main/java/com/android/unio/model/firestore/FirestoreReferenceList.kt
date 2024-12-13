@@ -67,7 +67,6 @@ class FirestoreReferenceList<T : UniquelyIdentifiable>(
    */
   override fun add(element: T) {
     add(element.uid)
-    Log.d("DELETEEVENTLOCALLY", "je rajoute ${element.uid}")
     _list.value += element
   }
 
