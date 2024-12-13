@@ -9,4 +9,6 @@ interface EventUserPictureRepository {
   )
 
   fun getNewUid(): String
+
+  fun deleteEventUserPictureById(uid: String, onSuccess: () -> Unit, onFailure: (Exception) -> Unit)
 }

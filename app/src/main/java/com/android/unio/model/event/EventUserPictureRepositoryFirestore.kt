@@ -12,6 +12,18 @@ class EventUserPictureRepositoryFirestore @Inject constructor(private val db: Fi
     return db.collection(EVENT_USER_PICTURES_PATH).document().id
   }
 
+  override fun deleteEventUserPictureById(
+      uid: String,
+      onSuccess: () -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+    db.collection(EVENT_USER_PICTURES_PATH)
+        .document(uid)
+        .delete()
+        .performFirestoreOperation(
+            onSuccess = { onSuccess() }, onFailure = { exception -> onFailure(exception) })
+  }
+
   override fun addEventUserPicture(
       eventUserPicture: EventUserPicture,
       onSuccess: () -> Unit,

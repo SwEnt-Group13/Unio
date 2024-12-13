@@ -35,6 +35,7 @@ import com.android.unio.model.firestore.firestoreReferenceListWith
 import com.android.unio.model.follow.ConcurrentAssociationUserRepositoryFirestore
 import com.android.unio.model.hilt.module.FirebaseModule
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
+import com.android.unio.model.save.ConcurrentEventUserRepositoryFirestore
 import com.android.unio.model.strings.test_tags.association.AssociationProfileTestTags
 import com.android.unio.model.user.User
 import com.android.unio.model.user.UserRepositoryFirestore
@@ -96,6 +97,9 @@ class AssociationProfileTest : TearDown() {
   @MockK private lateinit var imageRepository: ImageRepositoryFirebaseStorage
   @MockK
   private lateinit var eventUserPictureRepositoryFirestore: EventUserPictureRepositoryFirestore
+  @MockK
+  private lateinit var concurrentEventUserRepositoryFirestore:
+      ConcurrentEventUserRepositoryFirestore
 
   @MockK private lateinit var connectivityManager: ConnectivityManager
 
@@ -216,7 +220,8 @@ class AssociationProfileTest : TearDown() {
             eventRepository,
             imageRepository,
             associationRepository,
-            eventUserPictureRepositoryFirestore)
+            eventUserPictureRepositoryFirestore,
+            concurrentEventUserRepositoryFirestore)
 
     every { associationRepository.init(any()) } answers { firstArg<() -> Unit>().invoke() }
     every { associationRepository.getAssociations(any(), any()) } answers
