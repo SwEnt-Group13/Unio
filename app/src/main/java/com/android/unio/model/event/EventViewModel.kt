@@ -119,6 +119,7 @@ constructor(
       event.organisers.list.value.forEach {
         it.events.add(event.uid)
         associationRepository.saveAssociation(
+            isNewAssociation = false,
             it,
             { it.events.requestAll() },
             { e -> Log.e("EventViewModel", "An error occurred while loading associations: $e") })
@@ -157,6 +158,7 @@ constructor(
         if (it.events.contains(event.uid)) it.events.remove(event.uid)
         it.events.add(event.uid)
         associationRepository.saveAssociation(
+            isNewAssociation = false,
             it,
             {},
             { e -> Log.e("EventViewModel", "An error occurred while loading associations: $e") })
@@ -183,6 +185,7 @@ constructor(
         if (it.events.contains(event.uid)) it.events.remove(event.uid)
         it.events.add(event.uid)
         associationRepository.saveAssociation(
+            isNewAssociation = false,
             it,
             {},
             { e -> Log.e("EventViewModel", "An error occurred while loading associations: $e") })
@@ -245,6 +248,7 @@ constructor(
       event.organisers.list.value.forEach {
         it.events.remove(event.uid)
         associationRepository.saveAssociation(
+            isNewAssociation = false,
             it,
             {},
             { e -> Log.e("EventViewModel", "An error occurred while loading associations: $e") })

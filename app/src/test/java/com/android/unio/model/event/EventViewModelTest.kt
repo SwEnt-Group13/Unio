@@ -90,7 +90,9 @@ class EventViewModelTest {
         }
 
     every { associationRepositoryFirestore.getAssociations(any(), any()) } answers {}
-    every { associationRepositoryFirestore.saveAssociation(any(), any(), any()) } answers {}
+    every {
+      associationRepositoryFirestore.saveAssociation(isNewAssociation = false, any(), any(), any())
+    } answers {}
     `when`(eventUserPictureRepositoryFirestore.addEventUserPicture(any(), any(), any()))
         .thenAnswer { invocation ->
           val onSuccess = invocation.arguments[1] as () -> Unit

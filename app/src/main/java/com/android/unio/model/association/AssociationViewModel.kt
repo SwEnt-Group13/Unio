@@ -62,6 +62,24 @@ constructor(
   }
 
   /**
+   * Adds a new association or updates an existing one in the local list of associations in the
+   * ViewModel. This operation is performed locally without interacting with the repository.
+   *
+   * @param association The association to be added or updated.
+   */
+  fun saveAssociationLocally(association: Association) {
+    _associations.value =
+        _associations.value.map { if (it.uid == association.uid) association else it }
+
+    // If the association wasn't found, it will be added
+    if (_associations.value.none { it.uid == association.uid }) {
+      _associations.value = _associations.value + association
+    }
+
+    _associationsByCategory.value = _associations.value.groupBy { it.category }
+  }
+
+  /**
    * Fetches the user from a member
    *
    * @param member The member to fetch the user from
@@ -139,11 +157,14 @@ constructor(
    * the association is saved without an image.
    *
    * @param association The association to save.
+   * @param isNewAssociation [Boolean] : The boolean that explains if the Association is newly
+   *   created or not
    * @param imageStream The image stream to upload to Firebase Storage.
    * @param onSuccess A callback that is called when the association is successfully saved.
    * @param onFailure A callback that is called when an error occurs while saving the association.
    */
   fun saveAssociation(
+      isNewAssociation: Boolean,
       association: Association,
       imageStream: InputStream?,
       onSuccess: () -> Unit,
@@ -156,6 +177,7 @@ constructor(
           onSuccess = { imageUrl ->
             val updatedAssociation = association.copy(image = imageUrl)
             associationRepository.saveAssociation(
+                isNewAssociation,
                 updatedAssociation,
                 {
                   _associations.value =
@@ -165,6 +187,7 @@ constructor(
                   onSuccess()
                 },
                 onFailure)
+            saveAssociationLocally(updatedAssociation)
           },
           onFailure = { exception ->
             Log.e("ImageRepository", "Failed to store image: $exception")
@@ -172,6 +195,7 @@ constructor(
           })
     } else {
       associationRepository.saveAssociation(
+          isNewAssociation,
           association,
           {
             _associations.value =
@@ -204,5 +228,14 @@ constructor(
           it?.events?.requestAll()
           it?.members?.forEach { fetchUserFromMember(it) }
         }
+  }
+
+  /**
+   * Put a null association in the selector and updates the [_selectedAssociation] state flow.
+   *
+   * @param associationId The ID of the association to select.
+   */
+  fun selectNullAssociation() {
+    _selectedAssociation.value = null
   }
 }

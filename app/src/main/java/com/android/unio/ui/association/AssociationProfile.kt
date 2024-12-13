@@ -118,7 +118,7 @@ fun AssociationProfileScreen(
         associationViewModel = associationViewModel,
         onEdit = {
           associationViewModel.selectAssociation(association!!.uid)
-          navigationAction.navigateTo(Screen.EDIT_ASSOCIATION)
+          navigationAction.navigateTo(Screen.SAVE_ASSOCIATION)
         })
   }
 }

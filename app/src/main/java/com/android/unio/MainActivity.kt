@@ -35,7 +35,7 @@ import com.android.unio.model.preferences.getOrDefault
 import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.association.AssociationProfileScreen
-import com.android.unio.ui.association.EditAssociationScreen
+import com.android.unio.ui.association.SaveAssociationScreen
 import com.android.unio.ui.authentication.AccountDetailsScreen
 import com.android.unio.ui.authentication.EmailVerificationScreen
 import com.android.unio.ui.authentication.ResetPasswordScreen
@@ -54,7 +54,6 @@ import com.android.unio.ui.settings.SettingsScreen
 import com.android.unio.ui.theme.AppTheme
 import com.android.unio.ui.user.SomeoneElseUserProfileScreen
 import com.android.unio.ui.user.UserClaimAssociationPresidentialRightsScreen
-import com.android.unio.ui.user.UserClaimAssociationScreen
 import com.android.unio.ui.user.UserProfileEditionScreen
 import com.android.unio.ui.user.UserProfileScreen
 import dagger.hilt.android.AndroidEntryPoint
@@ -163,8 +162,8 @@ fun UnioApp() {
         AssociationProfileScreen(
             navigationActions, associationViewModel, userViewModel, eventViewModel)
       }
-      composable(Screen.EDIT_ASSOCIATION) {
-        EditAssociationScreen(associationViewModel, navigationActions)
+      composable(Screen.SAVE_ASSOCIATION) {
+        SaveAssociationScreen(associationViewModel, navigationActions, isNewAssociation = false)
       }
       composable(Screen.EVENT_CREATION) {
         EventCreationScreen(
@@ -207,12 +206,13 @@ fun UnioApp() {
       composable(Screen.SETTINGS) {
         SettingsScreen(navigationActions, authViewModel, userViewModel)
       }
-      composable(Screen.CLAIM_ASSOCIATION_RIGHTS) {
-        UserClaimAssociationScreen(associationViewModel, navigationActions, searchViewModel)
+      composable(Screen.SAVE_ASSOCIATION) {
+        associationViewModel.selectNullAssociation()
+        SaveAssociationScreen(associationViewModel, navigationActions, isNewAssociation = true)
       }
       composable(Screen.CLAIM_ASSOCIATION_PRESIDENTIAL_RIGHTS) {
         UserClaimAssociationPresidentialRightsScreen(
-            associationViewModel, navigationActions, userViewModel)
+            navigationActions, associationViewModel, userViewModel, searchViewModel)
       }
     }
   }
