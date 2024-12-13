@@ -12,6 +12,7 @@ class MockReferenceList<T : UniquelyIdentifiable>(elements: List<T> = emptyList(
   override val uids: List<String> = elements.map { it.uid }
 
   override fun add(uid: String) {}
+
   override fun add(element: T) {}
 
   override fun addAll(uids: List<String>) {}
