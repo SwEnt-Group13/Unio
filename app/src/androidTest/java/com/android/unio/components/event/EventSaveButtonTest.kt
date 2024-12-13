@@ -96,7 +96,7 @@ class EventSaveButtonTest : TearDown() {
 
   @Test
   fun testEventCardSaveAndUnsaveEventOnline() {
-    var indicator = false
+    var indicator = false //saved indicator
     every { concurrentEventUserRepositoryFirestore.updateSave(any(), any(), any(), any()) } answers
         {
           val onSuccess = args[2] as () -> Unit
@@ -108,12 +108,12 @@ class EventSaveButtonTest : TearDown() {
     composeTestRule.onNodeWithTag(EventDetailsTestTags.SAVE_BUTTON).assertExists().performClick()
 
     Thread.sleep(500)
-    assert(indicator)
+    assert(indicator) // asserts event is saved
 
-    verify { NotificationWorker.schedule(any(), any()) }
+    verify { NotificationWorker.schedule(any(), any()) } // asserts that a notification is scheduled
 
     composeTestRule.onNodeWithTag(EventDetailsTestTags.SAVE_BUTTON).assertExists().performClick()
     composeTestRule.waitForIdle()
-    assert(!indicator)
+    assert(!indicator) // asserts event is unsaved
   }
 }
