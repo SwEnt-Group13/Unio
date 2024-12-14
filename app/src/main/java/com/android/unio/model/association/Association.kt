@@ -256,6 +256,7 @@ enum class PermissionType(val stringName: String) {
     SEE_STATISTICS("See Statistics"), // See all statistics of the association
     SEND_NOTIFICATIONS("Send Notification"), // Send notifications to every people who liked a certain event
     VALIDATE_PICTURES("Validate Pictures"), // Validate pictures taken by other people, making them visible for other users
+    BETTER_OVERVIEW("Better Overview"), // Add the coloured strips to this association (If you don't have any other permission. Otherwise it is done automatically)
 
     // EVENTS
   VIEW_INVISIBLE_EVENTS("View Events"), // View events that will be launched soon, or drafts
