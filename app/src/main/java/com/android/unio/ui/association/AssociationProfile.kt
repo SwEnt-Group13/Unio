@@ -3,6 +3,7 @@ package com.android.unio.ui.association
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -11,7 +12,10 @@ import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -53,6 +57,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
@@ -79,11 +84,6 @@ import com.android.unio.ui.navigation.Screen
 import com.android.unio.ui.theme.AppTypography
 import com.android.unio.ui.utils.ToastUtils
 import kotlinx.coroutines.CoroutineScope
-
-// These variable are only here for testing purpose. They should be deleted when the screen is
-// linked to the backend
-private const val DEBUG_MESSAGE = "<DEBUG> Not implemented yet"
-
 
 
 /**
@@ -142,70 +142,147 @@ fun AssociationProfileScaffold(
     associationViewModel: AssociationViewModel,
     onEdit: () -> Unit
 ) {
-  val associationState by associationViewModel.selectedAssociation.collectAsState()
-  val association = associationState!!
+    val associationState by associationViewModel.selectedAssociation.collectAsState()
+    val association = associationState!!
 
-  var showSheet by remember { mutableStateOf(false) }
+    var showSheet by remember { mutableStateOf(false) }
+    val context = LocalContext.current
 
-  val context = LocalContext.current
-  Scaffold(
-      topBar = {
-        TopAppBar(
-            title = {
-              Text(
-                  text = association.name,
-                  modifier = Modifier.testTag(AssociationProfileTestTags.TITLE))
-            },
-            navigationIcon = {
-              IconButton(
-                  onClick = { navigationAction.goBack() },
-                  modifier = Modifier.testTag(AssociationProfileTestTags.GO_BACK_BUTTON)) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
-                        contentDescription = context.getString(R.string.association_go_back))
-                  }
-            },
-            actions = {
-              Row {
-                IconButton(
-                    modifier = Modifier.testTag(AssociationProfileTestTags.MORE_BUTTON),
-                    onClick = { showSheet = true }) {
-                      Icon(
-                          Icons.Outlined.MoreVert,
-                          contentDescription = context.getString(R.string.association_more))
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        text = association.name,
+                        modifier = Modifier.testTag(AssociationProfileTestTags.TITLE)
+                    )
+                },
+                navigationIcon = {
+                    IconButton(
+                        onClick = { navigationAction.goBack() },
+                        modifier = Modifier.testTag(AssociationProfileTestTags.GO_BACK_BUTTON)
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
+                            contentDescription = context.getString(R.string.association_go_back)
+                        )
                     }
-              }
-            })
-      },
-      content = { padding ->
-        Surface(
-            modifier = Modifier.padding(padding),
-        ) {
+                },
+                actions = {
+                    Row {
+                        IconButton(
+                            modifier = Modifier.testTag(AssociationProfileTestTags.MORE_BUTTON),
+                            onClick = { showSheet = true }
+                        ) {
+                            Icon(
+                                Icons.Outlined.MoreVert,
+                                contentDescription = context.getString(R.string.association_more)
+                            )
+                        }
+                    }
+                }
+            )
+        },
+        content = { padding ->
             val user by userViewModel.user.collectAsState()
-            // Retrieve the member's permissions if they are part of the association
-            val userPermissions = association.members.find { it.uid == user!!.uid }?.role?.permissions
-            // Check if the user has the "ADD_EVENTS" permission using the Permissions class
-            val hasAddEventsPermission = userPermissions?.hasPermission(PermissionType.ADD_EDIT_EVENTS) == true
-          AssociationProfileContent(navigationAction, userViewModel, eventViewModel, associationViewModel)
+            val userRole = association.members.find { it.uid == user!!.uid }?.role
+            val userPermissions = userRole?.permissions
+
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding)
+            ) {
+                if (userPermissions?.hasAnyPermission() == true) {
+                    val userRoleColor = Color(userRole.color)
+                    // Horizontal red strip
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(userRoleColor)
+                            .height(50.dp)
+                            .align(Alignment.TopCenter)
+                    ) {
+                        Text(
+                            context.getString(R.string.association_profile_your_role_text) + " " + userRole.displayName,
+                            color = Color.White,
+                            modifier = Modifier.align(Alignment.Center)
+                        )
+                    }
+
+                    // Main content with vertical red lines
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(top = 50.dp) // Ensure space for the red strip
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(horizontal = 0.dp) // Space for vertical lines
+                        ) {
+                            // Left red line
+                            Box(
+                                modifier = Modifier
+                                    .width(2.dp)
+                                    .fillMaxHeight()
+                                    .background(userRoleColor)
+                            )
+
+                            // Main content
+                            Surface(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .padding(horizontal = 8.dp)
+                            ) {
+                                AssociationProfileContent(
+                                    navigationAction = navigationAction,
+                                    userViewModel = userViewModel,
+                                    eventViewModel = eventViewModel,
+                                    associationViewModel = associationViewModel
+                                )
+                            }
+
+                            // Right red line
+                            Box(
+                                modifier = Modifier
+                                    .width(2.dp)
+                                    .fillMaxHeight()
+                                    .background(userRoleColor)
+                            )
+                        }
+                    }
+                } else {
+                    AssociationProfileContent(
+                        navigationAction = navigationAction,
+                        userViewModel = userViewModel,
+                        eventViewModel = eventViewModel,
+                        associationViewModel = associationViewModel
+                    )
+                }
+            }
         }
-      })
+    )
 
-  var showNotificationDialog by remember { mutableStateOf(false) }
+    var showNotificationDialog by remember { mutableStateOf(false) }
 
-  NotificationSender(
-      context.getString(R.string.association_broadcast_message),
-      NotificationType.ASSOCIATION_FOLLOWERS,
-      association.uid,
-      { mapOf("title" to association.name, "body" to it) },
-      showNotificationDialog,
-      { showNotificationDialog = false })
+    NotificationSender(
+        context.getString(R.string.association_broadcast_message),
+        NotificationType.ASSOCIATION_FOLLOWERS,
+        association.uid,
+        { mapOf("title" to association.name, "body" to it) },
+        showNotificationDialog,
+        { showNotificationDialog = false }
+    )
 
-  AssociationProfileBottomSheet(
-      showSheet,
-      onClose = { showSheet = false },
-      onEdit = onEdit,
-      onOpenNotificationDialog = { showNotificationDialog = true })
+    AssociationProfileBottomSheet(
+        showSheet,
+        onClose = { showSheet = false },
+        onEdit = onEdit,
+        onOpenNotificationDialog = { showNotificationDialog = true }
+    )
 }
+
 
 /**
  * Composable element that contain the bottom sheet of the given association profile screen.

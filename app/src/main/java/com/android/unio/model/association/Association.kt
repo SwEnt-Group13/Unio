@@ -136,6 +136,12 @@ class Permissions private constructor(private val grantedPermissions: MutableSet
   /** Returns a set of all permissions granted by this set. */
   fun getGrantedPermissions(): Set<PermissionType> = grantedPermissions.toSet()
 
+    /** Return true if the set of permissions is not empty. */
+
+    fun hasAnyPermission(): Boolean{
+        return grantedPermissions.isNotEmpty()
+    }
+
   /**
    * Adds a permission to the set grantedPermissions.
    *
