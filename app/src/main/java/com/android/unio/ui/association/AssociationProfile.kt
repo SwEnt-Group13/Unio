@@ -84,8 +84,7 @@ import kotlinx.coroutines.CoroutineScope
 // linked to the backend
 private const val DEBUG_MESSAGE = "<DEBUG> Not implemented yet"
 
-private var testSnackbar: SnackbarHostState? = null
-private var scope: CoroutineScope? = null
+
 
 /**
  * Composable element that contain the association profile screen. It display the association.
@@ -149,24 +148,7 @@ fun AssociationProfileScaffold(
   var showSheet by remember { mutableStateOf(false) }
 
   val context = LocalContext.current
-  testSnackbar = remember { SnackbarHostState() }
-  scope = rememberCoroutineScope()
   Scaffold(
-      snackbarHost = {
-        SnackbarHost(
-            hostState = testSnackbar!!,
-            modifier = Modifier.testTag(AssociationProfileTestTags.SNACKBAR_HOST),
-            snackbar = {
-              Snackbar {
-                TextButton(
-                    onClick = { testSnackbar!!.currentSnackbarData?.dismiss() },
-                    modifier =
-                        Modifier.testTag(AssociationProfileTestTags.SNACKBAR_ACTION_BUTTON)) {
-                      Text(text = DEBUG_MESSAGE)
-                    }
-              }
-            })
-      },
       topBar = {
         TopAppBar(
             title = {
