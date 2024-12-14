@@ -108,9 +108,10 @@ class Role(
         Role(
             "Committee",
             Permissions.PermissionsBuilder()
-                .addPermission(PermissionType.VIEW_MEMBERS)
-                .addPermission(PermissionType.EDIT_MEMBERS)
-                .addPermission(PermissionType.VIEW_EVENTS)
+                .addPermission(PermissionType.ADD_EDIT_EVENTS)
+                .addPermission(PermissionType.ADD_MEMBERS)
+                .addPermission(PermissionType.SEE_STATISTICS)
+                .addPermission(PermissionType.SEND_NOTIFICATIONS)
                 .build(),
             badgeColorYellow,
             "Committee")
@@ -129,7 +130,7 @@ class Permissions private constructor(private val grantedPermissions: MutableSet
   /** Returns true if the permission is granted, false otherwise. */
   fun hasPermission(permission: PermissionType): Boolean {
     return grantedPermissions.contains(permission) ||
-        grantedPermissions.contains(PermissionType.FULL_RIGHTS)
+            (grantedPermissions.contains(PermissionType.FULL_RIGHTS) && permission != PermissionType.OWNER)
   }
 
   /** Returns a set of all permissions granted by this set. */
@@ -201,7 +202,7 @@ class Permissions private constructor(private val grantedPermissions: MutableSet
      * @return The PermissionsBuilder object with the added permission
      */
     fun addPermission(permission: PermissionType): PermissionsBuilder {
-      permissions.add(permission)
+        permissions.add(permission)
       return this
     }
 
@@ -222,11 +223,10 @@ class Permissions private constructor(private val grantedPermissions: MutableSet
      * @return The Permissions object with the permissions added
      */
     fun build(): Permissions {
-      // Ensure that FULL_RIGHTS is not included explicitly
-      if (permissions.contains(PermissionType.FULL_RIGHTS)) {
-        throw IllegalArgumentException("Cannot grant FULL_RIGHTS explicitly.")
-      }
-      return Permissions(permissions)
+        if(permissions.contains(PermissionType.OWNER)){
+            this.addPermission(PermissionType.FULL_RIGHTS)
+        }
+      return Permissions(permissions.toMutableSet())
     }
   }
 }
@@ -237,14 +237,24 @@ class Permissions private constructor(private val grantedPermissions: MutableSet
  * @property stringName A human-readable name for the permission.
  */
 enum class PermissionType(val stringName: String) {
-  FULL_RIGHTS("Full rights"), // Special permission granting all rights
-  VIEW_MEMBERS("View members"),
-  EDIT_MEMBERS("Edit members"),
-  DELETE_MEMBERS("Delete members"),
-  VIEW_EVENTS("View events"),
-  EDIT_EVENTS("Edit events"),
-  DELETE_EVENTS("Delete Events"),
-  ADD_EVENTS("Add Events")
+    // ADMIN
+    OWNER("Owner"), // Special permission granting FULL_RIGHTS & Add give Full Rights to people. Can also edit & delete the association.
+  FULL_RIGHTS("Full Rights"), // Special permission granting all permissions except owner
+
+    // MEMBERS
+  VIEW_INVISIBLE_MEMBERS("View Invisible Members"), // See all members of the association including invisible ones
+    ADD_MEMBERS("Add Members"),
+    DELETE_MEMBERS("Delete Members"),
+
+    // GENERAL
+    SEE_STATISTICS("See Statistics"), // See all statistics of the association
+    SEND_NOTIFICATIONS("Send Notification"), // Send notifications to every people who liked a certain event
+    VALIDATE_PICTURES("Validate Pictures"), // Validate pictures taken by other people, making them visible for other users
+
+    // EVENTS
+  VIEW_INVISIBLE_EVENTS("View Events"), // View events that will be launched soon, or drafts
+    ADD_EDIT_EVENTS("Add & Edit Events"),
+  DELETE_EVENTS("Delete Events")
 }
 
 /**

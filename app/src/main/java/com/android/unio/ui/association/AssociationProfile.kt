@@ -181,8 +181,12 @@ fun AssociationProfileScaffold(
         Surface(
             modifier = Modifier.padding(padding),
         ) {
-          AssociationProfileContent(
-              navigationAction, userViewModel, eventViewModel, associationViewModel)
+            val user by userViewModel.user.collectAsState()
+            // Retrieve the member's permissions if they are part of the association
+            val userPermissions = association.members.find { it.uid == user!!.uid }?.role?.permissions
+            // Check if the user has the "ADD_EVENTS" permission using the Permissions class
+            val hasAddEventsPermission = userPermissions?.hasPermission(PermissionType.ADD_EDIT_EVENTS) == true
+          AssociationProfileContent(navigationAction, userViewModel, eventViewModel, associationViewModel)
         }
       })
 
@@ -422,7 +426,7 @@ private fun AssociationEvents(
   val userPermissions = association.members.find { it.uid == user!!.uid }?.role?.permissions
 
   // Check if the user has the "ADD_EVENTS" permission using the Permissions class
-  val hasAddEventsPermission = userPermissions?.hasPermission(PermissionType.ADD_EVENTS) == true
+  val hasAddEventsPermission = userPermissions?.hasPermission(PermissionType.ADD_EDIT_EVENTS) == true
   if (events.isNotEmpty()) {
     Text(
         context.getString(R.string.association_upcoming_events),
