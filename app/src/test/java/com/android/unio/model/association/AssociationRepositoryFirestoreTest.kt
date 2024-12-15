@@ -160,12 +160,12 @@ class AssociationRepositoryFirestoreTest {
                         mapOf(
                             "displayName" to "Guest",
                             "color" to badgeColorBlue,
-                            "permissions" to listOf("Full rights")),
+                            "permissions" to listOf("Full Rights")),
                     "Administrator" to
                         mapOf(
                             "displayName" to "Administrator",
                             "color" to badgeColorCyan,
-                            "permissions" to listOf("Full rights"))),
+                            "permissions" to listOf("Full Rights"))),
             "followersCount" to association1.followersCount,
             "image" to association1.image,
             "events" to association1.events.uids,
@@ -186,12 +186,12 @@ class AssociationRepositoryFirestoreTest {
                         mapOf(
                             "displayName" to "Guest",
                             "color" to badgeColorBlue,
-                            "permissions" to listOf("Full rights")),
+                            "permissions" to listOf("Full Rights")),
                     "Administrator" to
                         mapOf(
                             "displayName" to "Administrator",
                             "color" to badgeColorCyan,
-                            "permissions" to listOf("Full rights"))),
+                            "permissions" to listOf("Full Rights"))),
             "followersCount" to association2.followersCount,
             "image" to association2.image,
             "events" to association2.events.uids,
