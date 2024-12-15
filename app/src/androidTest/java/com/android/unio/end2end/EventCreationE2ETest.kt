@@ -120,9 +120,7 @@ class EventCreationE2ETest : EndToEndTest() {
     val currentDate = LocalDate.now()
     val dateToSelect = LocalDate.of(currentDate.year, currentDate.month, day)
     val dateString = dateToSelect.format(dateFormatter)
-
     composeTestRule.onNodeWithText(dateString).performClick()
-
     composeTestRule
         .onNodeWithText(context.getString(R.string.event_creation_dialog_ok))
         .performClick()
@@ -167,9 +165,9 @@ class EventCreationE2ETest : EndToEndTest() {
       hour: Int,
       minute: Int
   ) {
+
     composeTestRule.onNodeWithTag(dateFieldTag).performScrollTo().performClick()
     selectDate(day, datePickerTag)
-
     composeTestRule.onNodeWithTag(timeFieldTag).performScrollTo().performClick()
     selectTime(hour, minute, timePickerTag)
   }
@@ -238,13 +236,21 @@ class EventCreationE2ETest : EndToEndTest() {
         .performScrollTo()
         .performClick()
 
+    val currentDate = LocalDate.now()
+    val todayDayNumber = currentDate.dayOfMonth
+
     // Set Start Date and Time
     setDateTime(
         dateFieldTag = EventCreationTestTags.START_DATE_FIELD,
         datePickerTag = EventCreationTestTags.START_DATE_PICKER,
         timeFieldTag = EventCreationTestTags.START_TIME_FIELD,
         timePickerTag = EventCreationTestTags.START_TIME_PICKER,
-        day = 15,
+        day =
+            if (todayDayNumber != 15) {
+              15
+            } else {
+              14
+            },
         hour = 10,
         minute = 30)
 
@@ -254,7 +260,12 @@ class EventCreationE2ETest : EndToEndTest() {
         datePickerTag = EventCreationTestTags.END_DATE_PICKER,
         timeFieldTag = EventCreationTestTags.END_TIME_FIELD,
         timePickerTag = EventCreationTestTags.END_TIME_PICKER,
-        day = 16,
+        day =
+            if (todayDayNumber != 16) {
+              16
+            } else {
+              17
+            },
         hour = 11,
         minute = 25)
 
