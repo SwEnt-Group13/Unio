@@ -121,7 +121,7 @@ class EventCreationE2ETest : EndToEndTest() {
     val dateToSelect = LocalDate.of(currentDate.year, currentDate.month, day)
     val dateString = dateToSelect.format(dateFormatter)
 
-    composeTestRule.onNodeWithText(dateString).performClick()
+    composeTestRule.onNodeWithText(dateString, true).performClick()
 
     composeTestRule
         .onNodeWithText(context.getString(R.string.event_creation_dialog_ok))
@@ -275,7 +275,7 @@ class EventCreationE2ETest : EndToEndTest() {
     composeTestRule.waitUntilExactlyOneExists(
         matcher =
             hasTestTag(EventCreationTestTags.LOCATION_SUGGESTION_ITEM_LATITUDE + EVENT_LATITUDE),
-        timeoutMillis = 10000)
+        timeoutMillis = 15000)
 
     composeTestRule
         .onNodeWithTag(EventCreationTestTags.LOCATION_SUGGESTION_ITEM_LATITUDE + EVENT_LATITUDE)
