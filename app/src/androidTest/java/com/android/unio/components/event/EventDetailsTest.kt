@@ -3,6 +3,7 @@ package com.android.unio.components.event
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.assertTextEquals
+import androidx.compose.ui.test.isDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
@@ -81,8 +82,16 @@ class EventDetailsTest : TearDown() {
     MockKAnnotations.init(this, relaxed = true)
     eventPictures =
         listOf(
-            EventUserPicture("12", "http:image.com", User.emptyFirestoreReferenceElement(), 0),
-            EventUserPicture("34", "http:image.com", User.emptyFirestoreReferenceElement(), 3))
+            EventUserPicture(
+                "12",
+                "https://i1.sndcdn.com/artworks-000055240636-kowvdx-t500x500.jpg",
+                User.emptyFirestoreReferenceElement(),
+                0),
+            EventUserPicture(
+                "34",
+                "https://i1.sndcdn.com/artworks-000055240636-kowvdx-t500x500.jpg",
+                User.emptyFirestoreReferenceElement(),
+                3))
     events =
         listOf(
             MockEvent.createMockEvent(
@@ -276,13 +285,19 @@ class EventDetailsTest : TearDown() {
     composeTestRule.onNodeWithTag(EventDetailsTestTags.START_DATE).assertDisplayComponentInScroll()
   }
 
-  @Test
-  fun testGalleryDisplays() {
-    setEventScreen(events[0])
+  private fun goToGallery() {
     composeTestRule
         .onNodeWithTag(EventDetailsTestTags.EVENT_DETAILS_PAGER)
         .assertDisplayComponentInScroll()
     composeTestRule.onNodeWithTag(EventDetailsTestTags.EVENT_DETAILS_PAGER).performScrollToIndex(1)
+  }
+
+  @Test
+  fun testGalleryDisplays() {
+    setEventScreen(events[0])
+
+    goToGallery()
+
     composeTestRule
         .onNodeWithTag(EventDetailsTestTags.GALLERY_GRID)
         .assertDisplayComponentInScroll()
@@ -291,10 +306,7 @@ class EventDetailsTest : TearDown() {
   @Test
   fun testGalleryDoesNotDisplayWhenFutureStartDate() {
     setEventScreen(events[1])
-    composeTestRule
-        .onNodeWithTag(EventDetailsTestTags.EVENT_DETAILS_PAGER)
-        .assertDisplayComponentInScroll()
-    composeTestRule.onNodeWithTag(EventDetailsTestTags.EVENT_DETAILS_PAGER).performScrollToIndex(1)
+    goToGallery()
     composeTestRule.onNodeWithTag(EventDetailsTestTags.GALLERY_GRID).assertIsNotDisplayed()
     composeTestRule
         .onNodeWithTag(EventDetailsTestTags.EVENT_NOT_STARTED_TEXT)
@@ -304,13 +316,33 @@ class EventDetailsTest : TearDown() {
   @Test
   fun testGalleryDoesNotDisplayWhenNoPictures() {
     setEventScreen(events[2])
-    composeTestRule
-        .onNodeWithTag(EventDetailsTestTags.EVENT_DETAILS_PAGER)
-        .assertDisplayComponentInScroll()
-    composeTestRule.onNodeWithTag(EventDetailsTestTags.EVENT_DETAILS_PAGER).performScrollToIndex(1)
+    goToGallery()
     composeTestRule.onNodeWithTag(EventDetailsTestTags.GALLERY_GRID).assertIsNotDisplayed()
     composeTestRule
         .onNodeWithTag(EventDetailsTestTags.EVENT_NO_PICTURES_TEXT)
         .assertDisplayComponentInScroll()
+  }
+
+  @Test
+  fun testFullSizePictureOnClick() {
+    setEventScreen(events[0])
+    goToGallery()
+    composeTestRule.waitUntil(5000) {
+      composeTestRule
+          .onNodeWithTag(EventDetailsTestTags.USER_EVENT_PICTURE + eventPictures[0].uid)
+          .isDisplayed()
+    }
+
+    composeTestRule
+        .onNodeWithTag(EventDetailsTestTags.USER_EVENT_PICTURE + eventPictures[0].uid)
+        .performClick()
+
+    composeTestRule.onNodeWithTag(EventDetailsTestTags.PICTURE_FULL_SCREEN).assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag(EventDetailsTestTags.EVENT_PICTURES_ARROW_LEFT)
+        .assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag(EventDetailsTestTags.EVENT_PICTURES_ARROW_RIGHT)
+        .assertIsDisplayed()
   }
 }
