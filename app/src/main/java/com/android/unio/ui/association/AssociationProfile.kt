@@ -19,6 +19,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -81,6 +83,7 @@ import com.android.unio.ui.event.EventCard
 import com.android.unio.ui.image.AsyncImageWrapper
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
+import com.android.unio.ui.navigation.SmoothTopBarNavigationMenu
 import com.android.unio.ui.theme.AppTypography
 import com.android.unio.ui.utils.ToastUtils
 import kotlinx.coroutines.CoroutineScope
@@ -195,6 +198,7 @@ fun AssociationProfileScaffold(
             ) {
                 if (userPermissions?.hasAnyPermission() == true) {
                     val userRoleColor = Color(userRole.color)
+
                     // Horizontal red strip
                     Box(
                         modifier = Modifier
@@ -210,7 +214,7 @@ fun AssociationProfileScaffold(
                         )
                     }
 
-                    // Main content with vertical red lines
+                    // Main content with vertical red lines and pager
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
@@ -229,21 +233,63 @@ fun AssociationProfileScaffold(
                                     .background(userRoleColor)
                             )
 
-                            // Main content
-                            Surface(
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .padding(horizontal = 8.dp)
-                            ) {
-                                AssociationProfileContent(
-                                    navigationAction = navigationAction,
-                                    userViewModel = userViewModel,
-                                    eventViewModel = eventViewModel,
-                                    associationViewModel = associationViewModel
-                                )
+                            // Main content (Conditional based on permission)
+                            if (userPermissions.hasPermission(PermissionType.BETTER_OVERVIEW) && !(userPermissions.hasPermission(PermissionType.FULL_RIGHTS)) && userPermissions.getGrantedPermissions().size == 1) {
+                                // Default content without HorizontalPager
+                                Box(
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .padding(horizontal = 8.dp)
+                                ) {
+                                    AssociationProfileContent(
+                                        navigationAction = navigationAction,
+                                        userViewModel = userViewModel,
+                                        eventViewModel = eventViewModel,
+                                        associationViewModel = associationViewModel
+                                    )
+                                }
+
+                            } else {
+                                // Main content with HorizontalPager
+                                Column(
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .padding(horizontal = 8.dp)
+                                ) {
+                                    val nbOfTabs = 2
+                                    val pagerState = rememberPagerState(initialPage = 0) { nbOfTabs }
+
+                                    // Tab Menu
+                                    val tabList = listOf(
+                                        context.getString(R.string.association_tab_overview),
+                                        context.getString(R.string.association_tab_actions)
+                                    )
+                                    SmoothTopBarNavigationMenu(tabList, pagerState)
+
+                                    // Pager Content
+                                    HorizontalPager(
+                                        state = pagerState,
+                                        modifier = Modifier.fillMaxSize()
+                                    ) { page ->
+                                        when (page) {
+                                            0 -> AssociationProfileContent(
+                                                navigationAction = navigationAction,
+                                                userViewModel = userViewModel,
+                                                eventViewModel = eventViewModel,
+                                                associationViewModel = associationViewModel
+                                            )
+                                            1 -> Box(
+                                                modifier = Modifier.fillMaxSize(),
+                                                contentAlignment = Alignment.Center
+                                            ) {
+                                                Text("Hello")
+                                            }
+                                        }
+                                    }
+                                }
                             }
 
-                            // Right red line
+                            // Right red line (This will always be displayed)
                             Box(
                                 modifier = Modifier
                                     .width(2.dp)
@@ -253,6 +299,7 @@ fun AssociationProfileScaffold(
                         }
                     }
                 } else {
+                    // Default content without permissions
                     AssociationProfileContent(
                         navigationAction = navigationAction,
                         userViewModel = userViewModel,
@@ -282,6 +329,9 @@ fun AssociationProfileScaffold(
         onOpenNotificationDialog = { showNotificationDialog = true }
     )
 }
+
+
+
 
 
 /**
