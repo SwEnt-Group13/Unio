@@ -142,18 +142,18 @@ fun EventCreationScreen(
                       }
                     }
               },
-              trailingIcon =  {
-                  if (name.isNotEmpty()) {
-                      IconButton(
-                          onClick = { name = "" },
-                          modifier = Modifier.testTag(EventCreationTestTags.EVENT_TITLE_CLEAR_BUTTON)
-                      ) {
-                          Icon(
-                              imageVector = Icons.Outlined.Clear,
-                              contentDescription = context.getString(R.string.event_creation_content_description_clear_title)
-                          )
+              trailingIcon = {
+                if (name.isNotEmpty()) {
+                  IconButton(
+                      onClick = { name = "" },
+                      modifier = Modifier.testTag(EventCreationTestTags.EVENT_TITLE_CLEAR_BUTTON)) {
+                        Icon(
+                            imageVector = Icons.Outlined.Clear,
+                            contentDescription =
+                                context.getString(
+                                    R.string.event_creation_content_description_clear_title))
                       }
-                  }
+                }
               })
 
           OutlinedTextField(
@@ -181,18 +181,21 @@ fun EventCreationScreen(
                       }
                     }
               },
-              trailingIcon =  {
-                  if (shortDescription.isNotEmpty()) {
-                      IconButton(
-                          onClick = { shortDescription = "" },
-                          modifier = Modifier.testTag(EventCreationTestTags.EVENT_SHORT_DESCRIPTION_CLEAR_BUTTON)
-                      ) {
-                          Icon(
-                              imageVector = Icons.Outlined.Clear,
-                              contentDescription = context.getString(R.string.event_creation_content_description_clear_short_description)
-                          )
+              trailingIcon = {
+                if (shortDescription.isNotEmpty()) {
+                  IconButton(
+                      onClick = { shortDescription = "" },
+                      modifier =
+                          Modifier.testTag(
+                              EventCreationTestTags.EVENT_SHORT_DESCRIPTION_CLEAR_BUTTON)) {
+                        Icon(
+                            imageVector = Icons.Outlined.Clear,
+                            contentDescription =
+                                context.getString(
+                                    R.string
+                                        .event_creation_content_description_clear_short_description))
                       }
-                  }
+                }
               })
 
           BannerImagePicker(

@@ -111,10 +111,9 @@ fun NominatimLocationPicker(
         placeholder = { Text(context.getString(R.string.event_creation_location_input_label)) },
         modifier = Modifier.fillMaxWidth().testTag(textFieldTestTag),
         trailingIcon = {
-            Icon(
-                imageVector = Icons.Outlined.LocationOn,
-                contentDescription = context.getString(R.string.event_creation_location_icon)
-            )
+          Icon(
+              imageVector = Icons.Outlined.LocationOn,
+              contentDescription = context.getString(R.string.event_creation_location_icon))
         })
 
     DropdownMenu(
