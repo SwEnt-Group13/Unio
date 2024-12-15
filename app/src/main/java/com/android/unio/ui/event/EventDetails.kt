@@ -413,8 +413,12 @@ fun EventDetailsBody(
 @Composable
 fun EventDetailsPicturesTab(event: Event, context: Context) {
   val eventPictures by event.eventPictures.list.collectAsState()
-    var showFullScreen by remember { mutableStateOf(false) }
-    var selectedPictureUri by remember { mutableStateOf(Uri.EMPTY) }
+  var showFullScreen by remember { mutableStateOf(false) }
+  var selectedPictureUri by remember { mutableStateOf(Uri.EMPTY) }
+  val pagerState = rememberPagerState { eventPictures.size }
+  println(pagerState.pageCount)
+  val scope = rememberCoroutineScope()
+
   if (event.startDate.seconds > Timestamp.now().seconds) {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
       Text(
@@ -438,22 +442,26 @@ fun EventDetailsPicturesTab(event: Event, context: Context) {
                     context.getString(R.string.event_details_user_picture_content_description),
                 filterQuality = FilterQuality.Medium,
                 placeholderResourceId = 0,
-                contentScale = ContentScale.Crop,
+                contentScale = ContentScale.Inside,
                 modifier =
                     Modifier.padding(3.dp)
                         .clip(RoundedCornerShape(10))
                         .testTag(EventDetailsTestTags.USER_EVENT_PICTURE + item.uid)
                         .clickable {
-                            selectedPictureUri = item.image.toUri()
-                            showFullScreen = true })
+                          scope.launch { pagerState.scrollToPage(index) }
+                          showFullScreen = true
+                        })
           }
         }
-      if (showFullScreen && selectedPictureUri != Uri.EMPTY) {
-          PictureOverlay(selectedPictureUri) {
-              selectedPictureUri = Uri.EMPTY
-              showFullScreen = false
-          }
-      }
+    if (showFullScreen) {
+      PictureOverlay(
+          onDismiss = {
+            selectedPictureUri = Uri.EMPTY
+            showFullScreen = false
+          },
+          pagerState,
+          eventPictures)
+    }
   }
 }
 /**
