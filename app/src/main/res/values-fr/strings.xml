@@ -38,6 +38,9 @@
     <string name="association_content_description_association_image">Image de l\'association </string>
     <string name="association_content_description_follow_icon">Icône suivre</string>
     <string name="association_profile_add_event_button">Ajouter un événement</string>
+    <string name="association_profile_your_role_text">Votre rôle est</string>
+    <string name="association_tab_overview">Aperçu</string>
+    <string name="association_tab_actions">Actions</string>
 
     <!-- SaveAssociation strings -->
     <string name="association_image_explanation">Ajoutez une image comme logo de l\'association.</string>

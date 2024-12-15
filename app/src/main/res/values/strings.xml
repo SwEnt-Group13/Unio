@@ -43,6 +43,9 @@
     <string name="association_content_description_association_image">Association image of </string>
     <string name="association_content_description_follow_icon">Follow icon</string>
     <string name="association_profile_add_event_button">Add event</string>
+    <string name="association_profile_your_role_text">Your role is</string>
+    <string name="association_tab_overview">Overview</string>
+    <string name="association_tab_actions">Actions</string>
 
 
     <!-- SaveAssociation strings -->
