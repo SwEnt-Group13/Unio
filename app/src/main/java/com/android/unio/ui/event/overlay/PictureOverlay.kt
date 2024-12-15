@@ -1,6 +1,7 @@
 package com.android.unio.ui.event.overlay
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
@@ -63,47 +64,50 @@ fun PictureOverlay(
               dismissOnClickOutside = true,
               dismissOnBackPress = true,
               usePlatformDefaultWidth = false)) {
-        Box(modifier = Modifier.testTag(PICTURE_FULL_SCREEN)) {
-          HorizontalPager(pagerState, pageSpacing = 40.dp, beyondViewportPageCount = 1) { page ->
-            AsyncImageWrapper(
-                imageUri = eventPictures[page].image.toUri(),
-                contentDescription =
-                    context.getString(
-                        R.string.event_details_content_description_full_screen_picture),
-                filterQuality = FilterQuality.High,
-                placeholderResourceId = 0,
-                contentScale = ContentScale.Inside,
-                modifier = Modifier.padding(horizontal = 55.dp))
-          }
-          IconButton(
-              onClick = { onClickArrow(false) },
-              modifier =
-                  Modifier.align(Alignment.CenterStart)
-                      .testTag(EventDetailsTestTags.EVENT_PICTURES_ARROW_LEFT),
-              colors =
-                  IconButtonDefaults.iconButtonColors(
-                      contentColor = MaterialTheme.colorScheme.onPrimary,
-                      containerColor = MaterialTheme.colorScheme.primary)) {
-                Icon(
-                    Icons.AutoMirrored.Filled.ArrowBack,
-                    context.getString(R.string.event_details_content_description_arrow_left),
-                    modifier = Modifier.size(iconSize))
+        Box(
+            modifier = Modifier.testTag(PICTURE_FULL_SCREEN).fillMaxHeight(0.5f),
+            contentAlignment = Alignment.Center) {
+              HorizontalPager(pagerState, pageSpacing = 40.dp, beyondViewportPageCount = 1) { page
+                ->
+                AsyncImageWrapper(
+                    imageUri = eventPictures[page].image.toUri(),
+                    contentDescription =
+                        context.getString(
+                            R.string.event_details_content_description_full_screen_picture),
+                    filterQuality = FilterQuality.High,
+                    placeholderResourceId = 0,
+                    contentScale = ContentScale.Fit,
+                    modifier = Modifier.padding(horizontal = 55.dp))
               }
+              IconButton(
+                  onClick = { onClickArrow(false) },
+                  modifier =
+                      Modifier.align(Alignment.CenterStart)
+                          .testTag(EventDetailsTestTags.EVENT_PICTURES_ARROW_LEFT),
+                  colors =
+                      IconButtonDefaults.iconButtonColors(
+                          contentColor = MaterialTheme.colorScheme.onPrimary,
+                          containerColor = MaterialTheme.colorScheme.primary)) {
+                    Icon(
+                        Icons.AutoMirrored.Filled.ArrowBack,
+                        context.getString(R.string.event_details_content_description_arrow_left),
+                        modifier = Modifier.size(iconSize))
+                  }
 
-          IconButton(
-              onClick = { onClickArrow(true) },
-              modifier =
-                  Modifier.align(Alignment.CenterEnd)
-                      .testTag(EventDetailsTestTags.EVENT_PICTURES_ARROW_RIGHT),
-              colors =
-                  IconButtonDefaults.iconButtonColors(
-                      contentColor = MaterialTheme.colorScheme.onPrimary,
-                      containerColor = MaterialTheme.colorScheme.primary)) {
-                Icon(
-                    Icons.AutoMirrored.Filled.ArrowForward,
-                    context.getString(R.string.event_details_content_description_arrow_right),
-                    modifier = Modifier.size(iconSize))
-              }
-        }
+              IconButton(
+                  onClick = { onClickArrow(true) },
+                  modifier =
+                      Modifier.align(Alignment.CenterEnd)
+                          .testTag(EventDetailsTestTags.EVENT_PICTURES_ARROW_RIGHT),
+                  colors =
+                      IconButtonDefaults.iconButtonColors(
+                          contentColor = MaterialTheme.colorScheme.onPrimary,
+                          containerColor = MaterialTheme.colorScheme.primary)) {
+                    Icon(
+                        Icons.AutoMirrored.Filled.ArrowForward,
+                        context.getString(R.string.event_details_content_description_arrow_right),
+                        modifier = Modifier.size(iconSize))
+                  }
+            }
       }
 }

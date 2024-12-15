@@ -442,7 +442,7 @@ fun EventDetailsPicturesTab(event: Event, context: Context) {
                     context.getString(R.string.event_details_user_picture_content_description),
                 filterQuality = FilterQuality.Medium,
                 placeholderResourceId = 0,
-                contentScale = ContentScale.Inside,
+                contentScale = ContentScale.Fit,
                 modifier =
                     Modifier.padding(3.dp)
                         .clip(RoundedCornerShape(10))
