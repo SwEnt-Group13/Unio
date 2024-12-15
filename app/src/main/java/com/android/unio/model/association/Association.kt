@@ -130,17 +130,17 @@ class Permissions private constructor(private val grantedPermissions: MutableSet
   /** Returns true if the permission is granted, false otherwise. */
   fun hasPermission(permission: PermissionType): Boolean {
     return grantedPermissions.contains(permission) ||
-            (grantedPermissions.contains(PermissionType.FULL_RIGHTS) && permission != PermissionType.OWNER)
+        (grantedPermissions.contains(PermissionType.FULL_RIGHTS) &&
+            permission != PermissionType.OWNER)
   }
 
   /** Returns a set of all permissions granted by this set. */
   fun getGrantedPermissions(): Set<PermissionType> = grantedPermissions.toSet()
 
-    /** Return true if the set of permissions is not empty. */
-
-    fun hasAnyPermission(): Boolean{
-        return grantedPermissions.isNotEmpty()
-    }
+  /** Return true if the set of permissions is not empty. */
+  fun hasAnyPermission(): Boolean {
+    return grantedPermissions.isNotEmpty()
+  }
 
   /**
    * Adds a permission to the set grantedPermissions.
@@ -208,7 +208,7 @@ class Permissions private constructor(private val grantedPermissions: MutableSet
      * @return The PermissionsBuilder object with the added permission
      */
     fun addPermission(permission: PermissionType): PermissionsBuilder {
-        permissions.add(permission)
+      permissions.add(permission)
       return this
     }
 
@@ -229,9 +229,9 @@ class Permissions private constructor(private val grantedPermissions: MutableSet
      * @return The Permissions object with the permissions added
      */
     fun build(): Permissions {
-        if(permissions.contains(PermissionType.OWNER)){
-            this.addPermission(PermissionType.FULL_RIGHTS)
-        }
+      if (permissions.contains(PermissionType.OWNER)) {
+        this.addPermission(PermissionType.FULL_RIGHTS)
+      }
       return Permissions(permissions.toMutableSet())
     }
   }
@@ -243,24 +243,31 @@ class Permissions private constructor(private val grantedPermissions: MutableSet
  * @property stringName A human-readable name for the permission.
  */
 enum class PermissionType(val stringName: String) {
-    // ADMIN
-    OWNER("Owner"), // Special permission granting FULL_RIGHTS & Add give Full Rights to people. Can also edit & delete the association.
+  // ADMIN
+  OWNER("Owner"), // Special permission granting FULL_RIGHTS & Add give Full Rights to people. Can
+  // also edit & delete the association.
   FULL_RIGHTS("Full Rights"), // Special permission granting all permissions except owner
 
-    // MEMBERS
-  VIEW_INVISIBLE_MEMBERS("View Invisible Members"), // See all members of the association including invisible ones
-    ADD_MEMBERS("Add Members"),
-    DELETE_MEMBERS("Delete Members"),
+  // MEMBERS
+  VIEW_INVISIBLE_MEMBERS(
+      "View Invisible Members"), // See all members of the association including invisible ones
+  ADD_MEMBERS("Add Members"),
+  DELETE_MEMBERS("Delete Members"),
 
-    // GENERAL
-    SEE_STATISTICS("See Statistics"), // See all statistics of the association
-    SEND_NOTIFICATIONS("Send Notification"), // Send notifications to every people who liked a certain event
-    VALIDATE_PICTURES("Validate Pictures"), // Validate pictures taken by other people, making them visible for other users
-    BETTER_OVERVIEW("Better Overview"), // Add the coloured strips to this association (If you don't have any other permission. Otherwise it is done automatically)
+  // GENERAL
+  SEE_STATISTICS("See Statistics"), // See all statistics of the association
+  SEND_NOTIFICATIONS(
+      "Send Notification"), // Send notifications to every people who liked a certain event
+  VALIDATE_PICTURES(
+      "Validate Pictures"), // Validate pictures taken by other people, making them visible for
+  // other users
+  BETTER_OVERVIEW(
+      "Better Overview"), // Add the coloured strips to this association (If you don't have any
+  // other permission. Otherwise it is done automatically)
 
-    // EVENTS
+  // EVENTS
   VIEW_INVISIBLE_EVENTS("View Events"), // View events that will be launched soon, or drafts
-    ADD_EDIT_EVENTS("Add & Edit Events"),
+  ADD_EDIT_EVENTS("Add & Edit Events"),
   DELETE_EVENTS("Delete Events")
 }
 
