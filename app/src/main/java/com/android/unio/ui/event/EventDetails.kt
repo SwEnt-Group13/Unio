@@ -4,12 +4,14 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -86,6 +88,7 @@ import com.android.unio.model.strings.test_tags.event.EventDetailsTestTags
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.model.utils.NetworkUtils
 import com.android.unio.ui.components.NotificationSender
+import com.android.unio.ui.event.overlay.PictureOverlay
 import com.android.unio.ui.image.AsyncImageWrapper
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
@@ -410,6 +413,8 @@ fun EventDetailsBody(
 @Composable
 fun EventDetailsPicturesTab(event: Event, context: Context) {
   val eventPictures by event.eventPictures.list.collectAsState()
+    var showFullScreen by remember { mutableStateOf(false) }
+    var selectedPictureUri by remember { mutableStateOf(Uri.EMPTY) }
   if (event.startDate.seconds > Timestamp.now().seconds) {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
       Text(
@@ -437,9 +442,18 @@ fun EventDetailsPicturesTab(event: Event, context: Context) {
                 modifier =
                     Modifier.padding(3.dp)
                         .clip(RoundedCornerShape(10))
-                        .testTag(EventDetailsTestTags.USER_EVENT_PICTURE + item.uid))
+                        .testTag(EventDetailsTestTags.USER_EVENT_PICTURE + item.uid)
+                        .clickable {
+                            selectedPictureUri = item.image.toUri()
+                            showFullScreen = true })
           }
         }
+      if (showFullScreen && selectedPictureUri != Uri.EMPTY) {
+          PictureOverlay(selectedPictureUri) {
+              selectedPictureUri = Uri.EMPTY
+              showFullScreen = false
+          }
+      }
   }
 }
 /**
