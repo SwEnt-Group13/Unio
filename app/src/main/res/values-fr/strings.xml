@@ -210,6 +210,9 @@
     <string name="event_creation_location_input_label">Entrez une addresse</string>
     <string name="event_creation_location_dropdown_points">…</string>
     <string name="event_creation_location_dropdown_more">Plus…</string>
+    <string name="event_creation_content_description_clear_title">Effacer titre</string>
+    <string name="event_creation_content_description_clear_short_description">Effacer description courte</string>
+    <string name="event_creation_location_icon">Icône de localisation</string>
 
     <!-- Event Edit Strings -->
     <string name="event_edit_title">Modifier </string>
