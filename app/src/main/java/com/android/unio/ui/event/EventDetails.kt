@@ -409,6 +409,7 @@ fun EventDetailsBody(
  * The second page of the EventDetails horizontal scroll menu.
  *
  * @param event The event to display.
+ * @param context The local [Context]
  */
 @Composable
 fun EventDetailsPicturesTab(event: Event, context: Context) {
@@ -416,7 +417,6 @@ fun EventDetailsPicturesTab(event: Event, context: Context) {
   var showFullScreen by remember { mutableStateOf(false) }
   var selectedPictureUri by remember { mutableStateOf(Uri.EMPTY) }
   val pagerState = rememberPagerState { eventPictures.size }
-  println(pagerState.pageCount)
   val scope = rememberCoroutineScope()
 
   if (event.startDate.seconds > Timestamp.now().seconds) {
@@ -575,6 +575,13 @@ fun EventDetailsBottomSheet(
   }
 }
 
+/**
+ * Button that allows the user to save/unsave an event
+ *
+ * @param event the selected [Event].
+ * @param eventViewModel The [EventViewModel].
+ * @param userViewModel The [UserViewModel].
+ */
 @Composable
 fun EventSaveButton(event: Event, eventViewModel: EventViewModel, userViewModel: UserViewModel) {
   val context = LocalContext.current
