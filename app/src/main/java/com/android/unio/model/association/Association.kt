@@ -292,6 +292,18 @@ data class AssociationDocument(
     val description: String = ""
 )
 
+@Document
+data class MemberDocument(
+    @Id val uid: String, // Unique identifier for the MemberDocument (can be member's uid)
+    @Namespace val namespace: String = "unio", // Namespace for the document (similar to associations/events)
+    @StringProperty(indexingType = StringPropertyConfig.INDEXING_TYPE_PREFIXES)
+    val userUid: String,  // The UID of the user (linked to the member)
+    @StringProperty(indexingType = StringPropertyConfig.INDEXING_TYPE_PREFIXES)
+    val role: String, // The role of the member
+    @StringProperty(indexingType = StringPropertyConfig.INDEXING_TYPE_PREFIXES)
+    val associationUid: String // The UID of the association this member belongs to
+)
+
 /**
  * Extension function to convert an Association object to an AssociationDocument object
  *
