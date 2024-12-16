@@ -466,7 +466,7 @@ fun EventDetailsPicturesTab(event: Event, context: Context) {
             Modifier.fillMaxWidth()
                 .heightIn(max = Short.MAX_VALUE.toInt().dp)
                 .testTag(EventDetailsTestTags.GALLERY_GRID)) {
-          itemsIndexed(eventPictures) { _, item ->
+          itemsIndexed(eventPictures) { index, item ->
             AsyncImageWrapper(
                 item.image.toUri(),
                 contentDescription =
