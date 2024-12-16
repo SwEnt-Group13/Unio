@@ -243,25 +243,17 @@ constructor(
 
         val firestoreTask = async {
           user.savedEvents.list.value.forEach { event ->
-            if (eventToUpdate.contains(event)) {
-              val index = eventToUpdate.indexOf(event)
-              val current = eventToUpdate[index]
-              val newEvent = current.copy(numberOfSaved = current.numberOfSaved - 1)
-              eventToUpdate[index] = newEvent
-            } else {
-              val newEvent = event.copy(numberOfSaved = event.numberOfSaved - 1)
-              eventToUpdate.add(newEvent)
-            }
+            updateOrAdd(eventToUpdate, event) { it.copy(numberOfSaved = it.numberOfSaved - 1) }
           }
           user.followedAssociations.list.value.forEach { association ->
-            if (associationToUpdate.contains(association)) {
-              val index = associationToUpdate.indexOf(association)
-              val current = associationToUpdate[index]
-              val newAssociation = current.copy(followersCount = current.followersCount - 1)
-              associationToUpdate[index] = newAssociation
-            } else {
-              val newAssociation = association.copy(followersCount = association.followersCount - 1)
-              associationToUpdate.add(newAssociation)
+            updateOrAdd(associationToUpdate, association) {
+              it.copy(followersCount = it.followersCount - 1)
+            }
+          }
+
+          user.joinedAssociations.list.value.forEach { association ->
+            updateOrAdd(associationToUpdate, association) { current ->
+              association.copy(members = current.members.filter { it.uid != userId })
             }
           }
 
@@ -283,6 +275,18 @@ constructor(
 
       Log.e("UserDeletion", "Failed to delete user: ${e.message}", e)
       onFailure(e)
+    }
+  }
+
+  private fun <T> updateOrAdd(list: MutableList<T>, item: T, operation: (T) -> T) {
+    if (list.contains(item)) {
+      val index = list.indexOf(item)
+      val current = list[index]
+      val newItem = operation(current)
+      list[index] = newItem
+    } else {
+      val newItem = operation(item)
+      list.add(newItem)
     }
   }
 
