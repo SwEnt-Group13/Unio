@@ -121,7 +121,7 @@ class EventCreationE2ETest : EndToEndTest() {
     val dateToSelect = LocalDate.of(currentDate.year, currentDate.month, day)
     val dateString = dateToSelect.format(dateFormatter)
 
-    composeTestRule.onNodeWithText(dateString).performClick()
+    composeTestRule.onNodeWithText(text = dateString, substring = true).performClick()
 
     composeTestRule
         .onNodeWithText(context.getString(R.string.event_creation_dialog_ok))
