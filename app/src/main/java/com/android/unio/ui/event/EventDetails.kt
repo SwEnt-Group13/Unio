@@ -262,7 +262,8 @@ fun EventScreenContent(
           imageUri = event.image.toUri(),
           contentDescription = context.getString(R.string.event_image_description),
           modifier = Modifier.fillMaxWidth().testTag(EventDetailsTestTags.DETAILS_IMAGE),
-          contentScale = ContentScale.Crop)
+          contentScale = ContentScale.Crop,
+          placeholderResourceId = R.drawable.placeholder_pictures)
     }
 
     EventInformationCard(event, organisers, context)

@@ -1,5 +1,9 @@
 package com.android.unio.components.event
 
+import android.content.ContentResolver
+import android.content.res.Resources
+import android.net.Uri
+import androidx.annotation.AnyRes
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.assertTextEquals
@@ -10,6 +14,8 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollToIndex
 import androidx.navigation.NavHostController
+import androidx.test.platform.app.InstrumentationRegistry
+import com.android.unio.R
 import com.android.unio.TearDown
 import com.android.unio.assertDisplayComponentInScroll
 import com.android.unio.mocks.association.MockAssociation
@@ -77,19 +83,30 @@ class EventDetailsTest : TearDown() {
 
   @get:Rule val composeTestRule = createComposeRule()
 
+  private fun Resources.getUri(@AnyRes int: Int): Uri {
+    val scheme = ContentResolver.SCHEME_ANDROID_RESOURCE
+    val pkg = getResourcePackageName(int)
+    val type = getResourceTypeName(int)
+    val name = getResourceEntryName(int)
+    val uri = "$scheme://$pkg/$type/$name"
+    return Uri.parse(uri)
+  }
+
   @Before
   fun setUp() {
     MockKAnnotations.init(this, relaxed = true)
+    val context = InstrumentationRegistry.getInstrumentation().targetContext
+    val resources = context.applicationContext.resources
     eventPictures =
         listOf(
             EventUserPicture(
                 "12",
-                "https://i1.sndcdn.com/artworks-000055240636-kowvdx-t500x500.jpg",
+                resources.getUri(R.drawable.placeholder_pictures).toString(),
                 User.emptyFirestoreReferenceElement(),
                 0),
             EventUserPicture(
                 "34",
-                "https://i1.sndcdn.com/artworks-000055240636-kowvdx-t500x500.jpg",
+                resources.getUri(R.drawable.placeholder_pictures).toString(),
                 User.emptyFirestoreReferenceElement(),
                 3))
     events =
