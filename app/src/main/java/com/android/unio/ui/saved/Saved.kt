@@ -1,14 +1,20 @@
 package com.android.unio.ui.saved
 
 import android.util.Log
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Place
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -19,6 +25,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -44,6 +51,7 @@ import java.util.Calendar
  * @param eventViewModel The view model for events.
  * @param userViewModel The view model for the user.
  */
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun SavedScreen(
     navigationAction: NavigationAction,
@@ -79,6 +87,11 @@ fun SavedScreen(
     }
   }
 
+  val refreshState by eventViewModel.refreshState
+  val pullRefreshState =
+      rememberPullRefreshState(
+          refreshing = refreshState, onRefresh = { eventViewModel.loadEvents() })
+
   Scaffold(
       modifier = Modifier.testTag(SavedTestTags.SCREEN),
       floatingActionButton = {
@@ -94,60 +107,69 @@ fun SavedScreen(
       bottomBar = {
         BottomNavigationMenu(
             { navigationAction.navigateTo(it.route) }, LIST_TOP_LEVEL_DESTINATION, Route.SAVED)
-      }) {
-        Column(
-            modifier = Modifier.fillMaxSize().padding(it).padding(vertical = 16.dp),
-            horizontalAlignment = CenterHorizontally) {
-              Text(
-                  context.getString(R.string.saved_screen_title),
-                  style = AppTypography.headlineLarge,
-                  modifier = Modifier.testTag(SavedTestTags.TITLE))
+      }) { padding ->
+        Box(modifier = Modifier.padding(padding).pullRefresh(pullRefreshState).fillMaxHeight()) {
+          Column(
+              modifier = Modifier.fillMaxSize().padding(vertical = 16.dp),
+              horizontalAlignment = CenterHorizontally) {
+                Text(
+                    context.getString(R.string.saved_screen_title),
+                    style = AppTypography.headlineLarge,
+                    modifier = Modifier.testTag(SavedTestTags.TITLE))
 
-              LazyColumn(
-                  contentPadding = PaddingValues(vertical = 8.dp),
-                  horizontalAlignment = CenterHorizontally,
-                  modifier = Modifier.fillMaxSize().padding(horizontal = 32.dp),
-              ) {
-                if (savedEventsToday.first.isEmpty() && savedEventsToday.second.isEmpty()) {
-                  item {
-                    Text(
-                        context.getString(R.string.saved_screen_no_events),
-                        modifier = Modifier.padding(top = 16.dp).testTag(SavedTestTags.NO_EVENTS),
-                    )
+                LazyColumn(
+                    contentPadding = PaddingValues(vertical = 8.dp),
+                    horizontalAlignment = CenterHorizontally,
+                    modifier = Modifier.fillMaxSize().padding(horizontal = 32.dp),
+                ) {
+                  if (savedEventsToday.first.isEmpty() && savedEventsToday.second.isEmpty()) {
+                    item {
+                      Text(
+                          context.getString(R.string.saved_screen_no_events),
+                          modifier = Modifier.padding(top = 16.dp).testTag(SavedTestTags.NO_EVENTS),
+                      )
+                    }
                   }
-                }
-                if (savedEventsToday.first.isNotEmpty()) {
-                  item {
-                    Text(
-                        context.getString(R.string.saved_screen_today),
-                        modifier =
-                            Modifier.padding(top = 16.dp, bottom = 8.dp)
-                                .testTag(SavedTestTags.TODAY),
-                        style = AppTypography.headlineSmall)
-                  }
-                  item { HorizontalDivider() }
+                  if (savedEventsToday.first.isNotEmpty()) {
+                    item {
+                      Text(
+                          context.getString(R.string.saved_screen_today),
+                          modifier =
+                              Modifier.padding(top = 16.dp, bottom = 8.dp)
+                                  .testTag(SavedTestTags.TODAY),
+                          style = AppTypography.headlineSmall)
+                    }
+                    item { HorizontalDivider() }
 
-                  items(savedEventsToday.first) { event ->
-                    EventCard(navigationAction, event, userViewModel, eventViewModel)
+                    items(savedEventsToday.first) { event ->
+                      EventCard(navigationAction, event, userViewModel, eventViewModel)
+                    }
                   }
-                }
 
-                if (savedEventsToday.second.isNotEmpty()) {
-                  item {
-                    Text(
-                        context.getString(R.string.saved_screen_upcoming),
-                        modifier =
-                            Modifier.padding(top = 16.dp, bottom = 8.dp)
-                                .testTag(SavedTestTags.UPCOMING),
-                        style = AppTypography.headlineSmall)
-                  }
-                  item { HorizontalDivider() }
+                  if (savedEventsToday.second.isNotEmpty()) {
+                    item {
+                      Text(
+                          context.getString(R.string.saved_screen_upcoming),
+                          modifier =
+                              Modifier.padding(top = 16.dp, bottom = 8.dp)
+                                  .testTag(SavedTestTags.UPCOMING),
+                          style = AppTypography.headlineSmall)
+                    }
+                    item { HorizontalDivider() }
 
-                  items(savedEventsToday.second) { event ->
-                    EventCard(navigationAction, event, userViewModel, eventViewModel)
+                    items(savedEventsToday.second) { event ->
+                      EventCard(navigationAction, event, userViewModel, eventViewModel)
+                    }
                   }
                 }
               }
-            }
+        }
       }
+
+  Box {
+    PullRefreshIndicator(
+        refreshing = refreshState,
+        state = pullRefreshState,
+        modifier = Modifier.align(Alignment.TopCenter))
+  }
 }
