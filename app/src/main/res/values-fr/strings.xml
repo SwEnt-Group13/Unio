@@ -39,7 +39,16 @@
     <string name="association_content_description_follow_icon">Icône suivre</string>
     <string name="association_profile_add_event_button">Ajouter un événement</string>
 
-    <!-- EditAssociation strings -->
+    <!-- SaveAssociation strings -->
+    <string name="association_image_explanation">Ajoutez une image comme logo de l\'association.</string>
+    <string name="field_association_image">Choissez le logo de l\'association</string>
+    <string name="field_name">Nom</string>
+    <string name="field_full_name">Nom complet</string>
+    <string name="field_description">Déscription</string>
+    <string name="field_selected_image">Image selectionnée</string>
+    <string name="field_url">URL</string>
+    <string name="field_principal_email_address">Email adresse principale</string>
+    <string name="create_association_title">Créer l\'Association</string>
     <string name="edit_association_title">Modifier l\'Association</string>
     <string name="name_explanation">Le nom de l\'association. Il s\'agit généralement d\'un identifiant court ou d\'un acronyme.</string>
     <string name="full_name_explanation">Le nom complet de l\'association. Il peut s\'agir du nom officiel complet.</string>
@@ -52,6 +61,7 @@
     <string name="save_button_text">Enregistrer</string>
     <string name="category_button_text">Sélectionner la catégorie</string>
     <string name="save_failed_message">Échec de la sauvegarde de l\'association</string>
+    <string name="save_association_success">Votre nouvelle association est crée et va être approuver par les créateurs de l\'application !</string>
 
     /**
     * package: authentication

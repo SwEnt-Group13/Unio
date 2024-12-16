@@ -5,7 +5,7 @@ import com.google.firebase.firestore.DocumentReference
 interface AssociationRepository {
   fun init(onSuccess: () -> Unit)
 
-  fun getAssociationRef(uid: String): DocumentReference
+  fun getAssociationRef(uid: String, isNewAssociation: Boolean): DocumentReference
 
   fun getAssociations(onSuccess: (List<Association>) -> Unit, onFailure: (Exception) -> Unit)
 
@@ -16,6 +16,7 @@ interface AssociationRepository {
   )
 
   fun saveAssociation( // handles both add and update
+      isNewAssociation: Boolean,
       association: Association,
       onSuccess: () -> Unit,
       onFailure: (Exception) -> Unit

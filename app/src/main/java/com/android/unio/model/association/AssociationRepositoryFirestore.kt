@@ -2,6 +2,7 @@ package com.android.unio.model.association
 
 import com.android.unio.model.authentication.registerAuthStateListener
 import com.android.unio.model.firestore.FirestorePaths.ASSOCIATION_PATH
+import com.android.unio.model.firestore.FirestorePaths.ASSOCIATION_REQUEST_PATH
 import com.android.unio.model.firestore.performFirestoreOperation
 import com.android.unio.model.firestore.registerSnapshotListener
 import com.android.unio.model.firestore.transform.hydrate
@@ -34,10 +35,16 @@ class AssociationRepositoryFirestore @Inject constructor(private val db: Firebas
    * Fetches a [DocumentReference] for an [Association] object using the provided [uid].
    *
    * @param uid [String] : The uid of the [Association] to fetch.
+   * @param isNewAssociation [Boolean] : The boolean that explains if the Association is newly
+   *   created or not
    * @return [DocumentReference] : The [DocumentReference] for the [Association] object.
    */
-  override fun getAssociationRef(uid: String): DocumentReference {
-    return db.collection(ASSOCIATION_PATH).document(uid)
+  override fun getAssociationRef(uid: String, isNewAssociation: Boolean): DocumentReference {
+    if (isNewAssociation) {
+      return db.collection(ASSOCIATION_REQUEST_PATH).document(uid)
+    } else {
+      return db.collection(ASSOCIATION_PATH).document(uid)
+    }
   }
 
   /**
@@ -134,32 +141,34 @@ class AssociationRepositoryFirestore @Inject constructor(private val db: Firebas
       onSuccess: (Association) -> Unit,
       onFailure: (Exception) -> Unit
   ) {
-    getAssociationRef(id).registerSnapshotListener(MetadataChanges.EXCLUDE) {
-        documentSnapshot,
-        exception ->
-      if (exception != null) {
-        onFailure(exception)
-        return@registerSnapshotListener
-      }
-      if (documentSnapshot != null && documentSnapshot.exists()) {
-        onSuccess(hydrate(documentSnapshot.data))
-      }
-    }
+    getAssociationRef(id, isNewAssociation = false).registerSnapshotListener(
+        MetadataChanges.EXCLUDE) { documentSnapshot, exception ->
+          if (exception != null) {
+            onFailure(exception)
+            return@registerSnapshotListener
+          }
+          if (documentSnapshot != null && documentSnapshot.exists()) {
+            onSuccess(hydrate(documentSnapshot.data))
+          }
+        }
   }
 
   /**
    * Saves an [Association] object to Firestore.
    *
    * @param association [Association] : The [Association] object to save.
+   * @param isNewAssociation [Boolean] : The boolean that explains if the Association is newly
+   *   created or not
    * @param onSuccess [() -> Unit] : The callback to call when the [Association] is saved.
    * @param onFailure [(Exception) -> Unit] : The callback to call when the save fails.
    */
   override fun saveAssociation(
+      isNewAssociation: Boolean,
       association: Association,
       onSuccess: () -> Unit,
       onFailure: (Exception) -> Unit
   ) {
-    getAssociationRef(association.uid)
+    getAssociationRef(association.uid, isNewAssociation)
         .set(serialize(association))
         .performFirestoreOperation(onSuccess = { onSuccess() }, onFailure = onFailure)
   }
@@ -176,7 +185,7 @@ class AssociationRepositoryFirestore @Inject constructor(private val db: Firebas
       onSuccess: () -> Unit,
       onFailure: (Exception) -> Unit
   ) {
-    getAssociationRef(associationId)
+    getAssociationRef(associationId, isNewAssociation = false)
         .delete()
         .performFirestoreOperation(onSuccess = { onSuccess() }, onFailure = onFailure)
   }

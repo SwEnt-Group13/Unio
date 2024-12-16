@@ -29,6 +29,13 @@ import com.android.unio.ui.components.PictureSelectionTool
 import firestoreReferenceElementWith
 import kotlinx.coroutines.launch
 
+/**
+ * A Picture picker for Event details screen
+ *
+ * @param event the [Event] in question
+ * @param eventViewModel the [EventViewModel]
+ * @param user the authenticated [User]
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EventDetailsPicturePicker(event: Event, eventViewModel: EventViewModel, user: User) {

@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventRepository
 import com.android.unio.model.follow.ConcurrentAssociationUserRepository
 import com.android.unio.model.image.ImageRepository
@@ -64,6 +65,24 @@ constructor(
    */
   fun getUserFromMember(member: Member): StateFlow<User?> {
     return member.user.element
+  }
+
+  /**
+   * Adds a new association or updates an existing one in the local list of associations in the
+   * ViewModel. This operation is performed locally without interacting with the repository.
+   *
+   * @param association The association to be added or updated.
+   */
+  fun saveAssociationLocally(association: Association) {
+    _associations.value =
+        _associations.value.map { if (it.uid == association.uid) association else it }
+
+    // If the association wasn't found, it will be added
+    if (_associations.value.none { it.uid == association.uid }) {
+      _associations.value = _associations.value + association
+    }
+
+    _associationsByCategory.value = _associations.value.groupBy { it.category }
   }
 
   /**
@@ -165,16 +184,61 @@ constructor(
   }
 
   /**
+   * Deletes an event from the events list of the selected association locally.
+   *
+   * @param eventId The ID of the event to be deleted.
+   */
+  fun deleteEventLocally(eventId: String) {
+    val selectedAssociation = _selectedAssociation.value
+    if (selectedAssociation != null) {
+      val eventToDelete = selectedAssociation.events.uids.find { it == eventId }
+      // if event exists ->  remove it from the events list
+      if (eventToDelete != null) {
+        selectedAssociation.events.remove(
+            eventId) // check the definition of remove to see that it does not fetch the database ;
+        // )
+      } else {
+        Log.e("AssociationViewModel", "Event with ID $eventId not found")
+      }
+    } else {
+      Log.e("AssociationViewModel", "No association selected to delete event from")
+    }
+  }
+
+  /**
+   * Adds an event to the events list of the selected association locally.
+   *
+   * @param event The event to be added.
+   */
+  fun addEventLocally(event: Event) {
+    val selectedAssociation = _selectedAssociation.value
+    if (selectedAssociation != null) {
+      val eventAlreadyExists = selectedAssociation.events.uids.contains(event.uid)
+      // Check if the event already exists in the events list
+      if (!eventAlreadyExists) {
+        selectedAssociation.events.add(event) // Ensure `add` does not fetch the database
+      } else {
+        Log.w("AssociationViewModel", "Event with ID ${event.uid} already exists")
+      }
+    } else {
+      Log.e("AssociationViewModel", "No association selected to add event to")
+    }
+  }
+
+  /**
    * Saves an association to the repository. If an image stream is provided, the image is uploaded
    * to Firebase Storage and the image URL is saved to the association. If the image stream is null,
    * the association is saved without an image.
    *
    * @param association The association to save.
+   * @param isNewAssociation [Boolean] : The boolean that explains if the Association is newly
+   *   created or not
    * @param imageStream The image stream to upload to Firebase Storage.
    * @param onSuccess A callback that is called when the association is successfully saved.
    * @param onFailure A callback that is called when an error occurs while saving the association.
    */
   fun saveAssociation(
+      isNewAssociation: Boolean,
       association: Association,
       imageStream: InputStream?,
       onSuccess: () -> Unit,
@@ -187,6 +251,7 @@ constructor(
           onSuccess = { imageUrl ->
             val updatedAssociation = association.copy(image = imageUrl)
             associationRepository.saveAssociation(
+                isNewAssociation,
                 updatedAssociation,
                 {
                   _associations.value =
@@ -196,6 +261,7 @@ constructor(
                   onSuccess()
                 },
                 onFailure)
+            saveAssociationLocally(updatedAssociation)
           },
           onFailure = { exception ->
             Log.e("ImageRepository", "Failed to store image: $exception")
@@ -203,6 +269,7 @@ constructor(
           })
     } else {
       associationRepository.saveAssociation(
+          isNewAssociation,
           association,
           {
             _associations.value =
@@ -232,8 +299,21 @@ constructor(
   fun selectAssociation(associationId: String) {
     _selectedAssociation.value =
         findAssociationById(associationId).also { it ->
-          it?.events?.requestAll()
+          it?.events?.requestAll(
+              {
+                it.events.list.value.forEach { event -> event.organisers.requestAll(lazy = true) }
+              },
+              lazy = true)
           it?.members?.forEach { fetchUserFromMember(it) }
         }
+  }
+
+  /**
+   * Put a null association in the selector and updates the [_selectedAssociation] state flow.
+   *
+   * @param associationId The ID of the association to select.
+   */
+  fun selectNullAssociation() {
+    _selectedAssociation.value = null
   }
 }

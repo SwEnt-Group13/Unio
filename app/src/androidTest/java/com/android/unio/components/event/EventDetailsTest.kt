@@ -25,6 +25,7 @@ import com.android.unio.model.event.EventUtils.formatTimestamp
 import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.map.MapViewModel
+import com.android.unio.model.save.ConcurrentEventUserRepositoryFirestore
 import com.android.unio.model.strings.FormatStrings.DAY_MONTH_FORMAT
 import com.android.unio.model.strings.test_tags.event.EventDetailsTestTags
 import com.android.unio.model.user.User
@@ -66,6 +67,9 @@ class EventDetailsTest : TearDown() {
   @MockK private lateinit var imageRepository: ImageRepositoryFirebaseStorage
   @MockK
   private lateinit var eventUserPictureRepositoryFirestore: EventUserPictureRepositoryFirestore
+  @MockK
+  private lateinit var concurrentEventUserRepositoryFirestore:
+      ConcurrentEventUserRepositoryFirestore
 
   private lateinit var eventViewModel: EventViewModel
   private lateinit var userViewModel: UserViewModel
@@ -111,8 +115,13 @@ class EventDetailsTest : TearDown() {
             eventRepository,
             imageRepository,
             associationRepository,
-            eventUserPictureRepositoryFirestore)
+            eventUserPictureRepositoryFirestore,
+            concurrentEventUserRepositoryFirestore)
 
+    every { eventRepository.getEvents(any(), any()) } answers
+        {
+          (it.invocation.args[0] as (List<Event>) -> Unit)(events)
+        }
     every { userRepository.init(any()) } returns Unit
     every { userRepository.getUserWithId("uid", any(), any()) } answers
         {
@@ -223,12 +232,15 @@ class EventDetailsTest : TearDown() {
   @Test
   fun testButtonBehavior() {
     setEventScreen(events[0])
+    eventViewModel.loadEvents()
     // Share button
     composeTestRule
         .onNodeWithTag(EventDetailsTestTags.SHARE_BUTTON)
         .assertDisplayComponentInScroll()
 
     // Save button
+    println(events[0].uid)
+    println(eventViewModel.events.value)
     composeTestRule.onNodeWithTag(EventDetailsTestTags.SAVE_BUTTON).assertDisplayComponentInScroll()
     composeTestRule.onNodeWithTag(EventDetailsTestTags.SAVE_BUTTON).performClick()
 

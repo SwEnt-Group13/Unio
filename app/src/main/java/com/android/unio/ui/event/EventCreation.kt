@@ -283,8 +283,7 @@ fun EventCreationScreen(
                       selectedLocation != null,
               onClick = {
                 val inputStream = context.contentResolver.openInputStream(eventBannerUri.value)!!
-                eventViewModel.addEvent(
-                    inputStream,
+                val newEvent =
                     Event(
                         uid = "", // This gets overwritten by eventViewModel.addEvent
                         title = name,
@@ -306,10 +305,12 @@ fun EventCreationScreen(
                         endDate = endTimestamp!!,
                         location = selectedLocation!!,
                         eventPictures = MockReferenceList(),
-                    ),
+                    )
+                eventViewModel.addEvent(
+                    inputStream,
+                    newEvent,
                     onSuccess = {
-                      // TODO: Remove the following line when a fix is found
-                      associationViewModel.refreshAssociation()
+                      associationViewModel.addEventLocally(newEvent)
                       navigationAction.goBack()
                     },
                     onFailure = {

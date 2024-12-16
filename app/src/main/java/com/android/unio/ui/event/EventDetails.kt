@@ -90,15 +90,15 @@ import com.android.unio.model.strings.FormatStrings.HOUR_MINUTE_FORMAT
 import com.android.unio.model.strings.NotificationStrings.EVENT_REMINDER_CHANNEL_ID
 import com.android.unio.model.strings.test_tags.event.EventDetailsTestTags
 import com.android.unio.model.user.UserViewModel
+import com.android.unio.model.utils.NetworkUtils
 import com.android.unio.ui.components.NotificationSender
 import com.android.unio.ui.image.AsyncImageWrapper
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
 import com.android.unio.ui.navigation.SmoothTopBarNavigationMenu
 import com.android.unio.ui.theme.AppTypography
-import com.google.firebase.Firebase
+import com.android.unio.ui.utils.ToastUtils
 import com.google.firebase.Timestamp
-import com.google.firebase.messaging.messaging
 import java.text.SimpleDateFormat
 import java.util.Locale
 import kotlinx.coroutines.CoroutineScope
@@ -337,11 +337,12 @@ fun EventInformationCard(event: Event, organisers: List<Association>, context: C
                           context.getString(R.string.event_association_icon_description),
                       modifier =
                           Modifier.size(ASSOCIATION_ICON_SIZE)
-                              .clip(CircleShape)
+                              .clip(RoundedCornerShape(5.dp))
                               .align(Alignment.CenterVertically)
                               .testTag("${EventDetailsTestTags.ASSOCIATION_LOGO}$i"),
                       placeholderResourceId = R.drawable.adec,
-                      filterQuality = FilterQuality.None)
+                      filterQuality = FilterQuality.None,
+                      contentScale = ContentScale.Crop)
 
                   Text(
                       organisers[i].name,
@@ -455,7 +456,7 @@ fun EventDetailsPicturesTab(event: Event, context: Context) {
                 item.image.toUri(),
                 contentDescription =
                     context.getString(R.string.event_details_user_picture_content_description),
-                filterQuality = FilterQuality.High,
+                filterQuality = FilterQuality.Medium,
                 placeholderResourceId = 0,
                 contentScale = ContentScale.Crop,
                 modifier =
@@ -582,6 +583,7 @@ fun EventSaveButton(event: Event, eventViewModel: EventViewModel, userViewModel:
   val context = LocalContext.current
 
   val user by userViewModel.user.collectAsState()
+  val events by eventViewModel.events.collectAsState()
 
   if (user == null) {
     Log.e("EventCard", "User is null")
@@ -633,40 +635,34 @@ fun EventSaveButton(event: Event, eventViewModel: EventViewModel, userViewModel:
           }
         }
       }
-
+  var enableButton by remember { mutableStateOf(true) }
+  val isConnected = NetworkUtils.checkInternetConnection(context)
   val onClickSaveButton = {
-    if (isSaved) {
-      val newEvent = event.copy(numberOfSaved = event.numberOfSaved - 1)
-      eventViewModel.updateEventWithoutImage(
-          newEvent,
-          onSuccess = {},
-          onFailure = { e -> Log.e("EventCard", "Failed to update event: $e") })
-      userViewModel.unsaveEvent(event) {
-        if (notificationPermissionsEnabled) {
-          NotificationWorker.unschedule(context, event.uid.hashCode())
-        }
-      }
-      Firebase.messaging.unsubscribeFromTopic(event.uid)
-    } else {
-      val newEvent = event.copy(numberOfSaved = event.numberOfSaved + 1)
-      eventViewModel.updateEventWithoutImage(
-          newEvent,
-          onSuccess = {},
-          onFailure = { e -> Log.e("EventCard", "Failed to update event: $e") })
-      userViewModel.saveEvent(event) {
-        if (!notificationPermissionsEnabled) {
-          if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            // this permission requires api 33
-            // We should check how to make notifications work with lower api versions
-            permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+    enableButton = false
+    if (isConnected) {
+      eventViewModel.updateSave(events.first { it.uid == event.uid }, user!!, isSaved) {
+        userViewModel.refreshUser()
+        if (isSaved) {
+          if (notificationPermissionsEnabled) {
+            NotificationWorker.unschedule(context, event.uid.hashCode())
           }
         } else {
-          scheduleReminderNotification()
+          if (!notificationPermissionsEnabled) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+              // this permission requires api 33
+              // We should check how to make notifications work with lower api versions
+              permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            }
+          } else {
+            scheduleReminderNotification()
+          }
         }
+        isSaved = !isSaved
+        enableButton = true
       }
-      Firebase.messaging.subscribeToTopic(event.uid)
+    } else {
+      ToastUtils.showToast(context, context.getString(R.string.no_internet_connection))
     }
-    isSaved = !isSaved
   }
 
   IconButton(
@@ -676,7 +672,8 @@ fun EventSaveButton(event: Event, eventViewModel: EventViewModel, userViewModel:
               .background(MaterialTheme.colorScheme.inversePrimary)
               .padding(4.dp)
               .testTag(EventDetailsTestTags.SAVE_BUTTON),
-      onClick = { onClickSaveButton() }) {
+      onClick = { onClickSaveButton() },
+      enabled = enableButton) {
         Icon(
             imageVector = if (isSaved) Icons.Rounded.Favorite else Icons.Rounded.FavoriteBorder,
             contentDescription =
