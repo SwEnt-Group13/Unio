@@ -13,6 +13,8 @@ import com.android.unio.model.authentication.AuthViewModel
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.strings.test_tags.authentication.WelcomeTestTags
 import com.android.unio.model.user.User
+import com.android.unio.model.user.UserDeletionRepository
+import com.android.unio.model.user.UserDeletionRepositoryFirestore
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.authentication.WelcomeScreen
@@ -44,6 +46,7 @@ class WelcomeTest : TearDown() {
   private lateinit var authViewModel: AuthViewModel
   @MockK private lateinit var navigationAction: NavigationAction
   @MockK private lateinit var userRepository: UserRepositoryFirestore
+  @MockK private lateinit var userDeletionRepository: UserDeletionRepositoryFirestore
   @MockK private lateinit var imageRepository: ImageRepositoryFirebaseStorage
   @MockK private lateinit var firebaseAuth: FirebaseAuth
 
@@ -65,7 +68,7 @@ class WelcomeTest : TearDown() {
         }
 
     navigationAction = mock(NavigationAction::class.java)
-    userViewModel = UserViewModel(userRepository, imageRepository)
+    userViewModel = UserViewModel(userRepository, imageRepository, userDeletionRepository)
     authViewModel = AuthViewModel(firebaseAuth, userRepository)
   }
 

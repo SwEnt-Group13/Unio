@@ -23,6 +23,7 @@ class UserViewModelTest {
 
   @MockK private lateinit var repository: UserRepository
   @MockK private lateinit var imageRepository: ImageRepository
+  @MockK private lateinit var userDeletionRepository: UserDeletionRepositoryFirestore
   private lateinit var userViewModel: UserViewModel
 
   @Before
@@ -35,7 +36,7 @@ class UserViewModelTest {
       FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext())
     }
 
-    userViewModel = UserViewModel(repository, imageRepository)
+    userViewModel = UserViewModel(repository, imageRepository, userDeletionRepository)
   }
 
   @Test

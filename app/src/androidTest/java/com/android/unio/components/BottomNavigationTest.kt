@@ -13,6 +13,8 @@ import com.android.unio.model.save.ConcurrentEventUserRepositoryFirestore
 import com.android.unio.model.search.SearchRepository
 import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.strings.test_tags.navigation.NavigationActionTestTags
+import com.android.unio.model.user.UserDeletionRepository
+import com.android.unio.model.user.UserDeletionRepositoryFirestore
 import com.android.unio.model.user.UserRepository
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserViewModel
@@ -35,6 +37,7 @@ class BottomNavigationTest : TearDown() {
 
   @MockK private lateinit var imageRepository: ImageRepositoryFirebaseStorage
   @MockK private lateinit var associationRepositoryFirestore: AssociationRepositoryFirestore
+  @MockK private lateinit var userDeletionRepository: UserDeletionRepositoryFirestore
   @MockK
   private lateinit var eventUserPictureRepositoryFirestore: EventUserPictureRepositoryFirestore
   @MockK
@@ -62,7 +65,7 @@ class BottomNavigationTest : TearDown() {
             concurrentEventUserRepositoryFirestore)
 
     userRepository = mock { UserRepositoryFirestore::class.java }
-    userViewModel = UserViewModel(userRepository, imageRepository)
+    userViewModel = UserViewModel(userRepository, imageRepository, userDeletionRepository)
 
     searchViewModel = spyk(SearchViewModel(searchRepository))
 
