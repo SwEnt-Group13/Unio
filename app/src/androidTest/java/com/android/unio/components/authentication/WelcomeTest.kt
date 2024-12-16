@@ -13,7 +13,6 @@ import com.android.unio.model.authentication.AuthViewModel
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.strings.test_tags.authentication.WelcomeTestTags
 import com.android.unio.model.user.User
-import com.android.unio.model.user.UserDeletionRepository
 import com.android.unio.model.user.UserDeletionRepositoryFirestore
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserViewModel

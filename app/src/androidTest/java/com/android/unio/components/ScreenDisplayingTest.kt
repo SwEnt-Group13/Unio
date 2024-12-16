@@ -41,7 +41,6 @@ import com.android.unio.model.strings.test_tags.settings.SettingsTestTags
 import com.android.unio.model.strings.test_tags.user.SomeoneElseUserProfileTestTags
 import com.android.unio.model.strings.test_tags.user.UserProfileTestTags
 import com.android.unio.model.user.User
-import com.android.unio.model.user.UserDeletionRepository
 import com.android.unio.model.user.UserDeletionRepositoryFirestore
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserViewModel

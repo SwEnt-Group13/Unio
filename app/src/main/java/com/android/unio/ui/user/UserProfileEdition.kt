@@ -344,8 +344,7 @@ fun UserProfileEditionScreenScaffold(
 
     if (showDeleteUserPrompt) {
       UserDeletePrompt(
-          onDismiss = { showDeleteUserPrompt = false },
-          onConfirmDelete = { onDeleteUser(user) })
+          onDismiss = { showDeleteUserPrompt = false }, onConfirmDelete = { onDeleteUser(user) })
     }
   }
 }
