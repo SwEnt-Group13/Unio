@@ -291,6 +291,7 @@ fun EventScreenContent(
 
     SmoothTopBarNavigationMenu(tabList, pagerState)
     HorizontalPager(
+        userScrollEnabled = false,
         state = pagerState,
         modifier =
             Modifier.fillMaxSize()
@@ -436,21 +437,22 @@ fun EventDetailsBody(
 fun EventDetailsPicturesTab(event: Event, context: Context) {
   val eventPictures by event.eventPictures.list.collectAsState()
   if (event.startDate.seconds > Timestamp.now().seconds) {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+    Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
       Text(
           context.getString(R.string.event_pictures_before_start_date),
           modifier = Modifier.testTag(EventDetailsTestTags.EVENT_NOT_STARTED_TEXT))
     }
   } else if (eventPictures.isEmpty()) {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+    Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
       Text(
           context.getString(R.string.event_no_user_pictures),
           modifier = Modifier.testTag(EventDetailsTestTags.EVENT_NO_PICTURES_TEXT))
     }
   } else {
     LazyVerticalStaggeredGrid(
+        userScrollEnabled = false,
         columns = StaggeredGridCells.Adaptive(100.dp),
-        modifier = Modifier.fillMaxSize().testTag(EventDetailsTestTags.GALLERY_GRID)) {
+        modifier = Modifier.fillMaxWidth().testTag(EventDetailsTestTags.GALLERY_GRID)) {
           itemsIndexed(eventPictures) { index, item ->
             AsyncImageWrapper(
                 item.image.toUri(),
