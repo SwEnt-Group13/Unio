@@ -132,6 +132,7 @@ class FirestoreReferenceList<T : UniquelyIdentifiable>(
           onSuccess()
         }
         .addOnFailureListener { exception ->
+          _list.value = emptyList()
           Log.e("FirestoreReferenceList", "Failed to get documents", exception)
         }
   }
