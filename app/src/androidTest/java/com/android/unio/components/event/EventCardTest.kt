@@ -25,6 +25,8 @@ import com.android.unio.model.notification.NotificationWorker
 import com.android.unio.model.save.ConcurrentEventUserRepositoryFirestore
 import com.android.unio.model.strings.test_tags.event.EventCardTestTags
 import com.android.unio.model.strings.test_tags.event.EventDetailsTestTags
+import com.android.unio.model.user.UserDeletionRepository
+import com.android.unio.model.user.UserDeletionRepositoryFirestore
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.event.EventCard
@@ -76,6 +78,7 @@ class EventCardTest : TearDown() {
   @MockK private lateinit var eventRepository: EventRepositoryFirestore
   @MockK private lateinit var imageRepository: ImageRepositoryFirebaseStorage
   @MockK private lateinit var associationRepository: AssociationRepositoryFirestore
+  @MockK private lateinit var userDeletionRepository: UserDeletionRepositoryFirestore
   @MockK
   private lateinit var eventUserPictureRepositoryFirestore: EventUserPictureRepositoryFirestore
   @MockK
@@ -101,7 +104,7 @@ class EventCardTest : TearDown() {
                 associationRepository,
                 eventUserPictureRepositoryFirestore,
                 concurrentEventUserRepositoryFirestore))
-    userViewModel = UserViewModel(userRepository, imageRepository)
+    userViewModel = UserViewModel(userRepository, imageRepository, userDeletionRepository)
     every { userRepository.updateUser(user, any(), any()) } answers
         {
           val onSuccess = args[1] as () -> Unit
