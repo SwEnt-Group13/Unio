@@ -320,7 +320,7 @@ constructor(
                 event.eventPictures.add(newEventPicture.uid)
                 updateEventWithoutImage(
                     event,
-                    { event.eventPictures.requestAll(lazy = true) },
+                    { event.eventPictures.add(newEventPicture) },
                     { e ->
                       Log.e("EventViewModel", "An error occurred while updating an event: $e")
                     })
