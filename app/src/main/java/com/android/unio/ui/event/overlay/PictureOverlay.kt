@@ -48,14 +48,12 @@ fun PictureOverlay(
   val scope = rememberCoroutineScope()
   val context = LocalContext.current
   val iconSize = 40.dp
-  val onClickArrow = { isRight: Boolean ->
+  val onClickArrow: (Boolean) -> Unit = { isRight: Boolean ->
     if (isRight && pagerState.currentPage < eventPictures.size - 1) {
       scope.launch { pagerState.animateScrollToPage(pagerState.currentPage + 1) }
-    } else if (!isRight) {
-      if (pagerState.currentPage > 0) {
-        scope.launch { pagerState.animateScrollToPage(pagerState.currentPage - 1) }
-      } else {}
-    } else {}
+    } else if (!isRight && pagerState.currentPage > 0) {
+      scope.launch { pagerState.animateScrollToPage(pagerState.currentPage - 1) }
+    }
   }
   Dialog(
       onDismissRequest = onDismiss,
