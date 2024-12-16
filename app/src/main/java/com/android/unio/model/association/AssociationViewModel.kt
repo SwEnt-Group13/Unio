@@ -100,13 +100,17 @@ constructor(
    * set to an empty list.
    */
   fun getAssociations() {
+    _refreshState.value = true
     associationRepository.getAssociations(
         onSuccess = { fetchedAssociations ->
           _associations.value = fetchedAssociations
           _associationsByCategory.value = fetchedAssociations.groupBy { it.category }
+          _refreshState.value = false
         },
         onFailure = { exception ->
           _associations.value = emptyList()
+          _associationsByCategory.value = emptyMap()
+          _refreshState.value = false
           Log.e("ExploreViewModel", "Failed to fetch associations", exception)
         })
   }
