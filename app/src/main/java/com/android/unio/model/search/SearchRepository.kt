@@ -130,26 +130,26 @@ constructor(
     }
   }
 
-    private fun addMembersFromAssociations(associations: List<Association>) {
-        val memberDocuments = associations.flatMap { association ->
-            association.members.map { member ->
-                MemberDocument(
-                    uid = member.uid,  // Ensure each member has a unique UID
-                    userUid = member.user.uid,   // The user's UID
-                    role = member.role.displayName,
-                    associationUid = association.uid  // Link to the association UID
+  private fun addMembersFromAssociations(associations: List<Association>) {
+    val memberDocuments =
+        associations.flatMap { association ->
+          association.members.map { member ->
+            MemberDocument(
+                uid = member.uid, // Ensure each member has a unique UID
+                userUid = member.user.uid, // The user's UID
+                role = member.role.displayName,
+                associationUid = association.uid // Link to the association UID
                 )
-            }
+          }
         }
-        try {
-            session?.putAsync(PutDocumentsRequest.Builder().addDocuments(memberDocuments).build())
-        } catch (e: Exception) {
-            Log.e("SearchRepository", "failed to add members to search database", e)
-        }
+    try {
+      session?.putAsync(PutDocumentsRequest.Builder().addDocuments(memberDocuments).build())
+    } catch (e: Exception) {
+      Log.e("SearchRepository", "failed to add members to search database", e)
     }
+  }
 
-
-    /**
+  /**
    * Removes the association or event with the given uid from the search database.
    *
    * @param uid the uid of the association or event to remove
@@ -216,30 +216,30 @@ constructor(
     }
   }
 
-    suspend fun searchMembers(query: String): List<Member> {
-        return withContext(Dispatchers.IO) {
-            val searchSpec = SearchSpec.Builder()
-                .setSnippetCount(10)
-                .addFilterDocumentClasses(MemberDocument::class.java)
-                .setRankingStrategy(SearchSpec.RANKING_STRATEGY_NONE)
-                .build()
+  suspend fun searchMembers(query: String): List<Member> {
+    return withContext(Dispatchers.IO) {
+      val searchSpec =
+          SearchSpec.Builder()
+              .setSnippetCount(10)
+              .addFilterDocumentClasses(MemberDocument::class.java)
+              .setRankingStrategy(SearchSpec.RANKING_STRATEGY_NONE)
+              .build()
 
-            val result = session?.search(query, searchSpec) ?: return@withContext emptyList<Member>()
+      val result = session?.search(query, searchSpec) ?: return@withContext emptyList<Member>()
 
-            val members = mutableListOf<Member>()
-            val page = result.nextPageAsync.await()
+      val members = mutableListOf<Member>()
+      val page = result.nextPageAsync.await()
 
-            page.forEach {
-                val doc = it.getDocument(MemberDocument::class.java)
-                members.add(memberDocumentToMember(doc))
-            }
+      page.forEach {
+        val doc = it.getDocument(MemberDocument::class.java)
+        members.add(memberDocumentToMember(doc))
+      }
 
-            return@withContext members
-        }
+      return@withContext members
     }
+  }
 
-
-    /**
+  /**
    * Converts the given [AssociationDocument] to an [Association].
    *
    * @param associationDocument the [AssociationDocument] to convert
@@ -292,24 +292,20 @@ constructor(
     }
   }
 
-    private suspend fun memberDocumentToMember(memberDocument: MemberDocument): Member {
-        return suspendCoroutine { continuation ->
-            associationRepository.getAssociationWithId(
-                id = memberDocument.associationUid,
-                onSuccess = { association ->
-                    val member = association.members.firstOrNull { it.user.uid == memberDocument.userUid }
-                    member?.let { continuation.resume(it) }
-                        ?: continuation.resumeWithException(IllegalArgumentException("Member not found"))
-                },
-                onFailure = { exception ->
-                    continuation.resumeWithException(exception)
-                }
-            )
-        }
+  private suspend fun memberDocumentToMember(memberDocument: MemberDocument): Member {
+    return suspendCoroutine { continuation ->
+      associationRepository.getAssociationWithId(
+          id = memberDocument.associationUid,
+          onSuccess = { association ->
+            val member = association.members.firstOrNull { it.user.uid == memberDocument.userUid }
+            member?.let { continuation.resume(it) }
+                ?: continuation.resumeWithException(IllegalArgumentException("Member not found"))
+          },
+          onFailure = { exception -> continuation.resumeWithException(exception) })
     }
+  }
 
-
-    /** Closes the session and releases the resources. */
+  /** Closes the session and releases the resources. */
   fun closeSession() {
     session?.close()
     session = null

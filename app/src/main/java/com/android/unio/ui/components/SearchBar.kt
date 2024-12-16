@@ -59,95 +59,83 @@ fun <T> SearchBar(
     onOutsideClickHandled: () -> Unit,
     resultContent: @Composable (T) -> Unit
 ) {
-    var isExpanded by rememberSaveable { mutableStateOf(false) }
-    val context = LocalContext.current
+  var isExpanded by rememberSaveable { mutableStateOf(false) }
+  val context = LocalContext.current
 
-    if (shouldCloseExpandable && isExpanded) {
-        isExpanded = false
-        onOutsideClickHandled()
-    }
+  if (shouldCloseExpandable && isExpanded) {
+    isExpanded = false
+    onOutsideClickHandled()
+  }
 
-    DockedSearchBar(
-        inputField = {
-            SearchBarDefaults.InputField(
-                modifier = Modifier.testTag("SEARCH_BAR_INPUT"),
-                query = searchQuery,
-                onQueryChange = {
-                    onQueryChange(it)
-                },
-                onSearch = {},
-                expanded = isExpanded,
-                onExpandedChange = { isExpanded = it },
-                placeholder = {
-                    Text(
-                        text = context.getString(R.string.search_placeholder),
-                        style = AppTypography.bodyLarge,
-                        modifier = Modifier.testTag("SEARCH_BAR_PLACEHOLDER")
-                    )
-                },
-                trailingIcon = {
-                    Icon(
-                        Icons.Default.Search,
-                        contentDescription = context.getString(R.string.explore_content_description_search_icon),
-                        modifier = Modifier.testTag("SEARCH_TRAILING_ICON")
-                    )
-                },
-            )
-        },
-        expanded = isExpanded,
-        onExpandedChange = { isExpanded = it },
-        modifier = Modifier.padding(horizontal = 16.dp).testTag("SEARCH_BAR")
-    ) {
+  DockedSearchBar(
+      inputField = {
+        SearchBarDefaults.InputField(
+            modifier = Modifier.testTag("SEARCH_BAR_INPUT"),
+            query = searchQuery,
+            onQueryChange = { onQueryChange(it) },
+            onSearch = {},
+            expanded = isExpanded,
+            onExpandedChange = { isExpanded = it },
+            placeholder = {
+              Text(
+                  text = context.getString(R.string.search_placeholder),
+                  style = AppTypography.bodyLarge,
+                  modifier = Modifier.testTag("SEARCH_BAR_PLACEHOLDER"))
+            },
+            trailingIcon = {
+              Icon(
+                  Icons.Default.Search,
+                  contentDescription =
+                      context.getString(R.string.explore_content_description_search_icon),
+                  modifier = Modifier.testTag("SEARCH_TRAILING_ICON"))
+            },
+        )
+      },
+      expanded = isExpanded,
+      onExpandedChange = { isExpanded = it },
+      modifier = Modifier.padding(horizontal = 16.dp).testTag("SEARCH_BAR")) {
         when (searchState) {
-            SearchViewModel.Status.ERROR -> {
-                Box(
-                    modifier = Modifier.fillMaxWidth().padding(16.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(context.getString(R.string.explore_search_error_message))
+          SearchViewModel.Status.ERROR -> {
+            Box(
+                modifier = Modifier.fillMaxWidth().padding(16.dp),
+                contentAlignment = Alignment.Center) {
+                  Text(context.getString(R.string.explore_search_error_message))
                 }
-            }
-
-            SearchViewModel.Status.LOADING -> {
-                Box(
-                    modifier = Modifier.fillMaxWidth().padding(16.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    LinearProgressIndicator()
+          }
+          SearchViewModel.Status.LOADING -> {
+            Box(
+                modifier = Modifier.fillMaxWidth().padding(16.dp),
+                contentAlignment = Alignment.Center) {
+                  LinearProgressIndicator()
                 }
-            }
-
-            SearchViewModel.Status.IDLE -> {}
-
-            SearchViewModel.Status.SUCCESS -> {
-                if (results.isEmpty()) {
-                    Box(
-                        modifier = Modifier.fillMaxWidth().padding(16.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(context.getString(R.string.explore_search_no_results))
-                    }
-                } else {
-                    Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
-                        results.forEach { result ->
-                            ListItem(
-                                modifier = Modifier.clickable {
-                                    isExpanded = false
-                                    onResultClick(result)
-                                },
-                                headlineContent = { resultContent(result) }
-                            )
-                        }
-                    }
+          }
+          SearchViewModel.Status.IDLE -> {}
+          SearchViewModel.Status.SUCCESS -> {
+            if (results.isEmpty()) {
+              Box(
+                  modifier = Modifier.fillMaxWidth().padding(16.dp),
+                  contentAlignment = Alignment.Center) {
+                    Text(context.getString(R.string.explore_search_no_results))
+                  }
+            } else {
+              Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+                results.forEach { result ->
+                  ListItem(
+                      modifier =
+                          Modifier.clickable {
+                            isExpanded = false
+                            onResultClick(result)
+                          },
+                      headlineContent = { resultContent(result) })
                 }
+              }
             }
+          }
         }
-    }
+      }
 }
 
-/**
- * A search bar specialized for searching associations.
- */
+/** A search bar specialized for searching associations. */
 @Composable
 fun AssociationSearchBar(
     searchViewModel: SearchViewModel,
@@ -155,28 +143,25 @@ fun AssociationSearchBar(
     shouldCloseExpandable: Boolean,
     onOutsideClickHandled: () -> Unit
 ) {
-    val searchQuery by remember { mutableStateOf("") }
-    val associationResults by searchViewModel.associations.collectAsState()
-    val searchState by searchViewModel.status.collectAsState()
+  val searchQuery by remember { mutableStateOf("") }
+  val associationResults by searchViewModel.associations.collectAsState()
+  val searchState by searchViewModel.status.collectAsState()
 
-    SearchBar(
-        searchQuery = searchQuery,
-        onQueryChange = {
-            searchViewModel.debouncedSearch(it, SearchViewModel.SearchType.ASSOCIATION)
-        },
-        results = associationResults,
-        onResultClick = onAssociationSelected,
-        searchState = searchState,
-        shouldCloseExpandable = shouldCloseExpandable,
-        onOutsideClickHandled = onOutsideClickHandled
-    ) { association ->
+  SearchBar(
+      searchQuery = searchQuery,
+      onQueryChange = {
+        searchViewModel.debouncedSearch(it, SearchViewModel.SearchType.ASSOCIATION)
+      },
+      results = associationResults,
+      onResultClick = onAssociationSelected,
+      searchState = searchState,
+      shouldCloseExpandable = shouldCloseExpandable,
+      onOutsideClickHandled = onOutsideClickHandled) { association ->
         Text(association.name)
-    }
+      }
 }
 
-/**
- * A search bar specialized for searching events.
- */
+/** A search bar specialized for searching events. */
 @Composable
 fun EventSearchBar(
     searchViewModel: SearchViewModel,
@@ -184,23 +169,20 @@ fun EventSearchBar(
     shouldCloseExpandable: Boolean,
     onOutsideClickHandled: () -> Unit
 ) {
-    val searchQuery by remember { mutableStateOf("") }
-    val eventResults by searchViewModel.events.collectAsState()
-    val searchState by searchViewModel.status.collectAsState()
+  val searchQuery by remember { mutableStateOf("") }
+  val eventResults by searchViewModel.events.collectAsState()
+  val searchState by searchViewModel.status.collectAsState()
 
-    SearchBar(
-        searchQuery = searchQuery,
-        onQueryChange = {
-            searchViewModel.debouncedSearch(it, SearchViewModel.SearchType.EVENT)
-        },
-        results = eventResults,
-        onResultClick = onEventSelected,
-        searchState = searchState,
-        shouldCloseExpandable = shouldCloseExpandable,
-        onOutsideClickHandled = onOutsideClickHandled
-    ) { event ->
+  SearchBar(
+      searchQuery = searchQuery,
+      onQueryChange = { searchViewModel.debouncedSearch(it, SearchViewModel.SearchType.EVENT) },
+      results = eventResults,
+      onResultClick = onEventSelected,
+      searchState = searchState,
+      shouldCloseExpandable = shouldCloseExpandable,
+      onOutsideClickHandled = onOutsideClickHandled) { event ->
         Text(event.title)
-    }
+      }
 }
 
 @Composable
@@ -210,23 +192,24 @@ fun MemberSearchBar(
     shouldCloseExpandable: Boolean,
     onOutsideClickHandled: () -> Unit
 ) {
-    var searchQuery by remember { mutableStateOf("") }
-    val memberResults by searchViewModel.members.collectAsState() // Fetching members results from the ViewModel
-    val searchState by searchViewModel.status.collectAsState()
+  var searchQuery by remember { mutableStateOf("") }
+  val memberResults by
+      searchViewModel.members.collectAsState() // Fetching members results from the ViewModel
+  val searchState by searchViewModel.status.collectAsState()
 
-    SearchBar(
-        searchQuery = searchQuery,
-        onQueryChange = {
-            searchQuery = it
-            searchViewModel.debouncedSearch(it, SearchViewModel.SearchType.MEMBER) // Trigger search for members
-        },
-        results = memberResults,
-        onResultClick = onMemberSelected, // Handling member selection
-        searchState = searchState,
-        shouldCloseExpandable = shouldCloseExpandable,
-        onOutsideClickHandled = onOutsideClickHandled
-    ) { member ->
+  SearchBar(
+      searchQuery = searchQuery,
+      onQueryChange = {
+        searchQuery = it
+        searchViewModel.debouncedSearch(
+            it, SearchViewModel.SearchType.MEMBER) // Trigger search for members
+      },
+      results = memberResults,
+      onResultClick = onMemberSelected, // Handling member selection
+      searchState = searchState,
+      shouldCloseExpandable = shouldCloseExpandable,
+      onOutsideClickHandled = onOutsideClickHandled) { member ->
         // Display the member's name or any other information you'd like here
         Text("${member.user.uid} - ${member.role.displayName}")
-    }
+      }
 }

@@ -295,9 +295,10 @@ data class AssociationDocument(
 @Document
 data class MemberDocument(
     @Id val uid: String, // Unique identifier for the MemberDocument (can be member's uid)
-    @Namespace val namespace: String = "unio", // Namespace for the document (similar to associations/events)
+    @Namespace
+    val namespace: String = "unio", // Namespace for the document (similar to associations/events)
     @StringProperty(indexingType = StringPropertyConfig.INDEXING_TYPE_PREFIXES)
-    val userUid: String,  // The UID of the user (linked to the member)
+    val userUid: String, // The UID of the user (linked to the member)
     @StringProperty(indexingType = StringPropertyConfig.INDEXING_TYPE_PREFIXES)
     val role: String, // The role of the member
     @StringProperty(indexingType = StringPropertyConfig.INDEXING_TYPE_PREFIXES)

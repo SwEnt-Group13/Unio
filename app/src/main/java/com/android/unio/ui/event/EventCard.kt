@@ -185,8 +185,8 @@ fun EventCardScaffold(
                                     R.string.event_card_content_description_edit_association),
                             tint = Color.White)
                       }
-                }else{
-                    EventSaveButton(event, eventViewModel, userViewModel)
+                } else {
+                  EventSaveButton(event, eventViewModel, userViewModel)
                 }
               }
         }
