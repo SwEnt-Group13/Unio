@@ -16,6 +16,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.outlined.Clear
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -406,7 +407,20 @@ private fun EditUserTextFields(
           onFirstNameChange(it)
         }
       },
-      value = firstName)
+      value = firstName,
+      trailingIcon = {
+        if (firstName.isNotEmpty()) {
+          IconButton(
+              onClick = { onFirstNameChange("") },
+              modifier = Modifier.testTag(UserEditionTestTags.FIRST_NAME_CLEAR_BUTTON)) {
+                Icon(
+                    imageVector = Icons.Outlined.Clear,
+                    contentDescription =
+                        context.getString(
+                            R.string.user_edition_content_description_clear_first_name))
+              }
+        }
+      })
 
   OutlinedTextField(
       modifier = Modifier.padding(4.dp).testTag(UserEditionTestTags.LAST_NAME_TEXT_FIELD),
@@ -439,7 +453,20 @@ private fun EditUserTextFields(
           onLastNameChange(it)
         }
       },
-      value = lastName)
+      value = lastName,
+      trailingIcon = {
+        if (lastName.isNotEmpty()) {
+          IconButton(
+              onClick = { onLastNameChange("") },
+              modifier = Modifier.testTag(UserEditionTestTags.LAST_NAME_CLEAR_BUTTON)) {
+                Icon(
+                    imageVector = Icons.Outlined.Clear,
+                    contentDescription =
+                        context.getString(
+                            R.string.user_edition_content_description_clear_last_name))
+              }
+        }
+      })
 
   OutlinedTextField(
       modifier =

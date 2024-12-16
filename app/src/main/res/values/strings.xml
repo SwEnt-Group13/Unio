@@ -129,6 +129,8 @@
     <string name="user_edition_delete_user_failure" translatable="true">Failed to delete account, try again later</string>
     <string name="user_edition_modified_offline" translatable="true">Deleted user offline</string>
     <string name="user_edition_delete_user_offline" translatable="true">Please be connected to the internet to delete your Account</string>
+    <string name="user_edition_content_description_clear_first_name">Clear first name</string>
+    <string name="user_edition_content_description_clear_last_name">Clear last name</string>
 
 
     <!-- EmailVerification Strings -->

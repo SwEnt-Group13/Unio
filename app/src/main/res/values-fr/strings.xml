@@ -123,8 +123,8 @@
     <string name="user_edition_discard_changes" translatable="true">Annuler vos modifications</string>
     <string name="user_edition_save_changes" translatable="true">Sauvegarder vos modifications</string>
     <string name="user_edition_modified_successfully" translatable="true">Changements correctement modifiés</string>
-
-
+    <string name="user_edition_content_description_clear_first_name">Effacer prénom</string>
+    <string name="user_edition_content_description_clear_last_name">Effacer nom</string>
 
     <!-- EmailVerification Strings -->
     <string name="email_verification_refresh_failed">Échec de l\'actualisation</string>

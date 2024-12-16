@@ -10,12 +10,14 @@ object UserEditionTestTags {
   const val FIRST_NAME_TEXT = "userSettingsFirstNameText"
   const val FIRST_NAME_ERROR_TEXT = "userSettingsFirstNameErrorText"
   const val FIRST_NAME_CHARACTER_COUNTER = "userSettingsFirstNameCharacterCounter"
+  const val FIRST_NAME_CLEAR_BUTTON = "userSettingsFirstNameClearButton"
 
   // LAST NAME TEXT FIELD
   const val LAST_NAME_TEXT_FIELD = "userSettingsLastNameTextField"
   const val LAST_NAME_TEXT = "userSettingsLastNameText"
   const val LAST_NAME_ERROR_TEXT = "userSettingsLastNameErrorText"
   const val LAST_NAME_CHARACTER_COUNTER = "userSettingsLastNameCharacterCounter"
+  const val LAST_NAME_CLEAR_BUTTON = "userSettingsLastNameClearButton"
 
   // BIOGRAPHY TEXT FIELD
   const val BIOGRAPHY_TEXT_FIELD = "userSettingsBioTextField"
