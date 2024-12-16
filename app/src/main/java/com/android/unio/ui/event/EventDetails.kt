@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
@@ -196,7 +197,7 @@ fun EventScreenScaffold(
         SnackbarHost(
             hostState = testSnackbar!!,
             modifier = Modifier.testTag(EventDetailsTestTags.SNACKBAR_HOST),
-            snackbar = { data ->
+            snackbar = { _ ->
               Snackbar {
                 TextButton(
                     onClick = { testSnackbar!!.currentSnackbarData?.dismiss() },
@@ -291,7 +292,6 @@ fun EventScreenContent(
 
     SmoothTopBarNavigationMenu(tabList, pagerState)
     HorizontalPager(
-        userScrollEnabled = false,
         state = pagerState,
         modifier =
             Modifier.fillMaxSize()
@@ -452,8 +452,11 @@ fun EventDetailsPicturesTab(event: Event, context: Context) {
     LazyVerticalStaggeredGrid(
         userScrollEnabled = false,
         columns = StaggeredGridCells.Adaptive(100.dp),
-        modifier = Modifier.fillMaxWidth().testTag(EventDetailsTestTags.GALLERY_GRID)) {
-          itemsIndexed(eventPictures) { index, item ->
+        modifier =
+            Modifier.fillMaxWidth()
+                .heightIn(max = Short.MAX_VALUE.toInt().dp)
+                .testTag(EventDetailsTestTags.GALLERY_GRID)) {
+          itemsIndexed(eventPictures) { _, item ->
             AsyncImageWrapper(
                 item.image.toUri(),
                 contentDescription =
