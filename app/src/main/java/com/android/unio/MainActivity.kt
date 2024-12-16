@@ -160,7 +160,7 @@ fun UnioApp() {
       }
       composable(Screen.ASSOCIATION_PROFILE) {
         AssociationProfileScreen(
-            navigationActions, associationViewModel, userViewModel, eventViewModel)
+            navigationActions, associationViewModel, searchViewModel, userViewModel, eventViewModel)
       }
       composable(Screen.SAVE_ASSOCIATION) {
         SaveAssociationScreen(associationViewModel, navigationActions, isNewAssociation = false)
