@@ -13,8 +13,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Place
@@ -115,23 +113,18 @@ fun HomeScreen(
             { navigationAction.navigateTo(it.route) }, LIST_TOP_LEVEL_DESTINATION, Route.HOME)
       },
       modifier = Modifier.testTag(HomeTestTags.SCREEN)) { padding ->
-        Box(
-            modifier =
-                Modifier.padding(padding)
-                    .pullRefresh(pullRefreshState)
-                    .fillMaxHeight()) {
-              HorizontalPager(
-                  state = pagerState, modifier = Modifier.fillMaxWidth()) { page ->
-                    HomeContent(
-                        navigationAction,
-                        searchQuery,
-                        searchState,
-                        searchResults,
-                        userViewModel,
-                        eventViewModel,
-                        page == 1)
-                  }
-            }
+        Box(modifier = Modifier.padding(padding).pullRefresh(pullRefreshState).fillMaxHeight()) {
+          HorizontalPager(state = pagerState, modifier = Modifier.fillMaxWidth()) { page ->
+            HomeContent(
+                navigationAction,
+                searchQuery,
+                searchState,
+                searchResults,
+                userViewModel,
+                eventViewModel,
+                page == 1)
+          }
+        }
       }
 
   Box {
