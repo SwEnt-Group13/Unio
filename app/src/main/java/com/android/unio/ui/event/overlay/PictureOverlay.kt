@@ -1,6 +1,8 @@
 package com.android.unio.ui.event.overlay
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -9,6 +11,7 @@ import androidx.compose.foundation.pager.PagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
@@ -55,6 +58,7 @@ fun PictureOverlay(
       scope.launch { pagerState.animateScrollToPage(pagerState.currentPage - 1) }
     }
   }
+  val isLiked = 1
   Dialog(
       onDismissRequest = onDismiss,
       properties =
@@ -75,7 +79,7 @@ fun PictureOverlay(
                     filterQuality = FilterQuality.High,
                     placeholderResourceId = 0,
                     contentScale = ContentScale.Fit,
-                    modifier = Modifier.padding(horizontal = 55.dp))
+                    modifier = Modifier.padding(start = 55.dp, end = 55.dp, bottom = 55.dp))
               }
               IconButton(
                   onClick = { onClickArrow(false) },
@@ -84,8 +88,7 @@ fun PictureOverlay(
                           .testTag(EventDetailsTestTags.EVENT_PICTURES_ARROW_LEFT),
                   colors =
                       IconButtonDefaults.iconButtonColors(
-                          contentColor = MaterialTheme.colorScheme.onPrimary,
-                          containerColor = MaterialTheme.colorScheme.primary)) {
+                          contentColor = MaterialTheme.colorScheme.onPrimary)) {
                     Icon(
                         Icons.AutoMirrored.Filled.ArrowBack,
                         context.getString(R.string.event_details_content_description_arrow_left),
@@ -105,6 +108,23 @@ fun PictureOverlay(
                         Icons.AutoMirrored.Filled.ArrowForward,
                         context.getString(R.string.event_details_content_description_arrow_right),
                         modifier = Modifier.size(iconSize))
+                  }
+
+              Row(
+                  modifier =
+                      Modifier.testTag("pictureInteractionRow").align(Alignment.BottomCenter),
+                  horizontalArrangement = Arrangement.SpaceAround) {
+                    IconButton(
+                        onClick = {},
+                        modifier = Modifier,
+                        colors =
+                            IconButtonDefaults.iconButtonColors(
+                                contentColor = MaterialTheme.colorScheme.onPrimary)) {
+                          Icon(
+                              imageVector = Icons.Rounded.FavoriteBorder,
+                              "like button",
+                              modifier = Modifier.size(iconSize))
+                        }
                   }
             }
       }

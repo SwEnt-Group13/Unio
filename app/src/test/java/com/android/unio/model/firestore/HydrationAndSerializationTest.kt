@@ -30,13 +30,6 @@ import org.junit.Test
 
 class HydrationAndSerializationTest {
 
-  private val eventUserPicture =
-      EventUserPicture(
-          uid = "1",
-          image = "http://image.fr",
-          author = User.firestoreReferenceElementWith("1"),
-          likes = 2)
-
   private val user =
       User(
           uid = "1",
@@ -67,6 +60,13 @@ class HydrationAndSerializationTest {
           image = "https://www.example.com/image.jpg",
           events = Event.firestoreReferenceListWith(listOf("1", "2")),
           principalEmailAddress = "example@adress.com")
+
+  private val eventUserPicture =
+      EventUserPicture(
+          uid = "1",
+          image = "http://image.fr",
+          author = User.firestoreReferenceElementWith("1"),
+          likes = User.firestoreReferenceListWith(listOf(user.uid)))
 
   private val event =
       Event(
@@ -188,14 +188,14 @@ class HydrationAndSerializationTest {
 
     assertEquals(eventUserPicture.uid, serialized["uid"])
     assertEquals(eventUserPicture.image, serialized["image"])
-    assertEquals(eventUserPicture.likes, serialized["likes"])
+    assertEquals(eventUserPicture.likes.uids, serialized["likes"])
     assertEquals(eventUserPicture.author.uid, serialized["author"])
 
     val hydrated = EventUserPictureRepositoryFirestore.hydrate(serialized)
 
     assertEquals(eventUserPicture.uid, hydrated.uid)
     assertEquals(eventUserPicture.image, hydrated.image)
-    assertEquals(eventUserPicture.likes, hydrated.likes)
+    assertEquals(eventUserPicture.likes.uids, hydrated.likes.uids)
     assertEquals(eventUserPicture.author.uid, hydrated.author.uid)
   }
 
@@ -263,7 +263,7 @@ class HydrationAndSerializationTest {
 
     assertEquals("", hydrated.uid)
     assertEquals("", hydrated.image)
-    assertEquals(0, hydrated.likes)
+    assertEquals(emptyList<User>(), hydrated.likes.list.value)
     assertEquals("", hydrated.author.uid)
   }
 

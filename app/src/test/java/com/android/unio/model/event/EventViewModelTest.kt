@@ -4,6 +4,7 @@ import androidx.test.core.app.ApplicationProvider
 import com.android.unio.mocks.event.MockEvent
 import com.android.unio.mocks.firestore.MockReferenceList
 import com.android.unio.model.association.AssociationRepositoryFirestore
+import com.android.unio.model.firestore.emptyFirestoreReferenceList
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.save.ConcurrentEventUserRepositoryFirestore
 import com.android.unio.model.strings.StoragePathsStrings
@@ -53,9 +54,15 @@ class EventViewModelTest {
   private val testEventPictures =
       listOf(
           EventUserPicture(
-              uid = "1", image = "http://image.com", User.emptyFirestoreReferenceElement(), 0),
+              uid = "1",
+              image = "http://image.com",
+              User.emptyFirestoreReferenceElement(),
+              User.emptyFirestoreReferenceList()),
           EventUserPicture(
-              uid = "2", image = "http://image2.com", User.emptyFirestoreReferenceElement(), 0))
+              uid = "2",
+              image = "http://image2.com",
+              User.emptyFirestoreReferenceElement(),
+              User.emptyFirestoreReferenceList()))
   private val testEvents =
       listOf(
           MockEvent.createMockEvent(
@@ -236,7 +243,11 @@ class EventViewModelTest {
   fun testAddEventUserPicture() {
     `when`(eventUserPictureRepositoryFirestore.getNewUid()).thenReturn("1")
     val picture =
-        EventUserPicture("0", "http://real-image.com", User.emptyFirestoreReferenceElement(), 0)
+        EventUserPicture(
+            "0",
+            "http://real-image.com",
+            User.emptyFirestoreReferenceElement(),
+            User.emptyFirestoreReferenceList())
     eventViewModel.addEventUserPicture(inputStream, testEvents[0], picture)
     verify(eventUserPictureRepositoryFirestore).addEventUserPicture(any(), any(), any())
   }

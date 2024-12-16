@@ -23,6 +23,7 @@ import com.android.unio.R
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventUserPicture
 import com.android.unio.model.event.EventViewModel
+import com.android.unio.model.firestore.emptyFirestoreReferenceList
 import com.android.unio.model.strings.test_tags.event.EventDetailsTestTags
 import com.android.unio.model.user.User
 import com.android.unio.ui.components.PictureSelectionTool
@@ -77,7 +78,10 @@ fun EventDetailsPicturePicker(event: Event, eventViewModel: EventViewModel, user
                   } else {
                     val newEventPicture =
                         EventUserPicture(
-                            uid = "", "", author = User.firestoreReferenceElementWith(user.uid), 0)
+                            uid = "",
+                            "",
+                            author = User.firestoreReferenceElementWith(user.uid),
+                            User.emptyFirestoreReferenceList())
                     eventViewModel.addEventUserPicture(inputStream, event, newEventPicture)
                   }
                 }
