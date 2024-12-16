@@ -63,14 +63,17 @@ constructor(
 
   /** Loads the list of events from the repository and updates the internal [MutableStateFlow]. */
   fun loadEvents() {
+    _refreshState.value = true
     repository.getEvents(
         onSuccess = { eventList ->
           eventList.forEach { event -> event.organisers.requestAll() }
           _events.value = eventList
+          _refreshState.value = false
         },
         onFailure = { exception ->
           Log.e("EventViewModel", "An error occurred while loading events: $exception")
           _events.value = emptyList()
+          _refreshState.value = false
         })
   }
 
