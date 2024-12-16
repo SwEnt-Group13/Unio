@@ -11,15 +11,21 @@ import androidx.compose.foundation.pager.PagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -30,8 +36,10 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.core.net.toUri
 import com.android.unio.R
 import com.android.unio.model.event.EventUserPicture
+import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.strings.test_tags.event.EventDetailsTestTags
 import com.android.unio.model.strings.test_tags.event.EventDetailsTestTags.PICTURE_FULL_SCREEN
+import com.android.unio.model.user.User
 import com.android.unio.ui.image.AsyncImageWrapper
 import kotlinx.coroutines.launch
 
@@ -46,11 +54,14 @@ import kotlinx.coroutines.launch
 fun PictureOverlay(
     onDismiss: () -> Unit,
     pagerState: PagerState,
-    eventPictures: List<EventUserPicture>
+    eventPictures: List<EventUserPicture>,
+    eventViewModel:EventViewModel,
+    user: User
 ) {
   val scope = rememberCoroutineScope()
   val context = LocalContext.current
   val iconSize = 40.dp
+    var enableButton by remember { mutableStateOf(true) }
   val onClickArrow: (Boolean) -> Unit = { isRight: Boolean ->
     if (isRight && pagerState.currentPage < eventPictures.size - 1) {
       scope.launch { pagerState.animateScrollToPage(pagerState.currentPage + 1) }
@@ -58,7 +69,17 @@ fun PictureOverlay(
       scope.launch { pagerState.animateScrollToPage(pagerState.currentPage - 1) }
     }
   }
-  val isLiked = 1
+
+
+
+    var isLiked by remember(pagerState.currentPage) { mutableStateOf(eventPictures[pagerState.currentPage].likes.contains(user.uid)) }
+
+    val onClickLike = {
+        enableButton = false
+        val picture = eventPictures[pagerState.currentPage]
+        picture.likes.add(user.uid)
+        isLiked = !isLiked
+    }
   Dialog(
       onDismissRequest = onDismiss,
       properties =
@@ -115,15 +136,17 @@ fun PictureOverlay(
                       Modifier.testTag("pictureInteractionRow").align(Alignment.BottomCenter),
                   horizontalArrangement = Arrangement.SpaceAround) {
                     IconButton(
-                        onClick = {},
+                        onClick = {
+                            isLiked = !isLiked},
                         modifier = Modifier,
                         colors =
                             IconButtonDefaults.iconButtonColors(
                                 contentColor = MaterialTheme.colorScheme.onPrimary)) {
                           Icon(
-                              imageVector = Icons.Rounded.FavoriteBorder,
+                              imageVector = if (isLiked) Icons.Rounded.Favorite else Icons.Rounded.FavoriteBorder,
                               "like button",
-                              modifier = Modifier.size(iconSize))
+                              modifier = Modifier.size(iconSize),
+                        tint = if (isLiked) Color.Red else Color.White)
                         }
                   }
             }

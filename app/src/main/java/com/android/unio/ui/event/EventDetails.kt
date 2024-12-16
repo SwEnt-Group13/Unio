@@ -85,6 +85,7 @@ import com.android.unio.model.strings.FormatStrings.DAY_MONTH_FORMAT
 import com.android.unio.model.strings.FormatStrings.HOUR_MINUTE_FORMAT
 import com.android.unio.model.strings.NotificationStrings.EVENT_REMINDER_CHANNEL_ID
 import com.android.unio.model.strings.test_tags.event.EventDetailsTestTags
+import com.android.unio.model.user.User
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.model.utils.NetworkUtils
 import com.android.unio.ui.components.NotificationSender
@@ -223,7 +224,7 @@ fun EventScreenScaffold(
             })
       },
       content = {
-        EventScreenContent(navigationAction, mapViewModel, event, organisers, pagerState, tabList)
+        EventScreenContent(navigationAction, mapViewModel, event,user!!, organisers, pagerState, tabList)
       })
 
   NotificationSender(
@@ -251,6 +252,7 @@ fun EventScreenContent(
     navigationAction: NavigationAction,
     mapViewModel: MapViewModel,
     event: Event,
+    user:User,
     organisers: List<Association>,
     pagerState: PagerState,
     tabList: List<String>
@@ -275,7 +277,7 @@ fun EventScreenContent(
             Modifier.fillMaxSize()
                 .padding(9.dp)
                 .testTag(EventDetailsTestTags.EVENT_DETAILS_PAGER)) { page ->
-          EventDetailsBody(navigationAction, mapViewModel, event, context, page)
+          EventDetailsBody(navigationAction, mapViewModel, event,user, context, page)
         }
   }
 }
@@ -396,24 +398,26 @@ fun EventDetailsBody(
     navigationAction: NavigationAction,
     mapViewModel: MapViewModel,
     event: Event,
+    user:User,
     context: Context,
     page: Int
 ) {
   if (page == 0) {
     EventDetailsDescriptionTab(navigationAction, mapViewModel, event, context)
   } else if (page == 1) {
-    EventDetailsPicturesTab(event, context)
+    EventDetailsPicturesTab(event,user, context)
   }
 }
 
 /**
  * The second page of the EventDetails horizontal scroll menu.
  *
- * @param event The event to display.
+ * @param event The [Event] to display.
+ * @param user The logged in [User]
  * @param context The local [Context]
  */
 @Composable
-fun EventDetailsPicturesTab(event: Event, context: Context) {
+fun EventDetailsPicturesTab(event: Event, user: User, context: Context) {
   val eventPictures by event.eventPictures.list.collectAsState()
   var showFullScreen by remember { mutableStateOf(false) }
   var selectedPictureUri by remember { mutableStateOf(Uri.EMPTY) }
@@ -461,7 +465,7 @@ fun EventDetailsPicturesTab(event: Event, context: Context) {
             showFullScreen = false
           },
           pagerState,
-          eventPictures)
+          eventPictures, user)
     }
   }
 }
