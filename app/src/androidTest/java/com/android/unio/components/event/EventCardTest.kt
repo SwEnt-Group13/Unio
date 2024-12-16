@@ -25,7 +25,6 @@ import com.android.unio.model.notification.NotificationWorker
 import com.android.unio.model.save.ConcurrentEventUserRepositoryFirestore
 import com.android.unio.model.strings.test_tags.event.EventCardTestTags
 import com.android.unio.model.strings.test_tags.event.EventDetailsTestTags
-import com.android.unio.model.user.UserDeletionRepository
 import com.android.unio.model.user.UserDeletionRepositoryFirestore
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserViewModel
