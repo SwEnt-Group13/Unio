@@ -59,6 +59,7 @@ constructor(
       Firebase.auth.registerAuthStateListener { auth ->
         if (auth.currentUser != null) {
           userRepository.init { getUserByUid(auth.currentUser!!.uid, true) }
+          userDeletionRepository.init {}
         }
       }
     } else {

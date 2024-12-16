@@ -68,6 +68,10 @@ data class Event(
     return uid == other.uid
   }
 
+  override fun hashCode(): Int {
+    return uid.hashCode()
+  }
+
   companion object
 }
 
