@@ -15,6 +15,7 @@ import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.save.ConcurrentEventUserRepositoryFirestore
 import com.android.unio.model.strings.test_tags.saved.SavedTestTags
+import com.android.unio.model.user.UserDeletionRepositoryFirestore
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.navigation.NavigationAction
@@ -43,6 +44,7 @@ class SavedTest : TearDown() {
   // Mock event repository to provide test data.
   @MockK private lateinit var eventRepository: EventRepositoryFirestore
   @MockK private lateinit var userRepository: UserRepositoryFirestore
+  @MockK private lateinit var userDeletionRepository: UserDeletionRepositoryFirestore
   @MockK private lateinit var navigationAction: NavigationAction
   @MockK private lateinit var associationRepositoryFirestore: AssociationRepositoryFirestore
   @MockK private lateinit var imageRepository: ImageRepositoryFirebaseStorage
@@ -81,7 +83,7 @@ class SavedTest : TearDown() {
           onSuccess()
         }
 
-    userViewModel = spyk(UserViewModel(userRepository, imageRepository))
+    userViewModel = spyk(UserViewModel(userRepository, imageRepository, userDeletionRepository))
 
     every { eventRepository.getEvents(any(), any()) } answers
         {

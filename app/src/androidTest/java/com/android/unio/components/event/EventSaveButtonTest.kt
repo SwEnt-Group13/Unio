@@ -17,6 +17,7 @@ import com.android.unio.model.notification.NotificationWorker
 import com.android.unio.model.save.ConcurrentEventUserRepositoryFirestore
 import com.android.unio.model.strings.test_tags.event.EventDetailsTestTags
 import com.android.unio.model.user.User
+import com.android.unio.model.user.UserDeletionRepositoryFirestore
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.event.EventSaveButton
@@ -41,6 +42,7 @@ class EventSaveButtonTest : TearDown() {
   @MockK private lateinit var eventRepository: EventRepositoryFirestore
   @MockK private lateinit var imageRepository: ImageRepositoryFirebaseStorage
   @MockK private lateinit var associationRepository: AssociationRepositoryFirestore
+  @MockK private lateinit var userDeletionRepository: UserDeletionRepositoryFirestore
   @MockK
   private lateinit var eventUserPictureRepositoryFirestore: EventUserPictureRepositoryFirestore
   @MockK
@@ -66,7 +68,7 @@ class EventSaveButtonTest : TearDown() {
                 eventUserPictureRepositoryFirestore,
                 concurrentEventUserRepositoryFirestore))
 
-    userViewModel = UserViewModel(userRepository, imageRepository)
+    userViewModel = UserViewModel(userRepository, imageRepository, userDeletionRepository)
     every { userRepository.updateUser(testUser, any(), any()) } answers
         {
           val onSuccess = args[1] as () -> Unit
