@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -19,6 +20,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -29,6 +31,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Send
 import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -40,24 +43,39 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.ModalBottomSheetProperties
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
 import com.android.unio.R
 import com.android.unio.model.association.Association
@@ -80,6 +98,7 @@ import com.android.unio.ui.navigation.Screen
 import com.android.unio.ui.navigation.SmoothTopBarNavigationMenu
 import com.android.unio.ui.theme.AppTypography
 import com.android.unio.ui.utils.ToastUtils
+import kotlinx.coroutines.launch
 
 /**
  * Composable element that contain the association profile screen. It display the association.
@@ -247,11 +266,11 @@ fun AssociationProfileScaffold(
                                             eventViewModel = eventViewModel,
                                             associationViewModel = associationViewModel)
                                     1 ->
-                                        Box(
-                                            modifier = Modifier.fillMaxSize(),
-                                            contentAlignment = Alignment.Center) {
-                                              Text("Hello")
-                                            }
+                                        AssociationProfileActionsContent(
+                                            navigationAction = navigationAction,
+                                            userViewModel = userViewModel,
+                                            eventViewModel = eventViewModel,
+                                            associationViewModel = associationViewModel)
                                   }
                                 }
                           }
@@ -409,6 +428,71 @@ private fun AssociationProfileContent(
 }
 
 /**
+ * Composable element that contain the actions of the given association. It call all
+ * elements that should be displayed on the screen, such as the header, the description, the
+ * events...
+ *
+ * @param navigationAction [NavigationAction] : The navigation actions of the screen
+ * @param userViewModel [UserViewModel] : The user view model
+ * @param eventViewModel [EventViewModel] : The event view model
+ * @param associationViewModel [AssociationViewModel] : The association view model
+ */
+@Composable
+private fun AssociationProfileActionsContent(
+    navigationAction: NavigationAction,
+    userViewModel: UserViewModel,
+    eventViewModel: EventViewModel,
+    associationViewModel: AssociationViewModel
+) {
+    val context = LocalContext.current
+    val association by associationViewModel.selectedAssociation.collectAsState()
+    val user by userViewModel.user.collectAsState()
+
+    if (association == null || user == null) {
+        Log.e("AssociationProfileContent", "Association or user not found.")
+        return
+    }
+
+    var isFollowed by remember {
+        mutableStateOf(user!!.followedAssociations.contains(association!!.uid))
+    }
+    var enableButton by remember { mutableStateOf(true) }
+    val isConnected = NetworkUtils.checkInternetConnection(context)
+
+    val onFollow = {
+        if (isConnected) {
+            enableButton = false
+            associationViewModel.updateFollow(association!!, user!!, isFollowed) {
+                userViewModel.refreshUser()
+                enableButton = true
+            }
+            isFollowed = !isFollowed
+        } else {
+            ToastUtils.showToast(context, context.getString(R.string.no_internet_connection))
+        }
+    }
+
+    val onMemberClick = { member: User ->
+        userViewModel.setSomeoneElseUser(member)
+        navigationAction.navigateTo(Screen.SOMEONE_ELSE_PROFILE)
+    }
+
+    // Add spacedBy to the horizontalArrangement
+    Column(
+        modifier =
+        Modifier.testTag(AssociationProfileTestTags.SCREEN)
+            .verticalScroll(rememberScrollState())
+            .fillMaxWidth()
+            .padding(24.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)) {
+        AssociationActionsEvents(navigationAction, association!!, userViewModel, eventViewModel)
+        AssociationHeader(association!!, isFollowed, enableButton, onFollow)
+        AssociationDescription(association!!)
+        AssociationMembers(associationViewModel, association!!.members, onMemberClick)
+    }
+}
+
+/**
  * Component that displays the users that are in the association that can be contacted. It displays
  * the title of the section and then displays the different users in the association.
  *
@@ -524,11 +608,11 @@ private fun AssociationEvents(
       // See more clicked, display all events
       if (isSeeMoreClicked) {
         events.forEach { event ->
-          AssociationEventCard(navigationAction, event, userViewModel, eventViewModel)
+          AssociationEventCard(navigationAction, event, userViewModel, eventViewModel, shouldBeEditable = false)
         }
         // Display the first event only
       } else {
-        AssociationEventCard(navigationAction, first, userViewModel, eventViewModel)
+        AssociationEventCard(navigationAction, first, userViewModel, eventViewModel, shouldBeEditable = false)
       }
     }
     // Display the see more button if there are more than one event
@@ -558,6 +642,197 @@ private fun AssociationEvents(
         }
   }
 }
+
+
+@Composable
+private fun AssociationActionsEvents(
+    navigationAction: NavigationAction,
+    association: Association,
+    userViewModel: UserViewModel,
+    eventViewModel: EventViewModel
+) {
+    val context = LocalContext.current
+    val isConnected = NetworkUtils.checkInternetConnection(context)
+
+    val events by association.events.list.collectAsState()
+    val user by userViewModel.user.collectAsState()
+
+    if (user == null) {
+        return
+    }
+
+    val isMember = association.members.any { it.uid == user!!.uid }
+    val userPermissions = association.members.find { it.uid == user!!.uid }?.role?.permissions
+    val hasAddEventsPermission =
+        userPermissions?.hasPermission(PermissionType.ADD_EDIT_EVENTS) == true
+
+    Text(
+        text = "Events",
+        modifier = Modifier.testTag(AssociationProfileTestTags.EVENT_TITLE),
+        style = AppTypography.headlineLarge
+    )
+
+    if (isMember && hasAddEventsPermission) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 0.dp), // Optional padding around the button
+            horizontalArrangement = Arrangement.Center // Centers the content horizontally
+        ) {
+            Button(
+                onClick = {
+                    if (isConnected) {
+                        navigationAction.navigateTo(Screen.EVENT_CREATION)
+                    } else {
+                        ToastUtils.showToast(context, context.getString(R.string.no_internet_connection))
+                    }
+                },
+                modifier = Modifier.testTag(AssociationProfileTestTags.ADD_EVENT_BUTTON),
+                contentPadding = ButtonDefaults.ButtonWithIconContentPadding
+            ) {
+                Icon(
+                    Icons.Filled.Add,
+                    contentDescription = context.getString(R.string.association_profile_add_event_button),
+                    modifier = Modifier.size(ButtonDefaults.IconSize)
+                )
+                Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+                Text(context.getString(R.string.association_profile_add_event_button))
+            }
+        }
+    }
+
+
+    if (events.isNotEmpty()) {
+
+        val sortedEvents = events.sortedBy { it.startDate }
+        val nbOfTabs = sortedEvents.size
+        val pagerState = rememberPagerState(initialPage = 0) { nbOfTabs }
+
+        Column(horizontalAlignment = CenterHorizontally) {
+
+            if (sortedEvents.size > 1) {
+                Text(
+                    text = "Slide to see all the events",
+                    modifier = Modifier.testTag("ADDTESTTAGGG").padding(bottom = 4.dp),
+                    style = AppTypography.bodySmall
+                )
+                ProgressBarBetweenEvents(
+                    tabList = sortedEvents.map { it.title ?: "Event" },
+                    pagerState = pagerState
+                )
+            }
+
+            HorizontalPager(
+                state = pagerState,
+                modifier = Modifier.fillMaxWidth(),
+                contentPadding = PaddingValues(horizontal = 16.dp), // Add padding between items
+                pageSpacing = 16.dp
+            ) { page ->
+                val event = sortedEvents[page]
+                AssociationEventCard(
+                    navigationAction,
+                    event,
+                    userViewModel,
+                    eventViewModel,
+                    shouldBeEditable = hasAddEventsPermission
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun ProgressBarBetweenEvents(tabList: List<String>, pagerState: PagerState) {
+    val defaultTabWidth = 576.0F
+    val defaultTabHeight = 92.0F
+
+    val scope = rememberCoroutineScope()
+    val colorScheme = MaterialTheme.colorScheme
+    val sizeList = remember { mutableStateMapOf<Int, Pair<Float, Float>>() }
+    val progressFromFirstPage by remember {
+        derivedStateOf { pagerState.currentPageOffsetFraction + pagerState.currentPage.dp.value }
+    }
+
+    TabRow(
+        selectedTabIndex = pagerState.currentPage,
+        contentColor = colorScheme.primary,
+        divider = {},
+        indicator = {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .drawBehind {
+                        val totalWidth = sizeList.values.map { it.first }.sum()
+                        val height: Float
+
+                        if (sizeList.isEmpty()) {
+                            Log.e("Home Page", "The size values of tabs are null, should not happen !")
+                            height = defaultTabHeight
+                        } else {
+                            height = sizeList[0]?.second ?: defaultTabHeight
+                        }
+
+                        // Draw the outer rounded rectangle encompassing the full sliding bar area
+                        val outerRectangleYStart = height - 45
+                        val outerRectangleYEnd = height - 5
+
+                        // Draw the inner rounded rectangle (the sliding line area)
+                        val tabWidth = sizeList[0]?.first ?: defaultTabWidth
+                        val rectangleStartX = progressFromFirstPage * tabWidth + tabWidth / 4
+                        val rectangleEndX = progressFromFirstPage * tabWidth + tabWidth * 3 / 4
+                        val rectangleYStart = height - 35
+                        val rectangleYEnd = height - 15
+
+                        drawRoundRect(
+                            color = colorScheme.primary.copy(alpha = 0.1f),
+                            topLeft = Offset(x = tabWidth / 4, y = outerRectangleYStart),
+                            size = Size(width = tabWidth * 7 / 2, height = outerRectangleYEnd - outerRectangleYStart), // 2 * (7/2 = 1 + 3 / 4)
+                            cornerRadius = CornerRadius(x = 16.dp.toPx(), y = 16.dp.toPx())
+                        )
+
+                        drawRoundRect(
+                            color = colorScheme.primary.copy(alpha = 0.2f),
+                            topLeft = Offset(x = rectangleStartX, y = rectangleYStart),
+                            size = Size(width = rectangleEndX - rectangleStartX, height = rectangleYEnd - rectangleYStart),
+                            cornerRadius = CornerRadius(x = 12.dp.toPx(), y = 12.dp.toPx())
+                        )
+
+                        // Draw the sliding line inside the inner rectangle
+                        val lineStartOffset = Offset(x = progressFromFirstPage * tabWidth + tabWidth / 3, y = height - 25)
+                        val lineEndOffset = Offset(x = progressFromFirstPage * tabWidth + tabWidth * 2 / 3, y = height - 25)
+
+                        drawLine(
+                            start = lineStartOffset,
+                            end = lineEndOffset,
+                            color = colorScheme.primary,
+                            strokeWidth = Stroke.DefaultMiter
+                        )
+                    }
+            )
+        }
+    ) {
+        tabList.forEachIndexed { index, str ->
+            Tab(
+                selected = index == pagerState.currentPage,
+                onClick = { scope.launch { pagerState.animateScrollToPage(index) } },
+                modifier = Modifier.onSizeChanged {
+                    sizeList[index] = Pair(it.width.toFloat(), it.height.toFloat())
+                },
+                selectedContentColor = colorScheme.primary
+            ) {
+                Spacer(
+                    modifier = Modifier
+                        .height(20.dp) // Minimal size to retain dimensions without visible content
+                )
+            }
+        }
+    }
+}
+
+
+
+
+
 
 @Composable
 fun AssociationProfileSeeMoreButton(
@@ -599,7 +874,8 @@ private fun AssociationEventCard(
     navigationAction: NavigationAction,
     event: Event,
     userViewModel: UserViewModel,
-    eventViewModel: EventViewModel
+    eventViewModel: EventViewModel,
+    shouldBeEditable: Boolean
 ) {
   Box(modifier = Modifier.testTag(AssociationProfileTestTags.EVENT_CARD + event.uid)) {
     EventCard(
@@ -607,7 +883,7 @@ private fun AssociationEventCard(
         event = event,
         userViewModel = userViewModel,
         eventViewModel = eventViewModel,
-        true)
+        shouldBeEditable = shouldBeEditable)
   }
 }
 
@@ -684,4 +960,96 @@ private fun AssociationHeader(
       }
     }
   }
+}
+
+/**
+ * Component that display the header of the association profile screen. It display the image of the
+ * association, the number of followers and the number of members. It also display a button to
+ * follow the association.
+ */
+@Composable
+private fun AssociationActionsHeader(
+    association: Association,
+    isFollowed: Boolean,
+    enableButton: Boolean,
+    onFollow: () -> Unit,
+) {
+    val context = LocalContext.current
+
+    Text(
+        text = "General Actions",
+        modifier = Modifier.testTag(AssociationProfileTestTags.EVENT_TITLE),
+        style = AppTypography.headlineLarge
+    )
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 0.dp), // Optional padding around the button
+        horizontalArrangement = Arrangement.Center // Centers the content horizontally
+    ) {
+        Button(
+            onClick = {
+
+            },
+            modifier = Modifier.testTag("TESTTAGGGG"),
+            contentPadding = ButtonDefaults.ButtonWithIconContentPadding
+        ) {
+            Icon(
+                Icons.Filled.Send,
+                contentDescription = context.getString(R.string.association_profile_add_event_button),
+                modifier = Modifier.size(ButtonDefaults.IconSize)
+            )
+            Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+            Text("Broadcast a message to all members of the association")
+        }
+    }
+
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
+    ) {
+        Box(modifier = Modifier.testTag(AssociationProfileTestTags.IMAGE_HEADER)) {
+            AsyncImageWrapper(
+                imageUri = association.image.toUri(),
+                contentDescription =
+                context.getString(R.string.association_content_description_association_image) +
+                        association.name,
+                modifier = Modifier.size(124.dp),
+                placeholderResourceId = R.drawable.adec,
+                contentScale = ContentScale.Crop)
+        }
+        Column {
+            Text(
+                "${association.followersCount} " + context.getString(R.string.association_follower),
+                style = AppTypography.headlineSmall,
+                modifier =
+                Modifier.padding(bottom = 5.dp).testTag(AssociationProfileTestTags.HEADER_FOLLOWERS))
+            Text(
+                "${association.members.size} " + context.getString(R.string.association_member),
+                style = AppTypography.headlineSmall,
+                modifier =
+                Modifier.padding(bottom = 14.dp).testTag(AssociationProfileTestTags.HEADER_MEMBERS))
+
+            if (isFollowed) {
+                OutlinedButton(
+                    enabled = enableButton,
+                    onClick = onFollow,
+                    modifier = Modifier.testTag(AssociationProfileTestTags.FOLLOW_BUTTON)) {
+                    Text(context.getString(R.string.association_unfollow))
+                }
+            } else {
+                Button(
+                    enabled = enableButton,
+                    onClick = onFollow,
+                    modifier = Modifier.testTag(AssociationProfileTestTags.FOLLOW_BUTTON)) {
+                    Icon(
+                        Icons.Filled.Add,
+                        contentDescription =
+                        context.getString(R.string.association_content_description_follow_icon))
+                    Spacer(Modifier.width(2.dp))
+                    Text(context.getString(R.string.association_follow))
+                }
+            }
+        }
+    }
 }

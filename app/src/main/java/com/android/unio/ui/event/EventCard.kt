@@ -185,10 +185,9 @@ fun EventCardScaffold(
                                     R.string.event_card_content_description_edit_association),
                             tint = Color.White)
                       }
+                }else{
+                    EventSaveButton(event, eventViewModel, userViewModel)
                 }
-                Spacer(modifier = Modifier.width(2.dp))
-
-                EventSaveButton(event, eventViewModel, userViewModel)
               }
         }
 
