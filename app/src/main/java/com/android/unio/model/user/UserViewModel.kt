@@ -5,6 +5,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.android.unio.model.association.Association
 import com.android.unio.model.authentication.registerAuthStateListener
 import com.android.unio.model.event.Event
 import com.android.unio.model.image.ImageRepository
@@ -29,7 +30,8 @@ class UserViewModel
 @Inject
 constructor(
     private val userRepository: UserRepository,
-    private val imageRepository: ImageRepository
+    private val imageRepository: ImageRepository,
+    private val userDeletionRepository: UserDeletionRepository
 ) : ViewModel() {
   private val _user = MutableStateFlow<User?>(null)
   val user: StateFlow<User?> = _user.asStateFlow()
@@ -46,8 +48,9 @@ constructor(
   constructor(
       userRepository: UserRepository,
       imageRepository: ImageRepository,
+      userDeletionRepository: UserDeletionRepository,
       initializeWithAuthenticatedUser: Boolean
-  ) : this(userRepository, imageRepository) {
+  ) : this(userRepository, imageRepository, userDeletionRepository) {
     this.initializeWithAuthenticatedUser = initializeWithAuthenticatedUser
   }
 
@@ -204,11 +207,14 @@ constructor(
    * @return true if all three method were successful and false otherwise
    */
   suspend fun deleteUser(
-      userId: String,
+      user: User,
       deleteWithProfilePicture: Boolean,
       onSuccess: () -> Unit,
       onFailure: (Exception) -> Unit
   ) {
+    val userId = user.uid
+    val eventToUpdate: MutableList<Event> = mutableListOf()
+    val associationToUpdate: MutableList<Association> = mutableListOf()
     try {
       coroutineScope {
 
@@ -236,8 +242,33 @@ constructor(
         }
 
         val firestoreTask = async {
-          userRepository.deleteUserInFirestore(
+          user.savedEvents.list.value.forEach { event ->
+            if (eventToUpdate.contains(event)) {
+              val index = eventToUpdate.indexOf(event)
+              val current = eventToUpdate[index]
+              val newEvent = current.copy(numberOfSaved = current.numberOfSaved - 1)
+              eventToUpdate[index] = newEvent
+            } else {
+              val newEvent = event.copy(numberOfSaved = event.numberOfSaved - 1)
+              eventToUpdate.add(newEvent)
+            }
+          }
+          user.followedAssociations.list.value.forEach { association ->
+            if (associationToUpdate.contains(association)) {
+              val index = associationToUpdate.indexOf(association)
+              val current = associationToUpdate[index]
+              val newAssociation = current.copy(followersCount = current.followersCount - 1)
+              associationToUpdate[index] = newAssociation
+            } else {
+              val newAssociation = association.copy(followersCount = association.followersCount - 1)
+              associationToUpdate.add(newAssociation)
+            }
+          }
+
+          userDeletionRepository.deleteUser(
               userId,
+              eventToUpdate,
+              associationToUpdate,
               onSuccess = { Log.i("UserDeletion", "Successfully deleted user from firestore") },
               onFailure = { onFailure(it) })
         }
