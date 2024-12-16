@@ -109,6 +109,8 @@
     <string name="account_details_content_description_links_icon">Links icon</string>
     <string name="account_details_content_description_pfp">Profile Picture</string>
     <string name="account_details_content_description_remove_pfp">Remove Profile Picture</string>
+    <string name="account_details_content_description_clear_first_name">Clear first name</string>
+    <string name="account_details_content_description_clear_last_name">Clear last name</string>
 
     <!-- UserSettings Strings -->
     <string name="user_edition_content_description_remove_social">Remove User Social</string>

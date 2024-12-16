@@ -103,6 +103,8 @@
     <string name="account_details_content_description_links_icon">Icône de liens</string>
     <string name="account_details_content_description_pfp">Photo de profile</string>
     <string name="account_details_content_description_remove_pfp">Supprimer la photo de profil</string>
+    <string name="account_details_content_description_clear_first_name">Effacer prénom</string>
+    <string name="account_details_content_description_clear_last_name">Effacer nom</string>
 
     <!-- UserSettings Strings -->
     <string name="user_edition_delete_user" translatable="true">Supprimer le compte</string>
