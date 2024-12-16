@@ -93,6 +93,7 @@ import com.android.unio.model.strings.test_tags.association.AssociationProfileTe
 import com.android.unio.model.user.User
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.model.utils.NetworkUtils
+import com.android.unio.ui.components.EventSearchBar
 import com.android.unio.ui.components.NotificationSender
 import com.android.unio.ui.components.RoleBadge
 import com.android.unio.ui.event.EventCard
@@ -100,7 +101,6 @@ import com.android.unio.ui.image.AsyncImageWrapper
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
 import com.android.unio.ui.navigation.SmoothTopBarNavigationMenu
-import com.android.unio.ui.search.EventSearchBar
 import com.android.unio.ui.theme.AppTypography
 import com.android.unio.ui.utils.ToastUtils
 import kotlinx.coroutines.coroutineScope

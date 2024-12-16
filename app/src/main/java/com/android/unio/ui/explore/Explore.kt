@@ -39,7 +39,7 @@ import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.strings.test_tags.explore.ExploreContentTestTags
 import com.android.unio.model.strings.test_tags.explore.ExploreTestTags
-import com.android.unio.ui.association.AssociationSearchBar
+import com.android.unio.ui.components.AssociationSearchBar
 import com.android.unio.ui.image.AsyncImageWrapper
 import com.android.unio.ui.navigation.BottomNavigationMenu
 import com.android.unio.ui.navigation.LIST_TOP_LEVEL_DESTINATION
