@@ -58,6 +58,16 @@ data class Event(
     val numberOfSaved: Int = 0,
     val eventPictures: ReferenceList<EventUserPicture>,
 ) : UniquelyIdentifiable {
+
+  override fun equals(other: Any?): Boolean {
+    if (this === other) return true
+    if (javaClass != other?.javaClass) return false
+
+    other as Event
+
+    return uid == other.uid
+  }
+
   companion object
 }
 
