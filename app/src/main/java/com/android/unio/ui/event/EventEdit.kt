@@ -139,6 +139,12 @@ fun EventEditScreen(
           OutlinedTextField(
               modifier = Modifier.fillMaxWidth().testTag(EventEditTestTags.EVENT_TITLE),
               value = name,
+              isError = name.isEmpty(),
+              supportingText = {
+                if (name.isEmpty()) {
+                  context.getString(R.string.event_creation_name_error)
+                }
+              },
               onValueChange = { name = it },
               label = { Text(context.getString(R.string.event_creation_name_label)) })
 
