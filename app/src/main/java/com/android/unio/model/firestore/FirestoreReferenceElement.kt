@@ -34,8 +34,10 @@ class FirestoreReferenceElement<T : UniquelyIdentifiable>(
    * @param lazy If true, the fetch will only be performed if the element is not already hydrated.
    */
   override fun fetch(onSuccess: () -> Unit, lazy: Boolean) {
+      Log.d("AssociationActionsMembers", "Fetching for member with uid $_uid")
     if (lazy && _element.value?.uid == _uid) {
       onSuccess()
+        Log.d("AssociationActionsMembers", "lazy")
       return
     }
 
@@ -43,6 +45,7 @@ class FirestoreReferenceElement<T : UniquelyIdentifiable>(
 
     if (_uid.isEmpty()) {
       onSuccess()
+        Log.d("AssociationActionsMembers", "empty uid")
       return
     }
 
@@ -53,14 +56,17 @@ class FirestoreReferenceElement<T : UniquelyIdentifiable>(
           .document(_uid)
           .get()
           .addOnSuccessListener { document ->
-            _element.value = hydrate(document.data)
+              _element.value = hydrate(document.data)
+              element.value?.let { Log.d("AssociationActionsMembers", "uid de l'element : " + it.uid) }
             onSuccess()
           }
           .addOnFailureListener { exception ->
+              Log.e("AssociationActionsMembers", "Failed to fetch document", exception)
             Log.e("FirestoreReferenceElement", "Failed to fetch document", exception)
           }
     } else {
-      Log.e("FirestoreReferenceElement", "Missing collection path")
+      Log.e("AssociationActionsMembers", "Missing collection path")
+        Log.e("FirestoreReferenceElement", "Missing collection path")
     }
   }
 

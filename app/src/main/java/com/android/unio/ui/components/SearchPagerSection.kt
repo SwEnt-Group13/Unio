@@ -47,17 +47,19 @@ fun <T> SearchPagerSection(
         modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
     ) {
 
-        // Search Bar Composable
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 20.dp)
-        ) {
-            searchBar()
-        }
+
 
         // Sliding Progress Bar (if more than one item exists)
         if (items.size > 1) {
+            // Search Bar Composable
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp)
+            ) {
+                searchBar()
+            }
+
             Text(
                 text = "Slide to see all results",
                 style = AppTypography.bodySmall,

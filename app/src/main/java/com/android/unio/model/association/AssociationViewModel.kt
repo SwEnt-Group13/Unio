@@ -86,7 +86,10 @@ constructor(
    * @param member The member to fetch the user from
    */
   private fun fetchUserFromMember(member: Member) {
+      Log.d("AssociationActionsMembers", "member with uid aked for fetching : " + member.uid)
     member.user.fetch()
+      Log.d("AssociationActionsMembers", "should have lastName :")
+      member.user.element.value?.lastName?.let { Log.d("AssociationActionsMembers", it) }
   }
 
   /**
