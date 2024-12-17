@@ -111,4 +111,7 @@ object EventDetailsTestTags {
   const val EVENT_DETAILS_PAGER = "eventDetailsPager"
   const val EVENT_NOT_STARTED_TEXT = "eventNotStartedText"
   const val EVENT_NO_PICTURES_TEXT = "eventNoPicturesText"
+  const val EVENT_PICTURES_ARROW_LEFT = "picturesArrowLeft"
+  const val EVENT_PICTURES_ARROW_RIGHT = "picturesArrowRight"
+  const val PICTURE_FULL_SCREEN = "pictureFullScreen"
 }
