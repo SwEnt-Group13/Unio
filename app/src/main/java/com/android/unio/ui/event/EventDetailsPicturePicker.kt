@@ -82,7 +82,7 @@ fun EventDetailsPicturePicker(event: Event, eventViewModel: EventViewModel, user
                             "",
                             author = User.firestoreReferenceElementWith(user.uid),
                             User.emptyFirestoreReferenceList())
-                    eventViewModel.addEventUserPicture(inputStream, event, newEventPicture)
+                    eventViewModel.addEventUserPicture(inputStream, event, newEventPicture, {}, {})
                   }
                 }
                 scope.launch { sheetState.hide() }
