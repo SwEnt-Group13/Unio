@@ -224,7 +224,8 @@ fun EventScreenScaffold(
             })
       },
       content = {
-        EventScreenContent(navigationAction, mapViewModel, event,user!!, organisers, pagerState, tabList)
+        EventScreenContent(
+            navigationAction, mapViewModel, event, user!!, organisers, pagerState, tabList)
       })
 
   NotificationSender(
@@ -252,7 +253,7 @@ fun EventScreenContent(
     navigationAction: NavigationAction,
     mapViewModel: MapViewModel,
     event: Event,
-    user:User,
+    user: User,
     organisers: List<Association>,
     pagerState: PagerState,
     tabList: List<String>
@@ -277,7 +278,7 @@ fun EventScreenContent(
             Modifier.fillMaxSize()
                 .padding(9.dp)
                 .testTag(EventDetailsTestTags.EVENT_DETAILS_PAGER)) { page ->
-          EventDetailsBody(navigationAction, mapViewModel, event,user, context, page)
+          EventDetailsBody(navigationAction, mapViewModel, event, user, context, page)
         }
   }
 }
@@ -398,14 +399,14 @@ fun EventDetailsBody(
     navigationAction: NavigationAction,
     mapViewModel: MapViewModel,
     event: Event,
-    user:User,
+    user: User,
     context: Context,
     page: Int
 ) {
   if (page == 0) {
     EventDetailsDescriptionTab(navigationAction, mapViewModel, event, context)
   } else if (page == 1) {
-    EventDetailsPicturesTab(event,user, context)
+    EventDetailsPicturesTab(event, user, context)
   }
 }
 
@@ -465,7 +466,8 @@ fun EventDetailsPicturesTab(event: Event, user: User, context: Context) {
             showFullScreen = false
           },
           pagerState,
-          eventPictures, user)
+          eventPictures,
+          user)
     }
   }
 }

@@ -55,13 +55,13 @@ fun PictureOverlay(
     onDismiss: () -> Unit,
     pagerState: PagerState,
     eventPictures: List<EventUserPicture>,
-    eventViewModel:EventViewModel,
+    eventViewModel: EventViewModel,
     user: User
 ) {
   val scope = rememberCoroutineScope()
   val context = LocalContext.current
   val iconSize = 40.dp
-    var enableButton by remember { mutableStateOf(true) }
+  var enableButton by remember { mutableStateOf(true) }
   val onClickArrow: (Boolean) -> Unit = { isRight: Boolean ->
     if (isRight && pagerState.currentPage < eventPictures.size - 1) {
       scope.launch { pagerState.animateScrollToPage(pagerState.currentPage + 1) }
@@ -70,16 +70,17 @@ fun PictureOverlay(
     }
   }
 
+  var isLiked by
+      remember(pagerState.currentPage) {
+        mutableStateOf(eventPictures[pagerState.currentPage].likes.contains(user.uid))
+      }
 
-
-    var isLiked by remember(pagerState.currentPage) { mutableStateOf(eventPictures[pagerState.currentPage].likes.contains(user.uid)) }
-
-    val onClickLike = {
-        enableButton = false
-        val picture = eventPictures[pagerState.currentPage]
-        picture.likes.add(user.uid)
-        isLiked = !isLiked
-    }
+  val onClickLike = {
+    enableButton = false
+    val picture = eventPictures[pagerState.currentPage]
+    picture.likes.add(user.uid)
+    isLiked = !isLiked
+  }
   Dialog(
       onDismissRequest = onDismiss,
       properties =
@@ -136,17 +137,18 @@ fun PictureOverlay(
                       Modifier.testTag("pictureInteractionRow").align(Alignment.BottomCenter),
                   horizontalArrangement = Arrangement.SpaceAround) {
                     IconButton(
-                        onClick = {
-                            isLiked = !isLiked},
+                        onClick = { isLiked = !isLiked },
                         modifier = Modifier,
                         colors =
                             IconButtonDefaults.iconButtonColors(
                                 contentColor = MaterialTheme.colorScheme.onPrimary)) {
                           Icon(
-                              imageVector = if (isLiked) Icons.Rounded.Favorite else Icons.Rounded.FavoriteBorder,
+                              imageVector =
+                                  if (isLiked) Icons.Rounded.Favorite
+                                  else Icons.Rounded.FavoriteBorder,
                               "like button",
                               modifier = Modifier.size(iconSize),
-                        tint = if (isLiked) Color.Red else Color.White)
+                              tint = if (isLiked) Color.Red else Color.White)
                         }
                   }
             }

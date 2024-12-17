@@ -303,6 +303,27 @@ constructor(
   }
 
   /**
+   * Update an existing eventUserPicture without updating its image.
+   *
+   * @param event The event in question.
+   * @param picture The [EventUserPicture] to update
+   */
+  fun updateEventUserPictureWithoutImage(event: Event, picture: EventUserPicture) {
+    eventUserPictureRepository.addEventUserPicture(
+        picture,
+        {
+          if (!event.eventPictures.contains(picture.uid)) {
+            event.eventPictures.add(picture.uid)
+            updateEventWithoutImage(
+                event,
+                { event.eventPictures.add(picture) },
+                { e -> Log.e("EventViewModel", "An error occurred while updating an event: $e") })
+          }
+        },
+        { e -> Log.e("EventViewModel", "An error occurred while adding an event picture: $e") })
+  }
+
+  /**
    * Updates the save status of the user for the target event. If the user has already saved the
    * event, the event's interested count is decremented and the event is removed from the user's
    * saved events. If the user is has not yet saved the event, the event's interested count is
