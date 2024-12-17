@@ -271,6 +271,12 @@ fun DateAndTimePicker(
                 ?: "",
         readOnly = true,
         onValueChange = {},
+        isError = selectedDate == null && initialDate == null,
+        supportingText = {
+          if (selectedDate == null && initialDate == null) {
+            Text(context.getString(R.string.event_edit_date_error))
+          }
+        },
         trailingIcon = {
           Icon(
               Icons.Default.DateRange,
@@ -299,6 +305,12 @@ fun DateAndTimePicker(
                 ?: "",
         readOnly = true,
         onValueChange = {},
+        isError = selectedTime == null && initialTime == null,
+        supportingText = {
+          if (selectedTime == null && initialTime == null) {
+            Text(context.getString(R.string.event_edit_time_error))
+          }
+        },
         trailingIcon = {
           Icon(
               Icons.Default.AccessTime,

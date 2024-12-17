@@ -227,6 +227,8 @@
     <!-- Event Edit Component Strings -->
     <string name="event_edit_date_picker_desc">Select date</string>
     <string name="event_edit_time_picker_desc">Select time</string>
+    <string name="event_edit_date_error">Date is missing</string>
+    <string name="event_edit_time_error">Time is missing</string>
     <string name="event_edit_toast_more_button">Continue typing to see more results</string>
 
     <!-- Associations Overlay Strings -->
