@@ -93,6 +93,7 @@ import com.android.unio.model.utils.NetworkUtils
 import com.android.unio.ui.components.EventSearchBar
 import com.android.unio.ui.components.NotificationSender
 import com.android.unio.ui.components.RoleBadge
+import com.android.unio.ui.components.SearchPagerSection
 import com.android.unio.ui.event.EventCard
 import com.android.unio.ui.image.AsyncImageWrapper
 import com.android.unio.ui.navigation.NavigationAction
@@ -734,196 +735,96 @@ private fun AssociationActionsEvents(
     eventViewModel: EventViewModel,
     searchViewModel: SearchViewModel // Add this parameter for event searching
 ) {
-  val context = LocalContext.current
-  val isConnected = NetworkUtils.checkInternetConnection(context)
+    val context = LocalContext.current
+    val isConnected = NetworkUtils.checkInternetConnection(context)
 
-  val events by association.events.list.collectAsState()
-  val user by userViewModel.user.collectAsState()
-  val eventResults by searchViewModel.events.collectAsState() // Observing search results
-  val searchStatus by searchViewModel.status.collectAsState()
+    val events by association.events.list.collectAsState()
+    val user by userViewModel.user.collectAsState()
 
-  if (user == null) {
-    return
-  }
+    if (user == null) {
+        return
+    }
 
-  val isMember = association.members.any { it.uid == user!!.uid }
-  val userPermissions = association.members.find { it.uid == user!!.uid }?.role?.permissions
-  val hasAddEventsPermission =
-      userPermissions?.hasPermission(PermissionType.ADD_EDIT_EVENTS) == true
+    val isMember = association.members.any { it.uid == user!!.uid }
+    val userPermissions = association.members.find { it.uid == user!!.uid }?.role?.permissions
+    val hasAddEventsPermission =
+        userPermissions?.hasPermission(PermissionType.ADD_EDIT_EVENTS) == true
 
-  Text(
-      text = "Events",
-      modifier = Modifier.testTag(AssociationProfileTestTags.EVENT_TITLE),
-      style = AppTypography.headlineLarge)
+    // Title
+    Text(
+        text = "Events",
+        modifier = Modifier.testTag(AssociationProfileTestTags.EVENT_TITLE),
+        style = AppTypography.headlineLarge
+    )
 
-  // Add Event Button
-  if (isMember && hasAddEventsPermission) {
-    Row(
-        modifier = Modifier.fillMaxWidth().padding(vertical = 0.dp),
-        horizontalArrangement = Arrangement.Center) {
-          Button(
-              onClick = {
-                if (isConnected) {
-                  navigationAction.navigateTo(Screen.EVENT_CREATION)
-                } else {
-                  ToastUtils.showToast(context, context.getString(R.string.no_internet_connection))
-                }
-              },
-              modifier = Modifier.testTag(AssociationProfileTestTags.ADD_EVENT_BUTTON),
-              contentPadding = ButtonDefaults.ButtonWithIconContentPadding) {
+    // Add Event Button
+    if (isMember && hasAddEventsPermission) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 0.dp),
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Button(
+                onClick = {
+                    if (isConnected) {
+                        navigationAction.navigateTo(Screen.EVENT_CREATION)
+                    } else {
+                        ToastUtils.showToast(context, context.getString(R.string.no_internet_connection))
+                    }
+                },
+                modifier = Modifier.testTag(AssociationProfileTestTags.ADD_EVENT_BUTTON),
+                contentPadding = ButtonDefaults.ButtonWithIconContentPadding
+            ) {
                 Icon(
                     Icons.Filled.Add,
-                    contentDescription =
-                        context.getString(R.string.association_profile_add_event_button),
-                    modifier = Modifier.size(ButtonDefaults.IconSize))
+                    contentDescription = context.getString(R.string.association_profile_add_event_button),
+                    modifier = Modifier.size(ButtonDefaults.IconSize)
+                )
                 Spacer(Modifier.size(ButtonDefaults.IconSpacing))
                 Text(context.getString(R.string.association_profile_add_event_button))
-              }
+            }
         }
-  }
-
-  // Remember the pager state and the list of sorted events
-  val sortedEvents = events.sortedBy { it.startDate }
-  val nbOfTabs = sortedEvents.size
-  val pagerState = rememberPagerState(initialPage = 0) { nbOfTabs }
-  val coroutineScope = rememberCoroutineScope() // For handling coroutine launches
-
-  // Add Event SearchBar on top of the slide bar
-  EventSearchBar(
-      searchViewModel = searchViewModel,
-      onEventSelected = { selectedEvent ->
-        // Scroll the HorizontalPager to the selected event
-        val targetPage = sortedEvents.indexOfFirst { it.uid == selectedEvent.uid }
-        if (targetPage >= 0) {
-          coroutineScope.launch { pagerState.animateScrollToPage(targetPage) }
-        }
-      },
-      shouldCloseExpandable = false,
-      onOutsideClickHandled = {})
-
-  // Slide Bar Section
-  if (events.isNotEmpty()) {
-
-    Column(horizontalAlignment = CenterHorizontally) {
-      if (sortedEvents.size > 1) {
-        Text(
-            text = "Slide to see all the events",
-            modifier = Modifier.testTag("ADDTESTTAGGG").padding(bottom = 4.dp),
-            style = AppTypography.bodySmall)
-        ProgressBarBetweenElements(
-            tabList = sortedEvents.map { it.title ?: "Event" }, pagerState = pagerState)
-      }
-
-      HorizontalPager(
-          state = pagerState,
-          modifier = Modifier.fillMaxWidth(),
-          contentPadding = PaddingValues(horizontal = 16.dp),
-          pageSpacing = 16.dp) { page ->
-            val event = sortedEvents[page]
-            AssociationEventCard(
-                navigationAction,
-                event,
-                userViewModel,
-                eventViewModel,
-                shouldBeEditable = hasAddEventsPermission)
-          }
     }
-  }
+
+    // Sorted Events
+    val sortedEvents = events.sortedBy { it.startDate }
+    val pagerState = rememberPagerState { sortedEvents.size } // Place at top-level of composable
+    val coroutineScope = rememberCoroutineScope()
+
+    // Use the generalized SearchPagerSection
+    if (events.isNotEmpty()) {
+        SearchPagerSection(
+            items = sortedEvents,
+            cardContent = { event ->
+                // Each event card in the HorizontalPager
+                AssociationEventCard(
+                    navigationAction = navigationAction,
+                    event = event,
+                    userViewModel = userViewModel,
+                    eventViewModel = eventViewModel,
+                    shouldBeEditable = hasAddEventsPermission
+                )
+            },
+            searchBar = {
+                EventSearchBar(
+                    searchViewModel = searchViewModel,
+                    onEventSelected = { selectedEvent ->
+                        val targetPage = sortedEvents.indexOfFirst { it.uid == selectedEvent.uid }
+                        if (targetPage >= 0) {
+                            coroutineScope.launch { pagerState.animateScrollToPage(targetPage) }
+                        }
+                    },
+                    shouldCloseExpandable = false,
+                    onOutsideClickHandled = {}
+                )
+            },
+            pagerState = pagerState
+        )
+    }
 }
 
-@Composable
-fun ProgressBarBetweenElements(tabList: List<String>, pagerState: PagerState) {
-  val defaultTabWidth = 576.0F
-  val defaultTabHeight = 92.0F
 
-  val scope = rememberCoroutineScope()
-  val colorScheme = MaterialTheme.colorScheme
-  val sizeList = remember { mutableStateMapOf<Int, Pair<Float, Float>>() }
-  val progressFromFirstPage by remember {
-    derivedStateOf { pagerState.currentPageOffsetFraction + pagerState.currentPage.dp.value }
-  }
-
-  TabRow(
-      selectedTabIndex = pagerState.currentPage,
-      contentColor = colorScheme.primary,
-      divider = {},
-      indicator = {
-        Box(
-            modifier =
-                Modifier.fillMaxSize().drawBehind {
-                  val totalWidth = sizeList.values.map { it.first }.sum()
-                  val height: Float
-
-                  if (sizeList.isEmpty()) {
-                    Log.e("Home Page", "The size values of tabs are null, should not happen !")
-                    height = defaultTabHeight
-                  } else {
-                    height = sizeList[0]?.second ?: defaultTabHeight
-                  }
-
-                  // Draw the outer rounded rectangle encompassing the full sliding bar area
-                  val outerRectangleYStart = height - 45
-                  val outerRectangleYEnd = height - 5
-
-                  // Draw the inner rounded rectangle (the sliding line area)
-                  val tabWidth = sizeList[0]?.first ?: defaultTabWidth
-                  val rectangleStartX = progressFromFirstPage * tabWidth + tabWidth / 4
-                  val rectangleEndX = progressFromFirstPage * tabWidth + tabWidth * 3 / 4
-                  val rectangleYStart = height - 35
-                  val rectangleYEnd = height - 15
-
-                  drawRoundRect(
-                      color = colorScheme.primary.copy(alpha = 0.1f),
-                      topLeft = Offset(x = tabWidth / 4, y = outerRectangleYStart),
-                      size =
-                          Size(
-                              width = tabWidth * 7 / 2,
-                              height =
-                                  outerRectangleYEnd -
-                                      outerRectangleYStart), // 2 * (7/2 = 1 + 3 / 4)
-                      cornerRadius = CornerRadius(x = 16.dp.toPx(), y = 16.dp.toPx()))
-
-                  drawRoundRect(
-                      color = colorScheme.primary.copy(alpha = 0.2f),
-                      topLeft = Offset(x = rectangleStartX, y = rectangleYStart),
-                      size =
-                          Size(
-                              width = rectangleEndX - rectangleStartX,
-                              height = rectangleYEnd - rectangleYStart),
-                      cornerRadius = CornerRadius(x = 12.dp.toPx(), y = 12.dp.toPx()))
-
-                  // Draw the sliding line inside the inner rectangle
-                  val lineStartOffset =
-                      Offset(x = progressFromFirstPage * tabWidth + tabWidth / 3, y = height - 25)
-                  val lineEndOffset =
-                      Offset(
-                          x = progressFromFirstPage * tabWidth + tabWidth * 2 / 3, y = height - 25)
-
-                  drawLine(
-                      start = lineStartOffset,
-                      end = lineEndOffset,
-                      color = colorScheme.primary,
-                      strokeWidth = Stroke.DefaultMiter)
-                })
-      }) {
-        tabList.forEachIndexed { index, str ->
-          Tab(
-              selected = index == pagerState.currentPage,
-              onClick = { scope.launch { pagerState.animateScrollToPage(index) } },
-              modifier =
-                  Modifier.onSizeChanged {
-                    sizeList[index] = Pair(it.width.toFloat(), it.height.toFloat())
-                  },
-              selectedContentColor = colorScheme.primary) {
-                Spacer(
-                    modifier =
-                        Modifier.height(
-                            20.dp) // Minimal size to retain dimensions without visible content
-                    )
-              }
-        }
-      }
-}
 
 @Composable
 fun AssociationProfileSeeMoreButton(
