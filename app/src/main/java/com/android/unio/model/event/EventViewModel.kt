@@ -276,7 +276,9 @@ constructor(
   fun addEventUserPicture(
       pictureInputStream: InputStream,
       event: Event,
-      picture: EventUserPicture
+      picture: EventUserPicture,
+      onSuccess: () -> Unit,
+      onFailure: (Exception) -> Unit
   ) {
     val picId = eventUserPictureRepository.getNewUid()
     imageRepository.uploadImage(
@@ -290,12 +292,16 @@ constructor(
                 event.eventPictures.add(newEventPicture.uid)
                 updateEventWithoutImage(
                     event,
-                    { event.eventPictures.add(newEventPicture) },
+                    {
+                      event.eventPictures.add(newEventPicture)
+                      onSuccess()
+                    },
                     { e ->
                       Log.e("EventViewModel", "An error occurred while updating an event: $e")
                     })
               },
               { e ->
+                onFailure(e)
                 Log.e("EventViewModel", "An error occurred while adding an event picture: $e")
               })
         },
@@ -308,7 +314,12 @@ constructor(
    * @param event The event in question.
    * @param picture The [EventUserPicture] to update
    */
-  fun updateEventUserPictureWithoutImage(event: Event, picture: EventUserPicture) {
+  fun updateEventUserPictureWithoutImage(
+      event: Event,
+      picture: EventUserPicture,
+      onSuccess: () -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
     eventUserPictureRepository.addEventUserPicture(
         picture,
         {
@@ -319,8 +330,12 @@ constructor(
                 { event.eventPictures.add(picture) },
                 { e -> Log.e("EventViewModel", "An error occurred while updating an event: $e") })
           }
+          onSuccess()
         },
-        { e -> Log.e("EventViewModel", "An error occurred while adding an event picture: $e") })
+        { e ->
+          onFailure(e)
+          Log.e("EventViewModel", "An error occurred while adding an event picture: $e")
+        })
   }
 
   /**

@@ -1,5 +1,7 @@
 package com.android.unio.ui.event.overlay
 
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -18,6 +20,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -62,6 +65,13 @@ fun PictureOverlay(
   val context = LocalContext.current
   val iconSize = 40.dp
   var enableButton by remember { mutableStateOf(true) }
+  val event by eventViewModel.selectedEvent.collectAsState()
+
+  if (event == null) {
+    Log.e("PictureOverlay", "Event is null")
+    Toast.makeText(LocalContext.current, "An error occurred.", Toast.LENGTH_SHORT).show()
+    return
+  }
   val onClickArrow: (Boolean) -> Unit = { isRight: Boolean ->
     if (isRight && pagerState.currentPage < eventPictures.size - 1) {
       scope.launch { pagerState.animateScrollToPage(pagerState.currentPage + 1) }
@@ -78,8 +88,16 @@ fun PictureOverlay(
   val onClickLike = {
     enableButton = false
     val picture = eventPictures[pagerState.currentPage]
-    picture.likes.add(user.uid)
+    if (isLiked == true) {
+      // unlike
+      picture.likes.remove(user.uid)
+    } else {
+
+      picture.likes.add(user.uid)
+    }
     isLiked = !isLiked
+    eventViewModel.updateEventUserPictureWithoutImage(
+        event = event!!, picture = picture, { enableButton = true }, {})
   }
   Dialog(
       onDismissRequest = onDismiss,

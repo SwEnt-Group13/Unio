@@ -225,7 +225,14 @@ fun EventScreenScaffold(
       },
       content = {
         EventScreenContent(
-            navigationAction, mapViewModel, event, user!!, organisers, pagerState, tabList)
+            navigationAction,
+            mapViewModel,
+            eventViewModel,
+            event,
+            user!!,
+            organisers,
+            pagerState,
+            tabList)
       })
 
   NotificationSender(
@@ -252,6 +259,7 @@ fun EventScreenScaffold(
 fun EventScreenContent(
     navigationAction: NavigationAction,
     mapViewModel: MapViewModel,
+    eventViewModel: EventViewModel,
     event: Event,
     user: User,
     organisers: List<Association>,
@@ -278,7 +286,8 @@ fun EventScreenContent(
             Modifier.fillMaxSize()
                 .padding(9.dp)
                 .testTag(EventDetailsTestTags.EVENT_DETAILS_PAGER)) { page ->
-          EventDetailsBody(navigationAction, mapViewModel, event, user, context, page)
+          EventDetailsBody(
+              navigationAction, mapViewModel, eventViewModel, event, user, context, page)
         }
   }
 }
@@ -398,6 +407,7 @@ fun EventDate(event: Event) {
 fun EventDetailsBody(
     navigationAction: NavigationAction,
     mapViewModel: MapViewModel,
+    eventViewModel: EventViewModel,
     event: Event,
     user: User,
     context: Context,
@@ -406,7 +416,7 @@ fun EventDetailsBody(
   if (page == 0) {
     EventDetailsDescriptionTab(navigationAction, mapViewModel, event, context)
   } else if (page == 1) {
-    EventDetailsPicturesTab(event, user, context)
+    EventDetailsPicturesTab(event, user, context, eventViewModel)
   }
 }
 
@@ -418,7 +428,12 @@ fun EventDetailsBody(
  * @param context The local [Context]
  */
 @Composable
-fun EventDetailsPicturesTab(event: Event, user: User, context: Context) {
+fun EventDetailsPicturesTab(
+    event: Event,
+    user: User,
+    context: Context,
+    eventViewModel: EventViewModel
+) {
   val eventPictures by event.eventPictures.list.collectAsState()
   var showFullScreen by remember { mutableStateOf(false) }
   var selectedPictureUri by remember { mutableStateOf(Uri.EMPTY) }
@@ -467,6 +482,7 @@ fun EventDetailsPicturesTab(event: Event, user: User, context: Context) {
           },
           pagerState,
           eventPictures,
+          eventViewModel,
           user)
     }
   }
