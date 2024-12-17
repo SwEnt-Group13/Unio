@@ -22,6 +22,11 @@ constructor(
     private val eventRepository: EventRepository
 ) : UserDeletionRepository {
 
+  /**
+   * Initialize the user deletion repository.
+   *
+   * @param onSuccess the callback to be called when the initialization is successful.
+   */
   override fun init(onSuccess: () -> Unit) {
     Firebase.auth.registerAuthStateListener {
       if (it.currentUser != null) {
@@ -30,6 +35,16 @@ constructor(
     }
   }
 
+  /**
+   * Delete the user with the given user ID. This method will also update the events and
+   * associations that the user is associated with.
+   *
+   * @param userId the ID of the user to be deleted.
+   * @param eventToUpdate the list of events to be updated.
+   * @param associationToUpdate the list of associations to be updated.
+   * @param onSuccess the callback to be called when the user is successfully deleted.
+   * @param onFailure the callback to be called when the user deletion fails.
+   */
   override fun deleteUser(
       userId: String,
       eventToUpdate: List<Event>,

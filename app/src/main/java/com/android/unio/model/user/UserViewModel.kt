@@ -201,11 +201,13 @@ constructor(
   }
 
   /**
-   * Deletes the user with the given userId from firebase auth, storage (for the profile picture)
-   * and firestore
+   * Deletes the user and from the database and update all its dependencies. If
+   * [deleteWithProfilePicture] is set to true, the user's profile picture will also be deleted.
    *
-   * @param userId The Id of the corresponding user we want to delete
-   * @return true if all three method were successful and false otherwise
+   * @param user The [User] object to delete.
+   * @param deleteWithProfilePicture Whether to delete the user's profile picture or not.
+   * @param onSuccess Callback if deletion is successful.
+   * @param onFailure Callback if deletion fails.
    */
   suspend fun deleteUser(
       user: User,
