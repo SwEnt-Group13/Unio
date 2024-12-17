@@ -41,6 +41,7 @@ import com.android.unio.model.strings.test_tags.settings.SettingsTestTags
 import com.android.unio.model.strings.test_tags.user.SomeoneElseUserProfileTestTags
 import com.android.unio.model.strings.test_tags.user.UserProfileTestTags
 import com.android.unio.model.user.User
+import com.android.unio.model.user.UserDeletionRepositoryFirestore
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.association.AssociationProfileScaffold
@@ -111,6 +112,7 @@ class ScreenDisplayingTest : TearDown() {
       }
 
   @MockK private lateinit var associationRepositoryFirestore: AssociationRepositoryFirestore
+  @MockK private lateinit var userDeletionRepository: UserDeletionRepositoryFirestore
   @MockK private lateinit var imageRepositoryFirestore: ImageRepositoryFirebaseStorage
   @MockK
   private lateinit var eventUserPictureRepositoryFirestore: EventUserPictureRepositoryFirestore
@@ -191,7 +193,7 @@ class ScreenDisplayingTest : TearDown() {
           val onSuccess = args[1] as (User) -> Unit
           onSuccess(user)
         }
-    userViewModel = UserViewModel(userRepository, imageRepositoryFirestore)
+    userViewModel = UserViewModel(userRepository, imageRepositoryFirestore, userDeletionRepository)
     userViewModel.getUserByUid("1", false)
 
     searchViewModel = spyk(SearchViewModel(searchRepository))
