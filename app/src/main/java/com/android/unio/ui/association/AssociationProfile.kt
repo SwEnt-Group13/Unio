@@ -1,7 +1,9 @@
 package com.android.unio.ui.association
 
+import android.annotation.SuppressLint
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -91,6 +93,7 @@ import com.android.unio.model.user.User
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.model.utils.NetworkUtils
 import com.android.unio.ui.components.EventSearchBar
+import com.android.unio.ui.components.MemberSearchBar
 import com.android.unio.ui.components.NotificationSender
 import com.android.unio.ui.components.RoleBadge
 import com.android.unio.ui.components.SearchPagerSection
@@ -509,7 +512,7 @@ private fun AssociationProfileActionsContent(
             eventViewModel,
             searchViewModel = searchViewModel)
         AssociationDescription(association!!)
-        AssociationMembers(associationViewModel, association!!.members, onMemberClick)
+        AssociationActionsMembers(associationViewModel, onMemberClick, searchViewModel)
       }
 }
 
@@ -519,6 +522,7 @@ private fun AssociationProfileActionsContent(
  *
  * @param members (List<User>) : The list of users in the association that can be contacted
  */
+@SuppressLint("StateFlowValueCalledInComposition")
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun AssociationMembers(
@@ -531,6 +535,9 @@ private fun AssociationMembers(
   if (members.isEmpty()) {
     return
   }
+
+    Log.d("AssociationActionsMembers", "MemberSize" + members.size.toString())
+    Log.d("AssociationActionsMembers", "member0" + members.get(0).user.element.value.toString())
 
   Text(
       context.getString(R.string.association_contact_members),
@@ -580,66 +587,93 @@ private fun AssociationMembers(
       }
 }
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun AssociationActionsMembers(
     associationViewModel: AssociationViewModel,
-    members: List<Member>,
-    onMemberClick: (User) -> Unit
+    onMemberClick: (User) -> Unit,
+    searchViewModel: SearchViewModel, // ViewModel for handling member search
 ) {
-  val context = LocalContext.current
+    val context = LocalContext.current
 
-  if (members.isEmpty()) {
-    return
-  }
+    // State for search results and pager state
+    val association by associationViewModel.selectedAssociation.collectAsState()
+    val members = association?.members
+    val pagerState = rememberPagerState(initialPage = 0) { members?.size ?: 0 }
+    val coroutineScope = rememberCoroutineScope()
 
-  Text(
-      text = "Members",
-      style = AppTypography.headlineMedium,
-      modifier = Modifier.testTag("NEW TEST TAGGGG"))
-  FlowRow(
-      modifier = Modifier.fillMaxWidth(),
-      horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally),
-      verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        members.forEach { member ->
-          val user = associationViewModel.getUserFromMember(member).collectAsState()
-          Column(
-              modifier =
-                  Modifier.background(
-                          MaterialTheme.colorScheme.secondaryContainer, RoundedCornerShape(8.dp))
-                      .clickable { user.value?.let { onMemberClick(it) } }
-                      .padding(16.dp),
-              verticalArrangement = Arrangement.spacedBy(8.dp),
-              horizontalAlignment = Alignment.CenterHorizontally) {
-                Box(
-                    modifier =
-                        Modifier.clip(CircleShape)
-                            .size(75.dp)
-                            .background(MaterialTheme.colorScheme.surfaceDim)) {
-                      user.value?.profilePicture?.toUri()?.let {
-                        AsyncImageWrapper(
-                            imageUri = it,
-                            contentDescription =
-                                context.getString(
-                                    R.string.association_contact_member_profile_picture),
-                            modifier = Modifier.fillMaxWidth(),
-                            contentScale = ContentScale.Crop)
-                      }
+    Log.d("AssociationActionsMembers", "searchResults size : "+ members?.size.toString())
+
+    // Define the MemberSearchBar
+    val searchBar: @Composable () -> Unit = {
+        MemberSearchBar(
+            searchViewModel = searchViewModel,
+            onMemberSelected = { selectedMember ->
+                val targetPage = members?.indexOfFirst { it.uid == selectedMember.uid }
+                if (targetPage != null && targetPage >= 0) {
+                    coroutineScope.launch {
+                        pagerState.animateScrollToPage(targetPage)
                     }
-                user.value?.firstName?.let {
-                  val firstName = it
-                  user.value?.lastName?.let {
-                    val lastName = it
+                }
+            },
+            shouldCloseExpandable = false,
+            onOutsideClickHandled = {}
+        )
+    }
+
+    // Define the cardContent logic for each member
+    val cardContent: @Composable (Member) -> Unit = { member ->
+        val user = associationViewModel.getUserFromMember(member).collectAsState()
+        Column(
+            modifier = Modifier
+                .background(
+                    MaterialTheme.colorScheme.secondaryContainer, RoundedCornerShape(8.dp)
+                )
+                .clickable { user.value?.let { onMemberClick(it) } }
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Box(
+                modifier = Modifier
+                    .clip(CircleShape)
+                    .size(75.dp)
+                    .background(MaterialTheme.colorScheme.surfaceDim)
+            ) {
+                user.value?.profilePicture?.toUri()?.let {
+                    AsyncImageWrapper(
+                        imageUri = it,
+                        contentDescription = context.getString(
+                            R.string.association_contact_member_profile_picture
+                        ),
+                        modifier = Modifier.fillMaxWidth(),
+                        contentScale = ContentScale.Crop
+                    )
+                }
+            }
+            user.value?.firstName?.let { firstName ->
+                user.value?.lastName?.let { lastName ->
                     Text("$firstName $lastName")
 
                     // Role Badge
                     RoleBadge(member.role)
-                  }
                 }
-              }
+            }
         }
-      }
+    }
+
+    // Use the reusable SearchPagerSection
+    if (members != null){
+        SearchPagerSection(
+            items = members,
+            cardContent = { cardContent(it) },
+            searchBar = searchBar,
+            pagerState = pagerState
+        )
+    }
+
 }
+
+
 
 /**
  * Component that display all the events of the association in a card format, like in the home
