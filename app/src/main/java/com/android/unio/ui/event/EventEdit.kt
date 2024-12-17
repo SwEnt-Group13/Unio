@@ -142,7 +142,7 @@ fun EventEditScreen(
               isError = name.isEmpty(),
               supportingText = {
                 if (name.isEmpty()) {
-                  context.getString(R.string.event_creation_name_error)
+                  Text(context.getString(R.string.event_creation_name_error))
                 }
               },
               onValueChange = { name = it },
@@ -151,6 +151,12 @@ fun EventEditScreen(
           OutlinedTextField(
               modifier = Modifier.fillMaxWidth().testTag(EventEditTestTags.SHORT_DESCRIPTION),
               value = shortDescription,
+              isError = shortDescription.isEmpty(),
+              supportingText = {
+                if (shortDescription.isEmpty()) {
+                  Text(context.getString(R.string.event_creation_short_description_error))
+                }
+              },
               onValueChange = { shortDescription = it },
               label = { Text(context.getString(R.string.event_creation_short_description_label)) })
 
@@ -184,6 +190,12 @@ fun EventEditScreen(
           OutlinedTextField(
               modifier = Modifier.fillMaxWidth().testTag(EventEditTestTags.DESCRIPTION),
               value = longDescription,
+              isError = longDescription.isEmpty(),
+              supportingText = {
+                if (longDescription.isEmpty()) {
+                  Text(context.getString(R.string.event_creation_description_error))
+                }
+              },
               onValueChange = { longDescription = it },
               label = { Text(context.getString(R.string.event_creation_description_label)) })
 

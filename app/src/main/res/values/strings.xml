@@ -215,6 +215,8 @@
     <string name="event_creation_location_dropdown_points">…</string>
     <string name="event_creation_location_dropdown_more">More…</string>
     <string name="event_creation_name_error">Enter an event name</string>
+    <string name="event_creation_short_description_error">Enter an event short description</string>
+    <string name="event_creation_description_error">Enter an event description</string>
 
     <!-- Event Edit Strings -->
     <string name="event_edit_title">Edit </string>
