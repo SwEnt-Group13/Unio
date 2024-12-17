@@ -83,9 +83,9 @@ fun EventEditScreen(
 
   val eventToEdit = remember { eventViewModel.selectedEvent.value!! }
 
-  var name by remember { mutableStateOf(eventToEdit.title) }
-  var shortDescription by remember { mutableStateOf(eventToEdit.catchyDescription) }
-  var longDescription by remember { mutableStateOf(eventToEdit.description) }
+  var name by remember { mutableStateOf(eventToEdit.title.trim()) }
+  var shortDescription by remember { mutableStateOf(eventToEdit.catchyDescription.trim()) }
+  var longDescription by remember { mutableStateOf(eventToEdit.description.trim()) }
 
   var coauthorsAndBoolean =
       associationViewModel.associations.collectAsState().value.map {
