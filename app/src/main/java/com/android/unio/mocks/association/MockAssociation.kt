@@ -103,11 +103,11 @@ class MockAssociation {
                 Member(
                     MockReferenceElement(
                         MockUser.createMockUser(uid = "1", associationDependency = true)),
-                    Role.GUEST),
+                    "GUESTUID"),
                 Member(
                     MockReferenceElement(
                         MockUser.createMockUser(uid = "2", associationDependency = true)),
-                    Role.GUEST))
+                    "GUESTUID"))
           }
       return Association(
           uid = uid,

@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import com.android.unio.R
 import com.android.unio.model.association.Association
 import com.android.unio.model.association.Member
+import com.android.unio.model.association.Role
 import com.android.unio.model.event.Event
 import com.android.unio.model.search.SearchViewModel
 import com.android.unio.ui.theme.AppTypography
@@ -188,6 +189,8 @@ fun EventSearchBar(
 @Composable
 fun MemberSearchBar(
     searchViewModel: SearchViewModel,
+    associationUid : String,
+    userUid : String,
     onMemberSelected: (Member) -> Unit,
     shouldCloseExpandable: Boolean,
     onOutsideClickHandled: () -> Unit
@@ -195,6 +198,7 @@ fun MemberSearchBar(
   var searchQuery by remember { mutableStateOf("") }
   val memberResults by
       searchViewModel.members.collectAsState() // Fetching members results from the ViewModel
+    val associations by searchViewModel.associations.collectAsState()
   val searchState by searchViewModel.status.collectAsState()
 
   SearchBar(
@@ -210,6 +214,12 @@ fun MemberSearchBar(
       shouldCloseExpandable = shouldCloseExpandable,
       onOutsideClickHandled = onOutsideClickHandled) { member ->
         // Display the member's name or any other information you'd like here
-        Text("${member.user.uid} - ${member.role.displayName}")
+
+      val association = associations.find{ it.uid == associationUid }
+      val userRole = association?.roles?.find { it.uid == association.members.find { it.uid == userUid }?.roleUid}
+
+      if (userRole != null) {
+          Text("${member.user.uid} - ${userRole.displayName}")
+      }
       }
 }

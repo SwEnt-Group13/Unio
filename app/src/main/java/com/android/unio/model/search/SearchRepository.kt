@@ -131,13 +131,13 @@ constructor(
   }
 
   private fun addMembersFromAssociations(associations: List<Association>) {
-    val memberDocuments =
+      val memberDocuments =
         associations.flatMap { association ->
           association.members.map { member ->
             MemberDocument(
                 uid = member.uid, // Ensure each member has a unique UID
                 userUid = member.user.uid, // The user's UID
-                role = member.role.displayName,
+                role = (association.roles.find {it.uid == member.uid}?.displayName ?: ""),
                 associationUid = association.uid // Link to the association UID
                 )
           }
