@@ -4,7 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventRepository
-import com.android.unio.model.follow.ConcurrentAssociationUserRepository
+import com.android.unio.model.usecase.ConcurrentAssociationUserRepository
 import com.android.unio.model.image.ImageRepository
 import com.android.unio.model.user.User
 import com.google.firebase.Firebase

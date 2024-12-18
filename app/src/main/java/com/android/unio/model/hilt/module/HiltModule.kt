@@ -7,8 +7,8 @@ import com.android.unio.model.event.EventRepository
 import com.android.unio.model.event.EventRepositoryFirestore
 import com.android.unio.model.event.EventUserPictureRepository
 import com.android.unio.model.event.EventUserPictureRepositoryFirestore
-import com.android.unio.model.follow.ConcurrentAssociationUserRepository
-import com.android.unio.model.follow.ConcurrentAssociationUserRepositoryFirestore
+import com.android.unio.model.usecase.ConcurrentAssociationUserRepository
+import com.android.unio.model.usecase.ConcurrentAssociationUserRepositoryFirestore
 import com.android.unio.model.image.ImageRepository
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.map.LocationRepository

@@ -17,7 +17,7 @@ import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventRepositoryFirestore
 import com.android.unio.model.event.EventUserPictureRepositoryFirestore
 import com.android.unio.model.event.EventViewModel
-import com.android.unio.model.follow.ConcurrentAssociationUserRepositoryFirestore
+import com.android.unio.model.usecase.ConcurrentAssociationUserRepositoryFirestore
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.image.ImageViewModel
 import com.android.unio.model.map.MapViewModel

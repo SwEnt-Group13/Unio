@@ -21,7 +21,7 @@ import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventRepositoryFirestore
 import com.android.unio.model.event.EventUserPictureRepositoryFirestore
 import com.android.unio.model.event.EventViewModel
-import com.android.unio.model.follow.ConcurrentAssociationUserRepositoryFirestore
+import com.android.unio.model.usecase.ConcurrentAssociationUserRepositoryFirestore
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.map.nominatim.NominatimApiService
 import com.android.unio.model.map.nominatim.NominatimLocationRepository
@@ -85,7 +85,7 @@ class EventCreationTest : TearDown() {
       ConcurrentEventUserRepositoryFirestore
   @MockK
   private lateinit var concurrentAssociationUserRepositoryFirestore:
-      ConcurrentAssociationUserRepositoryFirestore
+          ConcurrentAssociationUserRepositoryFirestore
 
   @MockK
   private lateinit var nominatimLocationRepositoryWithoutFunctionality: NominatimLocationRepository

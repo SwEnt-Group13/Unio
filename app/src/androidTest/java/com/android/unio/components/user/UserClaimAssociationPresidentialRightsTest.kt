@@ -12,7 +12,7 @@ import com.android.unio.mocks.user.MockUser
 import com.android.unio.model.association.AssociationRepositoryFirestore
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.event.EventRepositoryFirestore
-import com.android.unio.model.follow.ConcurrentAssociationUserRepositoryFirestore
+import com.android.unio.model.usecase.ConcurrentAssociationUserRepositoryFirestore
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.search.SearchRepository
 import com.android.unio.model.search.SearchViewModel
@@ -44,7 +44,7 @@ class UserClaimAssociationPresidentialRightsTest : TearDown() {
   @MockK private lateinit var userDeletionRepository: UserDeletionRepositoryFirestore
   @MockK
   private lateinit var concurrentAssociationUserRepositoryFirestore:
-      ConcurrentAssociationUserRepositoryFirestore
+          ConcurrentAssociationUserRepositoryFirestore
   @MockK private lateinit var navHostController: NavHostController
 
   private lateinit var associationViewModel: AssociationViewModel
