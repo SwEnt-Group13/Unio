@@ -47,10 +47,10 @@ constructor(
   private var initializeWithAuthenticatedUser: Boolean = true
 
   constructor(
-    userRepository: UserRepository,
-    imageRepository: ImageRepository,
-    userDeletionUseCase: UserDeletionUseCase,
-    initializeWithAuthenticatedUser: Boolean
+      userRepository: UserRepository,
+      imageRepository: ImageRepository,
+      userDeletionUseCase: UserDeletionUseCase,
+      initializeWithAuthenticatedUser: Boolean
   ) : this(userRepository, imageRepository, userDeletionUseCase) {
     this.initializeWithAuthenticatedUser = initializeWithAuthenticatedUser
   }
@@ -282,6 +282,14 @@ constructor(
     }
   }
 
+  /**
+   * Check if the item is already in the list. If it is, update it with the provided operation,
+   * otherwise add it to the list with the provided operation applied.
+   *
+   * @param list The list to add/update the item in.
+   * @param item The item to add/update.
+   * @param operation The operation to apply to the item.
+   */
   private fun <T> updateOrAdd(list: MutableList<T>, item: T, operation: (T) -> T) {
     if (list.contains(item)) {
       val index = list.indexOf(item)
