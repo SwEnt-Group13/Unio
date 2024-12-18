@@ -5,7 +5,7 @@ import com.android.unio.mocks.association.MockAssociation
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventRepository
 import com.android.unio.model.firestore.emptyFirestoreReferenceList
-import com.android.unio.model.usecase.ConcurrentAssociationUserRepository
+import com.android.unio.model.usecase.FollowUseCase
 import com.android.unio.model.image.ImageRepository
 import com.android.unio.model.user.User
 import com.google.firebase.Firebase
@@ -48,7 +48,7 @@ class AssociationViewModelTest {
   @Mock private lateinit var eventRepository: EventRepository
   @Mock private lateinit var imageRepository: ImageRepository
   @Mock
-  private lateinit var concurrentAssociationUserRepository: ConcurrentAssociationUserRepository
+  private lateinit var followUseCase: FollowUseCase
 
   private lateinit var viewModel: AssociationViewModel
 
@@ -80,7 +80,7 @@ class AssociationViewModelTest {
             associationRepository,
             eventRepository,
             imageRepository,
-            concurrentAssociationUserRepository)
+            followUseCase)
 
     user =
         User(
@@ -105,7 +105,7 @@ class AssociationViewModelTest {
 
   @Test
   fun testUpdateFollowIncrement() {
-    `when`(concurrentAssociationUserRepository.updateFollow(any(), any(), any(), any()))
+    `when`(followUseCase.updateFollow(any(), any(), any(), any()))
         .thenAnswer { invocation ->
           val onSuccess = invocation.arguments[2] as () -> Unit
           onSuccess()
@@ -121,7 +121,7 @@ class AssociationViewModelTest {
 
   @Test
   fun testUpdateFollowDecrement() {
-    `when`(concurrentAssociationUserRepository.updateFollow(any(), any(), any(), any()))
+    `when`(followUseCase.updateFollow(any(), any(), any(), any()))
         .thenAnswer { invocation ->
           val onSuccess = invocation.arguments[2] as () -> Unit
           onSuccess()
@@ -189,7 +189,7 @@ class AssociationViewModelTest {
             associationRepository,
             eventRepository,
             imageRepository,
-            concurrentAssociationUserRepository)
+            followUseCase)
 
     runBlocking {
       val result = newViewModel.associations.first()

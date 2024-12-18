@@ -20,7 +20,7 @@ import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventRepositoryFirestore
 import com.android.unio.model.event.EventUserPictureRepositoryFirestore
 import com.android.unio.model.event.EventViewModel
-import com.android.unio.model.usecase.ConcurrentAssociationUserRepositoryFirestore
+import com.android.unio.model.usecase.FollowUseCaseFirestore
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.map.nominatim.NominatimLocationRepository
 import com.android.unio.model.map.nominatim.NominatimLocationSearchViewModel
@@ -77,7 +77,7 @@ class EventEditTests : TearDown() {
       ConcurrentEventUserRepositoryFirestore
   @MockK
   private lateinit var concurrentAssociationUserRepositoryFirestore:
-          ConcurrentAssociationUserRepositoryFirestore
+          FollowUseCaseFirestore
 
   private val mockEvent =
       MockEvent.createMockEvent(
