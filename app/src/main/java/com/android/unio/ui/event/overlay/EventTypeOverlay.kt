@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.android.unio.model.event.EventType
+import com.android.unio.model.strings.test_tags.event.EventTypeOverlayTestTags
 import com.android.unio.ui.theme.AppTypography
 
 
@@ -50,26 +51,26 @@ fun EventTypeOverlay(
             elevation = CardDefaults.cardElevation(8.dp),
             shape = RoundedCornerShape(16.dp),
             modifier =
-            Modifier.fillMaxWidth().padding(20.dp).testTag()) {  //InterestsOverlayTestTags.CARD
+            Modifier.fillMaxWidth().padding(20.dp).testTag(EventTypeOverlayTestTags.CARD)) {
             Column(
                 modifier =
                 Modifier.fillMaxWidth()
                     .padding(15.dp)
                     .sizeIn(maxHeight = 400.dp)
-                    .testTag(), //InterestsOverlayTestTags.COLUMN
+                    .testTag(EventTypeOverlayTestTags.COLUMN),
                 verticalArrangement = Arrangement.SpaceBetween) {
 
                 // Text fields for the title and description of the Interest Overlay
                 Text(
                     text = context.getString(), //R.string.interest_overlay_title
                     style = AppTypography.headlineSmall,
-                    modifier = Modifier.testTag()) //InterestsOverlayTestTags.TITLE_TEXT
+                    modifier = Modifier.testTag(EventTypeOverlayTestTags.TITLE_TEXT))
                 Text(
                     text = context.getString(), //R.string.interest_overlay_description
                     style = AppTypography.bodyMedium,
                     modifier =
                     Modifier.padding(bottom = 5.dp)
-                        .testTag()) //InterestsOverlayTestTags.SUBTITLE_TEXT
+                        .testTag(EventTypeOverlayTestTags.SUBTITLE_TEXT))
                 Surface(
                     modifier = Modifier.sizeIn(maxHeight = 250.dp), color = Color.Transparent) {
                     Column(modifier = Modifier.verticalScroll(scrollState)) {
@@ -81,7 +82,7 @@ fun EventTypeOverlay(
                             if (index != copiedTypes.size - 1) {
                                 HorizontalDivider(
                                     modifier =
-                                    Modifier.testTag()) //InterestsOverlayTestTags.DIVIDER + "$index"
+                                    Modifier.testTag(EventTypeOverlayTestTags.DIVIDER + "$index"))
                             }
                         }
                     }
@@ -97,7 +98,7 @@ fun EventTypeOverlay(
                         onClick = onDismiss,
                         modifier =
                         Modifier.padding(5.dp)
-                            .testTag()) { //InterestsOverlayTestTags.CANCEL_BUTTON
+                            .testTag(EventTypeOverlayTestTags.CANCEL_BUTTON)) {
                         Text(context.getString()) //R.string.overlay_cancel
                     }
 
@@ -105,7 +106,7 @@ fun EventTypeOverlay(
                         onClick = { onSave(copiedTypes) },
                         modifier =
                         Modifier.padding(5.dp)
-                            .testTag()) { //InterestsOverlayTestTags.SAVE_BUTTON
+                            .testTag(EventTypeOverlayTestTags.SAVE_BUTTON)) {
                         Text(context.getString()) //R.string.overlay_save
                     }
                 }
@@ -124,17 +125,17 @@ private fun EventTypeOverlayRow(
         modifier =
         Modifier.padding(5.dp)
             .fillMaxWidth()
-            .testTag() //InterestsOverlayTestTags.CLICKABLE_ROW + pair.first.name
+            .testTag(EventTypeOverlayTestTags.CLICKABLE_ROW + pair.first.name)
             .clickable { pair.second.value = !pair.second.value }) {
         Text(
             text = pair.first.name,
             style = AppTypography.bodyMedium,
             modifier =
             Modifier.padding(start = 5.dp)
-                .testTag()) //InterestsOverlayTestTags.TEXT + pair.first.name
+                .testTag(EventTypeOverlayTestTags.TEXT + pair.first.name))
         Checkbox(
             checked = pair.second.value,
             onCheckedChange = { pair.second.value = it },
-            modifier = Modifier.testTag()) //InterestsOverlayTestTags.CHECKBOX + pair.first.name
+            modifier = Modifier.testTag(EventTypeOverlayTestTags.CHECK_BOX + pair.first.name))
     }
 }

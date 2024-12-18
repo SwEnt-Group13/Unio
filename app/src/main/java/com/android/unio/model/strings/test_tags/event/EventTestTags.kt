@@ -115,3 +115,16 @@ object EventDetailsTestTags {
   const val EVENT_PICTURES_ARROW_RIGHT = "picturesArrowRight"
   const val PICTURE_FULL_SCREEN = "pictureFullScreen"
 }
+
+object EventTypeOverlayTestTags {
+  const val CARD = "eventOverlayCard"
+  const val COLUMN = "eventOverlayColumn"
+  const val TITLE_TEXT = "eventOverlayTitleText"
+  const val SUBTITLE_TEXT = "eventOverlaySubtitleText"
+  const val DIVIDER = "eventOverlayDivider"
+  const val CANCEL_BUTTON = "eventOverlayCancelButton"
+  const val SAVE_BUTTON = "eventOverlaySaveButton"
+  const val CLICKABLE_ROW = "eventOverlayClickableRow"
+  const val TEXT = "eventOverlayRowText"
+  const val CHECK_BOX = "eventOverlayRowCheckBox"
+}
