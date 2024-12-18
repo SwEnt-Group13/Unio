@@ -168,175 +168,200 @@ fun AssociationProfileScaffold(
     searchViewModel: SearchViewModel,
     onEdit: () -> Unit
 ) {
-  val associationState by associationViewModel.selectedAssociation.collectAsState()
-  val association = associationState!!
+    val associationCollect by associationViewModel.selectedAssociation.collectAsState()
 
-  var showSheet by remember { mutableStateOf(false) }
-  val context = LocalContext.current
-
-  Scaffold(
-      topBar = {
-        TopAppBar(
-            title = {
-              Text(
-                  text = association.name,
-                  modifier = Modifier.testTag(AssociationProfileTestTags.TITLE))
-            },
-            navigationIcon = {
-              IconButton(
-                  onClick = { navigationAction.goBack() },
-                  modifier = Modifier.testTag(AssociationProfileTestTags.GO_BACK_BUTTON)) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
-                        contentDescription = context.getString(R.string.association_go_back))
-                  }
-            },
-            actions = {
-              Row {
-                IconButton(
-                    modifier = Modifier.testTag(AssociationProfileTestTags.MORE_BUTTON),
-                    onClick = { showSheet = true }) {
-                      Icon(
-                          Icons.Outlined.MoreVert,
-                          contentDescription = context.getString(R.string.association_more))
+    var showSheet by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+    associationCollect?.let { association ->
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        text = association.name,
+                        modifier = Modifier.testTag(AssociationProfileTestTags.TITLE)
+                    )
+                },
+                navigationIcon = {
+                    IconButton(
+                        onClick = { navigationAction.goBack() },
+                        modifier = Modifier.testTag(AssociationProfileTestTags.GO_BACK_BUTTON)
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
+                            contentDescription = context.getString(R.string.association_go_back)
+                        )
                     }
-              }
-            })
-      },
-      content = { padding ->
-        val user by userViewModel.user.collectAsState()
-        val userRole = association.members.find { it.uid == user!!.uid }?.role
-        val userPermissions = userRole?.permissions
-
-        Box(modifier = Modifier
-            .fillMaxSize()
-            .padding(padding)) {
-          if (userPermissions?.hasAnyPermission() == true) {
-            val userRoleColor = Color(userRole.color)
-
-            // Horizontal red strip
-            Box(
-                modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .background(userRoleColor)
-                    .height(50.dp)
-                    .align(Alignment.TopCenter)) {
-                  Text(
-                      "Your role is" +
-                          " " +
-                          userRole.displayName,
-                      color = Color.White,
-                      modifier = Modifier.align(Alignment.Center))
-                }
-
-            // Main content with vertical red lines and pager
-            Box(
-                modifier =
-                Modifier
-                    .fillMaxSize()
-                    .padding(top = 50.dp) // Ensure space for the red strip
-                ) {
-                  Row(
-                      modifier =
-                      Modifier
-                          .fillMaxSize()
-                          .padding(horizontal = 0.dp) // Space for vertical lines
-                      ) {
-                        // Left red line
-                        Box(
-                            modifier =
-                            Modifier
-                                .width(2.dp)
-                                .fillMaxHeight()
-                                .background(userRoleColor))
-
-                        // Main content (Conditional based on permission)
-                        if (userPermissions.hasPermission(PermissionType.BETTER_OVERVIEW) &&
-                            !(userPermissions.hasPermission(PermissionType.FULL_RIGHTS)) &&
-                            userPermissions.getGrantedPermissions().size == 1) {
-                          // Default content without HorizontalPager
-                          Box(modifier = Modifier
-                              .weight(1f)
-                              .padding(horizontal = 8.dp)) {
-                            AssociationProfileContent(
-                                navigationAction = navigationAction,
-                                userViewModel = userViewModel,
-                                eventViewModel = eventViewModel,
-                                associationViewModel = associationViewModel)
-                          }
-                        } else {
-                          // Main content with HorizontalPager
-                          Column(modifier = Modifier
-                              .weight(1f)
-                              .padding(horizontal = 8.dp)) {
-                            val nbOfTabs = 2
-                            val pagerState = rememberPagerState(initialPage = 0) { nbOfTabs }
-
-                            // Tab Menu
-                            val tabList =
-                                listOf(
-                                    "Overview",
-                                    "Actions")
-                            SmoothTopBarNavigationMenu(tabList, pagerState)
-
-                            // Pager Content
-                            HorizontalPager(
-                                state = pagerState, modifier = Modifier.fillMaxSize()) { page ->
-                                  when (page) {
-                                    0 ->
-                                        AssociationProfileContent(
-                                            navigationAction = navigationAction,
-                                            userViewModel = userViewModel,
-                                            eventViewModel = eventViewModel,
-                                            associationViewModel = associationViewModel)
-                                    1 ->
-                                        AssociationProfileActionsContent(
-                                            navigationAction = navigationAction,
-                                            userViewModel = userViewModel,
-                                            eventViewModel = eventViewModel,
-                                            associationViewModel = associationViewModel,
-                                            searchViewModel = searchViewModel)
-                                  }
-                                }
-                          }
+                },
+                actions = {
+                    Row {
+                        IconButton(
+                            modifier = Modifier.testTag(AssociationProfileTestTags.MORE_BUTTON),
+                            onClick = { showSheet = true }) {
+                            Icon(
+                                Icons.Outlined.MoreVert,
+                                contentDescription = context.getString(R.string.association_more)
+                            )
                         }
+                    }
+                })
+        },
+        content = { padding ->
+            val user by userViewModel.user.collectAsState()
+            val userRole = association.roles.find { it.uid == association.members.find { it.uid == user!!.uid }?.roleUid}
 
-                        // Right red line (This will always be displayed)
-                        Box(
+            val userPermissions = userRole?.permissions
+
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding)
+            ) {
+                if (userPermissions?.hasAnyPermission() == true) {
+                    val userRoleColor = Color(userRole.color)
+
+                    // Horizontal red strip
+                    Box(
+                        modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .background(userRoleColor)
+                            .height(50.dp)
+                            .align(Alignment.TopCenter)
+                    ) {
+                        Text(
+                            "Your role is" +
+                                    " " +
+                                    userRole.displayName,
+                            color = Color.White,
+                            modifier = Modifier.align(Alignment.Center)
+                        )
+                    }
+
+                    // Main content with vertical red lines and pager
+                    Box(
+                        modifier =
+                        Modifier
+                            .fillMaxSize()
+                            .padding(top = 50.dp) // Ensure space for the red strip
+                    ) {
+                        Row(
                             modifier =
                             Modifier
-                                .width(2.dp)
-                                .fillMaxHeight()
-                                .background(userRoleColor))
-                      }
+                                .fillMaxSize()
+                                .padding(horizontal = 0.dp) // Space for vertical lines
+                        ) {
+                            // Left red line
+                            Box(
+                                modifier =
+                                Modifier
+                                    .width(2.dp)
+                                    .fillMaxHeight()
+                                    .background(userRoleColor)
+                            )
+
+                            // Main content (Conditional based on permission)
+                            if (userPermissions.hasPermission(PermissionType.BETTER_OVERVIEW) &&
+                                !(userPermissions.hasPermission(PermissionType.FULL_RIGHTS)) &&
+                                userPermissions.getGrantedPermissions().size == 1
+                            ) {
+                                // Default content without HorizontalPager
+                                Box(
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .padding(horizontal = 8.dp)
+                                ) {
+                                    AssociationProfileContent(
+                                        navigationAction = navigationAction,
+                                        userViewModel = userViewModel,
+                                        eventViewModel = eventViewModel,
+                                        associationViewModel = associationViewModel
+                                    )
+                                }
+                            } else {
+                                // Main content with HorizontalPager
+                                Column(
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .padding(horizontal = 8.dp)
+                                ) {
+                                    val nbOfTabs = 2
+                                    val pagerState =
+                                        rememberPagerState(initialPage = 0) { nbOfTabs }
+
+                                    // Tab Menu
+                                    val tabList =
+                                        listOf(
+                                            "Overview",
+                                            "Actions"
+                                        )
+                                    SmoothTopBarNavigationMenu(tabList, pagerState)
+
+                                    // Pager Content
+                                    HorizontalPager(
+                                        state = pagerState, modifier = Modifier.fillMaxSize()
+                                    ) { page ->
+                                        when (page) {
+                                            0 ->
+                                                AssociationProfileContent(
+                                                    navigationAction = navigationAction,
+                                                    userViewModel = userViewModel,
+                                                    eventViewModel = eventViewModel,
+                                                    associationViewModel = associationViewModel
+                                                )
+
+                                            1 ->
+                                                AssociationProfileActionsContent(
+                                                    navigationAction = navigationAction,
+                                                    userViewModel = userViewModel,
+                                                    eventViewModel = eventViewModel,
+                                                    associationViewModel = associationViewModel,
+                                                    searchViewModel = searchViewModel
+                                                )
+                                        }
+                                    }
+                                }
+                            }
+
+                            // Right red line (This will always be displayed)
+                            Box(
+                                modifier =
+                                Modifier
+                                    .width(2.dp)
+                                    .fillMaxHeight()
+                                    .background(userRoleColor)
+                            )
+                        }
+                    }
+                } else {
+                    // Default content without permissions
+                    AssociationProfileContent(
+                        navigationAction = navigationAction,
+                        userViewModel = userViewModel,
+                        eventViewModel = eventViewModel,
+                        associationViewModel = associationViewModel
+                    )
                 }
-          } else {
-            // Default content without permissions
-            AssociationProfileContent(
-                navigationAction = navigationAction,
-                userViewModel = userViewModel,
-                eventViewModel = eventViewModel,
-                associationViewModel = associationViewModel)
-          }
-        }
-      })
+            }
+        })
 
-  var showNotificationDialog by remember { mutableStateOf(false) }
+    var showNotificationDialog by remember { mutableStateOf(false) }
 
-  NotificationSender(
-      context.getString(R.string.association_broadcast_message),
-      NotificationType.ASSOCIATION_FOLLOWERS,
-      association.uid,
-      { mapOf("title" to association.name, "body" to it) },
-      showNotificationDialog,
-      { showNotificationDialog = false })
+    NotificationSender(
+        context.getString(R.string.association_broadcast_message),
+        NotificationType.ASSOCIATION_FOLLOWERS,
+        association.uid,
+        { mapOf("title" to association.name, "body" to it) },
+        showNotificationDialog,
+        { showNotificationDialog = false })
 
-  AssociationProfileBottomSheet(
-      showSheet,
-      onClose = { showSheet = false },
-      onEdit = onEdit,
-      onOpenNotificationDialog = { showNotificationDialog = true })
+    AssociationProfileBottomSheet(
+        showSheet,
+        onClose = { showSheet = false },
+        onEdit = onEdit,
+        onOpenNotificationDialog = { showNotificationDialog = true })
+
+}
 }
 
 /**
@@ -511,11 +536,11 @@ private fun addEditRoleCloudFunction(
 
                 // Call the Firebase Cloud Function
                 Firebase.functions
-                    .getHttpsCallable("addRole")
+                    .getHttpsCallable("saveRole")
                     .call(
                         hashMapOf(
                             "tokenId" to tokenId,
-                            "newRole" to mapOf(
+                            "role" to mapOf(
                                 "displayName" to newRole.displayName,
                                 "permissions" to newRole.permissions.getGrantedPermissions().toList()
                                     .map { permission -> permission.stringName },
@@ -622,7 +647,7 @@ private fun AssociationProfileActionsContent(
             eventViewModel,
             searchViewModel = searchViewModel)
         AssociationDescription(association!!)
-        AssociationActionsMembers(associationViewModel, onMemberClick, searchViewModel)
+        AssociationActionsMembers(associationViewModel, user!!.uid, onMemberClick, searchViewModel)
       }
 }
 
@@ -692,7 +717,12 @@ private fun AssociationMembers(
                     Text("$firstName $lastName")
 
                     // Role Badge
-                    RoleBadge(member.role)
+                      val association = associationViewModel.selectedAssociation.value
+                      val userRole = association?.roles?.find { it.uid == association.members.find { it.uid == user.value?.uid }?.roleUid}
+
+                      if (userRole != null) {
+                          RoleBadge(userRole)
+                      }
                   }
                 }
               }
@@ -703,6 +733,7 @@ private fun AssociationMembers(
 @Composable
 private fun AssociationActionsMembers(
     associationViewModel: AssociationViewModel,
+    userUid: String,
     onMemberClick: (User) -> Unit,
     searchViewModel: SearchViewModel, // ViewModel for handling member search
 ) {
@@ -718,19 +749,23 @@ private fun AssociationActionsMembers(
 
     // Define the MemberSearchBar
     val searchBar: @Composable () -> Unit = {
-        MemberSearchBar(
-            searchViewModel = searchViewModel,
-            onMemberSelected = { selectedMember ->
-                val targetPage = members?.indexOfFirst { it.uid == selectedMember.uid }
-                if (targetPage != null && targetPage >= 0) {
-                    coroutineScope.launch {
-                        pagerState.animateScrollToPage(targetPage)
+        association?.let {
+            MemberSearchBar(
+                searchViewModel = searchViewModel,
+                associationUid = it.uid,
+                userUid = userUid,
+                onMemberSelected = { selectedMember ->
+                    val targetPage = members?.indexOfFirst { it.uid == selectedMember.uid }
+                    if (targetPage != null && targetPage >= 0) {
+                        coroutineScope.launch {
+                            pagerState.animateScrollToPage(targetPage)
+                        }
                     }
-                }
-            },
-            shouldCloseExpandable = false,
-            onOutsideClickHandled = {}
-        )
+                },
+                shouldCloseExpandable = false,
+                onOutsideClickHandled = {}
+            )
+        }
     }
 
     // Define the cardContent logic for each member
@@ -774,7 +809,12 @@ private fun AssociationActionsMembers(
                         Text("$firstName $lastName")
 
                         // Role Badge
-                        RoleBadge(member.role)
+                        val association = associationViewModel.selectedAssociation.value
+                        val userRole = association?.roles?.find { it.uid == association.members.find { it.uid == user.value?.uid }?.roleUid}
+
+                        if (userRole != null) {
+                            RoleBadge(userRole)
+                        }
                     }
                 }
 
@@ -1036,7 +1076,8 @@ fun SaveRoleDialog(
                         controller = controller,
                         onColorChanged = { colorEnvelope ->
                             selectedColor = colorEnvelope.color
-                        }
+                        },
+                        initialColor = selectedColor
                     )
                 }
 
@@ -1112,7 +1153,9 @@ private fun AssociationEvents(
   val isMember = association.members.any { it.uid == user!!.uid }
 
   // Retrieve the member's permissions if they are part of the association
-  val userPermissions = association.members.find { it.uid == user!!.uid }?.role?.permissions
+    val userRole = association?.roles?.find { it.uid == association.members.find { it.uid == user!!.uid }?.roleUid}
+
+  val userPermissions = userRole?.permissions
 
   // Check if the user has the "ADD_EVENTS" permission using the Permissions class
   val hasAddEventsPermission =
@@ -1185,7 +1228,9 @@ private fun AssociationActionsEvents(
     }
 
     val isMember = association.members.any { it.uid == user!!.uid }
-    val userPermissions = association.members.find { it.uid == user!!.uid }?.role?.permissions
+    val userRole = association?.roles?.find { it.uid == association.members.find { it.uid == user!!.uid }?.roleUid}
+
+    val userPermissions = userRole?.permissions
     val hasAddEventsPermission =
         userPermissions?.hasPermission(PermissionType.ADD_EDIT_EVENTS) == true
 
