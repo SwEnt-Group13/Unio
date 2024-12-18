@@ -73,7 +73,7 @@ service cloud.firestore {
       }
       function validate() {
         // Check that the association document has the correct fields
-        let fields = ['uid', 'url', 'name', 'fullName', 'category', 'description', 'followersCount', 'members', 'image', 'events'];
+        let fields = ['uid', 'url', 'name', 'fullName', 'category', 'description', 'followersCount', 'members', 'roles', 'image', 'events', 'principalEmailAddress'];
         let hasCorrectNumberOfFields = request.resource.data.size() == fields.size();
         let hasCorrectFields = request.resource.data.keys().hasAll(fields);
 
@@ -87,8 +87,10 @@ service cloud.firestore {
           request.resource.data.followersCount is int &&
           request.resource.data.followersCount >= 0 &&
           request.resource.data.members is list &&
+          request.resource.data.roles is list &&
           request.resource.data.image is string &&
-          request.resource.data.events is list;
+          request.resource.data.events is list &&
+          request.resource.data.principalEmailAddress is string;
       }
 
       allow read: if isVerified();
@@ -106,7 +108,7 @@ service cloud.firestore {
       }
       function validate() {
         // Check that the event document has the correct fields
-        let fields = ['uid', 'title', 'organisers', 'taggedAssociations', 'image', 'description', 'catchyDescription', 'price', 'date', 'location', 'types'];
+        let fields = ['uid', 'title', 'organisers', 'taggedAssociations', 'image', 'description', 'catchyDescription', 'price', 'startDate', 'endDate', 'location', 'types', 'maxNumberOfPlaces', 'numberOfSaved', 'eventPictures'];
         let hasCorrectNumberOfFields = request.resource.data.size() == fields.size();
         let hasCorrectFields = request.resource.data.keys().hasAll(fields);
 
@@ -123,12 +125,18 @@ service cloud.firestore {
           request.resource.data.catchyDescription.size() <= 100 &&
           request.resource.data.price is number &&
           request.resource.data.price >= 0 &&
-          request.resource.data.date is timestamp &&
+          request.resource.data.startDate is timestamp &&
+          request.resource.data.endDate is timestamp &&
           request.resource.data.location is map &&
           request.resource.data.location.latitude is number &&
           request.resource.data.location.longitude is number &&
           request.resource.data.location.name is string &&
-          request.resource.data.types is list;
+          request.resource.data.types is list &&
+          request.resource.data.maxNumberOfPlaces is int &&
+          request.resource.data.maxNumberOfPlaces >= -1 &&
+          request.resource.data.numberOfSaved is int &&
+          request.resource.data.numberOfSaved >= 0 &&
+          request.resource.data.eventPictures is list;
       }
 
       allow read: if isVerified();
