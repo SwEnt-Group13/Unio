@@ -214,6 +214,9 @@
     <string name="event_creation_location_input_label">Enter an address</string>
     <string name="event_creation_location_dropdown_points">…</string>
     <string name="event_creation_location_dropdown_more">More…</string>
+    <string name="event_creation_name_error">Enter an event name</string>
+    <string name="event_creation_short_description_error">Enter an event short description</string>
+    <string name="event_creation_description_error">Enter an event description</string>
 
     <!-- Event Edit Strings -->
     <string name="event_edit_title">Edit </string>
@@ -224,6 +227,9 @@
     <!-- Event Edit Component Strings -->
     <string name="event_edit_date_picker_desc">Select date</string>
     <string name="event_edit_time_picker_desc">Select time</string>
+    <string name="event_edit_date_error">Date is missing</string>
+    <string name="event_edit_time_error">Time is missing</string>
+    <string name="event_edit_location_error">Wrong location input</string>
     <string name="event_edit_toast_more_button">Continue typing to see more results</string>
 
     <!-- Associations Overlay Strings -->
