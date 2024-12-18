@@ -177,115 +177,126 @@ exports.verifyCode = onRequest(async (req, res) => {
 });
 
 /**
- * Adds a new role to an association in Firestore.
+ * Adds or updates a role in an association in Firestore.
  *
- * @param {Object} newRole - The role to add. Must include `uid`, `displayName`, `permissions` (array), and optionally `color`.
+ * @param {Object} role - The role to add or update. Must include `uid`, `displayName`, `permissions` (array), and optionally `color`.
  * @param {Object} associationDocRef - Firestore reference to the association document.
- * @returns {Promise<void>} - Resolves if the role is added successfully, otherwise throws an error.
- * @throws {Error} - If the role data is invalid or the role already exists.
+ * @param {boolean} isNewRole - Determines whether the role is new or being updated.
+ * @returns {Promise<void>} - Resolves if the role is added/updated successfully, otherwise throws an error.
+ * @throws {Error} - If the role data is invalid or if there's a conflict when adding a new role.
  */
-async function addRoleToAssociation(newRole, associationDocRef) {
-  if (!newRole || !newRole.uid || !newRole.displayName || !Array.isArray(newRole.permissions)) {
-    console.log("Error : Invalid role data. Role must have `uid`, `displayName`, and `permissions`.");
-      throw new Error("Invalid role data. Role must have `uid`, `displayName`, and `permissions`.");
+async function addOrUpdateRoleInAssociation(role, associationDocRef, isNewRole) {
+  if (!role || !role.uid || !role.displayName || !Array.isArray(role.permissions)) {
+    console.log("Error: Invalid role data. Role must have `uid`, `displayName`, and `permissions`.");
+    throw new Error("Invalid role data. Role must have `uid`, `displayName`, and `permissions`.");
   }
 
   // Fetch the association document
   const associationDoc = await associationDocRef.get();
 
   if (!associationDoc.exists) {
-    console.log("Error : Association not found.");
-      throw new Error("Association not found.");
+    console.log("Error: Association not found.");
+    throw new Error("Association not found.");
   }
 
   const associationData = associationDoc.data();
-
-  // Check if the role already exists
   const existingRoles = associationData.roles || {};
-  if (existingRoles[newRole.uid]) {
-    console.log("Error : Role with this UID already exists.");
+
+  if (isNewRole) {
+    // Check if the role already exists when adding a new role
+    if (existingRoles[role.uid]) {
+      console.log("Error: Role with this UID already exists.");
       throw new Error("Role with this UID already exists.");
+    }
+  } else {
+    // Check if the role exists when updating
+    if (!existingRoles[role.uid]) {
+      console.log("Error: Role with this UID does not exist.");
+      throw new Error("Role with this UID does not exist.");
+    }
   }
 
-  // Prepare the new role for Firestore
-  const newRoleData = {
-      displayName: newRole.displayName,
-      color: newRole.color || 0xFFFF0000, // Default color
-      permissions: newRole.permissions, // List of permissions
+  // Prepare the role data for Firestore
+  const updatedRoleData = {
+    displayName: role.displayName,
+    color: role.color || 0xFFFF0000, // Default color
+    permissions: role.permissions,  // List of permissions
   };
 
   // Update the roles in Firestore
   const updatedRoles = {
-      ...existingRoles,
-      [newRole.uid]: newRoleData,
+    ...existingRoles,
+    [role.uid]: updatedRoleData,
   };
 
   await associationDocRef.update({ roles: updatedRoles });
 
-  console.log(`New role ${newRole.uid} added to association ${associationDocRef.id}`);
+  console.log(`Role ${role.uid} ${isNewRole ? "added to" : "updated in"} association ${associationDocRef.id}`);
 }
 
-
+// Updated Cloud Function
 exports.addRole = onRequest(async (req, res) => {
   try {
-      const tokenId = req.body.data?.tokenId; // Token ID given by the user
-      const newRole = req.body.data?.newRole; // Role to add
-      const associationUid = req.body.data?.associationUid; // Association UID from the client
+    const tokenId = req.body.data?.tokenId; // Token ID given by the user
+    const role = req.body.data?.role; // Role to add or update
+    const isNewRole = req.body.data?.isNewRole; // Boolean indicating whether it's a new role
+    const associationUid = req.body.data?.associationUid; // Association UID from the client
 
-      if (!tokenId || !newRole || !associationUid) {
-          return res.status(400).json({ message: "Missing required parameters" });
-      }
+    if (!tokenId || !role || !associationUid || typeof isNewRole !== "boolean") {
+      return res.status(400).json({ message: "Missing or invalid required parameters" });
+    }
 
-      console.log("New Role:", newRole);
-      console.log("Association UID:", associationUid);
+    console.log("Role Data:", role);
+    console.log("Association UID:", associationUid);
+    console.log("isNewRole:", isNewRole);
 
-      // Get the UID of the current user
-      const uid = await getCurrentUserUid(tokenId);
-      console.log("User UID:", uid);
+    // Get the UID of the current user
+    const uid = await getCurrentUserUid(tokenId);
+    console.log("User UID:", uid);
 
-      // Fetch the association document reference
-      const firestore = getFirestore();
-      const associationDocRef = firestore.collection("associations").doc(associationUid);
+    // Fetch the association document reference
+    const firestore = getFirestore();
+    const associationDocRef = firestore.collection("associations").doc(associationUid);
 
-      // Fetch association data for permission checks
-      const associationDoc = await associationDocRef.get();
-      if (!associationDoc.exists) {
-        console.log("Error : Association not found");
-          return res.status(404).json({ message: "Association not found" });
-      }
+    // Fetch association data for permission checks
+    const associationDoc = await associationDocRef.get();
+    if (!associationDoc.exists) {
+      console.log("Error: Association not found.");
+      return res.status(404).json({ message: "Association not found." });
+    }
 
-      const associationData = associationDoc.data();
+    const associationData = associationDoc.data();
 
-      // Hydrate roles and members
-      const roles = hydrateRoles(associationData.roles || {});
-      const members = hydrateMembers(associationData.members || {}, roles);
+    // Hydrate roles and members
+    const roles = hydrateRoles(associationData.roles || {});
+    const members = hydrateMembers(associationData.members || {}, roles);
 
-      // Find the current user and their role
-      const currentMember = members.find((member) => member.userUid === uid);
-      if (!currentMember) {
-        console.log(members);
-        console.log("Error : User is not a member of the association");
-          return res.status(403).json({ message: "User is not a member of the association" });
-      }
-      
+    // Find the current user and their role
+    const currentMember = members.find((member) => member.userUid === uid);
+    if (!currentMember) {
+      console.log(members);
+      console.log("Error: User is not a member of the association.");
+      return res.status(403).json({ message: "User is not a member of the association." });
+    }
 
-      const userPermissions = currentMember.role.permissions;
+    const userPermissions = currentMember.role.permissions;
 
-      // Check if the user has the required permission
-      if (!hasPermission(userPermissions, "Add & Edit Roles")) {
-        console.log("Permission denied: ADD_EDIT_ROLES required for this association");
-          return res.status(403).json({ message: "Permission denied: ADD_EDIT_ROLES required for this association" });
-      }
+    // Check if the user has the required permission
+    if (!hasPermission(userPermissions, "Add & Edit Roles")) {
+      console.log("Permission denied: ADD_EDIT_ROLES required for this association.");
+      return res.status(403).json({ message: "Permission denied: ADD_EDIT_ROLES required for this association." });
+    }
 
-      // Add the new role to the association
-      await addRoleToAssociation(newRole, associationDocRef);
-      console.log("Role added successfully");
-      return res.status(200).json({ data: "Role added successfully", userId: uid });
+    // Add or update the role in the association
+    await addOrUpdateRoleInAssociation(role, associationDocRef, isNewRole);
+    console.log(`Role ${isNewRole ? "added" : "updated"} successfully.`);
+    return res.status(200).json({ data: `Role ${isNewRole ? "added" : "updated"} successfully`, userId: uid });
   } catch (error) {
-      console.error("Error in addRole function:", error.message);
-      return res.status(500).json({ message: "server-error", error: error.message });
+    console.error("Error in addRole function:", error.message);
+    return res.status(500).json({ message: "server-error", error: error.message });
   }
 });
+
 
 
 /**
