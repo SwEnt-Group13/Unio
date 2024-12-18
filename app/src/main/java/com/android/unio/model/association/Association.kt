@@ -80,7 +80,7 @@ enum class AssociationCategory(val displayNameId: Int) {
  * @property user Reference to the user who is a member.
  * @property role The role assigned to the member within the association.
  */
-data class Member(val user: ReferenceElement<User>, val role: Role) : UniquelyIdentifiable {
+data class Member(val user: ReferenceElement<User>, val roleUid: String) : UniquelyIdentifiable {
   class Companion {}
 
   override val uid: String
