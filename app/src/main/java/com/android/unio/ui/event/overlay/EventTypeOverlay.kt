@@ -83,7 +83,6 @@ fun EventTypeOverlay(
                                   pair,
                                   onChange = {
                                     isError.value = copiedTypes.count({ it.second.value }) > 3
-                                    println(isError)
                                   })
 
                               if (index != copiedTypes.size - 1) {
