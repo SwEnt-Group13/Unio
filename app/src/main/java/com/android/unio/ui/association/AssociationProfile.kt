@@ -3,7 +3,7 @@ package com.android.unio.ui.association
 import android.annotation.SuppressLint
 import android.util.Log
 import android.widget.Toast
-import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.annotation.NonNull
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -22,12 +21,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -36,47 +36,17 @@ import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Send
 import androidx.compose.material.icons.outlined.MoreVert
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.ModalBottomSheetProperties
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.rememberModalBottomSheetState
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateMapOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.CornerRadius
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import com.android.unio.R
@@ -84,6 +54,8 @@ import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.association.Member
 import com.android.unio.model.association.PermissionType
+import com.android.unio.model.association.Permissions
+import com.android.unio.model.association.Role
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.notification.NotificationType
@@ -104,8 +76,18 @@ import com.android.unio.ui.navigation.Screen
 import com.android.unio.ui.navigation.SmoothTopBarNavigationMenu
 import com.android.unio.ui.theme.AppTypography
 import com.android.unio.ui.utils.ToastUtils
-import kotlinx.coroutines.coroutineScope
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.android.gms.tasks.Task
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.GetTokenResult
+import com.google.firebase.functions.FirebaseFunctions
+import com.google.firebase.functions.ktx.functions
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
+
 
 /**
  * Composable element that contain the association profile screen. It display the association.
@@ -206,19 +188,22 @@ fun AssociationProfileScaffold(
         val userRole = association.members.find { it.uid == user!!.uid }?.role
         val userPermissions = userRole?.permissions
 
-        Box(modifier = Modifier.fillMaxSize().padding(padding)) {
+        Box(modifier = Modifier
+            .fillMaxSize()
+            .padding(padding)) {
           if (userPermissions?.hasAnyPermission() == true) {
             val userRoleColor = Color(userRole.color)
 
             // Horizontal red strip
             Box(
                 modifier =
-                    Modifier.fillMaxWidth()
-                        .background(userRoleColor)
-                        .height(50.dp)
-                        .align(Alignment.TopCenter)) {
+                Modifier
+                    .fillMaxWidth()
+                    .background(userRoleColor)
+                    .height(50.dp)
+                    .align(Alignment.TopCenter)) {
                   Text(
-                      context.getString(R.string.association_profile_your_role_text) +
+                      "Your role is" +
                           " " +
                           userRole.displayName,
                       color = Color.White,
@@ -228,24 +213,32 @@ fun AssociationProfileScaffold(
             // Main content with vertical red lines and pager
             Box(
                 modifier =
-                    Modifier.fillMaxSize().padding(top = 50.dp) // Ensure space for the red strip
+                Modifier
+                    .fillMaxSize()
+                    .padding(top = 50.dp) // Ensure space for the red strip
                 ) {
                   Row(
                       modifier =
-                          Modifier.fillMaxSize()
-                              .padding(horizontal = 0.dp) // Space for vertical lines
+                      Modifier
+                          .fillMaxSize()
+                          .padding(horizontal = 0.dp) // Space for vertical lines
                       ) {
                         // Left red line
                         Box(
                             modifier =
-                                Modifier.width(2.dp).fillMaxHeight().background(userRoleColor))
+                            Modifier
+                                .width(2.dp)
+                                .fillMaxHeight()
+                                .background(userRoleColor))
 
                         // Main content (Conditional based on permission)
                         if (userPermissions.hasPermission(PermissionType.BETTER_OVERVIEW) &&
                             !(userPermissions.hasPermission(PermissionType.FULL_RIGHTS)) &&
                             userPermissions.getGrantedPermissions().size == 1) {
                           // Default content without HorizontalPager
-                          Box(modifier = Modifier.weight(1f).padding(horizontal = 8.dp)) {
+                          Box(modifier = Modifier
+                              .weight(1f)
+                              .padding(horizontal = 8.dp)) {
                             AssociationProfileContent(
                                 navigationAction = navigationAction,
                                 userViewModel = userViewModel,
@@ -254,15 +247,17 @@ fun AssociationProfileScaffold(
                           }
                         } else {
                           // Main content with HorizontalPager
-                          Column(modifier = Modifier.weight(1f).padding(horizontal = 8.dp)) {
+                          Column(modifier = Modifier
+                              .weight(1f)
+                              .padding(horizontal = 8.dp)) {
                             val nbOfTabs = 2
                             val pagerState = rememberPagerState(initialPage = 0) { nbOfTabs }
 
                             // Tab Menu
                             val tabList =
                                 listOf(
-                                    context.getString(R.string.association_tab_overview),
-                                    context.getString(R.string.association_tab_actions))
+                                    "Overview",
+                                    "Actions")
                             SmoothTopBarNavigationMenu(tabList, pagerState)
 
                             // Pager Content
@@ -290,7 +285,10 @@ fun AssociationProfileScaffold(
                         // Right red line (This will always be displayed)
                         Box(
                             modifier =
-                                Modifier.width(2.dp).fillMaxHeight().background(userRoleColor))
+                            Modifier
+                                .width(2.dp)
+                                .fillMaxHeight()
+                                .background(userRoleColor))
                       }
                 }
           } else {
@@ -351,7 +349,9 @@ fun AssociationProfileBottomSheet(
       Column {
         TextButton(
             modifier =
-                Modifier.fillMaxWidth().testTag(AssociationProfileTestTags.BOTTOM_SHEET_EDIT),
+            Modifier
+                .fillMaxWidth()
+                .testTag(AssociationProfileTestTags.BOTTOM_SHEET_EDIT),
             onClick = {
               onClose()
               onEdit()
@@ -360,8 +360,9 @@ fun AssociationProfileBottomSheet(
             }
         TextButton(
             modifier =
-                Modifier.fillMaxWidth()
-                    .testTag(AssociationProfileTestTags.BOTTOM_SHEET_NOTIFICATION),
+            Modifier
+                .fillMaxWidth()
+                .testTag(AssociationProfileTestTags.BOTTOM_SHEET_NOTIFICATION),
             onClick = {
               onClose()
               onOpenNotificationDialog()
@@ -423,19 +424,105 @@ private fun AssociationProfileContent(
     navigationAction.navigateTo(Screen.SOMEONE_ELSE_PROFILE)
   }
 
+
   // Add spacedBy to the horizontalArrangement
   Column(
       modifier =
-          Modifier.testTag(AssociationProfileTestTags.SCREEN)
-              .verticalScroll(rememberScrollState())
-              .fillMaxWidth()
-              .padding(24.dp),
+      Modifier
+          .testTag(AssociationProfileTestTags.SCREEN)
+          .verticalScroll(rememberScrollState())
+          .fillMaxWidth()
+          .padding(24.dp),
       verticalArrangement = Arrangement.spacedBy(16.dp)) {
         AssociationHeader(association!!, isFollowed, enableButton, onFollow)
         AssociationDescription(association!!)
         AssociationEvents(navigationAction, association!!, userViewModel, eventViewModel)
         AssociationMembers(associationViewModel, association!!.members, onMemberClick)
-      }
+      /*Button(onClick = { addRoleCloudFunction(association!!.uid) }){
+          Text("Bonjoueuuu")
+      }*/
+
+  }
+}
+
+/**
+ * Retrieves the current user's token ID asynchronously.
+ * @return The user's token ID as a String.
+ * @throws Exception if the user is not signed in or the token retrieval fails.
+ */
+private fun giveCurrentUserTokenID(
+    onSuccess: (String) -> Unit,
+    onError: (Exception) -> Unit
+) {
+    val currentUser = FirebaseAuth.getInstance().currentUser
+    if (currentUser == null) {
+        onError(IllegalStateException("User is not signed in."))
+        return
+    }
+
+    currentUser.getIdToken(true)
+        .addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                val tokenId = task.result?.token
+                if (tokenId != null) {
+                    onSuccess(tokenId)
+                } else {
+                    onError(IllegalStateException("Token is null."))
+                }
+            } else {
+                onError(task.exception ?: Exception("Failed to retrieve token ID."))
+            }
+        }
+}
+
+
+private fun addRoleCloudFunction(
+    newRole: Role,
+    associationUId: String,
+    onSuccess: (String) -> Unit,
+    onError: (Exception) -> Unit
+) {
+    try {
+        // Fetch the token asynchronously
+        giveCurrentUserTokenID(
+            onSuccess = { tokenId ->
+                Log.d("addRoleTQT", "Token ID: $tokenId")
+
+                // Call the Firebase Cloud Function
+                Firebase.functions
+                    .getHttpsCallable("addRole")
+                    .call(
+                        hashMapOf(
+                            "tokenId" to tokenId,
+                            "newRole" to mapOf(
+                                "displayName" to newRole.displayName,
+                                "permissions" to newRole.permissions.getGrantedPermissions().toList()
+                                    .map { permission -> permission.stringName },
+                                "color" to newRole.color.toInt(),
+                                "uid" to newRole.uid
+                            ),
+                            "associationUid" to associationUId
+                        )
+                    )
+                    .addOnSuccessListener { result ->
+                        val responseData = result.data as? String
+                        if (responseData != null) {
+                            onSuccess(responseData)
+                        } else {
+                            onError(IllegalStateException("Unexpected response format from Cloud Function."))
+                        }
+                    }
+                    .addOnFailureListener { error ->
+                        onError(error)
+                    }
+            },
+            onError = { error ->
+                onError(error)
+            }
+        )
+    } catch (e: Exception) {
+        onError(e)
+    }
 }
 
 /**
@@ -491,10 +578,11 @@ private fun AssociationProfileActionsContent(
   // Add spacedBy to the horizontalArrangement
   Column(
       modifier =
-          Modifier.testTag(AssociationProfileTestTags.SCREEN)
-              .verticalScroll(rememberScrollState())
-              .fillMaxWidth()
-              .padding(24.dp),
+      Modifier
+          .testTag(AssociationProfileTestTags.SCREEN)
+          .verticalScroll(rememberScrollState())
+          .fillMaxWidth()
+          .padding(24.dp),
       verticalArrangement = Arrangement.spacedBy(16.dp)) {
         AssociationActionsHeader(
             association!!,
@@ -551,17 +639,20 @@ private fun AssociationMembers(
           val user = associationViewModel.getUserFromMember(member).collectAsState()
           Column(
               modifier =
-                  Modifier.background(
-                          MaterialTheme.colorScheme.secondaryContainer, RoundedCornerShape(8.dp))
-                      .clickable { user.value?.let { onMemberClick(it) } }
-                      .padding(16.dp),
+              Modifier
+                  .background(
+                      MaterialTheme.colorScheme.secondaryContainer, RoundedCornerShape(8.dp)
+                  )
+                  .clickable { user.value?.let { onMemberClick(it) } }
+                  .padding(16.dp),
               verticalArrangement = Arrangement.spacedBy(8.dp),
               horizontalAlignment = Alignment.CenterHorizontally) {
                 Box(
                     modifier =
-                        Modifier.clip(CircleShape)
-                            .size(75.dp)
-                            .background(MaterialTheme.colorScheme.surfaceDim)) {
+                    Modifier
+                        .clip(CircleShape)
+                        .size(75.dp)
+                        .background(MaterialTheme.colorScheme.surfaceDim)) {
                       user.value?.profilePicture?.toUri()?.let {
                         AsyncImageWrapper(
                             imageUri = it,
@@ -623,42 +714,51 @@ private fun AssociationActionsMembers(
     // Define the cardContent logic for each member
     val cardContent: @Composable (Member) -> Unit = { member ->
         val user = associationViewModel.getUserFromMember(member).collectAsState()
-        Column(
+        Box(
             modifier = Modifier
-                .background(
-                    MaterialTheme.colorScheme.secondaryContainer, RoundedCornerShape(8.dp)
-                )
-                .clickable { user.value?.let { onMemberClick(it) } }
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .fillMaxWidth()
+                .padding(top = 10.dp), // Added top padding to the Box
+            contentAlignment = Alignment.Center
         ) {
-            Box(
+            Column(
                 modifier = Modifier
-                    .clip(CircleShape)
-                    .size(75.dp)
-                    .background(MaterialTheme.colorScheme.surfaceDim)
-            ) {
-                user.value?.profilePicture?.toUri()?.let {
-                    AsyncImageWrapper(
-                        imageUri = it,
-                        contentDescription = context.getString(
-                            R.string.association_contact_member_profile_picture
-                        ),
-                        modifier = Modifier.fillMaxWidth(),
-                        contentScale = ContentScale.Crop
+                    .background(
+                        MaterialTheme.colorScheme.secondaryContainer, RoundedCornerShape(8.dp)
                     )
+                    .clickable { user.value?.let { onMemberClick(it) } }
+                    .padding(16.dp), // Padding inside the column itself
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Box(
+                    modifier = Modifier
+                        .clip(CircleShape)
+                        .size(75.dp)
+                        .background(MaterialTheme.colorScheme.surfaceDim)
+                ) {
+                    user.value?.profilePicture?.toUri()?.let {
+                        AsyncImageWrapper(
+                            imageUri = it,
+                            contentDescription = context.getString(
+                                R.string.association_contact_member_profile_picture
+                            ),
+                            modifier = Modifier.fillMaxWidth(),
+                            contentScale = ContentScale.Crop
+                        )
+                    }
                 }
-            }
-            user.value?.firstName?.let { firstName ->
-                user.value?.lastName?.let { lastName ->
-                    Text("$firstName $lastName")
+                user.value?.firstName?.let { firstName ->
+                    user.value?.lastName?.let { lastName ->
+                        Text("$firstName $lastName")
 
-                    // Role Badge
-                    RoleBadge(member.role)
+                        // Role Badge
+                        RoleBadge(member.role)
+                    }
                 }
+
             }
         }
+
     }
 
     // Use the reusable SearchPagerSection
@@ -669,9 +769,201 @@ private fun AssociationActionsMembers(
             searchBar = searchBar,
             pagerState = pagerState
         )
+
+        association?.let { RolesManagementScreen(it.roles, associationViewModel = associationViewModel) }
     }
 
+
+
 }
+
+@Composable
+fun RolesManagementScreen(roles: List<Role>, associationViewModel: AssociationViewModel) {
+    var showCreateRoleDialog by remember { mutableStateOf(false) }
+
+    Column(
+        Modifier
+            .fillMaxSize()
+            .padding(16.dp)) {
+        Text(text = "Roles", style = MaterialTheme.typography.headlineMedium)
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Display existing roles
+        roles.forEach { role ->
+            RoleCard(role)
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Button to create a new role
+        Button(onClick = { showCreateRoleDialog = true }) {
+            Text(text = "Create New Role")
+        }
+
+        // Show dialog for creating a new role
+        if (showCreateRoleDialog) {
+            CreateRoleDialog(
+                onDismiss = { showCreateRoleDialog = false },
+                onCreateRole = { newRole ->
+                    showCreateRoleDialog = false
+                },
+                associationViewModel = associationViewModel
+            )
+        }
+    }
+}
+
+@Composable
+fun RoleCard(role: Role) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp),
+        elevation = CardDefaults.cardElevation(4.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(24.dp)
+                    .background(Color(role.color))
+            )
+
+            Spacer(modifier = Modifier.width(8.dp))
+
+            Text(
+                text = role.displayName,
+                style = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier.weight(1f)
+            )
+
+            Text(
+                text = "Permissions: ${role.permissions.getGrantedPermissions().size}",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.secondary
+            )
+        }
+    }
+}
+
+@Composable
+fun CreateRoleDialog(onDismiss: () -> Unit, onCreateRole: (Role) -> Unit, associationViewModel: AssociationViewModel) {
+    var displayName by remember { mutableStateOf(TextFieldValue("")) }
+    var colorHex by remember { mutableStateOf(TextFieldValue("#FFFFFF")) }
+    val selectedPermissions = remember { mutableStateListOf<PermissionType>() }
+    val allPermissions = PermissionType.values()
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        confirmButton = {
+            Button(onClick = {
+                val color = try {
+                    java.lang.Long.parseLong(colorHex.text.removePrefix("#"), 16)
+                } catch (e: Exception) {
+                    0xFFFFFF // Fallback to white
+                }
+
+                val newRole = Role(
+                    displayName = displayName.text,
+                    permissions = Permissions.PermissionsBuilder().addPermissions(selectedPermissions.toList()).build(),
+                    color = color,
+                    uid = displayName.text
+                )
+                associationViewModel.selectedAssociation.value?.let {association ->
+                    addRoleCloudFunction(newRole, associationUId = association.uid, onSuccess = {Log.d("ADD_ROLEE", "SUCCESS"); associationViewModel.addRoleLocally(association.uid, newRole)}, onError = { e -> Log.d("ADD_ROLEE",
+                        "ERROR$e"
+                    )})
+                }
+                onCreateRole(newRole)
+            }) {
+                Text("Create")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Cancel")
+            }
+        },
+        title = { Text("Create New Role") },
+        text = {
+            Column(Modifier.fillMaxWidth()) {
+                // Fixed Top Fields: Display Name and Color
+                Column(
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 16.dp)) {
+                    Text(text = "Display Name", style = MaterialTheme.typography.labelMedium)
+                    BasicTextField(
+                        value = displayName,
+                        onValueChange = { displayName = it },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(Color.LightGray)
+                            .padding(8.dp)
+                    )
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    Text(text = "Color (Hex Code)", style = MaterialTheme.typography.labelMedium)
+                    BasicTextField(
+                        value = colorHex,
+                        onValueChange = { colorHex = it },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(Color.LightGray)
+                            .padding(8.dp)
+                    )
+                }
+
+                // Scrollable Permissions Section
+                Text(text = "Permissions", style = MaterialTheme.typography.labelMedium)
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+                        .padding(top = 8.dp)
+                ) {
+                    LazyColumn(modifier = Modifier.fillMaxWidth()) {
+                        items(allPermissions.size) { index ->
+                            val permission = allPermissions[index]
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable {
+                                        if (selectedPermissions.contains(permission)) {
+                                            selectedPermissions.remove(permission)
+                                        } else {
+                                            selectedPermissions.add(permission)
+                                        }
+                                    }
+                                    .padding(8.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Checkbox(
+                                    checked = selectedPermissions.contains(permission),
+                                    onCheckedChange = {
+                                        if (it) {
+                                            selectedPermissions.add(permission)
+                                        } else {
+                                            selectedPermissions.remove(permission)
+                                        }
+                                    }
+                                )
+                                Text(text = permission.stringName)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    )
+}
+
 
 
 
@@ -957,12 +1249,16 @@ private fun AssociationHeader(
           "${association.followersCount} " + context.getString(R.string.association_follower),
           style = AppTypography.headlineSmall,
           modifier =
-              Modifier.padding(bottom = 5.dp).testTag(AssociationProfileTestTags.HEADER_FOLLOWERS))
+          Modifier
+              .padding(bottom = 5.dp)
+              .testTag(AssociationProfileTestTags.HEADER_FOLLOWERS))
       Text(
           "${association.members.size} " + context.getString(R.string.association_member),
           style = AppTypography.headlineSmall,
           modifier =
-              Modifier.padding(bottom = 14.dp).testTag(AssociationProfileTestTags.HEADER_MEMBERS))
+          Modifier
+              .padding(bottom = 14.dp)
+              .testTag(AssociationProfileTestTags.HEADER_MEMBERS))
 
       if (isFollowed) {
         OutlinedButton(
@@ -1020,7 +1316,9 @@ private fun AssociationActionsHeader(
 
   Row(
       modifier =
-          Modifier.fillMaxWidth().padding(vertical = 0.dp), // Optional padding around the row
+      Modifier
+          .fillMaxWidth()
+          .padding(vertical = 0.dp), // Optional padding around the row
       horizontalArrangement = Arrangement.Center, // Centers the content horizontally
       verticalAlignment = Alignment.CenterVertically // Aligns the text and icon vertically
       ) {
@@ -1035,7 +1333,9 @@ private fun AssociationActionsHeader(
             }
         IconButton(
             onClick = { showNotificationDialog = true },
-            modifier = Modifier.testTag("BROADCAST_ICON_BUTTON").size(24.dp)) {
+            modifier = Modifier
+                .testTag("BROADCAST_ICON_BUTTON")
+                .size(24.dp)) {
               Icon(
                   Icons.AutoMirrored.Filled.Send,
                   contentDescription = "CONTENT BROADCASTBUTTON",
@@ -1046,7 +1346,9 @@ private fun AssociationActionsHeader(
 
   Row(
       modifier =
-          Modifier.fillMaxWidth().padding(vertical = 0.dp), // Optional padding around the row
+      Modifier
+          .fillMaxWidth()
+          .padding(vertical = 0.dp), // Optional padding around the row
       horizontalArrangement = Arrangement.Center, // Centers the content horizontally
       verticalAlignment = Alignment.CenterVertically // Aligns the text and icon vertically
       ) {
@@ -1061,7 +1363,9 @@ private fun AssociationActionsHeader(
             }
         IconButton(
             onClick = { onClickSaveButton() },
-            modifier = Modifier.testTag("BROADCAST_ICON_BUTTON").size(24.dp)) {
+            modifier = Modifier
+                .testTag("BROADCAST_ICON_BUTTON")
+                .size(24.dp)) {
               Icon(
                   Icons.Filled.Edit,
                   contentDescription = "CONTENT BROADCASTBUTTON",
