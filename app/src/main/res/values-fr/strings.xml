@@ -213,12 +213,15 @@
     <string name="event_creation_name_error">Entrez un nom d\'événement</string>
     <string name="event_creation_short_description_error">Entrez une courte description de l\'événement</string>
     <string name="event_creation_description_error">Entrez une description de l\'événement</string>
+    <string name="event_creation_type">Ajouter des types à l\'événement</string>
 
     <!-- Event Edit Strings -->
     <string name="event_edit_title">Modifier </string>
     <string name="event_edit_delete_button">Supprimer</string>
     <string name="event_edit_failed">Echec lors de la modification</string>
     <string name="event_edit_save_button">Sauvegarder</string>
+    <string name="event_edit_type">Modifier les types de votre événement</string>
+
 
     <!-- Event Edit Component Strings -->
     <string name="event_edit_date_picker_desc">Sélectionner une date</string>
@@ -227,6 +230,10 @@
     <string name="event_edit_time_error">L\'heure est manquante</string>
     <string name="event_edit_location_error">Localisation erronée</string>
     <string name="event_edit_toast_more_button">Continuez à taper pour voir plus de résultats</string>
+
+    <!-- Event Type Overlay Strings -->
+    <string name="event_type_overlay_title">Type de l\'événement</string>
+    <string name="event_type_overlay_description">Choisissez jusqu\'à trois types d\'événements pour mieux décrire votre événement à votre audiance</string>
 
     <!-- Associations Overlay Strings -->
     <string name="associations_overlay_coauthors_title" translatable="true">Co-organisateurs</string>
