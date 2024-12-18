@@ -121,9 +121,9 @@ fun EventCreationScreen(
               value = name,
               isError = name.isEmpty(),
               supportingText = {
-                  if (name.isEmpty()) {
-                      Text(context.getString(R.string.event_creation_name_error))
-                  }
+                if (name.isEmpty()) {
+                  Text(context.getString(R.string.event_creation_name_error))
+                }
               },
               onValueChange = {
                 if (Utils.checkInputLength(it, TextLength.SMALL)) {
@@ -152,9 +152,9 @@ fun EventCreationScreen(
               value = shortDescription,
               isError = shortDescription.isEmpty(),
               supportingText = {
-                  if (shortDescription.isEmpty()) {
-                      Text(context.getString(R.string.event_creation_short_description_error))
-                  }
+                if (shortDescription.isEmpty()) {
+                  Text(context.getString(R.string.event_creation_short_description_error))
+                }
               },
               onValueChange = {
                 if (Utils.checkInputLength(it, TextLength.MEDIUM)) {
@@ -210,9 +210,9 @@ fun EventCreationScreen(
               modifier = Modifier.fillMaxWidth().testTag(EventCreationTestTags.DESCRIPTION),
               value = longDescription,
               supportingText = {
-                  if (longDescription.isEmpty()) {
-                      Text(context.getString(R.string.event_creation_description_error))
-                  }
+                if (longDescription.isEmpty()) {
+                  Text(context.getString(R.string.event_creation_description_error))
+                }
               },
               onValueChange = {
                 if (Utils.checkInputLength(it, TextLength.LARGE)) {

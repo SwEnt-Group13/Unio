@@ -98,11 +98,11 @@ fun NominatimLocationPicker(
   var showDropdown by remember { mutableStateOf(false) }
 
   var shouldDisplayInitialLocation by remember { mutableStateOf(true) }
-    var selectedLocation by remember { mutableStateOf(initialLocation) }
+  var selectedLocation by remember { mutableStateOf(initialLocation) }
   val isError by remember {
-      derivedStateOf {
-          selectedLocation == null || selectedLocation!!.name.isEmpty() && locationQuery.isEmpty()
-   }
+    derivedStateOf {
+      selectedLocation == null || selectedLocation!!.name.isEmpty() && locationQuery.isEmpty()
+    }
   }
 
   Box(modifier = Modifier.fillMaxWidth()) {
@@ -110,7 +110,7 @@ fun NominatimLocationPicker(
         value = if (shouldDisplayInitialLocation) initialLocation?.name ?: "" else locationQuery,
         onValueChange = {
           locationSearchViewModel.setQuery(it)
-            selectedLocation = null
+          selectedLocation = null
           shouldDisplayInitialLocation = false
           showDropdown = true
         },
@@ -143,7 +143,7 @@ fun NominatimLocationPicker(
                 },
                 onClick = {
                   locationSearchViewModel.setQuery(location.name)
-                    selectedLocation = location
+                  selectedLocation = location
                   onLocationSelected(location)
                   showDropdown = false
                 },
