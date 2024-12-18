@@ -293,7 +293,7 @@ class ScreenDisplayingTest : TearDown() {
     composeTestRule.setContent {
       ProvidePreferenceLocals {
         AssociationProfileScaffold(
-            navigationAction, userViewModel, eventViewModel, associationViewModel) {}
+            navigationAction, userViewModel, eventViewModel, associationViewModel, searchViewModel) {}
       }
     }
     composeTestRule.onNodeWithTag(AssociationProfileTestTags.SCREEN).assertIsDisplayed()
