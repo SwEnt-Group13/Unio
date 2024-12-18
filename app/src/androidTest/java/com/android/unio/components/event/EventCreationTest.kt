@@ -1,6 +1,7 @@
 package com.android.unio.components.event
 
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.isDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
@@ -30,6 +31,8 @@ import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.strings.TextLengthSamples
 import com.android.unio.model.strings.test_tags.event.EventCreationOverlayTestTags
 import com.android.unio.model.strings.test_tags.event.EventCreationTestTags
+import com.android.unio.model.strings.test_tags.event.EventDetailsTestTags
+import com.android.unio.model.strings.test_tags.event.EventTypeOverlayTestTags
 import com.android.unio.model.usecase.FollowUseCaseFirestore
 import com.android.unio.model.usecase.SaveUseCaseFirestore
 import com.android.unio.ui.event.EventCreationScreen
@@ -45,7 +48,6 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockkStatic
 import io.mockk.spyk
-import java.net.HttpURLConnection
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.Before
@@ -53,6 +55,7 @@ import org.junit.Rule
 import org.junit.Test
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.net.HttpURLConnection
 
 @HiltAndroidTest
 class EventCreationTest : TearDown() {
@@ -280,6 +283,59 @@ class EventCreationTest : TearDown() {
         .assertExists()
     composeTestRule.onNodeWithTag(EventCreationTestTags.DESCRIPTION).performTextClearance()
   }
+
+    @Test
+    fun testCorrectlyAddEvenTypes(){
+        nominatimLocationSearchViewModel =
+            NominatimLocationSearchViewModel(nominatimLocationRepositoryWithoutFunctionality)
+        composeTestRule.setContent {
+            EventCreationScreen(
+                navigationAction,
+                searchViewModel,
+                associationViewModel,
+                eventViewModel,
+                nominatimLocationSearchViewModel)
+        }
+
+        composeTestRule.onNodeWithTag(EventCreationTestTags.EVENT_TYPE).performScrollTo().performClick()
+
+        composeTestRule.onNodeWithTag(EventTypeOverlayTestTags.CARD).assertExists()
+
+        composeTestRule.onNodeWithTag(EventTypeOverlayTestTags.CLICKABLE_ROW + "FESTIVAL").performScrollTo().performClick()
+        composeTestRule.onNodeWithTag(EventTypeOverlayTestTags.CLICKABLE_ROW + "APERITIF").performScrollTo().performClick()
+
+        composeTestRule.onNodeWithTag(EventTypeOverlayTestTags.SAVE_BUTTON).performClick()
+
+        composeTestRule.onNodeWithTag(EventCreationTestTags.SCREEN).assertIsDisplayed()
+
+        composeTestRule.onNodeWithTag(EventDetailsTestTags.CHIPS + "Festival").assertExists()
+        composeTestRule.onNodeWithTag(EventDetailsTestTags.CHIPS + "Aperitif").assertExists()
+    }
+
+    @Test
+    fun testNotPossibleToAddMoreThan3EventTypes(){
+        nominatimLocationSearchViewModel =
+            NominatimLocationSearchViewModel(nominatimLocationRepositoryWithoutFunctionality)
+        composeTestRule.setContent {
+            EventCreationScreen(
+                navigationAction,
+                searchViewModel,
+                associationViewModel,
+                eventViewModel,
+                nominatimLocationSearchViewModel)
+        }
+
+        composeTestRule.onNodeWithTag(EventCreationTestTags.EVENT_TYPE).performScrollTo().performClick()
+
+        composeTestRule.onNodeWithTag(EventTypeOverlayTestTags.CARD).assertExists()
+
+        composeTestRule.onNodeWithTag(EventTypeOverlayTestTags.CLICKABLE_ROW + "FESTIVAL").performScrollTo().performClick()
+        composeTestRule.onNodeWithTag(EventTypeOverlayTestTags.CLICKABLE_ROW + "APERITIF").performScrollTo().performClick()
+        composeTestRule.onNodeWithTag(EventTypeOverlayTestTags.CLICKABLE_ROW + "JAM").performScrollTo().performClick()
+        composeTestRule.onNodeWithTag(EventTypeOverlayTestTags.CLICKABLE_ROW + "TRIP").performScrollTo().performClick()
+
+        composeTestRule.onNodeWithTag(EventTypeOverlayTestTags.SAVE_BUTTON).assertIsNotEnabled()
+    }
 
   @Test
   fun testLocationInputFunctionality() {

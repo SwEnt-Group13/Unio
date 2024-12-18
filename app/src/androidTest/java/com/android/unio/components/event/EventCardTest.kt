@@ -17,7 +17,6 @@ import com.android.unio.mocks.user.MockUser
 import com.android.unio.model.association.AssociationRepositoryFirestore
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventRepositoryFirestore
-import com.android.unio.model.event.EventType
 import com.android.unio.model.event.EventUserPictureRepositoryFirestore
 import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
@@ -41,12 +40,12 @@ import io.mockk.mockkObject
 import io.mockk.runs
 import io.mockk.spyk
 import io.mockk.verify
-import java.util.Date
 import me.zhanghai.compose.preference.ProvidePreferenceLocals
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import java.util.Date
 
 class EventCardTest : TearDown() {
 
@@ -142,7 +141,7 @@ class EventCardTest : TearDown() {
     composeTestRule
         .onNodeWithTag(EventCardTestTags.EVENT_MAIN_TYPE, useUnmergedTree = true)
         .assertExists()
-        .assertTextEquals(EventType.TRIP.text)
+        .assertTextEquals("Trip")
 
     composeTestRule
         .onNodeWithTag(EventCardTestTags.EVENT_LOCATION, useUnmergedTree = true)
