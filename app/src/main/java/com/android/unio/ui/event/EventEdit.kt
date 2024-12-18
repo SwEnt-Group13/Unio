@@ -80,6 +80,7 @@ fun EventEditScreen(
   val scrollState = rememberScrollState()
   var showCoauthorsOverlay by remember { mutableStateOf(false) }
   var showTaggedOverlay by remember { mutableStateOf(false) }
+    var showEventTypeOverlay by remember { mutableStateOf(false) }
 
   val eventToEdit = remember { eventViewModel.selectedEvent.value!! }
 
@@ -174,6 +175,19 @@ fun EventEditScreen(
               }
 
           AssociationChips(taggedAndBoolean)
+
+        OutlinedButton(
+            modifier = Modifier
+                .fillMaxWidth()
+                .testTag("todo"),
+            onClick = { showEventTypeOverlay = true }
+        ) {
+            Icon(
+                Icons.Default.Add,
+                contentDescription =
+                context.getString(R.string.social_overlay_content_description_add))
+            Text(context.getString(R.string.event_creation_tagged_label))
+        }
 
           OutlinedTextField(
               modifier = Modifier.fillMaxWidth().testTag(EventEditTestTags.DESCRIPTION),
@@ -294,6 +308,7 @@ fun EventEditScreen(
                               startDate = startTimestamp!!,
                               endDate = endTimestamp!!,
                               location = selectedLocation!!,
+                              types = emptyList(),
                               eventPictures = MockReferenceList(),
                           )
                       // This should be extracted to a util

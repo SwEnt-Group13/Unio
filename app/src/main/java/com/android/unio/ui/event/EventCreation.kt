@@ -39,6 +39,7 @@ import com.android.unio.mocks.firestore.MockReferenceList
 import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.event.Event
+import com.android.unio.model.event.EventType
 import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.firestore.firestoreReferenceListWith
 import com.android.unio.model.map.Location
@@ -52,9 +53,11 @@ import com.android.unio.ui.components.BannerImagePicker
 import com.android.unio.ui.components.DateAndTimePicker
 import com.android.unio.ui.components.NominatimLocationPicker
 import com.android.unio.ui.event.overlay.AssociationsOverlay
+import com.android.unio.ui.event.overlay.EventTypeOverlay
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.theme.AppTypography
 import com.google.firebase.Timestamp
+import kotlinx.coroutines.flow.MutableStateFlow
 
 /**
  * A screen that allows users to create an event.
@@ -77,10 +80,17 @@ fun EventCreationScreen(
   val scrollState = rememberScrollState()
   var showCoauthorsOverlay by remember { mutableStateOf(false) }
   var showTaggedOverlay by remember { mutableStateOf(false) }
+    var showEventTypeOverlay by remember { mutableStateOf(false) }
 
   var name by remember { mutableStateOf("") }
   var shortDescription by remember { mutableStateOf("") }
   var longDescription by remember { mutableStateOf("") }
+
+    val EventTypeFlow = remember {
+        MutableStateFlow(EventType.entries.map { it to mutableStateOf(false) }.toList())
+    }
+
+    val eventTypes by EventTypeFlow.collectAsState()
 
   var coauthorsAndBoolean =
       associationViewModel.associations.collectAsState().value.map { it to mutableStateOf(false) }
@@ -194,6 +204,19 @@ fun EventCreationScreen(
 
           AssociationChips(taggedAndBoolean)
 
+        OutlinedButton(
+            modifier = Modifier
+                .fillMaxWidth()
+                .testTag("todo"),
+            onClick = { showEventTypeOverlay = true }
+        ) {
+            Icon(
+                Icons.Default.Add,
+                contentDescription =
+                context.getString(R.string.social_overlay_content_description_add))
+            Text(context.getString(R.string.event_creation_tagged_label))
+        }
+
           OutlinedTextField(
               modifier = Modifier.fillMaxWidth().testTag(EventCreationTestTags.DESCRIPTION),
               value = longDescription,
@@ -304,6 +327,7 @@ fun EventCreationScreen(
                         startDate = startTimestamp!!,
                         endDate = endTimestamp!!,
                         location = selectedLocation!!,
+                        types = emptyList(),
                         eventPictures = MockReferenceList(),
                     )
                 eventViewModel.addEvent(
