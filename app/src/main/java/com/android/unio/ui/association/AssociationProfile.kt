@@ -36,6 +36,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material3.*
@@ -798,7 +799,7 @@ fun RolesManagementScreen(roles: List<Role>, associationViewModel: AssociationVi
 
         // Display existing roles
         roles.forEach { role ->
-            RoleCard(role)
+            RoleCard(role, associationViewModel)
         }
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -810,7 +811,7 @@ fun RolesManagementScreen(roles: List<Role>, associationViewModel: AssociationVi
 
         // Show dialog for creating a new role
         if (showCreateRoleDialog) {
-            CreateRoleDialog(
+            SaveRoleDialog(
                 onDismiss = { showCreateRoleDialog = false },
                 onCreateRole = { newRole ->
                     showCreateRoleDialog = false
@@ -822,52 +823,136 @@ fun RolesManagementScreen(roles: List<Role>, associationViewModel: AssociationVi
 }
 
 @Composable
-fun RoleCard(role: Role) {
+fun RoleCard(role: Role, associationViewModel: AssociationViewModel) {
+    var expanded by remember { mutableStateOf(false) }
+    var showEditDialog by remember { mutableStateOf(false) }
+    var showDeleteDialog by remember { mutableStateOf(false) }
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp),
+            .padding(vertical = 8.dp)
+            .clickable { expanded = !expanded },
         elevation = CardDefaults.cardElevation(4.dp)
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Box(
-                modifier = Modifier
-                    .size(24.dp)
-                    .background(Color(role.color))
-            )
+        Column(Modifier.fillMaxWidth().padding(16.dp)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(24.dp)
+                        .background(Color(role.color))
+                )
 
-            Spacer(modifier = Modifier.width(8.dp))
+                Spacer(modifier = Modifier.width(8.dp))
 
-            Text(
-                text = role.displayName,
-                style = MaterialTheme.typography.bodyLarge,
-                modifier = Modifier.weight(1f)
-            )
+                Text(
+                    text = role.displayName,
+                    style = MaterialTheme.typography.bodyLarge,
+                    modifier = Modifier.weight(1f)
+                )
 
-            Text(
-                text = "Permissions: ${role.permissions.getGrantedPermissions().size}",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.secondary
-            )
+                Row {
+                    Icon(
+                        imageVector = Icons.Default.Edit,
+                        contentDescription = "Edit Role",
+                        modifier = Modifier
+                            .size(24.dp)
+                            .clickable { showEditDialog = true }
+                            .padding(4.dp)
+                    )
+
+                    Icon(
+                        imageVector = Icons.Default.Delete,
+                        contentDescription = "Delete Role",
+                        modifier = Modifier
+                            .size(24.dp)
+                            .clickable { showDeleteDialog = true }
+                            .padding(4.dp)
+                    )
+                }
+            }
+
+            if (expanded) {
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = "Permissions:",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.primary
+                )
+
+                Spacer(modifier = Modifier.height(4.dp))
+
+                role.permissions.getGrantedPermissions().forEach { permission ->
+                    Text(
+                        text = "- ${permission.stringName}",
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier.padding(start = 16.dp)
+                    )
+                }
+            }
         }
+    }
+
+    // Edit Role Dialog
+    if (showEditDialog) {
+        SaveRoleDialog(
+            onDismiss = { showEditDialog = false },
+            onCreateRole = { updatedRole ->
+                associationViewModel.selectedAssociation.value?.let { association ->
+                    associationViewModel.editRoleLocally(association.uid, updatedRole)
+                }
+                showEditDialog = false
+            },
+            associationViewModel = associationViewModel,
+            initialRole = role // Pass the role to prefill data
+        )
+    }
+
+    // Delete Role Confirmation Dialog
+    if (showDeleteDialog) {
+        AlertDialog(
+            onDismissRequest = { showDeleteDialog = false },
+            confirmButton = {
+                Button(onClick = {
+                    associationViewModel.selectedAssociation.value?.let { association ->
+                        associationViewModel.deleteRoleLocally(association.uid, role)
+                    }
+                    showDeleteDialog = false
+                }) {
+                    Text("Delete")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDeleteDialog = false }) {
+                    Text("Cancel")
+                }
+            },
+            title = { Text("Delete Role") },
+            text = { Text("Are you sure you want to delete the role '${role.displayName}'?") }
+        )
     }
 }
 
+
+
 @Composable
-fun CreateRoleDialog(
+fun SaveRoleDialog(
     onDismiss: () -> Unit,
     onCreateRole: (Role) -> Unit,
-    associationViewModel: AssociationViewModel
+    associationViewModel: AssociationViewModel,
+    initialRole: Role? = null // Pass initialRole for editing
 ) {
-    var displayName by remember { mutableStateOf(TextFieldValue("")) }
-    val controller = rememberColorPickerController() // Skydoves color picker controller
-    var selectedColor by remember { mutableStateOf(Color.White) }
-    val selectedPermissions = remember { mutableStateListOf<PermissionType>() }
+    var displayName by remember { mutableStateOf(TextFieldValue(initialRole?.displayName ?: "")) }
+    val controller = rememberColorPickerController()
+    var selectedColor by remember { mutableStateOf(Color(initialRole?.color ?: Color.White.toArgb().toLong())) }
+    val selectedPermissions = remember {
+        mutableStateListOf<PermissionType>().apply {
+            initialRole?.permissions?.getGrantedPermissions()?.let { addAll(it) }
+        }
+    }
     val allPermissions = PermissionType.values()
 
     AlertDialog(
@@ -879,17 +964,11 @@ fun CreateRoleDialog(
                     displayName = displayName.text,
                     permissions = Permissions.PermissionsBuilder().addPermissions(selectedPermissions.toList()).build(),
                     color = colorInt,
-                    uid = displayName.text
+                    uid = initialRole?.uid ?: displayName.text // Use existing UID for edit
                 )
-                associationViewModel.selectedAssociation.value?.let { association ->
-                    addRoleCloudFunction(newRole, association.uid, onSuccess = {
-                        Log.d("ADD_ROLE", "SUCCESS")
-                        associationViewModel.addRoleLocally(association.uid, newRole)
-                    }, onError = { e -> Log.d("ADD_ROLE", "ERROR: $e") })
-                }
                 onCreateRole(newRole)
             }) {
-                Text("Create")
+                Text(if (initialRole != null) "Save" else "Create")
             }
         },
         dismissButton = {
@@ -897,10 +976,10 @@ fun CreateRoleDialog(
                 Text("Cancel")
             }
         },
-        title = { Text("Create New Role") },
+        title = { Text(if (initialRole != null) "Edit Role" else "Create New Role") },
         text = {
             Column(Modifier.fillMaxWidth()) {
-                // Role Name
+                // Prefilled Role Name
                 Column(
                     Modifier
                         .fillMaxWidth()
@@ -917,7 +996,7 @@ fun CreateRoleDialog(
                     )
                 }
 
-                // Color Picker
+                // Prefilled Color Picker
                 Column(
                     Modifier
                         .fillMaxWidth()
@@ -936,7 +1015,7 @@ fun CreateRoleDialog(
                     )
                 }
 
-                // Permissions Section
+                // Prefilled Permissions
                 Text(text = "Permissions", style = MaterialTheme.typography.labelMedium)
                 LazyColumn(modifier = Modifier.fillMaxWidth()) {
                     items(allPermissions.size) { index ->
@@ -972,6 +1051,7 @@ fun CreateRoleDialog(
         }
     )
 }
+
 
 
 
