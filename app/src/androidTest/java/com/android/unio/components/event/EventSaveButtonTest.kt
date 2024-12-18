@@ -14,8 +14,9 @@ import com.android.unio.model.event.EventUserPictureRepositoryFirestore
 import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.notification.NotificationWorker
-import com.android.unio.model.save.ConcurrentEventUserRepositoryFirestore
 import com.android.unio.model.strings.test_tags.event.EventDetailsTestTags
+import com.android.unio.model.usecase.SaveUseCaseFirestore
+import com.android.unio.model.usecase.UserDeletionUseCaseFirestore
 import com.android.unio.model.user.User
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserViewModel
@@ -41,11 +42,10 @@ class EventSaveButtonTest : TearDown() {
   @MockK private lateinit var eventRepository: EventRepositoryFirestore
   @MockK private lateinit var imageRepository: ImageRepositoryFirebaseStorage
   @MockK private lateinit var associationRepository: AssociationRepositoryFirestore
+  @MockK private lateinit var userDeletionRepository: UserDeletionUseCaseFirestore
   @MockK
   private lateinit var eventUserPictureRepositoryFirestore: EventUserPictureRepositoryFirestore
-  @MockK
-  private lateinit var concurrentEventUserRepositoryFirestore:
-      ConcurrentEventUserRepositoryFirestore
+  @MockK private lateinit var concurrentEventUserRepositoryFirestore: SaveUseCaseFirestore
   @MockK private lateinit var userRepository: UserRepositoryFirestore
   private lateinit var eventViewModel: EventViewModel
   private lateinit var userViewModel: UserViewModel
@@ -66,7 +66,7 @@ class EventSaveButtonTest : TearDown() {
                 eventUserPictureRepositoryFirestore,
                 concurrentEventUserRepositoryFirestore))
 
-    userViewModel = UserViewModel(userRepository, imageRepository)
+    userViewModel = UserViewModel(userRepository, imageRepository, userDeletionRepository)
     every { userRepository.updateUser(testUser, any(), any()) } answers
         {
           val onSuccess = args[1] as () -> Unit

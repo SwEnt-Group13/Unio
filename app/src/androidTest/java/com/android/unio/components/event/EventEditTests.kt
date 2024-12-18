@@ -1,13 +1,17 @@
 package com.android.unio.components.event
 
+import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotEnabled
+import androidx.compose.ui.test.assertTextEquals
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextClearance
+import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.performTextReplacement
 import com.android.unio.TearDown
 import com.android.unio.assertDisplayComponentInScroll
@@ -20,14 +24,14 @@ import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventRepositoryFirestore
 import com.android.unio.model.event.EventUserPictureRepositoryFirestore
 import com.android.unio.model.event.EventViewModel
-import com.android.unio.model.follow.ConcurrentAssociationUserRepositoryFirestore
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.map.nominatim.NominatimLocationRepository
 import com.android.unio.model.map.nominatim.NominatimLocationSearchViewModel
-import com.android.unio.model.save.ConcurrentEventUserRepositoryFirestore
 import com.android.unio.model.search.SearchRepository
 import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.strings.test_tags.event.EventEditTestTags
+import com.android.unio.model.usecase.FollowUseCaseFirestore
+import com.android.unio.model.usecase.SaveUseCaseFirestore
 import com.android.unio.ui.event.EventEditScreen
 import com.android.unio.ui.navigation.NavigationAction
 import com.google.firebase.Firebase
@@ -72,12 +76,8 @@ class EventEditTests : TearDown() {
   @MockK private lateinit var imageRepositoryFirestore: ImageRepositoryFirebaseStorage
   @MockK
   private lateinit var eventUserPictureRepositoryFirestore: EventUserPictureRepositoryFirestore
-  @MockK
-  private lateinit var concurrentEventUserRepositoryFirestore:
-      ConcurrentEventUserRepositoryFirestore
-  @MockK
-  private lateinit var concurrentAssociationUserRepositoryFirestore:
-      ConcurrentAssociationUserRepositoryFirestore
+  @MockK private lateinit var concurrentEventUserRepositoryFirestore: SaveUseCaseFirestore
+  @MockK private lateinit var concurrentAssociationUserRepositoryFirestore: FollowUseCaseFirestore
 
   private val mockEvent =
       MockEvent.createMockEvent(
@@ -284,5 +284,43 @@ class EventEditTests : TearDown() {
     assert(shouldBeTrue)
     assert(result.title != mockEvent.title)
     assert(result.description == mockEvent.description)
+  }
+
+  @Test
+  fun testClearButtonFunctionality() {
+    nominatimLocationSearchViewModel =
+        NominatimLocationSearchViewModel(nominatimLocationRepositoryWithoutFunctionality)
+    composeTestRule.setContent {
+      EventEditScreen(
+          navigationAction,
+          searchViewModel,
+          associationViewModel,
+          eventViewModel,
+          nominatimLocationSearchViewModel)
+    }
+
+    composeTestRule
+        .onNodeWithTag(EventEditTestTags.EVENT_TITLE)
+        .performScrollTo()
+        .performTextClearance()
+    composeTestRule.onNodeWithTag(EventEditTestTags.EVENT_TITLE).performTextInput("New Event Title")
+    composeTestRule
+        .onNodeWithTag(EventEditTestTags.EVENT_TITLE, useUnmergedTree = true)
+        .assertTextEquals("New Event Title", includeEditableText = true)
+    composeTestRule.onNodeWithTag(EventEditTestTags.EVENT_TITLE_CLEAR_BUTTON).performClick()
+    composeTestRule.onNodeWithTag(EventEditTestTags.EVENT_TITLE).assert(hasText(""))
+
+    composeTestRule
+        .onNodeWithTag(EventEditTestTags.SHORT_DESCRIPTION)
+        .performScrollTo()
+        .performTextClearance()
+    composeTestRule
+        .onNodeWithTag(EventEditTestTags.SHORT_DESCRIPTION)
+        .performTextInput("New Short Description")
+    composeTestRule
+        .onNodeWithTag(EventEditTestTags.SHORT_DESCRIPTION, useUnmergedTree = true)
+        .assertTextEquals("New Short Description", includeEditableText = true)
+    composeTestRule.onNodeWithTag(EventEditTestTags.SHORT_DESCRIPTION_CLEAR_BUTTON).performClick()
+    composeTestRule.onNodeWithTag(EventEditTestTags.SHORT_DESCRIPTION).assert(hasText(""))
   }
 }

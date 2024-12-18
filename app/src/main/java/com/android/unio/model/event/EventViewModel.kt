@@ -6,8 +6,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.android.unio.model.association.AssociationRepository
 import com.android.unio.model.image.ImageRepository
-import com.android.unio.model.save.ConcurrentEventUserRepository
 import com.android.unio.model.strings.StoragePathsStrings
+import com.android.unio.model.usecase.SaveUseCase
 import com.android.unio.model.user.User
 import com.google.firebase.Firebase
 import com.google.firebase.messaging.messaging
@@ -35,7 +35,7 @@ constructor(
     private val imageRepository: ImageRepository,
     private val associationRepository: AssociationRepository,
     private val eventUserPictureRepository: EventUserPictureRepository,
-    private val concurrentEventUserRepository: ConcurrentEventUserRepository
+    private val saveUseCase: SaveUseCase
 ) : ViewModel() {
 
   /**
@@ -357,7 +357,7 @@ constructor(
       updatedUser.savedEvents.add(target.uid)
       Firebase.messaging.subscribeToTopic(target.uid)
     }
-    concurrentEventUserRepository.updateSave(
+    saveUseCase.updateSave(
         updatedUser,
         updatedEvent,
         {

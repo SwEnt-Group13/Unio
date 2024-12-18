@@ -14,6 +14,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.outlined.Clear
+import androidx.compose.material.icons.rounded.Clear
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -119,6 +121,12 @@ fun EventCreationScreen(
           OutlinedTextField(
               modifier = Modifier.fillMaxWidth().testTag(EventCreationTestTags.EVENT_TITLE),
               value = name,
+              isError = name.isEmpty(),
+              supportingText = {
+                if (name.isEmpty()) {
+                  Text(context.getString(R.string.event_creation_name_error))
+                }
+              },
               onValueChange = {
                 if (Utils.checkInputLength(it, TextLength.SMALL)) {
                   name = it
@@ -139,11 +147,29 @@ fun EventCreationScreen(
                                 Modifier.testTag(EventCreationTestTags.TITLE_CHARACTER_COUNTER))
                       }
                     }
+              },
+              trailingIcon = {
+                IconButton(
+                    onClick = { name = "" },
+                    enabled = name.isNotEmpty(),
+                    modifier = Modifier.testTag(EventCreationTestTags.EVENT_TITLE_CLEAR_BUTTON)) {
+                      Icon(
+                          imageVector = Icons.Outlined.Clear,
+                          contentDescription =
+                              context.getString(
+                                  R.string.event_creation_content_description_clear_title))
+                    }
               })
 
           OutlinedTextField(
               modifier = Modifier.fillMaxWidth().testTag(EventCreationTestTags.SHORT_DESCRIPTION),
               value = shortDescription,
+              isError = shortDescription.isEmpty(),
+              supportingText = {
+                if (shortDescription.isEmpty()) {
+                  Text(context.getString(R.string.event_creation_short_description_error))
+                }
+              },
               onValueChange = {
                 if (Utils.checkInputLength(it, TextLength.MEDIUM)) {
                   shortDescription = it
@@ -164,6 +190,21 @@ fun EventCreationScreen(
                                 Modifier.testTag(
                                     EventCreationTestTags.SHORT_DESCRIPTION_CHARACTER_COUNTER))
                       }
+                    }
+              },
+              trailingIcon = {
+                IconButton(
+                    onClick = { shortDescription = "" },
+                    enabled = shortDescription.isNotEmpty(),
+                    modifier =
+                        Modifier.testTag(
+                            EventCreationTestTags.EVENT_SHORT_DESCRIPTION_CLEAR_BUTTON)) {
+                      Icon(
+                          imageVector = Icons.Outlined.Clear,
+                          contentDescription =
+                              context.getString(
+                                  R.string
+                                      .event_creation_content_description_clear_short_description))
                     }
               })
 
@@ -197,6 +238,12 @@ fun EventCreationScreen(
           OutlinedTextField(
               modifier = Modifier.fillMaxWidth().testTag(EventCreationTestTags.DESCRIPTION),
               value = longDescription,
+              isError = longDescription.isEmpty(),
+              supportingText = {
+                if (longDescription.isEmpty()) {
+                  Text(context.getString(R.string.event_creation_description_error))
+                }
+              },
               onValueChange = {
                 if (Utils.checkInputLength(it, TextLength.LARGE)) {
                   longDescription = it

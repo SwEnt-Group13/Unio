@@ -23,6 +23,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
@@ -41,6 +42,7 @@ import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -97,18 +99,36 @@ fun NominatimLocationPicker(
   var showDropdown by remember { mutableStateOf(false) }
 
   var shouldDisplayInitialLocation by remember { mutableStateOf(true) }
+  var selectedLocation by remember { mutableStateOf(initialLocation) }
+  val isError by remember {
+    derivedStateOf {
+      selectedLocation == null || selectedLocation!!.name.isEmpty() && locationQuery.isEmpty()
+    }
+  }
 
   Box(modifier = Modifier.fillMaxWidth()) {
     OutlinedTextField(
         value = if (shouldDisplayInitialLocation) initialLocation?.name ?: "" else locationQuery,
         onValueChange = {
           locationSearchViewModel.setQuery(it)
+          selectedLocation = null
           shouldDisplayInitialLocation = false
           showDropdown = true
         },
+        isError = isError,
+        supportingText = {
+          if (isError) {
+            Text(context.getString(R.string.event_edit_location_error))
+          }
+        },
         label = { Text(context.getString(R.string.event_creation_location_label)) },
         placeholder = { Text(context.getString(R.string.event_creation_location_input_label)) },
-        modifier = Modifier.fillMaxWidth().testTag(textFieldTestTag))
+        modifier = Modifier.fillMaxWidth().testTag(textFieldTestTag),
+        trailingIcon = {
+          Icon(
+              imageVector = Icons.Outlined.LocationOn,
+              contentDescription = context.getString(R.string.event_creation_location_icon))
+        })
 
     DropdownMenu(
         expanded = showDropdown && locationSuggestions.isNotEmpty(),
@@ -129,6 +149,7 @@ fun NominatimLocationPicker(
                 },
                 onClick = {
                   locationSearchViewModel.setQuery(location.name)
+                  selectedLocation = location
                   onLocationSelected(location)
                   showDropdown = false
                 },
@@ -271,6 +292,12 @@ fun DateAndTimePicker(
                 ?: "",
         readOnly = true,
         onValueChange = {},
+        isError = selectedDate == null && initialDate == null,
+        supportingText = {
+          if (selectedDate == null && initialDate == null) {
+            Text(context.getString(R.string.event_edit_date_error))
+          }
+        },
         trailingIcon = {
           Icon(
               Icons.Default.DateRange,
@@ -299,6 +326,12 @@ fun DateAndTimePicker(
                 ?: "",
         readOnly = true,
         onValueChange = {},
+        isError = selectedTime == null && initialTime == null,
+        supportingText = {
+          if (selectedTime == null && initialTime == null) {
+            Text(context.getString(R.string.event_edit_time_error))
+          }
+        },
         trailingIcon = {
           Icon(
               Icons.Default.AccessTime,

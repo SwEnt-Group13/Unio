@@ -103,6 +103,8 @@
     <string name="account_details_content_description_links_icon">Icône de liens</string>
     <string name="account_details_content_description_pfp">Photo de profile</string>
     <string name="account_details_content_description_remove_pfp">Supprimer la photo de profil</string>
+    <string name="account_details_content_description_clear_first_name">Effacer prénom</string>
+    <string name="account_details_content_description_clear_last_name">Effacer nom</string>
 
     <!-- UserSettings Strings -->
     <string name="user_edition_delete_user" translatable="true">Supprimer le compte</string>
@@ -121,8 +123,8 @@
     <string name="user_edition_discard_changes" translatable="true">Annuler vos modifications</string>
     <string name="user_edition_save_changes" translatable="true">Sauvegarder vos modifications</string>
     <string name="user_edition_modified_successfully" translatable="true">Changements correctement modifiés</string>
-
-
+    <string name="user_edition_content_description_clear_first_name">Effacer prénom</string>
+    <string name="user_edition_content_description_clear_last_name">Effacer nom</string>
 
     <!-- EmailVerification Strings -->
     <string name="email_verification_refresh_failed">Échec de l\'actualisation</string>
@@ -210,6 +212,12 @@
     <string name="event_creation_location_input_label">Entrez une addresse</string>
     <string name="event_creation_location_dropdown_points">…</string>
     <string name="event_creation_location_dropdown_more">Plus…</string>
+    <string name="event_creation_name_error">Entrez un nom d\'événement</string>
+    <string name="event_creation_short_description_error">Entrez une courte description de l\'événement</string>
+    <string name="event_creation_description_error">Entrez une description de l\'événement</string>
+    <string name="event_creation_content_description_clear_title">Effacer titre</string>
+    <string name="event_creation_content_description_clear_short_description">Effacer description courte</string>
+    <string name="event_creation_location_icon">Icône de localisation</string>
 
     <!-- Event Edit Strings -->
     <string name="event_edit_title">Modifier </string>
@@ -220,6 +228,9 @@
     <!-- Event Edit Component Strings -->
     <string name="event_edit_date_picker_desc">Sélectionner une date</string>
     <string name="event_edit_time_picker_desc">Sélectionner une heure</string>
+    <string name="event_edit_date_error">La date est manquante</string>
+    <string name="event_edit_time_error">L\'heure est manquante</string>
+    <string name="event_edit_location_error">Localisation erronée</string>
     <string name="event_edit_toast_more_button">Continuez à taper pour voir plus de résultats</string>
 
     <!-- Associations Overlay Strings -->

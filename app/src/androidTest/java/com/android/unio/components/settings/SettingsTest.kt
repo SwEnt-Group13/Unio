@@ -9,6 +9,7 @@ import com.android.unio.model.authentication.AuthViewModel
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.preferences.AppPreferences
 import com.android.unio.model.strings.test_tags.settings.SettingsTestTags
+import com.android.unio.model.usecase.UserDeletionUseCaseFirestore
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.navigation.NavigationAction
@@ -31,6 +32,7 @@ import org.junit.Test
 class SettingsTest : TearDown() {
   @MockK private lateinit var navigationAction: NavigationAction
   @MockK private lateinit var userRepository: UserRepositoryFirestore
+  @MockK private lateinit var userDeletionRepository: UserDeletionUseCaseFirestore
   @MockK private lateinit var imageRepository: ImageRepositoryFirebaseStorage
 
   private lateinit var authViewModel: AuthViewModel
@@ -57,7 +59,7 @@ class SettingsTest : TearDown() {
         }
 
     authViewModel = AuthViewModel(firebaseAuth, userRepository)
-    userViewModel = UserViewModel(userRepository, imageRepository)
+    userViewModel = UserViewModel(userRepository, imageRepository, userDeletionRepository)
 
     userViewModel.addUser(user, {})
   }

@@ -14,6 +14,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.outlined.Clear
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -83,9 +84,9 @@ fun EventEditScreen(
 
   val eventToEdit = remember { eventViewModel.selectedEvent.value!! }
 
-  var name by remember { mutableStateOf(eventToEdit.title) }
-  var shortDescription by remember { mutableStateOf(eventToEdit.catchyDescription) }
-  var longDescription by remember { mutableStateOf(eventToEdit.description) }
+  var name by remember { mutableStateOf(eventToEdit.title.trim()) }
+  var shortDescription by remember { mutableStateOf(eventToEdit.catchyDescription.trim()) }
+  var longDescription by remember { mutableStateOf(eventToEdit.description.trim()) }
 
   var coauthorsAndBoolean =
       associationViewModel.associations.collectAsState().value.map {
@@ -139,14 +140,51 @@ fun EventEditScreen(
           OutlinedTextField(
               modifier = Modifier.fillMaxWidth().testTag(EventEditTestTags.EVENT_TITLE),
               value = name,
+              isError = name.isEmpty(),
+              supportingText = {
+                if (name.isEmpty()) {
+                  Text(context.getString(R.string.event_creation_name_error))
+                }
+              },
               onValueChange = { name = it },
-              label = { Text(context.getString(R.string.event_creation_name_label)) })
+              label = { Text(context.getString(R.string.event_creation_name_label)) },
+              trailingIcon = {
+                IconButton(
+                    onClick = { name = "" },
+                    enabled = name.isNotEmpty(),
+                    modifier = Modifier.testTag(EventEditTestTags.EVENT_TITLE_CLEAR_BUTTON)) {
+                      Icon(
+                          imageVector = Icons.Outlined.Clear,
+                          contentDescription =
+                              context.getString(
+                                  R.string.event_creation_content_description_clear_title))
+                    }
+              })
 
           OutlinedTextField(
               modifier = Modifier.fillMaxWidth().testTag(EventEditTestTags.SHORT_DESCRIPTION),
               value = shortDescription,
+              isError = shortDescription.isEmpty(),
+              supportingText = {
+                if (shortDescription.isEmpty()) {
+                  Text(context.getString(R.string.event_creation_short_description_error))
+                }
+              },
               onValueChange = { shortDescription = it },
-              label = { Text(context.getString(R.string.event_creation_short_description_label)) })
+              label = { Text(context.getString(R.string.event_creation_short_description_label)) },
+              trailingIcon = {
+                IconButton(
+                    onClick = { shortDescription = "" },
+                    enabled = shortDescription.isNotEmpty(),
+                    modifier = Modifier.testTag(EventEditTestTags.SHORT_DESCRIPTION_CLEAR_BUTTON)) {
+                      Icon(
+                          imageVector = Icons.Outlined.Clear,
+                          contentDescription =
+                              context.getString(
+                                  R.string
+                                      .event_creation_content_description_clear_short_description))
+                    }
+              })
 
           BannerImagePicker(
               eventBannerUri, modifier = Modifier.testTag(EventEditTestTags.EVENT_IMAGE))
@@ -178,6 +216,12 @@ fun EventEditScreen(
           OutlinedTextField(
               modifier = Modifier.fillMaxWidth().testTag(EventEditTestTags.DESCRIPTION),
               value = longDescription,
+              isError = longDescription.isEmpty(),
+              supportingText = {
+                if (longDescription.isEmpty()) {
+                  Text(context.getString(R.string.event_creation_description_error))
+                }
+              },
               onValueChange = { longDescription = it },
               label = { Text(context.getString(R.string.event_creation_description_label)) })
 
