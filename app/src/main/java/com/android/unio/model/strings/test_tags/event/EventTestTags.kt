@@ -116,6 +116,7 @@ object EventDetailsTestTags {
   const val EVENT_PICTURES_ARROW_LEFT = "picturesArrowLeft"
   const val EVENT_PICTURES_ARROW_RIGHT = "picturesArrowRight"
   const val PICTURE_FULL_SCREEN = "pictureFullScreen"
+  const val CHIPS = "eventChips"
 }
 
 object EventTypeOverlayTestTags {
