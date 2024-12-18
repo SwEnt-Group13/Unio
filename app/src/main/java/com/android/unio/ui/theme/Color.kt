@@ -219,14 +219,27 @@ val surfaceContainerDarkHighContrast = Color(0xFF1F1F25)
 val surfaceContainerHighDarkHighContrast = Color(0xFF2A292F)
 val surfaceContainerHighestDarkHighContrast = Color(0xFF35343A)
 
-val eventTypeFestival = Color(0xFF6200EE) // Purple
-val eventTypeAperitif = Color(0xFF03DAC5) // Teal
-val eventTypeNightParty = Color(0xFFFF5722) // Deep Orange
-val eventTypeJam = Color(0xFFFFEB3B) // Yellow
-val eventTypeNetworking = Color(0xFF009688) // Cyan
-val eventTypeSport = Color(0xFF8BC34A) // Light Green
-val eventTypeTrip = Color(0xFFE91E63) // Pink
-val eventTypeOther = Color.Gray // Default Color
+object EventColors{
+  val Festival = Color(0xFF6200EE) // Purple
+  val Aperitif = Color(0xFF03DAC5) // Teal
+  val NightParty = Color(0xFFFF5722) // Deep Orange
+  val Jam = Color(0xFFFFEB3B) // Yellow
+  val Networking = Color(0xFF009688) // Cyan
+  val SportTournament = Color(0xFF8BC34A) // Light Green
+  val Trip = Color(0xFFE91E63) // Pink
+  val SportDiscovery = Color(0xFF3B40F4)
+  val Lan = Color(0xFF3F074C)
+  val FilmProjection = Color(0xFFFCD746)
+  val ForeignCultureDiscovery = Color(0xFF7EE4CA)
+  val TechPresentation = Color(0xFFB8397D)
+  val ScienceFare = Color(0xFF5DF09B)
+  val FoodDistribution = Color(0xFF33811E)
+  val ArtConvention = Color(0xFF2dAAAF)
+  val Manifestation = Color(0xFFF2801D)
+  val BoardGames = Color(0xFFAE86AC)
+  val GroupStudy = Color(0xFFF3A885)
+  val Other = Color.Gray // Default Color
+}
 
 // Colors for the approximate user location circle on the map
 val mapUserLocationCircleFiller = Color(0x2200A0FF)

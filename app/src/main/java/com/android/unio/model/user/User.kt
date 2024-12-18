@@ -21,6 +21,9 @@ enum class Interest(val title: Int) {
   FOOD(R.string.interest_food),
   GAMING(R.string.interest_gaming),
   FESTIVALS(R.string.interest_festivals),
+  APEROS(R.string.interest_apero),
+  NETWORKING(R.string.interest_networking),
+  CULTURE(R.string.interest_culture)
 }
 
 enum class Social(val title: String, val icon: Int, val url: String) {
