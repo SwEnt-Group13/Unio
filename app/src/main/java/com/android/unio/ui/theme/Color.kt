@@ -219,7 +219,7 @@ val surfaceContainerDarkHighContrast = Color(0xFF1F1F25)
 val surfaceContainerHighDarkHighContrast = Color(0xFF2A292F)
 val surfaceContainerHighestDarkHighContrast = Color(0xFF35343A)
 
-object EventColors{
+object EventColors {
   val Festival = Color(0xFF6200EE) // Purple
   val Aperitif = Color(0xFF03DAC5) // Teal
   val NightParty = Color(0xFFFF5722) // Deep Orange

@@ -174,26 +174,25 @@ fun NominatimLocationPicker(
 fun <T> Chips(
     items: List<Pair<T, MutableState<Boolean>>>,
     getName: (T) -> String,
-){
-    val context = LocalContext.current
+) {
+  val context = LocalContext.current
 
-    FlowRow {
-        items.forEach { (item, selected) ->
-            if (selected.value) {
-                InputChip(
-                    label = { Text(getName(item)) },
-                    onClick = {},
-                    selected = selected.value,
-                    avatar = {
-                        Icon(
-                            Icons.Default.Close,
-                            contentDescription = context.getString(R.string.associations_overlay_remove),
-                            modifier = Modifier.clickable { selected.value = !selected.value })
-                    })
-            }
-
-        }
+  FlowRow {
+    items.forEach { (item, selected) ->
+      if (selected.value) {
+        InputChip(
+            label = { Text(getName(item)) },
+            onClick = {},
+            selected = selected.value,
+            avatar = {
+              Icon(
+                  Icons.Default.Close,
+                  contentDescription = context.getString(R.string.associations_overlay_remove),
+                  modifier = Modifier.clickable { selected.value = !selected.value })
+            })
+      }
     }
+  }
 }
 
 /**
@@ -269,20 +268,17 @@ fun DateAndTimePicker(
   ) {
     OutlinedTextField(
         modifier =
-        Modifier
-            .testTag(dateFieldTestTag)
-            .weight(1f)
-            .pointerInput(Unit) {
-                awaitEachGesture {
-                    // Modifier.clickable doesn't work for text fields, so we use Modifier.pointerInput
-                    // in the Initial pass to observe events before the text field consumes them
-                    // in the Main pass.
-                    awaitFirstDown(pass = PointerEventPass.Initial)
-                    val upEvent = waitForUpOrCancellation(pass = PointerEventPass.Initial)
-                    if (upEvent != null) {
-                        isDatePickerVisible = true
-                    }
+            Modifier.testTag(dateFieldTestTag).weight(1f).pointerInput(Unit) {
+              awaitEachGesture {
+                // Modifier.clickable doesn't work for text fields, so we use Modifier.pointerInput
+                // in the Initial pass to observe events before the text field consumes them
+                // in the Main pass.
+                awaitFirstDown(pass = PointerEventPass.Initial)
+                val upEvent = waitForUpOrCancellation(pass = PointerEventPass.Initial)
+                if (upEvent != null) {
+                  isDatePickerVisible = true
                 }
+              }
             },
         value =
             selectedDate?.let { convertMillisToDate(it) }
@@ -306,20 +302,17 @@ fun DateAndTimePicker(
     Spacer(modifier = Modifier.weight(0.05f))
     OutlinedTextField(
         modifier =
-        Modifier
-            .testTag(timeFieldTestTag)
-            .weight(1f)
-            .pointerInput(Unit) {
-                awaitEachGesture {
-                    // Modifier.clickable doesn't work for text fields, so we use Modifier.pointerInput
-                    // in the Initial pass to observe events before the text field consumes them
-                    // in the Main pass.
-                    awaitFirstDown(pass = PointerEventPass.Initial)
-                    val upEvent = waitForUpOrCancellation(pass = PointerEventPass.Initial)
-                    if (upEvent != null) {
-                        isTimePickerVisible = true
-                    }
+            Modifier.testTag(timeFieldTestTag).weight(1f).pointerInput(Unit) {
+              awaitEachGesture {
+                // Modifier.clickable doesn't work for text fields, so we use Modifier.pointerInput
+                // in the Initial pass to observe events before the text field consumes them
+                // in the Main pass.
+                awaitFirstDown(pass = PointerEventPass.Initial)
+                val upEvent = waitForUpOrCancellation(pass = PointerEventPass.Initial)
+                if (upEvent != null) {
+                  isTimePickerVisible = true
                 }
+              }
             },
         value =
             selectedTime?.let { convertMillisToTime(it) }

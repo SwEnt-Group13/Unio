@@ -83,7 +83,7 @@ fun EventEditScreen(
   val scrollState = rememberScrollState()
   var showCoauthorsOverlay by remember { mutableStateOf(false) }
   var showTaggedOverlay by remember { mutableStateOf(false) }
-    var showEventTypeOverlay by remember { mutableStateOf(false) }
+  var showEventTypeOverlay by remember { mutableStateOf(false) }
 
   val eventToEdit = remember { eventViewModel.selectedEvent.value!! }
 
@@ -91,11 +91,11 @@ fun EventEditScreen(
   var shortDescription by remember { mutableStateOf(eventToEdit.catchyDescription.trim()) }
   var longDescription by remember { mutableStateOf(eventToEdit.description.trim()) }
 
-    val eventTypeFlow = remember {
-        MutableStateFlow(EventType.entries.map { it to mutableStateOf(eventToEdit.types.contains(it)) })
-    }
+  val eventTypeFlow = remember {
+    MutableStateFlow(EventType.entries.map { it to mutableStateOf(eventToEdit.types.contains(it)) })
+  }
 
-    val types by eventTypeFlow.collectAsState()
+  val types by eventTypeFlow.collectAsState()
 
   var coauthorsAndBoolean =
       associationViewModel.associations.collectAsState().value.map {
@@ -203,24 +203,17 @@ fun EventEditScreen(
               getName = { it.name },
           )
 
-        OutlinedButton(
-            modifier = Modifier
-                .fillMaxWidth()
-                .testTag(EventEditTestTags.EVENT_TYPE),
-            onClick = { showEventTypeOverlay = true }
-        ) {
-            Icon(
-                Icons.Default.Add,
-                contentDescription =
-                context.getString(R.string.social_overlay_content_description_add))
-            Text(context.getString(R.string.event_edit_type))
-        }
+          OutlinedButton(
+              modifier = Modifier.fillMaxWidth().testTag(EventEditTestTags.EVENT_TYPE),
+              onClick = { showEventTypeOverlay = true }) {
+                Icon(
+                    Icons.Default.Add,
+                    contentDescription =
+                        context.getString(R.string.social_overlay_content_description_add))
+                Text(context.getString(R.string.event_edit_type))
+              }
 
-        Chips(
-            types,
-            getName = { context.getString(it.text) }
-        )
-
+          Chips(types, getName = { context.getString(it.text) })
 
           OutlinedTextField(
               modifier = Modifier.fillMaxWidth().testTag(EventEditTestTags.DESCRIPTION),
@@ -410,15 +403,14 @@ fun EventEditScreen(
           }
         }
 
-      if(showEventTypeOverlay){
-            EventTypeOverlay(
-                onDismiss = { showEventTypeOverlay = false },
-                onSave = { types ->
-                    eventTypeFlow.value = types
-                    showEventTypeOverlay = false
-                },
-                types = types
-            )
-      }
+    if (showEventTypeOverlay) {
+      EventTypeOverlay(
+          onDismiss = { showEventTypeOverlay = false },
+          onSave = { types ->
+            eventTypeFlow.value = types
+            showEventTypeOverlay = false
+          },
+          types = types)
+    }
   }
 }

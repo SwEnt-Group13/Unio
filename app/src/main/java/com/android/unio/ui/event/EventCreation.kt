@@ -80,17 +80,17 @@ fun EventCreationScreen(
   val scrollState = rememberScrollState()
   var showCoauthorsOverlay by remember { mutableStateOf(false) }
   var showTaggedOverlay by remember { mutableStateOf(false) }
-    var showEventTypeOverlay by remember { mutableStateOf(false) }
+  var showEventTypeOverlay by remember { mutableStateOf(false) }
 
   var name by remember { mutableStateOf("") }
   var shortDescription by remember { mutableStateOf("") }
   var longDescription by remember { mutableStateOf("") }
 
-    val eventTypeFlow = remember {
-        MutableStateFlow(EventType.entries.map { it to mutableStateOf(false) }.toList())
-    }
+  val eventTypeFlow = remember {
+    MutableStateFlow(EventType.entries.map { it to mutableStateOf(false) }.toList())
+  }
 
-    val types by eventTypeFlow.collectAsState()
+  val types by eventTypeFlow.collectAsState()
 
   var coauthorsAndBoolean =
       associationViewModel.associations.collectAsState().value.map { it to mutableStateOf(false) }
@@ -202,10 +202,7 @@ fun EventCreationScreen(
                 Text(context.getString(R.string.event_creation_coauthors_label))
               }
 
-          Chips(
-              coauthorsAndBoolean,
-              getName = { it.name }
-          )
+          Chips(coauthorsAndBoolean, getName = { it.name })
 
           OutlinedButton(
               modifier = Modifier.fillMaxWidth().testTag(EventCreationTestTags.TAGGED_ASSOCIATIONS),
@@ -217,28 +214,19 @@ fun EventCreationScreen(
                 Text(context.getString(R.string.event_creation_tagged_label))
               }
 
-          Chips(
-                taggedAndBoolean,
-                getName = { it.name }
-          )
+          Chips(taggedAndBoolean, getName = { it.name })
 
-        OutlinedButton(
-            modifier = Modifier
-                .fillMaxWidth()
-                .testTag(EventCreationTestTags.EVENT_TYPE),
-            onClick = { showEventTypeOverlay = true }
-        ) {
-            Icon(
-                Icons.Default.Add,
-                contentDescription =
-                context.getString(R.string.social_overlay_content_description_add))
-            Text(context.getString(R.string.event_creation_type))
-        }
+          OutlinedButton(
+              modifier = Modifier.fillMaxWidth().testTag(EventCreationTestTags.EVENT_TYPE),
+              onClick = { showEventTypeOverlay = true }) {
+                Icon(
+                    Icons.Default.Add,
+                    contentDescription =
+                        context.getString(R.string.social_overlay_content_description_add))
+                Text(context.getString(R.string.event_creation_type))
+              }
 
-        Chips(
-            types,
-            getName = { context.getString(it.text) }
-        )
+          Chips(types, getName = { context.getString(it.text) })
 
           OutlinedTextField(
               modifier = Modifier.fillMaxWidth().testTag(EventCreationTestTags.DESCRIPTION),
@@ -404,15 +392,14 @@ fun EventCreationScreen(
           bodyText = context.getString(R.string.associations_overlay_tagged_description))
     }
 
-      if(showEventTypeOverlay) {
-            EventTypeOverlay(
-                onDismiss = { showEventTypeOverlay = false },
-                onSave = { types ->
-                    eventTypeFlow.value = types
-                    showEventTypeOverlay = false
-                },
-                types = types
-            )
-      }
+    if (showEventTypeOverlay) {
+      EventTypeOverlay(
+          onDismiss = { showEventTypeOverlay = false },
+          onSave = { types ->
+            eventTypeFlow.value = types
+            showEventTypeOverlay = false
+          },
+          types = types)
+    }
   }
 }

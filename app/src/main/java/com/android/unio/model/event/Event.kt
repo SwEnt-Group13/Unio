@@ -6,12 +6,12 @@ import androidx.appsearch.annotation.Document.Namespace
 import androidx.appsearch.annotation.Document.StringProperty
 import androidx.appsearch.app.AppSearchSchema.StringPropertyConfig
 import androidx.compose.ui.graphics.Color
+import com.android.unio.R
 import com.android.unio.model.association.Association
 import com.android.unio.model.firestore.ReferenceList
 import com.android.unio.model.firestore.UniquelyIdentifiable
 import com.android.unio.model.map.Location
 import com.android.unio.ui.theme.EventColors
-import com.android.unio.R
 import com.google.firebase.Timestamp
 import java.util.Date
 
@@ -82,19 +82,26 @@ enum class EventType(val color: Color, val text: Int) {
   JAM(EventColors.Jam, R.string.event_type_jam), // + Music and Art
   NETWORKING(EventColors.Networking, R.string.event_type_networking), // + Apéro and Networking
   SPORT_TOURNAMENT(EventColors.SportTournament, R.string.event_type_sport_tournament), // + Sports
-    SPORT_DISCOVERY(EventColors.SportDiscovery, R.string.event_type_sport_discovery), // + Sports, Socialising
+  SPORT_DISCOVERY(
+      EventColors.SportDiscovery, R.string.event_type_sport_discovery), // + Sports, Socialising
   TRIP(EventColors.Trip, R.string.event_type_trip), // + Travel, Culture
-    LAN(EventColors.Lan, R.string.event_type_lan), // + Gaming
-    FILM_PROJECTION(EventColors.FilmProjection, R.string.event_type_film_projection), // + Art, Culture
-    FOREIGN_CULTURE_DISCOVERY(EventColors.ForeignCultureDiscovery, R.string.event_type_foreign_culture_discovery), // + Culture, Literature
-    TECH_PRESENTATION(EventColors.TechPresentation, R.string.event_type_tech_presentation), // + Tech, Science
-    SCIENCE_FARE(EventColors.ScienceFare, R.string.event_type_science_fare), // + Science, Tech
-    FOOD_DISTRIBUTION(EventColors.FoodDistribution, R.string.event_type_food_distribuition), // + Food
-    ART_CONVENTION(EventColors.ArtConvention, R.string.event_type_art_convention), // + Art, Literature
-    MANIFESTATION(EventColors.Manifestation, R.string.event_type_manifestation), // + Culture, Socialising
-    BOARD_GAMES(EventColors.BoardGames, R.string.event_type_board_games), // + Gaming, Socialising
-    GROUP_STUDY(EventColors.GroupStudy, R.string.event_type_group_study), // + Science, Tech
-    OTHER(EventColors.Other, R.string.event_type_other)
+  LAN(EventColors.Lan, R.string.event_type_lan), // + Gaming
+  FILM_PROJECTION(
+      EventColors.FilmProjection, R.string.event_type_film_projection), // + Art, Culture
+  FOREIGN_CULTURE_DISCOVERY(
+      EventColors.ForeignCultureDiscovery,
+      R.string.event_type_foreign_culture_discovery), // + Culture, Literature
+  TECH_PRESENTATION(
+      EventColors.TechPresentation, R.string.event_type_tech_presentation), // + Tech, Science
+  SCIENCE_FARE(EventColors.ScienceFare, R.string.event_type_science_fare), // + Science, Tech
+  FOOD_DISTRIBUTION(EventColors.FoodDistribution, R.string.event_type_food_distribuition), // + Food
+  ART_CONVENTION(
+      EventColors.ArtConvention, R.string.event_type_art_convention), // + Art, Literature
+  MANIFESTATION(
+      EventColors.Manifestation, R.string.event_type_manifestation), // + Culture, Socialising
+  BOARD_GAMES(EventColors.BoardGames, R.string.event_type_board_games), // + Gaming, Socialising
+  GROUP_STUDY(EventColors.GroupStudy, R.string.event_type_group_study), // + Science, Tech
+  OTHER(EventColors.Other, R.string.event_type_other)
 }
 
 /**
