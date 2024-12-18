@@ -129,7 +129,7 @@ fun EventCardScaffold(
   Column(
       modifier =
           Modifier.fillMaxWidth()
-              .padding(vertical = 8.dp)
+              .padding(vertical = 10.dp)
               .testTag(EventCardTestTags.EVENT_ITEM)
               .clip(RoundedCornerShape(10.dp))
               .background(MaterialTheme.colorScheme.primaryContainer)

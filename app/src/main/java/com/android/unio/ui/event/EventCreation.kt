@@ -14,6 +14,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.outlined.Clear
+import androidx.compose.material.icons.rounded.Clear
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -155,6 +157,18 @@ fun EventCreationScreen(
                                 Modifier.testTag(EventCreationTestTags.TITLE_CHARACTER_COUNTER))
                       }
                     }
+              },
+              trailingIcon = {
+                IconButton(
+                    onClick = { name = "" },
+                    enabled = name.isNotEmpty(),
+                    modifier = Modifier.testTag(EventCreationTestTags.EVENT_TITLE_CLEAR_BUTTON)) {
+                      Icon(
+                          imageVector = Icons.Outlined.Clear,
+                          contentDescription =
+                              context.getString(
+                                  R.string.event_creation_content_description_clear_title))
+                    }
               })
 
           OutlinedTextField(
@@ -186,6 +200,21 @@ fun EventCreationScreen(
                                 Modifier.testTag(
                                     EventCreationTestTags.SHORT_DESCRIPTION_CHARACTER_COUNTER))
                       }
+                    }
+              },
+              trailingIcon = {
+                IconButton(
+                    onClick = { shortDescription = "" },
+                    enabled = shortDescription.isNotEmpty(),
+                    modifier =
+                        Modifier.testTag(
+                            EventCreationTestTags.EVENT_SHORT_DESCRIPTION_CLEAR_BUTTON)) {
+                      Icon(
+                          imageVector = Icons.Outlined.Clear,
+                          contentDescription =
+                              context.getString(
+                                  R.string
+                                      .event_creation_content_description_clear_short_description))
                     }
               })
 

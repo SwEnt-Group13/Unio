@@ -23,6 +23,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
@@ -122,7 +123,12 @@ fun NominatimLocationPicker(
         },
         label = { Text(context.getString(R.string.event_creation_location_label)) },
         placeholder = { Text(context.getString(R.string.event_creation_location_input_label)) },
-        modifier = Modifier.fillMaxWidth().testTag(textFieldTestTag))
+        modifier = Modifier.fillMaxWidth().testTag(textFieldTestTag),
+        trailingIcon = {
+          Icon(
+              imageVector = Icons.Outlined.LocationOn,
+              contentDescription = context.getString(R.string.event_creation_location_icon))
+        })
 
     DropdownMenu(
         expanded = showDropdown && locationSuggestions.isNotEmpty(),

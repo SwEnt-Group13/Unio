@@ -14,6 +14,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.outlined.Clear
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -156,7 +157,19 @@ fun EventEditScreen(
                 }
               },
               onValueChange = { name = it },
-              label = { Text(context.getString(R.string.event_creation_name_label)) })
+              label = { Text(context.getString(R.string.event_creation_name_label)) },
+              trailingIcon = {
+                IconButton(
+                    onClick = { name = "" },
+                    enabled = name.isNotEmpty(),
+                    modifier = Modifier.testTag(EventEditTestTags.EVENT_TITLE_CLEAR_BUTTON)) {
+                      Icon(
+                          imageVector = Icons.Outlined.Clear,
+                          contentDescription =
+                              context.getString(
+                                  R.string.event_creation_content_description_clear_title))
+                    }
+              })
 
           OutlinedTextField(
               modifier = Modifier.fillMaxWidth().testTag(EventEditTestTags.SHORT_DESCRIPTION),
@@ -168,7 +181,20 @@ fun EventEditScreen(
                 }
               },
               onValueChange = { shortDescription = it },
-              label = { Text(context.getString(R.string.event_creation_short_description_label)) })
+              label = { Text(context.getString(R.string.event_creation_short_description_label)) },
+              trailingIcon = {
+                IconButton(
+                    onClick = { shortDescription = "" },
+                    enabled = shortDescription.isNotEmpty(),
+                    modifier = Modifier.testTag(EventEditTestTags.SHORT_DESCRIPTION_CLEAR_BUTTON)) {
+                      Icon(
+                          imageVector = Icons.Outlined.Clear,
+                          contentDescription =
+                              context.getString(
+                                  R.string
+                                      .event_creation_content_description_clear_short_description))
+                    }
+              })
 
           BannerImagePicker(
               eventBannerUri, modifier = Modifier.testTag(EventEditTestTags.EVENT_IMAGE))

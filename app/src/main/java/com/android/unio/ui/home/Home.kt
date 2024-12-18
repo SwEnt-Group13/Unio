@@ -3,7 +3,6 @@ package com.android.unio.ui.home
 import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -203,7 +202,6 @@ fun EventList(
     eventViewModel: EventViewModel
 ) {
   LazyColumn(
-      contentPadding = PaddingValues(vertical = 8.dp),
       modifier =
           Modifier.fillMaxSize().padding(horizontal = 32.dp).testTag(HomeTestTags.EVENT_LIST)) {
         items(events) { event -> EventCard(navigationAction, event, userViewModel, eventViewModel) }

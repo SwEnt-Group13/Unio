@@ -16,6 +16,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.outlined.Clear
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -375,7 +376,8 @@ private fun EditUserTextFields(
   val isLastNameError = isErrors.contains(AccountDetailsError.EMPTY_LAST_NAME)
 
   OutlinedTextField(
-      modifier = Modifier.padding(4.dp).testTag(UserEditionTestTags.FIRST_NAME_TEXT_FIELD),
+      modifier =
+          Modifier.padding(4.dp).fillMaxWidth().testTag(UserEditionTestTags.FIRST_NAME_TEXT_FIELD),
       label = {
         Row(
             horizontalArrangement = Arrangement.SpaceEvenly,
@@ -405,10 +407,22 @@ private fun EditUserTextFields(
           onFirstNameChange(it)
         }
       },
-      value = firstName)
+      value = firstName,
+      trailingIcon = {
+        IconButton(
+            onClick = { onFirstNameChange("") },
+            enabled = firstName.isNotEmpty(),
+            modifier = Modifier.testTag(UserEditionTestTags.FIRST_NAME_CLEAR_BUTTON)) {
+              Icon(
+                  imageVector = Icons.Outlined.Clear,
+                  contentDescription =
+                      context.getString(R.string.user_edition_content_description_clear_first_name))
+            }
+      })
 
   OutlinedTextField(
-      modifier = Modifier.padding(4.dp).testTag(UserEditionTestTags.LAST_NAME_TEXT_FIELD),
+      modifier =
+          Modifier.padding(4.dp).fillMaxWidth().testTag(UserEditionTestTags.LAST_NAME_TEXT_FIELD),
       label = {
         Row(
             horizontalArrangement = Arrangement.SpaceEvenly,
@@ -438,7 +452,18 @@ private fun EditUserTextFields(
           onLastNameChange(it)
         }
       },
-      value = lastName)
+      value = lastName,
+      trailingIcon = {
+        IconButton(
+            onClick = { onLastNameChange("") },
+            enabled = lastName.isNotEmpty(),
+            modifier = Modifier.testTag(UserEditionTestTags.LAST_NAME_CLEAR_BUTTON)) {
+              Icon(
+                  imageVector = Icons.Outlined.Clear,
+                  contentDescription =
+                      context.getString(R.string.user_edition_content_description_clear_last_name))
+            }
+      })
 
   OutlinedTextField(
       modifier =
@@ -493,7 +518,7 @@ private fun InterestButtonAndFlowRow(
                 context.getString(R.string.account_details_content_description_add))
         Text(context.getString(R.string.user_edition_edit_interests))
       }
-  FlowRow {
+  FlowRow(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
     interests.forEach { pair ->
       if (pair.second.value) {
         InterestInputChip(pair, testTag = UserEditionTestTags.INTERESTS_CHIP + pair.first.name)
@@ -529,7 +554,7 @@ private fun SocialButtonAndFlowRow(
         Text(context.getString(R.string.user_edition_edit_socials))
       }
 
-  FlowRow(modifier = Modifier.fillMaxWidth().padding(3.dp)) {
+  FlowRow(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
     socials.forEachIndexed { index, userSocial ->
       SocialInputChip(
           userSocial,

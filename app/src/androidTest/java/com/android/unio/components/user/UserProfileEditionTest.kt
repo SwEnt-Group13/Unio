@@ -2,8 +2,11 @@ package com.android.unio.components.user
 
 import android.net.ConnectivityManager
 import android.net.Network
+import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotDisplayed
+import androidx.compose.ui.test.assertTextEquals
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
@@ -311,6 +314,29 @@ class UserProfileEditionTest : TearDown() {
         .onNodeWithTag(UserEditionTestTags.BIOGRAPHY_CHARACTER_COUNTER, useUnmergedTree = true)
         .assertExists()
     composeTestRule.onNodeWithTag(UserEditionTestTags.BIOGRAPHY_TEXT_FIELD).performTextClearance()
+  }
+
+  @Test
+  fun testClearButtonFunctionality() {
+    composeTestRule.onNodeWithTag(UserEditionTestTags.FIRST_NAME_TEXT_FIELD).performTextClearance()
+    composeTestRule
+        .onNodeWithTag(UserEditionTestTags.FIRST_NAME_TEXT_FIELD)
+        .performTextInput(UserUpdate.FIRST_NAME)
+    composeTestRule
+        .onNodeWithTag(UserEditionTestTags.FIRST_NAME_TEXT_FIELD, useUnmergedTree = true)
+        .assertTextEquals(UserUpdate.FIRST_NAME, includeEditableText = true)
+    composeTestRule.onNodeWithTag(UserEditionTestTags.FIRST_NAME_CLEAR_BUTTON).performClick()
+    composeTestRule.onNodeWithTag(UserEditionTestTags.FIRST_NAME_TEXT_FIELD).assert(hasText(""))
+
+    composeTestRule.onNodeWithTag(UserEditionTestTags.LAST_NAME_TEXT_FIELD).performTextClearance()
+    composeTestRule
+        .onNodeWithTag(UserEditionTestTags.LAST_NAME_TEXT_FIELD)
+        .performTextInput(UserUpdate.LAST_NAME)
+    composeTestRule
+        .onNodeWithTag(UserEditionTestTags.LAST_NAME_TEXT_FIELD, useUnmergedTree = true)
+        .assertTextEquals(UserUpdate.LAST_NAME, includeEditableText = true)
+    composeTestRule.onNodeWithTag(UserEditionTestTags.LAST_NAME_CLEAR_BUTTON).performClick()
+    composeTestRule.onNodeWithTag(UserEditionTestTags.LAST_NAME_TEXT_FIELD).assert(hasText(""))
   }
 
   object UserUpdate {
