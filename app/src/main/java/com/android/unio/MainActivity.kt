@@ -74,9 +74,9 @@ class MainActivity : ComponentActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
     super.onCreate(savedInstanceState)
-    //TODO BLBLBL
-    Firebase.auth.useEmulator("10.0.2.2", 9099)
+    // TODO BLBLBL
     Firebase.storage.useEmulator("10.0.2.2", 9199)
+    Firebase.auth.useEmulator("10.0.2.2", 9099)
     Firebase.functions.useEmulator("10.0.2.2", 5001)
     Firebase.firestore.useEmulator("10.0.2.2", 8080)
     setContent {

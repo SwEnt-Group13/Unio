@@ -105,6 +105,16 @@ service cloud.firestore {
         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.joinedAssociations
         );
       }
+
+      function onlyUpdatedEventPictures() {
+        // Check that the only updated field is the eventPictures field
+
+        let affectedKeys = request.resource.data.diff(resource.data).affectedKeys();
+        let onlyEventPicturesChanged = affectedKeys.hasOnly(['eventPictures']);
+
+        return onlyEventPicturesChanged;
+      }
+
       function validate() {
         // Check that the event document has the correct fields
         let fields = ['uid', 'title', 'organisers', 'taggedAssociations', 'image', 'description', 'catchyDescription', 'price', 'date', 'location', 'types', 'maxNumberOfPlaces', 'numberOfSaved', 'eventPictures'];
@@ -145,13 +155,15 @@ service cloud.firestore {
 
       // To update or delete an event, the user must be an
       // organiser in the existing event document
-      allow update: if isEventOrganiser(resource.data.organisers) && validate();
+      allow update: if isEventOrganiser(resource.data.organisers) && validate() && onlyEventPicturesChanged;
       allow delete: if isEventOrganiser(resource.data.organisers);
     }
-    match /eventUserPicture/{uid} {
+    match /eventUserPictures/{uid} {
       function isAuthor() {
         return isVerified() && request.auth.uid == uid;
       }
+
+      
 
       function validate() {
         // Check that the eventUserPicture document has the correct fields
@@ -167,7 +179,7 @@ service cloud.firestore {
         }
       allow read: if isVerified();
       allow create: if isVerified() && validate();
-      allow update: if isAuthor() && validate();
+      allow update: if isAuthor() && validate() ;
       allow delete: if isAuthor();
     }
   }

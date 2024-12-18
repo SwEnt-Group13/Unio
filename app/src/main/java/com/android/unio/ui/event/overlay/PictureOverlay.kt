@@ -19,9 +19,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -85,14 +87,17 @@ fun PictureOverlay(
         mutableStateOf(eventPictures[pagerState.currentPage].likes.contains(user.uid))
       }
 
+  val nbOfLikes by
+      remember(pagerState.currentPage) {
+        mutableIntStateOf(eventPictures[pagerState.currentPage].likes.uids.size)
+      }
+
   val onClickLike = {
     enableButton = false
     val picture = eventPictures[pagerState.currentPage]
-    if (isLiked == true) {
-      // unlike
+    if (isLiked) {
       picture.likes.remove(user.uid)
     } else {
-
       picture.likes.add(user.uid)
     }
     isLiked = !isLiked
@@ -155,7 +160,7 @@ fun PictureOverlay(
                       Modifier.testTag("pictureInteractionRow").align(Alignment.BottomCenter),
                   horizontalArrangement = Arrangement.SpaceAround) {
                     IconButton(
-                        onClick = { isLiked = !isLiked },
+                        onClick = onClickLike,
                         modifier = Modifier,
                         colors =
                             IconButtonDefaults.iconButtonColors(
@@ -168,6 +173,8 @@ fun PictureOverlay(
                               modifier = Modifier.size(iconSize),
                               tint = if (isLiked) Color.Red else Color.White)
                         }
+
+                    Text(nbOfLikes.toString(), color = MaterialTheme.colorScheme.onPrimary)
                   }
             }
       }
