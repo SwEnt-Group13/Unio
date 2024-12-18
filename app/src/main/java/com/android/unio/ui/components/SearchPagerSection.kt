@@ -78,7 +78,14 @@ fun <T> SearchPagerSection(
             pageSpacing = 16.dp
         ) { page ->
             val item = items[page]
-            cardContent(item) // Render content using the provided cardContent lambda
+            //cardContent(item) // Render content using the provided cardContent lambda
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth(), // Ensures that the card takes the full width of the parent
+                contentAlignment = Alignment.Center // Centers the content inside the Box
+            ) {
+                cardContent(item) // Render content using the provided cardContent lambda
+            }
         }
     }
 }
