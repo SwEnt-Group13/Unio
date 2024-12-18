@@ -5,6 +5,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.annotation.NonNull
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -43,6 +44,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
@@ -76,6 +79,8 @@ import com.android.unio.ui.navigation.Screen
 import com.android.unio.ui.navigation.SmoothTopBarNavigationMenu
 import com.android.unio.ui.theme.AppTypography
 import com.android.unio.ui.utils.ToastUtils
+import com.github.skydoves.colorpicker.compose.HsvColorPicker
+import com.github.skydoves.colorpicker.compose.rememberColorPickerController
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
@@ -87,6 +92,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
+import kotlin.math.max
+import kotlin.math.min
 
 
 /**
@@ -852,9 +859,14 @@ fun RoleCard(role: Role) {
 }
 
 @Composable
-fun CreateRoleDialog(onDismiss: () -> Unit, onCreateRole: (Role) -> Unit, associationViewModel: AssociationViewModel) {
+fun CreateRoleDialog(
+    onDismiss: () -> Unit,
+    onCreateRole: (Role) -> Unit,
+    associationViewModel: AssociationViewModel
+) {
     var displayName by remember { mutableStateOf(TextFieldValue("")) }
-    var colorHex by remember { mutableStateOf(TextFieldValue("#FFFFFF")) }
+    val controller = rememberColorPickerController() // Skydoves color picker controller
+    var selectedColor by remember { mutableStateOf(Color.White) }
     val selectedPermissions = remember { mutableStateListOf<PermissionType>() }
     val allPermissions = PermissionType.values()
 
@@ -862,22 +874,18 @@ fun CreateRoleDialog(onDismiss: () -> Unit, onCreateRole: (Role) -> Unit, associ
         onDismissRequest = onDismiss,
         confirmButton = {
             Button(onClick = {
-                val color = try {
-                    java.lang.Long.parseLong(colorHex.text.removePrefix("#"), 16)
-                } catch (e: Exception) {
-                    0xFFFFFF // Fallback to white
-                }
-
+                val colorInt = selectedColor.toArgb().toLong()
                 val newRole = Role(
                     displayName = displayName.text,
                     permissions = Permissions.PermissionsBuilder().addPermissions(selectedPermissions.toList()).build(),
-                    color = color,
+                    color = colorInt,
                     uid = displayName.text
                 )
-                associationViewModel.selectedAssociation.value?.let {association ->
-                    addRoleCloudFunction(newRole, associationUId = association.uid, onSuccess = {Log.d("ADD_ROLEE", "SUCCESS"); associationViewModel.addRoleLocally(association.uid, newRole)}, onError = { e -> Log.d("ADD_ROLEE",
-                        "ERROR$e"
-                    )})
+                associationViewModel.selectedAssociation.value?.let { association ->
+                    addRoleCloudFunction(newRole, association.uid, onSuccess = {
+                        Log.d("ADD_ROLE", "SUCCESS")
+                        associationViewModel.addRoleLocally(association.uid, newRole)
+                    }, onError = { e -> Log.d("ADD_ROLE", "ERROR: $e") })
                 }
                 onCreateRole(newRole)
             }) {
@@ -892,11 +900,12 @@ fun CreateRoleDialog(onDismiss: () -> Unit, onCreateRole: (Role) -> Unit, associ
         title = { Text("Create New Role") },
         text = {
             Column(Modifier.fillMaxWidth()) {
-                // Fixed Top Fields: Display Name and Color
+                // Role Name
                 Column(
                     Modifier
                         .fillMaxWidth()
-                        .padding(bottom = 16.dp)) {
+                        .padding(bottom = 16.dp)
+                ) {
                     Text(text = "Display Name", style = MaterialTheme.typography.labelMedium)
                     BasicTextField(
                         value = displayName,
@@ -906,56 +915,56 @@ fun CreateRoleDialog(onDismiss: () -> Unit, onCreateRole: (Role) -> Unit, associ
                             .background(Color.LightGray)
                             .padding(8.dp)
                     )
+                }
 
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    Text(text = "Color (Hex Code)", style = MaterialTheme.typography.labelMedium)
-                    BasicTextField(
-                        value = colorHex,
-                        onValueChange = { colorHex = it },
+                // Color Picker
+                Column(
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 16.dp)
+                ) {
+                    Text("Choose Role Color", style = MaterialTheme.typography.labelMedium)
+                    HsvColorPicker(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .background(Color.LightGray)
-                            .padding(8.dp)
+                            .height(200.dp)
+                            .padding(10.dp),
+                        controller = controller,
+                        onColorChanged = { colorEnvelope ->
+                            selectedColor = colorEnvelope.color
+                        }
                     )
                 }
 
-                // Scrollable Permissions Section
+                // Permissions Section
                 Text(text = "Permissions", style = MaterialTheme.typography.labelMedium)
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f)
-                        .padding(top = 8.dp)
-                ) {
-                    LazyColumn(modifier = Modifier.fillMaxWidth()) {
-                        items(allPermissions.size) { index ->
-                            val permission = allPermissions[index]
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .clickable {
-                                        if (selectedPermissions.contains(permission)) {
-                                            selectedPermissions.remove(permission)
-                                        } else {
-                                            selectedPermissions.add(permission)
-                                        }
+                LazyColumn(modifier = Modifier.fillMaxWidth()) {
+                    items(allPermissions.size) { index ->
+                        val permission = allPermissions[index]
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    if (selectedPermissions.contains(permission)) {
+                                        selectedPermissions.remove(permission)
+                                    } else {
+                                        selectedPermissions.add(permission)
                                     }
-                                    .padding(8.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Checkbox(
-                                    checked = selectedPermissions.contains(permission),
-                                    onCheckedChange = {
-                                        if (it) {
-                                            selectedPermissions.add(permission)
-                                        } else {
-                                            selectedPermissions.remove(permission)
-                                        }
+                                }
+                                .padding(8.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Checkbox(
+                                checked = selectedPermissions.contains(permission),
+                                onCheckedChange = {
+                                    if (it) {
+                                        selectedPermissions.add(permission)
+                                    } else {
+                                        selectedPermissions.remove(permission)
                                     }
-                                )
-                                Text(text = permission.stringName)
-                            }
+                                }
+                            )
+                            Text(text = permission.stringName)
                         }
                     }
                 }
@@ -963,7 +972,6 @@ fun CreateRoleDialog(onDismiss: () -> Unit, onCreateRole: (Role) -> Unit, associ
         }
     )
 }
-
 
 
 
