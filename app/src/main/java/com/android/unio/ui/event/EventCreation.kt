@@ -48,8 +48,8 @@ import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.strings.test_tags.event.EventCreationTestTags
 import com.android.unio.model.utils.TextLength
 import com.android.unio.model.utils.Utils
-import com.android.unio.ui.components.AssociationChips
 import com.android.unio.ui.components.BannerImagePicker
+import com.android.unio.ui.components.Chips
 import com.android.unio.ui.components.DateAndTimePicker
 import com.android.unio.ui.components.NominatimLocationPicker
 import com.android.unio.ui.event.overlay.AssociationsOverlay
@@ -202,7 +202,10 @@ fun EventCreationScreen(
                 Text(context.getString(R.string.event_creation_coauthors_label))
               }
 
-          AssociationChips(coauthorsAndBoolean)
+          Chips(
+              coauthorsAndBoolean,
+              getName = { it.name }
+          )
 
           OutlinedButton(
               modifier = Modifier.fillMaxWidth().testTag(EventCreationTestTags.TAGGED_ASSOCIATIONS),
@@ -214,7 +217,10 @@ fun EventCreationScreen(
                 Text(context.getString(R.string.event_creation_tagged_label))
               }
 
-          AssociationChips(taggedAndBoolean)
+          Chips(
+                taggedAndBoolean,
+                getName = { it.name }
+          )
 
         OutlinedButton(
             modifier = Modifier
@@ -228,6 +234,11 @@ fun EventCreationScreen(
                 context.getString(R.string.social_overlay_content_description_add))
             Text(context.getString(R.string.event_creation_type))
         }
+
+        Chips(
+            types,
+            getName = { context.getString(it.text) }
+        )
 
           OutlinedTextField(
               modifier = Modifier.fillMaxWidth().testTag(EventCreationTestTags.DESCRIPTION),
