@@ -145,7 +145,7 @@ jobs:
 
       # Upload the test results to the artifacts
       - name: Upload Test Results
-        if: ${{ !cancelled() }}
+        if: ${{ failure() }}
         uses: actions/upload-artifact@v4
         with:
             name: test-results
