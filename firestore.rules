@@ -113,9 +113,9 @@ service cloud.firestore {
         let oldCount = resource.data.numberOfSaved;
 
         let affectedKeys = request.resource.data.diff(resource.data).affectedKeys();
-        let onlyFollowerCountChanged = affectedKeys.hasOnly(['numberOfSaved']);
+        let onlySavedChanged = affectedKeys.hasOnly(['numberOfSaved']);
 
-        return onlyFollowerCountChanged && (newCount == oldCount || newCount == oldCount + 1 || newCount == oldCount - 1);
+        return onlySavedChanged && (newCount == oldCount || newCount == oldCount + 1 || newCount == oldCount - 1);
       }
 
       function validate() {
@@ -179,7 +179,7 @@ service cloud.firestore {
         request.resource.data.image is string &&
         request.resource.data.author is string &&
         request.resource.data.likes is list;
-        }
+      }
       allow read: if isVerified();
       allow create: if isVerified() && validate();
       allow update: if isAuthor() && validate();
