@@ -86,8 +86,8 @@ service cloud.firestore {
           request.resource.data.description is string &&
           request.resource.data.followersCount is int &&
           request.resource.data.followersCount >= 0 &&
-          request.resource.data.members is list &&
-          request.resource.data.roles is list &&
+          request.resource.data.members is map &&
+          request.resource.data.roles is map &&
           request.resource.data.image is string &&
           request.resource.data.events is list &&
           request.resource.data.principalEmailAddress is string;
@@ -106,6 +106,18 @@ service cloud.firestore {
           get(/databases/$(database)/documents/users/$(request.auth.uid)).data.joinedAssociations
         );
       }
+      function onlyUpdateSaved() {
+        // Check that the only updated field is the numberOfSaved field
+        // and that it was only incremented or decremented by 1
+        let newCount = request.resource.data.numberOfSaved;
+        let oldCount = resource.data.numberOfSaved;
+
+        let affectedKeys = request.resource.data.diff(resource.data).affectedKeys();
+        let onlyFollowerCountChanged = affectedKeys.hasOnly(['numberOfSaved']);
+
+        return onlyFollowerCountChanged && (newCount == oldCount || newCount == oldCount + 1 || newCount == oldCount - 1);
+      }
+
       function validate() {
         // Check that the event document has the correct fields
         let fields = ['uid', 'title', 'organisers', 'taggedAssociations', 'image', 'description', 'catchyDescription', 'price', 'startDate', 'endDate', 'location', 'types', 'maxNumberOfPlaces', 'numberOfSaved', 'eventPictures'];
@@ -147,8 +159,31 @@ service cloud.firestore {
 
       // To update or delete an event, the user must be an
       // organiser in the existing event document
-      allow update: if isEventOrganiser(resource.data.organisers) && validate();
+      allow update: if (isEventOrganiser(resource.data.organisers) || onlyUpdateSaved()) && validate();
       allow delete: if isEventOrganiser(resource.data.organisers);
+    }
+
+    match /eventUserPicture/{uid} {
+      function isAuthor() {
+        return isVerified() && request.auth.uid == uid;
+      }
+
+      function validate() {
+        // Check that the eventUserPicture document has the correct fields
+        let fields = ['uid', 'image', 'author', 'likes'];
+        let hasCorrectNumberOfFields = request.resource.data.size() == fields.size();
+        let hasCorrectFields = request.resource.data.keys().hasAll(fields);
+
+        return hasCorrectNumberOfFields && hasCorrectFields &&
+        request.resource.data.uid == uid &&
+        request.resource.data.image is string &&
+        request.resource.data.author is string &&
+        request.resource.data.likes is list;
+        }
+      allow read: if isVerified();
+      allow create: if isVerified() && validate();
+      allow update: if isAuthor() && validate();
+      allow delete: if isAuthor();
     }
   }
 }
