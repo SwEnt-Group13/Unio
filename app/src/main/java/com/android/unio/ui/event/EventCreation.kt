@@ -86,11 +86,11 @@ fun EventCreationScreen(
   var shortDescription by remember { mutableStateOf("") }
   var longDescription by remember { mutableStateOf("") }
 
-    val EventTypeFlow = remember {
+    val eventTypeFlow = remember {
         MutableStateFlow(EventType.entries.map { it to mutableStateOf(false) }.toList())
     }
 
-    val eventTypes by EventTypeFlow.collectAsState()
+    val types by eventTypeFlow.collectAsState()
 
   var coauthorsAndBoolean =
       associationViewModel.associations.collectAsState().value.map { it to mutableStateOf(false) }
@@ -219,14 +219,14 @@ fun EventCreationScreen(
         OutlinedButton(
             modifier = Modifier
                 .fillMaxWidth()
-                .testTag("todo"),
+                .testTag(EventCreationTestTags.EVENT_TYPE),
             onClick = { showEventTypeOverlay = true }
         ) {
             Icon(
                 Icons.Default.Add,
                 contentDescription =
                 context.getString(R.string.social_overlay_content_description_add))
-            Text(context.getString(R.string.event_creation_tagged_label))
+            Text(context.getString(R.string.event_creation_type))
         }
 
           OutlinedTextField(
@@ -345,7 +345,7 @@ fun EventCreationScreen(
                         startDate = startTimestamp!!,
                         endDate = endTimestamp!!,
                         location = selectedLocation!!,
-                        types = emptyList(),
+                        types = types.filter { it.second.value }.map { it.first },
                         eventPictures = MockReferenceList(),
                     )
                 eventViewModel.addEvent(
@@ -392,5 +392,16 @@ fun EventCreationScreen(
           headerText = context.getString(R.string.associations_overlay_tagged_title),
           bodyText = context.getString(R.string.associations_overlay_tagged_description))
     }
+
+      if(showEventTypeOverlay) {
+            EventTypeOverlay(
+                onDismiss = { showEventTypeOverlay = false },
+                onSave = { types ->
+                    eventTypeFlow.value = types
+                    showEventTypeOverlay = false
+                },
+                types = types
+            )
+      }
   }
 }

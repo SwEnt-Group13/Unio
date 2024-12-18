@@ -29,6 +29,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import com.android.unio.R
 import com.android.unio.model.event.EventType
 import com.android.unio.model.strings.test_tags.event.EventTypeOverlayTestTags
 import com.android.unio.ui.theme.AppTypography
@@ -62,11 +63,11 @@ fun EventTypeOverlay(
 
                 // Text fields for the title and description of the Interest Overlay
                 Text(
-                    text = context.getString(), //R.string.interest_overlay_title
+                    text = context.getString(R.string.event_type_overlay_title),
                     style = AppTypography.headlineSmall,
                     modifier = Modifier.testTag(EventTypeOverlayTestTags.TITLE_TEXT))
                 Text(
-                    text = context.getString(), //R.string.interest_overlay_description
+                    text = context.getString(R.string.event_type_overlay_description),
                     style = AppTypography.bodyMedium,
                     modifier =
                     Modifier.padding(bottom = 5.dp)
@@ -99,7 +100,7 @@ fun EventTypeOverlay(
                         modifier =
                         Modifier.padding(5.dp)
                             .testTag(EventTypeOverlayTestTags.CANCEL_BUTTON)) {
-                        Text(context.getString()) //R.string.overlay_cancel
+                        Text(context.getString(R.string.overlay_cancel))
                     }
 
                     Button(
@@ -107,7 +108,7 @@ fun EventTypeOverlay(
                         modifier =
                         Modifier.padding(5.dp)
                             .testTag(EventTypeOverlayTestTags.SAVE_BUTTON)) {
-                        Text(context.getString()) //R.string.overlay_save
+                        Text(context.getString(R.string.overlay_save))
                     }
                 }
             }
