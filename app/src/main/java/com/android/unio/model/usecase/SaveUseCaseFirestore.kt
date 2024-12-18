@@ -14,8 +14,8 @@ import com.google.firebase.firestore.FirebaseFirestore
 import javax.inject.Inject
 
 /**
- * A Firestore implementation of [SaveUseCase]. This class is responsible for
- * updating the Firestore database with the user's save status for an event.
+ * A Firestore implementation of [SaveUseCase]. This class is responsible for updating the Firestore
+ * database with the user's save status for an event.
  *
  * @property db The Firestore database.
  * @property userRepository The repository for user data.

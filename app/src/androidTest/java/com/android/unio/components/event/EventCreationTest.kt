@@ -21,17 +21,17 @@ import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventRepositoryFirestore
 import com.android.unio.model.event.EventUserPictureRepositoryFirestore
 import com.android.unio.model.event.EventViewModel
-import com.android.unio.model.usecase.FollowUseCaseFirestore
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.map.nominatim.NominatimApiService
 import com.android.unio.model.map.nominatim.NominatimLocationRepository
 import com.android.unio.model.map.nominatim.NominatimLocationSearchViewModel
-import com.android.unio.model.usecase.SaveUseCaseFirestore
 import com.android.unio.model.search.SearchRepository
 import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.strings.TextLengthSamples
 import com.android.unio.model.strings.test_tags.event.EventCreationOverlayTestTags
 import com.android.unio.model.strings.test_tags.event.EventCreationTestTags
+import com.android.unio.model.usecase.FollowUseCaseFirestore
+import com.android.unio.model.usecase.SaveUseCaseFirestore
 import com.android.unio.ui.event.EventCreationScreen
 import com.android.unio.ui.navigation.NavigationAction
 import com.google.firebase.Firebase
@@ -80,12 +80,8 @@ class EventCreationTest : TearDown() {
   @MockK private lateinit var imageRepositoryFirestore: ImageRepositoryFirebaseStorage
   @MockK
   private lateinit var eventUserPictureRepositoryFirestore: EventUserPictureRepositoryFirestore
-  @MockK
-  private lateinit var concurrentEventUserRepositoryFirestore:
-          SaveUseCaseFirestore
-  @MockK
-  private lateinit var concurrentAssociationUserRepositoryFirestore:
-          FollowUseCaseFirestore
+  @MockK private lateinit var concurrentEventUserRepositoryFirestore: SaveUseCaseFirestore
+  @MockK private lateinit var concurrentAssociationUserRepositoryFirestore: FollowUseCaseFirestore
 
   @MockK
   private lateinit var nominatimLocationRepositoryWithoutFunctionality: NominatimLocationRepository

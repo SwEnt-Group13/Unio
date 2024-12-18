@@ -7,13 +7,13 @@ import com.android.unio.model.event.EventRepository
 import com.android.unio.model.event.EventRepositoryFirestore
 import com.android.unio.model.event.EventUserPictureRepository
 import com.android.unio.model.event.EventUserPictureRepositoryFirestore
-import com.android.unio.model.usecase.FollowUseCase
-import com.android.unio.model.usecase.FollowUseCaseFirestore
 import com.android.unio.model.image.ImageRepository
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.map.LocationRepository
 import com.android.unio.model.map.nominatim.NominatimApiService
 import com.android.unio.model.map.nominatim.NominatimLocationRepository
+import com.android.unio.model.usecase.FollowUseCase
+import com.android.unio.model.usecase.FollowUseCaseFirestore
 import com.android.unio.model.usecase.SaveUseCase
 import com.android.unio.model.usecase.SaveUseCaseFirestore
 import com.android.unio.model.usecase.UserDeletionUseCase

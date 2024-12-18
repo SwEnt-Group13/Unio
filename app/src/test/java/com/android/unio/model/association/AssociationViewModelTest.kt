@@ -5,8 +5,8 @@ import com.android.unio.mocks.association.MockAssociation
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventRepository
 import com.android.unio.model.firestore.emptyFirestoreReferenceList
-import com.android.unio.model.usecase.FollowUseCase
 import com.android.unio.model.image.ImageRepository
+import com.android.unio.model.usecase.FollowUseCase
 import com.android.unio.model.user.User
 import com.google.firebase.Firebase
 import com.google.firebase.FirebaseApp
@@ -47,8 +47,7 @@ class AssociationViewModelTest {
   @Mock private lateinit var inputStream: InputStream
   @Mock private lateinit var eventRepository: EventRepository
   @Mock private lateinit var imageRepository: ImageRepository
-  @Mock
-  private lateinit var followUseCase: FollowUseCase
+  @Mock private lateinit var followUseCase: FollowUseCase
 
   private lateinit var viewModel: AssociationViewModel
 
@@ -76,11 +75,7 @@ class AssociationViewModelTest {
             MockAssociation.createMockAssociation(uid = "2", name = "IEEE"))
 
     viewModel =
-        AssociationViewModel(
-            associationRepository,
-            eventRepository,
-            imageRepository,
-            followUseCase)
+        AssociationViewModel(associationRepository, eventRepository, imageRepository, followUseCase)
 
     user =
         User(
@@ -105,11 +100,10 @@ class AssociationViewModelTest {
 
   @Test
   fun testUpdateFollowIncrement() {
-    `when`(followUseCase.updateFollow(any(), any(), any(), any()))
-        .thenAnswer { invocation ->
-          val onSuccess = invocation.arguments[2] as () -> Unit
-          onSuccess()
-        }
+    `when`(followUseCase.updateFollow(any(), any(), any(), any())).thenAnswer { invocation ->
+      val onSuccess = invocation.arguments[2] as () -> Unit
+      onSuccess()
+    }
     val association = MockAssociation.createMockAssociation(uid = "1", name = "ACM")
     val followCount = association.followersCount
     viewModel.selectAssociation(association.uid)
@@ -121,11 +115,10 @@ class AssociationViewModelTest {
 
   @Test
   fun testUpdateFollowDecrement() {
-    `when`(followUseCase.updateFollow(any(), any(), any(), any()))
-        .thenAnswer { invocation ->
-          val onSuccess = invocation.arguments[2] as () -> Unit
-          onSuccess()
-        }
+    `when`(followUseCase.updateFollow(any(), any(), any(), any())).thenAnswer { invocation ->
+      val onSuccess = invocation.arguments[2] as () -> Unit
+      onSuccess()
+    }
     val association = MockAssociation.createMockAssociation(uid = "1", name = "ACM")
     val followCount = association.followersCount
     viewModel.selectAssociation(association.uid)
@@ -185,11 +178,7 @@ class AssociationViewModelTest {
     }
 
     val newViewModel =
-        AssociationViewModel(
-            associationRepository,
-            eventRepository,
-            imageRepository,
-            followUseCase)
+        AssociationViewModel(associationRepository, eventRepository, imageRepository, followUseCase)
 
     runBlocking {
       val result = newViewModel.associations.first()

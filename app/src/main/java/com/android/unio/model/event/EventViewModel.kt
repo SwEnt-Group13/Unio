@@ -4,8 +4,8 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.android.unio.model.association.AssociationRepository
 import com.android.unio.model.image.ImageRepository
-import com.android.unio.model.usecase.SaveUseCase
 import com.android.unio.model.strings.StoragePathsStrings
+import com.android.unio.model.usecase.SaveUseCase
 import com.android.unio.model.user.User
 import com.google.firebase.Firebase
 import com.google.firebase.messaging.messaging

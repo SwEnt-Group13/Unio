@@ -12,8 +12,8 @@ import com.android.unio.mocks.user.MockUser
 import com.android.unio.model.authentication.AuthViewModel
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.strings.test_tags.authentication.WelcomeTestTags
-import com.android.unio.model.user.User
 import com.android.unio.model.usecase.UserDeletionUseCaseFirestore
+import com.android.unio.model.user.User
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.authentication.WelcomeScreen

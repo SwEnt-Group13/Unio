@@ -4,8 +4,8 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventRepository
-import com.android.unio.model.usecase.FollowUseCase
 import com.android.unio.model.image.ImageRepository
+import com.android.unio.model.usecase.FollowUseCase
 import com.android.unio.model.user.User
 import com.google.firebase.Firebase
 import com.google.firebase.messaging.messaging
@@ -24,8 +24,7 @@ import kotlinx.coroutines.flow.asStateFlow
  * @property associationRepository The [AssociationRepository] that provides the associations.
  * @property eventRepository The [EventRepository] that provides the events of the association.
  * @property imageRepository The [ImageRepository] that provides the images of the association.
- * @property followUseCase The [FollowUseCase] that
- *   provides the functionality of the follow button.
+ * @property followUseCase The [FollowUseCase] that provides the functionality of the follow button.
  */
 @HiltViewModel
 class AssociationViewModel

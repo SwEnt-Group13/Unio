@@ -18,8 +18,7 @@ class SaveUseCaseFirestoreTest {
   @MockK private lateinit var userRepository: UserRepository
   @MockK private lateinit var eventRepository: EventRepository
 
-  private lateinit var concurrentEventUserRepositoryFirestore:
-          SaveUseCaseFirestore
+  private lateinit var concurrentEventUserRepositoryFirestore: SaveUseCaseFirestore
 
   private val user = MockUser.createMockUser(uid = "1")
   private val event = MockEvent.createMockEvent(uid = "11")

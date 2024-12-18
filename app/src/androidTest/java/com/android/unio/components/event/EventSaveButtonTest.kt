@@ -14,10 +14,10 @@ import com.android.unio.model.event.EventUserPictureRepositoryFirestore
 import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.notification.NotificationWorker
-import com.android.unio.model.usecase.SaveUseCaseFirestore
 import com.android.unio.model.strings.test_tags.event.EventDetailsTestTags
-import com.android.unio.model.user.User
+import com.android.unio.model.usecase.SaveUseCaseFirestore
 import com.android.unio.model.usecase.UserDeletionUseCaseFirestore
+import com.android.unio.model.user.User
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.event.EventSaveButton
@@ -45,9 +45,7 @@ class EventSaveButtonTest : TearDown() {
   @MockK private lateinit var userDeletionRepository: UserDeletionUseCaseFirestore
   @MockK
   private lateinit var eventUserPictureRepositoryFirestore: EventUserPictureRepositoryFirestore
-  @MockK
-  private lateinit var concurrentEventUserRepositoryFirestore:
-          SaveUseCaseFirestore
+  @MockK private lateinit var concurrentEventUserRepositoryFirestore: SaveUseCaseFirestore
   @MockK private lateinit var userRepository: UserRepositoryFirestore
   private lateinit var eventViewModel: EventViewModel
   private lateinit var userViewModel: UserViewModel
