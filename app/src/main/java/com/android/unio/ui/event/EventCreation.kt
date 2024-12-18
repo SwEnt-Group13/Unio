@@ -209,6 +209,7 @@ fun EventCreationScreen(
           OutlinedTextField(
               modifier = Modifier.fillMaxWidth().testTag(EventCreationTestTags.DESCRIPTION),
               value = longDescription,
+              isError = longDescription.isEmpty(),
               supportingText = {
                 if (longDescription.isEmpty()) {
                   Text(context.getString(R.string.event_creation_description_error))
