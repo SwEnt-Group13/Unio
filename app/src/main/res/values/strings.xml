@@ -434,6 +434,7 @@
     <string name="event_type_manifestation">Manifestation</string>
     <string name="event_type_board_games">Board Games</string>
     <string name="event_type_group_study">Groups study</string>
+    <string name="event_type_other">Other</string>
 
 
     <!-- EventRepositoryFirestore Strings -->

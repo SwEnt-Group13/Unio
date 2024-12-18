@@ -238,6 +238,7 @@ object EventColors{
   val Manifestation = Color(0xFFF2801D)
   val BoardGames = Color(0xFFAE86AC)
   val GroupStudy = Color(0xFFF3A885)
+  val Other = Color.Gray // Default Color
 }
 
 // Colors for the approximate user location circle on the map

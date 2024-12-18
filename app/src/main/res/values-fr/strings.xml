@@ -388,6 +388,7 @@
     <string name="event_type_manifestation">Manifestation</string>
     <string name="event_type_board_games">Jeux de sociétés</string>
     <string name="event_type_group_study">Études en groupe</string>
+    <string name="event_type_other">Autre</string>
 
     <!-- EventRepositoryFirestore Strings -->
     <string name="event_error_converting_document">Erreur lors de la conversion du document de la base de données en objet Évènement</string>

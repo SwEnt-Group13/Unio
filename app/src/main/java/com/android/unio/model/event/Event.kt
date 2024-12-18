@@ -80,6 +80,7 @@ enum class EventType(val color: Color, val text: Int) {
     MANIFESTATION(EventColors.Manifestation, R.string.event_type_manifestation), // + Culture, Socialising
     BOARD_GAMES(EventColors.BoardGames, R.string.event_type_board_games), // + Gaming, Socialising
     GROUP_STUDY(EventColors.GroupStudy, R.string.event_type_group_study), // + Science, Tech
+    OTHER(EventColors.Other, R.string.event_type_other)
 }
 
 /**
