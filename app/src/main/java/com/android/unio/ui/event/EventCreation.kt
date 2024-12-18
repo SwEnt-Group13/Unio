@@ -119,6 +119,12 @@ fun EventCreationScreen(
           OutlinedTextField(
               modifier = Modifier.fillMaxWidth().testTag(EventCreationTestTags.EVENT_TITLE),
               value = name,
+              isError = name.isEmpty(),
+              supportingText = {
+                  if (name.isEmpty()) {
+                      Text(context.getString(R.string.event_creation_name_error))
+                  }
+              },
               onValueChange = {
                 if (Utils.checkInputLength(it, TextLength.SMALL)) {
                   name = it
@@ -144,6 +150,12 @@ fun EventCreationScreen(
           OutlinedTextField(
               modifier = Modifier.fillMaxWidth().testTag(EventCreationTestTags.SHORT_DESCRIPTION),
               value = shortDescription,
+              isError = shortDescription.isEmpty(),
+              supportingText = {
+                  if (shortDescription.isEmpty()) {
+                      Text(context.getString(R.string.event_creation_short_description_error))
+                  }
+              },
               onValueChange = {
                 if (Utils.checkInputLength(it, TextLength.MEDIUM)) {
                   shortDescription = it
@@ -197,6 +209,11 @@ fun EventCreationScreen(
           OutlinedTextField(
               modifier = Modifier.fillMaxWidth().testTag(EventCreationTestTags.DESCRIPTION),
               value = longDescription,
+              supportingText = {
+                  if (longDescription.isEmpty()) {
+                      Text(context.getString(R.string.event_creation_description_error))
+                  }
+              },
               onValueChange = {
                 if (Utils.checkInputLength(it, TextLength.LARGE)) {
                   longDescription = it
