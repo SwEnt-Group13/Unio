@@ -421,9 +421,20 @@
     <string name="event_type_night_party">Night Party</string>
     <string name="event_type_jam">Jam</string>
     <string name="event_type_networking">Networking</string>
-    <string name="event_type_sport">Sport</string>
     <string name="event_type_trip">Trip</string>
-    <string name="event_type_other">Other</string>
+    <string name="event_type_sport_tournament">Sport Tournament</string>
+    <string name="event_type_sport_discovery">Sport</string>
+    <string name="event_type_lan">Lan</string>
+    <string name="event_type_film_projection">Film Projection</string>
+    <string name="event_type_foreign_culture_discovery">Foreing Culture Discovery</string>
+    <string name="event_type_tech_presentation">Tech Presentation</string>
+    <string name="event_type_science_fare">Science Fare</string>
+    <string name="event_type_food_distribuition">Food Distribution</string>
+    <string name="event_type_art_convention">Art Convention</string>
+    <string name="event_type_manifestation">Manifestation</string>
+    <string name="event_type_board_games">Board Games</string>
+    <string name="event_type_group_study">Groups study</string>
+
 
     <!-- EventRepositoryFirestore Strings -->
     <string name="event_error_converting_document">Error while converting db document to Event object</string>
@@ -461,6 +472,10 @@
     <string name="interest_food" translatable="true">Food</string>
     <string name="interest_gaming" translatable="true">Gaming</string>
     <string name="interest_festivals" translatable="true">Festivals</string>
+    <string name="interest_apero" translatable="true">Apero</string>
+    <string name="interest_networking" translatable="true">Networking</string>
+    <string name="interest_culture" translatable="true">Culture</string>
+
 
     <!-- Reset Password Strings -->
     <string name="reset_password_success_toast">An email has been sent to the given address</string>
