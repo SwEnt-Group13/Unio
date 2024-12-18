@@ -45,7 +45,7 @@ jobs:
           java-version: "17"
 
 
-      # Caching is a very useful part of a CI, as a workflow is executed in a clean environement every time,
+      # Caching is a very useful part of a CI, as a workflow is executed in a clean environment every time,
       # this means that one would need to re-download and re-process gradle files for every run. Which is very time consuming.
       #
       # To avoid that, we cache the the gradle folder to reuse it later.
@@ -142,6 +142,15 @@ jobs:
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
           script: firebase emulators:exec --import=firebase/emulator-data './gradlew connectedCheck --parallel --build-cache'
+
+      # Upload the test results to the artifacts
+      - name: Upload Test Results
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+            name: test-results
+            path: app/build/reports/androidTests/connected/debug/
+            retention-days: 1
 
       # This step generates the coverage report which will be uploaded to sonar
       - name: Generate Coverage Report
