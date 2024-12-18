@@ -41,6 +41,7 @@ import com.android.unio.mocks.firestore.MockReferenceList
 import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.event.Event
+import com.android.unio.model.event.EventType
 import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.firestore.firestoreReferenceListWith
 import com.android.unio.model.map.Location
@@ -49,14 +50,16 @@ import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.strings.test_tags.event.EventCreationTestTags
 import com.android.unio.model.utils.TextLength
 import com.android.unio.model.utils.Utils
-import com.android.unio.ui.components.AssociationChips
 import com.android.unio.ui.components.BannerImagePicker
+import com.android.unio.ui.components.Chips
 import com.android.unio.ui.components.DateAndTimePicker
 import com.android.unio.ui.components.NominatimLocationPicker
 import com.android.unio.ui.event.overlay.AssociationsOverlay
+import com.android.unio.ui.event.overlay.EventTypeOverlay
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.theme.AppTypography
 import com.google.firebase.Timestamp
+import kotlinx.coroutines.flow.MutableStateFlow
 
 /**
  * A screen that allows users to create an event.
@@ -79,10 +82,17 @@ fun EventCreationScreen(
   val scrollState = rememberScrollState()
   var showCoauthorsOverlay by remember { mutableStateOf(false) }
   var showTaggedOverlay by remember { mutableStateOf(false) }
+  var showEventTypeOverlay by remember { mutableStateOf(false) }
 
   var name by remember { mutableStateOf("") }
   var shortDescription by remember { mutableStateOf("") }
   var longDescription by remember { mutableStateOf("") }
+
+  val eventTypeFlow = remember {
+    MutableStateFlow(EventType.entries.map { it to mutableStateOf(false) }.toList())
+  }
+
+  val types by eventTypeFlow.collectAsState()
 
   var coauthorsAndBoolean =
       associationViewModel.associations.collectAsState().value.map { it to mutableStateOf(false) }
@@ -221,7 +231,7 @@ fun EventCreationScreen(
                 Text(context.getString(R.string.event_creation_coauthors_label))
               }
 
-          AssociationChips(coauthorsAndBoolean)
+          Chips(coauthorsAndBoolean, getName = { it.name })
 
           OutlinedButton(
               modifier = Modifier.fillMaxWidth().testTag(EventCreationTestTags.TAGGED_ASSOCIATIONS),
@@ -233,7 +243,19 @@ fun EventCreationScreen(
                 Text(context.getString(R.string.event_creation_tagged_label))
               }
 
-          AssociationChips(taggedAndBoolean)
+          Chips(taggedAndBoolean, getName = { it.name })
+
+          OutlinedButton(
+              modifier = Modifier.fillMaxWidth().testTag(EventCreationTestTags.EVENT_TYPE),
+              onClick = { showEventTypeOverlay = true }) {
+                Icon(
+                    Icons.Default.Add,
+                    contentDescription =
+                        context.getString(R.string.social_overlay_content_description_add))
+                Text(context.getString(R.string.event_creation_type))
+              }
+
+          Chips(types, getName = { context.getString(it.text) })
 
           OutlinedTextField(
               modifier = Modifier.fillMaxWidth().testTag(EventCreationTestTags.DESCRIPTION),
@@ -351,6 +373,7 @@ fun EventCreationScreen(
                         startDate = startTimestamp!!,
                         endDate = endTimestamp!!,
                         location = selectedLocation!!,
+                        types = types.filter { it.second.value }.map { it.first },
                         eventPictures = MockReferenceList(),
                     )
                 eventViewModel.addEvent(
@@ -396,6 +419,16 @@ fun EventCreationScreen(
           searchViewModel = searchViewModel,
           headerText = context.getString(R.string.associations_overlay_tagged_title),
           bodyText = context.getString(R.string.associations_overlay_tagged_description))
+    }
+
+    if (showEventTypeOverlay) {
+      EventTypeOverlay(
+          onDismiss = { showEventTypeOverlay = false },
+          onSave = { types ->
+            eventTypeFlow.value = types
+            showEventTypeOverlay = false
+          },
+          types = types)
     }
   }
 }

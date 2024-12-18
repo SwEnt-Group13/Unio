@@ -17,7 +17,6 @@ import com.android.unio.mocks.user.MockUser
 import com.android.unio.model.association.AssociationRepositoryFirestore
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventRepositoryFirestore
-import com.android.unio.model.event.EventType
 import com.android.unio.model.event.EventUserPictureRepositoryFirestore
 import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
@@ -142,7 +141,7 @@ class EventCardTest : TearDown() {
     composeTestRule
         .onNodeWithTag(EventCardTestTags.EVENT_MAIN_TYPE, useUnmergedTree = true)
         .assertExists()
-        .assertTextEquals(EventType.TRIP.text)
+        .assertTextEquals("Trip")
 
     composeTestRule
         .onNodeWithTag(EventCardTestTags.EVENT_LOCATION, useUnmergedTree = true)

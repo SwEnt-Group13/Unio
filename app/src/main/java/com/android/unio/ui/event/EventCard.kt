@@ -232,7 +232,7 @@ fun EventCardScaffold(
                                   .background(addAlphaToColor(type.color, 200))
                                   .wrapContentWidth()) {
                             Text(
-                                text = type.text,
+                                text = context.getString(type.text),
                                 modifier =
                                     Modifier.padding(horizontal = 4.dp, vertical = 4.dp)
                                         .testTag(EventCardTestTags.EVENT_MAIN_TYPE),

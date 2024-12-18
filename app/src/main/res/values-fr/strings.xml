@@ -215,6 +215,7 @@
     <string name="event_creation_name_error">Entrez un nom d\'événement</string>
     <string name="event_creation_short_description_error">Entrez une courte description de l\'événement</string>
     <string name="event_creation_description_error">Entrez une description de l\'événement</string>
+    <string name="event_creation_type">Ajouter des types à l\'événement</string>
     <string name="event_creation_content_description_clear_title">Effacer titre</string>
     <string name="event_creation_content_description_clear_short_description">Effacer description courte</string>
     <string name="event_creation_location_icon">Icône de localisation</string>
@@ -224,6 +225,8 @@
     <string name="event_edit_delete_button">Supprimer</string>
     <string name="event_edit_failed">Echec lors de la modification</string>
     <string name="event_edit_save_button">Sauvegarder</string>
+    <string name="event_edit_type">Modifier les types de votre événement</string>
+
 
     <!-- Event Edit Component Strings -->
     <string name="event_edit_date_picker_desc">Sélectionner une date</string>
@@ -232,6 +235,10 @@
     <string name="event_edit_time_error">L\'heure est manquante</string>
     <string name="event_edit_location_error">Localisation erronée</string>
     <string name="event_edit_toast_more_button">Continuez à taper pour voir plus de résultats</string>
+
+    <!-- Event Type Overlay Strings -->
+    <string name="event_type_overlay_title">Type de l\'événement</string>
+    <string name="event_type_overlay_description">Choisissez jusqu\'à trois types d\'événements pour mieux décrire votre événement à votre audiance</string>
 
     <!-- Associations Overlay Strings -->
     <string name="associations_overlay_coauthors_title" translatable="true">Co-organisateurs</string>
@@ -386,8 +393,19 @@
     <string name="event_type_night_party">Soirée</string>
     <string name="event_type_jam">Jam</string>
     <string name="event_type_networking">Réseautage</string>
-    <string name="event_type_sport">Sport</string>
     <string name="event_type_trip">Voyage</string>
+    <string name="event_type_sport_tournament">Tournoi de sport</string>
+    <string name="event_type_sport_discovery">Découverte de sport</string>
+    <string name="event_type_lan">Lan</string>
+    <string name="event_type_film_projection">Projection de film</string>
+    <string name="event_type_foreign_culture_discovery">Découverte de culture étrangère</string>
+    <string name="event_type_tech_presentation">Présentation de Tech</string>
+    <string name="event_type_science_fare">Exposition de Sciences</string>
+    <string name="event_type_food_distribuition">Distribution de nourriture</string>
+    <string name="event_type_art_convention">Convention d\'Art</string>
+    <string name="event_type_manifestation">Manifestation</string>
+    <string name="event_type_board_games">Jeux de sociétés</string>
+    <string name="event_type_group_study">Études en groupe</string>
     <string name="event_type_other">Autre</string>
 
     <!-- EventRepositoryFirestore Strings -->
@@ -412,6 +430,12 @@
     <string name="interest_food" translatable="true">Nourriture</string>
     <string name="interest_gaming" translatable="true">Gaming</string>
     <string name="interest_festivals" translatable="true">Festivals</string>
+    <string name="interest_apero" translatable="true">Apéro</string>
+    <string name="interest_networking" translatable="true">Résautage</string>
+    <string name="interest_culture" translatable="true">Culture</string>
+
+
+
     <string name="settings_back_content_description">Retour</string>
     <string name="association_edit">Modifier l\'Association</string>
     <string name="association_recruitment">Recrutement</string>

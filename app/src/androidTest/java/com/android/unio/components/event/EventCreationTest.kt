@@ -2,6 +2,7 @@ package com.android.unio.components.event
 
 import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.isDisplayed
@@ -32,6 +33,8 @@ import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.strings.TextLengthSamples
 import com.android.unio.model.strings.test_tags.event.EventCreationOverlayTestTags
 import com.android.unio.model.strings.test_tags.event.EventCreationTestTags
+import com.android.unio.model.strings.test_tags.event.EventDetailsTestTags
+import com.android.unio.model.strings.test_tags.event.EventTypeOverlayTestTags
 import com.android.unio.model.usecase.FollowUseCaseFirestore
 import com.android.unio.model.usecase.SaveUseCaseFirestore
 import com.android.unio.ui.event.EventCreationScreen
@@ -281,6 +284,77 @@ class EventCreationTest : TearDown() {
         .onNodeWithTag(EventCreationTestTags.DESCRIPTION_CHARACTER_COUNTER, useUnmergedTree = true)
         .assertExists()
     composeTestRule.onNodeWithTag(EventCreationTestTags.DESCRIPTION).performTextClearance()
+  }
+
+  @Test
+  fun testCorrectlyAddEvenTypes() {
+    nominatimLocationSearchViewModel =
+        NominatimLocationSearchViewModel(nominatimLocationRepositoryWithoutFunctionality)
+    composeTestRule.setContent {
+      EventCreationScreen(
+          navigationAction,
+          searchViewModel,
+          associationViewModel,
+          eventViewModel,
+          nominatimLocationSearchViewModel)
+    }
+
+    composeTestRule.onNodeWithTag(EventCreationTestTags.EVENT_TYPE).performScrollTo().performClick()
+
+    composeTestRule.onNodeWithTag(EventTypeOverlayTestTags.CARD).assertExists()
+
+    composeTestRule
+        .onNodeWithTag(EventTypeOverlayTestTags.CLICKABLE_ROW + "FESTIVAL")
+        .performScrollTo()
+        .performClick()
+    composeTestRule
+        .onNodeWithTag(EventTypeOverlayTestTags.CLICKABLE_ROW + "APERITIF")
+        .performScrollTo()
+        .performClick()
+
+    composeTestRule.onNodeWithTag(EventTypeOverlayTestTags.SAVE_BUTTON).performClick()
+
+    composeTestRule.onNodeWithTag(EventCreationTestTags.SCREEN).assertIsDisplayed()
+
+    composeTestRule.onNodeWithTag(EventDetailsTestTags.CHIPS + "Festival").assertExists()
+    composeTestRule.onNodeWithTag(EventDetailsTestTags.CHIPS + "Aperitif").assertExists()
+  }
+
+  @Test
+  fun testNotPossibleToAddMoreThan3EventTypes() {
+    nominatimLocationSearchViewModel =
+        NominatimLocationSearchViewModel(nominatimLocationRepositoryWithoutFunctionality)
+    composeTestRule.setContent {
+      EventCreationScreen(
+          navigationAction,
+          searchViewModel,
+          associationViewModel,
+          eventViewModel,
+          nominatimLocationSearchViewModel)
+    }
+
+    composeTestRule.onNodeWithTag(EventCreationTestTags.EVENT_TYPE).performScrollTo().performClick()
+
+    composeTestRule.onNodeWithTag(EventTypeOverlayTestTags.CARD).assertExists()
+
+    composeTestRule
+        .onNodeWithTag(EventTypeOverlayTestTags.CLICKABLE_ROW + "FESTIVAL")
+        .performScrollTo()
+        .performClick()
+    composeTestRule
+        .onNodeWithTag(EventTypeOverlayTestTags.CLICKABLE_ROW + "APERITIF")
+        .performScrollTo()
+        .performClick()
+    composeTestRule
+        .onNodeWithTag(EventTypeOverlayTestTags.CLICKABLE_ROW + "JAM")
+        .performScrollTo()
+        .performClick()
+    composeTestRule
+        .onNodeWithTag(EventTypeOverlayTestTags.CLICKABLE_ROW + "TRIP")
+        .performScrollTo()
+        .performClick()
+
+    composeTestRule.onNodeWithTag(EventTypeOverlayTestTags.SAVE_BUTTON).assertIsNotEnabled()
   }
 
   @Test

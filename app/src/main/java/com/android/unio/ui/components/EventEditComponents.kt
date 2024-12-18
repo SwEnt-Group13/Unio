@@ -58,11 +58,11 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.PopupProperties
 import com.android.unio.R
-import com.android.unio.model.association.Association
 import com.android.unio.model.map.Location
 import com.android.unio.model.map.nominatim.NominatimLocationSearchViewModel
 import com.android.unio.model.strings.FormatStrings.DAY_MONTH_YEAR_FORMAT
 import com.android.unio.model.strings.FormatStrings.HOUR_MINUTE_FORMAT
+import com.android.unio.model.strings.test_tags.event.EventDetailsTestTags
 import com.android.unio.ui.image.AsyncImageWrapper
 import com.android.unio.ui.utils.ToastUtils
 import com.google.firebase.Timestamp
@@ -172,24 +172,26 @@ fun NominatimLocationPicker(
 }
 
 /**
- * Composable for the association chips that show the selected associations.
+ * Composable for the different chips used that must be displayed in a flowRow
  *
- * @param associations List<Pair<Association, MutableState<Boolean>>> : List of associations and
- *   their selected state.
+ * @param items a generic list of items that can have their elements selected or not
  */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun AssociationChips(
-    associations: List<Pair<Association, MutableState<Boolean>>>,
+fun <T> Chips(
+    items: List<Pair<T, MutableState<Boolean>>>,
+    getName: (T) -> String,
 ) {
   val context = LocalContext.current
+
   FlowRow {
-    associations.forEach { (association, selected) ->
+    items.forEach { (item, selected) ->
       if (selected.value) {
         InputChip(
-            label = { Text(association.name) },
+            label = { Text(getName(item)) },
             onClick = {},
             selected = selected.value,
+            modifier = Modifier.testTag(EventDetailsTestTags.CHIPS + getName(item)),
             avatar = {
               Icon(
                   Icons.Default.Close,

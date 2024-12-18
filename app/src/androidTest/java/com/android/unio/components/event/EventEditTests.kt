@@ -29,7 +29,9 @@ import com.android.unio.model.map.nominatim.NominatimLocationRepository
 import com.android.unio.model.map.nominatim.NominatimLocationSearchViewModel
 import com.android.unio.model.search.SearchRepository
 import com.android.unio.model.search.SearchViewModel
+import com.android.unio.model.strings.test_tags.event.EventDetailsTestTags
 import com.android.unio.model.strings.test_tags.event.EventEditTestTags
+import com.android.unio.model.strings.test_tags.event.EventTypeOverlayTestTags
 import com.android.unio.model.usecase.FollowUseCaseFirestore
 import com.android.unio.model.usecase.SaveUseCaseFirestore
 import com.android.unio.ui.event.EventEditScreen
@@ -229,6 +231,73 @@ class EventEditTests : TearDown() {
         .performTextClearance()
     composeTestRule.onNodeWithTag(EventEditTestTags.SAVE_BUTTON).assertIsNotEnabled()
     composeTestRule.waitForIdle()
+  }
+
+  @Test
+  fun testCorrectlyAddEvenTypes() {
+    nominatimLocationSearchViewModel =
+        NominatimLocationSearchViewModel(nominatimLocationRepositoryWithoutFunctionality)
+    composeTestRule.setContent {
+      EventEditScreen(
+          navigationAction,
+          searchViewModel,
+          associationViewModel,
+          eventViewModel,
+          nominatimLocationSearchViewModel)
+    }
+
+    composeTestRule.onNodeWithTag(EventEditTestTags.EVENT_TYPE).performScrollTo().performClick()
+
+    composeTestRule.onNodeWithTag(EventTypeOverlayTestTags.CARD).assertExists()
+
+    composeTestRule
+        .onNodeWithTag(EventTypeOverlayTestTags.CLICKABLE_ROW + "FESTIVAL")
+        .performScrollTo()
+        .performClick()
+    composeTestRule
+        .onNodeWithTag(EventTypeOverlayTestTags.CLICKABLE_ROW + "APERITIF")
+        .performScrollTo()
+        .performClick()
+
+    composeTestRule.onNodeWithTag(EventTypeOverlayTestTags.SAVE_BUTTON).performClick()
+
+    composeTestRule.onNodeWithTag(EventEditTestTags.SCREEN).assertIsDisplayed()
+
+    composeTestRule.onNodeWithTag(EventDetailsTestTags.CHIPS + "Festival").assertExists()
+    composeTestRule.onNodeWithTag(EventDetailsTestTags.CHIPS + "Aperitif").assertExists()
+  }
+
+  @Test
+  fun testNotPossibleToAddMoreThan3EventTypes() {
+    nominatimLocationSearchViewModel =
+        NominatimLocationSearchViewModel(nominatimLocationRepositoryWithoutFunctionality)
+    composeTestRule.setContent {
+      EventEditScreen(
+          navigationAction,
+          searchViewModel,
+          associationViewModel,
+          eventViewModel,
+          nominatimLocationSearchViewModel)
+    }
+
+    composeTestRule.onNodeWithTag(EventEditTestTags.EVENT_TYPE).performScrollTo().performClick()
+
+    composeTestRule.onNodeWithTag(EventTypeOverlayTestTags.CARD).assertExists()
+
+    composeTestRule
+        .onNodeWithTag(EventTypeOverlayTestTags.CLICKABLE_ROW + "LAN")
+        .performScrollTo()
+        .performClick()
+    composeTestRule
+        .onNodeWithTag(EventTypeOverlayTestTags.CLICKABLE_ROW + "FOOD_DISTRIBUTION")
+        .performScrollTo()
+        .performClick()
+    composeTestRule
+        .onNodeWithTag(EventTypeOverlayTestTags.CLICKABLE_ROW + "MANIFESTATION")
+        .performScrollTo()
+        .performClick()
+
+    composeTestRule.onNodeWithTag(EventTypeOverlayTestTags.SAVE_BUTTON).assertIsNotEnabled()
   }
 
   @Test

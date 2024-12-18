@@ -22,6 +22,7 @@ object EventCreationTestTags {
   const val EVENT_SHORT_DESCRIPTION_CLEAR_BUTTON = "eventCreationShortDescriptionClearButton"
   const val COAUTHORS = "eventCreationCoauthors"
   const val TAGGED_ASSOCIATIONS = "eventCreationTaggedAssociations"
+  const val EVENT_TYPE = "eventCreationEventType"
   const val DESCRIPTION = "eventCreationDescription"
   const val LOCATION = "eventCreationLocation"
   const val SAVE_BUTTON = "eventCreationSaveButton"
@@ -63,6 +64,7 @@ object EventEditTestTags {
   const val SHORT_DESCRIPTION_CLEAR_BUTTON = "eventEditShortDescriptionClearButton"
   const val COAUTHORS = "eventEditCoauthors"
   const val TAGGED_ASSOCIATIONS = "eventEditTaggedAssociations"
+  const val EVENT_TYPE = "eventEditEventType"
   const val DESCRIPTION = "eventEditDescription"
   const val LOCATION = "eventEditLocation"
   const val LOCATION_SUGGESTION_ITEM = "eventCreationSuggestionItem: "
@@ -118,4 +120,18 @@ object EventDetailsTestTags {
   const val EVENT_PICTURES_ARROW_LEFT = "picturesArrowLeft"
   const val EVENT_PICTURES_ARROW_RIGHT = "picturesArrowRight"
   const val PICTURE_FULL_SCREEN = "pictureFullScreen"
+  const val CHIPS = "eventChips"
+}
+
+object EventTypeOverlayTestTags {
+  const val CARD = "eventOverlayCard"
+  const val COLUMN = "eventOverlayColumn"
+  const val TITLE_TEXT = "eventOverlayTitleText"
+  const val SUBTITLE_TEXT = "eventOverlaySubtitleText"
+  const val DIVIDER = "eventOverlayDivider"
+  const val CANCEL_BUTTON = "eventOverlayCancelButton"
+  const val SAVE_BUTTON = "eventOverlaySaveButton"
+  const val CLICKABLE_ROW = "eventOverlayClickableRow"
+  const val TEXT = "eventOverlayRowText"
+  const val CHECK_BOX = "eventOverlayRowCheckBox"
 }
