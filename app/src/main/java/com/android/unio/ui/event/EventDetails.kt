@@ -542,30 +542,25 @@ fun EventDetailsDescriptionTab(
             event.description,
             modifier = Modifier.testTag(EventDetailsTestTags.DESCRIPTION).padding(6.dp),
             style = AppTypography.bodyMedium)
-        Column(
-            modifier = Modifier.fillMaxSize().padding(top = 30.dp),
-            verticalArrangement = Arrangement.spacedBy(20.dp)) {
-              OutlinedButton(
-                  onClick = {
-                    mapViewModel.setHighlightedEvent(event.uid, event.location)
-                    navigationAction.navigateTo(Screen.MAP)
-                  },
+        OutlinedButton(
+            onClick = {
+              mapViewModel.setHighlightedEvent(event.uid, event.location)
+              navigationAction.navigateTo(Screen.MAP)
+            },
+            modifier =
+                Modifier.testTag(EventDetailsTestTags.MAP_BUTTON)
+                    .align(Alignment.CenterHorizontally)
+                    .wrapContentSize(),
+            shape = CircleShape) {
+              Text(
+                  event.location.name,
                   modifier =
-                      Modifier.testTag(EventDetailsTestTags.MAP_BUTTON)
-                          .align(Alignment.CenterHorizontally)
-                          .wrapContentSize(),
-                  shape = CircleShape) {
-                    Text(
-                        event.location.name,
-                        modifier =
-                            Modifier.testTag(EventDetailsTestTags.LOCATION_ADDRESS)
-                                .padding(end = 5.dp))
-                    Icon(
-                        Icons.Outlined.LocationOn,
-                        contentDescription =
-                            context.getString(R.string.event_location_button_description),
-                    )
-                  }
+                      Modifier.testTag(EventDetailsTestTags.LOCATION_ADDRESS).padding(end = 5.dp))
+              Icon(
+                  Icons.Outlined.LocationOn,
+                  contentDescription =
+                      context.getString(R.string.event_location_button_description),
+              )
             }
       }
 }
