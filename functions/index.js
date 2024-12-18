@@ -235,7 +235,7 @@ async function addOrUpdateRoleInAssociation(role, associationDocRef, isNewRole) 
 }
 
 // Updated Cloud Function
-exports.addRole = onRequest(async (req, res) => {
+exports.saveRole = onRequest(async (req, res) => {
   try {
     const tokenId = req.body.data?.tokenId; // Token ID given by the user
     const role = req.body.data?.role; // Role to add or update
@@ -243,6 +243,10 @@ exports.addRole = onRequest(async (req, res) => {
     const associationUid = req.body.data?.associationUid; // Association UID from the client
 
     if (!tokenId || !role || !associationUid || typeof isNewRole !== "boolean") {
+      console.log("is isNewRole a Boolean :", (typeof isNewRole));
+      console.log("tokenId : ", tokenId)
+      console.log("role : ", role)
+      console.log("associationUid : ", associationUid)
       return res.status(400).json({ message: "Missing or invalid required parameters" });
     }
 
