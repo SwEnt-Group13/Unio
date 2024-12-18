@@ -1,9 +1,9 @@
-package com.android.unio.model.save
+package com.android.unio.model.usecase
 
 import com.android.unio.model.event.Event
 import com.android.unio.model.user.User
 
-interface ConcurrentEventUserRepository {
+interface SaveUseCase {
 
   fun init(onSuccess: () -> Unit)
 

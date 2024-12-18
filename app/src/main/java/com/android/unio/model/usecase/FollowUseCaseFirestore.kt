@@ -1,4 +1,4 @@
-package com.android.unio.model.follow
+package com.android.unio.model.usecase
 
 import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationRepository
@@ -14,20 +14,20 @@ import com.google.firebase.firestore.FirebaseFirestore
 import javax.inject.Inject
 
 /**
- * A Firestore implementation of [ConcurrentAssociationUserRepository]. This class is responsible
- * for updating the Firestore database with the user's follow status for an association.
+ * A Firestore implementation of [FollowUseCase]. This class is responsible for updating the
+ * Firestore database with the user's follow status for an association.
  *
  * @property db The Firestore database.
  * @property userRepository The repository for user data.
  * @property associationRepository The repository for association data.
  */
-class ConcurrentAssociationUserRepositoryFirestore
+class FollowUseCaseFirestore
 @Inject
 constructor(
     private val db: FirebaseFirestore,
     private val userRepository: UserRepository,
     private val associationRepository: AssociationRepository
-) : ConcurrentAssociationUserRepository {
+) : FollowUseCase {
 
   override fun init(onSuccess: () -> Unit) {
     Firebase.auth.registerAuthStateListener {

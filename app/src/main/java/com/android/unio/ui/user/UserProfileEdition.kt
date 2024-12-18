@@ -191,7 +191,7 @@ fun UserProfileEditionScreenScaffold(
     onModifyUser: (MutableState<Uri>, (String) -> Unit) -> Unit,
     onUploadUserOnline: (User) -> Unit,
     onUploadUserOffline: (User) -> Unit,
-    onDeleteUser: (String) -> Unit
+    onDeleteUser: (User) -> Unit
 ) {
 
   val context = LocalContext.current
@@ -344,8 +344,7 @@ fun UserProfileEditionScreenScaffold(
 
     if (showDeleteUserPrompt) {
       UserDeletePrompt(
-          onDismiss = { showDeleteUserPrompt = false },
-          onConfirmDelete = { onDeleteUser(user.uid) })
+          onDismiss = { showDeleteUserPrompt = false }, onConfirmDelete = { onDeleteUser(user) })
     }
   }
 }
