@@ -109,7 +109,7 @@ class Role(
             "Committee",
             Permissions.PermissionsBuilder()
                 .addPermission(PermissionType.ADD_EDIT_EVENTS)
-                .addPermission(PermissionType.ADD_MEMBERS)
+                .addPermission(PermissionType.ADD_EDIT_MEMBERS)
                 .addPermission(PermissionType.SEE_STATISTICS)
                 .addPermission(PermissionType.SEND_NOTIFICATIONS)
                 .build(),
@@ -251,8 +251,12 @@ enum class PermissionType(val stringName: String) {
   // MEMBERS
   VIEW_INVISIBLE_MEMBERS(
       "View Invisible Members"), // See all members of the association including invisible ones
-  ADD_MEMBERS("Add Members"),
+  ADD_EDIT_MEMBERS("Add & Edit Members"),
   DELETE_MEMBERS("Delete Members"),
+
+    // ROLES
+    ADD_EDIT_ROLES("Add & Edit Roles"),
+    DELETE_ROLES("Delete Roles"),
 
   // GENERAL
   SEE_STATISTICS("See Statistics"), // See all statistics of the association
