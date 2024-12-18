@@ -1,13 +1,17 @@
 package com.android.unio.components.event
 
+import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotEnabled
+import androidx.compose.ui.test.assertTextEquals
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextClearance
+import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.performTextReplacement
 import com.android.unio.TearDown
 import com.android.unio.assertDisplayComponentInScroll
@@ -280,5 +284,43 @@ class EventEditTests : TearDown() {
     assert(shouldBeTrue)
     assert(result.title != mockEvent.title)
     assert(result.description == mockEvent.description)
+  }
+
+  @Test
+  fun testClearButtonFunctionality() {
+    nominatimLocationSearchViewModel =
+        NominatimLocationSearchViewModel(nominatimLocationRepositoryWithoutFunctionality)
+    composeTestRule.setContent {
+      EventEditScreen(
+          navigationAction,
+          searchViewModel,
+          associationViewModel,
+          eventViewModel,
+          nominatimLocationSearchViewModel)
+    }
+
+    composeTestRule
+        .onNodeWithTag(EventEditTestTags.EVENT_TITLE)
+        .performScrollTo()
+        .performTextClearance()
+    composeTestRule.onNodeWithTag(EventEditTestTags.EVENT_TITLE).performTextInput("New Event Title")
+    composeTestRule
+        .onNodeWithTag(EventEditTestTags.EVENT_TITLE, useUnmergedTree = true)
+        .assertTextEquals("New Event Title", includeEditableText = true)
+    composeTestRule.onNodeWithTag(EventEditTestTags.EVENT_TITLE_CLEAR_BUTTON).performClick()
+    composeTestRule.onNodeWithTag(EventEditTestTags.EVENT_TITLE).assert(hasText(""))
+
+    composeTestRule
+        .onNodeWithTag(EventEditTestTags.SHORT_DESCRIPTION)
+        .performScrollTo()
+        .performTextClearance()
+    composeTestRule
+        .onNodeWithTag(EventEditTestTags.SHORT_DESCRIPTION)
+        .performTextInput("New Short Description")
+    composeTestRule
+        .onNodeWithTag(EventEditTestTags.SHORT_DESCRIPTION, useUnmergedTree = true)
+        .assertTextEquals("New Short Description", includeEditableText = true)
+    composeTestRule.onNodeWithTag(EventEditTestTags.SHORT_DESCRIPTION_CLEAR_BUTTON).performClick()
+    composeTestRule.onNodeWithTag(EventEditTestTags.SHORT_DESCRIPTION).assert(hasText(""))
   }
 }

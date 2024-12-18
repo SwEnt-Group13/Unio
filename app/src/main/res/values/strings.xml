@@ -109,6 +109,8 @@
     <string name="account_details_content_description_links_icon">Links icon</string>
     <string name="account_details_content_description_pfp">Profile Picture</string>
     <string name="account_details_content_description_remove_pfp">Remove Profile Picture</string>
+    <string name="account_details_content_description_clear_first_name">Clear first name</string>
+    <string name="account_details_content_description_clear_last_name">Clear last name</string>
 
     <!-- UserSettings Strings -->
     <string name="user_edition_content_description_remove_social">Remove User Social</string>
@@ -127,6 +129,8 @@
     <string name="user_edition_delete_user_failure" translatable="true">Failed to delete account, try again later</string>
     <string name="user_edition_modified_offline" translatable="true">Deleted user offline</string>
     <string name="user_edition_delete_user_offline" translatable="true">Please be connected to the internet to delete your Account</string>
+    <string name="user_edition_content_description_clear_first_name">Clear first name</string>
+    <string name="user_edition_content_description_clear_last_name">Clear last name</string>
 
 
     <!-- EmailVerification Strings -->
@@ -217,6 +221,9 @@
     <string name="event_creation_name_error">Enter an event name</string>
     <string name="event_creation_short_description_error">Enter an event short description</string>
     <string name="event_creation_description_error">Enter an event description</string>
+    <string name="event_creation_content_description_clear_title">Clear title</string>
+    <string name="event_creation_content_description_clear_short_description">Clear short description</string>
+    <string name="event_creation_location_icon">Location icon</string>
 
     <!-- Event Edit Strings -->
     <string name="event_edit_title">Edit </string>
