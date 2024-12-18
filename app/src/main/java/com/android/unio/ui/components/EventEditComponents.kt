@@ -57,7 +57,6 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.PopupProperties
 import com.android.unio.R
-import com.android.unio.model.association.Association
 import com.android.unio.model.map.Location
 import com.android.unio.model.map.nominatim.NominatimLocationSearchViewModel
 import com.android.unio.model.strings.FormatStrings.DAY_MONTH_YEAR_FORMAT
@@ -166,33 +165,35 @@ fun NominatimLocationPicker(
 }
 
 /**
- * Composable for the association chips that show the selected associations.
+ * Composable for the different chips used that must be displayed in a flowRow
  *
- * @param associations List<Pair<Association, MutableState<Boolean>>> : List of associations and
- *   their selected state.
+ * @param items a generic list of items that can have their elements selected or not
  */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun AssociationChips(
-    associations: List<Pair<Association, MutableState<Boolean>>>,
-) {
-  val context = LocalContext.current
-  FlowRow {
-    associations.forEach { (association, selected) ->
-      if (selected.value) {
-        InputChip(
-            label = { Text(association.name) },
-            onClick = {},
-            selected = selected.value,
-            avatar = {
-              Icon(
-                  Icons.Default.Close,
-                  contentDescription = context.getString(R.string.associations_overlay_remove),
-                  modifier = Modifier.clickable { selected.value = !selected.value })
-            })
-      }
+fun <T> Chips(
+    items: List<Pair<T, MutableState<Boolean>>>,
+    getName: (T) -> String,
+){
+    val context = LocalContext.current
+
+    FlowRow {
+        items.forEach { (item, selected) ->
+            if (selected.value) {
+                InputChip(
+                    label = { Text(getName(item)) },
+                    onClick = {},
+                    selected = selected.value,
+                    avatar = {
+                        Icon(
+                            Icons.Default.Close,
+                            contentDescription = context.getString(R.string.associations_overlay_remove),
+                            modifier = Modifier.clickable { selected.value = !selected.value })
+                    })
+            }
+
+        }
     }
-  }
 }
 
 /**
@@ -268,17 +269,20 @@ fun DateAndTimePicker(
   ) {
     OutlinedTextField(
         modifier =
-            Modifier.testTag(dateFieldTestTag).weight(1f).pointerInput(Unit) {
-              awaitEachGesture {
-                // Modifier.clickable doesn't work for text fields, so we use Modifier.pointerInput
-                // in the Initial pass to observe events before the text field consumes them
-                // in the Main pass.
-                awaitFirstDown(pass = PointerEventPass.Initial)
-                val upEvent = waitForUpOrCancellation(pass = PointerEventPass.Initial)
-                if (upEvent != null) {
-                  isDatePickerVisible = true
+        Modifier
+            .testTag(dateFieldTestTag)
+            .weight(1f)
+            .pointerInput(Unit) {
+                awaitEachGesture {
+                    // Modifier.clickable doesn't work for text fields, so we use Modifier.pointerInput
+                    // in the Initial pass to observe events before the text field consumes them
+                    // in the Main pass.
+                    awaitFirstDown(pass = PointerEventPass.Initial)
+                    val upEvent = waitForUpOrCancellation(pass = PointerEventPass.Initial)
+                    if (upEvent != null) {
+                        isDatePickerVisible = true
+                    }
                 }
-              }
             },
         value =
             selectedDate?.let { convertMillisToDate(it) }
@@ -302,17 +306,20 @@ fun DateAndTimePicker(
     Spacer(modifier = Modifier.weight(0.05f))
     OutlinedTextField(
         modifier =
-            Modifier.testTag(timeFieldTestTag).weight(1f).pointerInput(Unit) {
-              awaitEachGesture {
-                // Modifier.clickable doesn't work for text fields, so we use Modifier.pointerInput
-                // in the Initial pass to observe events before the text field consumes them
-                // in the Main pass.
-                awaitFirstDown(pass = PointerEventPass.Initial)
-                val upEvent = waitForUpOrCancellation(pass = PointerEventPass.Initial)
-                if (upEvent != null) {
-                  isTimePickerVisible = true
+        Modifier
+            .testTag(timeFieldTestTag)
+            .weight(1f)
+            .pointerInput(Unit) {
+                awaitEachGesture {
+                    // Modifier.clickable doesn't work for text fields, so we use Modifier.pointerInput
+                    // in the Initial pass to observe events before the text field consumes them
+                    // in the Main pass.
+                    awaitFirstDown(pass = PointerEventPass.Initial)
+                    val upEvent = waitForUpOrCancellation(pass = PointerEventPass.Initial)
+                    if (upEvent != null) {
+                        isTimePickerVisible = true
+                    }
                 }
-              }
             },
         value =
             selectedTime?.let { convertMillisToTime(it) }
