@@ -14,8 +14,8 @@ import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.map.LocationRepository
 import com.android.unio.model.map.nominatim.NominatimApiService
 import com.android.unio.model.map.nominatim.NominatimLocationRepository
-import com.android.unio.model.save.ConcurrentEventUserRepository
-import com.android.unio.model.save.ConcurrentEventUserRepositoryFirestore
+import com.android.unio.model.usecase.SaveUseCase
+import com.android.unio.model.usecase.SaveUseCaseFirestore
 import com.android.unio.model.user.UserDeletionRepository
 import com.android.unio.model.user.UserDeletionRepositoryFirestore
 import com.android.unio.model.user.UserRepository
@@ -131,8 +131,8 @@ abstract class ConcurrentEventUserModule {
 
   @Binds
   abstract fun bindConcurrentEventUserRepository(
-      concurrentEventUserRepositoryFirestore: ConcurrentEventUserRepositoryFirestore
-  ): ConcurrentEventUserRepository
+      concurrentEventUserRepositoryFirestore: SaveUseCaseFirestore
+  ): SaveUseCase
 }
 
 @Module

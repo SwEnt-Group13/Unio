@@ -14,7 +14,7 @@ import com.android.unio.model.event.EventRepositoryFirestore
 import com.android.unio.model.event.EventUserPictureRepositoryFirestore
 import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
-import com.android.unio.model.save.ConcurrentEventUserRepositoryFirestore
+import com.android.unio.model.usecase.SaveUseCaseFirestore
 import com.android.unio.model.strings.test_tags.event.EventDetailsTestTags
 import com.android.unio.model.user.User
 import com.android.unio.ui.event.EventDetailsPicturePicker
@@ -36,7 +36,7 @@ class EventDetailsPicturePickerTest : TearDown() {
   private lateinit var eventUserPictureRepositoryFirestore: EventUserPictureRepositoryFirestore
   @MockK
   private lateinit var concurrentEventUserRepositoryFirestore:
-      ConcurrentEventUserRepositoryFirestore
+          SaveUseCaseFirestore
 
   private lateinit var eventViewModel: EventViewModel
 

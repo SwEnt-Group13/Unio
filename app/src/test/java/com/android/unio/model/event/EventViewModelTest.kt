@@ -5,7 +5,7 @@ import com.android.unio.mocks.event.MockEvent
 import com.android.unio.mocks.firestore.MockReferenceList
 import com.android.unio.model.association.AssociationRepositoryFirestore
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
-import com.android.unio.model.save.ConcurrentEventUserRepositoryFirestore
+import com.android.unio.model.usecase.SaveUseCaseFirestore
 import com.android.unio.model.strings.StoragePathsStrings
 import com.android.unio.model.user.User
 import com.google.firebase.FirebaseApp
@@ -46,7 +46,7 @@ class EventViewModelTest {
   private lateinit var eventUserPictureRepositoryFirestore: EventUserPictureRepositoryFirestore
   @Mock
   private lateinit var concurrentEventUserRepositoryFirestore:
-      ConcurrentEventUserRepositoryFirestore
+          SaveUseCaseFirestore
 
   private lateinit var eventViewModel: EventViewModel
 

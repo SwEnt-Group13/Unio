@@ -32,7 +32,7 @@ import com.android.unio.model.event.EventUtils.formatTimestamp
 import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.map.MapViewModel
-import com.android.unio.model.save.ConcurrentEventUserRepositoryFirestore
+import com.android.unio.model.usecase.SaveUseCaseFirestore
 import com.android.unio.model.strings.FormatStrings.DAY_MONTH_FORMAT
 import com.android.unio.model.strings.test_tags.event.EventDetailsTestTags
 import com.android.unio.model.user.User
@@ -78,7 +78,7 @@ class EventDetailsTest : TearDown() {
   private lateinit var eventUserPictureRepositoryFirestore: EventUserPictureRepositoryFirestore
   @MockK
   private lateinit var concurrentEventUserRepositoryFirestore:
-      ConcurrentEventUserRepositoryFirestore
+          SaveUseCaseFirestore
 
   private lateinit var eventViewModel: EventViewModel
   private lateinit var userViewModel: UserViewModel

@@ -14,7 +14,7 @@ import com.android.unio.model.event.EventUserPictureRepositoryFirestore
 import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.notification.NotificationWorker
-import com.android.unio.model.save.ConcurrentEventUserRepositoryFirestore
+import com.android.unio.model.usecase.SaveUseCaseFirestore
 import com.android.unio.model.strings.test_tags.event.EventDetailsTestTags
 import com.android.unio.model.user.User
 import com.android.unio.model.user.UserDeletionRepositoryFirestore
@@ -47,7 +47,7 @@ class EventSaveButtonTest : TearDown() {
   private lateinit var eventUserPictureRepositoryFirestore: EventUserPictureRepositoryFirestore
   @MockK
   private lateinit var concurrentEventUserRepositoryFirestore:
-      ConcurrentEventUserRepositoryFirestore
+          SaveUseCaseFirestore
   @MockK private lateinit var userRepository: UserRepositoryFirestore
   private lateinit var eventViewModel: EventViewModel
   private lateinit var userViewModel: UserViewModel

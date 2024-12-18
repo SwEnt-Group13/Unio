@@ -35,7 +35,7 @@ import com.android.unio.model.firestore.firestoreReferenceListWith
 import com.android.unio.model.usecase.FollowUseCaseFirestore
 import com.android.unio.model.hilt.module.FirebaseModule
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
-import com.android.unio.model.save.ConcurrentEventUserRepositoryFirestore
+import com.android.unio.model.usecase.SaveUseCaseFirestore
 import com.android.unio.model.strings.test_tags.association.AssociationProfileTestTags
 import com.android.unio.model.user.User
 import com.android.unio.model.user.UserDeletionRepositoryFirestore
@@ -101,7 +101,7 @@ class AssociationProfileTest : TearDown() {
   private lateinit var eventUserPictureRepositoryFirestore: EventUserPictureRepositoryFirestore
   @MockK
   private lateinit var concurrentEventUserRepositoryFirestore:
-      ConcurrentEventUserRepositoryFirestore
+          SaveUseCaseFirestore
 
   @MockK private lateinit var connectivityManager: ConnectivityManager
 

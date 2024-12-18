@@ -18,7 +18,7 @@ import com.android.unio.model.event.EventUserPictureRepositoryFirestore
 import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.map.MapViewModel
-import com.android.unio.model.save.ConcurrentEventUserRepositoryFirestore
+import com.android.unio.model.usecase.SaveUseCaseFirestore
 import com.android.unio.model.strings.test_tags.map.MapTestTags
 import com.android.unio.model.user.User
 import com.android.unio.model.user.UserDeletionRepositoryFirestore
@@ -64,7 +64,7 @@ class MapScreenTest : TearDown() {
   private lateinit var eventUserPictureRepositoryFirestore: EventUserPictureRepositoryFirestore
   @MockK
   private lateinit var concurrentEventUserRepositoryFirestore:
-      ConcurrentEventUserRepositoryFirestore
+          SaveUseCaseFirestore
 
   private lateinit var locationTask: Task<Location>
   private lateinit var context: Context

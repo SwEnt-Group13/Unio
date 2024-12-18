@@ -1,4 +1,4 @@
-package com.android.unio.model.save
+package com.android.unio.model.usecase
 
 import com.android.unio.model.authentication.registerAuthStateListener
 import com.android.unio.model.event.Event
@@ -14,20 +14,20 @@ import com.google.firebase.firestore.FirebaseFirestore
 import javax.inject.Inject
 
 /**
- * A Firestore implementation of [ConcurrentEventUserRepository]. This class is responsible for
+ * A Firestore implementation of [SaveUseCase]. This class is responsible for
  * updating the Firestore database with the user's save status for an event.
  *
  * @property db The Firestore database.
  * @property userRepository The repository for user data.
  * @property eventRepository The repository for event data.
  */
-class ConcurrentEventUserRepositoryFirestore
+class SaveUseCaseFirestore
 @Inject
 constructor(
     private val db: FirebaseFirestore,
     private val userRepository: UserRepository,
     private val eventRepository: EventRepository
-) : ConcurrentEventUserRepository {
+) : SaveUseCase {
 
   override fun init(onSuccess: () -> Unit) {
     Firebase.auth.registerAuthStateListener {
