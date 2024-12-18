@@ -3,9 +3,7 @@ package com.android.unio.ui.association
 import android.annotation.SuppressLint
 import android.util.Log
 import android.widget.Toast
-import androidx.annotation.NonNull
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -39,13 +37,36 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.outlined.MoreVert
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.ModalBottomSheetProperties
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -82,19 +103,10 @@ import com.android.unio.ui.theme.AppTypography
 import com.android.unio.ui.utils.ToastUtils
 import com.github.skydoves.colorpicker.compose.HsvColorPicker
 import com.github.skydoves.colorpicker.compose.rememberColorPickerController
-import com.google.android.gms.tasks.OnCompleteListener
-import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.GetTokenResult
-import com.google.firebase.functions.FirebaseFunctions
 import com.google.firebase.functions.ktx.functions
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.suspendCancellableCoroutine
-import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
-import kotlin.math.max
-import kotlin.math.min
 
 
 /**
@@ -484,11 +496,12 @@ private fun giveCurrentUserTokenID(
 }
 
 
-private fun addRoleCloudFunction(
+private fun addEditRoleCloudFunction(
     newRole: Role,
     associationUId: String,
     onSuccess: (String) -> Unit,
-    onError: (Exception) -> Unit
+    onError: (Exception) -> Unit,
+    isNewRole : Boolean
 ) {
     try {
         // Fetch the token asynchronously
@@ -509,6 +522,7 @@ private fun addRoleCloudFunction(
                                 "color" to newRole.color.toInt(),
                                 "uid" to newRole.uid
                             ),
+                            "isNewRole" to isNewRole,
                             "associationUid" to associationUId
                         )
                     )
@@ -835,7 +849,10 @@ fun RoleCard(role: Role, associationViewModel: AssociationViewModel) {
             .clickable { expanded = !expanded },
         elevation = CardDefaults.cardElevation(4.dp)
     ) {
-        Column(Modifier.fillMaxWidth().padding(16.dp)) {
+        Column(
+            Modifier
+                .fillMaxWidth()
+                .padding(16.dp)) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
@@ -960,13 +977,21 @@ fun SaveRoleDialog(
         confirmButton = {
             Button(onClick = {
                 val colorInt = selectedColor.toArgb().toLong()
-                val newRole = Role(
+                val saveRole = Role(
                     displayName = displayName.text,
                     permissions = Permissions.PermissionsBuilder().addPermissions(selectedPermissions.toList()).build(),
                     color = colorInt,
                     uid = initialRole?.uid ?: displayName.text // Use existing UID for edit
                 )
-                onCreateRole(newRole)
+                associationViewModel.selectedAssociation.value?.let { association ->
+                    addEditRoleCloudFunction(saveRole, association.uid, onSuccess = {
+                        Log.d("ADD_ROLE", "SUCCESS")
+                        associationViewModel.addRoleLocally(association.uid, saveRole)
+                    }, onError = { e -> Log.d("ADD_ROLE", "ERROR: $e") },
+                        isNewRole = initialRole == null
+                    )
+                }
+                onCreateRole(saveRole)
             }) {
                 Text(if (initialRole != null) "Save" else "Create")
             }
