@@ -40,12 +40,12 @@ import io.mockk.mockkObject
 import io.mockk.runs
 import io.mockk.spyk
 import io.mockk.verify
+import java.util.Date
 import me.zhanghai.compose.preference.ProvidePreferenceLocals
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import java.util.Date
 
 class EventCardTest : TearDown() {
 

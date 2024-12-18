@@ -229,58 +229,72 @@ class EventEditTests : TearDown() {
     composeTestRule.waitForIdle()
   }
 
-    @Test
-    fun testCorrectlyAddEvenTypes(){
-        nominatimLocationSearchViewModel =
-            NominatimLocationSearchViewModel(nominatimLocationRepositoryWithoutFunctionality)
-        composeTestRule.setContent {
-            EventEditScreen(
-                navigationAction,
-                searchViewModel,
-                associationViewModel,
-                eventViewModel,
-                nominatimLocationSearchViewModel)
-        }
-
-        composeTestRule.onNodeWithTag(EventEditTestTags.EVENT_TYPE).performScrollTo().performClick()
-
-        composeTestRule.onNodeWithTag(EventTypeOverlayTestTags.CARD).assertExists()
-
-        composeTestRule.onNodeWithTag(EventTypeOverlayTestTags.CLICKABLE_ROW + "FESTIVAL").performScrollTo().performClick()
-        composeTestRule.onNodeWithTag(EventTypeOverlayTestTags.CLICKABLE_ROW + "APERITIF").performScrollTo().performClick()
-
-        composeTestRule.onNodeWithTag(EventTypeOverlayTestTags.SAVE_BUTTON).performClick()
-
-        composeTestRule.onNodeWithTag(EventEditTestTags.SCREEN).assertIsDisplayed()
-
-        composeTestRule.onNodeWithTag(EventDetailsTestTags.CHIPS + "Festival").assertExists()
-        composeTestRule.onNodeWithTag(EventDetailsTestTags.CHIPS + "Aperitif").assertExists()
+  @Test
+  fun testCorrectlyAddEvenTypes() {
+    nominatimLocationSearchViewModel =
+        NominatimLocationSearchViewModel(nominatimLocationRepositoryWithoutFunctionality)
+    composeTestRule.setContent {
+      EventEditScreen(
+          navigationAction,
+          searchViewModel,
+          associationViewModel,
+          eventViewModel,
+          nominatimLocationSearchViewModel)
     }
 
-    @Test
-    fun testNotPossibleToAddMoreThan3EventTypes(){
-        nominatimLocationSearchViewModel =
-            NominatimLocationSearchViewModel(nominatimLocationRepositoryWithoutFunctionality)
-        composeTestRule.setContent {
-            EventEditScreen(
-                navigationAction,
-                searchViewModel,
-                associationViewModel,
-                eventViewModel,
-                nominatimLocationSearchViewModel)
-        }
+    composeTestRule.onNodeWithTag(EventEditTestTags.EVENT_TYPE).performScrollTo().performClick()
 
-        composeTestRule.onNodeWithTag(EventEditTestTags.EVENT_TYPE).performScrollTo().performClick()
+    composeTestRule.onNodeWithTag(EventTypeOverlayTestTags.CARD).assertExists()
 
-        composeTestRule.onNodeWithTag(EventTypeOverlayTestTags.CARD).assertExists()
+    composeTestRule
+        .onNodeWithTag(EventTypeOverlayTestTags.CLICKABLE_ROW + "FESTIVAL")
+        .performScrollTo()
+        .performClick()
+    composeTestRule
+        .onNodeWithTag(EventTypeOverlayTestTags.CLICKABLE_ROW + "APERITIF")
+        .performScrollTo()
+        .performClick()
 
-        composeTestRule.onNodeWithTag(EventTypeOverlayTestTags.CLICKABLE_ROW + "LAN").performScrollTo().performClick()
-        composeTestRule.onNodeWithTag(EventTypeOverlayTestTags.CLICKABLE_ROW + "FOOD_DISTRIBUTION").performScrollTo().performClick()
-        composeTestRule.onNodeWithTag(EventTypeOverlayTestTags.CLICKABLE_ROW + "MANIFESTATION").performScrollTo().performClick()
+    composeTestRule.onNodeWithTag(EventTypeOverlayTestTags.SAVE_BUTTON).performClick()
 
+    composeTestRule.onNodeWithTag(EventEditTestTags.SCREEN).assertIsDisplayed()
 
-        composeTestRule.onNodeWithTag(EventTypeOverlayTestTags.SAVE_BUTTON).assertIsNotEnabled()
+    composeTestRule.onNodeWithTag(EventDetailsTestTags.CHIPS + "Festival").assertExists()
+    composeTestRule.onNodeWithTag(EventDetailsTestTags.CHIPS + "Aperitif").assertExists()
+  }
+
+  @Test
+  fun testNotPossibleToAddMoreThan3EventTypes() {
+    nominatimLocationSearchViewModel =
+        NominatimLocationSearchViewModel(nominatimLocationRepositoryWithoutFunctionality)
+    composeTestRule.setContent {
+      EventEditScreen(
+          navigationAction,
+          searchViewModel,
+          associationViewModel,
+          eventViewModel,
+          nominatimLocationSearchViewModel)
     }
+
+    composeTestRule.onNodeWithTag(EventEditTestTags.EVENT_TYPE).performScrollTo().performClick()
+
+    composeTestRule.onNodeWithTag(EventTypeOverlayTestTags.CARD).assertExists()
+
+    composeTestRule
+        .onNodeWithTag(EventTypeOverlayTestTags.CLICKABLE_ROW + "LAN")
+        .performScrollTo()
+        .performClick()
+    composeTestRule
+        .onNodeWithTag(EventTypeOverlayTestTags.CLICKABLE_ROW + "FOOD_DISTRIBUTION")
+        .performScrollTo()
+        .performClick()
+    composeTestRule
+        .onNodeWithTag(EventTypeOverlayTestTags.CLICKABLE_ROW + "MANIFESTATION")
+        .performScrollTo()
+        .performClick()
+
+    composeTestRule.onNodeWithTag(EventTypeOverlayTestTags.SAVE_BUTTON).assertIsNotEnabled()
+  }
 
   @Test
   fun testDeleteButtonWorksCorrectly() {

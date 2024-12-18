@@ -116,7 +116,7 @@ fun EventTypeOverlay(
                               modifier =
                                   Modifier.padding(5.dp)
                                       .testTag(EventTypeOverlayTestTags.SAVE_BUTTON)) {
-                                if (!isError.value) Text(context.getString(R.string.overlay_save))
+                                Text(context.getString(R.string.overlay_save))
                               }
                         }
                   }

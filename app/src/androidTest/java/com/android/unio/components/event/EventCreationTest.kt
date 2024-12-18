@@ -48,6 +48,7 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockkStatic
 import io.mockk.spyk
+import java.net.HttpURLConnection
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.Before
@@ -55,7 +56,6 @@ import org.junit.Rule
 import org.junit.Test
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import java.net.HttpURLConnection
 
 @HiltAndroidTest
 class EventCreationTest : TearDown() {
@@ -284,58 +284,76 @@ class EventCreationTest : TearDown() {
     composeTestRule.onNodeWithTag(EventCreationTestTags.DESCRIPTION).performTextClearance()
   }
 
-    @Test
-    fun testCorrectlyAddEvenTypes(){
-        nominatimLocationSearchViewModel =
-            NominatimLocationSearchViewModel(nominatimLocationRepositoryWithoutFunctionality)
-        composeTestRule.setContent {
-            EventCreationScreen(
-                navigationAction,
-                searchViewModel,
-                associationViewModel,
-                eventViewModel,
-                nominatimLocationSearchViewModel)
-        }
-
-        composeTestRule.onNodeWithTag(EventCreationTestTags.EVENT_TYPE).performScrollTo().performClick()
-
-        composeTestRule.onNodeWithTag(EventTypeOverlayTestTags.CARD).assertExists()
-
-        composeTestRule.onNodeWithTag(EventTypeOverlayTestTags.CLICKABLE_ROW + "FESTIVAL").performScrollTo().performClick()
-        composeTestRule.onNodeWithTag(EventTypeOverlayTestTags.CLICKABLE_ROW + "APERITIF").performScrollTo().performClick()
-
-        composeTestRule.onNodeWithTag(EventTypeOverlayTestTags.SAVE_BUTTON).performClick()
-
-        composeTestRule.onNodeWithTag(EventCreationTestTags.SCREEN).assertIsDisplayed()
-
-        composeTestRule.onNodeWithTag(EventDetailsTestTags.CHIPS + "Festival").assertExists()
-        composeTestRule.onNodeWithTag(EventDetailsTestTags.CHIPS + "Aperitif").assertExists()
+  @Test
+  fun testCorrectlyAddEvenTypes() {
+    nominatimLocationSearchViewModel =
+        NominatimLocationSearchViewModel(nominatimLocationRepositoryWithoutFunctionality)
+    composeTestRule.setContent {
+      EventCreationScreen(
+          navigationAction,
+          searchViewModel,
+          associationViewModel,
+          eventViewModel,
+          nominatimLocationSearchViewModel)
     }
 
-    @Test
-    fun testNotPossibleToAddMoreThan3EventTypes(){
-        nominatimLocationSearchViewModel =
-            NominatimLocationSearchViewModel(nominatimLocationRepositoryWithoutFunctionality)
-        composeTestRule.setContent {
-            EventCreationScreen(
-                navigationAction,
-                searchViewModel,
-                associationViewModel,
-                eventViewModel,
-                nominatimLocationSearchViewModel)
-        }
+    composeTestRule.onNodeWithTag(EventCreationTestTags.EVENT_TYPE).performScrollTo().performClick()
 
-        composeTestRule.onNodeWithTag(EventCreationTestTags.EVENT_TYPE).performScrollTo().performClick()
+    composeTestRule.onNodeWithTag(EventTypeOverlayTestTags.CARD).assertExists()
 
-        composeTestRule.onNodeWithTag(EventTypeOverlayTestTags.CARD).assertExists()
+    composeTestRule
+        .onNodeWithTag(EventTypeOverlayTestTags.CLICKABLE_ROW + "FESTIVAL")
+        .performScrollTo()
+        .performClick()
+    composeTestRule
+        .onNodeWithTag(EventTypeOverlayTestTags.CLICKABLE_ROW + "APERITIF")
+        .performScrollTo()
+        .performClick()
 
-        composeTestRule.onNodeWithTag(EventTypeOverlayTestTags.CLICKABLE_ROW + "FESTIVAL").performScrollTo().performClick()
-        composeTestRule.onNodeWithTag(EventTypeOverlayTestTags.CLICKABLE_ROW + "APERITIF").performScrollTo().performClick()
-        composeTestRule.onNodeWithTag(EventTypeOverlayTestTags.CLICKABLE_ROW + "JAM").performScrollTo().performClick()
-        composeTestRule.onNodeWithTag(EventTypeOverlayTestTags.CLICKABLE_ROW + "TRIP").performScrollTo().performClick()
+    composeTestRule.onNodeWithTag(EventTypeOverlayTestTags.SAVE_BUTTON).performClick()
 
-        composeTestRule.onNodeWithTag(EventTypeOverlayTestTags.SAVE_BUTTON).assertIsNotEnabled()
+    composeTestRule.onNodeWithTag(EventCreationTestTags.SCREEN).assertIsDisplayed()
+
+    composeTestRule.onNodeWithTag(EventDetailsTestTags.CHIPS + "Festival").assertExists()
+    composeTestRule.onNodeWithTag(EventDetailsTestTags.CHIPS + "Aperitif").assertExists()
+  }
+
+  @Test
+  fun testNotPossibleToAddMoreThan3EventTypes() {
+    nominatimLocationSearchViewModel =
+        NominatimLocationSearchViewModel(nominatimLocationRepositoryWithoutFunctionality)
+    composeTestRule.setContent {
+      EventCreationScreen(
+          navigationAction,
+          searchViewModel,
+          associationViewModel,
+          eventViewModel,
+          nominatimLocationSearchViewModel)
     }
+
+    composeTestRule.onNodeWithTag(EventCreationTestTags.EVENT_TYPE).performScrollTo().performClick()
+
+    composeTestRule.onNodeWithTag(EventTypeOverlayTestTags.CARD).assertExists()
+
+    composeTestRule
+        .onNodeWithTag(EventTypeOverlayTestTags.CLICKABLE_ROW + "FESTIVAL")
+        .performScrollTo()
+        .performClick()
+    composeTestRule
+        .onNodeWithTag(EventTypeOverlayTestTags.CLICKABLE_ROW + "APERITIF")
+        .performScrollTo()
+        .performClick()
+    composeTestRule
+        .onNodeWithTag(EventTypeOverlayTestTags.CLICKABLE_ROW + "JAM")
+        .performScrollTo()
+        .performClick()
+    composeTestRule
+        .onNodeWithTag(EventTypeOverlayTestTags.CLICKABLE_ROW + "TRIP")
+        .performScrollTo()
+        .performClick()
+
+    composeTestRule.onNodeWithTag(EventTypeOverlayTestTags.SAVE_BUTTON).assertIsNotEnabled()
+  }
 
   @Test
   fun testLocationInputFunctionality() {
