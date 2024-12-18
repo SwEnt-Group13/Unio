@@ -21,6 +21,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -44,6 +45,9 @@ fun EventTypeOverlay(
     val context = LocalContext.current
     val scrollState = rememberScrollState()
     val copiedTypes = types.toList().map { it.first to mutableStateOf(it.second.value) }
+    val isError = remember {
+        mutableStateOf(false)
+    }
 
     Dialog(
         onDismissRequest = onDismiss,
@@ -78,7 +82,11 @@ fun EventTypeOverlay(
                         copiedTypes.forEachIndexed { index, pair ->
 
                             // The row for each interest
-                            EventTypeOverlayRow(pair)
+                            EventTypeOverlayRow(pair,
+                                onChange = {
+                                    isError.value = copiedTypes.count({ it.second.value }) > 3
+                                    println(isError)
+                                })
 
                             if (index != copiedTypes.size - 1) {
                                 HorizontalDivider(
@@ -104,11 +112,16 @@ fun EventTypeOverlay(
                     }
 
                     Button(
-                        onClick = { onSave(copiedTypes) },
+                        onClick = {
+                                onSave(copiedTypes)
+                            },
+                        enabled = !isError.value,
                         modifier =
-                        Modifier.padding(5.dp)
+                        Modifier
+                            .padding(5.dp)
                             .testTag(EventTypeOverlayTestTags.SAVE_BUTTON)) {
-                        Text(context.getString(R.string.overlay_save))
+                        if(!isError.value)
+                            Text(context.getString(R.string.overlay_save))
                     }
                 }
             }
@@ -119,6 +132,7 @@ fun EventTypeOverlay(
 @Composable
 private fun EventTypeOverlayRow(
     pair: Pair<EventType, MutableState<Boolean>>,
+    onChange: () -> Unit
 ) {
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -127,16 +141,21 @@ private fun EventTypeOverlayRow(
         Modifier.padding(5.dp)
             .fillMaxWidth()
             .testTag(EventTypeOverlayTestTags.CLICKABLE_ROW + pair.first.name)
-            .clickable { pair.second.value = !pair.second.value }) {
+            .clickable {
+                pair.second.value = !pair.second.value
+                onChange()
+            }) {
         Text(
             text = pair.first.name,
             style = AppTypography.bodyMedium,
             modifier =
-            Modifier.padding(start = 5.dp)
+            Modifier
+                .padding(start = 5.dp)
                 .testTag(EventTypeOverlayTestTags.TEXT + pair.first.name))
         Checkbox(
             checked = pair.second.value,
-            onCheckedChange = { pair.second.value = it },
+            onCheckedChange = { pair.second.value = it
+                              onChange() },
             modifier = Modifier.testTag(EventTypeOverlayTestTags.CHECK_BOX + pair.first.name))
     }
 }
