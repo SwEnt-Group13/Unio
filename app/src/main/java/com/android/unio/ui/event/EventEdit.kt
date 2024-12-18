@@ -84,9 +84,9 @@ fun EventEditScreen(
 
   val eventToEdit = remember { eventViewModel.selectedEvent.value!! }
 
-  var name by remember { mutableStateOf(eventToEdit.title) }
-  var shortDescription by remember { mutableStateOf(eventToEdit.catchyDescription) }
-  var longDescription by remember { mutableStateOf(eventToEdit.description) }
+  var name by remember { mutableStateOf(eventToEdit.title.trim()) }
+  var shortDescription by remember { mutableStateOf(eventToEdit.catchyDescription.trim()) }
+  var longDescription by remember { mutableStateOf(eventToEdit.description.trim()) }
 
   var coauthorsAndBoolean =
       associationViewModel.associations.collectAsState().value.map {
@@ -140,6 +140,12 @@ fun EventEditScreen(
           OutlinedTextField(
               modifier = Modifier.fillMaxWidth().testTag(EventEditTestTags.EVENT_TITLE),
               value = name,
+              isError = name.isEmpty(),
+              supportingText = {
+                if (name.isEmpty()) {
+                  Text(context.getString(R.string.event_creation_name_error))
+                }
+              },
               onValueChange = { name = it },
               label = { Text(context.getString(R.string.event_creation_name_label)) },
               trailingIcon = {
@@ -159,6 +165,12 @@ fun EventEditScreen(
           OutlinedTextField(
               modifier = Modifier.fillMaxWidth().testTag(EventEditTestTags.SHORT_DESCRIPTION),
               value = shortDescription,
+              isError = shortDescription.isEmpty(),
+              supportingText = {
+                if (shortDescription.isEmpty()) {
+                  Text(context.getString(R.string.event_creation_short_description_error))
+                }
+              },
               onValueChange = { shortDescription = it },
               label = { Text(context.getString(R.string.event_creation_short_description_label)) },
               trailingIcon = {
@@ -207,6 +219,12 @@ fun EventEditScreen(
           OutlinedTextField(
               modifier = Modifier.fillMaxWidth().testTag(EventEditTestTags.DESCRIPTION),
               value = longDescription,
+              isError = longDescription.isEmpty(),
+              supportingText = {
+                if (longDescription.isEmpty()) {
+                  Text(context.getString(R.string.event_creation_description_error))
+                }
+              },
               onValueChange = { longDescription = it },
               label = { Text(context.getString(R.string.event_creation_description_label)) })
 

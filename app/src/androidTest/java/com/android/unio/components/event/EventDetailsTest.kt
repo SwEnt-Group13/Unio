@@ -32,9 +32,10 @@ import com.android.unio.model.event.EventUtils.formatTimestamp
 import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.map.MapViewModel
-import com.android.unio.model.save.ConcurrentEventUserRepositoryFirestore
 import com.android.unio.model.strings.FormatStrings.DAY_MONTH_FORMAT
 import com.android.unio.model.strings.test_tags.event.EventDetailsTestTags
+import com.android.unio.model.usecase.SaveUseCaseFirestore
+import com.android.unio.model.usecase.UserDeletionUseCaseFirestore
 import com.android.unio.model.user.User
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserViewModel
@@ -71,12 +72,11 @@ class EventDetailsTest : TearDown() {
   @MockK private lateinit var eventRepository: EventRepositoryFirestore
   @MockK private lateinit var associationRepository: AssociationRepositoryFirestore
   @MockK private lateinit var userRepository: UserRepositoryFirestore
+  @MockK private lateinit var userDeletionRepository: UserDeletionUseCaseFirestore
   @MockK private lateinit var imageRepository: ImageRepositoryFirebaseStorage
   @MockK
   private lateinit var eventUserPictureRepositoryFirestore: EventUserPictureRepositoryFirestore
-  @MockK
-  private lateinit var concurrentEventUserRepositoryFirestore:
-      ConcurrentEventUserRepositoryFirestore
+  @MockK private lateinit var concurrentEventUserRepositoryFirestore: SaveUseCaseFirestore
 
   private lateinit var eventViewModel: EventViewModel
   private lateinit var userViewModel: UserViewModel
@@ -154,7 +154,7 @@ class EventDetailsTest : TearDown() {
           (it.invocation.args[1] as (User) -> Unit)((MockUser.createMockUser()))
         }
 
-    userViewModel = UserViewModel(userRepository, imageRepository)
+    userViewModel = UserViewModel(userRepository, imageRepository, userDeletionRepository)
     userViewModel.getUserByUid("uid")
   }
 

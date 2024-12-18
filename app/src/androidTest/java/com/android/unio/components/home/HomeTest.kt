@@ -22,10 +22,11 @@ import com.android.unio.model.event.EventUserPictureRepositoryFirestore
 import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.hilt.module.FirebaseModule
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
-import com.android.unio.model.save.ConcurrentEventUserRepositoryFirestore
 import com.android.unio.model.search.SearchRepository
 import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.strings.test_tags.home.HomeTestTags
+import com.android.unio.model.usecase.SaveUseCaseFirestore
+import com.android.unio.model.usecase.UserDeletionUseCaseFirestore
 import com.android.unio.model.user.User
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserViewModel
@@ -70,14 +71,13 @@ class HomeTest : TearDown() {
   // Mock event repository to provide test data.
   @MockK private lateinit var eventRepository: EventRepositoryFirestore
   @MockK private lateinit var userRepository: UserRepositoryFirestore
+  @MockK private lateinit var userDeletionRepository: UserDeletionUseCaseFirestore
   @MockK private lateinit var imageRepository: ImageRepositoryFirebaseStorage
   @MockK private lateinit var navigationAction: NavigationAction
   @MockK private lateinit var associationRepositoryFirestore: AssociationRepositoryFirestore
   @MockK
   private lateinit var eventUserPictureRepositoryFirestore: EventUserPictureRepositoryFirestore
-  @MockK
-  private lateinit var concurrentEventUserRepositoryFirestore:
-      ConcurrentEventUserRepositoryFirestore
+  @MockK private lateinit var concurrentEventUserRepositoryFirestore: SaveUseCaseFirestore
 
   private lateinit var eventViewModel: EventViewModel
   private lateinit var searchViewModel: SearchViewModel
@@ -107,7 +107,7 @@ class HomeTest : TearDown() {
           onSuccess(MockUser.createMockUser())
         }
 
-    userViewModel = spyk(UserViewModel(userRepository, imageRepository))
+    userViewModel = spyk(UserViewModel(userRepository, imageRepository, userDeletionRepository))
     val asso = MockAssociation.createMockAssociation()
     val user =
         MockUser.createMockUser(

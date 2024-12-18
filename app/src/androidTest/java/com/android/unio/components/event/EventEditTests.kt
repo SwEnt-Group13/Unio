@@ -24,14 +24,14 @@ import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventRepositoryFirestore
 import com.android.unio.model.event.EventUserPictureRepositoryFirestore
 import com.android.unio.model.event.EventViewModel
-import com.android.unio.model.follow.ConcurrentAssociationUserRepositoryFirestore
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.map.nominatim.NominatimLocationRepository
 import com.android.unio.model.map.nominatim.NominatimLocationSearchViewModel
-import com.android.unio.model.save.ConcurrentEventUserRepositoryFirestore
 import com.android.unio.model.search.SearchRepository
 import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.strings.test_tags.event.EventEditTestTags
+import com.android.unio.model.usecase.FollowUseCaseFirestore
+import com.android.unio.model.usecase.SaveUseCaseFirestore
 import com.android.unio.ui.event.EventEditScreen
 import com.android.unio.ui.navigation.NavigationAction
 import com.google.firebase.Firebase
@@ -76,12 +76,8 @@ class EventEditTests : TearDown() {
   @MockK private lateinit var imageRepositoryFirestore: ImageRepositoryFirebaseStorage
   @MockK
   private lateinit var eventUserPictureRepositoryFirestore: EventUserPictureRepositoryFirestore
-  @MockK
-  private lateinit var concurrentEventUserRepositoryFirestore:
-      ConcurrentEventUserRepositoryFirestore
-  @MockK
-  private lateinit var concurrentAssociationUserRepositoryFirestore:
-      ConcurrentAssociationUserRepositoryFirestore
+  @MockK private lateinit var concurrentEventUserRepositoryFirestore: SaveUseCaseFirestore
+  @MockK private lateinit var concurrentAssociationUserRepositoryFirestore: FollowUseCaseFirestore
 
   private val mockEvent =
       MockEvent.createMockEvent(

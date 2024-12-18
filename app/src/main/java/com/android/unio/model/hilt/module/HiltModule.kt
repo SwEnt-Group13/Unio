@@ -7,15 +7,17 @@ import com.android.unio.model.event.EventRepository
 import com.android.unio.model.event.EventRepositoryFirestore
 import com.android.unio.model.event.EventUserPictureRepository
 import com.android.unio.model.event.EventUserPictureRepositoryFirestore
-import com.android.unio.model.follow.ConcurrentAssociationUserRepository
-import com.android.unio.model.follow.ConcurrentAssociationUserRepositoryFirestore
 import com.android.unio.model.image.ImageRepository
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.map.LocationRepository
 import com.android.unio.model.map.nominatim.NominatimApiService
 import com.android.unio.model.map.nominatim.NominatimLocationRepository
-import com.android.unio.model.save.ConcurrentEventUserRepository
-import com.android.unio.model.save.ConcurrentEventUserRepositoryFirestore
+import com.android.unio.model.usecase.FollowUseCase
+import com.android.unio.model.usecase.FollowUseCaseFirestore
+import com.android.unio.model.usecase.SaveUseCase
+import com.android.unio.model.usecase.SaveUseCaseFirestore
+import com.android.unio.model.usecase.UserDeletionUseCase
+import com.android.unio.model.usecase.UserDeletionUseCaseFirestore
 import com.android.unio.model.user.UserRepository
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -109,8 +111,18 @@ abstract class ConcurrentAssociationUserModule {
 
   @Binds
   abstract fun bindConcurrentAssociationUserRepository(
-      concurrentAssociationUserRepositoryFirestore: ConcurrentAssociationUserRepositoryFirestore
-  ): ConcurrentAssociationUserRepository
+      concurrentAssociationUserRepositoryFirestore: FollowUseCaseFirestore
+  ): FollowUseCase
+}
+
+@Module
+@InstallIn(SingletonComponent::class)
+abstract class UserDeletionModule {
+
+  @Binds
+  abstract fun bindUserDeletionRepository(
+      userDeletionRepository: UserDeletionUseCaseFirestore
+  ): UserDeletionUseCase
 }
 
 @Module
@@ -119,8 +131,8 @@ abstract class ConcurrentEventUserModule {
 
   @Binds
   abstract fun bindConcurrentEventUserRepository(
-      concurrentEventUserRepositoryFirestore: ConcurrentEventUserRepositoryFirestore
-  ): ConcurrentEventUserRepository
+      concurrentEventUserRepositoryFirestore: SaveUseCaseFirestore
+  ): SaveUseCase
 }
 
 @Module

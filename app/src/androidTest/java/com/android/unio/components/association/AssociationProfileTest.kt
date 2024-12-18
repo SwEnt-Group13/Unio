@@ -32,11 +32,12 @@ import com.android.unio.model.event.EventUserPictureRepositoryFirestore
 import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.firestore.emptyFirestoreReferenceList
 import com.android.unio.model.firestore.firestoreReferenceListWith
-import com.android.unio.model.follow.ConcurrentAssociationUserRepositoryFirestore
 import com.android.unio.model.hilt.module.FirebaseModule
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
-import com.android.unio.model.save.ConcurrentEventUserRepositoryFirestore
 import com.android.unio.model.strings.test_tags.association.AssociationProfileTestTags
+import com.android.unio.model.usecase.FollowUseCaseFirestore
+import com.android.unio.model.usecase.SaveUseCaseFirestore
+import com.android.unio.model.usecase.UserDeletionUseCaseFirestore
 import com.android.unio.model.user.User
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserViewModel
@@ -88,18 +89,15 @@ class AssociationProfileTest : TearDown() {
 
   @MockK private lateinit var eventRepository: EventRepositoryFirestore
 
-  @MockK
-  private lateinit var concurrentAssociationUserRepository:
-      ConcurrentAssociationUserRepositoryFirestore
+  @MockK private lateinit var concurrentAssociationUserRepository: FollowUseCaseFirestore
 
   @MockK private lateinit var userRepository: UserRepositoryFirestore
+  @MockK private lateinit var userDeletionRepository: UserDeletionUseCaseFirestore
 
   @MockK private lateinit var imageRepository: ImageRepositoryFirebaseStorage
   @MockK
   private lateinit var eventUserPictureRepositoryFirestore: EventUserPictureRepositoryFirestore
-  @MockK
-  private lateinit var concurrentEventUserRepositoryFirestore:
-      ConcurrentEventUserRepositoryFirestore
+  @MockK private lateinit var concurrentEventUserRepositoryFirestore: SaveUseCaseFirestore
 
   @MockK private lateinit var connectivityManager: ConnectivityManager
 
@@ -248,7 +246,7 @@ class AssociationProfileTest : TearDown() {
           onSuccess()
         }
 
-    userViewModel = UserViewModel(userRepository, imageRepository)
+    userViewModel = UserViewModel(userRepository, imageRepository, userDeletionRepository)
     userViewModel.addUser(user, {})
 
     associationViewModel =
