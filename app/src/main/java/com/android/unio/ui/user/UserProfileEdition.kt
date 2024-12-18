@@ -376,7 +376,8 @@ private fun EditUserTextFields(
   val isLastNameError = isErrors.contains(AccountDetailsError.EMPTY_LAST_NAME)
 
   OutlinedTextField(
-      modifier = Modifier.padding(4.dp).testTag(UserEditionTestTags.FIRST_NAME_TEXT_FIELD),
+      modifier =
+          Modifier.padding(4.dp).fillMaxWidth().testTag(UserEditionTestTags.FIRST_NAME_TEXT_FIELD),
       label = {
         Row(
             horizontalArrangement = Arrangement.SpaceEvenly,
@@ -409,7 +410,8 @@ private fun EditUserTextFields(
       value = firstName)
 
   OutlinedTextField(
-      modifier = Modifier.padding(4.dp).testTag(UserEditionTestTags.LAST_NAME_TEXT_FIELD),
+      modifier =
+          Modifier.padding(4.dp).fillMaxWidth().testTag(UserEditionTestTags.LAST_NAME_TEXT_FIELD),
       label = {
         Row(
             horizontalArrangement = Arrangement.SpaceEvenly,
@@ -494,7 +496,7 @@ private fun InterestButtonAndFlowRow(
                 context.getString(R.string.account_details_content_description_add))
         Text(context.getString(R.string.user_edition_edit_interests))
       }
-  FlowRow {
+  FlowRow(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
     interests.forEach { pair ->
       if (pair.second.value) {
         InterestInputChip(pair, testTag = UserEditionTestTags.INTERESTS_CHIP + pair.first.name)
@@ -530,7 +532,7 @@ private fun SocialButtonAndFlowRow(
         Text(context.getString(R.string.user_edition_edit_socials))
       }
 
-  FlowRow(modifier = Modifier.fillMaxWidth().padding(3.dp)) {
+  FlowRow(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
     socials.forEachIndexed { index, userSocial ->
       SocialInputChip(
           userSocial,
