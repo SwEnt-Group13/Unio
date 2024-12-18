@@ -408,17 +408,15 @@ private fun EditUserTextFields(
       },
       value = firstName,
       trailingIcon = {
-        if (firstName.isNotEmpty()) {
-          IconButton(
-              onClick = { onFirstNameChange("") },
-              modifier = Modifier.testTag(UserEditionTestTags.FIRST_NAME_CLEAR_BUTTON)) {
-                Icon(
-                    imageVector = Icons.Outlined.Clear,
-                    contentDescription =
-                        context.getString(
-                            R.string.user_edition_content_description_clear_first_name))
-              }
-        }
+        IconButton(
+            onClick = { onFirstNameChange("") },
+            enabled = firstName.isNotEmpty(),
+            modifier = Modifier.testTag(UserEditionTestTags.FIRST_NAME_CLEAR_BUTTON)) {
+              Icon(
+                  imageVector = Icons.Outlined.Clear,
+                  contentDescription =
+                      context.getString(R.string.user_edition_content_description_clear_first_name))
+            }
       })
 
   OutlinedTextField(
@@ -454,17 +452,15 @@ private fun EditUserTextFields(
       },
       value = lastName,
       trailingIcon = {
-        if (lastName.isNotEmpty()) {
-          IconButton(
-              onClick = { onLastNameChange("") },
-              modifier = Modifier.testTag(UserEditionTestTags.LAST_NAME_CLEAR_BUTTON)) {
-                Icon(
-                    imageVector = Icons.Outlined.Clear,
-                    contentDescription =
-                        context.getString(
-                            R.string.user_edition_content_description_clear_last_name))
-              }
-        }
+        IconButton(
+            onClick = { onLastNameChange("") },
+            enabled = lastName.isNotEmpty(),
+            modifier = Modifier.testTag(UserEditionTestTags.LAST_NAME_CLEAR_BUTTON)) {
+              Icon(
+                  imageVector = Icons.Outlined.Clear,
+                  contentDescription =
+                      context.getString(R.string.user_edition_content_description_clear_last_name))
+            }
       })
 
   OutlinedTextField(

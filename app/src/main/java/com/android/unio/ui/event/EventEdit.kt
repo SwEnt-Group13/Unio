@@ -149,17 +149,16 @@ fun EventEditScreen(
               onValueChange = { name = it },
               label = { Text(context.getString(R.string.event_creation_name_label)) },
               trailingIcon = {
-                if (name.isNotEmpty()) {
-                  IconButton(
-                      onClick = { name = "" },
-                      modifier = Modifier.testTag(EventEditTestTags.EVENT_TITLE_CLEAR_BUTTON)) {
-                        Icon(
-                            imageVector = Icons.Outlined.Clear,
-                            contentDescription =
-                                context.getString(
-                                    R.string.event_creation_content_description_clear_title))
-                      }
-                }
+                IconButton(
+                    onClick = { name = "" },
+                    enabled = name.isNotEmpty(),
+                    modifier = Modifier.testTag(EventEditTestTags.EVENT_TITLE_CLEAR_BUTTON)) {
+                      Icon(
+                          imageVector = Icons.Outlined.Clear,
+                          contentDescription =
+                              context.getString(
+                                  R.string.event_creation_content_description_clear_title))
+                    }
               })
 
           OutlinedTextField(
@@ -174,19 +173,17 @@ fun EventEditScreen(
               onValueChange = { shortDescription = it },
               label = { Text(context.getString(R.string.event_creation_short_description_label)) },
               trailingIcon = {
-                if (shortDescription.isNotEmpty()) {
-                  IconButton(
-                      onClick = { shortDescription = "" },
-                      modifier =
-                          Modifier.testTag(EventEditTestTags.SHORT_DESCRIPTION_CLEAR_BUTTON)) {
-                        Icon(
-                            imageVector = Icons.Outlined.Clear,
-                            contentDescription =
-                                context.getString(
-                                    R.string
-                                        .event_creation_content_description_clear_short_description))
-                      }
-                }
+                IconButton(
+                    onClick = { shortDescription = "" },
+                    enabled = shortDescription.isNotEmpty(),
+                    modifier = Modifier.testTag(EventEditTestTags.SHORT_DESCRIPTION_CLEAR_BUTTON)) {
+                      Icon(
+                          imageVector = Icons.Outlined.Clear,
+                          contentDescription =
+                              context.getString(
+                                  R.string
+                                      .event_creation_content_description_clear_short_description))
+                    }
               })
 
           BannerImagePicker(
