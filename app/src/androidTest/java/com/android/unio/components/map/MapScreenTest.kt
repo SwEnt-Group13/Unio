@@ -21,7 +21,7 @@ import com.android.unio.model.map.MapViewModel
 import com.android.unio.model.usecase.SaveUseCaseFirestore
 import com.android.unio.model.strings.test_tags.map.MapTestTags
 import com.android.unio.model.user.User
-import com.android.unio.model.user.UserDeletionRepositoryFirestore
+import com.android.unio.model.usecase.UserDeletionUseCaseFirestore
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.map.MapScreen
@@ -57,7 +57,7 @@ class MapScreenTest : TearDown() {
   @MockK private lateinit var eventRepository: EventRepositoryFirestore
   @MockK private lateinit var imageRepository: ImageRepositoryFirebaseStorage
   @MockK private lateinit var userRepository: UserRepositoryFirestore
-  @MockK private lateinit var userDeletionRepository: UserDeletionRepositoryFirestore
+  @MockK private lateinit var userDeletionRepository: UserDeletionUseCaseFirestore
   @MockK private lateinit var navHostController: NavHostController
   @MockK private lateinit var associationRepositoryFirestore: AssociationRepositoryFirestore
   @MockK

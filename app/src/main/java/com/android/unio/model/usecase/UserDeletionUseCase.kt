@@ -1,9 +1,9 @@
-package com.android.unio.model.user
+package com.android.unio.model.usecase
 
 import com.android.unio.model.association.Association
 import com.android.unio.model.event.Event
 
-interface UserDeletionRepository {
+interface UserDeletionUseCase {
 
   fun init(onSuccess: () -> Unit)
 

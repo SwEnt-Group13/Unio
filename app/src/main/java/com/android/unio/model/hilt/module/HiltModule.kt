@@ -16,8 +16,8 @@ import com.android.unio.model.map.nominatim.NominatimApiService
 import com.android.unio.model.map.nominatim.NominatimLocationRepository
 import com.android.unio.model.usecase.SaveUseCase
 import com.android.unio.model.usecase.SaveUseCaseFirestore
-import com.android.unio.model.user.UserDeletionRepository
-import com.android.unio.model.user.UserDeletionRepositoryFirestore
+import com.android.unio.model.usecase.UserDeletionUseCase
+import com.android.unio.model.usecase.UserDeletionUseCaseFirestore
 import com.android.unio.model.user.UserRepository
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -121,8 +121,8 @@ abstract class UserDeletionModule {
 
   @Binds
   abstract fun bindUserDeletionRepository(
-      userDeletionRepository: UserDeletionRepositoryFirestore
-  ): UserDeletionRepository
+      userDeletionRepository: UserDeletionUseCaseFirestore
+  ): UserDeletionUseCase
 }
 
 @Module

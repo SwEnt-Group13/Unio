@@ -15,7 +15,7 @@ import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.usecase.SaveUseCaseFirestore
 import com.android.unio.model.strings.test_tags.saved.SavedTestTags
-import com.android.unio.model.user.UserDeletionRepositoryFirestore
+import com.android.unio.model.usecase.UserDeletionUseCaseFirestore
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.navigation.NavigationAction
@@ -44,7 +44,7 @@ class SavedTest : TearDown() {
   // Mock event repository to provide test data.
   @MockK private lateinit var eventRepository: EventRepositoryFirestore
   @MockK private lateinit var userRepository: UserRepositoryFirestore
-  @MockK private lateinit var userDeletionRepository: UserDeletionRepositoryFirestore
+  @MockK private lateinit var userDeletionRepository: UserDeletionUseCaseFirestore
   @MockK private lateinit var navigationAction: NavigationAction
   @MockK private lateinit var associationRepositoryFirestore: AssociationRepositoryFirestore
   @MockK private lateinit var imageRepository: ImageRepositoryFirebaseStorage

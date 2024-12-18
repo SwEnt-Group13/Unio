@@ -10,6 +10,7 @@ import com.android.unio.model.authentication.registerAuthStateListener
 import com.android.unio.model.event.Event
 import com.android.unio.model.image.ImageRepository
 import com.android.unio.model.strings.StoragePathsStrings
+import com.android.unio.model.usecase.UserDeletionUseCase
 import com.android.unio.ui.event.SECONDS_IN_AN_HOUR
 import com.google.firebase.Firebase
 import com.google.firebase.Timestamp
@@ -31,7 +32,7 @@ class UserViewModel
 constructor(
     private val userRepository: UserRepository,
     private val imageRepository: ImageRepository,
-    private val userDeletionRepository: UserDeletionRepository
+    private val userDeletionUseCase: UserDeletionUseCase
 ) : ViewModel() {
   private val _user = MutableStateFlow<User?>(null)
   val user: StateFlow<User?> = _user.asStateFlow()
@@ -46,11 +47,11 @@ constructor(
   private var initializeWithAuthenticatedUser: Boolean = true
 
   constructor(
-      userRepository: UserRepository,
-      imageRepository: ImageRepository,
-      userDeletionRepository: UserDeletionRepository,
-      initializeWithAuthenticatedUser: Boolean
-  ) : this(userRepository, imageRepository, userDeletionRepository) {
+    userRepository: UserRepository,
+    imageRepository: ImageRepository,
+    userDeletionUseCase: UserDeletionUseCase,
+    initializeWithAuthenticatedUser: Boolean
+  ) : this(userRepository, imageRepository, userDeletionUseCase) {
     this.initializeWithAuthenticatedUser = initializeWithAuthenticatedUser
   }
 
@@ -59,7 +60,7 @@ constructor(
       Firebase.auth.registerAuthStateListener { auth ->
         if (auth.currentUser != null) {
           userRepository.init { getUserByUid(auth.currentUser!!.uid, true) }
-          userDeletionRepository.init {}
+          userDeletionUseCase.init {}
         }
       }
     } else {
@@ -260,7 +261,7 @@ constructor(
             }
           }
 
-          userDeletionRepository.deleteUser(
+          userDeletionUseCase.deleteUser(
               userId,
               eventToUpdate,
               associationToUpdate,

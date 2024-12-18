@@ -3,6 +3,7 @@ package com.android.unio.model.user
 import androidx.test.core.app.ApplicationProvider
 import com.android.unio.mocks.user.MockUser
 import com.android.unio.model.image.ImageRepository
+import com.android.unio.model.usecase.UserDeletionUseCaseFirestore
 import com.google.firebase.FirebaseApp
 import io.mockk.MockKAnnotations
 import io.mockk.clearAllMocks
@@ -23,7 +24,7 @@ class UserViewModelTest {
 
   @MockK private lateinit var repository: UserRepository
   @MockK private lateinit var imageRepository: ImageRepository
-  @MockK private lateinit var userDeletionRepository: UserDeletionRepositoryFirestore
+  @MockK private lateinit var userDeletionRepository: UserDeletionUseCaseFirestore
   private lateinit var userViewModel: UserViewModel
 
   @Before

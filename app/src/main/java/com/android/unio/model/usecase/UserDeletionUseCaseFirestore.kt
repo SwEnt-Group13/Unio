@@ -1,4 +1,4 @@
-package com.android.unio.model.user
+package com.android.unio.model.usecase
 
 import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationRepository
@@ -8,19 +8,20 @@ import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventRepository
 import com.android.unio.model.event.EventRepositoryFirestore
 import com.android.unio.model.firestore.transform.serialize
+import com.android.unio.model.user.UserRepository
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import javax.inject.Inject
 
-class UserDeletionRepositoryFirestore
+class UserDeletionUseCaseFirestore
 @Inject
 constructor(
     private val db: FirebaseFirestore,
     private val userRepository: UserRepository,
     private val associationRepository: AssociationRepository,
     private val eventRepository: EventRepository
-) : UserDeletionRepository {
+) : UserDeletionUseCase {
 
   /**
    * Initialize the user deletion repository.

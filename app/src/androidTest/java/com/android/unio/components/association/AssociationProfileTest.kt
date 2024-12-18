@@ -38,7 +38,7 @@ import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.usecase.SaveUseCaseFirestore
 import com.android.unio.model.strings.test_tags.association.AssociationProfileTestTags
 import com.android.unio.model.user.User
-import com.android.unio.model.user.UserDeletionRepositoryFirestore
+import com.android.unio.model.usecase.UserDeletionUseCaseFirestore
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.association.AssociationProfileScaffold
@@ -94,7 +94,7 @@ class AssociationProfileTest : TearDown() {
           FollowUseCaseFirestore
 
   @MockK private lateinit var userRepository: UserRepositoryFirestore
-  @MockK private lateinit var userDeletionRepository: UserDeletionRepositoryFirestore
+  @MockK private lateinit var userDeletionRepository: UserDeletionUseCaseFirestore
 
   @MockK private lateinit var imageRepository: ImageRepositoryFirebaseStorage
   @MockK
