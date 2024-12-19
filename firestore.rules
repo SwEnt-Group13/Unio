@@ -7,7 +7,7 @@ service cloud.firestore {
   match /databases/{database}/documents {
 
     match /{document=**} {
-      allow read, write : if request.auth.token.role == "admin";
+      allow read, write : if request.auth.token.get("role", null) == "admin";
     }
 
     function isSignedIn() {
@@ -55,7 +55,7 @@ service cloud.firestore {
 
         return hasCorrectNumberOfFields && hasCorrectFields &&
         request.resource.data.uid == uid &&
-        request.resource.data.email is string &&
+        request.resource.data.email == request.auth.token.email &&
         request.resource.data.firstName is string &&
         request.resource.data.firstName.size() <= 30 &&
         request.resource.data.lastName is string &&
@@ -74,7 +74,7 @@ service cloud.firestore {
       allow list: if isVerified();
       allow delete: if isOwner();
       allow create: if isOwner() && validate();
-      allow update: if (onlySavedEventsUpdated() || onlyFollowedAssociationsUpdated()) && validateJoinedAssociations() && validate() && isOwner();
+      allow update: if validateJoinedAssociations() && validate() && isOwner();
     }
 
     match /associations/{uid} {
