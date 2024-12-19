@@ -1214,26 +1214,7 @@ private fun AssociationEvents(
           { isSeeMoreClicked = false }, { isSeeMoreClicked = true }, isSeeMoreClicked)
     }
   }
-  // Show the "Add Event" button only if the user is a member and has the "ADD_EVENTS" permission
-  if (isMember && hasAddEventsPermission) {
-    Button(
-        onClick = {
-          if (isConnected) {
-            navigationAction.navigateTo(Screen.EVENT_CREATION)
-          } else {
-            ToastUtils.showToast(context, context.getString(R.string.no_internet_connection))
-          }
-        },
-        modifier = Modifier.testTag(AssociationProfileTestTags.ADD_EVENT_BUTTON),
-        contentPadding = ButtonDefaults.ButtonWithIconContentPadding) {
-          Icon(
-              Icons.Filled.Add,
-              contentDescription = context.getString(R.string.association_profile_add_event_button),
-              modifier = Modifier.size(ButtonDefaults.IconSize))
-          Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-          Text(context.getString(R.string.association_profile_add_event_button))
-        }
-  }
+
 }
 
 @Composable
