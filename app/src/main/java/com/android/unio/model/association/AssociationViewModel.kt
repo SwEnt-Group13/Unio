@@ -318,22 +318,28 @@ constructor(
    *
    * @param event The event to be added.
    */
-  fun addEventLocally(event: Event) {
-    val selectedAssociation = _selectedAssociation.value
-    if (selectedAssociation != null) {
-      val eventAlreadyExists = selectedAssociation.events.uids.contains(event.uid)
-      // Check if the event already exists in the events list
-      if (!eventAlreadyExists) {
-        selectedAssociation.events.add(event) // Ensure `add` does not fetch the database
+  fun addEditEventLocally(event: Event) {
+      val selectedAssociation = _selectedAssociation.value
+      if (selectedAssociation != null) {
+          // Map the events list, updating the existing event or adding it if not found
+          selectedAssociation.events.update(event) // also add
+
+          Log.d(
+              "AssociationViewModel",
+              if (selectedAssociation.events.uids.contains(event.uid)) {
+                  "Event with ID ${event.uid} updated successfully."
+              } else {
+                  "Event with ID ${event.uid} added successfully."
+              }
+          )
       } else {
-        Log.w("AssociationViewModel", "Event with ID ${event.uid} already exists")
+          Log.e("AssociationViewModel", "No association selected to add or edit event.")
       }
-    } else {
-      Log.e("AssociationViewModel", "No association selected to add event to")
-    }
   }
 
-  /**
+
+
+    /**
    * Saves an association to the repository. If an image stream is provided, the image is uploaded
    * to Firebase Storage and the image URL is saved to the association. If the image stream is null,
    * the association is saved without an image.
