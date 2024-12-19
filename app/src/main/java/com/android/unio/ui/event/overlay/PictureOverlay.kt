@@ -197,7 +197,8 @@ fun PictureOverlay(
                                 imageVector =
                                     if (isLiked) Icons.Rounded.Favorite
                                     else Icons.Rounded.FavoriteBorder,
-                                "",
+                                context.getString(
+                                    R.string.event_details_content_description_like_picture),
                                 modifier = Modifier.size(iconSize),
                                 tint = if (isLiked) Color.Red else Color.White)
                           }
@@ -206,12 +207,14 @@ fun PictureOverlay(
                     }
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.testTag(EventDetailsTestTags.EVENT_PICTURES_AUTHOR_INFO)) {
+                        modifier =
+                            Modifier.testTag(EventDetailsTestTags.EVENT_PICTURES_AUTHOR_INFO)) {
                           author?.profilePicture?.toUri()?.let {
                             AsyncImageWrapper(
                                 imageUri = it,
                                 contentDescription =
-                                    "",
+                                    context.getString(
+                                        R.string.event_details_content_description_author_icon),
                                 modifier =
                                     Modifier.size(ASSOCIATION_ICON_SIZE)
                                         .clip(RoundedCornerShape(5.dp))
@@ -224,7 +227,9 @@ fun PictureOverlay(
 
                           Text(
                               "${author?.firstName} ${author?.lastName}",
-                              modifier = Modifier.testTag(EventDetailsTestTags.EVENT_PICTURES_AUTHOR_NAME).padding(start = 5.dp),
+                              modifier =
+                                  Modifier.testTag(EventDetailsTestTags.EVENT_PICTURES_AUTHOR_NAME)
+                                      .padding(start = 5.dp),
                               style = AppTypography.bodyMedium,
                               color = MaterialTheme.colorScheme.onPrimary)
                         }
