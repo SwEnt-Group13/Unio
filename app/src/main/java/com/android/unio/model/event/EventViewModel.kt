@@ -331,7 +331,6 @@ constructor(
                 { e -> Log.e("EventViewModel", "An error occurred while updating an event: $e") })
           } else {
             event.eventPictures.remove(picture.uid)
-            event.eventPictures.add(picture.uid)
             event.eventPictures.add(picture)
           }
           onSuccess()

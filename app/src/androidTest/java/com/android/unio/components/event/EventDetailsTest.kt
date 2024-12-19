@@ -30,6 +30,7 @@ import com.android.unio.model.event.EventUserPicture
 import com.android.unio.model.event.EventUserPictureRepositoryFirestore
 import com.android.unio.model.event.EventUtils.formatTimestamp
 import com.android.unio.model.event.EventViewModel
+import com.android.unio.model.firestore.emptyFirestoreReferenceList
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.map.MapViewModel
 import com.android.unio.model.save.ConcurrentEventUserRepositoryFirestore
@@ -103,12 +104,12 @@ class EventDetailsTest : TearDown() {
                 "12",
                 resources.getUri(R.drawable.placeholder_pictures).toString(),
                 User.emptyFirestoreReferenceElement(),
-                0),
+                User.emptyFirestoreReferenceList()),
             EventUserPicture(
                 "34",
                 resources.getUri(R.drawable.placeholder_pictures).toString(),
                 User.emptyFirestoreReferenceElement(),
-                3))
+                User.emptyFirestoreReferenceList()))
     events =
         listOf(
             MockEvent.createMockEvent(
