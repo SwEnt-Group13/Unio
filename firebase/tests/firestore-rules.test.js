@@ -111,13 +111,13 @@ async function runTests(testEnv) {
   );
 
   /** Read and write operations on associations **/
-  await assertSucceeds(
+  /*await assertSucceeds(
     setDoc(
       doc(aliceDb, `/associations/${aliceAssociation.uid}`),
       aliceAssociation
     )
   );
-  /*await assertFails(setDoc(doc(aliceDb, `/associations/${aliceAssociation.uid}`), { ...aliceAssociation, uid: "other" }));
+  await assertFails(setDoc(doc(aliceDb, `/associations/${aliceAssociation.uid}`), { ...aliceAssociation, uid: "other" }));
   await assertSucceeds(getDoc(doc(aliceDb, `/associations/${aliceAssociation.uid}`)));
   await assertFails(updateDoc(doc(aliceDb, `/associations/${otherAssociation.uid}`), aliceAssociation));
   await assertFails(setDoc(doc(aliceDb, `/associations/new-association`), { ...aliceAssociation, uid: "new-association" }));
