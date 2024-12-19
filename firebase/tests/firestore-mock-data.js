@@ -23,8 +23,8 @@ export const aliceAssociation = {
   description: "Description",
   followersCount: 0,
   members: {"123": "alice"},
-  roles: {"1234": {color:4294901760, displayName:"displayNameRole",
-    permissions: ["some rights"]}},
+  roles: {"alice": {color:4294901760, displayName:"displayNameRole",
+    permissions: ["Full Rights"]}},
 
   image: "",
   events: [],
@@ -100,8 +100,8 @@ export const otherAssociation = {
   description: "Description",
   followersCount: 0,
   members: {"123": "other"},
-  roles: {"1234": {color:4294901760, displayName:"displayNameRole",
-  permissions: ["some rights"]}},
+  roles: {"other": {color:4294901760, displayName:"displayNameRole",
+  permissions: ["Full Rights"]}},
   image: "",
   events: [],
   principalEmailAddress: "otherassociation@gmail.com"
