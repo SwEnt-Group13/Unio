@@ -89,7 +89,6 @@ constructor(
           it?.taggedAssociations?.requestAll()
           if (loadPictures) {
             it?.eventPictures?.requestAll()
-
           }
         }
   }
@@ -323,9 +322,7 @@ constructor(
                 event.eventPictures.add(newEventPicture)
                 updateEventWithoutImage(
                     event,
-                    {
-                      onSuccess()
-                    },
+                    { onSuccess() },
                     { e ->
                       Log.e("EventViewModel", "An error occurred while updating an event: $e")
                     })
@@ -353,20 +350,19 @@ constructor(
     eventUserPictureRepository.addEventUserPicture(
         picture,
         {
-
           if (!event.eventPictures.contains(picture.uid)) {
-              event.eventPictures.add(picture)
+            event.eventPictures.add(picture)
           }
-            updateEventWithoutImage(event, {
-                _events.value =
-                    _events.value.map {
-                        if (it.uid == event.uid) event else it
-                    }
+          updateEventWithoutImage(
+              event,
+              {
+                _events.value = _events.value.map { if (it.uid == event.uid) event else it }
                 onSuccess()
-            }, { e ->
+              },
+              { e ->
                 onFailure(e)
-                Log.e("EventViewModel", "An error occurred while updating an event: $e") })
-
+                Log.e("EventViewModel", "An error occurred while updating an event: $e")
+              })
         },
         { e ->
           onFailure(e)
