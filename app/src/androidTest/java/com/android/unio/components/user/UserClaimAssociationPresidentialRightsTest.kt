@@ -33,63 +33,63 @@ import org.junit.Test
 @HiltAndroidTest
 class UserClaimAssociationPresidentialRightsTest : TearDown() {
 
-    @get:Rule val composeTestRule = createComposeRule()
-    @get:Rule val hiltRule = HiltAndroidRule(this)
+  @get:Rule val composeTestRule = createComposeRule()
+  @get:Rule val hiltRule = HiltAndroidRule(this)
 
-    @MockK private lateinit var associationRepository: AssociationRepositoryFirestore
-    @MockK private lateinit var eventRepository: EventRepositoryFirestore
-    @MockK private lateinit var imageRepository: ImageRepositoryFirebaseStorage
-    @MockK private lateinit var userRepository: UserRepositoryFirestore
-    @MockK private lateinit var searchRepository: SearchRepository
-    @MockK private lateinit var userDeletionRepository: UserDeletionUseCaseFirestore
-    @MockK private lateinit var concurrentAssociationUserRepositoryFirestore: FollowUseCaseFirestore
-    @MockK private lateinit var navHostController: NavHostController
+  @MockK private lateinit var associationRepository: AssociationRepositoryFirestore
+  @MockK private lateinit var eventRepository: EventRepositoryFirestore
+  @MockK private lateinit var imageRepository: ImageRepositoryFirebaseStorage
+  @MockK private lateinit var userRepository: UserRepositoryFirestore
+  @MockK private lateinit var searchRepository: SearchRepository
+  @MockK private lateinit var userDeletionRepository: UserDeletionUseCaseFirestore
+  @MockK private lateinit var concurrentAssociationUserRepositoryFirestore: FollowUseCaseFirestore
+  @MockK private lateinit var navHostController: NavHostController
 
-    private lateinit var associationViewModel: AssociationViewModel
-    @MockK private lateinit var navigationAction: NavigationAction
+  private lateinit var associationViewModel: AssociationViewModel
+  @MockK private lateinit var navigationAction: NavigationAction
 
-    private lateinit var searchViewModel: SearchViewModel
+  private lateinit var searchViewModel: SearchViewModel
 
-    private lateinit var userViewModel: UserViewModel
+  private lateinit var userViewModel: UserViewModel
 
-    // test data
-    private val testAssociation =
-        MockAssociation.createMockAssociation(
-            uid = "assoc123", principalEmailAddress = "president@university.edu")
+  // test data
+  private val testAssociation =
+      MockAssociation.createMockAssociation(
+          uid = "assoc123", principalEmailAddress = "president@university.edu")
 
-    private val testUser = MockUser.createMockUser(uid = "user123", email = "user@example.com")
+  private val testUser = MockUser.createMockUser(uid = "user123", email = "user@example.com")
 
-    @Before
-    fun setUp() {
-        MockKAnnotations.init(this, relaxed = true)
-        hiltRule.inject()
+  @Before
+  fun setUp() {
+    MockKAnnotations.init(this, relaxed = true)
+    hiltRule.inject()
 
-        every { navigationAction.navigateTo(any<String>()) } returns Unit
+    every { navigationAction.navigateTo(any<String>()) } returns Unit
 
-        associationViewModel =
-            AssociationViewModel(
-                associationRepository,
-                eventRepository,
-                imageRepository,
-                concurrentAssociationUserRepositoryFirestore)
-        navigationAction = NavigationAction(navHostController)
+    associationViewModel =
+        AssociationViewModel(
+            associationRepository,
+            eventRepository,
+            imageRepository,
+            concurrentAssociationUserRepositoryFirestore)
+    navigationAction = NavigationAction(navHostController)
 
-        userViewModel = UserViewModel(userRepository, imageRepository, userDeletionRepository)
+    userViewModel = UserViewModel(userRepository, imageRepository, userDeletionRepository)
 
-        searchViewModel = SearchViewModel(searchRepository)
+    searchViewModel = SearchViewModel(searchRepository)
+  }
+
+  @Test
+  fun testBackButtonNavigatesBack() {
+    composeTestRule.setContent {
+      UserClaimAssociationPresidentialRightsScreenScaffold(
+          navigationAction = navigationAction,
+          associationViewModel = associationViewModel,
+          user = MockUser.createMockUser(uid = "1"),
+          searchViewModel = searchViewModel)
     }
 
-    @Test
-    fun testBackButtonNavigatesBack() {
-        composeTestRule.setContent {
-            UserClaimAssociationPresidentialRightsScreenScaffold(
-                navigationAction = navigationAction,
-                associationViewModel = associationViewModel,
-                user = MockUser.createMockUser(uid = "1"),
-                searchViewModel = searchViewModel)
-        }
-
-        // click the back button
-        composeTestRule.onNodeWithTag("goBackButton").performClick()
-    }
+    // click the back button
+    composeTestRule.onNodeWithTag("goBackButton").performClick()
+  }
 }

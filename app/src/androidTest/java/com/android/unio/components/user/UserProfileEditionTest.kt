@@ -42,306 +42,306 @@ import org.mockito.Mockito.`when`
 
 @HiltAndroidTest
 class UserProfileEditionTest : TearDown() {
-    private lateinit var navigationAction: NavigationAction
+  private lateinit var navigationAction: NavigationAction
 
-    @get:Rule val composeTestRule = createComposeRule()
-    @get:Rule val hiltRule = HiltAndroidRule(this)
+  @get:Rule val composeTestRule = createComposeRule()
+  @get:Rule val hiltRule = HiltAndroidRule(this)
 
-    @MockK private lateinit var connectivityManager: ConnectivityManager
+  @MockK private lateinit var connectivityManager: ConnectivityManager
 
-    private lateinit var user: User
-    private var isOnlineUpdated: Boolean = false
+  private lateinit var user: User
+  private var isOnlineUpdated: Boolean = false
 
-    @Before
-    fun setUp() {
-        MockKAnnotations.init(this, relaxed = true)
+  @Before
+  fun setUp() {
+    MockKAnnotations.init(this, relaxed = true)
 
-        // Mocking the navigationAction object
-        navigationAction = mock(NavigationAction::class.java)
-        `when`(navigationAction.getCurrentRoute()).thenReturn(Screen.EDIT_PROFILE)
+    // Mocking the navigationAction object
+    navigationAction = mock(NavigationAction::class.java)
+    `when`(navigationAction.getCurrentRoute()).thenReturn(Screen.EDIT_PROFILE)
 
-        user = MockUser.createMockUser(interests = emptyList(), profilePicture = "")
+    user = MockUser.createMockUser(interests = emptyList(), profilePicture = "")
 
-        val onOfflineChange = { newUser: User ->
-            user = newUser
-            isOnlineUpdated = false
-        }
-
-        val onOnlineChange = { newUser: User ->
-            user = newUser
-            isOnlineUpdated = true
-        }
-
-        mockkStatic(Network::class)
-        mockkStatic(ContextCompat::class)
-        every { getSystemService(any(), ConnectivityManager::class.java) } returns connectivityManager
-
-        composeTestRule.setContent {
-            UserProfileEditionScreenScaffold(
-                user,
-                { navigationAction.goBack() },
-                { uri, method -> method("") },
-                onOnlineChange,
-                onOfflineChange,
-                {})
-        }
+    val onOfflineChange = { newUser: User ->
+      user = newUser
+      isOnlineUpdated = false
     }
 
-    @Test
-    fun testUpdateUserOffline() {
-        every { connectivityManager?.activeNetwork } returns null
-
-        composeTestRule
-            .onNodeWithTag(UserEditionTestTags.FIRST_NAME_TEXT_FIELD)
-            .assertDisplayComponentInScroll()
-        composeTestRule.onNodeWithTag(UserEditionTestTags.FIRST_NAME_TEXT_FIELD).performTextClearance()
-        composeTestRule.onNodeWithTag(UserEditionTestTags.FIRST_NAME_TEXT_FIELD).performClick()
-        composeTestRule
-            .onNodeWithTag(UserEditionTestTags.FIRST_NAME_TEXT_FIELD)
-            .performTextInput(UserUpdate.FIRST_NAME)
-
-        composeTestRule
-            .onNodeWithTag(UserEditionTestTags.LAST_NAME_TEXT_FIELD)
-            .assertDisplayComponentInScroll()
-        composeTestRule.onNodeWithTag(UserEditionTestTags.LAST_NAME_TEXT_FIELD).performTextClearance()
-        composeTestRule.onNodeWithTag(UserEditionTestTags.LAST_NAME_TEXT_FIELD).performClick()
-        composeTestRule
-            .onNodeWithTag(UserEditionTestTags.LAST_NAME_TEXT_FIELD)
-            .performTextInput(UserUpdate.LAST_NAME)
-
-        composeTestRule
-            .onNodeWithTag(UserEditionTestTags.BIOGRAPHY_TEXT_FIELD)
-            .assertDisplayComponentInScroll()
-        composeTestRule.onNodeWithTag(UserEditionTestTags.BIOGRAPHY_TEXT_FIELD).performTextClearance()
-        composeTestRule.onNodeWithTag(UserEditionTestTags.BIOGRAPHY_TEXT_FIELD).performClick()
-        composeTestRule
-            .onNodeWithTag(UserEditionTestTags.BIOGRAPHY_TEXT_FIELD)
-            .performTextInput(UserUpdate.BIOGRAPHY)
-
-        composeTestRule.onNodeWithTag(UserEditionTestTags.SAVE_BUTTON).assertDisplayComponentInScroll()
-        composeTestRule.onNodeWithTag(UserEditionTestTags.SAVE_BUTTON).performClick()
-
-        assert(user.firstName == UserUpdate.FIRST_NAME)
-        assert(user.lastName == UserUpdate.LAST_NAME)
-        assert(user.biography == UserUpdate.BIOGRAPHY)
-        assert(!isOnlineUpdated)
+    val onOnlineChange = { newUser: User ->
+      user = newUser
+      isOnlineUpdated = true
     }
 
-    @Test
-    fun testUpdateUserOnline() {
-        every { connectivityManager?.activeNetwork } returns mockk<Network>()
+    mockkStatic(Network::class)
+    mockkStatic(ContextCompat::class)
+    every { getSystemService(any(), ConnectivityManager::class.java) } returns connectivityManager
 
-        composeTestRule
-            .onNodeWithTag(UserEditionTestTags.FIRST_NAME_TEXT_FIELD)
-            .assertDisplayComponentInScroll()
-        composeTestRule.onNodeWithTag(UserEditionTestTags.FIRST_NAME_TEXT_FIELD).performTextClearance()
-        composeTestRule.onNodeWithTag(UserEditionTestTags.FIRST_NAME_TEXT_FIELD).performClick()
-        composeTestRule
-            .onNodeWithTag(UserEditionTestTags.FIRST_NAME_TEXT_FIELD)
-            .performTextInput(UserUpdate.FIRST_NAME)
-
-        composeTestRule
-            .onNodeWithTag(UserEditionTestTags.LAST_NAME_TEXT_FIELD)
-            .assertDisplayComponentInScroll()
-        composeTestRule.onNodeWithTag(UserEditionTestTags.LAST_NAME_TEXT_FIELD).performTextClearance()
-        composeTestRule.onNodeWithTag(UserEditionTestTags.LAST_NAME_TEXT_FIELD).performClick()
-        composeTestRule
-            .onNodeWithTag(UserEditionTestTags.LAST_NAME_TEXT_FIELD)
-            .performTextInput(UserUpdate.LAST_NAME)
-
-        composeTestRule
-            .onNodeWithTag(UserEditionTestTags.BIOGRAPHY_TEXT_FIELD)
-            .assertDisplayComponentInScroll()
-        composeTestRule.onNodeWithTag(UserEditionTestTags.BIOGRAPHY_TEXT_FIELD).performTextClearance()
-        composeTestRule.onNodeWithTag(UserEditionTestTags.BIOGRAPHY_TEXT_FIELD).performClick()
-        composeTestRule
-            .onNodeWithTag(UserEditionTestTags.BIOGRAPHY_TEXT_FIELD)
-            .performTextInput(UserUpdate.BIOGRAPHY)
-
-        composeTestRule.onNodeWithTag(UserEditionTestTags.SAVE_BUTTON).assertDisplayComponentInScroll()
-        composeTestRule.onNodeWithTag(UserEditionTestTags.SAVE_BUTTON).performClick()
-
-        assert(user.firstName == UserUpdate.FIRST_NAME)
-        assert(user.lastName == UserUpdate.LAST_NAME)
-        assert(user.biography == UserUpdate.BIOGRAPHY)
-        assert(isOnlineUpdated)
+    composeTestRule.setContent {
+      UserProfileEditionScreenScaffold(
+          user,
+          { navigationAction.goBack() },
+          { uri, method -> method("") },
+          onOnlineChange,
+          onOfflineChange,
+          {})
     }
+  }
 
-    @Test
-    fun testEverythingIsDisplayed() {
-        every { connectivityManager?.activeNetwork } returns mockk<Network>()
+  @Test
+  fun testUpdateUserOffline() {
+    every { connectivityManager?.activeNetwork } returns null
 
-        composeTestRule.onNodeWithTag(UserEditionTestTags.DISCARD_TEXT).assertIsDisplayed()
-        composeTestRule
-            .onNodeWithTag(UserEditionTestTags.FIRST_NAME_TEXT, useUnmergedTree = true)
-            .assertIsDisplayed()
-        composeTestRule
-            .onNodeWithTag(UserEditionTestTags.LAST_NAME_TEXT, useUnmergedTree = true)
-            .assertIsDisplayed()
-        composeTestRule.onNodeWithTag(UserEditionTestTags.BIOGRAPHY_TEXT_FIELD).assertExists()
-        composeTestRule.onNodeWithTag(UserEditionTestTags.PROFILE_PICTURE_ICON).assertExists()
-        composeTestRule.onNodeWithTag(UserEditionTestTags.INTERESTS_BUTTON).assertExists()
-        composeTestRule.onNodeWithTag(UserEditionTestTags.SOCIALS_BUTTON).assertExists()
-        composeTestRule.onNodeWithTag(UserEditionTestTags.SAVE_BUTTON).assertExists()
-    }
+    composeTestRule
+        .onNodeWithTag(UserEditionTestTags.FIRST_NAME_TEXT_FIELD)
+        .assertDisplayComponentInScroll()
+    composeTestRule.onNodeWithTag(UserEditionTestTags.FIRST_NAME_TEXT_FIELD).performTextClearance()
+    composeTestRule.onNodeWithTag(UserEditionTestTags.FIRST_NAME_TEXT_FIELD).performClick()
+    composeTestRule
+        .onNodeWithTag(UserEditionTestTags.FIRST_NAME_TEXT_FIELD)
+        .performTextInput(UserUpdate.FIRST_NAME)
 
-    @Test
-    fun testInterestsButtonWorksCorrectly() {
-        every { connectivityManager?.activeNetwork } returns mockk<Network>()
+    composeTestRule
+        .onNodeWithTag(UserEditionTestTags.LAST_NAME_TEXT_FIELD)
+        .assertDisplayComponentInScroll()
+    composeTestRule.onNodeWithTag(UserEditionTestTags.LAST_NAME_TEXT_FIELD).performTextClearance()
+    composeTestRule.onNodeWithTag(UserEditionTestTags.LAST_NAME_TEXT_FIELD).performClick()
+    composeTestRule
+        .onNodeWithTag(UserEditionTestTags.LAST_NAME_TEXT_FIELD)
+        .performTextInput(UserUpdate.LAST_NAME)
 
-        composeTestRule
-            .onNodeWithTag(UserEditionTestTags.INTERESTS_BUTTON)
-            .performScrollTo()
-            .performClick()
-        composeTestRule.onNodeWithTag(InterestsOverlayTestTags.TITLE_TEXT).assertIsDisplayed()
-    }
+    composeTestRule
+        .onNodeWithTag(UserEditionTestTags.BIOGRAPHY_TEXT_FIELD)
+        .assertDisplayComponentInScroll()
+    composeTestRule.onNodeWithTag(UserEditionTestTags.BIOGRAPHY_TEXT_FIELD).performTextClearance()
+    composeTestRule.onNodeWithTag(UserEditionTestTags.BIOGRAPHY_TEXT_FIELD).performClick()
+    composeTestRule
+        .onNodeWithTag(UserEditionTestTags.BIOGRAPHY_TEXT_FIELD)
+        .performTextInput(UserUpdate.BIOGRAPHY)
 
-    @Test
-    fun testSocialsButtonWorksCorrectly() {
-        every { connectivityManager?.activeNetwork } returns mockk<Network>()
+    composeTestRule.onNodeWithTag(UserEditionTestTags.SAVE_BUTTON).assertDisplayComponentInScroll()
+    composeTestRule.onNodeWithTag(UserEditionTestTags.SAVE_BUTTON).performClick()
 
-        composeTestRule
-            .onNodeWithTag(UserEditionTestTags.SOCIALS_BUTTON)
-            .performScrollTo()
-            .performClick()
-        composeTestRule.onNodeWithTag(SocialsOverlayTestTags.TITLE_TEXT).assertIsDisplayed()
-    }
+    assert(user.firstName == UserUpdate.FIRST_NAME)
+    assert(user.lastName == UserUpdate.LAST_NAME)
+    assert(user.biography == UserUpdate.BIOGRAPHY)
+    assert(!isOnlineUpdated)
+  }
 
-    @Test
-    fun testAddingInterestsCorrectlyModifiesTheFlowRow() {
-        every { connectivityManager?.activeNetwork } returns mockk<Network>()
+  @Test
+  fun testUpdateUserOnline() {
+    every { connectivityManager?.activeNetwork } returns mockk<Network>()
 
-        composeTestRule
-            .onNodeWithTag(UserEditionTestTags.INTERESTS_BUTTON)
-            .performScrollTo()
-            .performClick()
-        composeTestRule
-            .onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW + "SPORTS")
-            .performScrollTo()
-            .performClick()
-        composeTestRule
-            .onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW + "GAMING")
-            .performScrollTo()
-            .performClick()
-        composeTestRule.onNodeWithTag(InterestsOverlayTestTags.SAVE_BUTTON).performClick()
+    composeTestRule
+        .onNodeWithTag(UserEditionTestTags.FIRST_NAME_TEXT_FIELD)
+        .assertDisplayComponentInScroll()
+    composeTestRule.onNodeWithTag(UserEditionTestTags.FIRST_NAME_TEXT_FIELD).performTextClearance()
+    composeTestRule.onNodeWithTag(UserEditionTestTags.FIRST_NAME_TEXT_FIELD).performClick()
+    composeTestRule
+        .onNodeWithTag(UserEditionTestTags.FIRST_NAME_TEXT_FIELD)
+        .performTextInput(UserUpdate.FIRST_NAME)
 
-        composeTestRule.onNodeWithTag(UserEditionTestTags.INTERESTS_CHIP + "SPORTS").assertExists()
-        composeTestRule.onNodeWithTag(UserEditionTestTags.INTERESTS_CHIP + "GAMING").assertExists()
-    }
+    composeTestRule
+        .onNodeWithTag(UserEditionTestTags.LAST_NAME_TEXT_FIELD)
+        .assertDisplayComponentInScroll()
+    composeTestRule.onNodeWithTag(UserEditionTestTags.LAST_NAME_TEXT_FIELD).performTextClearance()
+    composeTestRule.onNodeWithTag(UserEditionTestTags.LAST_NAME_TEXT_FIELD).performClick()
+    composeTestRule
+        .onNodeWithTag(UserEditionTestTags.LAST_NAME_TEXT_FIELD)
+        .performTextInput(UserUpdate.LAST_NAME)
 
-    @Test
-    fun testAddingSocialsCorrectlyModifiesTheFlowRow() {
-        every { connectivityManager?.activeNetwork } returns mockk<Network>()
+    composeTestRule
+        .onNodeWithTag(UserEditionTestTags.BIOGRAPHY_TEXT_FIELD)
+        .assertDisplayComponentInScroll()
+    composeTestRule.onNodeWithTag(UserEditionTestTags.BIOGRAPHY_TEXT_FIELD).performTextClearance()
+    composeTestRule.onNodeWithTag(UserEditionTestTags.BIOGRAPHY_TEXT_FIELD).performClick()
+    composeTestRule
+        .onNodeWithTag(UserEditionTestTags.BIOGRAPHY_TEXT_FIELD)
+        .performTextInput(UserUpdate.BIOGRAPHY)
 
-        composeTestRule
-            .onNodeWithTag(UserEditionTestTags.SOCIALS_BUTTON)
-            .performScrollTo()
-            .performClick()
-        addNewUserSocial(composeTestRule, "snap_username", "Snapchat")
-        addNewUserSocial(composeTestRule, "facebook_username", "Facebook")
-        composeTestRule.onNodeWithTag(SocialsOverlayTestTags.SAVE_BUTTON).performClick()
-        composeTestRule
-            .onNodeWithTag(UserEditionTestTags.SOCIALS_CHIP + "Snapchat", true)
-            .assertExists()
-        composeTestRule
-            .onNodeWithTag(UserEditionTestTags.SOCIALS_CHIP + "Facebook", true)
-            .assertExists()
-    }
+    composeTestRule.onNodeWithTag(UserEditionTestTags.SAVE_BUTTON).assertDisplayComponentInScroll()
+    composeTestRule.onNodeWithTag(UserEditionTestTags.SAVE_BUTTON).performClick()
 
-    @Test
-    fun testCorrectlyExitsInterestOverlayScreen() {
-        every { connectivityManager?.activeNetwork } returns mockk<Network>()
+    assert(user.firstName == UserUpdate.FIRST_NAME)
+    assert(user.lastName == UserUpdate.LAST_NAME)
+    assert(user.biography == UserUpdate.BIOGRAPHY)
+    assert(isOnlineUpdated)
+  }
 
-        composeTestRule
-            .onNodeWithTag(UserEditionTestTags.INTERESTS_BUTTON)
-            .performScrollTo()
-            .performClick()
-        composeTestRule.onNodeWithTag(InterestsOverlayTestTags.SAVE_BUTTON).performClick()
-        composeTestRule.onNodeWithTag(InterestsOverlayTestTags.TITLE_TEXT).assertIsNotDisplayed()
-    }
+  @Test
+  fun testEverythingIsDisplayed() {
+    every { connectivityManager?.activeNetwork } returns mockk<Network>()
 
-    @Test
-    fun testCorrectlyDisplaysErrorWhenFirstNameIsEmpty() {
-        every { connectivityManager?.activeNetwork } returns mockk<Network>()
+    composeTestRule.onNodeWithTag(UserEditionTestTags.DISCARD_TEXT).assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag(UserEditionTestTags.FIRST_NAME_TEXT, useUnmergedTree = true)
+        .assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag(UserEditionTestTags.LAST_NAME_TEXT, useUnmergedTree = true)
+        .assertIsDisplayed()
+    composeTestRule.onNodeWithTag(UserEditionTestTags.BIOGRAPHY_TEXT_FIELD).assertExists()
+    composeTestRule.onNodeWithTag(UserEditionTestTags.PROFILE_PICTURE_ICON).assertExists()
+    composeTestRule.onNodeWithTag(UserEditionTestTags.INTERESTS_BUTTON).assertExists()
+    composeTestRule.onNodeWithTag(UserEditionTestTags.SOCIALS_BUTTON).assertExists()
+    composeTestRule.onNodeWithTag(UserEditionTestTags.SAVE_BUTTON).assertExists()
+  }
 
-        composeTestRule.onNodeWithTag(UserEditionTestTags.FIRST_NAME_TEXT_FIELD).performTextClearance()
-        composeTestRule.onNodeWithTag(UserEditionTestTags.LAST_NAME_TEXT_FIELD).performTextClearance()
+  @Test
+  fun testInterestsButtonWorksCorrectly() {
+    every { connectivityManager?.activeNetwork } returns mockk<Network>()
 
-        composeTestRule.onNodeWithTag(UserEditionTestTags.SAVE_BUTTON).performScrollTo().performClick()
-        composeTestRule
-            .onNodeWithTag(UserEditionTestTags.FIRST_NAME_ERROR_TEXT, useUnmergedTree = true)
-            .assertExists()
-        composeTestRule
-            .onNodeWithTag(UserEditionTestTags.LAST_NAME_ERROR_TEXT, useUnmergedTree = true)
-            .assertExists()
-    }
+    composeTestRule
+        .onNodeWithTag(UserEditionTestTags.INTERESTS_BUTTON)
+        .performScrollTo()
+        .performClick()
+    composeTestRule.onNodeWithTag(InterestsOverlayTestTags.TITLE_TEXT).assertIsDisplayed()
+  }
 
-    @Test
-    fun testCorrectlyDisplaysCharacterCountForTextFields() {
-        composeTestRule
-            .onNodeWithTag(UserEditionTestTags.FIRST_NAME_TEXT_FIELD)
-            .performScrollTo()
-            .performTextClearance()
-        composeTestRule
-            .onNodeWithTag(UserEditionTestTags.FIRST_NAME_TEXT_FIELD)
-            .performTextInput(TextLengthSamples.SMALL)
-        composeTestRule
-            .onNodeWithTag(UserEditionTestTags.FIRST_NAME_CHARACTER_COUNTER, useUnmergedTree = true)
-            .assertExists()
-        composeTestRule.onNodeWithTag(UserEditionTestTags.FIRST_NAME_TEXT_FIELD).performTextClearance()
+  @Test
+  fun testSocialsButtonWorksCorrectly() {
+    every { connectivityManager?.activeNetwork } returns mockk<Network>()
 
-        composeTestRule
-            .onNodeWithTag(UserEditionTestTags.LAST_NAME_TEXT_FIELD)
-            .performScrollTo()
-            .performTextClearance()
-        composeTestRule
-            .onNodeWithTag(UserEditionTestTags.LAST_NAME_TEXT_FIELD)
-            .performScrollTo()
-            .performTextInput(TextLengthSamples.SMALL)
-        composeTestRule
-            .onNodeWithTag(UserEditionTestTags.LAST_NAME_CHARACTER_COUNTER, useUnmergedTree = true)
-            .assertExists()
-        composeTestRule.onNodeWithTag(UserEditionTestTags.LAST_NAME_TEXT_FIELD).performTextClearance()
+    composeTestRule
+        .onNodeWithTag(UserEditionTestTags.SOCIALS_BUTTON)
+        .performScrollTo()
+        .performClick()
+    composeTestRule.onNodeWithTag(SocialsOverlayTestTags.TITLE_TEXT).assertIsDisplayed()
+  }
 
-        composeTestRule
-            .onNodeWithTag(UserEditionTestTags.BIOGRAPHY_TEXT_FIELD)
-            .performScrollTo()
-            .performTextClearance()
-        composeTestRule
-            .onNodeWithTag(UserEditionTestTags.BIOGRAPHY_TEXT_FIELD)
-            .performTextInput(TextLengthSamples.LARGE)
-        composeTestRule
-            .onNodeWithTag(UserEditionTestTags.BIOGRAPHY_CHARACTER_COUNTER, useUnmergedTree = true)
-            .assertExists()
-        composeTestRule.onNodeWithTag(UserEditionTestTags.BIOGRAPHY_TEXT_FIELD).performTextClearance()
-    }
+  @Test
+  fun testAddingInterestsCorrectlyModifiesTheFlowRow() {
+    every { connectivityManager?.activeNetwork } returns mockk<Network>()
 
-    @Test
-    fun testClearButtonFunctionality() {
-        composeTestRule.onNodeWithTag(UserEditionTestTags.FIRST_NAME_TEXT_FIELD).performTextClearance()
-        composeTestRule
-            .onNodeWithTag(UserEditionTestTags.FIRST_NAME_TEXT_FIELD)
-            .performTextInput(UserUpdate.FIRST_NAME)
-        composeTestRule
-            .onNodeWithTag(UserEditionTestTags.FIRST_NAME_TEXT_FIELD, useUnmergedTree = true)
-            .assertTextEquals(UserUpdate.FIRST_NAME, includeEditableText = true)
-        composeTestRule.onNodeWithTag(UserEditionTestTags.FIRST_NAME_CLEAR_BUTTON).performClick()
-        composeTestRule.onNodeWithTag(UserEditionTestTags.FIRST_NAME_TEXT_FIELD).assert(hasText(""))
+    composeTestRule
+        .onNodeWithTag(UserEditionTestTags.INTERESTS_BUTTON)
+        .performScrollTo()
+        .performClick()
+    composeTestRule
+        .onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW + "SPORTS")
+        .performScrollTo()
+        .performClick()
+    composeTestRule
+        .onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW + "GAMING")
+        .performScrollTo()
+        .performClick()
+    composeTestRule.onNodeWithTag(InterestsOverlayTestTags.SAVE_BUTTON).performClick()
 
-        composeTestRule.onNodeWithTag(UserEditionTestTags.LAST_NAME_TEXT_FIELD).performTextClearance()
-        composeTestRule
-            .onNodeWithTag(UserEditionTestTags.LAST_NAME_TEXT_FIELD)
-            .performTextInput(UserUpdate.LAST_NAME)
-        composeTestRule
-            .onNodeWithTag(UserEditionTestTags.LAST_NAME_TEXT_FIELD, useUnmergedTree = true)
-            .assertTextEquals(UserUpdate.LAST_NAME, includeEditableText = true)
-        composeTestRule.onNodeWithTag(UserEditionTestTags.LAST_NAME_CLEAR_BUTTON).performClick()
-        composeTestRule.onNodeWithTag(UserEditionTestTags.LAST_NAME_TEXT_FIELD).assert(hasText(""))
-    }
+    composeTestRule.onNodeWithTag(UserEditionTestTags.INTERESTS_CHIP + "SPORTS").assertExists()
+    composeTestRule.onNodeWithTag(UserEditionTestTags.INTERESTS_CHIP + "GAMING").assertExists()
+  }
 
-    object UserUpdate {
-        const val FIRST_NAME = "Johnny"
-        const val LAST_NAME = "Däpp"
-        const val BIOGRAPHY = "Ich bin ein Testbenutzer"
-    }
+  @Test
+  fun testAddingSocialsCorrectlyModifiesTheFlowRow() {
+    every { connectivityManager?.activeNetwork } returns mockk<Network>()
+
+    composeTestRule
+        .onNodeWithTag(UserEditionTestTags.SOCIALS_BUTTON)
+        .performScrollTo()
+        .performClick()
+    addNewUserSocial(composeTestRule, "snap_username", "Snapchat")
+    addNewUserSocial(composeTestRule, "facebook_username", "Facebook")
+    composeTestRule.onNodeWithTag(SocialsOverlayTestTags.SAVE_BUTTON).performClick()
+    composeTestRule
+        .onNodeWithTag(UserEditionTestTags.SOCIALS_CHIP + "Snapchat", true)
+        .assertExists()
+    composeTestRule
+        .onNodeWithTag(UserEditionTestTags.SOCIALS_CHIP + "Facebook", true)
+        .assertExists()
+  }
+
+  @Test
+  fun testCorrectlyExitsInterestOverlayScreen() {
+    every { connectivityManager?.activeNetwork } returns mockk<Network>()
+
+    composeTestRule
+        .onNodeWithTag(UserEditionTestTags.INTERESTS_BUTTON)
+        .performScrollTo()
+        .performClick()
+    composeTestRule.onNodeWithTag(InterestsOverlayTestTags.SAVE_BUTTON).performClick()
+    composeTestRule.onNodeWithTag(InterestsOverlayTestTags.TITLE_TEXT).assertIsNotDisplayed()
+  }
+
+  @Test
+  fun testCorrectlyDisplaysErrorWhenFirstNameIsEmpty() {
+    every { connectivityManager?.activeNetwork } returns mockk<Network>()
+
+    composeTestRule.onNodeWithTag(UserEditionTestTags.FIRST_NAME_TEXT_FIELD).performTextClearance()
+    composeTestRule.onNodeWithTag(UserEditionTestTags.LAST_NAME_TEXT_FIELD).performTextClearance()
+
+    composeTestRule.onNodeWithTag(UserEditionTestTags.SAVE_BUTTON).performScrollTo().performClick()
+    composeTestRule
+        .onNodeWithTag(UserEditionTestTags.FIRST_NAME_ERROR_TEXT, useUnmergedTree = true)
+        .assertExists()
+    composeTestRule
+        .onNodeWithTag(UserEditionTestTags.LAST_NAME_ERROR_TEXT, useUnmergedTree = true)
+        .assertExists()
+  }
+
+  @Test
+  fun testCorrectlyDisplaysCharacterCountForTextFields() {
+    composeTestRule
+        .onNodeWithTag(UserEditionTestTags.FIRST_NAME_TEXT_FIELD)
+        .performScrollTo()
+        .performTextClearance()
+    composeTestRule
+        .onNodeWithTag(UserEditionTestTags.FIRST_NAME_TEXT_FIELD)
+        .performTextInput(TextLengthSamples.SMALL)
+    composeTestRule
+        .onNodeWithTag(UserEditionTestTags.FIRST_NAME_CHARACTER_COUNTER, useUnmergedTree = true)
+        .assertExists()
+    composeTestRule.onNodeWithTag(UserEditionTestTags.FIRST_NAME_TEXT_FIELD).performTextClearance()
+
+    composeTestRule
+        .onNodeWithTag(UserEditionTestTags.LAST_NAME_TEXT_FIELD)
+        .performScrollTo()
+        .performTextClearance()
+    composeTestRule
+        .onNodeWithTag(UserEditionTestTags.LAST_NAME_TEXT_FIELD)
+        .performScrollTo()
+        .performTextInput(TextLengthSamples.SMALL)
+    composeTestRule
+        .onNodeWithTag(UserEditionTestTags.LAST_NAME_CHARACTER_COUNTER, useUnmergedTree = true)
+        .assertExists()
+    composeTestRule.onNodeWithTag(UserEditionTestTags.LAST_NAME_TEXT_FIELD).performTextClearance()
+
+    composeTestRule
+        .onNodeWithTag(UserEditionTestTags.BIOGRAPHY_TEXT_FIELD)
+        .performScrollTo()
+        .performTextClearance()
+    composeTestRule
+        .onNodeWithTag(UserEditionTestTags.BIOGRAPHY_TEXT_FIELD)
+        .performTextInput(TextLengthSamples.LARGE)
+    composeTestRule
+        .onNodeWithTag(UserEditionTestTags.BIOGRAPHY_CHARACTER_COUNTER, useUnmergedTree = true)
+        .assertExists()
+    composeTestRule.onNodeWithTag(UserEditionTestTags.BIOGRAPHY_TEXT_FIELD).performTextClearance()
+  }
+
+  @Test
+  fun testClearButtonFunctionality() {
+    composeTestRule.onNodeWithTag(UserEditionTestTags.FIRST_NAME_TEXT_FIELD).performTextClearance()
+    composeTestRule
+        .onNodeWithTag(UserEditionTestTags.FIRST_NAME_TEXT_FIELD)
+        .performTextInput(UserUpdate.FIRST_NAME)
+    composeTestRule
+        .onNodeWithTag(UserEditionTestTags.FIRST_NAME_TEXT_FIELD, useUnmergedTree = true)
+        .assertTextEquals(UserUpdate.FIRST_NAME, includeEditableText = true)
+    composeTestRule.onNodeWithTag(UserEditionTestTags.FIRST_NAME_CLEAR_BUTTON).performClick()
+    composeTestRule.onNodeWithTag(UserEditionTestTags.FIRST_NAME_TEXT_FIELD).assert(hasText(""))
+
+    composeTestRule.onNodeWithTag(UserEditionTestTags.LAST_NAME_TEXT_FIELD).performTextClearance()
+    composeTestRule
+        .onNodeWithTag(UserEditionTestTags.LAST_NAME_TEXT_FIELD)
+        .performTextInput(UserUpdate.LAST_NAME)
+    composeTestRule
+        .onNodeWithTag(UserEditionTestTags.LAST_NAME_TEXT_FIELD, useUnmergedTree = true)
+        .assertTextEquals(UserUpdate.LAST_NAME, includeEditableText = true)
+    composeTestRule.onNodeWithTag(UserEditionTestTags.LAST_NAME_CLEAR_BUTTON).performClick()
+    composeTestRule.onNodeWithTag(UserEditionTestTags.LAST_NAME_TEXT_FIELD).assert(hasText(""))
+  }
+
+  object UserUpdate {
+    const val FIRST_NAME = "Johnny"
+    const val LAST_NAME = "Däpp"
+    const val BIOGRAPHY = "Ich bin ein Testbenutzer"
+  }
 }

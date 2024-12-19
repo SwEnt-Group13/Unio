@@ -20,68 +20,68 @@ import org.robolectric.RobolectricTestRunner
 
 @RunWith(RobolectricTestRunner::class)
 class UserViewModelTest {
-    private val user = MockUser.createMockUser()
+  private val user = MockUser.createMockUser()
 
-    @MockK private lateinit var repository: UserRepository
-    @MockK private lateinit var imageRepository: ImageRepository
-    @MockK private lateinit var userDeletionRepository: UserDeletionUseCaseFirestore
-    private lateinit var userViewModel: UserViewModel
+  @MockK private lateinit var repository: UserRepository
+  @MockK private lateinit var imageRepository: ImageRepository
+  @MockK private lateinit var userDeletionRepository: UserDeletionUseCaseFirestore
+  private lateinit var userViewModel: UserViewModel
 
-    @Before
-    fun setUp() {
-        MockKAnnotations.init(this)
+  @Before
+  fun setUp() {
+    MockKAnnotations.init(this)
 
-        every { repository.init(any()) } returns Unit
+    every { repository.init(any()) } returns Unit
 
-        if (FirebaseApp.getApps(ApplicationProvider.getApplicationContext()).isEmpty()) {
-            FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext())
+    if (FirebaseApp.getApps(ApplicationProvider.getApplicationContext()).isEmpty()) {
+      FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext())
+    }
+
+    userViewModel = UserViewModel(repository, imageRepository, userDeletionRepository)
+  }
+
+  @Test
+  fun testGetUserByUid() {
+    every { repository.getUserWithId("123", any(), any()) } answers
+        {
+          val onSuccess = it.invocation.args[1] as (User) -> Unit
+          onSuccess(user)
         }
 
-        userViewModel = UserViewModel(repository, imageRepository, userDeletionRepository)
-    }
+    userViewModel.getUserByUid("123")
 
-    @Test
-    fun testGetUserByUid() {
-        every { repository.getUserWithId("123", any(), any()) } answers
-                {
-                    val onSuccess = it.invocation.args[1] as (User) -> Unit
-                    onSuccess(user)
-                }
+    verify { repository.getUserWithId("123", any(), any()) }
 
-        userViewModel.getUserByUid("123")
+    // Check that refreshState is set to false
+    assertEquals(false, userViewModel.refreshState.value)
 
-        verify { repository.getUserWithId("123", any(), any()) }
+    // Check that user is set to null
+    assertEquals(user, userViewModel.user.value)
+  }
 
-        // Check that refreshState is set to false
-        assertEquals(false, userViewModel.refreshState.value)
+  @Test
+  fun testUpdateUser() {
+    val user = MockUser.createMockUser(uid = "1")
+    every { repository.updateUser(any(), any(), any()) } answers
+        {
+          val onSuccess = it.invocation.args[1] as () -> Unit
+          onSuccess()
+        }
+    every { repository.getUserWithId("1", any(), any()) } answers
+        {
+          val onSuccess = it.invocation.args[1] as (User) -> Unit
+          onSuccess(user)
+        }
+    userViewModel.updateUserDebounced(user, 0)
 
-        // Check that user is set to null
-        assertEquals(user, userViewModel.user.value)
-    }
+    verify { repository.updateUser(user, any(), any()) }
+    assertEquals(userViewModel.user.value?.uid, user.uid)
+  }
 
-    @Test
-    fun testUpdateUser() {
-        val user = MockUser.createMockUser(uid = "1")
-        every { repository.updateUser(any(), any(), any()) } answers
-                {
-                    val onSuccess = it.invocation.args[1] as () -> Unit
-                    onSuccess()
-                }
-        every { repository.getUserWithId("1", any(), any()) } answers
-                {
-                    val onSuccess = it.invocation.args[1] as (User) -> Unit
-                    onSuccess(user)
-                }
-        userViewModel.updateUserDebounced(user, 0)
-
-        verify { repository.updateUser(user, any(), any()) }
-        assertEquals(userViewModel.user.value?.uid, user.uid)
-    }
-
-    @After
-    fun tearDown() {
-        // Clean up
-        unmockkAll()
-        clearAllMocks()
-    }
+  @After
+  fun tearDown() {
+    // Clean up
+    unmockkAll()
+    clearAllMocks()
+  }
 }

@@ -33,87 +33,87 @@ import org.junit.Rule
 import org.junit.Test
 
 class EventSaveButtonTest : TearDown() {
-    @get:Rule val composeTestRule = createComposeRule()
+  @get:Rule val composeTestRule = createComposeRule()
 
-    @get:Rule
-    val permissionRule: GrantPermissionRule =
-        GrantPermissionRule.grant(android.Manifest.permission.POST_NOTIFICATIONS)
+  @get:Rule
+  val permissionRule: GrantPermissionRule =
+      GrantPermissionRule.grant(android.Manifest.permission.POST_NOTIFICATIONS)
 
-    @MockK private lateinit var eventRepository: EventRepositoryFirestore
-    @MockK private lateinit var imageRepository: ImageRepositoryFirebaseStorage
-    @MockK private lateinit var associationRepository: AssociationRepositoryFirestore
-    @MockK private lateinit var userDeletionRepository: UserDeletionUseCaseFirestore
-    @MockK
-    private lateinit var eventUserPictureRepositoryFirestore: EventUserPictureRepositoryFirestore
-    @MockK private lateinit var concurrentEventUserRepositoryFirestore: SaveUseCaseFirestore
-    @MockK private lateinit var userRepository: UserRepositoryFirestore
-    private lateinit var eventViewModel: EventViewModel
-    private lateinit var userViewModel: UserViewModel
+  @MockK private lateinit var eventRepository: EventRepositoryFirestore
+  @MockK private lateinit var imageRepository: ImageRepositoryFirebaseStorage
+  @MockK private lateinit var associationRepository: AssociationRepositoryFirestore
+  @MockK private lateinit var userDeletionRepository: UserDeletionUseCaseFirestore
+  @MockK
+  private lateinit var eventUserPictureRepositoryFirestore: EventUserPictureRepositoryFirestore
+  @MockK private lateinit var concurrentEventUserRepositoryFirestore: SaveUseCaseFirestore
+  @MockK private lateinit var userRepository: UserRepositoryFirestore
+  private lateinit var eventViewModel: EventViewModel
+  private lateinit var userViewModel: UserViewModel
 
-    private val testEvent = MockEvent.createMockEvent(uid = "1")
-    private val testUser = MockUser.createMockUser(uid = "1")
+  private val testEvent = MockEvent.createMockEvent(uid = "1")
+  private val testUser = MockUser.createMockUser(uid = "1")
 
-    @Before
-    fun setUp() {
-        MockKAnnotations.init(this, relaxed = true)
-        mockkObject(NotificationWorker.Companion)
-        eventViewModel =
-            spyk(
-                EventViewModel(
-                    eventRepository,
-                    imageRepository,
-                    associationRepository,
-                    eventUserPictureRepositoryFirestore,
-                    concurrentEventUserRepositoryFirestore))
+  @Before
+  fun setUp() {
+    MockKAnnotations.init(this, relaxed = true)
+    mockkObject(NotificationWorker.Companion)
+    eventViewModel =
+        spyk(
+            EventViewModel(
+                eventRepository,
+                imageRepository,
+                associationRepository,
+                eventUserPictureRepositoryFirestore,
+                concurrentEventUserRepositoryFirestore))
 
-        userViewModel = UserViewModel(userRepository, imageRepository, userDeletionRepository)
-        every { userRepository.updateUser(testUser, any(), any()) } answers
-                {
-                    val onSuccess = args[1] as () -> Unit
-                    onSuccess()
-                }
-        userViewModel.addUser(testUser) {}
-
-        every { eventRepository.getEvents(any(), any()) } answers
-                {
-                    (it.invocation.args[0] as (List<Event>) -> Unit)(listOf(testEvent))
-                }
-
-        every { userRepository.getUserWithId(testUser.uid, {}, {}) } answers
-                {
-                    val onSuccess = args[1] as (User) -> Unit
-                    onSuccess(testUser)
-                }
-
-        eventViewModel.loadEvents()
-    }
-
-    private fun setEventSaveButton() {
-        composeTestRule.setContent {
-            ProvidePreferenceLocals { EventSaveButton(testEvent, eventViewModel, userViewModel) }
+    userViewModel = UserViewModel(userRepository, imageRepository, userDeletionRepository)
+    every { userRepository.updateUser(testUser, any(), any()) } answers
+        {
+          val onSuccess = args[1] as () -> Unit
+          onSuccess()
         }
+    userViewModel.addUser(testUser) {}
+
+    every { eventRepository.getEvents(any(), any()) } answers
+        {
+          (it.invocation.args[0] as (List<Event>) -> Unit)(listOf(testEvent))
+        }
+
+    every { userRepository.getUserWithId(testUser.uid, {}, {}) } answers
+        {
+          val onSuccess = args[1] as (User) -> Unit
+          onSuccess(testUser)
+        }
+
+    eventViewModel.loadEvents()
+  }
+
+  private fun setEventSaveButton() {
+    composeTestRule.setContent {
+      ProvidePreferenceLocals { EventSaveButton(testEvent, eventViewModel, userViewModel) }
     }
+  }
 
-    @Test
-    fun testEventCardSaveAndUnsaveEventOnline() {
-        var indicator = false // saved indicator
-        every { concurrentEventUserRepositoryFirestore.updateSave(any(), any(), any(), any()) } answers
-                {
-                    val onSuccess = args[2] as () -> Unit
-                    onSuccess()
-                    indicator = !indicator
-                }
+  @Test
+  fun testEventCardSaveAndUnsaveEventOnline() {
+    var indicator = false // saved indicator
+    every { concurrentEventUserRepositoryFirestore.updateSave(any(), any(), any(), any()) } answers
+        {
+          val onSuccess = args[2] as () -> Unit
+          onSuccess()
+          indicator = !indicator
+        }
 
-        setEventSaveButton()
-        composeTestRule.onNodeWithTag(EventDetailsTestTags.SAVE_BUTTON).assertExists().performClick()
+    setEventSaveButton()
+    composeTestRule.onNodeWithTag(EventDetailsTestTags.SAVE_BUTTON).assertExists().performClick()
 
-        Thread.sleep(500)
-        assert(indicator) // asserts event is saved
+    Thread.sleep(500)
+    assert(indicator) // asserts event is saved
 
-        verify { NotificationWorker.schedule(any(), any()) } // asserts that a notification is scheduled
+    verify { NotificationWorker.schedule(any(), any()) } // asserts that a notification is scheduled
 
-        composeTestRule.onNodeWithTag(EventDetailsTestTags.SAVE_BUTTON).assertExists().performClick()
-        composeTestRule.waitForIdle()
-        assert(!indicator) // asserts event is unsaved
-    }
+    composeTestRule.onNodeWithTag(EventDetailsTestTags.SAVE_BUTTON).assertExists().performClick()
+    composeTestRule.waitForIdle()
+    assert(!indicator) // asserts event is unsaved
+  }
 }

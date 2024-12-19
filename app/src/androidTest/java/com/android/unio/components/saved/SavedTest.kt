@@ -35,102 +35,102 @@ import org.junit.Test
 
 @HiltAndroidTest
 class SavedTest : TearDown() {
-    @get:Rule val composeTestRule = createComposeRule()
+  @get:Rule val composeTestRule = createComposeRule()
 
-    @get:Rule val hiltRule = HiltAndroidRule(this)
+  @get:Rule val hiltRule = HiltAndroidRule(this)
 
-    private lateinit var userViewModel: UserViewModel
+  private lateinit var userViewModel: UserViewModel
 
-    // Mock event repository to provide test data.
-    @MockK private lateinit var eventRepository: EventRepositoryFirestore
-    @MockK private lateinit var userRepository: UserRepositoryFirestore
-    @MockK private lateinit var userDeletionRepository: UserDeletionUseCaseFirestore
-    @MockK private lateinit var navigationAction: NavigationAction
-    @MockK private lateinit var associationRepositoryFirestore: AssociationRepositoryFirestore
-    @MockK private lateinit var imageRepository: ImageRepositoryFirebaseStorage
-    @MockK
-    private lateinit var eventUserPictureRepositoryFirestore: EventUserPictureRepositoryFirestore
-    @MockK private lateinit var concurrentEventUserRepositoryFirestore: SaveUseCaseFirestore
+  // Mock event repository to provide test data.
+  @MockK private lateinit var eventRepository: EventRepositoryFirestore
+  @MockK private lateinit var userRepository: UserRepositoryFirestore
+  @MockK private lateinit var userDeletionRepository: UserDeletionUseCaseFirestore
+  @MockK private lateinit var navigationAction: NavigationAction
+  @MockK private lateinit var associationRepositoryFirestore: AssociationRepositoryFirestore
+  @MockK private lateinit var imageRepository: ImageRepositoryFirebaseStorage
+  @MockK
+  private lateinit var eventUserPictureRepositoryFirestore: EventUserPictureRepositoryFirestore
+  @MockK private lateinit var concurrentEventUserRepositoryFirestore: SaveUseCaseFirestore
 
-    private lateinit var eventViewModel: EventViewModel
+  private lateinit var eventViewModel: EventViewModel
 
-    private lateinit var eventList: List<Event>
+  private lateinit var eventList: List<Event>
 
-    @Before
-    fun setUp() {
-        MockKAnnotations.init(this, relaxed = true)
-        hiltRule.inject()
+  @Before
+  fun setUp() {
+    MockKAnnotations.init(this, relaxed = true)
+    hiltRule.inject()
 
-        val asso = MockAssociation.createMockAssociation()
-        eventList =
-            listOf(
-                MockEvent.createMockEvent(organisers = listOf(asso)),
-                MockEvent.createMockEvent(title = "I am different", startDate = Timestamp.now()))
+    val asso = MockAssociation.createMockAssociation()
+    eventList =
+        listOf(
+            MockEvent.createMockEvent(organisers = listOf(asso)),
+            MockEvent.createMockEvent(title = "I am different", startDate = Timestamp.now()))
 
-        every { navigationAction.navigateTo(any(TopLevelDestination::class)) } returns Unit
-        every { navigationAction.navigateTo(any(String::class)) } returns Unit
+    every { navigationAction.navigateTo(any(TopLevelDestination::class)) } returns Unit
+    every { navigationAction.navigateTo(any(String::class)) } returns Unit
 
-        every { userRepository.updateUser(any(), any(), any()) } answers
-                {
-                    val onSuccess = args[1] as () -> Unit
-                    onSuccess()
-                }
-        every { userRepository.init(any()) } answers
-                {
-                    val onSuccess = args[0] as () -> Unit
-                    onSuccess()
-                }
-
-        userViewModel = spyk(UserViewModel(userRepository, imageRepository, userDeletionRepository))
-
-        every { eventRepository.getEvents(any(), any()) } answers
-                {
-                    val onSuccess = args[0] as (List<Event>) -> Unit
-                    onSuccess(eventList)
-                }
-        every { eventRepository.init(any()) } answers
-                {
-                    val onSuccess = args[0] as () -> Unit
-                    onSuccess()
-                }
-
-        eventViewModel =
-            EventViewModel(
-                eventRepository,
-                imageRepository,
-                associationRepositoryFirestore,
-                eventUserPictureRepositoryFirestore,
-                concurrentEventUserRepositoryFirestore)
-    }
-
-    @Test
-    fun testSavedScreenWithSavedEvents() {
-        userViewModel.addUser(MockUser.createMockUser(savedEvents = eventList)) {}
-
-        composeTestRule.setContent {
-            ProvidePreferenceLocals { SavedScreen(navigationAction, eventViewModel, userViewModel) }
+    every { userRepository.updateUser(any(), any(), any()) } answers
+        {
+          val onSuccess = args[1] as () -> Unit
+          onSuccess()
+        }
+    every { userRepository.init(any()) } answers
+        {
+          val onSuccess = args[0] as () -> Unit
+          onSuccess()
         }
 
-        composeTestRule.waitForIdle()
+    userViewModel = spyk(UserViewModel(userRepository, imageRepository, userDeletionRepository))
 
-        composeTestRule.onNodeWithTag(SavedTestTags.TITLE).assertDisplayComponentInScroll()
-        composeTestRule.onNodeWithTag(SavedTestTags.FAB).assertDisplayComponentInScroll()
-        composeTestRule.onNodeWithTag(SavedTestTags.TODAY).assertDisplayComponentInScroll()
-        composeTestRule.onNodeWithTag(SavedTestTags.UPCOMING).assertDisplayComponentInScroll()
-    }
-
-    @Test
-    fun testSavedScreenWithNoSavedEvents() {
-        userViewModel.addUser(MockUser.createMockUser(savedEvents = emptyList())) {}
-
-        composeTestRule.setContent {
-            ProvidePreferenceLocals { SavedScreen(navigationAction, eventViewModel, userViewModel) }
+    every { eventRepository.getEvents(any(), any()) } answers
+        {
+          val onSuccess = args[0] as (List<Event>) -> Unit
+          onSuccess(eventList)
+        }
+    every { eventRepository.init(any()) } answers
+        {
+          val onSuccess = args[0] as () -> Unit
+          onSuccess()
         }
 
-        composeTestRule.waitForIdle()
+    eventViewModel =
+        EventViewModel(
+            eventRepository,
+            imageRepository,
+            associationRepositoryFirestore,
+            eventUserPictureRepositoryFirestore,
+            concurrentEventUserRepositoryFirestore)
+  }
 
-        composeTestRule.onNodeWithTag(SavedTestTags.TITLE).assertDisplayComponentInScroll()
-        composeTestRule.onNodeWithTag(SavedTestTags.FAB).assertDisplayComponentInScroll()
-        composeTestRule.onNodeWithTag(SavedTestTags.NO_EVENTS).assertDisplayComponentInScroll()
+  @Test
+  fun testSavedScreenWithSavedEvents() {
+    userViewModel.addUser(MockUser.createMockUser(savedEvents = eventList)) {}
+
+    composeTestRule.setContent {
+      ProvidePreferenceLocals { SavedScreen(navigationAction, eventViewModel, userViewModel) }
     }
+
+    composeTestRule.waitForIdle()
+
+    composeTestRule.onNodeWithTag(SavedTestTags.TITLE).assertDisplayComponentInScroll()
+    composeTestRule.onNodeWithTag(SavedTestTags.FAB).assertDisplayComponentInScroll()
+    composeTestRule.onNodeWithTag(SavedTestTags.TODAY).assertDisplayComponentInScroll()
+    composeTestRule.onNodeWithTag(SavedTestTags.UPCOMING).assertDisplayComponentInScroll()
+  }
+
+  @Test
+  fun testSavedScreenWithNoSavedEvents() {
+    userViewModel.addUser(MockUser.createMockUser(savedEvents = emptyList())) {}
+
+    composeTestRule.setContent {
+      ProvidePreferenceLocals { SavedScreen(navigationAction, eventViewModel, userViewModel) }
+    }
+
+    composeTestRule.waitForIdle()
+
+    composeTestRule.onNodeWithTag(SavedTestTags.TITLE).assertDisplayComponentInScroll()
+    composeTestRule.onNodeWithTag(SavedTestTags.FAB).assertDisplayComponentInScroll()
+    composeTestRule.onNodeWithTag(SavedTestTags.NO_EVENTS).assertDisplayComponentInScroll()
+  }
 }

@@ -18,78 +18,78 @@ import org.junit.Test
 
 class ThemeTest : TearDown() {
 
-    @get:Rule val composeTestRule = createComposeRule()
+  @get:Rule val composeTestRule = createComposeRule()
 
-    @Test
-    fun testLightTheme() {
-        val preferencesFlow: MutableStateFlow<Preferences> =
-            MutableStateFlow(MapPreferences(mapOf(AppPreferences.THEME to AppPreferences.Theme.LIGHT)))
+  @Test
+  fun testLightTheme() {
+    val preferencesFlow: MutableStateFlow<Preferences> =
+        MutableStateFlow(MapPreferences(mapOf(AppPreferences.THEME to AppPreferences.Theme.LIGHT)))
 
-        composeTestRule.setContent {
-            ProvidePreferenceLocals(flow = preferencesFlow) {
-                AppTheme { assertEquals(primaryLight, MaterialTheme.colorScheme.primary) }
-            }
+    composeTestRule.setContent {
+      ProvidePreferenceLocals(flow = preferencesFlow) {
+        AppTheme { assertEquals(primaryLight, MaterialTheme.colorScheme.primary) }
+      }
+    }
+  }
+
+  @Test
+  fun testDarkTheme() {
+    val preferencesFlow: MutableStateFlow<Preferences> =
+        MutableStateFlow(MapPreferences(mapOf(AppPreferences.THEME to AppPreferences.Theme.DARK)))
+
+    composeTestRule.setContent {
+      ProvidePreferenceLocals(flow = preferencesFlow) {
+        AppTheme { assertEquals(primaryDark, MaterialTheme.colorScheme.primary) }
+      }
+    }
+  }
+
+  @Test
+  fun testSystemTheme() {
+    val preferencesFlow: MutableStateFlow<Preferences> =
+        MutableStateFlow(MapPreferences(mapOf(AppPreferences.THEME to AppPreferences.Theme.SYSTEM)))
+
+    composeTestRule.setContent {
+      ProvidePreferenceLocals(flow = preferencesFlow) {
+        AppTheme {
+          if (isSystemInDarkTheme()) {
+            assertEquals(primaryDark, MaterialTheme.colorScheme.primary)
+          } else {
+            assertEquals(primaryLight, MaterialTheme.colorScheme.primary)
+          }
         }
+      }
+    }
+  }
+
+  class MapMutablePreferences(private val map: MutableMap<String, Any> = mutableMapOf()) :
+      MutablePreferences {
+    @Suppress("UNCHECKED_CAST") override fun <T> get(key: String): T? = map[key] as T?
+
+    override fun asMap(): Map<String, Any> = map
+
+    override fun toMutablePreferences(): MutablePreferences =
+        MapMutablePreferences(map.toMutableMap())
+
+    override fun <T> set(key: String, value: T?) {
+      if (value != null) {
+        map[key] = value
+      } else {
+        map -= key
+      }
     }
 
-    @Test
-    fun testDarkTheme() {
-        val preferencesFlow: MutableStateFlow<Preferences> =
-            MutableStateFlow(MapPreferences(mapOf(AppPreferences.THEME to AppPreferences.Theme.DARK)))
-
-        composeTestRule.setContent {
-            ProvidePreferenceLocals(flow = preferencesFlow) {
-                AppTheme { assertEquals(primaryDark, MaterialTheme.colorScheme.primary) }
-            }
-        }
+    override fun clear() {
+      map.clear()
     }
+  }
 
-    @Test
-    fun testSystemTheme() {
-        val preferencesFlow: MutableStateFlow<Preferences> =
-            MutableStateFlow(MapPreferences(mapOf(AppPreferences.THEME to AppPreferences.Theme.SYSTEM)))
+  class MapPreferences(private val map: Map<String, Any> = emptyMap()) : Preferences {
+    @Suppress("UNCHECKED_CAST") override fun <T> get(key: String): T? = map[key] as T?
 
-        composeTestRule.setContent {
-            ProvidePreferenceLocals(flow = preferencesFlow) {
-                AppTheme {
-                    if (isSystemInDarkTheme()) {
-                        assertEquals(primaryDark, MaterialTheme.colorScheme.primary)
-                    } else {
-                        assertEquals(primaryLight, MaterialTheme.colorScheme.primary)
-                    }
-                }
-            }
-        }
-    }
+    override fun asMap(): Map<String, Any> = map
 
-    class MapMutablePreferences(private val map: MutableMap<String, Any> = mutableMapOf()) :
-        MutablePreferences {
-        @Suppress("UNCHECKED_CAST") override fun <T> get(key: String): T? = map[key] as T?
-
-        override fun asMap(): Map<String, Any> = map
-
-        override fun toMutablePreferences(): MutablePreferences =
-            MapMutablePreferences(map.toMutableMap())
-
-        override fun <T> set(key: String, value: T?) {
-            if (value != null) {
-                map[key] = value
-            } else {
-                map -= key
-            }
-        }
-
-        override fun clear() {
-            map.clear()
-        }
-    }
-
-    class MapPreferences(private val map: Map<String, Any> = emptyMap()) : Preferences {
-        @Suppress("UNCHECKED_CAST") override fun <T> get(key: String): T? = map[key] as T?
-
-        override fun asMap(): Map<String, Any> = map
-
-        override fun toMutablePreferences(): MutablePreferences =
-            MapMutablePreferences(map.toMutableMap())
-    }
+    override fun toMutablePreferences(): MutablePreferences =
+        MapMutablePreferences(map.toMutableMap())
+  }
 }

@@ -27,56 +27,56 @@ import org.junit.Test
 @HiltAndroidTest
 class PictureSelectionToolTest : TearDown() {
 
-    @MockK private lateinit var firebaseAuth: FirebaseAuth
-    @MockK private lateinit var mockFirebaseUser: zzac
+  @MockK private lateinit var firebaseAuth: FirebaseAuth
+  @MockK private lateinit var mockFirebaseUser: zzac
 
-    @get:Rule val composeTestRule = createComposeRule()
-    @get:Rule val hiltRule = HiltAndroidRule(this)
+  @get:Rule val composeTestRule = createComposeRule()
+  @get:Rule val hiltRule = HiltAndroidRule(this)
 
-    @Before
-    fun setUp() {
-        MockKAnnotations.init(this, relaxed = true)
+  @Before
+  fun setUp() {
+    MockKAnnotations.init(this, relaxed = true)
 
-        // Mocking Firebase.auth and its behavior
-        mockkStatic(FirebaseAuth::class)
-        every { Firebase.auth } returns firebaseAuth
-        every { firebaseAuth.currentUser } returns mockFirebaseUser
-        every { mockFirebaseUser.uid } returns "mocked-uid"
+    // Mocking Firebase.auth and its behavior
+    mockkStatic(FirebaseAuth::class)
+    every { Firebase.auth } returns firebaseAuth
+    every { firebaseAuth.currentUser } returns mockFirebaseUser
+    every { mockFirebaseUser.uid } returns "mocked-uid"
+  }
+
+  @Test
+  fun testInitialUIState() {
+    composeTestRule.setContent {
+      PictureSelectionTool(
+          maxPictures = 3,
+          allowGallery = true,
+          allowCamera = true,
+          onValidate = {},
+          onCancel = {},
+          initialSelectedPictures = emptyList())
     }
+    // Verify that initial UI elements are displayed
+    composeTestRule.onNodeWithTag(PictureSelectionToolTestTags.GALLERY_ADD).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(PictureSelectionToolTestTags.CAMERA_ADD).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(PictureSelectionToolTestTags.CANCEL_BUTTON).assertIsDisplayed()
+  }
 
-    @Test
-    fun testInitialUIState() {
-        composeTestRule.setContent {
-            PictureSelectionTool(
-                maxPictures = 3,
-                allowGallery = true,
-                allowCamera = true,
-                onValidate = {},
-                onCancel = {},
-                initialSelectedPictures = emptyList())
-        }
-        // Verify that initial UI elements are displayed
-        composeTestRule.onNodeWithTag(PictureSelectionToolTestTags.GALLERY_ADD).assertIsDisplayed()
-        composeTestRule.onNodeWithTag(PictureSelectionToolTestTags.CAMERA_ADD).assertIsDisplayed()
-        composeTestRule.onNodeWithTag(PictureSelectionToolTestTags.CANCEL_BUTTON).assertIsDisplayed()
+  @Test
+  fun testHavingPictures() {
+    val mockUri1 = mockk<Uri>(relaxed = true)
+
+    composeTestRule.setContent {
+      PictureSelectionTool(
+          maxPictures = 3,
+          allowGallery = true,
+          allowCamera = true,
+          onValidate = {},
+          onCancel = {},
+          initialSelectedPictures = listOf(mockUri1))
     }
-
-    @Test
-    fun testHavingPictures() {
-        val mockUri1 = mockk<Uri>(relaxed = true)
-
-        composeTestRule.setContent {
-            PictureSelectionTool(
-                maxPictures = 3,
-                allowGallery = true,
-                allowCamera = true,
-                onValidate = {},
-                onCancel = {},
-                initialSelectedPictures = listOf(mockUri1))
-        }
-        // Verify that the selected pictures are displayed
-        composeTestRule.onNodeWithTag(PictureSelectionToolTestTags.SELECTED_PICTURE).assertIsDisplayed()
-        // Ensure that the Validate button is now visible
-        composeTestRule.onNodeWithTag(PictureSelectionToolTestTags.VALIDATE_BUTTON).assertIsDisplayed()
-    }
+    // Verify that the selected pictures are displayed
+    composeTestRule.onNodeWithTag(PictureSelectionToolTestTags.SELECTED_PICTURE).assertIsDisplayed()
+    // Ensure that the Validate button is now visible
+    composeTestRule.onNodeWithTag(PictureSelectionToolTestTags.VALIDATE_BUTTON).assertIsDisplayed()
+  }
 }

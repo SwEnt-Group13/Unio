@@ -62,217 +62,217 @@ import org.junit.Test
 @ExperimentalUnitApi
 class HomeTest : TearDown() {
 
-    @get:Rule val composeTestRule = createComposeRule()
+  @get:Rule val composeTestRule = createComposeRule()
 
-    @get:Rule val hiltRule = HiltAndroidRule(this)
+  @get:Rule val hiltRule = HiltAndroidRule(this)
 
-    private lateinit var userViewModel: UserViewModel
+  private lateinit var userViewModel: UserViewModel
 
-    // Mock event repository to provide test data.
-    @MockK private lateinit var eventRepository: EventRepositoryFirestore
-    @MockK private lateinit var userRepository: UserRepositoryFirestore
-    @MockK private lateinit var userDeletionRepository: UserDeletionUseCaseFirestore
-    @MockK private lateinit var imageRepository: ImageRepositoryFirebaseStorage
-    @MockK private lateinit var navigationAction: NavigationAction
-    @MockK private lateinit var associationRepositoryFirestore: AssociationRepositoryFirestore
-    @MockK
-    private lateinit var eventUserPictureRepositoryFirestore: EventUserPictureRepositoryFirestore
-    @MockK private lateinit var concurrentEventUserRepositoryFirestore: SaveUseCaseFirestore
+  // Mock event repository to provide test data.
+  @MockK private lateinit var eventRepository: EventRepositoryFirestore
+  @MockK private lateinit var userRepository: UserRepositoryFirestore
+  @MockK private lateinit var userDeletionRepository: UserDeletionUseCaseFirestore
+  @MockK private lateinit var imageRepository: ImageRepositoryFirebaseStorage
+  @MockK private lateinit var navigationAction: NavigationAction
+  @MockK private lateinit var associationRepositoryFirestore: AssociationRepositoryFirestore
+  @MockK
+  private lateinit var eventUserPictureRepositoryFirestore: EventUserPictureRepositoryFirestore
+  @MockK private lateinit var concurrentEventUserRepositoryFirestore: SaveUseCaseFirestore
 
-    private lateinit var eventViewModel: EventViewModel
-    private lateinit var searchViewModel: SearchViewModel
+  private lateinit var eventViewModel: EventViewModel
+  private lateinit var searchViewModel: SearchViewModel
 
-    @MockK(relaxed = true) private lateinit var searchRepository: SearchRepository
+  @MockK(relaxed = true) private lateinit var searchRepository: SearchRepository
 
-    private lateinit var eventList: List<Event>
-    private lateinit var eventListFollowed: List<Event>
+  private lateinit var eventList: List<Event>
+  private lateinit var eventListFollowed: List<Event>
 
-    @Before
-    fun setUp() {
-        MockKAnnotations.init(this)
-        hiltRule.inject()
-        searchViewModel = spyk(SearchViewModel(searchRepository))
-        every { navigationAction.navigateTo(any(TopLevelDestination::class)) } returns Unit
-        every { navigationAction.navigateTo(any(String::class)) } returns Unit
+  @Before
+  fun setUp() {
+    MockKAnnotations.init(this)
+    hiltRule.inject()
+    searchViewModel = spyk(SearchViewModel(searchRepository))
+    every { navigationAction.navigateTo(any(TopLevelDestination::class)) } returns Unit
+    every { navigationAction.navigateTo(any(String::class)) } returns Unit
 
-        every { userRepository.init(any()) } answers
-                {
-                    val onSuccess = args[0] as () -> Unit
-                    onSuccess()
-                }
+    every { userRepository.init(any()) } answers
+        {
+          val onSuccess = args[0] as () -> Unit
+          onSuccess()
+        }
 
-        every { userRepository.getUserWithId(any(), any(), any()) } answers
-                {
-                    val onSuccess = args[1] as (User) -> Unit
-                    onSuccess(MockUser.createMockUser())
-                }
+    every { userRepository.getUserWithId(any(), any(), any()) } answers
+        {
+          val onSuccess = args[1] as (User) -> Unit
+          onSuccess(MockUser.createMockUser())
+        }
 
-        userViewModel = spyk(UserViewModel(userRepository, imageRepository, userDeletionRepository))
-        val asso = MockAssociation.createMockAssociation()
-        val user =
-            MockUser.createMockUser(
-                followedAssociations = listOf(asso),
-            )
-        eventList =
-            listOf(
-                MockEvent.createMockEvent(organisers = listOf(asso)),
-                MockEvent.createMockEvent(title = "I am different"))
+    userViewModel = spyk(UserViewModel(userRepository, imageRepository, userDeletionRepository))
+    val asso = MockAssociation.createMockAssociation()
+    val user =
+        MockUser.createMockUser(
+            followedAssociations = listOf(asso),
+        )
+    eventList =
+        listOf(
+            MockEvent.createMockEvent(organisers = listOf(asso)),
+            MockEvent.createMockEvent(title = "I am different"))
 
-        every { userRepository.updateUser(user, any(), any()) } answers
-                {
-                    val onSuccess = args[1] as () -> Unit
-                    onSuccess()
-                }
-        userViewModel.addUser(user, {})
+    every { userRepository.updateUser(user, any(), any()) } answers
+        {
+          val onSuccess = args[1] as () -> Unit
+          onSuccess()
+        }
+    userViewModel.addUser(user, {})
 
-        every { eventRepository.init(any()) } answers
-                {
-                    val onSuccess = args[0] as () -> Unit
-                    onSuccess()
-                }
-        every { eventRepository.getEvents(any(), any()) } answers
-                {
-                    val onSuccess = args[0] as (List<Event>) -> Unit
-                    onSuccess(eventList)
-                }
-        eventViewModel =
-            EventViewModel(
-                eventRepository,
-                imageRepository,
-                associationRepositoryFirestore,
-                eventUserPictureRepositoryFirestore,
-                concurrentEventUserRepositoryFirestore)
-        eventListFollowed = asso.let { eventList.filter { event -> event.organisers.contains(it.uid) } }
+    every { eventRepository.init(any()) } answers
+        {
+          val onSuccess = args[0] as () -> Unit
+          onSuccess()
+        }
+    every { eventRepository.getEvents(any(), any()) } answers
+        {
+          val onSuccess = args[0] as (List<Event>) -> Unit
+          onSuccess(eventList)
+        }
+    eventViewModel =
+        EventViewModel(
+            eventRepository,
+            imageRepository,
+            associationRepositoryFirestore,
+            eventUserPictureRepositoryFirestore,
+            concurrentEventUserRepositoryFirestore)
+    eventListFollowed = asso.let { eventList.filter { event -> event.organisers.contains(it.uid) } }
+  }
+
+  /**
+   * Tests the UI when the event list is empty. Asserts that the appropriate message is displayed
+   * when there are no events available.
+   */
+  @Test
+  fun testEmptyEventList() {
+    every { eventRepository.getEvents(any(), any()) } answers
+        {
+          val onSuccess = args[0] as (List<Event>) -> Unit
+          onSuccess(emptyList())
+        }
+
+    var text = ""
+    composeTestRule.setContent {
+      val context = LocalContext.current
+      text = context.getString(R.string.event_no_events_available)
+      val eventViewModel =
+          EventViewModel(
+              eventRepository,
+              imageRepository,
+              associationRepositoryFirestore,
+              eventUserPictureRepositoryFirestore,
+              concurrentEventUserRepositoryFirestore)
+
+      ProvidePreferenceLocals {
+        HomeScreen(navigationAction, eventViewModel, userViewModel, searchViewModel)
+      }
+    }
+    composeTestRule.onNodeWithTag(HomeTestTags.EMPTY_EVENT_PROMPT).assertExists()
+    composeTestRule.onNodeWithText(text).assertExists()
+  }
+
+  @Test
+  fun testEventListAll() {
+    composeTestRule.setContent {
+      ProvidePreferenceLocals {
+        HomeScreen(navigationAction, eventViewModel, userViewModel, searchViewModel)
+      }
+    }
+    composeTestRule.onNodeWithTag(HomeTestTags.TAB_ALL).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(HomeTestTags.TAB_ALL).performClick()
+
+    eventList.forEach { event ->
+      composeTestRule.onNodeWithText(event.title).assertDisplayComponentInScroll()
+    }
+  }
+
+  /**
+   * Test the UI of the following screen. Asserts that the 'Following' tab is displayed and that the
+   * list of events displayed is the same as the list of events followed by the user.
+   */
+  @Test
+  fun testEventListFollowed() {
+    composeTestRule.setContent {
+      ProvidePreferenceLocals {
+        HomeScreen(navigationAction, eventViewModel, userViewModel, searchViewModel)
+      }
+    }
+    composeTestRule.onNodeWithTag(HomeTestTags.TAB_FOLLOWING).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(HomeTestTags.TAB_FOLLOWING).performClick()
+
+    eventListFollowed.forEach { event ->
+      composeTestRule.onNodeWithText(event.title).assertDisplayComponentInScroll()
+    }
+    val theNegative = eventList.filter { !eventListFollowed.contains(it) }
+    theNegative.forEach { event ->
+      composeTestRule.onNodeWithText(event.title).assertIsNotDisplayed()
+    }
+  }
+
+  /**
+   * Tests the functionality of the Map button. Verifies that clicking the button triggers the
+   * expected action.
+   */
+  @Test
+  fun testMapButton() {
+    composeTestRule.setContent {
+      val eventViewModel =
+          EventViewModel(
+              eventRepository,
+              imageRepository,
+              associationRepositoryFirestore,
+              eventUserPictureRepositoryFirestore,
+              concurrentEventUserRepositoryFirestore)
+
+      ProvidePreferenceLocals {
+        HomeScreen(navigationAction, eventViewModel, userViewModel, searchViewModel)
+      }
+    }
+    composeTestRule.onNodeWithTag(HomeTestTags.MAP_BUTTON).assertExists()
+    composeTestRule.onNodeWithTag(HomeTestTags.MAP_BUTTON).assertHasClickAction()
+
+    composeTestRule.onNodeWithTag(HomeTestTags.MAP_BUTTON).performClick()
+    verify { navigationAction.navigateTo(Screen.MAP) }
+  }
+
+  /**
+   * Tests the sequence of clicking on the 'Following' tab and then on the 'Map' button to ensure
+   * that both actions trigger their respective animations and behaviors.
+   */
+  @Test
+  fun testClickFollowingAndAdd() {
+    composeTestRule.setContent {
+      val eventViewModel =
+          EventViewModel(
+              eventRepository,
+              imageRepository,
+              associationRepositoryFirestore,
+              eventUserPictureRepositoryFirestore,
+              concurrentEventUserRepositoryFirestore)
+
+      ProvidePreferenceLocals {
+        HomeScreen(navigationAction, eventViewModel, userViewModel, searchViewModel)
+      }
     }
 
-    /**
-     * Tests the UI when the event list is empty. Asserts that the appropriate message is displayed
-     * when there are no events available.
-     */
-    @Test
-    fun testEmptyEventList() {
-        every { eventRepository.getEvents(any(), any()) } answers
-                {
-                    val onSuccess = args[0] as (List<Event>) -> Unit
-                    onSuccess(emptyList())
-                }
+    composeTestRule.onNodeWithTag(HomeTestTags.TAB_FOLLOWING).assertExists()
+    composeTestRule.onNodeWithTag(HomeTestTags.TAB_FOLLOWING).performClick()
 
-        var text = ""
-        composeTestRule.setContent {
-            val context = LocalContext.current
-            text = context.getString(R.string.event_no_events_available)
-            val eventViewModel =
-                EventViewModel(
-                    eventRepository,
-                    imageRepository,
-                    associationRepositoryFirestore,
-                    eventUserPictureRepositoryFirestore,
-                    concurrentEventUserRepositoryFirestore)
+    composeTestRule.onNodeWithTag(HomeTestTags.MAP_BUTTON).assertExists()
+    composeTestRule.onNodeWithTag(HomeTestTags.MAP_BUTTON).performClick()
 
-            ProvidePreferenceLocals {
-                HomeScreen(navigationAction, eventViewModel, userViewModel, searchViewModel)
-            }
-        }
-        composeTestRule.onNodeWithTag(HomeTestTags.EMPTY_EVENT_PROMPT).assertExists()
-        composeTestRule.onNodeWithText(text).assertExists()
-    }
+    verify { navigationAction.navigateTo(Screen.MAP) }
+  }
 
-    @Test
-    fun testEventListAll() {
-        composeTestRule.setContent {
-            ProvidePreferenceLocals {
-                HomeScreen(navigationAction, eventViewModel, userViewModel, searchViewModel)
-            }
-        }
-        composeTestRule.onNodeWithTag(HomeTestTags.TAB_ALL).assertIsDisplayed()
-        composeTestRule.onNodeWithTag(HomeTestTags.TAB_ALL).performClick()
-
-        eventList.forEach { event ->
-            composeTestRule.onNodeWithText(event.title).assertDisplayComponentInScroll()
-        }
-    }
-
-    /**
-     * Test the UI of the following screen. Asserts that the 'Following' tab is displayed and that the
-     * list of events displayed is the same as the list of events followed by the user.
-     */
-    @Test
-    fun testEventListFollowed() {
-        composeTestRule.setContent {
-            ProvidePreferenceLocals {
-                HomeScreen(navigationAction, eventViewModel, userViewModel, searchViewModel)
-            }
-        }
-        composeTestRule.onNodeWithTag(HomeTestTags.TAB_FOLLOWING).assertIsDisplayed()
-        composeTestRule.onNodeWithTag(HomeTestTags.TAB_FOLLOWING).performClick()
-
-        eventListFollowed.forEach { event ->
-            composeTestRule.onNodeWithText(event.title).assertDisplayComponentInScroll()
-        }
-        val theNegative = eventList.filter { !eventListFollowed.contains(it) }
-        theNegative.forEach { event ->
-            composeTestRule.onNodeWithText(event.title).assertIsNotDisplayed()
-        }
-    }
-
-    /**
-     * Tests the functionality of the Map button. Verifies that clicking the button triggers the
-     * expected action.
-     */
-    @Test
-    fun testMapButton() {
-        composeTestRule.setContent {
-            val eventViewModel =
-                EventViewModel(
-                    eventRepository,
-                    imageRepository,
-                    associationRepositoryFirestore,
-                    eventUserPictureRepositoryFirestore,
-                    concurrentEventUserRepositoryFirestore)
-
-            ProvidePreferenceLocals {
-                HomeScreen(navigationAction, eventViewModel, userViewModel, searchViewModel)
-            }
-        }
-        composeTestRule.onNodeWithTag(HomeTestTags.MAP_BUTTON).assertExists()
-        composeTestRule.onNodeWithTag(HomeTestTags.MAP_BUTTON).assertHasClickAction()
-
-        composeTestRule.onNodeWithTag(HomeTestTags.MAP_BUTTON).performClick()
-        verify { navigationAction.navigateTo(Screen.MAP) }
-    }
-
-    /**
-     * Tests the sequence of clicking on the 'Following' tab and then on the 'Map' button to ensure
-     * that both actions trigger their respective animations and behaviors.
-     */
-    @Test
-    fun testClickFollowingAndAdd() {
-        composeTestRule.setContent {
-            val eventViewModel =
-                EventViewModel(
-                    eventRepository,
-                    imageRepository,
-                    associationRepositoryFirestore,
-                    eventUserPictureRepositoryFirestore,
-                    concurrentEventUserRepositoryFirestore)
-
-            ProvidePreferenceLocals {
-                HomeScreen(navigationAction, eventViewModel, userViewModel, searchViewModel)
-            }
-        }
-
-        composeTestRule.onNodeWithTag(HomeTestTags.TAB_FOLLOWING).assertExists()
-        composeTestRule.onNodeWithTag(HomeTestTags.TAB_FOLLOWING).performClick()
-
-        composeTestRule.onNodeWithTag(HomeTestTags.MAP_BUTTON).assertExists()
-        composeTestRule.onNodeWithTag(HomeTestTags.MAP_BUTTON).performClick()
-
-        verify { navigationAction.navigateTo(Screen.MAP) }
-    }
-
-    @Module
-    @InstallIn(SingletonComponent::class)
-    object FirebaseTestModule {
-        @Provides fun provideFirestore(): FirebaseFirestore = mockk()
-    }
+  @Module
+  @InstallIn(SingletonComponent::class)
+  object FirebaseTestModule {
+    @Provides fun provideFirestore(): FirebaseFirestore = mockk()
+  }
 }

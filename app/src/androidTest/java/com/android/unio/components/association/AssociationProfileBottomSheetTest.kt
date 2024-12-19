@@ -11,48 +11,48 @@ import org.junit.Rule
 import org.junit.Test
 
 class AssociationProfileBottomSheetTest : TearDown() {
-    @get:Rule val composeTestRule = createComposeRule()
+  @get:Rule val composeTestRule = createComposeRule()
 
-    @Test
-    fun testEverythingIsDisplayed() {
-        composeTestRule.setContent { AssociationProfileBottomSheet(true, {}, {}, {}) }
+  @Test
+  fun testEverythingIsDisplayed() {
+    composeTestRule.setContent { AssociationProfileBottomSheet(true, {}, {}, {}) }
 
-        composeTestRule.onNodeWithTag(AssociationProfileTestTags.BOTTOM_SHEET).assertExists()
+    composeTestRule.onNodeWithTag(AssociationProfileTestTags.BOTTOM_SHEET).assertExists()
 
-        composeTestRule.onNodeWithTag(AssociationProfileTestTags.BOTTOM_SHEET_EDIT).assertExists()
-        composeTestRule
-            .onNodeWithTag(AssociationProfileTestTags.BOTTOM_SHEET_NOTIFICATION)
-            .assertExists()
+    composeTestRule.onNodeWithTag(AssociationProfileTestTags.BOTTOM_SHEET_EDIT).assertExists()
+    composeTestRule
+        .onNodeWithTag(AssociationProfileTestTags.BOTTOM_SHEET_NOTIFICATION)
+        .assertExists()
 
-        composeTestRule
-            .onNodeWithTag(AssociationProfileTestTags.BOTTOM_SHEET_EDIT)
-            .assertHasClickAction()
-        composeTestRule
-            .onNodeWithTag(AssociationProfileTestTags.BOTTOM_SHEET_NOTIFICATION)
-            .assertHasClickAction()
+    composeTestRule
+        .onNodeWithTag(AssociationProfileTestTags.BOTTOM_SHEET_EDIT)
+        .assertHasClickAction()
+    composeTestRule
+        .onNodeWithTag(AssociationProfileTestTags.BOTTOM_SHEET_NOTIFICATION)
+        .assertHasClickAction()
+  }
+
+  @Test
+  fun testButtonActions() {
+    var editClicked = false
+    var notificationClicked = false
+    var closed = false
+
+    composeTestRule.setContent {
+      AssociationProfileBottomSheet(
+          true, { editClicked = true }, { notificationClicked = true }, { closed = true })
     }
 
-    @Test
-    fun testButtonActions() {
-        var editClicked = false
-        var notificationClicked = false
-        var closed = false
+    composeTestRule.onNodeWithTag(AssociationProfileTestTags.BOTTOM_SHEET_EDIT).performClick()
+    composeTestRule
+        .onNodeWithTag(AssociationProfileTestTags.BOTTOM_SHEET_NOTIFICATION)
+        .performClick()
 
-        composeTestRule.setContent {
-            AssociationProfileBottomSheet(
-                true, { editClicked = true }, { notificationClicked = true }, { closed = true })
-        }
+    // Check that the buttons were clicked
+    assert(editClicked)
+    assert(notificationClicked)
 
-        composeTestRule.onNodeWithTag(AssociationProfileTestTags.BOTTOM_SHEET_EDIT).performClick()
-        composeTestRule
-            .onNodeWithTag(AssociationProfileTestTags.BOTTOM_SHEET_NOTIFICATION)
-            .performClick()
-
-        // Check that the buttons were clicked
-        assert(editClicked)
-        assert(notificationClicked)
-
-        // Check that the bottom sheet was closed
-        assert(closed)
-    }
+    // Check that the bottom sheet was closed
+    assert(closed)
+  }
 }

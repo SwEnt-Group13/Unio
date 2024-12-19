@@ -29,50 +29,50 @@ import org.mockito.kotlin.mock
 
 class BottomNavigationTest : TearDown() {
 
-    @MockK private lateinit var navigationAction: NavigationAction
+  @MockK private lateinit var navigationAction: NavigationAction
 
-    private lateinit var eventRepository: EventRepository
-    private lateinit var eventViewModel: EventViewModel
+  private lateinit var eventRepository: EventRepository
+  private lateinit var eventViewModel: EventViewModel
 
-    @MockK private lateinit var imageRepository: ImageRepositoryFirebaseStorage
-    @MockK private lateinit var associationRepositoryFirestore: AssociationRepositoryFirestore
-    @MockK private lateinit var userDeletionRepository: UserDeletionUseCaseFirestore
-    @MockK
-    private lateinit var eventUserPictureRepositoryFirestore: EventUserPictureRepositoryFirestore
-    @MockK private lateinit var concurrentEventUserRepositoryFirestore: SaveUseCaseFirestore
+  @MockK private lateinit var imageRepository: ImageRepositoryFirebaseStorage
+  @MockK private lateinit var associationRepositoryFirestore: AssociationRepositoryFirestore
+  @MockK private lateinit var userDeletionRepository: UserDeletionUseCaseFirestore
+  @MockK
+  private lateinit var eventUserPictureRepositoryFirestore: EventUserPictureRepositoryFirestore
+  @MockK private lateinit var concurrentEventUserRepositoryFirestore: SaveUseCaseFirestore
 
-    private lateinit var userRepository: UserRepository
-    private lateinit var userViewModel: UserViewModel
+  private lateinit var userRepository: UserRepository
+  private lateinit var userViewModel: UserViewModel
 
-    @get:Rule val composeTestRule = createComposeRule()
+  @get:Rule val composeTestRule = createComposeRule()
 
-    private lateinit var searchViewModel: SearchViewModel
-    @MockK(relaxed = true) private lateinit var searchRepository: SearchRepository
+  private lateinit var searchViewModel: SearchViewModel
+  @MockK(relaxed = true) private lateinit var searchRepository: SearchRepository
 
-    @Before
-    fun setUp() {
-        MockKAnnotations.init(this)
-        eventRepository = mock { EventRepository::class.java }
-        eventViewModel =
-            EventViewModel(
-                eventRepository,
-                imageRepository,
-                associationRepositoryFirestore,
-                eventUserPictureRepositoryFirestore,
-                concurrentEventUserRepositoryFirestore)
+  @Before
+  fun setUp() {
+    MockKAnnotations.init(this)
+    eventRepository = mock { EventRepository::class.java }
+    eventViewModel =
+        EventViewModel(
+            eventRepository,
+            imageRepository,
+            associationRepositoryFirestore,
+            eventUserPictureRepositoryFirestore,
+            concurrentEventUserRepositoryFirestore)
 
-        userRepository = mock { UserRepositoryFirestore::class.java }
-        userViewModel = UserViewModel(userRepository, imageRepository, userDeletionRepository)
+    userRepository = mock { UserRepositoryFirestore::class.java }
+    userViewModel = UserViewModel(userRepository, imageRepository, userDeletionRepository)
 
-        searchViewModel = spyk(SearchViewModel(searchRepository))
+    searchViewModel = spyk(SearchViewModel(searchRepository))
 
-        composeTestRule.setContent {
-            HomeScreen(navigationAction, eventViewModel, userViewModel, searchViewModel)
-        }
+    composeTestRule.setContent {
+      HomeScreen(navigationAction, eventViewModel, userViewModel, searchViewModel)
     }
+  }
 
-    @Test
-    fun testBottomNavigationMenuDisplayed() {
-        composeTestRule.onNodeWithTag(NavigationActionTestTags.BOTTOM_NAV_MENU).assertIsDisplayed()
-    }
+  @Test
+  fun testBottomNavigationMenuDisplayed() {
+    composeTestRule.onNodeWithTag(NavigationActionTestTags.BOTTOM_NAV_MENU).assertIsDisplayed()
+  }
 }

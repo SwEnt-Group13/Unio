@@ -20,59 +20,59 @@ import org.robolectric.RobolectricTestRunner
 @RunWith(RobolectricTestRunner::class)
 class UnioMessagingServiceTest {
 
-    @MockK private lateinit var notificationManager: NotificationManager
-    @MockK private lateinit var messagingService: UnioMessagingService
-    @MockK private lateinit var notificationChannel: NotificationChannel
+  @MockK private lateinit var notificationManager: NotificationManager
+  @MockK private lateinit var messagingService: UnioMessagingService
+  @MockK private lateinit var notificationChannel: NotificationChannel
 
-    @Before
-    fun setup() {
-        MockKAnnotations.init(this)
+  @Before
+  fun setup() {
+    MockKAnnotations.init(this)
 
-        every { messagingService.getSystemService(Context.NOTIFICATION_SERVICE) } returns
-                notificationManager
-        every { messagingService.resources } returns
-                InstrumentationRegistry.getInstrumentation().context.resources
-        every { messagingService.applicationInfo } returns
-                InstrumentationRegistry.getInstrumentation().context.applicationInfo
-        every { messagingService.packageName } returns
-                InstrumentationRegistry.getInstrumentation().context.packageName
+    every { messagingService.getSystemService(Context.NOTIFICATION_SERVICE) } returns
+        notificationManager
+    every { messagingService.resources } returns
+        InstrumentationRegistry.getInstrumentation().context.resources
+    every { messagingService.applicationInfo } returns
+        InstrumentationRegistry.getInstrumentation().context.applicationInfo
+    every { messagingService.packageName } returns
+        InstrumentationRegistry.getInstrumentation().context.packageName
 
-        every { notificationManager.getNotificationChannel(any()) } returns notificationChannel
-        every { notificationManager.notify(any<Int>(), any()) } just runs
+    every { notificationManager.getNotificationChannel(any()) } returns notificationChannel
+    every { notificationManager.notify(any<Int>(), any()) } just runs
 
-        // Make the messaging service run the real onMessageReceived method when it is called
-        every { messagingService.onMessageReceived(any()) } answers { callOriginal() }
-    }
+    // Make the messaging service run the real onMessageReceived method when it is called
+    every { messagingService.onMessageReceived(any()) } answers { callOriginal() }
+  }
 
-    @Test
-    fun `onMessageReceived handles notification with all required fields`() {
-        // Mock the RemoteMessage
-        val data =
-            mapOf(
-                "type" to NotificationType.EVENT_SAVERS.name,
-                "title" to "Test Title",
-                "body" to "Test Body")
-        val remoteMessage = mockk<RemoteMessage>()
-        every { remoteMessage.data } returns data
+  @Test
+  fun `onMessageReceived handles notification with all required fields`() {
+    // Mock the RemoteMessage
+    val data =
+        mapOf(
+            "type" to NotificationType.EVENT_SAVERS.name,
+            "title" to "Test Title",
+            "body" to "Test Body")
+    val remoteMessage = mockk<RemoteMessage>()
+    every { remoteMessage.data } returns data
 
-        // Call the method under test
-        messagingService.onMessageReceived(remoteMessage)
+    // Call the method under test
+    messagingService.onMessageReceived(remoteMessage)
 
-        // Verify the notification was sent
-        verify { notificationManager.notify(any<Int>(), any()) }
-    }
+    // Verify the notification was sent
+    verify { notificationManager.notify(any<Int>(), any()) }
+  }
 
-    @Test
-    fun `onMessageReceived logs error when type is missing`() {
-        // Mock the RemoteMessage
-        val data = mapOf("title" to "Test Title", "body" to "Test Body")
-        val remoteMessage = mockk<RemoteMessage>()
-        every { remoteMessage.data } returns data
+  @Test
+  fun `onMessageReceived logs error when type is missing`() {
+    // Mock the RemoteMessage
+    val data = mapOf("title" to "Test Title", "body" to "Test Body")
+    val remoteMessage = mockk<RemoteMessage>()
+    every { remoteMessage.data } returns data
 
-        // Call the method under test
-        messagingService.onMessageReceived(remoteMessage)
+    // Call the method under test
+    messagingService.onMessageReceived(remoteMessage)
 
-        // Verify that the notification was not sent
-        verify(exactly = 0) { notificationManager.notify(any(), any()) }
-    }
+    // Verify that the notification was not sent
+    verify(exactly = 0) { notificationManager.notify(any(), any()) }
+  }
 }

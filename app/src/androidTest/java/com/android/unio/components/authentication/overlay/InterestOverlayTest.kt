@@ -16,45 +16,45 @@ import org.junit.Rule
 import org.junit.Test
 
 class InterestOverlayTest : TearDown() {
-    private val interests = Interest.entries.map { it to mutableStateOf(false) }.toMutableList()
+  private val interests = Interest.entries.map { it to mutableStateOf(false) }.toMutableList()
 
-    @get:Rule val composeTestRule = createComposeRule()
+  @get:Rule val composeTestRule = createComposeRule()
 
-    @Before
-    fun setUp() {
-        composeTestRule.setContent { InterestOverlay({}, {}, interests) }
+  @Before
+  fun setUp() {
+    composeTestRule.setContent { InterestOverlay({}, {}, interests) }
+  }
+
+  @Test
+  fun testEverythingIsDisplayed() {
+    composeTestRule.onNodeWithTag(InterestsOverlayTestTags.TITLE_TEXT).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(InterestsOverlayTestTags.SUBTITLE_TEXT).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(InterestsOverlayTestTags.SAVE_BUTTON).assertIsDisplayed()
+
+    interests.forEachIndexed { index, pair ->
+      composeTestRule
+          .onNodeWithTag(InterestsOverlayTestTags.TEXT + pair.first.name, useUnmergedTree = true)
+          .assertExists()
+      composeTestRule
+          .onNodeWithTag(InterestsOverlayTestTags.CHECKBOX + pair.first.name)
+          .assertExists()
+
+      if (index != interests.size - 1) {
+        composeTestRule.onNodeWithTag(InterestsOverlayTestTags.DIVIDER + "$index").assertExists()
+      }
     }
+  }
 
-    @Test
-    fun testEverythingIsDisplayed() {
-        composeTestRule.onNodeWithTag(InterestsOverlayTestTags.TITLE_TEXT).assertIsDisplayed()
-        composeTestRule.onNodeWithTag(InterestsOverlayTestTags.SUBTITLE_TEXT).assertIsDisplayed()
-        composeTestRule.onNodeWithTag(InterestsOverlayTestTags.SAVE_BUTTON).assertIsDisplayed()
-
-        interests.forEachIndexed { index, pair ->
-            composeTestRule
-                .onNodeWithTag(InterestsOverlayTestTags.TEXT + pair.first.name, useUnmergedTree = true)
-                .assertExists()
-            composeTestRule
-                .onNodeWithTag(InterestsOverlayTestTags.CHECKBOX + pair.first.name)
-                .assertExists()
-
-            if (index != interests.size - 1) {
-                composeTestRule.onNodeWithTag(InterestsOverlayTestTags.DIVIDER + "$index").assertExists()
-            }
-        }
+  @Test
+  fun testWhenCheckBoxCheckedInterestStateChanges() {
+    interests.forEach { pair ->
+      composeTestRule
+          .onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW + pair.first.name)
+          .performScrollTo()
+          .performClick()
+      composeTestRule
+          .onNodeWithTag(InterestsOverlayTestTags.CHECKBOX + pair.first.name)
+          .assertIsOn()
     }
-
-    @Test
-    fun testWhenCheckBoxCheckedInterestStateChanges() {
-        interests.forEach { pair ->
-            composeTestRule
-                .onNodeWithTag(InterestsOverlayTestTags.CLICKABLE_ROW + pair.first.name)
-                .performScrollTo()
-                .performClick()
-            composeTestRule
-                .onNodeWithTag(InterestsOverlayTestTags.CHECKBOX + pair.first.name)
-                .assertIsOn()
-        }
-    }
+  }
 }

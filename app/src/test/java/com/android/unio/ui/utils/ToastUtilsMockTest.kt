@@ -11,22 +11,22 @@ import org.junit.Test
 
 class ToastUtilsMockTest {
 
-    @Test
-    fun testShowToastCancelsPreviousToast() {
-        mockkStatic(Toast::class)
-        val mockToast = mockk<Toast>(relaxed = true)
+  @Test
+  fun testShowToastCancelsPreviousToast() {
+    mockkStatic(Toast::class)
+    val mockToast = mockk<Toast>(relaxed = true)
 
-        every { Toast.makeText(any(), any<String>(), any()) } returns mockToast
+    every { Toast.makeText(any(), any<String>(), any()) } returns mockToast
 
-        val mockContext = mockk<Context>()
+    val mockContext = mockk<Context>()
 
-        ToastUtils.showToast(mockContext, "First Toast")
-        verify { mockToast.show() }
+    ToastUtils.showToast(mockContext, "First Toast")
+    verify { mockToast.show() }
 
-        ToastUtils.showToast(mockContext, "Second Toast")
-        verify { mockToast.cancel() }
-        verify(exactly = 2) { mockToast.show() }
+    ToastUtils.showToast(mockContext, "Second Toast")
+    verify { mockToast.cancel() }
+    verify(exactly = 2) { mockToast.show() }
 
-        unmockkAll()
-    }
+    unmockkAll()
+  }
 }

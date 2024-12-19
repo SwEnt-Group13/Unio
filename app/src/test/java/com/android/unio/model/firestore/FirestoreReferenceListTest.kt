@@ -27,105 +27,105 @@ import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
 class FirestoreReferenceListTest {
-    private val collectionPath: String = ""
-    private lateinit var db: FirebaseFirestore
+  private val collectionPath: String = ""
+  private lateinit var db: FirebaseFirestore
 
-    @Mock private lateinit var mockCollection: CollectionReference
-    @Mock private lateinit var mockSnapshot: DocumentSnapshot
-    @Mock private lateinit var mockQuerySnapshot: QuerySnapshot
-    @Mock private lateinit var mockTask: Task<QuerySnapshot>
-    @Mock private lateinit var mockQuery: Query
-    @Mock
-    private lateinit var firestoreReferenceList: FirestoreReferenceList<UniquelyIdentifiableString>
+  @Mock private lateinit var mockCollection: CollectionReference
+  @Mock private lateinit var mockSnapshot: DocumentSnapshot
+  @Mock private lateinit var mockQuerySnapshot: QuerySnapshot
+  @Mock private lateinit var mockTask: Task<QuerySnapshot>
+  @Mock private lateinit var mockQuery: Query
+  @Mock
+  private lateinit var firestoreReferenceList: FirestoreReferenceList<UniquelyIdentifiableString>
 
-    @Before
-    fun setup() {
-        MockitoAnnotations.openMocks(this)
+  @Before
+  fun setup() {
+    MockitoAnnotations.openMocks(this)
 
-        // Use MockK to mock Firebase.firestore calls without dependency injection
-        db = mockk()
-        mockkStatic(FirebaseFirestore::class)
-        every { Firebase.firestore } returns db
-        every { db.collection(any()) } returns mockCollection
+    // Use MockK to mock Firebase.firestore calls without dependency injection
+    db = mockk()
+    mockkStatic(FirebaseFirestore::class)
+    every { Firebase.firestore } returns db
+    every { db.collection(any()) } returns mockCollection
 
-        `when`(mockCollection.whereIn(eq(FieldPath.documentId()), any())).thenReturn(mockQuery)
-        `when`(mockQuery.get()).thenReturn(mockTask)
+    `when`(mockCollection.whereIn(eq(FieldPath.documentId()), any())).thenReturn(mockQuery)
+    `when`(mockQuery.get()).thenReturn(mockTask)
 
-        firestoreReferenceList =
-            FirestoreReferenceList(collectionPath) { data ->
-                UniquelyIdentifiableString(data?.get("data") as? String ?: "")
-            }
+    firestoreReferenceList =
+        FirestoreReferenceList(collectionPath) { data ->
+          UniquelyIdentifiableString(data?.get("data") as? String ?: "")
+        }
+  }
+
+  @Test
+  fun `test add does not request immediately`() {
+    `when`(mockTask.addOnSuccessListener(any())).thenAnswer { invocation ->
+      val callback = invocation.arguments[0] as OnSuccessListener<QuerySnapshot>
+      callback.onSuccess(mockQuerySnapshot)
+      mockTask
     }
 
-    @Test
-    fun `test add does not request immediately`() {
-        `when`(mockTask.addOnSuccessListener(any())).thenAnswer { invocation ->
-            val callback = invocation.arguments[0] as OnSuccessListener<QuerySnapshot>
-            callback.onSuccess(mockQuerySnapshot)
-            mockTask
+    firestoreReferenceList.add("uid1")
+    firestoreReferenceList.add("uid2")
+
+    // Internal list of UIDs should now contain "uid1" and "uid2"
+    assertEquals(0, firestoreReferenceList.list.value.size) // initial list should still be empty
+  }
+
+  @Test
+  fun `test addAll does not request immediately`() {
+    `when`(mockTask.addOnSuccessListener(any())).thenAnswer { invocation ->
+      val callback = invocation.arguments[0] as OnSuccessListener<QuerySnapshot>
+      callback.onSuccess(mockQuerySnapshot)
+      mockTask
+    }
+
+    val uids = listOf("uid1", "uid2", "uid3")
+    firestoreReferenceList.addAll(uids)
+
+    assertEquals(0, firestoreReferenceList.list.value.size) // initial list should still be empty
+  }
+
+  @Test
+  fun `test requestAll fetches documents and updates list`() = runTest {
+    // Prepare mocks
+    `when`(mockTask.addOnSuccessListener(any())).thenAnswer { invocation ->
+      val callback = invocation.arguments[0] as OnSuccessListener<QuerySnapshot>
+      callback.onSuccess(mockQuerySnapshot)
+      mockTask
+    }
+
+    whenever(mockQuerySnapshot.documents).thenReturn(listOf(mockSnapshot, mockSnapshot))
+    whenever(mockSnapshot.data).thenReturn(mapOf("data" to "Item1"), mapOf("data" to "Item2"))
+
+    // Add UIDs and call requestAll
+    firestoreReferenceList.addAll(listOf("uid1", "uid2"))
+    firestoreReferenceList.requestAll({ assertEquals(2, firestoreReferenceList.list.value.size) })
+
+    // Assert that the list was updated correctly
+    assertEquals(listOf("Item1", "Item2"), firestoreReferenceList.list.value.map { it.uid })
+    verify(mockQuery).get()
+  }
+
+  @Test
+  fun `test fromList creates FirestoreReferenceList with UIDs`() = runTest {
+    val list = listOf("uid1", "uid2")
+    val fromList =
+        FirestoreReferenceList.fromList(list, collectionPath) { snapshot ->
+          UniquelyIdentifiableString(snapshot?.get("data") as? String ?: "")
         }
 
-        firestoreReferenceList.add("uid1")
-        firestoreReferenceList.add("uid2")
+    assertEquals(0, fromList.list.value.size)
+  }
 
-        // Internal list of UIDs should now contain "uid1" and "uid2"
-        assertEquals(0, firestoreReferenceList.list.value.size) // initial list should still be empty
-    }
-
-    @Test
-    fun `test addAll does not request immediately`() {
-        `when`(mockTask.addOnSuccessListener(any())).thenAnswer { invocation ->
-            val callback = invocation.arguments[0] as OnSuccessListener<QuerySnapshot>
-            callback.onSuccess(mockQuerySnapshot)
-            mockTask
+  @Test
+  fun `test empty creates FirestoreReferenceList without UIDs`() = runTest {
+    val emptyList =
+        FirestoreReferenceList.empty(collectionPath) { snapshot ->
+          UniquelyIdentifiableString(snapshot?.get("data") as? String ?: "")
         }
 
-        val uids = listOf("uid1", "uid2", "uid3")
-        firestoreReferenceList.addAll(uids)
-
-        assertEquals(0, firestoreReferenceList.list.value.size) // initial list should still be empty
-    }
-
-    @Test
-    fun `test requestAll fetches documents and updates list`() = runTest {
-        // Prepare mocks
-        `when`(mockTask.addOnSuccessListener(any())).thenAnswer { invocation ->
-            val callback = invocation.arguments[0] as OnSuccessListener<QuerySnapshot>
-            callback.onSuccess(mockQuerySnapshot)
-            mockTask
-        }
-
-        whenever(mockQuerySnapshot.documents).thenReturn(listOf(mockSnapshot, mockSnapshot))
-        whenever(mockSnapshot.data).thenReturn(mapOf("data" to "Item1"), mapOf("data" to "Item2"))
-
-        // Add UIDs and call requestAll
-        firestoreReferenceList.addAll(listOf("uid1", "uid2"))
-        firestoreReferenceList.requestAll({ assertEquals(2, firestoreReferenceList.list.value.size) })
-
-        // Assert that the list was updated correctly
-        assertEquals(listOf("Item1", "Item2"), firestoreReferenceList.list.value.map { it.uid })
-        verify(mockQuery).get()
-    }
-
-    @Test
-    fun `test fromList creates FirestoreReferenceList with UIDs`() = runTest {
-        val list = listOf("uid1", "uid2")
-        val fromList =
-            FirestoreReferenceList.fromList(list, collectionPath) { snapshot ->
-                UniquelyIdentifiableString(snapshot?.get("data") as? String ?: "")
-            }
-
-        assertEquals(0, fromList.list.value.size)
-    }
-
-    @Test
-    fun `test empty creates FirestoreReferenceList without UIDs`() = runTest {
-        val emptyList =
-            FirestoreReferenceList.empty(collectionPath) { snapshot ->
-                UniquelyIdentifiableString(snapshot?.get("data") as? String ?: "")
-            }
-
-        // Initial list should be empty
-        assertEquals(0, emptyList.list.value.size)
-    }
+    // Initial list should be empty
+    assertEquals(0, emptyList.list.value.size)
+  }
 }

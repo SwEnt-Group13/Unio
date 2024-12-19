@@ -13,21 +13,21 @@ import org.junit.Test
 
 class AsyncImageWrapperTest : TearDown() {
 
-    @get:Rule val composeTestRule = createComposeRule()
+  @get:Rule val composeTestRule = createComposeRule()
 
-    private val imgUrl =
-        "https://m.media-amazon.com/images/S/pv-target-images/4be23d776550ebae78e63f21bec3515d3347ac4f44a3fb81e6633cf7a116761e.jpg"
+  private val imgUrl =
+      "https://m.media-amazon.com/images/S/pv-target-images/4be23d776550ebae78e63f21bec3515d3347ac4f44a3fb81e6633cf7a116761e.jpg"
 
-    private fun setAsyncImageWrapper() {
-        composeTestRule.setContent {
-            AsyncImageWrapper(
-                imageUri = imgUrl.toUri(), contentDescription = "", modifier = Modifier.testTag("IMAGE"))
-        }
+  private fun setAsyncImageWrapper() {
+    composeTestRule.setContent {
+      AsyncImageWrapper(
+          imageUri = imgUrl.toUri(), contentDescription = "", modifier = Modifier.testTag("IMAGE"))
     }
+  }
 
-    @Test
-    fun checkImageDisplays() {
-        setAsyncImageWrapper()
-        composeTestRule.onNodeWithTag("IMAGE").assertIsDisplayed()
-    }
+  @Test
+  fun checkImageDisplays() {
+    setAsyncImageWrapper()
+    composeTestRule.onNodeWithTag("IMAGE").assertIsDisplayed()
+  }
 }

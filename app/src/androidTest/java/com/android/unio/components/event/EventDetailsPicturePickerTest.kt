@@ -26,51 +26,51 @@ import org.junit.Test
 
 class EventDetailsPicturePickerTest : TearDown() {
 
-    @get:Rule val composeTestRule = createComposeRule()
-    private lateinit var testEvent: Event
-    private lateinit var testUser: User
-    @MockK private lateinit var eventRepository: EventRepositoryFirestore
-    @MockK private lateinit var imageRepository: ImageRepositoryFirebaseStorage
-    @MockK private lateinit var associationRepository: AssociationRepositoryFirestore
-    @MockK
-    private lateinit var eventUserPictureRepositoryFirestore: EventUserPictureRepositoryFirestore
-    @MockK private lateinit var concurrentEventUserRepositoryFirestore: SaveUseCaseFirestore
+  @get:Rule val composeTestRule = createComposeRule()
+  private lateinit var testEvent: Event
+  private lateinit var testUser: User
+  @MockK private lateinit var eventRepository: EventRepositoryFirestore
+  @MockK private lateinit var imageRepository: ImageRepositoryFirebaseStorage
+  @MockK private lateinit var associationRepository: AssociationRepositoryFirestore
+  @MockK
+  private lateinit var eventUserPictureRepositoryFirestore: EventUserPictureRepositoryFirestore
+  @MockK private lateinit var concurrentEventUserRepositoryFirestore: SaveUseCaseFirestore
 
-    private lateinit var eventViewModel: EventViewModel
+  private lateinit var eventViewModel: EventViewModel
 
-    fun setPicturePicker() {
-        composeTestRule.setContent { EventDetailsPicturePicker(testEvent, eventViewModel, testUser) }
-    }
+  fun setPicturePicker() {
+    composeTestRule.setContent { EventDetailsPicturePicker(testEvent, eventViewModel, testUser) }
+  }
 
-    @Before
-    fun setUp() {
-        MockKAnnotations.init(this, relaxed = true)
-        testEvent = MockEvent.createMockEvent(uid = "2")
-        testUser = MockUser.createMockUser(uid = "74", firstName = "John")
+  @Before
+  fun setUp() {
+    MockKAnnotations.init(this, relaxed = true)
+    testEvent = MockEvent.createMockEvent(uid = "2")
+    testUser = MockUser.createMockUser(uid = "74", firstName = "John")
 
-        eventViewModel =
-            EventViewModel(
-                eventRepository,
-                imageRepository,
-                associationRepository,
-                eventUserPictureRepositoryFirestore,
-                concurrentEventUserRepositoryFirestore)
-    }
+    eventViewModel =
+        EventViewModel(
+            eventRepository,
+            imageRepository,
+            associationRepository,
+            eventUserPictureRepositoryFirestore,
+            concurrentEventUserRepositoryFirestore)
+  }
 
-    @Test
-    fun testButtonIsDisplayed() {
-        setPicturePicker()
-        composeTestRule.onNodeWithTag(EventDetailsTestTags.UPLOAD_PICTURE_BUTTON).assertIsDisplayed()
-    }
+  @Test
+  fun testButtonIsDisplayed() {
+    setPicturePicker()
+    composeTestRule.onNodeWithTag(EventDetailsTestTags.UPLOAD_PICTURE_BUTTON).assertIsDisplayed()
+  }
 
-    @Test
-    fun testPicturePickerIsDisplayed() {
+  @Test
+  fun testPicturePickerIsDisplayed() {
 
-        setPicturePicker()
-        composeTestRule
-            .onNodeWithTag(EventDetailsTestTags.PICTURE_SELECTION_SHEET)
-            .assertIsNotDisplayed()
-        composeTestRule.onNodeWithTag(EventDetailsTestTags.UPLOAD_PICTURE_BUTTON).performClick()
-        composeTestRule.onNodeWithTag(EventDetailsTestTags.PICTURE_SELECTION_SHEET).assertIsDisplayed()
-    }
+    setPicturePicker()
+    composeTestRule
+        .onNodeWithTag(EventDetailsTestTags.PICTURE_SELECTION_SHEET)
+        .assertIsNotDisplayed()
+    composeTestRule.onNodeWithTag(EventDetailsTestTags.UPLOAD_PICTURE_BUTTON).performClick()
+    composeTestRule.onNodeWithTag(EventDetailsTestTags.PICTURE_SELECTION_SHEET).assertIsDisplayed()
+  }
 }

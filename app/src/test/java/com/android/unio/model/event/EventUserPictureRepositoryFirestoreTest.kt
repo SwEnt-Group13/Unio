@@ -22,55 +22,55 @@ import org.mockito.MockitoAnnotations
 import org.mockito.kotlin.any
 
 class EventUserPictureRepositoryFirestoreTest {
-    private lateinit var db: FirebaseFirestore
-    private lateinit var eventUserPictureRepository: EventUserPictureRepositoryFirestore
+  private lateinit var db: FirebaseFirestore
+  private lateinit var eventUserPictureRepository: EventUserPictureRepositoryFirestore
 
-    @Mock private lateinit var collectionReference: CollectionReference
-    @Mock private lateinit var documentReference: DocumentReference
-    @Mock private lateinit var voidTask: Task<Void>
+  @Mock private lateinit var collectionReference: CollectionReference
+  @Mock private lateinit var documentReference: DocumentReference
+  @Mock private lateinit var voidTask: Task<Void>
 
-    private val eventUserPicture =
-        EventUserPicture(
-            uid = "1",
-            image = "http://image.fr",
-            author = User.firestoreReferenceElementWith("1"),
-            likes = 2)
+  private val eventUserPicture =
+      EventUserPicture(
+          uid = "1",
+          image = "http://image.fr",
+          author = User.firestoreReferenceElementWith("1"),
+          likes = 2)
 
-    @Before
-    fun setUp() {
-        MockitoAnnotations.openMocks(this)
-        MockKAnnotations.init(this, relaxed = true)
-        db = mockk()
-        mockkStatic(FirebaseFirestore::class)
-        every { Firebase.firestore } returns db
-        every { db.collection(EVENT_USER_PICTURES_PATH) } returns collectionReference
+  @Before
+  fun setUp() {
+    MockitoAnnotations.openMocks(this)
+    MockKAnnotations.init(this, relaxed = true)
+    db = mockk()
+    mockkStatic(FirebaseFirestore::class)
+    every { Firebase.firestore } returns db
+    every { db.collection(EVENT_USER_PICTURES_PATH) } returns collectionReference
 
-        eventUserPictureRepository = EventUserPictureRepositoryFirestore(db)
-    }
+    eventUserPictureRepository = EventUserPictureRepositoryFirestore(db)
+  }
 
-    @Test
-    fun testAddEventUserPicture() {
-        `when`(collectionReference.document(eventUserPicture.uid)).thenReturn(documentReference)
-        `when`(voidTask.addOnSuccessListener(any())).thenReturn(voidTask)
-        `when`(documentReference.set(any())).thenReturn(voidTask)
-        eventUserPictureRepository.addEventUserPicture(
-            eventUserPicture, onSuccess = {}, onFailure = { e -> throw e })
-    }
+  @Test
+  fun testAddEventUserPicture() {
+    `when`(collectionReference.document(eventUserPicture.uid)).thenReturn(documentReference)
+    `when`(voidTask.addOnSuccessListener(any())).thenReturn(voidTask)
+    `when`(documentReference.set(any())).thenReturn(voidTask)
+    eventUserPictureRepository.addEventUserPicture(
+        eventUserPicture, onSuccess = {}, onFailure = { e -> throw e })
+  }
 
-    @Test
-    fun testGetNewUid() {
-        val testUid = "TOTALLYNEWUID"
-        `when`(collectionReference.document()).thenReturn(documentReference)
-        `when`(documentReference.id).thenReturn(testUid)
-        assertEquals(eventUserPictureRepository.getNewUid(), testUid)
-    }
+  @Test
+  fun testGetNewUid() {
+    val testUid = "TOTALLYNEWUID"
+    `when`(collectionReference.document()).thenReturn(documentReference)
+    `when`(documentReference.id).thenReturn(testUid)
+    assertEquals(eventUserPictureRepository.getNewUid(), testUid)
+  }
 
-    @Test
-    fun testDeleteEventById() {
-        `when`(collectionReference.document(eventUserPicture.uid)).thenReturn(documentReference)
-        `when`(voidTask.addOnSuccessListener(any())).thenReturn(voidTask)
-        `when`(documentReference.delete()).thenReturn(voidTask)
-        eventUserPictureRepository.deleteEventUserPictureById(
-            eventUserPicture.uid, {}, { e -> throw e })
-    }
+  @Test
+  fun testDeleteEventById() {
+    `when`(collectionReference.document(eventUserPicture.uid)).thenReturn(documentReference)
+    `when`(voidTask.addOnSuccessListener(any())).thenReturn(voidTask)
+    `when`(documentReference.delete()).thenReturn(voidTask)
+    eventUserPictureRepository.deleteEventUserPictureById(
+        eventUserPicture.uid, {}, { e -> throw e })
+  }
 }

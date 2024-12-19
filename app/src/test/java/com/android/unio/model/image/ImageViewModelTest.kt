@@ -9,40 +9,40 @@ import org.junit.Before
 import org.junit.Test
 
 class ImageViewModelTest {
-    @MockK private lateinit var imageRepositoryFirebaseStorage: ImageRepositoryFirebaseStorage
-    @MockK private lateinit var inputStream: InputStream
+  @MockK private lateinit var imageRepositoryFirebaseStorage: ImageRepositoryFirebaseStorage
+  @MockK private lateinit var inputStream: InputStream
 
-    private lateinit var imageViewModel: ImageViewModel
+  private lateinit var imageViewModel: ImageViewModel
 
-    @Before
-    fun setUp() {
-        MockKAnnotations.init(this)
+  @Before
+  fun setUp() {
+    MockKAnnotations.init(this)
 
-        imageViewModel = ImageViewModel(imageRepositoryFirebaseStorage)
-    }
+    imageViewModel = ImageViewModel(imageRepositoryFirebaseStorage)
+  }
 
-    @Test
-    fun testUploadSucceeds() {
-        every { imageRepositoryFirebaseStorage.uploadImage(any(), any(), any(), any()) } answers
-                {
-                    (args[2] as (String) -> Unit)("url")
-                }
+  @Test
+  fun testUploadSucceeds() {
+    every { imageRepositoryFirebaseStorage.uploadImage(any(), any(), any(), any()) } answers
+        {
+          (args[2] as (String) -> Unit)("url")
+        }
 
-        imageViewModel.uploadImage(
-            inputStream, "path", { url -> assert(url == "url") }, { assert(false) })
+    imageViewModel.uploadImage(
+        inputStream, "path", { url -> assert(url == "url") }, { assert(false) })
 
-        verify { imageRepositoryFirebaseStorage.uploadImage(inputStream, "path", any(), any()) }
-    }
+    verify { imageRepositoryFirebaseStorage.uploadImage(inputStream, "path", any(), any()) }
+  }
 
-    @Test
-    fun testUploadFails() {
-        every { imageRepositoryFirebaseStorage.uploadImage(any(), any(), any(), any()) } answers
-                {
-                    (args[3] as (Exception) -> Unit)(Exception())
-                }
+  @Test
+  fun testUploadFails() {
+    every { imageRepositoryFirebaseStorage.uploadImage(any(), any(), any(), any()) } answers
+        {
+          (args[3] as (Exception) -> Unit)(Exception())
+        }
 
-        imageViewModel.uploadImage(inputStream, "path", { url -> assert(false) }, { assert(true) })
+    imageViewModel.uploadImage(inputStream, "path", { url -> assert(false) }, { assert(true) })
 
-        verify { imageRepositoryFirebaseStorage.uploadImage(inputStream, "path", any(), any()) }
-    }
+    verify { imageRepositoryFirebaseStorage.uploadImage(inputStream, "path", any(), any()) }
+  }
 }

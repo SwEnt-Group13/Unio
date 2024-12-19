@@ -16,56 +16,56 @@ import org.junit.Before
 import org.junit.Test
 
 class BroadcastMessageTest {
-    @MockK private lateinit var functions: FirebaseFunctions
-    @MockK private lateinit var httpsCallableReference: HttpsCallableReference
-    @MockK private lateinit var task: Task<HttpsCallableResult>
+  @MockK private lateinit var functions: FirebaseFunctions
+  @MockK private lateinit var httpsCallableReference: HttpsCallableReference
+  @MockK private lateinit var task: Task<HttpsCallableResult>
 
-    @Before
-    fun setUp() {
-        MockKAnnotations.init(this)
+  @Before
+  fun setUp() {
+    MockKAnnotations.init(this)
 
-        mockkStatic(FirebaseFunctions::class)
-        every { Firebase.functions } returns functions
+    mockkStatic(FirebaseFunctions::class)
+    every { Firebase.functions } returns functions
 
-        every { functions.getHttpsCallable("broadcastMessage") } returns httpsCallableReference
-        every { httpsCallableReference.call(any()) } returns task
-        every { task.addOnFailureListener(any()) } returns task
-    }
+    every { functions.getHttpsCallable("broadcastMessage") } returns httpsCallableReference
+    every { httpsCallableReference.call(any()) } returns task
+    every { task.addOnFailureListener(any()) } returns task
+  }
 
-    @Test
-    fun testInvalidParameters() {
-        var onFailureCalled = false
+  @Test
+  fun testInvalidParameters() {
+    var onFailureCalled = false
 
-        val payload = mapOf("title" to "title")
-        broadcastMessage(
-            NotificationType.EVENT_SAVERS,
-            "topic",
-            payload,
-            { assert(false) { "onSuccess should not be called" } },
-            { onFailureCalled = true })
+    val payload = mapOf("title" to "title")
+    broadcastMessage(
+        NotificationType.EVENT_SAVERS,
+        "topic",
+        payload,
+        { assert(false) { "onSuccess should not be called" } },
+        { onFailureCalled = true })
 
-        assert(onFailureCalled) { "onFailure should be called" }
-    }
+    assert(onFailureCalled) { "onFailure should be called" }
+  }
 
-    @Test
-    fun testValidParameters() {
-        every { task.addOnSuccessListener(any()) } answers
-                {
-                    val callback = it.invocation.args[0] as OnSuccessListener<HttpsCallableResult>
-                    callback.onSuccess(mockk())
-                    task
-                }
+  @Test
+  fun testValidParameters() {
+    every { task.addOnSuccessListener(any()) } answers
+        {
+          val callback = it.invocation.args[0] as OnSuccessListener<HttpsCallableResult>
+          callback.onSuccess(mockk())
+          task
+        }
 
-        var onSuccessCalled = false
+    var onSuccessCalled = false
 
-        val payload = mapOf("title" to "title", "body" to "body")
-        broadcastMessage(
-            NotificationType.EVENT_SAVERS,
-            "topic",
-            payload,
-            { onSuccessCalled = true },
-            { assert(false) { "onFailure should not be called" } })
+    val payload = mapOf("title" to "title", "body" to "body")
+    broadcastMessage(
+        NotificationType.EVENT_SAVERS,
+        "topic",
+        payload,
+        { onSuccessCalled = true },
+        { assert(false) { "onFailure should not be called" } })
 
-        assert(onSuccessCalled) { "onSuccess should be called" }
-    }
+    assert(onSuccessCalled) { "onSuccess should be called" }
+  }
 }

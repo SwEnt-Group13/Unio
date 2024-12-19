@@ -37,64 +37,64 @@ import org.mockito.Mockito.mock
 
 class WelcomeTest : TearDown() {
 
-    @get:Rule val composeTestRule = createComposeRule()
+  @get:Rule val composeTestRule = createComposeRule()
 
-    val user = MockUser.createMockUser()
+  val user = MockUser.createMockUser()
 
-    private lateinit var userViewModel: UserViewModel
-    private lateinit var authViewModel: AuthViewModel
-    @MockK private lateinit var navigationAction: NavigationAction
-    @MockK private lateinit var userRepository: UserRepositoryFirestore
-    @MockK private lateinit var userDeletionRepository: UserDeletionUseCaseFirestore
-    @MockK private lateinit var imageRepository: ImageRepositoryFirebaseStorage
-    @MockK private lateinit var firebaseAuth: FirebaseAuth
+  private lateinit var userViewModel: UserViewModel
+  private lateinit var authViewModel: AuthViewModel
+  @MockK private lateinit var navigationAction: NavigationAction
+  @MockK private lateinit var userRepository: UserRepositoryFirestore
+  @MockK private lateinit var userDeletionRepository: UserDeletionUseCaseFirestore
+  @MockK private lateinit var imageRepository: ImageRepositoryFirebaseStorage
+  @MockK private lateinit var firebaseAuth: FirebaseAuth
 
-    @Before
-    fun setUp() {
-        MockKAnnotations.init(this)
+  @Before
+  fun setUp() {
+    MockKAnnotations.init(this)
 
-        mockkStatic(FirebaseAuth::class)
-        every { Firebase.auth } returns firebaseAuth
-        every { firebaseAuth.addAuthStateListener(any()) } just runs
-        every { firebaseAuth.removeAuthStateListener(any()) } just runs
+    mockkStatic(FirebaseAuth::class)
+    every { Firebase.auth } returns firebaseAuth
+    every { firebaseAuth.addAuthStateListener(any()) } just runs
+    every { firebaseAuth.removeAuthStateListener(any()) } just runs
 
-        // Call first callback when init is called
-        every { userRepository.init(any()) } answers { firstArg<() -> Unit>().invoke() }
-        every { userRepository.getUserWithId(any(), any(), any()) } answers
-                {
-                    val onSuccess = args[1] as (User) -> Unit
-                    onSuccess(user)
-                }
+    // Call first callback when init is called
+    every { userRepository.init(any()) } answers { firstArg<() -> Unit>().invoke() }
+    every { userRepository.getUserWithId(any(), any(), any()) } answers
+        {
+          val onSuccess = args[1] as (User) -> Unit
+          onSuccess(user)
+        }
 
-        navigationAction = mock(NavigationAction::class.java)
-        userViewModel = UserViewModel(userRepository, imageRepository, userDeletionRepository)
-        authViewModel = AuthViewModel(firebaseAuth, userRepository)
-    }
+    navigationAction = mock(NavigationAction::class.java)
+    userViewModel = UserViewModel(userRepository, imageRepository, userDeletionRepository)
+    authViewModel = AuthViewModel(firebaseAuth, userRepository)
+  }
 
-    @Test
-    fun testWelcomeIsDisplayed() {
-        composeTestRule.setContent { WelcomeScreen(navigationAction, authViewModel) }
-        composeTestRule.onNodeWithTag(WelcomeTestTags.EMAIL).assertIsDisplayed()
-        composeTestRule.onNodeWithTag(WelcomeTestTags.PASSWORD).assertIsDisplayed()
-        composeTestRule.onNodeWithTag(WelcomeTestTags.BUTTON).assertIsDisplayed()
-        composeTestRule.onNodeWithTag(WelcomeTestTags.BUTTON).assertHasClickAction()
-        composeTestRule.onNodeWithTag(WelcomeTestTags.BUTTON).assertIsNotEnabled()
-    }
+  @Test
+  fun testWelcomeIsDisplayed() {
+    composeTestRule.setContent { WelcomeScreen(navigationAction, authViewModel) }
+    composeTestRule.onNodeWithTag(WelcomeTestTags.EMAIL).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(WelcomeTestTags.PASSWORD).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(WelcomeTestTags.BUTTON).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(WelcomeTestTags.BUTTON).assertHasClickAction()
+    composeTestRule.onNodeWithTag(WelcomeTestTags.BUTTON).assertIsNotEnabled()
+  }
 
-    @Test
-    fun testButtonEnables() {
-        composeTestRule.setContent { WelcomeScreen(navigationAction, authViewModel) }
-        composeTestRule.onNodeWithTag(WelcomeTestTags.BUTTON).assertIsNotEnabled()
+  @Test
+  fun testButtonEnables() {
+    composeTestRule.setContent { WelcomeScreen(navigationAction, authViewModel) }
+    composeTestRule.onNodeWithTag(WelcomeTestTags.BUTTON).assertIsNotEnabled()
 
-        composeTestRule.onNodeWithTag(WelcomeTestTags.EMAIL).performTextInput("john.doe@epfl.ch")
-        composeTestRule.onNodeWithTag(WelcomeTestTags.PASSWORD).performTextInput("123456")
+    composeTestRule.onNodeWithTag(WelcomeTestTags.EMAIL).performTextInput("john.doe@epfl.ch")
+    composeTestRule.onNodeWithTag(WelcomeTestTags.PASSWORD).performTextInput("123456")
 
-        composeTestRule.onNodeWithTag(WelcomeTestTags.BUTTON).assertIsEnabled()
-    }
+    composeTestRule.onNodeWithTag(WelcomeTestTags.BUTTON).assertIsEnabled()
+  }
 
-    @After
-    override fun tearDown() {
-        unmockkAll()
-        clearAllMocks()
-    }
+  @After
+  override fun tearDown() {
+    unmockkAll()
+    clearAllMocks()
+  }
 }

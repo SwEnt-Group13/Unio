@@ -18,52 +18,52 @@ import org.mockito.kotlin.any
 
 class ImageRepositoryFirebaseStorageTest {
 
-    @Mock private lateinit var storage: FirebaseStorage
+  @Mock private lateinit var storage: FirebaseStorage
 
-    @Mock private lateinit var storageRef: StorageReference
+  @Mock private lateinit var storageRef: StorageReference
 
-    @Mock private lateinit var task: Task<Uri>
+  @Mock private lateinit var task: Task<Uri>
 
-    @Mock private lateinit var uri: Uri
+  @Mock private lateinit var uri: Uri
 
-    @Mock private lateinit var taskSnapshot: TaskSnapshot
+  @Mock private lateinit var taskSnapshot: TaskSnapshot
 
-    @Mock private lateinit var fileInputStream: FileInputStream
+  @Mock private lateinit var fileInputStream: FileInputStream
 
-    @Mock private lateinit var uploadTask: UploadTask
+  @Mock private lateinit var uploadTask: UploadTask
 
-    private lateinit var repository: ImageRepositoryFirebaseStorage
+  private lateinit var repository: ImageRepositoryFirebaseStorage
 
-    @Before
-    fun setUp() {
-        MockitoAnnotations.openMocks(this)
-        `when`(storage.reference).thenReturn(storageRef)
-        `when`(storageRef.child(any())).thenReturn(storageRef)
-        `when`(storageRef.downloadUrl).thenReturn(task)
+  @Before
+  fun setUp() {
+    MockitoAnnotations.openMocks(this)
+    `when`(storage.reference).thenReturn(storageRef)
+    `when`(storageRef.child(any())).thenReturn(storageRef)
+    `when`(storageRef.downloadUrl).thenReturn(task)
 
-        `when`(storageRef.putStream(fileInputStream)).thenReturn(uploadTask)
-        `when`(uploadTask.addOnSuccessListener(any())).thenAnswer { invocation ->
-            val callback = invocation.arguments[0] as OnSuccessListener<TaskSnapshot>
-            callback.onSuccess(taskSnapshot)
-            uploadTask
-        }
-
-        `when`(task.addOnSuccessListener(any())).thenAnswer { invocation ->
-            val callback = invocation.arguments[0] as OnSuccessListener<Uri>
-            callback.onSuccess(uri)
-            task
-        }
-
-        repository = ImageRepositoryFirebaseStorage(storage)
+    `when`(storageRef.putStream(fileInputStream)).thenReturn(uploadTask)
+    `when`(uploadTask.addOnSuccessListener(any())).thenAnswer { invocation ->
+      val callback = invocation.arguments[0] as OnSuccessListener<TaskSnapshot>
+      callback.onSuccess(taskSnapshot)
+      uploadTask
     }
 
-    /**
-     * Asserts that uploadImage calls the right functions and returns a string that can be converted
-     * to Uri format.
-     */
-    @Test
-    fun uploadImageTest() {
-        repository.uploadImage(
-            fileInputStream, "images/test.jpg", { stringUrl -> stringUrl.toUri() }, { e -> throw e })
+    `when`(task.addOnSuccessListener(any())).thenAnswer { invocation ->
+      val callback = invocation.arguments[0] as OnSuccessListener<Uri>
+      callback.onSuccess(uri)
+      task
     }
+
+    repository = ImageRepositoryFirebaseStorage(storage)
+  }
+
+  /**
+   * Asserts that uploadImage calls the right functions and returns a string that can be converted
+   * to Uri format.
+   */
+  @Test
+  fun uploadImageTest() {
+    repository.uploadImage(
+        fileInputStream, "images/test.jpg", { stringUrl -> stringUrl.toUri() }, { e -> throw e })
+  }
 }

@@ -83,252 +83,252 @@ import org.mockito.kotlin.any
 
 @HiltAndroidTest
 class ScreenDisplayingTest : TearDown() {
-    val user = MockUser.createMockUser(uid = "1")
-    val events = listOf(MockEvent.createMockEvent())
+  val user = MockUser.createMockUser(uid = "1")
+  val events = listOf(MockEvent.createMockEvent())
 
-    @MockK private lateinit var navigationAction: NavigationAction
+  @MockK private lateinit var navigationAction: NavigationAction
 
-    @MockK private lateinit var userRepository: UserRepositoryFirestore
-    private lateinit var userViewModel: UserViewModel
-    private lateinit var authViewModel: AuthViewModel
+  @MockK private lateinit var userRepository: UserRepositoryFirestore
+  private lateinit var userViewModel: UserViewModel
+  private lateinit var authViewModel: AuthViewModel
 
-    private lateinit var associationViewModel: AssociationViewModel
+  private lateinit var associationViewModel: AssociationViewModel
 
-    @MockK private lateinit var eventRepository: EventRepositoryFirestore
-    private lateinit var eventViewModel: EventViewModel
+  @MockK private lateinit var eventRepository: EventRepositoryFirestore
+  private lateinit var eventViewModel: EventViewModel
 
-    @MockK private lateinit var nominatimLocationRepository: NominatimLocationRepository
-    private lateinit var nominatimLocationSearchViewModel: NominatimLocationSearchViewModel
+  @MockK private lateinit var nominatimLocationRepository: NominatimLocationRepository
+  private lateinit var nominatimLocationSearchViewModel: NominatimLocationSearchViewModel
+
+  // Mocking the mapViewModel and its dependencies
+  private lateinit var locationTask: Task<Location>
+  private lateinit var context: Context
+  private lateinit var mapViewModel: MapViewModel
+  private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+  private val location =
+      Location("mockProvider").apply {
+        latitude = 46.518831258
+        longitude = 6.559331096
+      }
+
+  @MockK private lateinit var associationRepositoryFirestore: AssociationRepositoryFirestore
+  @MockK private lateinit var userDeletionRepository: UserDeletionUseCaseFirestore
+  @MockK private lateinit var imageRepositoryFirestore: ImageRepositoryFirebaseStorage
+  @MockK
+  private lateinit var eventUserPictureRepositoryFirestore: EventUserPictureRepositoryFirestore
+  @MockK private lateinit var concurrentEventUserRepositoryFirestore: SaveUseCaseFirestore
+
+  private lateinit var imageViewModel: ImageViewModel
+
+  @MockK private lateinit var firebaseAuth: FirebaseAuth
+
+  // This is the implementation of the abstract method getUid() from FirebaseUser.
+  // Because it is impossible to mock abstract method, this is the only way to mock it.
+  @MockK private lateinit var mockFirebaseUser: zzac
+
+  @get:Rule val composeTestRule = createComposeRule()
+
+  @get:Rule
+  val permissionRule =
+      GrantPermissionRule.grant(
+          android.Manifest.permission.ACCESS_FINE_LOCATION,
+          android.Manifest.permission.ACCESS_COARSE_LOCATION)
+
+  @get:Rule val hiltRule = HiltAndroidRule(this)
+
+  private lateinit var searchViewModel: SearchViewModel
+  @MockK(relaxed = true) private lateinit var searchRepository: SearchRepository
+
+  @Before
+  fun setUp() {
+    MockKAnnotations.init(this, relaxed = true)
+    searchViewModel = spyk(SearchViewModel(searchRepository))
+    authViewModel = spyk(AuthViewModel(mock(), userRepository))
+
+    hiltRule.inject()
+
+    associationViewModel =
+        spyk(
+            AssociationViewModel(
+                associationRepositoryFirestore,
+                mockk<EventRepositoryFirestore>(),
+                imageRepositoryFirestore,
+                mockk<FollowUseCaseFirestore>()))
+
+    every { eventRepository.getEvents(any(), any()) } answers
+        {
+          val onSuccess = args[0] as (List<Event>) -> Unit
+          onSuccess(events)
+        }
+    eventViewModel =
+        EventViewModel(
+            eventRepository,
+            imageRepositoryFirestore,
+            associationRepositoryFirestore,
+            eventUserPictureRepositoryFirestore,
+            concurrentEventUserRepositoryFirestore)
+    eventViewModel.loadEvents()
+    eventViewModel.selectEvent(events.first().uid)
 
     // Mocking the mapViewModel and its dependencies
-    private lateinit var locationTask: Task<Location>
-    private lateinit var context: Context
-    private lateinit var mapViewModel: MapViewModel
-    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
-    private val location =
-        Location("mockProvider").apply {
-            latitude = 46.518831258
-            longitude = 6.559331096
-        }
-
-    @MockK private lateinit var associationRepositoryFirestore: AssociationRepositoryFirestore
-    @MockK private lateinit var userDeletionRepository: UserDeletionUseCaseFirestore
-    @MockK private lateinit var imageRepositoryFirestore: ImageRepositoryFirebaseStorage
-    @MockK
-    private lateinit var eventUserPictureRepositoryFirestore: EventUserPictureRepositoryFirestore
-    @MockK private lateinit var concurrentEventUserRepositoryFirestore: SaveUseCaseFirestore
-
-    private lateinit var imageViewModel: ImageViewModel
-
-    @MockK private lateinit var firebaseAuth: FirebaseAuth
-
-    // This is the implementation of the abstract method getUid() from FirebaseUser.
-    // Because it is impossible to mock abstract method, this is the only way to mock it.
-    @MockK private lateinit var mockFirebaseUser: zzac
-
-    @get:Rule val composeTestRule = createComposeRule()
-
-    @get:Rule
-    val permissionRule =
-        GrantPermissionRule.grant(
-            android.Manifest.permission.ACCESS_FINE_LOCATION,
-            android.Manifest.permission.ACCESS_COARSE_LOCATION)
-
-    @get:Rule val hiltRule = HiltAndroidRule(this)
-
-    private lateinit var searchViewModel: SearchViewModel
-    @MockK(relaxed = true) private lateinit var searchRepository: SearchRepository
-
-    @Before
-    fun setUp() {
-        MockKAnnotations.init(this, relaxed = true)
-        searchViewModel = spyk(SearchViewModel(searchRepository))
-        authViewModel = spyk(AuthViewModel(mock(), userRepository))
-
-        hiltRule.inject()
-
-        associationViewModel =
-            spyk(
-                AssociationViewModel(
-                    associationRepositoryFirestore,
-                    mockk<EventRepositoryFirestore>(),
-                    imageRepositoryFirestore,
-                    mockk<FollowUseCaseFirestore>()))
-
-        every { eventRepository.getEvents(any(), any()) } answers
-                {
-                    val onSuccess = args[0] as (List<Event>) -> Unit
-                    onSuccess(events)
-                }
-        eventViewModel =
-            EventViewModel(
-                eventRepository,
-                imageRepositoryFirestore,
-                associationRepositoryFirestore,
-                eventUserPictureRepositoryFirestore,
-                concurrentEventUserRepositoryFirestore)
-        eventViewModel.loadEvents()
-        eventViewModel.selectEvent(events.first().uid)
-
-        // Mocking the mapViewModel and its dependencies
-        fusedLocationProviderClient = mock()
-        locationTask = mock()
-        context = mock()
-        `when`(fusedLocationProviderClient.lastLocation).thenReturn(locationTask)
-        `when`(locationTask.addOnSuccessListener(any())).thenAnswer {
-            (it.arguments[0] as OnSuccessListener<Location?>).onSuccess(location)
-            locationTask
-        }
-        mapViewModel =
-            spyk(MapViewModel(fusedLocationProviderClient)) {
-                every { hasLocationPermissions(any()) } returns true
-            }
-        mapViewModel = MapViewModel(fusedLocationProviderClient)
-        mapViewModel.fetchUserLocation(context)
-
-        every { userRepository.getUserWithId(any(), any(), any()) } answers
-                {
-                    val onSuccess = args[1] as (User) -> Unit
-                    onSuccess(user)
-                }
-        userViewModel = UserViewModel(userRepository, imageRepositoryFirestore, userDeletionRepository)
-        userViewModel.getUserByUid("1", false)
-
-        searchViewModel = spyk(SearchViewModel(searchRepository))
-        val associations = MockAssociation.createAllMockAssociations(size = 2)
-
-        every { associationViewModel.findAssociationById(any()) } returns associations.first()
-
-        // Mocking the Firebase.auth object and its behaviour
-        mockkStatic(FirebaseAuth::class)
-        every { Firebase.auth } returns firebaseAuth
-        every { firebaseAuth.currentUser } returns mockFirebaseUser
-        associationViewModel.selectAssociation(associations.first().uid)
-
-        nominatimLocationSearchViewModel = NominatimLocationSearchViewModel(nominatimLocationRepository)
-
-        imageViewModel = ImageViewModel(imageRepositoryFirestore)
+    fusedLocationProviderClient = mock()
+    locationTask = mock()
+    context = mock()
+    `when`(fusedLocationProviderClient.lastLocation).thenReturn(locationTask)
+    `when`(locationTask.addOnSuccessListener(any())).thenAnswer {
+      (it.arguments[0] as OnSuccessListener<Location?>).onSuccess(location)
+      locationTask
     }
-
-    @Test
-    fun testWelcomeDisplayed() {
-        composeTestRule.setContent { WelcomeScreen(navigationAction, authViewModel) }
-        composeTestRule.onNodeWithTag(WelcomeTestTags.SCREEN).assertIsDisplayed()
-    }
-
-    @Test
-    fun testEmailVerificationDisplayed() {
-        composeTestRule.setContent {
-            EmailVerificationScreen(navigationAction, authViewModel, onEmailVerified = {})
+    mapViewModel =
+        spyk(MapViewModel(fusedLocationProviderClient)) {
+          every { hasLocationPermissions(any()) } returns true
         }
-        composeTestRule.onNodeWithTag(EmailVerificationTestTags.SCREEN).assertIsDisplayed()
-    }
+    mapViewModel = MapViewModel(fusedLocationProviderClient)
+    mapViewModel.fetchUserLocation(context)
 
-    @Test
-    fun testAccountDetailsDisplayed() {
-        composeTestRule.setContent {
-            AccountDetailsScreen(navigationAction, userViewModel, imageViewModel)
+    every { userRepository.getUserWithId(any(), any(), any()) } answers
+        {
+          val onSuccess = args[1] as (User) -> Unit
+          onSuccess(user)
         }
-        composeTestRule.onNodeWithTag(AccountDetailsTestTags.ACCOUNT_DETAILS).assertIsDisplayed()
-    }
+    userViewModel = UserViewModel(userRepository, imageRepositoryFirestore, userDeletionRepository)
+    userViewModel.getUserByUid("1", false)
 
-    @Test
-    fun testHomeDisplayed() {
-        composeTestRule.setContent {
-            ProvidePreferenceLocals {
-                HomeScreen(navigationAction, eventViewModel, userViewModel, searchViewModel)
-            }
-        }
-        composeTestRule.onNodeWithTag(HomeTestTags.SCREEN).assertIsDisplayed()
-        composeTestRule.onNodeWithTag(HomeTestTags.SEARCH_BAR).assertIsDisplayed()
-        composeTestRule.onNodeWithTag(HomeTestTags.SEARCH_BAR_INPUT).assertIsDisplayed()
-    }
+    searchViewModel = spyk(SearchViewModel(searchRepository))
+    val associations = MockAssociation.createAllMockAssociations(size = 2)
 
-    @Test
-    fun testExploreDisplayed() {
-        composeTestRule.setContent {
-            ExploreScreen(navigationAction, associationViewModel, searchViewModel)
-        }
-        composeTestRule.onNodeWithTag(ExploreTestTags.EXPLORE_SCAFFOLD_TITLE).assertIsDisplayed()
-        composeTestRule.onNodeWithTag(ExploreContentTestTags.SEARCH_BAR).assertIsDisplayed()
-    }
+    every { associationViewModel.findAssociationById(any()) } returns associations.first()
 
-    @Test
-    fun testMapDisplayed() {
-        composeTestRule.setContent {
-            MapScreen(navigationAction, eventViewModel, userViewModel, mapViewModel)
-        }
-        composeTestRule.onNodeWithTag(MapTestTags.SCREEN).assertIsDisplayed()
-    }
+    // Mocking the Firebase.auth object and its behaviour
+    mockkStatic(FirebaseAuth::class)
+    every { Firebase.auth } returns firebaseAuth
+    every { firebaseAuth.currentUser } returns mockFirebaseUser
+    associationViewModel.selectAssociation(associations.first().uid)
 
-    @Test
-    fun testEventDisplayed() {
-        composeTestRule.setContent {
-            ProvidePreferenceLocals {
-                EventScreen(
-                    navigationAction = navigationAction,
-                    eventViewModel = eventViewModel,
-                    userViewModel = userViewModel,
-                    mapViewModel = mapViewModel)
-            }
-        }
-        composeTestRule.onNodeWithTag(EventDetailsTestTags.SCREEN).assertIsDisplayed()
-    }
+    nominatimLocationSearchViewModel = NominatimLocationSearchViewModel(nominatimLocationRepository)
 
-    @Test
-    fun testEventCreationDisplayed() {
-        composeTestRule.setContent {
-            EventCreationScreen(
-                navigationAction,
-                searchViewModel,
-                associationViewModel,
-                eventViewModel,
-                nominatimLocationSearchViewModel)
-        }
-        composeTestRule.onNodeWithTag(EventCreationTestTags.SCREEN).assertIsDisplayed()
-    }
+    imageViewModel = ImageViewModel(imageRepositoryFirestore)
+  }
 
-    @Test
-    fun testAssociationProfileDisplayed() {
-        composeTestRule.setContent {
-            ProvidePreferenceLocals {
-                AssociationProfileScaffold(
-                    navigationAction, userViewModel, eventViewModel, associationViewModel) {}
-            }
-        }
-        composeTestRule.onNodeWithTag(AssociationProfileTestTags.SCREEN).assertIsDisplayed()
-    }
+  @Test
+  fun testWelcomeDisplayed() {
+    composeTestRule.setContent { WelcomeScreen(navigationAction, authViewModel) }
+    composeTestRule.onNodeWithTag(WelcomeTestTags.SCREEN).assertIsDisplayed()
+  }
 
-    @Test
-    fun testSavedDisplayed() {
-        composeTestRule.setContent {
-            ProvidePreferenceLocals { SavedScreen(navigationAction, eventViewModel, userViewModel) }
-        }
-        composeTestRule.onNodeWithTag(SavedTestTags.SCREEN).assertIsDisplayed()
+  @Test
+  fun testEmailVerificationDisplayed() {
+    composeTestRule.setContent {
+      EmailVerificationScreen(navigationAction, authViewModel, onEmailVerified = {})
     }
+    composeTestRule.onNodeWithTag(EmailVerificationTestTags.SCREEN).assertIsDisplayed()
+  }
 
-    @Test
-    fun testSettingsDisplayed() {
-        composeTestRule.setContent {
-            ProvidePreferenceLocals { SettingsScreen(navigationAction, authViewModel, userViewModel) }
-        }
-        composeTestRule.onNodeWithTag(SettingsTestTags.SCREEN).assertIsDisplayed()
+  @Test
+  fun testAccountDetailsDisplayed() {
+    composeTestRule.setContent {
+      AccountDetailsScreen(navigationAction, userViewModel, imageViewModel)
     }
+    composeTestRule.onNodeWithTag(AccountDetailsTestTags.ACCOUNT_DETAILS).assertIsDisplayed()
+  }
 
-    @Test
-    fun testUserProfileDisplayed() {
-        composeTestRule.setContent {
-            UserProfileScreenScaffold(MockUser.createMockUser(), navigationAction, false, {}, {})
-        }
-        composeTestRule.onNodeWithTag(UserProfileTestTags.SCREEN).assertIsDisplayed()
+  @Test
+  fun testHomeDisplayed() {
+    composeTestRule.setContent {
+      ProvidePreferenceLocals {
+        HomeScreen(navigationAction, eventViewModel, userViewModel, searchViewModel)
+      }
     }
+    composeTestRule.onNodeWithTag(HomeTestTags.SCREEN).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(HomeTestTags.SEARCH_BAR).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(HomeTestTags.SEARCH_BAR_INPUT).assertIsDisplayed()
+  }
 
-    @Test
-    fun testSomeoneElseUserProfileDisplayed() {
-        composeTestRule.setContent {
-            userViewModel.setSomeoneElseUser(user)
-            SomeoneElseUserProfileScreen(navigationAction, userViewModel, associationViewModel)
-        }
-        composeTestRule.onNodeWithTag(SomeoneElseUserProfileTestTags.SCREEN).assertIsDisplayed()
+  @Test
+  fun testExploreDisplayed() {
+    composeTestRule.setContent {
+      ExploreScreen(navigationAction, associationViewModel, searchViewModel)
     }
+    composeTestRule.onNodeWithTag(ExploreTestTags.EXPLORE_SCAFFOLD_TITLE).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(ExploreContentTestTags.SEARCH_BAR).assertIsDisplayed()
+  }
+
+  @Test
+  fun testMapDisplayed() {
+    composeTestRule.setContent {
+      MapScreen(navigationAction, eventViewModel, userViewModel, mapViewModel)
+    }
+    composeTestRule.onNodeWithTag(MapTestTags.SCREEN).assertIsDisplayed()
+  }
+
+  @Test
+  fun testEventDisplayed() {
+    composeTestRule.setContent {
+      ProvidePreferenceLocals {
+        EventScreen(
+            navigationAction = navigationAction,
+            eventViewModel = eventViewModel,
+            userViewModel = userViewModel,
+            mapViewModel = mapViewModel)
+      }
+    }
+    composeTestRule.onNodeWithTag(EventDetailsTestTags.SCREEN).assertIsDisplayed()
+  }
+
+  @Test
+  fun testEventCreationDisplayed() {
+    composeTestRule.setContent {
+      EventCreationScreen(
+          navigationAction,
+          searchViewModel,
+          associationViewModel,
+          eventViewModel,
+          nominatimLocationSearchViewModel)
+    }
+    composeTestRule.onNodeWithTag(EventCreationTestTags.SCREEN).assertIsDisplayed()
+  }
+
+  @Test
+  fun testAssociationProfileDisplayed() {
+    composeTestRule.setContent {
+      ProvidePreferenceLocals {
+        AssociationProfileScaffold(
+            navigationAction, userViewModel, eventViewModel, associationViewModel) {}
+      }
+    }
+    composeTestRule.onNodeWithTag(AssociationProfileTestTags.SCREEN).assertIsDisplayed()
+  }
+
+  @Test
+  fun testSavedDisplayed() {
+    composeTestRule.setContent {
+      ProvidePreferenceLocals { SavedScreen(navigationAction, eventViewModel, userViewModel) }
+    }
+    composeTestRule.onNodeWithTag(SavedTestTags.SCREEN).assertIsDisplayed()
+  }
+
+  @Test
+  fun testSettingsDisplayed() {
+    composeTestRule.setContent {
+      ProvidePreferenceLocals { SettingsScreen(navigationAction, authViewModel, userViewModel) }
+    }
+    composeTestRule.onNodeWithTag(SettingsTestTags.SCREEN).assertIsDisplayed()
+  }
+
+  @Test
+  fun testUserProfileDisplayed() {
+    composeTestRule.setContent {
+      UserProfileScreenScaffold(MockUser.createMockUser(), navigationAction, false, {}, {})
+    }
+    composeTestRule.onNodeWithTag(UserProfileTestTags.SCREEN).assertIsDisplayed()
+  }
+
+  @Test
+  fun testSomeoneElseUserProfileDisplayed() {
+    composeTestRule.setContent {
+      userViewModel.setSomeoneElseUser(user)
+      SomeoneElseUserProfileScreen(navigationAction, userViewModel, associationViewModel)
+    }
+    composeTestRule.onNodeWithTag(SomeoneElseUserProfileTestTags.SCREEN).assertIsDisplayed()
+  }
 }

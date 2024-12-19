@@ -24,62 +24,62 @@ import org.mockito.kotlin.mock
 
 class EditAssociationTest : TearDown() {
 
-    private lateinit var navHostController: NavHostController
-    private lateinit var navigationAction: NavigationAction
-    @Mock private lateinit var collectionReference: CollectionReference
-    @Mock private lateinit var db: FirebaseFirestore
-    @Mock private lateinit var associationRepository: AssociationRepository
+  private lateinit var navHostController: NavHostController
+  private lateinit var navigationAction: NavigationAction
+  @Mock private lateinit var collectionReference: CollectionReference
+  @Mock private lateinit var db: FirebaseFirestore
+  @Mock private lateinit var associationRepository: AssociationRepository
 
-    private lateinit var associations: List<Association>
+  private lateinit var associations: List<Association>
 
-    @get:Rule val composeTestRule = createComposeRule()
+  @get:Rule val composeTestRule = createComposeRule()
 
-    @Before
-    fun setUp() {
-        MockitoAnnotations.openMocks(this)
+  @Before
+  fun setUp() {
+    MockitoAnnotations.openMocks(this)
 
-        associations =
-            listOf(
-                MockAssociation.createMockAssociation(uid = "1"),
-                MockAssociation.createMockAssociation(uid = "2"))
+    associations =
+        listOf(
+            MockAssociation.createMockAssociation(uid = "1"),
+            MockAssociation.createMockAssociation(uid = "2"))
 
-        Mockito.`when`(db.collection(Mockito.anyString())).thenReturn(collectionReference)
-        Mockito.`when`(associationRepository.getAssociations(any(), any())).thenAnswer { invocation ->
-            val onSuccess: (List<Association>) -> Unit =
-                invocation.arguments[0] as (List<Association>) -> Unit
-            onSuccess(associations)
-        }
-
-        navHostController = mock()
-        navigationAction = NavigationAction(navHostController)
+    Mockito.`when`(db.collection(Mockito.anyString())).thenReturn(collectionReference)
+    Mockito.`when`(associationRepository.getAssociations(any(), any())).thenAnswer { invocation ->
+      val onSuccess: (List<Association>) -> Unit =
+          invocation.arguments[0] as (List<Association>) -> Unit
+      onSuccess(associations)
     }
 
-    @Test
-    fun testEditAssociationScreenDisplaysCorrectly() {
-        composeTestRule.setContent {
-            SaveAssociationScaffold(
-                association = MockAssociation.createMockAssociation(uid = "1"),
-                onCancel = {},
-                onSave = { _, _ -> },
-                isNewAssociation = false)
-        }
+    navHostController = mock()
+    navigationAction = NavigationAction(navHostController)
+  }
 
-        composeTestRule.waitForIdle()
-
-        composeTestRule
-            .onNodeWithTag(SaveAssociationTestTags.NAME_TEXT_FIELD)
-            .assertDisplayComponentInScroll()
-        composeTestRule
-            .onNodeWithTag(SaveAssociationTestTags.FULL_NAME_TEXT_FIELD)
-            .assertDisplayComponentInScroll()
-        composeTestRule
-            .onNodeWithTag(SaveAssociationTestTags.CATEGORY_BUTTON)
-            .assertDisplayComponentInScroll()
-        composeTestRule
-            .onNodeWithTag(SaveAssociationTestTags.DESCRIPTION_TEXT_FIELD)
-            .assertDisplayComponentInScroll()
-        composeTestRule
-            .onNodeWithTag(SaveAssociationTestTags.URL_TEXT_FIELD)
-            .assertDisplayComponentInScroll()
+  @Test
+  fun testEditAssociationScreenDisplaysCorrectly() {
+    composeTestRule.setContent {
+      SaveAssociationScaffold(
+          association = MockAssociation.createMockAssociation(uid = "1"),
+          onCancel = {},
+          onSave = { _, _ -> },
+          isNewAssociation = false)
     }
+
+    composeTestRule.waitForIdle()
+
+    composeTestRule
+        .onNodeWithTag(SaveAssociationTestTags.NAME_TEXT_FIELD)
+        .assertDisplayComponentInScroll()
+    composeTestRule
+        .onNodeWithTag(SaveAssociationTestTags.FULL_NAME_TEXT_FIELD)
+        .assertDisplayComponentInScroll()
+    composeTestRule
+        .onNodeWithTag(SaveAssociationTestTags.CATEGORY_BUTTON)
+        .assertDisplayComponentInScroll()
+    composeTestRule
+        .onNodeWithTag(SaveAssociationTestTags.DESCRIPTION_TEXT_FIELD)
+        .assertDisplayComponentInScroll()
+    composeTestRule
+        .onNodeWithTag(SaveAssociationTestTags.URL_TEXT_FIELD)
+        .assertDisplayComponentInScroll()
+  }
 }

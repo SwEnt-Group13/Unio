@@ -21,32 +21,32 @@ import org.junit.After
  * Scrolls to a component if it's not displayed and asserts if it is displayed
  */
 fun SemanticsNodeInteraction.assertDisplayComponentInScroll() {
-    if (this.isNotDisplayed()) {
-        this.performScrollTo()
-    }
-    this.assertIsDisplayed()
+  if (this.isNotDisplayed()) {
+    this.performScrollTo()
+  }
+  this.assertIsDisplayed()
 }
 
 /*
  * Adds a new user social to the list of user socials
  */
 fun addNewUserSocial(composeTestRule: ComposeContentTestRule, username: String, platform: String) {
-    composeTestRule.onNodeWithTag(SocialsOverlayTestTags.ADD_BUTTON).performScrollTo().performClick()
-    composeTestRule.onNodeWithTag(SocialsOverlayTestTags.PROMPT_TEXT_FIELD).performTextInput(username)
-    composeTestRule.onNodeWithTag(SocialsOverlayTestTags.PROMPT_DROP_BOX).performClick()
-    composeTestRule
-        .onNodeWithTag(SocialsOverlayTestTags.PROMPT_DROP_BOX_ITEM + platform)
-        .performClick()
-    composeTestRule.onNodeWithTag(SocialsOverlayTestTags.PROMPT_SAVE_BUTTON).performClick()
+  composeTestRule.onNodeWithTag(SocialsOverlayTestTags.ADD_BUTTON).performScrollTo().performClick()
+  composeTestRule.onNodeWithTag(SocialsOverlayTestTags.PROMPT_TEXT_FIELD).performTextInput(username)
+  composeTestRule.onNodeWithTag(SocialsOverlayTestTags.PROMPT_DROP_BOX).performClick()
+  composeTestRule
+      .onNodeWithTag(SocialsOverlayTestTags.PROMPT_DROP_BOX_ITEM + platform)
+      .performClick()
+  composeTestRule.onNodeWithTag(SocialsOverlayTestTags.PROMPT_SAVE_BUTTON).performClick()
 }
 
 fun clearTest() {
-    Firebase.auth.unregisterAllAuthStateListeners()
-    unregisterAllSnapshotListeners()
-    unmockkAll()
-    clearAllMocks()
+  Firebase.auth.unregisterAllAuthStateListeners()
+  unregisterAllSnapshotListeners()
+  unmockkAll()
+  clearAllMocks()
 }
 
 open class TearDown {
-    @After open fun tearDown() = clearTest()
+  @After open fun tearDown() = clearTest()
 }

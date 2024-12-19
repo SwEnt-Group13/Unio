@@ -14,27 +14,27 @@ import org.junit.Test
 
 class SaveUseCaseFirestoreTest {
 
-    @MockK private lateinit var db: FirebaseFirestore
-    @MockK private lateinit var userRepository: UserRepository
-    @MockK private lateinit var eventRepository: EventRepository
+  @MockK private lateinit var db: FirebaseFirestore
+  @MockK private lateinit var userRepository: UserRepository
+  @MockK private lateinit var eventRepository: EventRepository
 
-    private lateinit var concurrentEventUserRepositoryFirestore: SaveUseCaseFirestore
+  private lateinit var concurrentEventUserRepositoryFirestore: SaveUseCaseFirestore
 
-    private val user = MockUser.createMockUser(uid = "1")
-    private val event = MockEvent.createMockEvent(uid = "11")
+  private val user = MockUser.createMockUser(uid = "1")
+  private val event = MockEvent.createMockEvent(uid = "11")
 
-    @Before
-    fun setUp() {
-        MockKAnnotations.init(this, relaxed = true)
+  @Before
+  fun setUp() {
+    MockKAnnotations.init(this, relaxed = true)
 
-        concurrentEventUserRepositoryFirestore =
-            SaveUseCaseFirestore(db, userRepository, eventRepository)
-    }
+    concurrentEventUserRepositoryFirestore =
+        SaveUseCaseFirestore(db, userRepository, eventRepository)
+  }
 
-    @Test
-    fun testUpdateSave() {
-        // Not very thorough testing but complicated to test more
-        concurrentEventUserRepositoryFirestore.updateSave(user, event, {}, {})
-        verify { db.runBatch(any()) }
-    }
+  @Test
+  fun testUpdateSave() {
+    // Not very thorough testing but complicated to test more
+    concurrentEventUserRepositoryFirestore.updateSave(user, event, {}, {})
+    verify { db.runBatch(any()) }
+  }
 }

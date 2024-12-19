@@ -25,61 +25,61 @@ import org.junit.Test
 @HiltAndroidTest
 class UserProfileTest : TearDown() {
 
-    @MockK private lateinit var navHostController: NavHostController
-    @MockK private lateinit var navigationAction: NavigationAction
+  @MockK private lateinit var navHostController: NavHostController
+  @MockK private lateinit var navigationAction: NavigationAction
 
-    @get:Rule val composeTestRule = createComposeRule()
-    @get:Rule val hiltRule = HiltAndroidRule(this)
+  @get:Rule val composeTestRule = createComposeRule()
+  @get:Rule val hiltRule = HiltAndroidRule(this)
 
-    private val user = MockUser.createMockUser()
+  private val user = MockUser.createMockUser()
 
-    private lateinit var searchViewModel: SearchViewModel
-    @MockK private lateinit var searchRepository: SearchRepository
+  private lateinit var searchViewModel: SearchViewModel
+  @MockK private lateinit var searchRepository: SearchRepository
 
-    @Before
-    fun setUp() {
-        MockKAnnotations.init(this, relaxed = true)
-        hiltRule.inject()
+  @Before
+  fun setUp() {
+    MockKAnnotations.init(this, relaxed = true)
+    hiltRule.inject()
 
-        every { navigationAction.navigateTo(any<String>()) } returns Unit
+    every { navigationAction.navigateTo(any<String>()) } returns Unit
 
-        searchViewModel = SearchViewModel(searchRepository)
+    searchViewModel = SearchViewModel(searchRepository)
 
-        navigationAction = NavigationAction(navHostController)
+    navigationAction = NavigationAction(navHostController)
+  }
+
+  @Test
+  fun testEverythingIsDisplayed() {
+    composeTestRule.setContent { UserProfileScreenScaffold(user, navigationAction, false, {}, {}) }
+
+    composeTestRule.onNodeWithTag(UserProfileTestTags.PROFILE_PICTURE).assertExists()
+
+    composeTestRule.onNodeWithTag(UserProfileTestTags.NAME).assertExists()
+    composeTestRule
+        .onNodeWithTag(UserProfileTestTags.NAME)
+        .assertTextEquals("${user.firstName} ${user.lastName}")
+
+    composeTestRule.onNodeWithTag(UserProfileTestTags.BIOGRAPHY).assertExists()
+    composeTestRule.onNodeWithTag(UserProfileTestTags.BIOGRAPHY).assertTextEquals(user.biography)
+
+    user.socials.forEach { social ->
+      composeTestRule
+          .onNodeWithTag(UserProfileTestTags.SOCIAL_BUTTON + social.social.title)
+          .assertExists()
     }
 
-    @Test
-    fun testEverythingIsDisplayed() {
-        composeTestRule.setContent { UserProfileScreenScaffold(user, navigationAction, false, {}, {}) }
-
-        composeTestRule.onNodeWithTag(UserProfileTestTags.PROFILE_PICTURE).assertExists()
-
-        composeTestRule.onNodeWithTag(UserProfileTestTags.NAME).assertExists()
-        composeTestRule
-            .onNodeWithTag(UserProfileTestTags.NAME)
-            .assertTextEquals("${user.firstName} ${user.lastName}")
-
-        composeTestRule.onNodeWithTag(UserProfileTestTags.BIOGRAPHY).assertExists()
-        composeTestRule.onNodeWithTag(UserProfileTestTags.BIOGRAPHY).assertTextEquals(user.biography)
-
-        user.socials.forEach { social ->
-            composeTestRule
-                .onNodeWithTag(UserProfileTestTags.SOCIAL_BUTTON + social.social.title)
-                .assertExists()
-        }
-
-        user.interests.forEach { interest ->
-            composeTestRule
-                .onNodeWithTag(UserProfileTestTags.INTEREST_CHIP + interest.name)
-                .assertExists()
-        }
+    user.interests.forEach { interest ->
+      composeTestRule
+          .onNodeWithTag(UserProfileTestTags.INTEREST_CHIP + interest.name)
+          .assertExists()
     }
+  }
 
-    @Test
-    fun testBottomSheet() {
+  @Test
+  fun testBottomSheet() {
 
-        composeTestRule.setContent { UserProfileBottomSheet(true, navigationAction) {} }
+    composeTestRule.setContent { UserProfileBottomSheet(true, navigationAction) {} }
 
-        composeTestRule.onNodeWithTag(UserProfileTestTags.BOTTOM_SHEET).assertIsDisplayed()
-    }
+    composeTestRule.onNodeWithTag(UserProfileTestTags.BOTTOM_SHEET).assertIsDisplayed()
+  }
 }

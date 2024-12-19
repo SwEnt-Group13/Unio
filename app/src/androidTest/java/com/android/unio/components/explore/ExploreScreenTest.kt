@@ -39,141 +39,141 @@ import org.junit.Test
 
 @HiltAndroidTest
 class ExploreScreenTest : TearDown() {
-    @MockK private lateinit var navigationAction: NavigationAction
-    @MockK private lateinit var associationRepository: AssociationRepositoryFirestore
-    private lateinit var searchViewModel: SearchViewModel
-    @MockK private lateinit var searchRepository: SearchRepository
-    @MockK private lateinit var concurrentAssociationUserRepositoryFirestore: FollowUseCaseFirestore
-    @MockK private lateinit var eventRepository: EventRepositoryFirestore
-    @MockK private lateinit var imageRepository: ImageRepositoryFirebaseStorage
-    @MockK private lateinit var context: Context
-    private lateinit var associationViewModel: AssociationViewModel
+  @MockK private lateinit var navigationAction: NavigationAction
+  @MockK private lateinit var associationRepository: AssociationRepositoryFirestore
+  private lateinit var searchViewModel: SearchViewModel
+  @MockK private lateinit var searchRepository: SearchRepository
+  @MockK private lateinit var concurrentAssociationUserRepositoryFirestore: FollowUseCaseFirestore
+  @MockK private lateinit var eventRepository: EventRepositoryFirestore
+  @MockK private lateinit var imageRepository: ImageRepositoryFirebaseStorage
+  @MockK private lateinit var context: Context
+  private lateinit var associationViewModel: AssociationViewModel
 
-    @get:Rule val composeTestRule = createComposeRule()
-    @get:Rule val hiltRule = HiltAndroidRule(this)
+  @get:Rule val composeTestRule = createComposeRule()
+  @get:Rule val hiltRule = HiltAndroidRule(this)
 
-    private lateinit var associations: List<Association>
-    private lateinit var sortedByCategoryAssociations:
-            List<Map.Entry<AssociationCategory, List<Association>>>
+  private lateinit var associations: List<Association>
+  private lateinit var sortedByCategoryAssociations:
+      List<Map.Entry<AssociationCategory, List<Association>>>
 
-    @Before
-    fun setUp() {
-        MockKAnnotations.init(this, relaxed = true)
-        searchViewModel = spyk(SearchViewModel(searchRepository))
+  @Before
+  fun setUp() {
+    MockKAnnotations.init(this, relaxed = true)
+    searchViewModel = spyk(SearchViewModel(searchRepository))
 
-        // Mock the navigation action to do nothing
-        every { navigationAction.navigateTo(any<String>()) } returns Unit
-        every { context.getString(AssociationCategory.ARTS.displayNameId) } returns "Arts"
-        every { context.getString(AssociationCategory.SCIENCE_TECH.displayNameId) } returns
-                "Science and technology"
+    // Mock the navigation action to do nothing
+    every { navigationAction.navigateTo(any<String>()) } returns Unit
+    every { context.getString(AssociationCategory.ARTS.displayNameId) } returns "Arts"
+    every { context.getString(AssociationCategory.SCIENCE_TECH.displayNameId) } returns
+        "Science and technology"
 
-        associations =
-            listOf(
-                MockAssociation.createMockAssociation(
-                    uid = "1", name = "ACM", category = AssociationCategory.SCIENCE_TECH),
-                MockAssociation.createMockAssociation(
-                    uid = "2", name = "Musical", category = AssociationCategory.ARTS),
-            )
+    associations =
+        listOf(
+            MockAssociation.createMockAssociation(
+                uid = "1", name = "ACM", category = AssociationCategory.SCIENCE_TECH),
+            MockAssociation.createMockAssociation(
+                uid = "2", name = "Musical", category = AssociationCategory.ARTS),
+        )
 
-        every { associationRepository.init {} } returns Unit
-        every { associationRepository.getAssociations(any(), any()) } answers
-                {
-                    val onSuccess = args[0] as (List<Association>) -> Unit
-                    onSuccess(associations)
-                }
+    every { associationRepository.init {} } returns Unit
+    every { associationRepository.getAssociations(any(), any()) } answers
+        {
+          val onSuccess = args[0] as (List<Association>) -> Unit
+          onSuccess(associations)
+        }
 
-        sortedByCategoryAssociations =
-            getSortedEntriesAssociationsByCategory(context, associations.groupBy { it.category })
+    sortedByCategoryAssociations =
+        getSortedEntriesAssociationsByCategory(context, associations.groupBy { it.category })
 
-        associationViewModel =
-            AssociationViewModel(
-                associationRepository,
-                eventRepository,
-                imageRepository,
-                concurrentAssociationUserRepositoryFirestore)
+    associationViewModel =
+        AssociationViewModel(
+            associationRepository,
+            eventRepository,
+            imageRepository,
+            concurrentAssociationUserRepositoryFirestore)
+  }
+
+  @Test
+  fun allComponentsAreDisplayed() {
+    composeTestRule.setContent {
+      ExploreScreen(navigationAction, associationViewModel, searchViewModel)
+    }
+    composeTestRule.onNodeWithTag(ExploreTestTags.EXPLORE_SCAFFOLD_TITLE).assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag(ExploreContentTestTags.SEARCH_BAR_PLACEHOLDER, true)
+        .assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag(ExploreContentTestTags.SEARCH_TRAILING_ICON, true)
+        .assertIsDisplayed()
+    composeTestRule.onNodeWithTag(ExploreContentTestTags.SEARCH_BAR).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(ExploreContentTestTags.TITLE_TEXT).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(ExploreContentTestTags.CATEGORIES_LIST).assertExists()
+  }
+
+  @Test
+  fun canTypeInSearchBar() {
+    composeTestRule.setContent {
+      ExploreScreen(navigationAction, associationViewModel, searchViewModel)
+    }
+    composeTestRule.onNodeWithTag(ExploreContentTestTags.SEARCH_BAR_INPUT).performTextInput("Music")
+    composeTestRule.onNodeWithTag(ExploreContentTestTags.SEARCH_BAR_INPUT).assertTextEquals("Music")
+  }
+
+  @Test
+  fun testGetFilteredAssociationsByAlphabeticalOrder() {
+    val result = getFilteredAssociationsByAlphabeticalOrder(associations)
+    assertEquals(associations[0].name, result[0].name)
+    assertEquals(associations[1].name, result[1].name)
+  }
+
+  @Test
+  fun testGetFilteredAssociationsByCategory() {
+    val associationsByCategory = associations.groupBy { it.category }
+    val sortedByCategoryAssociations =
+        getSortedEntriesAssociationsByCategory(context, associationsByCategory)
+    println(sortedByCategoryAssociations)
+
+    assertEquals(AssociationCategory.ARTS, sortedByCategoryAssociations[0].key)
+    assertEquals(AssociationCategory.SCIENCE_TECH, sortedByCategoryAssociations[1].key)
+  }
+
+  @Test
+  fun associationsAreDisplayed() {
+    associationViewModel.getAssociations()
+    composeTestRule.setContent {
+      ExploreScreen(navigationAction, associationViewModel, searchViewModel)
     }
 
-    @Test
-    fun allComponentsAreDisplayed() {
-        composeTestRule.setContent {
-            ExploreScreen(navigationAction, associationViewModel, searchViewModel)
-        }
-        composeTestRule.onNodeWithTag(ExploreTestTags.EXPLORE_SCAFFOLD_TITLE).assertIsDisplayed()
+    sortedByCategoryAssociations.forEach { (category, associations) ->
+      composeTestRule
+          .onNodeWithTag(ExploreContentTestTags.CATEGORY_NAME + category.name, true)
+          .assertIsDisplayed()
+      composeTestRule
+          .onNodeWithTag(ExploreContentTestTags.ASSOCIATION_ROW + category.name, true)
+          .assertIsDisplayed()
+      associations.forEach { association ->
         composeTestRule
-            .onNodeWithTag(ExploreContentTestTags.SEARCH_BAR_PLACEHOLDER, true)
+            .onNodeWithTag(ExploreContentTestTags.ASSOCIATION_ITEM + association.name, true)
             .assertIsDisplayed()
+      }
+    }
+  }
+
+  @Test
+  fun testClickOnAssociation() {
+    associationViewModel.getAssociations()
+    composeTestRule.setContent {
+      ExploreScreen(navigationAction, associationViewModel, searchViewModel)
+    }
+
+    sortedByCategoryAssociations.forEach { (_, associations) ->
+      associations.forEach {
         composeTestRule
-            .onNodeWithTag(ExploreContentTestTags.SEARCH_TRAILING_ICON, true)
-            .assertIsDisplayed()
-        composeTestRule.onNodeWithTag(ExploreContentTestTags.SEARCH_BAR).assertIsDisplayed()
-        composeTestRule.onNodeWithTag(ExploreContentTestTags.TITLE_TEXT).assertIsDisplayed()
-        composeTestRule.onNodeWithTag(ExploreContentTestTags.CATEGORIES_LIST).assertExists()
+            .onNodeWithTag(ExploreContentTestTags.ASSOCIATION_ITEM + it.name)
+            .performClick()
+      }
     }
 
-    @Test
-    fun canTypeInSearchBar() {
-        composeTestRule.setContent {
-            ExploreScreen(navigationAction, associationViewModel, searchViewModel)
-        }
-        composeTestRule.onNodeWithTag(ExploreContentTestTags.SEARCH_BAR_INPUT).performTextInput("Music")
-        composeTestRule.onNodeWithTag(ExploreContentTestTags.SEARCH_BAR_INPUT).assertTextEquals("Music")
-    }
-
-    @Test
-    fun testGetFilteredAssociationsByAlphabeticalOrder() {
-        val result = getFilteredAssociationsByAlphabeticalOrder(associations)
-        assertEquals(associations[0].name, result[0].name)
-        assertEquals(associations[1].name, result[1].name)
-    }
-
-    @Test
-    fun testGetFilteredAssociationsByCategory() {
-        val associationsByCategory = associations.groupBy { it.category }
-        val sortedByCategoryAssociations =
-            getSortedEntriesAssociationsByCategory(context, associationsByCategory)
-        println(sortedByCategoryAssociations)
-
-        assertEquals(AssociationCategory.ARTS, sortedByCategoryAssociations[0].key)
-        assertEquals(AssociationCategory.SCIENCE_TECH, sortedByCategoryAssociations[1].key)
-    }
-
-    @Test
-    fun associationsAreDisplayed() {
-        associationViewModel.getAssociations()
-        composeTestRule.setContent {
-            ExploreScreen(navigationAction, associationViewModel, searchViewModel)
-        }
-
-        sortedByCategoryAssociations.forEach { (category, associations) ->
-            composeTestRule
-                .onNodeWithTag(ExploreContentTestTags.CATEGORY_NAME + category.name, true)
-                .assertIsDisplayed()
-            composeTestRule
-                .onNodeWithTag(ExploreContentTestTags.ASSOCIATION_ROW + category.name, true)
-                .assertIsDisplayed()
-            associations.forEach { association ->
-                composeTestRule
-                    .onNodeWithTag(ExploreContentTestTags.ASSOCIATION_ITEM + association.name, true)
-                    .assertIsDisplayed()
-            }
-        }
-    }
-
-    @Test
-    fun testClickOnAssociation() {
-        associationViewModel.getAssociations()
-        composeTestRule.setContent {
-            ExploreScreen(navigationAction, associationViewModel, searchViewModel)
-        }
-
-        sortedByCategoryAssociations.forEach { (_, associations) ->
-            associations.forEach {
-                composeTestRule
-                    .onNodeWithTag(ExploreContentTestTags.ASSOCIATION_ITEM + it.name)
-                    .performClick()
-            }
-        }
-
-        verify(atLeast = 1) { navigationAction.navigateTo(Screen.ASSOCIATION_PROFILE) }
-    }
+    verify(atLeast = 1) { navigationAction.navigateTo(Screen.ASSOCIATION_PROFILE) }
+  }
 }

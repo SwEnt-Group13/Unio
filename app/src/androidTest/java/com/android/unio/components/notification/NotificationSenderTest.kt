@@ -20,86 +20,86 @@ import org.junit.Rule
 import org.junit.Test
 
 class NotificationSenderTest : TearDown() {
-    @get:Rule val composeTestRule = createComposeRule()
+  @get:Rule val composeTestRule = createComposeRule()
 
-    @Before
-    fun setUp() {
-        MockKAnnotations.init(this)
+  @Before
+  fun setUp() {
+    MockKAnnotations.init(this)
 
-        mockkStatic(::broadcastMessage.javaMethod!!.declaringClass.kotlin)
+    mockkStatic(::broadcastMessage.javaMethod!!.declaringClass.kotlin)
+  }
+
+  @Test
+  fun testEverythingIsDisplayed() {
+    composeTestRule.setContent {
+      NotificationSender(
+          dialogTitle = "Test",
+          notificationType = NotificationType.EVENT_SAVERS,
+          topic = "Test",
+          notificationContent = { mapOf("title" to it) },
+          showNotificationDialog = true,
+          onClose = {})
     }
 
-    @Test
-    fun testEverythingIsDisplayed() {
-        composeTestRule.setContent {
-            NotificationSender(
-                dialogTitle = "Test",
-                notificationType = NotificationType.EVENT_SAVERS,
-                topic = "Test",
-                notificationContent = { mapOf("title" to it) },
-                showNotificationDialog = true,
-                onClose = {})
+    composeTestRule.onNodeWithTag(NotificationSenderTestTags.CARD).assertExists()
+    composeTestRule.onNodeWithTag(NotificationSenderTestTags.MESSAGE_FIELD).assertExists()
+    composeTestRule.onNodeWithTag(NotificationSenderTestTags.TITLE).assertExists()
+    composeTestRule.onNodeWithTag(NotificationSenderTestTags.SEND_BUTTON).assertExists()
+    composeTestRule.onNodeWithTag(NotificationSenderTestTags.SEND_BUTTON).assertHasClickAction()
+  }
+
+  @Test
+  fun testSendSuccess() {
+    val topic = "Topic"
+    val message = "Message"
+    val payload = mapOf("title" to message)
+
+    every { broadcastMessage(any(), any(), any(), any(), any()) } answers
+        {
+          (args[3] as () -> Unit)()
+          (args[4] as () -> Unit)()
         }
 
-        composeTestRule.onNodeWithTag(NotificationSenderTestTags.CARD).assertExists()
-        composeTestRule.onNodeWithTag(NotificationSenderTestTags.MESSAGE_FIELD).assertExists()
-        composeTestRule.onNodeWithTag(NotificationSenderTestTags.TITLE).assertExists()
-        composeTestRule.onNodeWithTag(NotificationSenderTestTags.SEND_BUTTON).assertExists()
-        composeTestRule.onNodeWithTag(NotificationSenderTestTags.SEND_BUTTON).assertHasClickAction()
+    composeTestRule.setContent {
+      NotificationSender(
+          dialogTitle = "Test",
+          notificationType = NotificationType.EVENT_SAVERS,
+          topic = topic,
+          notificationContent = { mapOf("title" to it) },
+          showNotificationDialog = true,
+          onClose = {})
     }
 
-    @Test
-    fun testSendSuccess() {
-        val topic = "Topic"
-        val message = "Message"
-        val payload = mapOf("title" to message)
+    composeTestRule
+        .onNodeWithTag(NotificationSenderTestTags.MESSAGE_FIELD)
+        .performTextInput(message)
+    composeTestRule.onNodeWithTag(NotificationSenderTestTags.SEND_BUTTON).performClick()
 
-        every { broadcastMessage(any(), any(), any(), any(), any()) } answers
-                {
-                    (args[3] as () -> Unit)()
-                    (args[4] as () -> Unit)()
-                }
+    // Verify that the broadcastMessage function was called
+    verify { broadcastMessage(NotificationType.EVENT_SAVERS, topic, payload, any(), any()) }
+  }
 
-        composeTestRule.setContent {
-            NotificationSender(
-                dialogTitle = "Test",
-                notificationType = NotificationType.EVENT_SAVERS,
-                topic = topic,
-                notificationContent = { mapOf("title" to it) },
-                showNotificationDialog = true,
-                onClose = {})
-        }
+  @Test
+  fun testSendEmptyMessage() {
+    val topic = "Topic"
+    val message = ""
 
-        composeTestRule
-            .onNodeWithTag(NotificationSenderTestTags.MESSAGE_FIELD)
-            .performTextInput(message)
-        composeTestRule.onNodeWithTag(NotificationSenderTestTags.SEND_BUTTON).performClick()
-
-        // Verify that the broadcastMessage function was called
-        verify { broadcastMessage(NotificationType.EVENT_SAVERS, topic, payload, any(), any()) }
+    composeTestRule.setContent {
+      NotificationSender(
+          dialogTitle = "Test",
+          notificationType = NotificationType.EVENT_SAVERS,
+          topic = topic,
+          notificationContent = { mapOf("title" to it) },
+          showNotificationDialog = true,
+          onClose = {})
     }
 
-    @Test
-    fun testSendEmptyMessage() {
-        val topic = "Topic"
-        val message = ""
+    composeTestRule
+        .onNodeWithTag(NotificationSenderTestTags.MESSAGE_FIELD)
+        .performTextInput(message)
+    composeTestRule.onNodeWithTag(NotificationSenderTestTags.SEND_BUTTON).performClick()
 
-        composeTestRule.setContent {
-            NotificationSender(
-                dialogTitle = "Test",
-                notificationType = NotificationType.EVENT_SAVERS,
-                topic = topic,
-                notificationContent = { mapOf("title" to it) },
-                showNotificationDialog = true,
-                onClose = {})
-        }
-
-        composeTestRule
-            .onNodeWithTag(NotificationSenderTestTags.MESSAGE_FIELD)
-            .performTextInput(message)
-        composeTestRule.onNodeWithTag(NotificationSenderTestTags.SEND_BUTTON).performClick()
-
-        // Verify that the broadcastMessage function was not called
-        verify(exactly = 0) { broadcastMessage(any(), any(), any(), any(), any()) }
-    }
+    // Verify that the broadcastMessage function was not called
+    verify(exactly = 0) { broadcastMessage(any(), any(), any(), any(), any()) }
+  }
 }
