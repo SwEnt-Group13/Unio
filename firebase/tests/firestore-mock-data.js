@@ -23,8 +23,10 @@ export const aliceAssociation = {
   description: "Description",
   followersCount: 0,
   members: ["alice"],
+  roles: [],
   image: "",
   events: [],
+  principalEmailAddress: "alice@gmail.com"
 };
 
 export const aliceEvent = {
@@ -36,7 +38,8 @@ export const aliceEvent = {
   description: "Description",
   catchyDescription: "Catchy description",
   price: 0.0,
-  date: new Date(),
+  startDate: new Date(),
+  endDate: new Date(),
   location: {
     name: "Location",
     address: "Address",
@@ -44,6 +47,9 @@ export const aliceEvent = {
     longitude: 0.0,
   },
   types: ["OTHER"],
+  maxNumberOfPlaces: -1,
+  numberOfSaved: 0,
+  eventPictures: []
 };
 
 export const otherUser = {
@@ -69,7 +75,8 @@ export const otherEvent = {
   description: "Description",
   catchyDescription: "Catchy description",
   price: 0.0,
-  date: new Date(),
+  startDate: new Date(),
+  endDate: new Date(),
   location: {
     name: "Location",
     address: "Address",
@@ -77,6 +84,9 @@ export const otherEvent = {
     longitude: 0.0,
   },
   types: ["OTHER"],
+  maxNumberOfPlaces: -1,
+  numberOfSaved: 0,
+  eventPictures: []
 };
 
 export const otherAssociation = {
@@ -88,8 +98,10 @@ export const otherAssociation = {
   description: "Description",
   followersCount: 0,
   members: ["other"],
+  roles: [],
   image: "",
   events: [],
+  principalEmailAddress: "otherassociation@gmail.com"
 };
 
 export async function setupFirestore(testEnv) {
