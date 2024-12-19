@@ -22,8 +22,10 @@ export const aliceAssociation = {
   category: "UNKNOWN",
   description: "Description",
   followersCount: 0,
-  members: ["alice"],
-  roles: [],
+  members: {"123": "alice"},
+  roles: {"1234": {color:4294901760, displayName:"displayNameRole",
+    permissions: ["some rights"]}},
+
   image: "",
   events: [],
   principalEmailAddress: "alice@gmail.com"
@@ -97,8 +99,9 @@ export const otherAssociation = {
   category: "UNKNOWN",
   description: "Description",
   followersCount: 0,
-  members: ["other"],
-  roles: [],
+  members: {"123": "other"},
+  roles: {"1234": {color:4294901760, displayName:"displayNameRole",
+  permissions: ["some rights"]}},
   image: "",
   events: [],
   principalEmailAddress: "otherassociation@gmail.com"
