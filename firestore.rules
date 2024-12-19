@@ -169,8 +169,8 @@ service cloud.firestore {
       function onlyUpdatedSavedCount() {
         // Check that the only updated field is the numberOfSaved field
         // and that it was only incremented or decremented by 1
-        let newCount = request.resource.data.numberOfSaved;
-        let oldCount = resource.data.numberOfSaved;
+        let newCount = request.resource.data.get("numberOfSaved", null);
+        let oldCount = resource.data.get("numberOfSaved", null);
 
         let affectedKeys = request.resource.data.diff(resource.data).affectedKeys();
         let onlySavedCountChanged = affectedKeys.hasOnly(['numberOfSaved']);
