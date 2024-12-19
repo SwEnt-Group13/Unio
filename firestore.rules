@@ -19,7 +19,7 @@ service cloud.firestore {
 
     match /users/{uid} {
       function isOwner() {
-        return isVerified() && request.auth.uid == uid && request.auth.token.email == request.resource.data.email;
+        return isVerified() && request.auth.uid == uid;
       }
       function validateJoinedAssociations() {
         // Prevent the user from changing the joinedAssociations field
@@ -74,12 +74,12 @@ service cloud.firestore {
       allow list: if isVerified();
       allow delete: if isOwner();
       allow create: if isOwner() && validate();
-      allow update: if (isOwner() || onlySavedEventsUpdated() || onlyFollowedAssociationsUpdated()) && validateJoinedAssociations() && validate();
+      allow update: if (onlySavedEventsUpdated() || onlyFollowedAssociationsUpdated()) && validateJoinedAssociations() && validate() && isOwner();
     }
 
     match /associations/{uid} {
       function isMember() {
-        return get(/databases/$(database)/documents/associations/$(uid)).data.members.hasAny([request.auth.uid]);
+        return get(/databases/$(database)/documents/associations/$(uid)).data.members.keys().hasAny([request.auth.uid]);
       }
       function onlyUpdatedFollowerCount() {
         // Check that the only updated field is the followersCount field

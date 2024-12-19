@@ -27,7 +27,7 @@ export const aliceAssociation = {
     alice: {
       color: 4294901760,
       displayName: "displayNameRole",
-      permissions: ["Full Rights"],
+      permissions: [""],
     },
   },
   image: "",

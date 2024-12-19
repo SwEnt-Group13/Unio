@@ -111,30 +111,75 @@ async function runTests(testEnv) {
   );
 
   /** Read and write operations on associations **/
-  /*await assertSucceeds(
+  await assertSucceeds(
     setDoc(
       doc(aliceDb, `/associations/${aliceAssociation.uid}`),
       aliceAssociation
     )
   );
-  await assertFails(setDoc(doc(aliceDb, `/associations/${aliceAssociation.uid}`), { ...aliceAssociation, uid: "other" }));
-  await assertSucceeds(getDoc(doc(aliceDb, `/associations/${aliceAssociation.uid}`)));
-  await assertFails(updateDoc(doc(aliceDb, `/associations/${otherAssociation.uid}`), aliceAssociation));
-  await assertFails(setDoc(doc(aliceDb, `/associations/new-association`), { ...aliceAssociation, uid: "new-association" }));
-  await assertSucceeds(updateDoc(doc(aliceDb, `/associations/${aliceAssociation.uid}`), { ...aliceAssociation, name: "New name" }));
-  await assertSucceeds(updateDoc(doc(aliceDb, `/associations/${otherAssociation.uid}`), { ...otherAssociation, followersCount: 1 }));
-  await assertSucceeds(updateDoc(doc(aliceDb, `/associations/${otherAssociation.uid}`), { ...otherAssociation, followersCount: 0 }));
-  await assertFails(updateDoc(doc(aliceDb, `/associations/${otherAssociation.uid}`), { ...otherAssociation, followersCount: 1000 }));
+  await assertFails(
+    setDoc(doc(aliceDb, `/associations/${aliceAssociation.uid}`), {
+      ...aliceAssociation,
+      uid: "other",
+    })
+  );
+  await assertSucceeds(
+    getDoc(doc(aliceDb, `/associations/${aliceAssociation.uid}`))
+  );
+  await assertFails(
+    updateDoc(
+      doc(aliceDb, `/associations/${otherAssociation.uid}`),
+      aliceAssociation
+    )
+  );
+  await assertFails(
+    setDoc(doc(aliceDb, `/associations/new-association`), {
+      ...aliceAssociation,
+      uid: "new-association",
+    })
+  );
+  await assertSucceeds(
+    updateDoc(doc(aliceDb, `/associations/${aliceAssociation.uid}`), {
+      ...aliceAssociation,
+      name: "New name",
+    })
+  );
+  await assertSucceeds(
+    updateDoc(doc(aliceDb, `/associations/${otherAssociation.uid}`), {
+      ...otherAssociation,
+      followersCount: 1,
+    })
+  );
+  await assertSucceeds(
+    updateDoc(doc(aliceDb, `/associations/${otherAssociation.uid}`), {
+      ...otherAssociation,
+      followersCount: 0,
+    })
+  );
+  await assertFails(
+    updateDoc(doc(aliceDb, `/associations/${otherAssociation.uid}`), {
+      ...otherAssociation,
+      followersCount: 1000,
+    })
+  );
   await assertSucceeds(getDocs(collection(aliceDb, `/associations`)));
-  await assertFails(deleteDoc(doc(aliceDb, `/associations/${aliceAssociation.uid}`)));
-  await assertFails(setDoc(doc(aliceDb, `/associations/new-association`), aliceAssociation));
-  await assertFails(setDoc(doc(aliceDb, `/associations/${aliceAssociation.uid}`), {
-    uid: aliceAssociation.uid
-  }));
-  await assertFails(setDoc(doc(aliceDb, `/associations/${aliceAssociation.uid}`), {
-    ...aliceAssociation,
-    members: "invalid type"
-  }));*/
+  await assertFails(
+    deleteDoc(doc(aliceDb, `/associations/${aliceAssociation.uid}`))
+  );
+  await assertFails(
+    setDoc(doc(aliceDb, `/associations/new-association`), aliceAssociation)
+  );
+  /*await assertFails(
+    setDoc(doc(aliceDb, `/associations/${aliceAssociation.uid}`), {
+      uid: aliceAssociation.uid,
+    })
+  );
+  await assertFails(
+    setDoc(doc(aliceDb, `/associations/${aliceAssociation.uid}`), {
+      ...aliceAssociation,
+      members: "invalid type",
+    })
+  );*/
 
   /** Read and write operations on events **/
   /*await assertSucceeds(setDoc(doc(aliceDb, `/events/${aliceEvent.uid}`), aliceEvent));
