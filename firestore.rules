@@ -85,12 +85,12 @@ service cloud.firestore {
       function onlyUpdatedFollowerCount() {
         // Check that the only updated field is the followersCount field
         // and that it was only incremented or decremented by 1
-        let newCount = request.resource.data.get(followersCount, null);
-        let oldCount = resource.data.get(followersCount, null);
+        let newCount = request.resource.data.get("followersCount", null);
+        let oldCount = resource.data.get("followersCount", null);
 
 
         let affectedKeys = request.resource.data.diff(resource.data).affectedKeys();
-        let onlyFollowerCountChanged = true; //affectedKeys.hasOnly(['followersCount']);
+        let onlyFollowerCountChanged = affectedKeys.hasOnly(['followersCount']);
 
         return onlyFollowerCountChanged && (newCount == oldCount || newCount == oldCount + 1 || newCount == oldCount - 1);
       }
