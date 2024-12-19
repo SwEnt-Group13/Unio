@@ -218,7 +218,7 @@ service cloud.firestore {
       // To update or delete an event, the user must be an
       // organiser in the existing event document
       allow update: if isVerified() && (isEventOrganiser(resource.data.organisers) || onlyUpdatedEventPictures() || onlyUpdatedSavedCount()) && validate();
-      allow delete: if isVerified() && isEventOrganiser(request.resource.data.organisers);
+      allow delete: if isVerified() && isEventOrganiser(resource.data.organisers);
     }
 
     match /eventUserPictures/{uid} {

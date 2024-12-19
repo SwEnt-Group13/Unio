@@ -162,7 +162,7 @@ async function runTests(testEnv) {
       followersCount: 1000,
     })
   );
-  /*await assertSucceeds(getDocs(collection(aliceDb, `/associations`)));
+  await assertSucceeds(getDocs(collection(aliceDb, `/associations`)));
   await assertFails(
     deleteDoc(doc(aliceDb, `/associations/${aliceAssociation.uid}`))
   );
@@ -179,26 +179,51 @@ async function runTests(testEnv) {
       ...aliceAssociation,
       members: "invalid type",
     })
-  );*/
+  );
 
   /** Read and write operations on events **/
-  /*await assertSucceeds(setDoc(doc(aliceDb, `/events/${aliceEvent.uid}`), aliceEvent));
-  await assertFails(setDoc(doc(aliceDb, `/events/${aliceEvent.uid}`), { ...aliceEvent, uid: "other" }));
+  await assertSucceeds(
+    setDoc(doc(aliceDb, `/events/${aliceEvent.uid}`), aliceEvent)
+  );
+  await assertFails(
+    setDoc(doc(aliceDb, `/events/${aliceEvent.uid}`), {
+      ...aliceEvent,
+      uid: "other",
+    })
+  );
   await assertSucceeds(getDoc(doc(aliceDb, `/events/${aliceEvent.uid}`)));
-  await assertFails(updateDoc(doc(aliceDb, `/events/${otherEvent.uid}`), aliceEvent));
+  await assertFails(
+    updateDoc(doc(aliceDb, `/events/${otherEvent.uid}`), aliceEvent)
+  );
   await assertFails(setDoc(doc(aliceDb, `/events/new-event`), aliceEvent));
-  await assertSucceeds(setDoc(doc(aliceDb, `/events/new-event`), { ...aliceEvent, uid: "new-event" }));
-  await assertSucceeds(updateDoc(doc(aliceDb, `/events/${aliceEvent.uid}`), { ...aliceEvent, title: "New title" }));
+  await assertSucceeds(
+    setDoc(doc(aliceDb, `/events/new-event`), {
+      ...aliceEvent,
+      uid: "new-event",
+    })
+  );
+  await assertSucceeds(
+    updateDoc(doc(aliceDb, `/events/${aliceEvent.uid}`), {
+      ...aliceEvent,
+      title: "New title",
+    })
+  );
   await assertSucceeds(getDocs(collection(aliceDb, `/events`)));
   await assertSucceeds(deleteDoc(doc(aliceDb, `/events/${aliceEvent.uid}`)));
-  await assertSucceeds(setDoc(doc(aliceDb, `/events/${aliceEvent.uid}`), aliceEvent));
-  await assertFails(setDoc(doc(aliceDb, `/events/${aliceEvent.uid}`), {
-    uid: aliceEvent.uid
-  }));
-  await assertFails(setDoc(doc(aliceDb, `/events/${aliceEvent.uid}`), {
-    ...aliceEvent,
-    organisers: "invalid type"
-  }));*/
+  await assertSucceeds(
+    setDoc(doc(aliceDb, `/events/${aliceEvent.uid}`), aliceEvent)
+  );
+  await assertFails(
+    setDoc(doc(aliceDb, `/events/${aliceEvent.uid}`), {
+      uid: aliceEvent.uid,
+    })
+  );
+  await assertFails(
+    setDoc(doc(aliceDb, `/events/${aliceEvent.uid}`), {
+      ...aliceEvent,
+      organisers: "invalid type",
+    })
+  );
 
   /** All unauthenticated requests should be denied **/
   const unAuthenticated = testEnv.unauthenticatedContext();
