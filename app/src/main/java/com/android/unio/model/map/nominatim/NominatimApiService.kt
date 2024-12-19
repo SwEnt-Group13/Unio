@@ -11,7 +11,7 @@ import retrofit2.http.Query
  * Retrofit which can build the URL automatically thanks to it.
  */
 interface NominatimApiService {
-  @Headers("User-Agent: Unio/0.3 (zafarderie@gmail.com)")
+  @Headers("User-Agent: Unio/0.3 (unio.epfl@gmail.com)")
   @GET("search")
 
   /**
