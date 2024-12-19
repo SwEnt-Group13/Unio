@@ -436,10 +436,7 @@ constructor(
               lazy = true)
           it?.members?.forEach { fetchUserFromMember(it) }
         }
-      Log.d("AssociationActionsMembers", "nombreOfMembers :" + (selectedAssociation.value?.members?.size
-          ?: -1))
-      Log.d("AssociationActionsMembers", "member0 : " + (selectedAssociation.value?.members?.get(0)?.uid))
-      Log.d("AssociationActionsMembers", "member1 : " + (selectedAssociation.value?.members?.get(1)?.uid))
+
       //Log.d("AssociationActionsMembers", "member2 : " + (selectedAssociation.value?.members?.get(2)?.uid))
   }
 

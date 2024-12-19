@@ -671,8 +671,6 @@ private fun AssociationMembers(
     return
   }
 
-    Log.d("AssociationActionsMembers", "MemberSize" + members.size.toString())
-    Log.d("AssociationActionsMembers", "member0" + members.get(0).user.element.value.toString())
 
   Text(
       context.getString(R.string.association_contact_members),
@@ -745,7 +743,6 @@ private fun AssociationActionsMembers(
     val pagerState = rememberPagerState(initialPage = 0) { members?.size ?: 0 }
     val coroutineScope = rememberCoroutineScope()
 
-    Log.d("AssociationActionsMembers", "searchResults size : "+ members?.size.toString())
 
     // Define the MemberSearchBar
     val searchBar: @Composable () -> Unit = {
