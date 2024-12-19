@@ -81,6 +81,7 @@ constructor(
           it?.taggedAssociations?.requestAll()
           if (loadPictures) {
             it?.eventPictures?.requestAll()
+
           }
         }
   }
@@ -289,11 +290,10 @@ constructor(
           eventUserPictureRepository.addEventUserPicture(
               newEventPicture,
               {
-                event.eventPictures.add(newEventPicture.uid)
+                event.eventPictures.add(newEventPicture)
                 updateEventWithoutImage(
                     event,
                     {
-                      event.eventPictures.add(newEventPicture)
                       onSuccess()
                     },
                     { e ->
@@ -325,9 +325,6 @@ constructor(
         {
 
           if (!event.eventPictures.contains(picture.uid)) {
-              event.eventPictures.add(picture)
-          } else {
-              event.eventPictures.remove(picture.uid)
               event.eventPictures.add(picture)
           }
             updateEventWithoutImage(event, {

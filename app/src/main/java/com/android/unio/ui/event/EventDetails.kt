@@ -472,7 +472,8 @@ fun EventDetailsPicturesTab(
         modifier = Modifier
             .fillMaxSize()
             .testTag(EventDetailsTestTags.GALLERY_GRID)) {
-          itemsIndexed(eventPictures.sortedWith(compareBy<EventUserPicture> { it.likes.uids.size }.thenBy{it.uid} ))  { index, item ->
+          itemsIndexed(eventPictures.sortedWith(compareBy<EventUserPicture> { it.uid }.thenByDescending{it.likes.uids.size}))  { index, item ->
+              println(item.likes.uids.size)
             AsyncImageWrapper(
                 item.image.toUri(),
                 contentDescription =

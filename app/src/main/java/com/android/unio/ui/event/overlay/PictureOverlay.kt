@@ -69,6 +69,7 @@ fun PictureOverlay(
   var enableButton by remember { mutableStateOf(true) }
   val event by eventViewModel.selectedEvent.collectAsState()
 
+    val sortedEventPictures = mutableListOf(eventPictures.sortedWith(compareBy<EventUserPicture> { it.uid }.thenBy{it.likes.uids.size}))
   if (event == null) {
     Log.e("PictureOverlay", "Event is null")
     Toast.makeText(LocalContext.current, "An error occurred.", Toast.LENGTH_SHORT).show()
@@ -76,7 +77,8 @@ fun PictureOverlay(
   }
   val onClickArrow: (Boolean) -> Unit = { isRight: Boolean ->
     if (isRight && pagerState.currentPage < eventPictures.size - 1) {
-      scope.launch { pagerState.animateScrollToPage(pagerState.currentPage + 1) }
+      scope.launch {pagerState.animateScrollToPage(pagerState.currentPage + 1)
+        }
     } else if (!isRight && pagerState.currentPage > 0) {
       scope.launch { pagerState.animateScrollToPage(pagerState.currentPage - 1) }
     }
@@ -87,22 +89,29 @@ fun PictureOverlay(
         mutableStateOf(eventPictures[pagerState.currentPage].likes.contains(user.uid))
       }
 
-  val nbOfLikes by
+  var nbOfLikes by
       remember(pagerState.currentPage) {
+          println("REFRESH")
         mutableIntStateOf(eventPictures[pagerState.currentPage].likes.uids.size)
       }
 
-  val onClickLike = {
-    enableButton = false
-    val picture = eventPictures[pagerState.currentPage]
-    if (isLiked) {
-      picture.likes.remove(user.uid)
-    } else {
-      picture.likes.add(user.uid)
-    }
-    isLiked = !isLiked
-    eventViewModel.updateEventUserPictureWithoutImage(
-        event = event!!, picture = picture, { enableButton = true }, {})
+    val onClickLike = {
+        enableButton = false
+        val picture = eventPictures[pagerState.currentPage]
+        println("BEFORE: ${picture.likes.uids.size}")
+        if (isLiked) {
+            picture.likes.remove(user.uid)
+            nbOfLikes -= 1
+        } else {
+            picture.likes.add(user.uid)
+            nbOfLikes += 1
+        }
+        println("AFTER: ${eventPictures[pagerState.currentPage].likes.uids.size}")
+        isLiked = !isLiked
+        eventViewModel.updateEventUserPictureWithoutImage(
+            event = event!!, picture = picture, {
+                println("AFTER: ${eventPictures[pagerState.currentPage].likes.uids.size}")
+            enableButton = true }, {})
   }
   Dialog(
       onDismissRequest = onDismiss,
@@ -112,7 +121,9 @@ fun PictureOverlay(
               dismissOnBackPress = true,
               usePlatformDefaultWidth = false)) {
         Box(
-            modifier = Modifier.testTag(PICTURE_FULL_SCREEN).fillMaxHeight(0.5f),
+            modifier = Modifier
+                .testTag(PICTURE_FULL_SCREEN)
+                .fillMaxHeight(0.5f),
             contentAlignment = Alignment.Center) {
               HorizontalPager(pagerState, pageSpacing = 40.dp, beyondViewportPageCount = 1) { page
                 ->
@@ -129,8 +140,9 @@ fun PictureOverlay(
               IconButton(
                   onClick = { onClickArrow(false) },
                   modifier =
-                      Modifier.align(Alignment.CenterStart)
-                          .testTag(EventDetailsTestTags.EVENT_PICTURES_ARROW_LEFT),
+                  Modifier
+                      .align(Alignment.CenterStart)
+                      .testTag(EventDetailsTestTags.EVENT_PICTURES_ARROW_LEFT),
                   colors =
                       IconButtonDefaults.iconButtonColors(
                           contentColor = MaterialTheme.colorScheme.onPrimary)) {
@@ -143,12 +155,12 @@ fun PictureOverlay(
               IconButton(
                   onClick = { onClickArrow(true) },
                   modifier =
-                      Modifier.align(Alignment.CenterEnd)
-                          .testTag(EventDetailsTestTags.EVENT_PICTURES_ARROW_RIGHT),
+                  Modifier
+                      .align(Alignment.CenterEnd)
+                      .testTag(EventDetailsTestTags.EVENT_PICTURES_ARROW_RIGHT),
                   colors =
                       IconButtonDefaults.iconButtonColors(
-                          contentColor = MaterialTheme.colorScheme.onPrimary,
-                          containerColor = MaterialTheme.colorScheme.primary)) {
+                          contentColor = MaterialTheme.colorScheme.onPrimary)) {
                     Icon(
                         Icons.AutoMirrored.Filled.ArrowForward,
                         context.getString(R.string.event_details_content_description_arrow_right),
@@ -157,8 +169,10 @@ fun PictureOverlay(
 
               Row(
                   modifier =
-                      Modifier.testTag("pictureInteractionRow").align(Alignment.BottomCenter),
-                  horizontalArrangement = Arrangement.SpaceAround) {
+                  Modifier
+                      .testTag("pictureInteractionRow")
+                      .align(Alignment.BottomCenter),
+                  horizontalArrangement = Arrangement.SpaceAround, verticalAlignment = Alignment.CenterVertically) {
                     IconButton(
                         onClick = onClickLike,
                         modifier = Modifier,
@@ -174,7 +188,7 @@ fun PictureOverlay(
                               tint = if (isLiked) Color.Red else Color.White)
                         }
 
-                    Text(nbOfLikes.toString(), color = MaterialTheme.colorScheme.onPrimary)
+                    Text("$nbOfLikes", color = MaterialTheme.colorScheme.onPrimary)
                   }
             }
       }
