@@ -58,7 +58,7 @@ service cloud.firestore {
 
     match /associations/{uid} {
       function isMember() {
-        return isVerified() && get(/databases/$(database)/documents/associations/$(uid)).data.members.hasAny([request.auth.uid]);
+        return isVerified() && get(/databases/$(database)/documents/associations/$(uid)).data.members.keys().hasAny([request.auth.uid]);
       }
       function onlyUpdatedFollowerCount() {
         // Check that the only updated field is the followersCount field
@@ -93,8 +93,8 @@ service cloud.firestore {
 
       allow read: if isVerified();
       // Allow update if the user is a member of the association or if the changed data is the followersCount field
-      allow update: if isVerified() &&
-          ((isMember() || onlyUpdatedFollowerCount())) && validate();
+      allow update: if isVerified() && (isMember() || onlyUpdatedFollowerCount()); //&& validate();
+
     }
 
     match /events/{uid} {
