@@ -1,3 +1,5 @@
+import com.android.unio.model.strings.test_tags.event.EventDetailsTestTags
+
 //package com.android.unio.end2end
 //
 //import android.app.Activity
@@ -335,11 +337,14 @@
 //    composeTestRule.onNodeWithText(EVENT_TITLE).assertIsDisplayed()
 //    composeTestRule.onNodeWithText(EVENT_SHORT_DESCRIPTION).assertIsDisplayed()
 //
-//    // Assert that the rest of the details are displayed
-//    composeTestRule.onNodeWithText(EVENT_TITLE).performScrollTo().performClick()
-//    composeTestRule.onNodeWithText(EVENT_DESCRIPTION).assertIsDisplayed()
-//    composeTestRule.onNodeWithText(EVENT_FORMATTED_ADDRESS).assertIsDisplayed()
+//    // Assert that the rest of the details exist
+//    composeTestRule.onNodeWithText(EVENT_TITLE).performClick()
+//    composeTestRule.waitUntil(10000) {
+//        composeTestRule.onNodeWithTag(EventDetailsTestTags.SCREEN).isDisplayed()
+//    }
 //
+//    composeTestRule.onNodeWithText(EVENT_DESCRIPTION).assertExists()
+//    composeTestRule.onNodeWithText(EVENT_FORMATTED_ADDRESS).assertExists()
 //    // Go back to the Home screen
 //    composeTestRule.onNodeWithTag(EventDetailsTestTags.GO_BACK_BUTTON).performClick()
 //    composeTestRule.waitUntil(10000) {

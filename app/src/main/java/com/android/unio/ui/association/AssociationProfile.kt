@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -28,6 +29,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
@@ -37,6 +39,9 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.outlined.MoreVert
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -51,6 +56,9 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.ModalBottomSheetProperties
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
@@ -158,7 +166,7 @@ fun AssociationProfileScreen(
  * @param associationViewModel [AssociationViewModel] : The association view model
  * @param onEdit [() -> Unit] : The action to edit the association
  */
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun AssociationProfileScaffold(
     navigationAction: NavigationAction,
@@ -169,6 +177,13 @@ fun AssociationProfileScaffold(
     onEdit: () -> Unit
 ) {
     val associationCollect by associationViewModel.selectedAssociation.collectAsState()
+
+    val refreshState by associationViewModel.refreshState
+    val pullRefreshState =
+        rememberPullRefreshState(
+            refreshing = refreshState, onRefresh = { associationViewModel.refreshAssociation() })
+
+    var showNotificationDialog by remember { mutableStateOf(false) }
 
     var showSheet by remember { mutableStateOf(false) }
     val context = LocalContext.current
@@ -207,153 +222,160 @@ fun AssociationProfileScaffold(
                 })
         },
         content = { padding ->
-            val user by userViewModel.user.collectAsState()
-            val userRole = association.roles.find { it.uid == association.members.find { it.uid == user!!.uid }?.roleUid}
-
-            val userPermissions = userRole?.permissions
-
             Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(padding)
+                modifier =
+                Modifier.padding(padding)
+                    .pullRefresh(pullRefreshState)
+                    .fillMaxHeight()
+                    .verticalScroll(rememberScrollState())
             ) {
-                if (userPermissions?.hasAnyPermission() == true) {
-                    val userRoleColor = Color(userRole.color)
+                val user by userViewModel.user.collectAsState()
+                val userRole =
+                    association.roles.find { it.uid == association.members.find { it.uid == user!!.uid }?.roleUid }
 
-                    // Horizontal red strip
-                    Box(
-                        modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .background(userRoleColor)
-                            .height(50.dp)
-                            .align(Alignment.TopCenter)
-                    ) {
-                        Text(
-                            "Your role is" +
-                                    " " +
-                                    userRole.displayName,
-                            color = Color.White,
-                            modifier = Modifier.align(Alignment.Center)
-                        )
-                    }
+                val userPermissions = userRole?.permissions
 
-                    // Main content with vertical red lines and pager
-                    Box(
-                        modifier =
-                        Modifier
-                            .fillMaxSize()
-                            .padding(top = 50.dp) // Ensure space for the red strip
-                    ) {
-                        Row(
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(padding)
+                ) {
+                    if (userPermissions?.hasAnyPermission() == true) {
+                        val userRoleColor = Color(userRole.color)
+
+                        // Horizontal red strip
+                        Box(
+                            modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .background(userRoleColor)
+                                .height(50.dp)
+                                .align(Alignment.TopCenter)
+                        ) {
+                            Text(
+                                "Your role is" +
+                                        " " +
+                                        userRole.displayName,
+                                color = Color.White,
+                                modifier = Modifier.align(Alignment.Center)
+                            )
+                        }
+
+                        // Main content with vertical red lines and pager
+                        Box(
                             modifier =
                             Modifier
                                 .fillMaxSize()
-                                .padding(horizontal = 0.dp) // Space for vertical lines
+                                .padding(top = 50.dp) // Ensure space for the red strip
                         ) {
-                            // Left red line
-                            Box(
+                            Row(
                                 modifier =
                                 Modifier
-                                    .width(2.dp)
-                                    .fillMaxHeight()
-                                    .background(userRoleColor)
-                            )
-
-                            // Main content (Conditional based on permission)
-                            if (userPermissions.hasPermission(PermissionType.BETTER_OVERVIEW) &&
-                                !(userPermissions.hasPermission(PermissionType.FULL_RIGHTS)) &&
-                                userPermissions.getGrantedPermissions().size == 1
+                                    .fillMaxSize()
+                                    .padding(horizontal = 0.dp) // Space for vertical lines
                             ) {
-                                // Default content without HorizontalPager
+                                // Left red line
                                 Box(
-                                    modifier = Modifier
-                                        .weight(1f)
-                                        .padding(horizontal = 8.dp)
-                                ) {
-                                    AssociationProfileContent(
-                                        navigationAction = navigationAction,
-                                        userViewModel = userViewModel,
-                                        eventViewModel = eventViewModel,
-                                        associationViewModel = associationViewModel
-                                    )
-                                }
-                            } else {
-                                // Main content with HorizontalPager
-                                Column(
-                                    modifier = Modifier
-                                        .weight(1f)
-                                        .padding(horizontal = 8.dp)
-                                ) {
-                                    val nbOfTabs = 2
-                                    val pagerState =
-                                        rememberPagerState(initialPage = 0) { nbOfTabs }
+                                    modifier =
+                                    Modifier
+                                        .width(2.dp)
+                                        .fillMaxHeight()
+                                        .background(userRoleColor)
+                                )
 
-                                    // Tab Menu
-                                    val tabList =
-                                        listOf(
-                                            "Overview",
-                                            "Actions"
+                                // Main content (Conditional based on permission)
+                                if (userPermissions.hasPermission(PermissionType.BETTER_OVERVIEW) &&
+                                    !(userPermissions.hasPermission(PermissionType.FULL_RIGHTS)) &&
+                                    userPermissions.getGrantedPermissions().size == 1
+                                ) {
+                                    // Default content without HorizontalPager
+                                    Box(
+                                        modifier = Modifier
+                                            .weight(1f)
+                                            .padding(horizontal = 8.dp)
+                                    ) {
+                                        AssociationProfileContent(
+                                            navigationAction = navigationAction,
+                                            userViewModel = userViewModel,
+                                            eventViewModel = eventViewModel,
+                                            associationViewModel = associationViewModel
                                         )
-                                    SmoothTopBarNavigationMenu(tabList, pagerState)
+                                    }
+                                } else {
+                                    // Main content with HorizontalPager
+                                    Column(
+                                        modifier = Modifier
+                                            .weight(1f)
+                                            .padding(horizontal = 8.dp)
+                                    ) {
+                                        val nbOfTabs = 2
+                                        val pagerState =
+                                            rememberPagerState(initialPage = 0) { nbOfTabs }
 
-                                    // Pager Content
-                                    HorizontalPager(
-                                        state = pagerState, modifier = Modifier.fillMaxSize()
-                                    ) { page ->
-                                        when (page) {
-                                            0 ->
-                                                AssociationProfileContent(
-                                                    navigationAction = navigationAction,
-                                                    userViewModel = userViewModel,
-                                                    eventViewModel = eventViewModel,
-                                                    associationViewModel = associationViewModel
-                                                )
+                                        // Tab Menu
+                                        val tabList =
+                                            listOf(
+                                                "Overview",
+                                                "Actions"
+                                            )
+                                        SmoothTopBarNavigationMenu(tabList, pagerState)
 
-                                            1 ->
-                                                AssociationProfileActionsContent(
-                                                    navigationAction = navigationAction,
-                                                    userViewModel = userViewModel,
-                                                    eventViewModel = eventViewModel,
-                                                    associationViewModel = associationViewModel,
-                                                    searchViewModel = searchViewModel
-                                                )
+                                        // Pager Content
+                                        HorizontalPager(
+                                            state = pagerState, modifier = Modifier.fillMaxSize()
+                                        ) { page ->
+                                            when (page) {
+                                                0 ->
+                                                    AssociationProfileContent(
+                                                        navigationAction = navigationAction,
+                                                        userViewModel = userViewModel,
+                                                        eventViewModel = eventViewModel,
+                                                        associationViewModel = associationViewModel
+                                                    )
+
+                                                1 ->
+                                                    AssociationProfileActionsContent(
+                                                        navigationAction = navigationAction,
+                                                        userViewModel = userViewModel,
+                                                        eventViewModel = eventViewModel,
+                                                        associationViewModel = associationViewModel,
+                                                        searchViewModel = searchViewModel
+                                                    )
+                                            }
                                         }
                                     }
                                 }
-                            }
 
-                            // Right red line (This will always be displayed)
-                            Box(
-                                modifier =
-                                Modifier
-                                    .width(2.dp)
-                                    .fillMaxHeight()
-                                    .background(userRoleColor)
-                            )
+                                // Right red line (This will always be displayed)
+                                Box(
+                                    modifier =
+                                    Modifier
+                                        .width(2.dp)
+                                        .fillMaxHeight()
+                                        .background(userRoleColor)
+                                )
+                            }
                         }
+                    } else {
+                        // Default content without permissions
+                        AssociationProfileContent(
+                            navigationAction = navigationAction,
+                            userViewModel = userViewModel,
+                            eventViewModel = eventViewModel,
+                            associationViewModel = associationViewModel
+                        )
                     }
-                } else {
-                    // Default content without permissions
-                    AssociationProfileContent(
-                        navigationAction = navigationAction,
-                        userViewModel = userViewModel,
-                        eventViewModel = eventViewModel,
-                        associationViewModel = associationViewModel
-                    )
                 }
             }
         })
-
-    var showNotificationDialog by remember { mutableStateOf(false) }
-
-    NotificationSender(
-        context.getString(R.string.association_broadcast_message),
-        NotificationType.ASSOCIATION_FOLLOWERS,
-        association.uid,
-        { mapOf("title" to association.name, "body" to it) },
-        showNotificationDialog,
-        { showNotificationDialog = false })
+        NotificationSender(
+            context.getString(R.string.association_broadcast_message),
+            NotificationType.ASSOCIATION_FOLLOWERS,
+            association.uid,
+            { mapOf("title" to association.name, "body" to it) },
+            showNotificationDialog,
+            { showNotificationDialog = false })
+    }
 
     AssociationProfileBottomSheet(
         showSheet,
@@ -361,7 +383,12 @@ fun AssociationProfileScaffold(
         onEdit = onEdit,
         onOpenNotificationDialog = { showNotificationDialog = true })
 
-}
+  Box {
+    PullRefreshIndicator(
+        refreshing = refreshState,
+        state = pullRefreshState,
+        modifier = Modifier.align(Alignment.TopCenter))
+  }
 }
 
 /**
@@ -430,7 +457,7 @@ fun AssociationProfileBottomSheet(
  * @param associationViewModel [AssociationViewModel] : The association view model
  */
 @Composable
-private fun AssociationProfileContent(
+fun AssociationProfileContent(
     navigationAction: NavigationAction,
     userViewModel: UserViewModel,
     eventViewModel: EventViewModel,
@@ -472,12 +499,7 @@ private fun AssociationProfileContent(
 
   // Add spacedBy to the horizontalArrangement
   Column(
-      modifier =
-      Modifier
-          .testTag(AssociationProfileTestTags.SCREEN)
-          .verticalScroll(rememberScrollState())
-          .fillMaxWidth()
-          .padding(24.dp),
+      modifier = Modifier.testTag(AssociationProfileTestTags.SCREEN).fillMaxWidth().padding(24.dp),
       verticalArrangement = Arrangement.spacedBy(16.dp)) {
         AssociationHeader(association!!, isFollowed, enableButton, onFollow)
         AssociationDescription(association!!)

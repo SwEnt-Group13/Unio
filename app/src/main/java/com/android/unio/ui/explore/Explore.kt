@@ -4,9 +4,11 @@ import android.content.Context
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -15,6 +17,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -56,12 +62,18 @@ import com.android.unio.ui.theme.AppTypography
  * @param associationViewModel The [AssociationViewModel] to use.
  * @param searchViewModel The [SearchViewModel] to use.
  */
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun ExploreScreen(
     navigationAction: NavigationAction,
     associationViewModel: AssociationViewModel,
     searchViewModel: SearchViewModel
 ) {
+
+  val refreshState by associationViewModel.refreshState
+  val pullRefreshState =
+      rememberPullRefreshState(
+          refreshing = refreshState, onRefresh = { associationViewModel.getAssociations() })
 
   Scaffold(
       bottomBar = {
@@ -70,19 +82,28 @@ fun ExploreScreen(
       },
       modifier = Modifier.testTag(ExploreTestTags.EXPLORE_SCAFFOLD_TITLE),
       content = { padding ->
-        ExploreScreenContent(padding, navigationAction, associationViewModel, searchViewModel)
+        Box(modifier = Modifier.padding(padding).pullRefresh(pullRefreshState).fillMaxHeight()) {
+          ExploreScreenContent(navigationAction, associationViewModel, searchViewModel)
+        }
       })
+
+  Box {
+    PullRefreshIndicator(
+        refreshing = refreshState,
+        state = pullRefreshState,
+        modifier = Modifier.align(Alignment.TopCenter))
+  }
 }
 
 /**
  * The content of the Explore screen. It displays a list of associations grouped by category.
  *
- * @param padding The padding values to apply to the content.
  * @param navigationAction The navigation action to use when an association is clicked.
+ * @param associationViewModel The [AssociationViewModel] to use.
+ * @param searchViewModel The [SearchViewModel] to use.
  */
 @Composable
 fun ExploreScreenContent(
-    padding: PaddingValues,
     navigationAction: NavigationAction,
     associationViewModel: AssociationViewModel,
     searchViewModel: SearchViewModel
@@ -93,7 +114,7 @@ fun ExploreScreenContent(
 
   Column(
       modifier =
-          Modifier.padding(padding).fillMaxWidth().pointerInput(shouldCloseExpandable) {
+          Modifier.fillMaxWidth().pointerInput(shouldCloseExpandable) {
             detectTapGestures {
               // Collapse the component when clicking outside
               shouldCloseExpandable = true

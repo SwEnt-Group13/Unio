@@ -34,18 +34,14 @@ class FirestoreReferenceElement<T : UniquelyIdentifiable>(
    * @param lazy If true, the fetch will only be performed if the element is not already hydrated.
    */
   override fun fetch(onSuccess: () -> Unit, lazy: Boolean) {
-      Log.d("AssociationActionsMembers", "Fetching for member with uid $_uid")
     if (lazy && _element.value?.uid == _uid) {
       onSuccess()
-        Log.d("AssociationActionsMembers", "lazy")
       return
     }
 
-    _element.value = null
-
     if (_uid.isEmpty()) {
+      _element.value = null
       onSuccess()
-        Log.d("AssociationActionsMembers", "empty uid")
       return
     }
 
@@ -61,7 +57,7 @@ class FirestoreReferenceElement<T : UniquelyIdentifiable>(
             onSuccess()
           }
           .addOnFailureListener { exception ->
-              Log.e("AssociationActionsMembers", "Failed to fetch document", exception)
+            _element.value = null
             Log.e("FirestoreReferenceElement", "Failed to fetch document", exception)
           }
     } else {

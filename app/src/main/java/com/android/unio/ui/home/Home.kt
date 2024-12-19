@@ -3,6 +3,7 @@ package com.android.unio.ui.home
 import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -11,9 +12,13 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Place
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DockedSearchBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -58,6 +63,7 @@ import com.android.unio.ui.navigation.SmoothTopBarNavigationMenu
  * @param userViewModel The [UserViewModel] to use.
  * @param searchViewModel The [SearchViewModel] to use.
  */
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun HomeScreen(
     navigationAction: NavigationAction,
@@ -73,6 +79,11 @@ fun HomeScreen(
 
   val nbOfTabs = 2
   val pagerState = rememberPagerState(initialPage = 0) { nbOfTabs }
+
+  val refreshState by eventViewModel.refreshState
+  val pullRefreshState =
+      rememberPullRefreshState(
+          refreshing = refreshState, onRefresh = { eventViewModel.loadEvents() })
 
   Scaffold(
       floatingActionButton = {
@@ -100,20 +111,27 @@ fun HomeScreen(
         BottomNavigationMenu(
             { navigationAction.navigateTo(it.route) }, LIST_TOP_LEVEL_DESTINATION, Route.HOME)
       },
-      modifier = Modifier.testTag(HomeTestTags.SCREEN),
-      content = { padding ->
-        HorizontalPager(state = pagerState, modifier = Modifier.fillMaxWidth().padding(padding)) {
-            page ->
-          HomeContent(
-              navigationAction,
-              searchQuery,
-              searchState,
-              searchResults,
-              userViewModel,
-              eventViewModel,
-              page == 1)
+      modifier = Modifier.testTag(HomeTestTags.SCREEN)) { padding ->
+        Box(modifier = Modifier.padding(padding).pullRefresh(pullRefreshState).fillMaxHeight()) {
+          HorizontalPager(state = pagerState, modifier = Modifier.fillMaxWidth()) { page ->
+            HomeContent(
+                navigationAction,
+                searchQuery,
+                searchState,
+                searchResults,
+                userViewModel,
+                eventViewModel,
+                page == 1)
+          }
         }
-      })
+      }
+
+  Box {
+    PullRefreshIndicator(
+        refreshing = refreshState,
+        state = pullRefreshState,
+        modifier = Modifier.align(Alignment.TopCenter))
+  }
 }
 
 /**

@@ -310,7 +310,7 @@
 //  fun testGetAssociationWithId() {
 //    every { queryDocumentSnapshot1.exists() } returns (true)
 //    var success = false
-//    repository.getAssociationWithId(
+//    repository.registerAssociationListener(
 //        association1.uid,
 //        onSuccess = { association ->
 //          assertEquals(association1.uid, association.uid)
