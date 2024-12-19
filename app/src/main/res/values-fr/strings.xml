@@ -158,6 +158,7 @@
     <string name="welcome_content_description_hide_password">Cacher le mot de passe</string>
     <string name="welcome_content_description_show_password">Montrer le mot de passe</string>
     <string name="welcome_forgot_password">Oubli de mot de passe ?</string>
+    <string name="welcome_content_description_clear_email">Effacer email</string>
 
     <!-- Picture Selection Tool Strings -->
     <string name="selection_tool_selected_picture_text">Images sélectionnées</string>

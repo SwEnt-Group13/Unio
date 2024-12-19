@@ -165,6 +165,7 @@
     <string name="welcome_content_description_hide_password">Hide password</string>
     <string name="welcome_content_description_show_password">Show password</string>
     <string name="welcome_forgot_password">Forgot your password ?</string>
+    <string name="welcome_content_description_clear_email">Clear email</string>
 
     <!-- Picture Selection Tool Strings -->
     <string name="selection_tool_selected_picture_text">Selected Pictures</string>
