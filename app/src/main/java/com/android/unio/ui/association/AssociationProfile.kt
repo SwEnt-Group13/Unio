@@ -322,6 +322,7 @@ fun AssociationProfileScaffold(
 
                                         // Pager Content
                                         HorizontalPager(
+                                            userScrollEnabled = false,
                                             state = pagerState, modifier = Modifier.fillMaxSize()
                                         ) { page ->
                                             when (page) {
@@ -649,7 +650,7 @@ private fun AssociationProfileActionsContent(
       modifier =
       Modifier
           .testTag(AssociationProfileTestTags.SCREEN)
-          .verticalScroll(rememberScrollState())
+//          .verticalScroll(rememberScrollState())
           .fillMaxWidth()
           .padding(24.dp),
       verticalArrangement = Arrangement.spacedBy(16.dp)) {
