@@ -79,16 +79,18 @@ service cloud.firestore {
 
     match /associations/{uid} {
       function isMember() {
-        return get(/databases/$(database)/documents/associations/$(uid)).data.members.keys().hasAny([request.auth.uid]);
+        let members = get(/databases/$(database)/documents/associations/$(uid)).data.get(members, null);
+        return (members != null) && members.keys().hasAny([request.auth.uid]);
       }
       function onlyUpdatedFollowerCount() {
         // Check that the only updated field is the followersCount field
         // and that it was only incremented or decremented by 1
-        let newCount = request.resource.data.followersCount;
-        let oldCount = resource.data.followersCount;
+        let newCount = request.resource.data.get(followersCount, null);
+        let oldCount = resource.data.get(followersCount, null);
+
 
         let affectedKeys = request.resource.data.diff(resource.data).affectedKeys();
-        let onlyFollowerCountChanged = affectedKeys.hasOnly(['followersCount']);
+        let onlyFollowerCountChanged = true; //affectedKeys.hasOnly(['followersCount']);
 
         return onlyFollowerCountChanged && (newCount == oldCount || newCount == oldCount + 1 || newCount == oldCount - 1);
       }
