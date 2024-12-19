@@ -1,6 +1,7 @@
 package com.android.unio.model.event
 
 import com.android.unio.model.firestore.FirestorePaths.EVENT_USER_PICTURES_PATH
+import com.android.unio.model.firestore.emptyFirestoreReferenceList
 import com.android.unio.model.user.User
 import com.google.android.gms.tasks.Task
 import com.google.firebase.Firebase
@@ -34,7 +35,7 @@ class EventUserPictureRepositoryFirestoreTest {
           uid = "1",
           image = "http://image.fr",
           author = User.firestoreReferenceElementWith("1"),
-          likes = 2)
+          likes = User.emptyFirestoreReferenceList())
 
   @Before
   fun setUp() {

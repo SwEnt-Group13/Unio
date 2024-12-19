@@ -125,5 +125,5 @@ fun EventUserPictureRepositoryFirestore.Companion.serialize(
       EventUserPicture::uid.name to eventUserPicture.uid,
       EventUserPicture::image.name to eventUserPicture.image,
       EventUserPicture::author.name to eventUserPicture.author.uid,
-      EventUserPicture::likes.name to eventUserPicture.likes)
+      EventUserPicture::likes.name to eventUserPicture.likes.uids)
 }

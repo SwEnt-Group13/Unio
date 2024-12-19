@@ -22,9 +22,17 @@ export const aliceAssociation = {
   category: "UNKNOWN",
   description: "Description",
   followersCount: 0,
-  members: ["alice"],
+  members: { alice: "123" },
+  roles: {
+    alice: {
+      color: 4294901760,
+      displayName: "displayNameRole",
+      permissions: [""],
+    },
+  },
   image: "",
   events: [],
+  principalEmailAddress: "alice@gmail.com",
 };
 
 export const aliceEvent = {
@@ -36,7 +44,8 @@ export const aliceEvent = {
   description: "Description",
   catchyDescription: "Catchy description",
   price: 0.0,
-  date: new Date(),
+  startDate: new Date(),
+  endDate: new Date(),
   location: {
     name: "Location",
     address: "Address",
@@ -44,6 +53,9 @@ export const aliceEvent = {
     longitude: 0.0,
   },
   types: ["OTHER"],
+  maxNumberOfPlaces: -1,
+  numberOfSaved: 0,
+  eventPictures: [],
 };
 
 export const otherUser = {
@@ -58,7 +70,7 @@ export const otherUser = {
   interests: [],
   socials: [],
   profilePicture: "",
-}
+};
 
 export const otherEvent = {
   uid: "other-event",
@@ -69,7 +81,8 @@ export const otherEvent = {
   description: "Description",
   catchyDescription: "Catchy description",
   price: 0.0,
-  date: new Date(),
+  startDate: new Date(),
+  endDate: new Date(),
   location: {
     name: "Location",
     address: "Address",
@@ -77,6 +90,9 @@ export const otherEvent = {
     longitude: 0.0,
   },
   types: ["OTHER"],
+  maxNumberOfPlaces: -1,
+  numberOfSaved: 0,
+  eventPictures: [],
 };
 
 export const otherAssociation = {
@@ -87,23 +103,37 @@ export const otherAssociation = {
   category: "UNKNOWN",
   description: "Description",
   followersCount: 0,
-  members: ["other"],
+  members: { other: "other" },
+  roles: {
+    other: {
+      color: 4294901760,
+      displayName: "displayNameRole",
+      permissions: ["Full Rights"],
+    },
+  },
   image: "",
   events: [],
+  principalEmailAddress: "otherassociation@gmail.com",
 };
 
 export async function setupFirestore(testEnv) {
   testEnv.clearFirestore();
 
-  await testEnv.withSecurityRulesDisabled(async env => {
+  await testEnv.withSecurityRulesDisabled(async (env) => {
     const db = env.firestore();
 
     await setDoc(doc(db, `/users/${alice.uid}`), alice);
     await setDoc(doc(db, `/events/${aliceEvent.uid}`), aliceEvent);
-    await setDoc(doc(db, `/associations/${aliceAssociation.uid}`), aliceAssociation);
+    await setDoc(
+      doc(db, `/associations/${aliceAssociation.uid}`),
+      aliceAssociation
+    );
 
     await setDoc(doc(db, `/users/${otherUser.uid}`), otherUser);
-    await setDoc(doc(db, `/associations/${otherAssociation.uid}`), otherAssociation);
+    await setDoc(
+      doc(db, `/associations/${otherAssociation.uid}`),
+      otherAssociation
+    );
     await setDoc(doc(db, `/events/${otherEvent.uid}`), otherEvent);
   });
 }

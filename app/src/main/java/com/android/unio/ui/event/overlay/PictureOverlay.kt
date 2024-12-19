@@ -1,22 +1,39 @@
 package com.android.unio.ui.event.overlay
 
+import android.util.Log
+import android.widget.Toast
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.rounded.Favorite
+import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -27,11 +44,16 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.core.net.toUri
 import com.android.unio.R
 import com.android.unio.model.event.EventUserPicture
+import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.strings.test_tags.event.EventDetailsTestTags
 import com.android.unio.model.strings.test_tags.event.EventDetailsTestTags.PICTURE_FULL_SCREEN
+import com.android.unio.model.user.User
 import com.android.unio.ui.image.AsyncImageWrapper
+import com.android.unio.ui.theme.AppTypography
 import kotlinx.coroutines.launch
 
+private val ASSOCIATION_ICON_SIZE = 32.dp
+private val PADDING_VALUE = 55.dp
 /**
  * A dialog that allows users to view event pictures in full screen.
  *
@@ -43,17 +65,59 @@ import kotlinx.coroutines.launch
 fun PictureOverlay(
     onDismiss: () -> Unit,
     pagerState: PagerState,
-    eventPictures: List<EventUserPicture>
+    eventPictures: List<EventUserPicture>,
+    eventViewModel: EventViewModel,
+    user: User
 ) {
+
   val scope = rememberCoroutineScope()
   val context = LocalContext.current
   val iconSize = 40.dp
+  var enableButton by remember { mutableStateOf(true) }
+  val event by eventViewModel.selectedEvent.collectAsState()
+
+  if (event == null) {
+    Log.e("PictureOverlay", "Event is null")
+    Toast.makeText(LocalContext.current, "An error occurred.", Toast.LENGTH_SHORT).show()
+    return
+  }
   val onClickArrow: (Boolean) -> Unit = { isRight: Boolean ->
     if (isRight && pagerState.currentPage < eventPictures.size - 1) {
-      scope.launch { pagerState.animateScrollToPage(pagerState.currentPage + 1) }
+      val newPageIndex = pagerState.currentPage + 1
+      eventPictures[newPageIndex].author.fetch()
+      scope.launch { pagerState.animateScrollToPage(newPageIndex) }
     } else if (!isRight && pagerState.currentPage > 0) {
-      scope.launch { pagerState.animateScrollToPage(pagerState.currentPage - 1) }
+      val newPageIndex = pagerState.currentPage - 1
+      eventPictures[newPageIndex].author.fetch()
+      scope.launch { pagerState.animateScrollToPage(newPageIndex) }
     }
+  }
+
+  val author by eventPictures[pagerState.currentPage].author.element.collectAsState()
+
+  var isLiked by
+      remember(pagerState.currentPage) {
+        mutableStateOf(eventPictures[pagerState.currentPage].likes.contains(user.uid))
+      }
+
+  var nbOfLikes by
+      remember(pagerState.currentPage) {
+        mutableIntStateOf(eventPictures[pagerState.currentPage].likes.uids.size)
+      }
+
+  val onClickLike = {
+    enableButton = false
+    val picture = eventPictures[pagerState.currentPage]
+    if (isLiked) {
+      picture.likes.remove(user.uid)
+      nbOfLikes -= 1
+    } else {
+      picture.likes.add(user.uid)
+      nbOfLikes += 1
+    }
+    isLiked = !isLiked
+    eventViewModel.updateEventUserPictureWithoutImage(
+        event = event!!, picture = picture, { enableButton = true }, {})
   }
   Dialog(
       onDismissRequest = onDismiss,
@@ -63,20 +127,29 @@ fun PictureOverlay(
               dismissOnBackPress = true,
               usePlatformDefaultWidth = false)) {
         Box(
-            modifier = Modifier.testTag(PICTURE_FULL_SCREEN).fillMaxHeight(0.5f),
+            modifier = Modifier.testTag(PICTURE_FULL_SCREEN).fillMaxHeight(0.5f).fillMaxWidth(),
             contentAlignment = Alignment.Center) {
-              HorizontalPager(pagerState, pageSpacing = 40.dp, beyondViewportPageCount = 1) { page
-                ->
-                AsyncImageWrapper(
-                    imageUri = eventPictures[page].image.toUri(),
-                    contentDescription =
-                        context.getString(
-                            R.string.event_details_content_description_full_screen_picture),
-                    filterQuality = FilterQuality.High,
-                    placeholderResourceId = 0,
-                    contentScale = ContentScale.Fit,
-                    modifier = Modifier.padding(horizontal = 55.dp))
-              }
+              HorizontalPager(
+                  pagerState,
+                  pageSpacing = 40.dp,
+                  beyondViewportPageCount = 1,
+                  modifier = Modifier.align(Alignment.Center)) { page ->
+                    AsyncImageWrapper(
+                        imageUri = eventPictures[page].image.toUri(),
+                        contentDescription =
+                            context.getString(
+                                R.string.event_details_content_description_full_screen_picture),
+                        filterQuality = FilterQuality.High,
+                        placeholderResourceId = 0,
+                        contentScale = ContentScale.Fit,
+                        modifier =
+                            Modifier.padding(
+                                    start = PADDING_VALUE,
+                                    end = PADDING_VALUE,
+                                    bottom = PADDING_VALUE)
+                                .align(Alignment.Center)
+                                .fillMaxWidth())
+                  }
               IconButton(
                   onClick = { onClickArrow(false) },
                   modifier =
@@ -84,8 +157,7 @@ fun PictureOverlay(
                           .testTag(EventDetailsTestTags.EVENT_PICTURES_ARROW_LEFT),
                   colors =
                       IconButtonDefaults.iconButtonColors(
-                          contentColor = MaterialTheme.colorScheme.onPrimary,
-                          containerColor = MaterialTheme.colorScheme.primary)) {
+                          contentColor = MaterialTheme.colorScheme.onPrimary)) {
                     Icon(
                         Icons.AutoMirrored.Filled.ArrowBack,
                         context.getString(R.string.event_details_content_description_arrow_left),
@@ -99,12 +171,63 @@ fun PictureOverlay(
                           .testTag(EventDetailsTestTags.EVENT_PICTURES_ARROW_RIGHT),
                   colors =
                       IconButtonDefaults.iconButtonColors(
-                          contentColor = MaterialTheme.colorScheme.onPrimary,
-                          containerColor = MaterialTheme.colorScheme.primary)) {
+                          contentColor = MaterialTheme.colorScheme.onPrimary)) {
                     Icon(
                         Icons.AutoMirrored.Filled.ArrowForward,
                         context.getString(R.string.event_details_content_description_arrow_right),
                         modifier = Modifier.size(iconSize))
+                  }
+
+              Row(
+                  modifier =
+                      Modifier.testTag(EventDetailsTestTags.INTERACTION_ROW)
+                          .align(Alignment.BottomCenter)
+                          .fillMaxWidth()
+                          .padding(horizontal = PADDING_VALUE),
+                  horizontalArrangement = Arrangement.SpaceBetween,
+                  verticalAlignment = Alignment.CenterVertically) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                      IconButton(
+                          onClick = onClickLike,
+                          modifier = Modifier,
+                          colors =
+                              IconButtonDefaults.iconButtonColors(
+                                  contentColor = MaterialTheme.colorScheme.onPrimary)) {
+                            Icon(
+                                imageVector =
+                                    if (isLiked) Icons.Rounded.Favorite
+                                    else Icons.Rounded.FavoriteBorder,
+                                "",
+                                modifier = Modifier.size(iconSize),
+                                tint = if (isLiked) Color.Red else Color.White)
+                          }
+
+                      Text("$nbOfLikes", color = Color.White)
+                    }
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.testTag(EventDetailsTestTags.EVENT_PICTURES_AUTHOR_INFO)) {
+                          author?.profilePicture?.toUri()?.let {
+                            AsyncImageWrapper(
+                                imageUri = it,
+                                contentDescription =
+                                    "",
+                                modifier =
+                                    Modifier.size(ASSOCIATION_ICON_SIZE)
+                                        .clip(RoundedCornerShape(5.dp))
+                                        .align(Alignment.CenterVertically)
+                                        .testTag(EventDetailsTestTags.EVENT_PICTURES_AUTHOR_ICON),
+                                placeholderResourceId = R.drawable.adec,
+                                filterQuality = FilterQuality.None,
+                                contentScale = ContentScale.Crop)
+                          }
+
+                          Text(
+                              "${author?.firstName} ${author?.lastName}",
+                              modifier = Modifier.testTag(EventDetailsTestTags.EVENT_PICTURES_AUTHOR_NAME).padding(start = 5.dp),
+                              style = AppTypography.bodyMedium,
+                              color = MaterialTheme.colorScheme.onPrimary)
+                        }
                   }
             }
       }
