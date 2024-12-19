@@ -114,10 +114,9 @@ class FirestoreReferenceList<T : UniquelyIdentifiable>(
       return
     }
 
-    _list.value = emptyList()
-
     // If there are no UIDs, return early.
     if (_uids.isEmpty()) {
+      _list.value = emptyList()
       onSuccess()
       return
     }
@@ -133,6 +132,7 @@ class FirestoreReferenceList<T : UniquelyIdentifiable>(
           onSuccess()
         }
         .addOnFailureListener { exception ->
+          _list.value = emptyList()
           Log.e("FirestoreReferenceList", "Failed to get documents", exception)
         }
   }

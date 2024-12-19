@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
@@ -29,14 +30,20 @@ import androidx.compose.foundation.lazy.staggeredgrid.itemsIndexed
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material.icons.rounded.FavoriteBorder
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -157,7 +164,7 @@ fun EventScreen(
  * @param userViewModel The [UserViewModel] to use.
  */
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun EventScreenScaffold(
     navigationAction: NavigationAction,
@@ -174,6 +181,11 @@ fun EventScreenScaffold(
   var showSheet by remember { mutableStateOf(false) }
   val user by userViewModel.user.collectAsState()
 
+  val refreshState by eventViewModel.refreshState
+  val pullRefreshState =
+      rememberPullRefreshState(
+          refreshing = refreshState, onRefresh = { eventViewModel.refreshEvent() })
+
   var showNotificationDialog by remember { mutableStateOf(false) }
   testSnackbar = remember { SnackbarHostState() }
   scope = rememberCoroutineScope()
@@ -188,7 +200,7 @@ fun EventScreenScaffold(
         SnackbarHost(
             hostState = testSnackbar!!,
             modifier = Modifier.testTag(EventDetailsTestTags.SNACKBAR_HOST),
-            snackbar = { data ->
+            snackbar = { _ ->
               Snackbar {
                 TextButton(
                     onClick = { testSnackbar!!.currentSnackbarData?.dismiss() },
@@ -221,10 +233,17 @@ fun EventScreenScaffold(
                             context.getString(R.string.event_more_button_description))
                   }
             })
-      },
-      content = {
-        EventScreenContent(navigationAction, mapViewModel, event, organisers, pagerState, tabList)
-      })
+      }) { padding ->
+        Box(
+            modifier =
+                Modifier.padding(padding)
+                    .pullRefresh(pullRefreshState)
+                    .fillMaxHeight()
+                    .verticalScroll(rememberScrollState())) {
+              EventScreenContent(
+                  navigationAction, mapViewModel, event, organisers, pagerState, tabList)
+            }
+      }
 
   NotificationSender(
       dialogTitle = context.getString(R.string.event_send_notification),
@@ -235,6 +254,13 @@ fun EventScreenScaffold(
       onClose = { showNotificationDialog = false })
 
   EventDetailsBottomSheet(showSheet, { showNotificationDialog = true }) { showSheet = false }
+
+  Box {
+    PullRefreshIndicator(
+        refreshing = refreshState,
+        state = pullRefreshState,
+        modifier = Modifier.align(Alignment.TopCenter))
+  }
 }
 
 /**
@@ -421,21 +447,25 @@ fun EventDetailsPicturesTab(event: Event, context: Context) {
   val scope = rememberCoroutineScope()
 
   if (event.startDate.seconds > Timestamp.now().seconds) {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+    Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
       Text(
           context.getString(R.string.event_pictures_before_start_date),
           modifier = Modifier.testTag(EventDetailsTestTags.EVENT_NOT_STARTED_TEXT))
     }
   } else if (eventPictures.isEmpty()) {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+    Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
       Text(
           context.getString(R.string.event_no_user_pictures),
           modifier = Modifier.testTag(EventDetailsTestTags.EVENT_NO_PICTURES_TEXT))
     }
   } else {
     LazyVerticalStaggeredGrid(
+        userScrollEnabled = false,
         columns = StaggeredGridCells.Adaptive(100.dp),
-        modifier = Modifier.fillMaxSize().testTag(EventDetailsTestTags.GALLERY_GRID)) {
+        modifier =
+            Modifier.fillMaxWidth()
+                .heightIn(max = Short.MAX_VALUE.toInt().dp)
+                .testTag(EventDetailsTestTags.GALLERY_GRID)) {
           itemsIndexed(eventPictures) { index, item ->
             AsyncImageWrapper(
                 item.image.toUri(),
@@ -512,30 +542,25 @@ fun EventDetailsDescriptionTab(
             event.description,
             modifier = Modifier.testTag(EventDetailsTestTags.DESCRIPTION).padding(6.dp),
             style = AppTypography.bodyMedium)
-        Column(
-            modifier = Modifier.fillMaxSize().padding(top = 30.dp),
-            verticalArrangement = Arrangement.spacedBy(20.dp)) {
-              OutlinedButton(
-                  onClick = {
-                    mapViewModel.setHighlightedEvent(event.uid, event.location)
-                    navigationAction.navigateTo(Screen.MAP)
-                  },
+        OutlinedButton(
+            onClick = {
+              mapViewModel.setHighlightedEvent(event.uid, event.location)
+              navigationAction.navigateTo(Screen.MAP)
+            },
+            modifier =
+                Modifier.testTag(EventDetailsTestTags.MAP_BUTTON)
+                    .align(Alignment.CenterHorizontally)
+                    .wrapContentSize(),
+            shape = CircleShape) {
+              Text(
+                  event.location.name,
                   modifier =
-                      Modifier.testTag(EventDetailsTestTags.MAP_BUTTON)
-                          .align(Alignment.CenterHorizontally)
-                          .wrapContentSize(),
-                  shape = CircleShape) {
-                    Text(
-                        event.location.name,
-                        modifier =
-                            Modifier.testTag(EventDetailsTestTags.LOCATION_ADDRESS)
-                                .padding(end = 5.dp))
-                    Icon(
-                        Icons.Outlined.LocationOn,
-                        contentDescription =
-                            context.getString(R.string.event_location_button_description),
-                    )
-                  }
+                      Modifier.testTag(EventDetailsTestTags.LOCATION_ADDRESS).padding(end = 5.dp))
+              Icon(
+                  Icons.Outlined.LocationOn,
+                  contentDescription =
+                      context.getString(R.string.event_location_button_description),
+              )
             }
       }
 }

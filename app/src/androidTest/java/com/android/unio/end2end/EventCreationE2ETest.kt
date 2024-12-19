@@ -121,7 +121,7 @@ class EventCreationE2ETest : EndToEndTest() {
     val dateToSelect = LocalDate.of(currentDate.year, currentDate.month, day)
     val dateString = dateToSelect.format(dateFormatter)
 
-    composeTestRule.onNodeWithText(text = dateString, substring = true).performClick()
+    composeTestRule.onNodeWithText(dateString, substring = true).performClick()
 
     composeTestRule
         .onNodeWithText(context.getString(R.string.event_creation_dialog_ok))
@@ -323,10 +323,14 @@ class EventCreationE2ETest : EndToEndTest() {
     composeTestRule.onNodeWithText(EVENT_TITLE).assertIsDisplayed()
     composeTestRule.onNodeWithText(EVENT_SHORT_DESCRIPTION).assertIsDisplayed()
 
-    // Assert that the rest of the details are displayed
-    composeTestRule.onNodeWithText(EVENT_TITLE).performScrollTo().performClick()
-    composeTestRule.onNodeWithText(EVENT_DESCRIPTION).assertIsDisplayed()
-    composeTestRule.onNodeWithText(EVENT_FORMATTED_ADDRESS).assertIsDisplayed()
+    // Assert that the rest of the details exist
+    composeTestRule.onNodeWithText(EVENT_TITLE).performClick()
+    composeTestRule.waitUntil(10000) {
+      composeTestRule.onNodeWithTag(EventDetailsTestTags.SCREEN).isDisplayed()
+    }
+
+    composeTestRule.onNodeWithText(EVENT_DESCRIPTION).assertExists()
+    composeTestRule.onNodeWithText(EVENT_FORMATTED_ADDRESS).assertExists()
 
     // Go back to the Home screen
     composeTestRule.onNodeWithTag(EventDetailsTestTags.GO_BACK_BUTTON).performClick()

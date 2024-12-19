@@ -39,9 +39,8 @@ class FirestoreReferenceElement<T : UniquelyIdentifiable>(
       return
     }
 
-    _element.value = null
-
     if (_uid.isEmpty()) {
+      _element.value = null
       onSuccess()
       return
     }
@@ -57,6 +56,7 @@ class FirestoreReferenceElement<T : UniquelyIdentifiable>(
             onSuccess()
           }
           .addOnFailureListener { exception ->
+            _element.value = null
             Log.e("FirestoreReferenceElement", "Failed to fetch document", exception)
           }
     } else {

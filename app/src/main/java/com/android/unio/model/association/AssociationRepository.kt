@@ -9,7 +9,7 @@ interface AssociationRepository {
 
   fun getAssociations(onSuccess: (List<Association>) -> Unit, onFailure: (Exception) -> Unit)
 
-  fun getAssociationWithId(
+  fun registerAssociationListener(
       id: String,
       onSuccess: (Association) -> Unit,
       onFailure: (Exception) -> Unit
@@ -25,6 +25,12 @@ interface AssociationRepository {
   fun deleteAssociationById(
       associationId: String,
       onSuccess: () -> Unit,
+      onFailure: (Exception) -> Unit
+  )
+
+  fun getAssociationWithId(
+      id: String,
+      onSuccess: (Association) -> Unit,
       onFailure: (Exception) -> Unit
   )
 }

@@ -1,6 +1,8 @@
 package com.android.unio.model.event
 
 import android.util.Log
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.android.unio.model.association.AssociationRepository
 import com.android.unio.model.image.ImageRepository
@@ -52,20 +54,26 @@ constructor(
 
   val selectedEvent: StateFlow<Event?> = _selectedEvent.asStateFlow()
 
+  private val _refreshState = mutableStateOf(false)
+  val refreshState: State<Boolean> = _refreshState
+
   init {
     repository.init { loadEvents() }
   }
 
   /** Loads the list of events from the repository and updates the internal [MutableStateFlow]. */
   fun loadEvents() {
+    _refreshState.value = true
     repository.getEvents(
         onSuccess = { eventList ->
           eventList.forEach { event -> event.organisers.requestAll() }
           _events.value = eventList
+          _refreshState.value = false
         },
         onFailure = { exception ->
           Log.e("EventViewModel", "An error occurred while loading events: $exception")
           _events.value = emptyList()
+          _refreshState.value = false
         })
   }
 
@@ -83,6 +91,28 @@ constructor(
             it?.eventPictures?.requestAll()
           }
         }
+  }
+
+  fun refreshEvent() {
+    if (_selectedEvent.value == null) {
+      return
+    }
+
+    _refreshState.value = true
+    repository.getEventWithId(
+        _selectedEvent.value!!.uid,
+        onSuccess = { fetchedEvent ->
+          _selectedEvent.value = fetchedEvent
+          _selectedEvent.value?.taggedAssociations?.requestAll()
+          _selectedEvent.value?.organisers?.requestAll()
+          _selectedEvent.value?.eventPictures?.requestAll()
+
+          _refreshState.value = false
+        },
+        onFailure = { exception ->
+          Log.e("EventViewModel", "Failed to fetch event", exception)
+          _refreshState.value = false
+        })
   }
 
   /**

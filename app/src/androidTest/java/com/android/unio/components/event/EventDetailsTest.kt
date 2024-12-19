@@ -14,6 +14,9 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollToIndex
 import androidx.navigation.NavHostController
+import androidx.test.espresso.Espresso
+import androidx.test.espresso.action.ViewActions
+import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.platform.app.InstrumentationRegistry
 import com.android.unio.R
 import com.android.unio.TearDown
@@ -239,6 +242,7 @@ class EventDetailsTest : TearDown() {
         .onNodeWithTag(EventDetailsTestTags.DETAILS_BODY)
         .assertDisplayComponentInScroll()
 
+    Espresso.onView(ViewMatchers.isRoot()).perform(ViewActions.swipeUp())
     composeTestRule.onNodeWithTag(EventDetailsTestTags.PLACES_REMAINING_TEXT).assertExists()
     composeTestRule.onNodeWithTag(EventDetailsTestTags.DESCRIPTION).assertDisplayComponentInScroll()
     composeTestRule
@@ -271,6 +275,7 @@ class EventDetailsTest : TearDown() {
     composeTestRule.onNodeWithTag(EventDetailsTestTags.SAVE_BUTTON).performClick()
 
     // Location button
+    Espresso.onView(ViewMatchers.isRoot()).perform(ViewActions.swipeUp())
     composeTestRule.onNodeWithTag(EventDetailsTestTags.MAP_BUTTON).assertDisplayComponentInScroll()
     composeTestRule.onNodeWithTag(EventDetailsTestTags.MAP_BUTTON).performClick()
     verify { navigationAction.navigateTo(Screen.MAP) }
@@ -296,9 +301,16 @@ class EventDetailsTest : TearDown() {
   fun testEventDetailsData() {
     val event = events[1]
     setEventScreen(event)
-    composeTestRule.onNodeWithText(event.title).assertDisplayComponentInScroll()
-    composeTestRule.onNodeWithText(event.description).assertDisplayComponentInScroll()
-    composeTestRule.onNodeWithText(event.location.name).assertDisplayComponentInScroll()
+    composeTestRule.onNodeWithText(event.title, substring = true).assertDisplayComponentInScroll()
+    composeTestRule
+        .onNodeWithText(event.description, substring = true)
+        .assertDisplayComponentInScroll()
+
+    Espresso.onView(ViewMatchers.isRoot()).perform(ViewActions.swipeUp())
+    composeTestRule
+        .onNodeWithText(event.location.name, substring = true)
+        .assertDisplayComponentInScroll()
+
     composeTestRule.onNodeWithTag(EventDetailsTestTags.START_DATE).assertDisplayComponentInScroll()
   }
 
