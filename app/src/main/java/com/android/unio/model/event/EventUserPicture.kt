@@ -1,6 +1,7 @@
 package com.android.unio.model.event
 
 import com.android.unio.model.firestore.ReferenceElement
+import com.android.unio.model.firestore.ReferenceList
 import com.android.unio.model.firestore.UniquelyIdentifiable
 import com.android.unio.model.user.User
 
@@ -16,7 +17,7 @@ data class EventUserPicture(
     override val uid: String,
     val image: String,
     val author: ReferenceElement<User>,
-    val likes: Int
+    val likes: ReferenceList<User>
 ) : UniquelyIdentifiable {
   companion object
 }

@@ -306,7 +306,9 @@ constructor(
   fun addEventUserPicture(
       pictureInputStream: InputStream,
       event: Event,
-      picture: EventUserPicture
+      picture: EventUserPicture,
+      onSuccess: () -> Unit,
+      onFailure: (Exception) -> Unit
   ) {
     val picId = eventUserPictureRepository.getNewUid()
     imageRepository.uploadImage(
@@ -317,19 +319,55 @@ constructor(
           eventUserPictureRepository.addEventUserPicture(
               newEventPicture,
               {
-                event.eventPictures.add(newEventPicture.uid)
+                event.eventPictures.add(newEventPicture)
                 updateEventWithoutImage(
                     event,
-                    { event.eventPictures.add(newEventPicture) },
+                    { onSuccess() },
                     { e ->
                       Log.e("EventViewModel", "An error occurred while updating an event: $e")
                     })
               },
               { e ->
+                onFailure(e)
                 Log.e("EventViewModel", "An error occurred while adding an event picture: $e")
               })
         },
         onFailure = { e -> Log.e("ImageRepository", "Failed to store image: $e") })
+  }
+
+  /**
+   * Update an existing eventUserPicture without updating its image.
+   *
+   * @param event The event in question.
+   * @param picture The [EventUserPicture] to update
+   */
+  fun updateEventUserPictureWithoutImage(
+      event: Event,
+      picture: EventUserPicture,
+      onSuccess: () -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+    eventUserPictureRepository.addEventUserPicture(
+        picture,
+        {
+          if (!event.eventPictures.contains(picture.uid)) {
+            event.eventPictures.add(picture)
+          }
+          updateEventWithoutImage(
+              event,
+              {
+                _events.value = _events.value.map { if (it.uid == event.uid) event else it }
+                onSuccess()
+              },
+              { e ->
+                onFailure(e)
+                Log.e("EventViewModel", "An error occurred while updating an event: $e")
+              })
+        },
+        { e ->
+          onFailure(e)
+          Log.e("EventViewModel", "An error occurred while adding an event picture: $e")
+        })
   }
 
   /**

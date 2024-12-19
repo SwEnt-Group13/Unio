@@ -1,6 +1,10 @@
 package com.android.unio.ui.event.overlay
 
+import android.util.Log
+import android.widget.Toast
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -9,14 +13,24 @@ import androidx.compose.foundation.pager.PagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.rounded.Favorite
+import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -27,8 +41,10 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.core.net.toUri
 import com.android.unio.R
 import com.android.unio.model.event.EventUserPicture
+import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.strings.test_tags.event.EventDetailsTestTags
 import com.android.unio.model.strings.test_tags.event.EventDetailsTestTags.PICTURE_FULL_SCREEN
+import com.android.unio.model.user.User
 import com.android.unio.ui.image.AsyncImageWrapper
 import kotlinx.coroutines.launch
 
@@ -43,17 +59,65 @@ import kotlinx.coroutines.launch
 fun PictureOverlay(
     onDismiss: () -> Unit,
     pagerState: PagerState,
-    eventPictures: List<EventUserPicture>
+    eventPictures: List<EventUserPicture>,
+    eventViewModel: EventViewModel,
+    user: User
 ) {
   val scope = rememberCoroutineScope()
   val context = LocalContext.current
   val iconSize = 40.dp
+  var enableButton by remember { mutableStateOf(true) }
+  val event by eventViewModel.selectedEvent.collectAsState()
+
+  val sortedEventPictures =
+      mutableListOf(
+          eventPictures.sortedWith(
+              compareBy<EventUserPicture> { it.uid }.thenBy { it.likes.uids.size }))
+  if (event == null) {
+    Log.e("PictureOverlay", "Event is null")
+    Toast.makeText(LocalContext.current, "An error occurred.", Toast.LENGTH_SHORT).show()
+    return
+  }
   val onClickArrow: (Boolean) -> Unit = { isRight: Boolean ->
     if (isRight && pagerState.currentPage < eventPictures.size - 1) {
       scope.launch { pagerState.animateScrollToPage(pagerState.currentPage + 1) }
     } else if (!isRight && pagerState.currentPage > 0) {
       scope.launch { pagerState.animateScrollToPage(pagerState.currentPage - 1) }
     }
+  }
+
+  var isLiked by
+      remember(pagerState.currentPage) {
+        mutableStateOf(eventPictures[pagerState.currentPage].likes.contains(user.uid))
+      }
+
+  var nbOfLikes by
+      remember(pagerState.currentPage) {
+        println("REFRESH")
+        mutableIntStateOf(eventPictures[pagerState.currentPage].likes.uids.size)
+      }
+
+  val onClickLike = {
+    enableButton = false
+    val picture = eventPictures[pagerState.currentPage]
+    println("BEFORE: ${picture.likes.uids.size}")
+    if (isLiked) {
+      picture.likes.remove(user.uid)
+      nbOfLikes -= 1
+    } else {
+      picture.likes.add(user.uid)
+      nbOfLikes += 1
+    }
+    println("AFTER: ${eventPictures[pagerState.currentPage].likes.uids.size}")
+    isLiked = !isLiked
+    eventViewModel.updateEventUserPictureWithoutImage(
+        event = event!!,
+        picture = picture,
+        {
+          println("AFTER: ${eventPictures[pagerState.currentPage].likes.uids.size}")
+          enableButton = true
+        },
+        {})
   }
   Dialog(
       onDismissRequest = onDismiss,
@@ -75,7 +139,7 @@ fun PictureOverlay(
                     filterQuality = FilterQuality.High,
                     placeholderResourceId = 0,
                     contentScale = ContentScale.Fit,
-                    modifier = Modifier.padding(horizontal = 55.dp))
+                    modifier = Modifier.padding(start = 55.dp, end = 55.dp, bottom = 55.dp))
               }
               IconButton(
                   onClick = { onClickArrow(false) },
@@ -84,8 +148,7 @@ fun PictureOverlay(
                           .testTag(EventDetailsTestTags.EVENT_PICTURES_ARROW_LEFT),
                   colors =
                       IconButtonDefaults.iconButtonColors(
-                          contentColor = MaterialTheme.colorScheme.onPrimary,
-                          containerColor = MaterialTheme.colorScheme.primary)) {
+                          contentColor = MaterialTheme.colorScheme.onPrimary)) {
                     Icon(
                         Icons.AutoMirrored.Filled.ArrowBack,
                         context.getString(R.string.event_details_content_description_arrow_left),
@@ -99,12 +162,34 @@ fun PictureOverlay(
                           .testTag(EventDetailsTestTags.EVENT_PICTURES_ARROW_RIGHT),
                   colors =
                       IconButtonDefaults.iconButtonColors(
-                          contentColor = MaterialTheme.colorScheme.onPrimary,
-                          containerColor = MaterialTheme.colorScheme.primary)) {
+                          contentColor = MaterialTheme.colorScheme.onPrimary)) {
                     Icon(
                         Icons.AutoMirrored.Filled.ArrowForward,
                         context.getString(R.string.event_details_content_description_arrow_right),
                         modifier = Modifier.size(iconSize))
+                  }
+
+              Row(
+                  modifier =
+                      Modifier.testTag("pictureInteractionRow").align(Alignment.BottomCenter),
+                  horizontalArrangement = Arrangement.SpaceAround,
+                  verticalAlignment = Alignment.CenterVertically) {
+                    IconButton(
+                        onClick = onClickLike,
+                        modifier = Modifier,
+                        colors =
+                            IconButtonDefaults.iconButtonColors(
+                                contentColor = MaterialTheme.colorScheme.onPrimary)) {
+                          Icon(
+                              imageVector =
+                                  if (isLiked) Icons.Rounded.Favorite
+                                  else Icons.Rounded.FavoriteBorder,
+                              "like button",
+                              modifier = Modifier.size(iconSize),
+                              tint = if (isLiked) Color.Red else Color.White)
+                        }
+
+                    Text("$nbOfLikes", color = MaterialTheme.colorScheme.onPrimary)
                   }
             }
       }
