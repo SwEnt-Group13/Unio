@@ -1,9 +1,9 @@
-package com.android.unio.model.follow
+package com.android.unio.model.usecase
 
 import com.android.unio.model.association.Association
 import com.android.unio.model.user.User
 
-interface ConcurrentAssociationUserRepository {
+interface FollowUseCase {
 
   fun init(onSuccess: () -> Unit)
 

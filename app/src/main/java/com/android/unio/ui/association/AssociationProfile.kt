@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -19,12 +20,16 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.outlined.MoreVert
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -38,7 +43,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
@@ -134,7 +138,7 @@ fun AssociationProfileScreen(
  * @param associationViewModel [AssociationViewModel] : The association view model
  * @param onEdit [() -> Unit] : The action to edit the association
  */
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun AssociationProfileScaffold(
     navigationAction: NavigationAction,
@@ -147,6 +151,11 @@ fun AssociationProfileScaffold(
   val association = associationState!!
 
   var showSheet by remember { mutableStateOf(false) }
+
+  val refreshState by associationViewModel.refreshState
+  val pullRefreshState =
+      rememberPullRefreshState(
+          refreshing = refreshState, onRefresh = { associationViewModel.refreshAssociation() })
 
   val context = LocalContext.current
   testSnackbar = remember { SnackbarHostState() }
@@ -196,12 +205,15 @@ fun AssociationProfileScaffold(
             })
       },
       content = { padding ->
-        Surface(
-            modifier = Modifier.padding(padding),
-        ) {
-          AssociationProfileContent(
-              navigationAction, userViewModel, eventViewModel, associationViewModel)
-        }
+        Box(
+            modifier =
+                Modifier.padding(padding)
+                    .pullRefresh(pullRefreshState)
+                    .fillMaxHeight()
+                    .verticalScroll(rememberScrollState())) {
+              AssociationProfileContent(
+                  navigationAction, userViewModel, eventViewModel, associationViewModel)
+            }
       })
 
   var showNotificationDialog by remember { mutableStateOf(false) }
@@ -219,6 +231,13 @@ fun AssociationProfileScaffold(
       onClose = { showSheet = false },
       onEdit = onEdit,
       onOpenNotificationDialog = { showNotificationDialog = true })
+
+  Box {
+    PullRefreshIndicator(
+        refreshing = refreshState,
+        state = pullRefreshState,
+        modifier = Modifier.align(Alignment.TopCenter))
+  }
 }
 
 /**
@@ -325,11 +344,7 @@ private fun AssociationProfileContent(
 
   // Add spacedBy to the horizontalArrangement
   Column(
-      modifier =
-          Modifier.testTag(AssociationProfileTestTags.SCREEN)
-              .verticalScroll(rememberScrollState())
-              .fillMaxWidth()
-              .padding(24.dp),
+      modifier = Modifier.testTag(AssociationProfileTestTags.SCREEN).fillMaxWidth().padding(24.dp),
       verticalArrangement = Arrangement.spacedBy(16.dp)) {
         AssociationHeader(association!!, isFollowed, enableButton, onFollow)
         AssociationDescription(association!!)

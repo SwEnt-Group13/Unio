@@ -17,13 +17,11 @@ import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventRepositoryFirestore
 import com.android.unio.model.event.EventUserPictureRepositoryFirestore
 import com.android.unio.model.event.EventViewModel
-import com.android.unio.model.follow.ConcurrentAssociationUserRepositoryFirestore
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.image.ImageViewModel
 import com.android.unio.model.map.MapViewModel
 import com.android.unio.model.map.nominatim.NominatimLocationRepository
 import com.android.unio.model.map.nominatim.NominatimLocationSearchViewModel
-import com.android.unio.model.save.ConcurrentEventUserRepositoryFirestore
 import com.android.unio.model.search.SearchRepository
 import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.strings.test_tags.association.AssociationProfileTestTags
@@ -40,6 +38,9 @@ import com.android.unio.model.strings.test_tags.saved.SavedTestTags
 import com.android.unio.model.strings.test_tags.settings.SettingsTestTags
 import com.android.unio.model.strings.test_tags.user.SomeoneElseUserProfileTestTags
 import com.android.unio.model.strings.test_tags.user.UserProfileTestTags
+import com.android.unio.model.usecase.FollowUseCaseFirestore
+import com.android.unio.model.usecase.SaveUseCaseFirestore
+import com.android.unio.model.usecase.UserDeletionUseCaseFirestore
 import com.android.unio.model.user.User
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserViewModel
@@ -111,12 +112,11 @@ class ScreenDisplayingTest : TearDown() {
       }
 
   @MockK private lateinit var associationRepositoryFirestore: AssociationRepositoryFirestore
+  @MockK private lateinit var userDeletionRepository: UserDeletionUseCaseFirestore
   @MockK private lateinit var imageRepositoryFirestore: ImageRepositoryFirebaseStorage
   @MockK
   private lateinit var eventUserPictureRepositoryFirestore: EventUserPictureRepositoryFirestore
-  @MockK
-  private lateinit var concurrentEventUserRepositoryFirestore:
-      ConcurrentEventUserRepositoryFirestore
+  @MockK private lateinit var concurrentEventUserRepositoryFirestore: SaveUseCaseFirestore
 
   private lateinit var imageViewModel: ImageViewModel
 
@@ -153,7 +153,7 @@ class ScreenDisplayingTest : TearDown() {
                 associationRepositoryFirestore,
                 mockk<EventRepositoryFirestore>(),
                 imageRepositoryFirestore,
-                mockk<ConcurrentAssociationUserRepositoryFirestore>()))
+                mockk<FollowUseCaseFirestore>()))
 
     every { eventRepository.getEvents(any(), any()) } answers
         {
@@ -191,7 +191,7 @@ class ScreenDisplayingTest : TearDown() {
           val onSuccess = args[1] as (User) -> Unit
           onSuccess(user)
         }
-    userViewModel = UserViewModel(userRepository, imageRepositoryFirestore)
+    userViewModel = UserViewModel(userRepository, imageRepositoryFirestore, userDeletionRepository)
     userViewModel.getUserByUid("1", false)
 
     searchViewModel = spyk(SearchViewModel(searchRepository))

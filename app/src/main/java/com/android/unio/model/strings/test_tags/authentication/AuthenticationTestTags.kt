@@ -10,12 +10,14 @@ object AccountDetailsTestTags {
   const val FIRST_NAME_TEXT = "accountDetailsFirstNameText"
   const val FIRST_NAME_ERROR_TEXT = "accountDetailsFirstNameErrorText"
   const val FIRST_NAME_CHARACTER_COUNTER = "accountDetailsFirstNameCharacterCounter"
+  const val FIRST_NAME_CLEAR_BUTTON = "accountDetailsFirstNameClearButton"
 
   // LAST NAME TEXT FIELD
   const val LAST_NAME_TEXT_FIELD = "accountDetailsLastNameTextField"
   const val LAST_NAME_TEXT = "accountDetailsLastNameText"
   const val LAST_NAME_ERROR_TEXT = "accountDetailsLastNameErrorText"
   const val LAST_NAME_CHARACTER_COUNTER = "accountDetailsLastNameCharacterCounter"
+  const val LAST_NAME_CLEAR_BUTTON = "accountDetailsLastNameClearButton"
 
   // BIOGRAPHY TEXT FIELD
   const val BIOGRAPHY_TEXT_FIELD = "accountDetailsBioTextField"

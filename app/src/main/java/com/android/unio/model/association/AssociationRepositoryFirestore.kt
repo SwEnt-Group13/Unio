@@ -52,7 +52,7 @@ class AssociationRepositoryFirestore @Inject constructor(private val db: Firebas
    *
    * @param onSuccess [(List<Association>) -> Unit] : The callback to call when the [Association]s
    *   are fetched.
-   *     @param onFailure [(Exception) -> Unit] : The callback to call when the fetch fails.
+   * @param onFailure [(Exception) -> Unit] : The callback to call when the fetch fails.
    */
   override fun getAssociations(
       onSuccess: (List<Association>) -> Unit,
@@ -73,6 +73,14 @@ class AssociationRepositoryFirestore @Inject constructor(private val db: Firebas
             onFailure = { exception -> onFailure(exception) })
   }
 
+  /**
+   * Fetches all [Association] objects from Firestore that belong to the provided [category].
+   *
+   * @param category [AssociationCategory] : The category of the [Association]s to fetch.
+   * @param onSuccess [(List<Association>) -> Unit] : The callback to call when the [Association]s
+   *   are fetched.
+   * @param onFailure [(Exception) -> Unit] : The callback to call when the fetch fails.
+   */
   fun getAssociationsByCategory(
       category: AssociationCategory,
       onSuccess: (List<Association>) -> Unit,
@@ -95,6 +103,30 @@ class AssociationRepositoryFirestore @Inject constructor(private val db: Firebas
   }
 
   /**
+   * Fetches an [Association] object from Firestore using the provided [id].
+   *
+   * @param id [String] : The id of the [Association] to fetch.
+   * @param onSuccess [(Association) -> Unit] : The callback to call when the [Association] is
+   *   fetched.
+   * @param onFailure [(Exception) -> Unit] : The callback to call when the fetch fails.
+   */
+  override fun getAssociationWithId(
+      id: String,
+      onSuccess: (Association) -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+    db.collection(ASSOCIATION_PATH)
+        .document(id)
+        .get()
+        .performFirestoreOperation(
+            onSuccess = { result ->
+              val association = hydrate(result.data)
+              onSuccess(association)
+            },
+            onFailure = { exception -> onFailure(exception) })
+  }
+
+  /**
    * Fetches an [Association] object from Firestore using the provided [id]. Here, instead of using
    * success and failure listener directly, we use a Snapshot Listener that call directly the
    * callback when a read/write are made on the local (cache) database.
@@ -104,7 +136,7 @@ class AssociationRepositoryFirestore @Inject constructor(private val db: Firebas
    *   fetched.
    * @param onFailure [(Exception) -> Unit] : The callback to call when the fetch fails.
    */
-  override fun getAssociationWithId(
+  override fun registerAssociationListener(
       id: String,
       onSuccess: (Association) -> Unit,
       onFailure: (Exception) -> Unit

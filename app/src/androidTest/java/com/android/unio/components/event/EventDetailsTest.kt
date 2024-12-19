@@ -14,6 +14,9 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollToIndex
 import androidx.navigation.NavHostController
+import androidx.test.espresso.Espresso
+import androidx.test.espresso.action.ViewActions
+import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.platform.app.InstrumentationRegistry
 import com.android.unio.R
 import com.android.unio.TearDown
@@ -33,9 +36,10 @@ import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.firestore.emptyFirestoreReferenceList
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.map.MapViewModel
-import com.android.unio.model.save.ConcurrentEventUserRepositoryFirestore
 import com.android.unio.model.strings.FormatStrings.DAY_MONTH_FORMAT
 import com.android.unio.model.strings.test_tags.event.EventDetailsTestTags
+import com.android.unio.model.usecase.SaveUseCaseFirestore
+import com.android.unio.model.usecase.UserDeletionUseCaseFirestore
 import com.android.unio.model.user.User
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserViewModel
@@ -72,12 +76,11 @@ class EventDetailsTest : TearDown() {
   @MockK private lateinit var eventRepository: EventRepositoryFirestore
   @MockK private lateinit var associationRepository: AssociationRepositoryFirestore
   @MockK private lateinit var userRepository: UserRepositoryFirestore
+  @MockK private lateinit var userDeletionRepository: UserDeletionUseCaseFirestore
   @MockK private lateinit var imageRepository: ImageRepositoryFirebaseStorage
   @MockK
   private lateinit var eventUserPictureRepositoryFirestore: EventUserPictureRepositoryFirestore
-  @MockK
-  private lateinit var concurrentEventUserRepositoryFirestore:
-      ConcurrentEventUserRepositoryFirestore
+  @MockK private lateinit var concurrentEventUserRepositoryFirestore: SaveUseCaseFirestore
 
   private lateinit var eventViewModel: EventViewModel
   private lateinit var userViewModel: UserViewModel
@@ -155,7 +158,7 @@ class EventDetailsTest : TearDown() {
           (it.invocation.args[1] as (User) -> Unit)((MockUser.createMockUser()))
         }
 
-    userViewModel = UserViewModel(userRepository, imageRepository)
+    userViewModel = UserViewModel(userRepository, imageRepository, userDeletionRepository)
     userViewModel.getUserByUid("uid")
   }
 
@@ -240,6 +243,7 @@ class EventDetailsTest : TearDown() {
         .onNodeWithTag(EventDetailsTestTags.DETAILS_BODY)
         .assertDisplayComponentInScroll()
 
+    Espresso.onView(ViewMatchers.isRoot()).perform(ViewActions.swipeUp())
     composeTestRule.onNodeWithTag(EventDetailsTestTags.PLACES_REMAINING_TEXT).assertExists()
     composeTestRule.onNodeWithTag(EventDetailsTestTags.DESCRIPTION).assertDisplayComponentInScroll()
     composeTestRule
@@ -272,6 +276,7 @@ class EventDetailsTest : TearDown() {
     composeTestRule.onNodeWithTag(EventDetailsTestTags.SAVE_BUTTON).performClick()
 
     // Location button
+    Espresso.onView(ViewMatchers.isRoot()).perform(ViewActions.swipeUp())
     composeTestRule.onNodeWithTag(EventDetailsTestTags.MAP_BUTTON).assertDisplayComponentInScroll()
     composeTestRule.onNodeWithTag(EventDetailsTestTags.MAP_BUTTON).performClick()
     verify { navigationAction.navigateTo(Screen.MAP) }
@@ -297,9 +302,16 @@ class EventDetailsTest : TearDown() {
   fun testEventDetailsData() {
     val event = events[1]
     setEventScreen(event)
-    composeTestRule.onNodeWithText(event.title).assertDisplayComponentInScroll()
-    composeTestRule.onNodeWithText(event.description).assertDisplayComponentInScroll()
-    composeTestRule.onNodeWithText(event.location.name).assertDisplayComponentInScroll()
+    composeTestRule.onNodeWithText(event.title, substring = true).assertDisplayComponentInScroll()
+    composeTestRule
+        .onNodeWithText(event.description, substring = true)
+        .assertDisplayComponentInScroll()
+
+    Espresso.onView(ViewMatchers.isRoot()).perform(ViewActions.swipeUp())
+    composeTestRule
+        .onNodeWithText(event.location.name, substring = true)
+        .assertDisplayComponentInScroll()
+
     composeTestRule.onNodeWithTag(EventDetailsTestTags.START_DATE).assertDisplayComponentInScroll()
   }
 

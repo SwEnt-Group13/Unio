@@ -15,8 +15,10 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.outlined.Clear
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -306,7 +308,19 @@ private fun UserTextFields(
           onFirstNameChange(it)
         }
       },
-      value = firstName)
+      value = firstName,
+      trailingIcon = {
+        IconButton(
+            onClick = { onFirstNameChange("") },
+            enabled = firstName.isNotEmpty(),
+            modifier = Modifier.testTag(AccountDetailsTestTags.FIRST_NAME_CLEAR_BUTTON)) {
+              Icon(
+                  imageVector = Icons.Outlined.Clear,
+                  contentDescription =
+                      context.getString(
+                          R.string.account_details_content_description_clear_first_name))
+            }
+      })
 
   OutlinedTextField(
       modifier =
@@ -340,7 +354,19 @@ private fun UserTextFields(
           onLastNameChange(it)
         }
       },
-      value = lastName)
+      value = lastName,
+      trailingIcon = {
+        IconButton(
+            onClick = { onLastNameChange("") },
+            enabled = lastName.isNotEmpty(),
+            modifier = Modifier.testTag(AccountDetailsTestTags.LAST_NAME_CLEAR_BUTTON)) {
+              Icon(
+                  imageVector = Icons.Outlined.Clear,
+                  contentDescription =
+                      context.getString(
+                          R.string.account_details_content_description_clear_last_name))
+            }
+      })
 
   OutlinedTextField(
       modifier =

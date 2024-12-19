@@ -83,6 +83,7 @@ class HydrationAndSerializationTest {
           location = Location(latitude = 0.0, longitude = 0.0, name = "Example Location"),
           maxNumberOfPlaces = -1,
           numberOfSaved = 3,
+          types = emptyList(),
           eventPictures = EventUserPicture.emptyFirestoreReferenceList())
 
   /** Round-trip tests for serialization and hydration of user, association, and event instances. */

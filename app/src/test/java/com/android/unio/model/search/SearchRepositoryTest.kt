@@ -124,6 +124,7 @@ class SearchRepositoryTest {
           startDate = Timestamp(GregorianCalendar(2004, 7, 1).time),
           location = Location(1.2345, 2.3455, "Somewhere"),
           maxNumberOfPlaces = -1,
+          types = emptyList(),
           eventPictures = EventUserPicture.emptyFirestoreReferenceList())
   private val event2 =
       Event(
@@ -137,6 +138,7 @@ class SearchRepositoryTest {
           startDate = Timestamp(GregorianCalendar(2008, 7, 1).time),
           location = Location(1.2345, 2.3455, "Somewhere"),
           maxNumberOfPlaces = -1,
+          types = emptyList(),
           eventPictures = EventUserPicture.emptyFirestoreReferenceList())
 
   @Before
@@ -291,7 +293,7 @@ class SearchRepositoryTest {
             immediateFuture(listOf(mockSearchResult))
         every { mockSearchResults.nextPageAsync } returns mockFuture
 
-        every { mockAssociationRepository.getAssociationWithId(any(), any(), any()) } answers
+        every { mockAssociationRepository.registerAssociationListener(any(), any(), any()) } answers
             {
               val id = firstArg<String>()
               val onSuccess = secondArg<(Association) -> Unit>()
@@ -331,7 +333,7 @@ class SearchRepositoryTest {
             immediateFuture(listOf(mockSearchResult))
         every { mockSearchResults.nextPageAsync } returns mockFuture
 
-        every { mockAssociationRepository.getAssociationWithId(any(), any(), any()) } answers
+        every { mockAssociationRepository.registerAssociationListener(any(), any(), any()) } answers
             {
               val id = firstArg<String>()
               val onSuccess = secondArg<(Association) -> Unit>()

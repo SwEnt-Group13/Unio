@@ -23,6 +23,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
@@ -41,6 +42,7 @@ import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -56,11 +58,11 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.PopupProperties
 import com.android.unio.R
-import com.android.unio.model.association.Association
 import com.android.unio.model.map.Location
 import com.android.unio.model.map.nominatim.NominatimLocationSearchViewModel
 import com.android.unio.model.strings.FormatStrings.DAY_MONTH_YEAR_FORMAT
 import com.android.unio.model.strings.FormatStrings.HOUR_MINUTE_FORMAT
+import com.android.unio.model.strings.test_tags.event.EventDetailsTestTags
 import com.android.unio.ui.image.AsyncImageWrapper
 import com.android.unio.ui.utils.ToastUtils
 import com.google.firebase.Timestamp
@@ -97,18 +99,36 @@ fun NominatimLocationPicker(
   var showDropdown by remember { mutableStateOf(false) }
 
   var shouldDisplayInitialLocation by remember { mutableStateOf(true) }
+  var selectedLocation by remember { mutableStateOf(initialLocation) }
+  val isError by remember {
+    derivedStateOf {
+      selectedLocation == null || selectedLocation!!.name.isEmpty() && locationQuery.isEmpty()
+    }
+  }
 
   Box(modifier = Modifier.fillMaxWidth()) {
     OutlinedTextField(
         value = if (shouldDisplayInitialLocation) initialLocation?.name ?: "" else locationQuery,
         onValueChange = {
           locationSearchViewModel.setQuery(it)
+          selectedLocation = null
           shouldDisplayInitialLocation = false
           showDropdown = true
         },
+        isError = isError,
+        supportingText = {
+          if (isError) {
+            Text(context.getString(R.string.event_edit_location_error))
+          }
+        },
         label = { Text(context.getString(R.string.event_creation_location_label)) },
         placeholder = { Text(context.getString(R.string.event_creation_location_input_label)) },
-        modifier = Modifier.fillMaxWidth().testTag(textFieldTestTag))
+        modifier = Modifier.fillMaxWidth().testTag(textFieldTestTag),
+        trailingIcon = {
+          Icon(
+              imageVector = Icons.Outlined.LocationOn,
+              contentDescription = context.getString(R.string.event_creation_location_icon))
+        })
 
     DropdownMenu(
         expanded = showDropdown && locationSuggestions.isNotEmpty(),
@@ -129,6 +149,7 @@ fun NominatimLocationPicker(
                 },
                 onClick = {
                   locationSearchViewModel.setQuery(location.name)
+                  selectedLocation = location
                   onLocationSelected(location)
                   showDropdown = false
                 },
@@ -151,24 +172,26 @@ fun NominatimLocationPicker(
 }
 
 /**
- * Composable for the association chips that show the selected associations.
+ * Composable for the different chips used that must be displayed in a flowRow
  *
- * @param associations List<Pair<Association, MutableState<Boolean>>> : List of associations and
- *   their selected state.
+ * @param items a generic list of items that can have their elements selected or not
  */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun AssociationChips(
-    associations: List<Pair<Association, MutableState<Boolean>>>,
+fun <T> Chips(
+    items: List<Pair<T, MutableState<Boolean>>>,
+    getName: (T) -> String,
 ) {
   val context = LocalContext.current
+
   FlowRow {
-    associations.forEach { (association, selected) ->
+    items.forEach { (item, selected) ->
       if (selected.value) {
         InputChip(
-            label = { Text(association.name) },
+            label = { Text(getName(item)) },
             onClick = {},
             selected = selected.value,
+            modifier = Modifier.testTag(EventDetailsTestTags.CHIPS + getName(item)),
             avatar = {
               Icon(
                   Icons.Default.Close,
@@ -271,6 +294,12 @@ fun DateAndTimePicker(
                 ?: "",
         readOnly = true,
         onValueChange = {},
+        isError = selectedDate == null && initialDate == null,
+        supportingText = {
+          if (selectedDate == null && initialDate == null) {
+            Text(context.getString(R.string.event_edit_date_error))
+          }
+        },
         trailingIcon = {
           Icon(
               Icons.Default.DateRange,
@@ -299,6 +328,12 @@ fun DateAndTimePicker(
                 ?: "",
         readOnly = true,
         onValueChange = {},
+        isError = selectedTime == null && initialTime == null,
+        supportingText = {
+          if (selectedTime == null && initialTime == null) {
+            Text(context.getString(R.string.event_edit_time_error))
+          }
+        },
         trailingIcon = {
           Icon(
               Icons.Default.AccessTime,

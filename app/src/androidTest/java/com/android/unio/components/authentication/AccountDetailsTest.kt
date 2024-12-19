@@ -1,8 +1,11 @@
 package com.android.unio.components.authentication
 
+import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.assertTextContains
+import androidx.compose.ui.test.assertTextEquals
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
@@ -123,6 +126,27 @@ class AccountDetailsTest : TearDown() {
     composeTestRule
         .onNodeWithTag(AccountDetailsTestTags.BIOGRAPHY_TEXT_FIELD)
         .assertTextContains("I am a student")
+  }
+
+  @Test
+  fun testClearButtonFunctionality() {
+    composeTestRule
+        .onNodeWithTag(AccountDetailsTestTags.FIRST_NAME_TEXT_FIELD)
+        .performTextInput("John")
+    composeTestRule
+        .onNodeWithTag(AccountDetailsTestTags.FIRST_NAME_TEXT_FIELD, useUnmergedTree = true)
+        .assertTextEquals("John", includeEditableText = true)
+    composeTestRule.onNodeWithTag(AccountDetailsTestTags.FIRST_NAME_CLEAR_BUTTON).performClick()
+    composeTestRule.onNodeWithTag(AccountDetailsTestTags.FIRST_NAME_TEXT_FIELD).assert(hasText(""))
+
+    composeTestRule
+        .onNodeWithTag(AccountDetailsTestTags.LAST_NAME_TEXT_FIELD)
+        .performTextInput("Doe")
+    composeTestRule
+        .onNodeWithTag(AccountDetailsTestTags.LAST_NAME_TEXT_FIELD, useUnmergedTree = true)
+        .assertTextEquals("Doe", includeEditableText = true)
+    composeTestRule.onNodeWithTag(AccountDetailsTestTags.LAST_NAME_CLEAR_BUTTON).performClick()
+    composeTestRule.onNodeWithTag(AccountDetailsTestTags.LAST_NAME_TEXT_FIELD).assert(hasText(""))
   }
 
   @Test

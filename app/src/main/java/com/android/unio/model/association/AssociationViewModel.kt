@@ -1,11 +1,13 @@
 package com.android.unio.model.association
 
 import android.util.Log
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventRepository
-import com.android.unio.model.follow.ConcurrentAssociationUserRepository
 import com.android.unio.model.image.ImageRepository
+import com.android.unio.model.usecase.FollowUseCase
 import com.android.unio.model.user.User
 import com.google.firebase.Firebase
 import com.google.firebase.messaging.messaging
@@ -24,8 +26,7 @@ import kotlinx.coroutines.flow.asStateFlow
  * @property associationRepository The [AssociationRepository] that provides the associations.
  * @property eventRepository The [EventRepository] that provides the events of the association.
  * @property imageRepository The [ImageRepository] that provides the images of the association.
- * @property concurrentAssociationUserRepository The [ConcurrentAssociationUserRepository] that
- *   provides the functionality of the follow button.
+ * @property followUseCase The [FollowUseCase] that provides the functionality of the follow button.
  */
 @HiltViewModel
 class AssociationViewModel
@@ -34,7 +35,7 @@ constructor(
     private val associationRepository: AssociationRepository,
     private val eventRepository: EventRepository,
     private val imageRepository: ImageRepository,
-    private val concurrentAssociationUserRepository: ConcurrentAssociationUserRepository
+    private val followUseCase: FollowUseCase
 ) : ViewModel() {
 
   private val _associations = MutableStateFlow<List<Association>>(emptyList())
@@ -47,6 +48,9 @@ constructor(
 
   private val _selectedAssociation = MutableStateFlow<Association?>(null)
   val selectedAssociation: StateFlow<Association?> = _selectedAssociation
+
+  private val _refreshState = mutableStateOf(false)
+  val refreshState: State<Boolean> = _refreshState
 
   init {
     associationRepository.init { getAssociations() }
@@ -95,14 +99,44 @@ constructor(
    * set to an empty list.
    */
   fun getAssociations() {
+    _refreshState.value = true
     associationRepository.getAssociations(
         onSuccess = { fetchedAssociations ->
           _associations.value = fetchedAssociations
           _associationsByCategory.value = fetchedAssociations.groupBy { it.category }
+          _refreshState.value = false
         },
         onFailure = { exception ->
           _associations.value = emptyList()
+          _associationsByCategory.value = emptyMap()
+          _refreshState.value = false
           Log.e("ExploreViewModel", "Failed to fetch associations", exception)
+        })
+  }
+
+  fun refreshAssociation() {
+    if (_selectedAssociation.value == null) {
+      return
+    }
+
+    _refreshState.value = true
+    associationRepository.getAssociationWithId(
+        _selectedAssociation.value!!.uid,
+        onSuccess = { fetchedAssociation ->
+          _selectedAssociation.value = fetchedAssociation
+          _selectedAssociation.value?.events?.requestAll()
+          _selectedAssociation.value?.members?.forEach { fetchUserFromMember(it) }
+
+          _associations.value =
+              _associations.value.map {
+                if (it.uid == fetchedAssociation.uid) fetchedAssociation else it
+              }
+          _associationsByCategory.value = _associations.value.groupBy { it.category }
+          _refreshState.value = false
+        },
+        onFailure = { exception ->
+          Log.e("AssociationViewModel", "Failed to fetch association", exception)
+          _refreshState.value = false
         })
   }
 
@@ -136,7 +170,7 @@ constructor(
       updatedUser.followedAssociations.add(target.uid)
       Firebase.messaging.subscribeToTopic(target.uid)
     }
-    concurrentAssociationUserRepository.updateFollow(
+    followUseCase.updateFollow(
         updatedUser,
         updatedAssociation,
         {

@@ -17,14 +17,14 @@ import com.android.unio.mocks.user.MockUser
 import com.android.unio.model.association.AssociationRepositoryFirestore
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventRepositoryFirestore
-import com.android.unio.model.event.EventType
 import com.android.unio.model.event.EventUserPictureRepositoryFirestore
 import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.notification.NotificationWorker
-import com.android.unio.model.save.ConcurrentEventUserRepositoryFirestore
 import com.android.unio.model.strings.test_tags.event.EventCardTestTags
 import com.android.unio.model.strings.test_tags.event.EventDetailsTestTags
+import com.android.unio.model.usecase.SaveUseCaseFirestore
+import com.android.unio.model.usecase.UserDeletionUseCaseFirestore
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.event.EventCard
@@ -76,11 +76,10 @@ class EventCardTest : TearDown() {
   @MockK private lateinit var eventRepository: EventRepositoryFirestore
   @MockK private lateinit var imageRepository: ImageRepositoryFirebaseStorage
   @MockK private lateinit var associationRepository: AssociationRepositoryFirestore
+  @MockK private lateinit var userDeletionRepository: UserDeletionUseCaseFirestore
   @MockK
   private lateinit var eventUserPictureRepositoryFirestore: EventUserPictureRepositoryFirestore
-  @MockK
-  private lateinit var concurrentEventUserRepositoryFirestore:
-      ConcurrentEventUserRepositoryFirestore
+  @MockK private lateinit var concurrentEventUserRepositoryFirestore: SaveUseCaseFirestore
   private lateinit var context: Context
 
   @Before
@@ -101,7 +100,7 @@ class EventCardTest : TearDown() {
                 associationRepository,
                 eventUserPictureRepositoryFirestore,
                 concurrentEventUserRepositoryFirestore))
-    userViewModel = UserViewModel(userRepository, imageRepository)
+    userViewModel = UserViewModel(userRepository, imageRepository, userDeletionRepository)
     every { userRepository.updateUser(user, any(), any()) } answers
         {
           val onSuccess = args[1] as () -> Unit
@@ -142,7 +141,7 @@ class EventCardTest : TearDown() {
     composeTestRule
         .onNodeWithTag(EventCardTestTags.EVENT_MAIN_TYPE, useUnmergedTree = true)
         .assertExists()
-        .assertTextEquals(EventType.TRIP.text)
+        .assertTextEquals("Trip")
 
     composeTestRule
         .onNodeWithTag(EventCardTestTags.EVENT_LOCATION, useUnmergedTree = true)

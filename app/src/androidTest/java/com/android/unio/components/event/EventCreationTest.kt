@@ -1,7 +1,10 @@
 package com.android.unio.components.event
 
+import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.assertTextEquals
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.isDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
@@ -21,17 +24,19 @@ import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventRepositoryFirestore
 import com.android.unio.model.event.EventUserPictureRepositoryFirestore
 import com.android.unio.model.event.EventViewModel
-import com.android.unio.model.follow.ConcurrentAssociationUserRepositoryFirestore
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.map.nominatim.NominatimApiService
 import com.android.unio.model.map.nominatim.NominatimLocationRepository
 import com.android.unio.model.map.nominatim.NominatimLocationSearchViewModel
-import com.android.unio.model.save.ConcurrentEventUserRepositoryFirestore
 import com.android.unio.model.search.SearchRepository
 import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.strings.TextLengthSamples
 import com.android.unio.model.strings.test_tags.event.EventCreationOverlayTestTags
 import com.android.unio.model.strings.test_tags.event.EventCreationTestTags
+import com.android.unio.model.strings.test_tags.event.EventDetailsTestTags
+import com.android.unio.model.strings.test_tags.event.EventTypeOverlayTestTags
+import com.android.unio.model.usecase.FollowUseCaseFirestore
+import com.android.unio.model.usecase.SaveUseCaseFirestore
 import com.android.unio.ui.event.EventCreationScreen
 import com.android.unio.ui.navigation.NavigationAction
 import com.google.firebase.Firebase
@@ -80,12 +85,8 @@ class EventCreationTest : TearDown() {
   @MockK private lateinit var imageRepositoryFirestore: ImageRepositoryFirebaseStorage
   @MockK
   private lateinit var eventUserPictureRepositoryFirestore: EventUserPictureRepositoryFirestore
-  @MockK
-  private lateinit var concurrentEventUserRepositoryFirestore:
-      ConcurrentEventUserRepositoryFirestore
-  @MockK
-  private lateinit var concurrentAssociationUserRepositoryFirestore:
-      ConcurrentAssociationUserRepositoryFirestore
+  @MockK private lateinit var concurrentEventUserRepositoryFirestore: SaveUseCaseFirestore
+  @MockK private lateinit var concurrentAssociationUserRepositoryFirestore: FollowUseCaseFirestore
 
   @MockK
   private lateinit var nominatimLocationRepositoryWithoutFunctionality: NominatimLocationRepository
@@ -283,6 +284,119 @@ class EventCreationTest : TearDown() {
         .onNodeWithTag(EventCreationTestTags.DESCRIPTION_CHARACTER_COUNTER, useUnmergedTree = true)
         .assertExists()
     composeTestRule.onNodeWithTag(EventCreationTestTags.DESCRIPTION).performTextClearance()
+  }
+
+  @Test
+  fun testCorrectlyAddEvenTypes() {
+    nominatimLocationSearchViewModel =
+        NominatimLocationSearchViewModel(nominatimLocationRepositoryWithoutFunctionality)
+    composeTestRule.setContent {
+      EventCreationScreen(
+          navigationAction,
+          searchViewModel,
+          associationViewModel,
+          eventViewModel,
+          nominatimLocationSearchViewModel)
+    }
+
+    composeTestRule.onNodeWithTag(EventCreationTestTags.EVENT_TYPE).performScrollTo().performClick()
+
+    composeTestRule.onNodeWithTag(EventTypeOverlayTestTags.CARD).assertExists()
+
+    composeTestRule
+        .onNodeWithTag(EventTypeOverlayTestTags.CLICKABLE_ROW + "FESTIVAL")
+        .performScrollTo()
+        .performClick()
+    composeTestRule
+        .onNodeWithTag(EventTypeOverlayTestTags.CLICKABLE_ROW + "APERITIF")
+        .performScrollTo()
+        .performClick()
+
+    composeTestRule.onNodeWithTag(EventTypeOverlayTestTags.SAVE_BUTTON).performClick()
+
+    composeTestRule.onNodeWithTag(EventCreationTestTags.SCREEN).assertIsDisplayed()
+
+    composeTestRule.onNodeWithTag(EventDetailsTestTags.CHIPS + "Festival").assertExists()
+    composeTestRule.onNodeWithTag(EventDetailsTestTags.CHIPS + "Aperitif").assertExists()
+  }
+
+  @Test
+  fun testNotPossibleToAddMoreThan3EventTypes() {
+    nominatimLocationSearchViewModel =
+        NominatimLocationSearchViewModel(nominatimLocationRepositoryWithoutFunctionality)
+    composeTestRule.setContent {
+      EventCreationScreen(
+          navigationAction,
+          searchViewModel,
+          associationViewModel,
+          eventViewModel,
+          nominatimLocationSearchViewModel)
+    }
+
+    composeTestRule.onNodeWithTag(EventCreationTestTags.EVENT_TYPE).performScrollTo().performClick()
+
+    composeTestRule.onNodeWithTag(EventTypeOverlayTestTags.CARD).assertExists()
+
+    composeTestRule
+        .onNodeWithTag(EventTypeOverlayTestTags.CLICKABLE_ROW + "FESTIVAL")
+        .performScrollTo()
+        .performClick()
+    composeTestRule
+        .onNodeWithTag(EventTypeOverlayTestTags.CLICKABLE_ROW + "APERITIF")
+        .performScrollTo()
+        .performClick()
+    composeTestRule
+        .onNodeWithTag(EventTypeOverlayTestTags.CLICKABLE_ROW + "JAM")
+        .performScrollTo()
+        .performClick()
+    composeTestRule
+        .onNodeWithTag(EventTypeOverlayTestTags.CLICKABLE_ROW + "TRIP")
+        .performScrollTo()
+        .performClick()
+
+    composeTestRule.onNodeWithTag(EventTypeOverlayTestTags.SAVE_BUTTON).assertIsNotEnabled()
+  }
+
+  @Test
+  fun testClearButtonFunctionality() {
+    nominatimLocationSearchViewModel =
+        NominatimLocationSearchViewModel(nominatimLocationRepositoryWithoutFunctionality)
+    composeTestRule.setContent {
+      EventCreationScreen(
+          navigationAction,
+          searchViewModel,
+          associationViewModel,
+          eventViewModel,
+          nominatimLocationSearchViewModel)
+    }
+
+    composeTestRule.waitForIdle()
+
+    composeTestRule
+        .onNodeWithTag(EventCreationTestTags.EVENT_TITLE)
+        .performScrollTo()
+        .performTextClearance()
+    composeTestRule.onNodeWithTag(EventCreationTestTags.EVENT_TITLE).performTextInput("Test Title")
+    composeTestRule
+        .onNodeWithTag(EventCreationTestTags.EVENT_TITLE, useUnmergedTree = true)
+        .assertTextEquals("Test Title", includeEditableText = true)
+    composeTestRule.onNodeWithTag(EventCreationTestTags.EVENT_TITLE_CLEAR_BUTTON).performClick()
+    composeTestRule.onNodeWithTag(EventCreationTestTags.EVENT_TITLE).assert(hasText(""))
+
+    composeTestRule
+        .onNodeWithTag(EventCreationTestTags.SHORT_DESCRIPTION)
+        .performScrollTo()
+        .performTextClearance()
+    composeTestRule
+        .onNodeWithTag(EventCreationTestTags.SHORT_DESCRIPTION)
+        .performTextInput("Test Short Description")
+    composeTestRule
+        .onNodeWithTag(EventCreationTestTags.SHORT_DESCRIPTION, useUnmergedTree = true)
+        .assertTextEquals("Test Short Description", includeEditableText = true)
+    composeTestRule
+        .onNodeWithTag(EventCreationTestTags.EVENT_SHORT_DESCRIPTION_CLEAR_BUTTON)
+        .performClick()
+    composeTestRule.onNodeWithTag(EventCreationTestTags.SHORT_DESCRIPTION).assert(hasText(""))
   }
 
   @Test
