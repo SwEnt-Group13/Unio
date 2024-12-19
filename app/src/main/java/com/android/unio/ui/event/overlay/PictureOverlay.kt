@@ -102,14 +102,12 @@ fun PictureOverlay(
 
   var nbOfLikes by
       remember(pagerState.currentPage) {
-        println("REFRESH")
         mutableIntStateOf(eventPictures[pagerState.currentPage].likes.uids.size)
       }
 
   val onClickLike = {
     enableButton = false
     val picture = eventPictures[pagerState.currentPage]
-    println("BEFORE: ${picture.likes.uids.size}")
     if (isLiked) {
       picture.likes.remove(user.uid)
       nbOfLikes -= 1
@@ -117,16 +115,9 @@ fun PictureOverlay(
       picture.likes.add(user.uid)
       nbOfLikes += 1
     }
-    println("AFTER: ${eventPictures[pagerState.currentPage].likes.uids.size}")
     isLiked = !isLiked
     eventViewModel.updateEventUserPictureWithoutImage(
-        event = event!!,
-        picture = picture,
-        {
-          println("AFTER: ${eventPictures[pagerState.currentPage].likes.uids.size}")
-          enableButton = true
-        },
-        {})
+        event = event!!, picture = picture, { enableButton = true }, {})
   }
   Dialog(
       onDismissRequest = onDismiss,
@@ -189,7 +180,7 @@ fun PictureOverlay(
 
               Row(
                   modifier =
-                      Modifier.testTag("pictureInteractionRow")
+                      Modifier.testTag(EventDetailsTestTags.INTERACTION_ROW)
                           .align(Alignment.BottomCenter)
                           .fillMaxWidth()
                           .padding(horizontal = PADDING_VALUE),
@@ -206,26 +197,26 @@ fun PictureOverlay(
                                 imageVector =
                                     if (isLiked) Icons.Rounded.Favorite
                                     else Icons.Rounded.FavoriteBorder,
-                                "like button",
+                                "",
                                 modifier = Modifier.size(iconSize),
                                 tint = if (isLiked) Color.Red else Color.White)
                           }
 
-                      Text("$nbOfLikes", color = MaterialTheme.colorScheme.onPrimary)
+                      Text("$nbOfLikes", color = Color.White)
                     }
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.testTag("")) {
+                        modifier = Modifier.testTag(EventDetailsTestTags.EVENT_PICTURES_AUTHOR_INFO)) {
                           author?.profilePicture?.toUri()?.let {
                             AsyncImageWrapper(
                                 imageUri = it,
                                 contentDescription =
-                                    context.getString(R.string.event_association_icon_description),
+                                    "",
                                 modifier =
                                     Modifier.size(ASSOCIATION_ICON_SIZE)
                                         .clip(RoundedCornerShape(5.dp))
                                         .align(Alignment.CenterVertically)
-                                        .testTag(""),
+                                        .testTag(EventDetailsTestTags.EVENT_PICTURES_AUTHOR_ICON),
                                 placeholderResourceId = R.drawable.adec,
                                 filterQuality = FilterQuality.None,
                                 contentScale = ContentScale.Crop)
@@ -233,7 +224,7 @@ fun PictureOverlay(
 
                           Text(
                               "${author?.firstName} ${author?.lastName}",
-                              modifier = Modifier.testTag("").padding(start = 5.dp),
+                              modifier = Modifier.testTag(EventDetailsTestTags.EVENT_PICTURES_AUTHOR_NAME).padding(start = 5.dp),
                               style = AppTypography.bodyMedium,
                               color = MaterialTheme.colorScheme.onPrimary)
                         }
