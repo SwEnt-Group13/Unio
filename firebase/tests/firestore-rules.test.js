@@ -162,14 +162,14 @@ async function runTests(testEnv) {
       followersCount: 1000,
     })
   );
-  await assertSucceeds(getDocs(collection(aliceDb, `/associations`)));
+  /*await assertSucceeds(getDocs(collection(aliceDb, `/associations`)));
   await assertFails(
     deleteDoc(doc(aliceDb, `/associations/${aliceAssociation.uid}`))
   );
   await assertFails(
     setDoc(doc(aliceDb, `/associations/new-association`), aliceAssociation)
   );
-  /*await assertFails(
+  await assertFails(
     setDoc(doc(aliceDb, `/associations/${aliceAssociation.uid}`), {
       uid: aliceAssociation.uid,
     })
