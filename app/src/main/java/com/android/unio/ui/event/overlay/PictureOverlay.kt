@@ -6,10 +6,12 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
@@ -30,6 +32,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.layout.ContentScale
@@ -46,8 +49,12 @@ import com.android.unio.model.strings.test_tags.event.EventDetailsTestTags
 import com.android.unio.model.strings.test_tags.event.EventDetailsTestTags.PICTURE_FULL_SCREEN
 import com.android.unio.model.user.User
 import com.android.unio.ui.image.AsyncImageWrapper
+import com.android.unio.ui.theme.AppTypography
 import kotlinx.coroutines.launch
 
+
+private val ASSOCIATION_ICON_SIZE = 32.dp
+private val PADDING_VALUE = 55.dp
 /**
  * A dialog that allows users to view event pictures in full screen.
  *
@@ -63,28 +70,33 @@ fun PictureOverlay(
     eventViewModel: EventViewModel,
     user: User
 ) {
+
   val scope = rememberCoroutineScope()
   val context = LocalContext.current
   val iconSize = 40.dp
   var enableButton by remember { mutableStateOf(true) }
   val event by eventViewModel.selectedEvent.collectAsState()
 
-  val sortedEventPictures =
-      mutableListOf(
-          eventPictures.sortedWith(
-              compareBy<EventUserPicture> { it.uid }.thenBy { it.likes.uids.size }))
   if (event == null) {
     Log.e("PictureOverlay", "Event is null")
     Toast.makeText(LocalContext.current, "An error occurred.", Toast.LENGTH_SHORT).show()
     return
   }
   val onClickArrow: (Boolean) -> Unit = { isRight: Boolean ->
+
     if (isRight && pagerState.currentPage < eventPictures.size - 1) {
-      scope.launch { pagerState.animateScrollToPage(pagerState.currentPage + 1) }
+        val newPageIndex = pagerState.currentPage + 1
+        eventPictures[newPageIndex].author.fetch()
+      scope.launch { pagerState.animateScrollToPage(newPageIndex) }
     } else if (!isRight && pagerState.currentPage > 0) {
-      scope.launch { pagerState.animateScrollToPage(pagerState.currentPage - 1) }
+        val newPageIndex = pagerState.currentPage - 1
+        eventPictures[newPageIndex].author.fetch()
+      scope.launch { pagerState.animateScrollToPage(newPageIndex) }
     }
   }
+
+
+    val author by eventPictures[pagerState.currentPage].author.element.collectAsState()
 
   var isLiked by
       remember(pagerState.currentPage) {
@@ -127,9 +139,10 @@ fun PictureOverlay(
               dismissOnBackPress = true,
               usePlatformDefaultWidth = false)) {
         Box(
-            modifier = Modifier.testTag(PICTURE_FULL_SCREEN).fillMaxHeight(0.5f),
+            modifier = Modifier.testTag(PICTURE_FULL_SCREEN).fillMaxHeight(0.5f).fillMaxWidth(),
             contentAlignment = Alignment.Center) {
-              HorizontalPager(pagerState, pageSpacing = 40.dp, beyondViewportPageCount = 1) { page
+
+              HorizontalPager(pagerState, pageSpacing = 40.dp, beyondViewportPageCount = 1, modifier = Modifier.align(Alignment.Center)) { page
                 ->
                 AsyncImageWrapper(
                     imageUri = eventPictures[page].image.toUri(),
@@ -139,7 +152,7 @@ fun PictureOverlay(
                     filterQuality = FilterQuality.High,
                     placeholderResourceId = 0,
                     contentScale = ContentScale.Fit,
-                    modifier = Modifier.padding(start = 55.dp, end = 55.dp, bottom = 55.dp))
+                    modifier=Modifier.padding(start = PADDING_VALUE, end = PADDING_VALUE, bottom= PADDING_VALUE).align(Alignment.Center).fillMaxWidth())
               }
               IconButton(
                   onClick = { onClickArrow(false) },
@@ -171,25 +184,56 @@ fun PictureOverlay(
 
               Row(
                   modifier =
-                      Modifier.testTag("pictureInteractionRow").align(Alignment.BottomCenter),
-                  horizontalArrangement = Arrangement.SpaceAround,
+                      Modifier.testTag("pictureInteractionRow").align(Alignment.BottomCenter).fillMaxWidth()
+                          .padding(horizontal = PADDING_VALUE),
+                  horizontalArrangement = Arrangement.SpaceBetween,
                   verticalAlignment = Alignment.CenterVertically) {
-                    IconButton(
-                        onClick = onClickLike,
-                        modifier = Modifier,
-                        colors =
-                            IconButtonDefaults.iconButtonColors(
-                                contentColor = MaterialTheme.colorScheme.onPrimary)) {
+                  Row(verticalAlignment = Alignment.CenterVertically) {
+                      IconButton(
+                          onClick = onClickLike,
+                          modifier = Modifier,
+                          colors =
+                          IconButtonDefaults.iconButtonColors(
+                              contentColor = MaterialTheme.colorScheme.onPrimary)) {
                           Icon(
                               imageVector =
-                                  if (isLiked) Icons.Rounded.Favorite
-                                  else Icons.Rounded.FavoriteBorder,
+                              if (isLiked) Icons.Rounded.Favorite
+                              else Icons.Rounded.FavoriteBorder,
                               "like button",
                               modifier = Modifier.size(iconSize),
                               tint = if (isLiked) Color.Red else Color.White)
-                        }
+                      }
 
-                    Text("$nbOfLikes", color = MaterialTheme.colorScheme.onPrimary)
+                      Text("$nbOfLikes", color = MaterialTheme.colorScheme.onPrimary)
+
+                  }
+                  Row(verticalAlignment = Alignment.CenterVertically,
+                      modifier =
+                      Modifier.testTag("")) {
+                      author?.profilePicture?.toUri()?.let {
+                          AsyncImageWrapper(
+                              imageUri = it,
+                              contentDescription =
+                              context.getString(R.string.event_association_icon_description),
+                              modifier =
+                              Modifier.size(ASSOCIATION_ICON_SIZE)
+                                  .clip(RoundedCornerShape(5.dp))
+                                  .align(Alignment.CenterVertically)
+                                  .testTag(""),
+                              placeholderResourceId = R.drawable.adec,
+                              filterQuality = FilterQuality.None,
+                              contentScale = ContentScale.Crop)
+                      }
+
+                      Text(
+                          "${author?.firstName} ${author?.lastName}",
+                          modifier =
+                          Modifier.testTag("")
+                              .padding(start = 5.dp),
+                          style = AppTypography.bodyMedium,
+                          color = MaterialTheme.colorScheme.onPrimary)
+                  }
+
                   }
             }
       }
