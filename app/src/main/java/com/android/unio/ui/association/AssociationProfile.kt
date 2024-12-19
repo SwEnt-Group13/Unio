@@ -90,7 +90,10 @@ import com.android.unio.model.association.PermissionType
 import com.android.unio.model.association.Permissions
 import com.android.unio.model.association.Role
 import com.android.unio.model.event.Event
+import com.android.unio.model.event.EventRepositoryFirestore
 import com.android.unio.model.event.EventViewModel
+import com.android.unio.model.firestore.transform.serialize
+import com.android.unio.model.functions.addEditRoleCloudFunction
 import com.android.unio.model.notification.NotificationType
 import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.strings.test_tags.association.AssociationProfileTestTags
@@ -181,7 +184,7 @@ fun AssociationProfileScaffold(
     val refreshState by associationViewModel.refreshState
     val pullRefreshState =
         rememberPullRefreshState(
-            refreshing = refreshState, onRefresh = { associationViewModel.refreshAssociation() })
+            refreshing = refreshState, onRefresh = { associationViewModel.refreshAssociation(); eventViewModel.loadEvents() })
 
     var showNotificationDialog by remember { mutableStateOf(false) }
 
@@ -520,87 +523,6 @@ fun AssociationProfileContent(
   }
 }
 
-/**
- * Retrieves the current user's token ID asynchronously.
- * @return The user's token ID as a String.
- * @throws Exception if the user is not signed in or the token retrieval fails.
- */
-private fun giveCurrentUserTokenID(
-    onSuccess: (String) -> Unit,
-    onError: (Exception) -> Unit
-) {
-    val currentUser = FirebaseAuth.getInstance().currentUser
-    if (currentUser == null) {
-        onError(IllegalStateException("User is not signed in."))
-        return
-    }
-
-    currentUser.getIdToken(true)
-        .addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                val tokenId = task.result?.token
-                if (tokenId != null) {
-                    onSuccess(tokenId)
-                } else {
-                    onError(IllegalStateException("Token is null."))
-                }
-            } else {
-                onError(task.exception ?: Exception("Failed to retrieve token ID."))
-            }
-        }
-}
-
-
-private fun addEditRoleCloudFunction(
-    newRole: Role,
-    associationUId: String,
-    onSuccess: (String) -> Unit,
-    onError: (Exception) -> Unit,
-    isNewRole : Boolean
-) {
-    try {
-        // Fetch the token asynchronously
-        giveCurrentUserTokenID(
-            onSuccess = { tokenId ->
-                Log.d("addRoleTQT", "Token ID: $tokenId")
-
-                // Call the Firebase Cloud Function
-                Firebase.functions
-                    .getHttpsCallable("saveRole")
-                    .call(
-                        hashMapOf(
-                            "tokenId" to tokenId,
-                            "role" to mapOf(
-                                "displayName" to newRole.displayName,
-                                "permissions" to newRole.permissions.getGrantedPermissions().toList()
-                                    .map { permission -> permission.stringName },
-                                "color" to newRole.color.toInt(),
-                                "uid" to newRole.uid
-                            ),
-                            "isNewRole" to isNewRole,
-                            "associationUid" to associationUId
-                        )
-                    )
-                    .addOnSuccessListener { result ->
-                        val responseData = result.data as? String
-                        if (responseData != null) {
-                            onSuccess(responseData)
-                        } else {
-                            onError(IllegalStateException("Unexpected response format from Cloud Function."))
-                        }
-                    }
-                    .addOnFailureListener { error ->
-                        onError(error)
-                    }
-            },
-            onError = { error ->
-                onError(error)
-            }
-        )
-    } catch (e: Exception) {
-        onError(e)
-    }
-}
 
 /**
  * Composable element that contain the actions of the given association. It call all elements that
@@ -676,7 +598,6 @@ private fun AssociationProfileActionsContent(
             userViewModel,
             eventViewModel,
             searchViewModel = searchViewModel)
-        AssociationDescription(association!!)
         AssociationActionsMembers(associationViewModel, user!!.uid, onMemberClick, searchViewModel)
       }
 }
@@ -1170,6 +1091,8 @@ private fun AssociationEvents(
   var isSeeMoreClicked by remember { mutableStateOf(false) }
 
   val events by association.events.list.collectAsState()
+
+
   val user by userViewModel.user.collectAsState()
 
   if (user == null) {
