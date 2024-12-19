@@ -224,10 +224,8 @@ fun AssociationProfileScaffold(
         content = { padding ->
             Box(
                 modifier =
-                Modifier.padding(padding)
-                    .pullRefresh(pullRefreshState)
-                    .fillMaxHeight()
-                    .verticalScroll(rememberScrollState())
+                Modifier.padding(0.dp)
+                    .fillMaxSize()
             ) {
                 val user by userViewModel.user.collectAsState()
                 val userRole =
@@ -239,6 +237,7 @@ fun AssociationProfileScaffold(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(padding)
+
                 ) {
                     if (userPermissions?.hasAnyPermission() == true) {
                         val userRoleColor = Color(userRole.color)
@@ -293,6 +292,8 @@ fun AssociationProfileScaffold(
                                         modifier = Modifier
                                             .weight(1f)
                                             .padding(horizontal = 8.dp)
+                                            .pullRefresh(pullRefreshState)
+                                            .verticalScroll(rememberScrollState())
                                     ) {
                                         AssociationProfileContent(
                                             navigationAction = navigationAction,
@@ -327,21 +328,25 @@ fun AssociationProfileScaffold(
                                         ) { page ->
                                             when (page) {
                                                 0 ->
+                                                    Box(modifier = Modifier.pullRefresh(pullRefreshState)
+                                                        .verticalScroll(rememberScrollState())){
                                                     AssociationProfileContent(
                                                         navigationAction = navigationAction,
                                                         userViewModel = userViewModel,
                                                         eventViewModel = eventViewModel,
                                                         associationViewModel = associationViewModel
-                                                    )
+                                                    )}
 
                                                 1 ->
+                                                    Box(modifier = Modifier.pullRefresh(pullRefreshState)
+                                                        .verticalScroll(rememberScrollState())){
                                                     AssociationProfileActionsContent(
                                                         navigationAction = navigationAction,
                                                         userViewModel = userViewModel,
                                                         eventViewModel = eventViewModel,
                                                         associationViewModel = associationViewModel,
                                                         searchViewModel = searchViewModel
-                                                    )
+                                                    )}
                                             }
                                         }
                                     }
@@ -359,12 +364,14 @@ fun AssociationProfileScaffold(
                         }
                     } else {
                         // Default content without permissions
+                        Box(modifier = Modifier.pullRefresh(pullRefreshState)
+                            .verticalScroll(rememberScrollState())){
                         AssociationProfileContent(
                             navigationAction = navigationAction,
                             userViewModel = userViewModel,
                             eventViewModel = eventViewModel,
                             associationViewModel = associationViewModel
-                        )
+                        )}
                     }
                 }
             }
