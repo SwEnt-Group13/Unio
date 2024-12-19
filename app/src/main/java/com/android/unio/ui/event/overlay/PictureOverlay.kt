@@ -52,7 +52,6 @@ import com.android.unio.ui.image.AsyncImageWrapper
 import com.android.unio.ui.theme.AppTypography
 import kotlinx.coroutines.launch
 
-
 private val ASSOCIATION_ICON_SIZE = 32.dp
 private val PADDING_VALUE = 55.dp
 /**
@@ -83,20 +82,18 @@ fun PictureOverlay(
     return
   }
   val onClickArrow: (Boolean) -> Unit = { isRight: Boolean ->
-
     if (isRight && pagerState.currentPage < eventPictures.size - 1) {
-        val newPageIndex = pagerState.currentPage + 1
-        eventPictures[newPageIndex].author.fetch()
+      val newPageIndex = pagerState.currentPage + 1
+      eventPictures[newPageIndex].author.fetch()
       scope.launch { pagerState.animateScrollToPage(newPageIndex) }
     } else if (!isRight && pagerState.currentPage > 0) {
-        val newPageIndex = pagerState.currentPage - 1
-        eventPictures[newPageIndex].author.fetch()
+      val newPageIndex = pagerState.currentPage - 1
+      eventPictures[newPageIndex].author.fetch()
       scope.launch { pagerState.animateScrollToPage(newPageIndex) }
     }
   }
 
-
-    val author by eventPictures[pagerState.currentPage].author.element.collectAsState()
+  val author by eventPictures[pagerState.currentPage].author.element.collectAsState()
 
   var isLiked by
       remember(pagerState.currentPage) {
@@ -141,19 +138,27 @@ fun PictureOverlay(
         Box(
             modifier = Modifier.testTag(PICTURE_FULL_SCREEN).fillMaxHeight(0.5f).fillMaxWidth(),
             contentAlignment = Alignment.Center) {
-
-              HorizontalPager(pagerState, pageSpacing = 40.dp, beyondViewportPageCount = 1, modifier = Modifier.align(Alignment.Center)) { page
-                ->
-                AsyncImageWrapper(
-                    imageUri = eventPictures[page].image.toUri(),
-                    contentDescription =
-                        context.getString(
-                            R.string.event_details_content_description_full_screen_picture),
-                    filterQuality = FilterQuality.High,
-                    placeholderResourceId = 0,
-                    contentScale = ContentScale.Fit,
-                    modifier=Modifier.padding(start = PADDING_VALUE, end = PADDING_VALUE, bottom= PADDING_VALUE).align(Alignment.Center).fillMaxWidth())
-              }
+              HorizontalPager(
+                  pagerState,
+                  pageSpacing = 40.dp,
+                  beyondViewportPageCount = 1,
+                  modifier = Modifier.align(Alignment.Center)) { page ->
+                    AsyncImageWrapper(
+                        imageUri = eventPictures[page].image.toUri(),
+                        contentDescription =
+                            context.getString(
+                                R.string.event_details_content_description_full_screen_picture),
+                        filterQuality = FilterQuality.High,
+                        placeholderResourceId = 0,
+                        contentScale = ContentScale.Fit,
+                        modifier =
+                            Modifier.padding(
+                                    start = PADDING_VALUE,
+                                    end = PADDING_VALUE,
+                                    bottom = PADDING_VALUE)
+                                .align(Alignment.Center)
+                                .fillMaxWidth())
+                  }
               IconButton(
                   onClick = { onClickArrow(false) },
                   modifier =
@@ -184,56 +189,54 @@ fun PictureOverlay(
 
               Row(
                   modifier =
-                      Modifier.testTag("pictureInteractionRow").align(Alignment.BottomCenter).fillMaxWidth()
+                      Modifier.testTag("pictureInteractionRow")
+                          .align(Alignment.BottomCenter)
+                          .fillMaxWidth()
                           .padding(horizontal = PADDING_VALUE),
                   horizontalArrangement = Arrangement.SpaceBetween,
                   verticalAlignment = Alignment.CenterVertically) {
-                  Row(verticalAlignment = Alignment.CenterVertically) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
                       IconButton(
                           onClick = onClickLike,
                           modifier = Modifier,
                           colors =
-                          IconButtonDefaults.iconButtonColors(
-                              contentColor = MaterialTheme.colorScheme.onPrimary)) {
-                          Icon(
-                              imageVector =
-                              if (isLiked) Icons.Rounded.Favorite
-                              else Icons.Rounded.FavoriteBorder,
-                              "like button",
-                              modifier = Modifier.size(iconSize),
-                              tint = if (isLiked) Color.Red else Color.White)
-                      }
+                              IconButtonDefaults.iconButtonColors(
+                                  contentColor = MaterialTheme.colorScheme.onPrimary)) {
+                            Icon(
+                                imageVector =
+                                    if (isLiked) Icons.Rounded.Favorite
+                                    else Icons.Rounded.FavoriteBorder,
+                                "like button",
+                                modifier = Modifier.size(iconSize),
+                                tint = if (isLiked) Color.Red else Color.White)
+                          }
 
                       Text("$nbOfLikes", color = MaterialTheme.colorScheme.onPrimary)
+                    }
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.testTag("")) {
+                          author?.profilePicture?.toUri()?.let {
+                            AsyncImageWrapper(
+                                imageUri = it,
+                                contentDescription =
+                                    context.getString(R.string.event_association_icon_description),
+                                modifier =
+                                    Modifier.size(ASSOCIATION_ICON_SIZE)
+                                        .clip(RoundedCornerShape(5.dp))
+                                        .align(Alignment.CenterVertically)
+                                        .testTag(""),
+                                placeholderResourceId = R.drawable.adec,
+                                filterQuality = FilterQuality.None,
+                                contentScale = ContentScale.Crop)
+                          }
 
-                  }
-                  Row(verticalAlignment = Alignment.CenterVertically,
-                      modifier =
-                      Modifier.testTag("")) {
-                      author?.profilePicture?.toUri()?.let {
-                          AsyncImageWrapper(
-                              imageUri = it,
-                              contentDescription =
-                              context.getString(R.string.event_association_icon_description),
-                              modifier =
-                              Modifier.size(ASSOCIATION_ICON_SIZE)
-                                  .clip(RoundedCornerShape(5.dp))
-                                  .align(Alignment.CenterVertically)
-                                  .testTag(""),
-                              placeholderResourceId = R.drawable.adec,
-                              filterQuality = FilterQuality.None,
-                              contentScale = ContentScale.Crop)
-                      }
-
-                      Text(
-                          "${author?.firstName} ${author?.lastName}",
-                          modifier =
-                          Modifier.testTag("")
-                              .padding(start = 5.dp),
-                          style = AppTypography.bodyMedium,
-                          color = MaterialTheme.colorScheme.onPrimary)
-                  }
-
+                          Text(
+                              "${author?.firstName} ${author?.lastName}",
+                              modifier = Modifier.testTag("").padding(start = 5.dp),
+                              style = AppTypography.bodyMedium,
+                              color = MaterialTheme.colorScheme.onPrimary)
+                        }
                   }
             }
       }

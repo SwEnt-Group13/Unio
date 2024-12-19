@@ -504,9 +504,8 @@ fun EventDetailsPicturesTab(
                             .clip(RoundedCornerShape(10))
                             .testTag(EventDetailsTestTags.USER_EVENT_PICTURE + item.uid)
                             .clickable {
-                                eventPictures[index].author.fetch()
-                              scope.launch {
-                                  pagerState.scrollToPage(index) }
+                              eventPictures[index].author.fetch()
+                              scope.launch { pagerState.scrollToPage(index) }
                               showFullScreen = true
                             })
               }
