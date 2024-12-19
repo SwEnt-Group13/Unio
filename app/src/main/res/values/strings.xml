@@ -307,8 +307,8 @@
     <string name="map_event_go_back_button">Go back</string>
     <string name="map_event_title">Event map</string>
     <string name="map_event_marker_time_remaining_prefix">In </string>
-    <string name="map_event_marker_time_remaining_days">days, </string>
-    <string name="map_event_marker_time_remaining_hours">hours</string>
+    <string name="map_event_marker_time_remaining_days">day(s), </string>
+    <string name="map_event_marker_time_remaining_hours">hour(s)</string>
     <string name="map_event_marker_prefix">Event: </string>
     <string name="map_event_marker_snippet_separator" translatable="false"> - </string>
     <string name="map_content_description_center_on_user">Center on User</string>

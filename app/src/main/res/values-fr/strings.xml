@@ -280,8 +280,8 @@
     <string name="map_event_go_back_button">Retour</string>
     <string name="map_event_title">Carte d\'évènements</string>
     <string name="map_event_marker_time_remaining_prefix">Dans </string>
-    <string name="map_event_marker_time_remaining_days">jours, </string>
-    <string name="map_event_marker_time_remaining_hours">heures</string>
+    <string name="map_event_marker_time_remaining_days">jour(s), </string>
+    <string name="map_event_marker_time_remaining_hours">heure(s)</string>
     <string name="map_event_marker_prefix">Evénements : </string>
     <string name="map_content_description_center_on_user">Centrer sur l\'utilisateur</string>
 
