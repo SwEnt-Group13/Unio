@@ -14,6 +14,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.outlined.Clear
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -41,6 +42,7 @@ import com.android.unio.mocks.firestore.MockReferenceList
 import com.android.unio.model.association.Association
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.event.Event
+import com.android.unio.model.event.EventType
 import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.firestore.firestoreReferenceListWith
 import com.android.unio.model.map.Location
@@ -49,15 +51,17 @@ import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.strings.test_tags.event.EventEditTestTags
 import com.android.unio.model.user.ImageUriType
 import com.android.unio.model.user.checkImageUri
-import com.android.unio.ui.components.AssociationChips
 import com.android.unio.ui.components.BannerImagePicker
+import com.android.unio.ui.components.Chips
 import com.android.unio.ui.components.DateAndTimePicker
 import com.android.unio.ui.components.NominatimLocationPicker
 import com.android.unio.ui.components.getHHMMInMillisFromTimestamp
 import com.android.unio.ui.event.overlay.AssociationsOverlay
+import com.android.unio.ui.event.overlay.EventTypeOverlay
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.theme.AppTypography
 import com.google.firebase.Timestamp
+import kotlinx.coroutines.flow.MutableStateFlow
 
 /**
  * Composable function that displays the event edit screen. It functions similarly to the Event
@@ -80,12 +84,19 @@ fun EventEditScreen(
   val scrollState = rememberScrollState()
   var showCoauthorsOverlay by remember { mutableStateOf(false) }
   var showTaggedOverlay by remember { mutableStateOf(false) }
+  var showEventTypeOverlay by remember { mutableStateOf(false) }
 
   val eventToEdit = remember { eventViewModel.selectedEvent.value!! }
 
-  var name by remember { mutableStateOf(eventToEdit.title) }
-  var shortDescription by remember { mutableStateOf(eventToEdit.catchyDescription) }
-  var longDescription by remember { mutableStateOf(eventToEdit.description) }
+  var name by remember { mutableStateOf(eventToEdit.title.trim()) }
+  var shortDescription by remember { mutableStateOf(eventToEdit.catchyDescription.trim()) }
+  var longDescription by remember { mutableStateOf(eventToEdit.description.trim()) }
+
+  val eventTypeFlow = remember {
+    MutableStateFlow(EventType.entries.map { it to mutableStateOf(eventToEdit.types.contains(it)) })
+  }
+
+  val types by eventTypeFlow.collectAsState()
 
   var coauthorsAndBoolean =
       associationViewModel.associations.collectAsState().value.map {
@@ -139,14 +150,51 @@ fun EventEditScreen(
           OutlinedTextField(
               modifier = Modifier.fillMaxWidth().testTag(EventEditTestTags.EVENT_TITLE),
               value = name,
+              isError = name.isEmpty(),
+              supportingText = {
+                if (name.isEmpty()) {
+                  Text(context.getString(R.string.event_creation_name_error))
+                }
+              },
               onValueChange = { name = it },
-              label = { Text(context.getString(R.string.event_creation_name_label)) })
+              label = { Text(context.getString(R.string.event_creation_name_label)) },
+              trailingIcon = {
+                IconButton(
+                    onClick = { name = "" },
+                    enabled = name.isNotEmpty(),
+                    modifier = Modifier.testTag(EventEditTestTags.EVENT_TITLE_CLEAR_BUTTON)) {
+                      Icon(
+                          imageVector = Icons.Outlined.Clear,
+                          contentDescription =
+                              context.getString(
+                                  R.string.event_creation_content_description_clear_title))
+                    }
+              })
 
           OutlinedTextField(
               modifier = Modifier.fillMaxWidth().testTag(EventEditTestTags.SHORT_DESCRIPTION),
               value = shortDescription,
+              isError = shortDescription.isEmpty(),
+              supportingText = {
+                if (shortDescription.isEmpty()) {
+                  Text(context.getString(R.string.event_creation_short_description_error))
+                }
+              },
               onValueChange = { shortDescription = it },
-              label = { Text(context.getString(R.string.event_creation_short_description_label)) })
+              label = { Text(context.getString(R.string.event_creation_short_description_label)) },
+              trailingIcon = {
+                IconButton(
+                    onClick = { shortDescription = "" },
+                    enabled = shortDescription.isNotEmpty(),
+                    modifier = Modifier.testTag(EventEditTestTags.SHORT_DESCRIPTION_CLEAR_BUTTON)) {
+                      Icon(
+                          imageVector = Icons.Outlined.Clear,
+                          contentDescription =
+                              context.getString(
+                                  R.string
+                                      .event_creation_content_description_clear_short_description))
+                    }
+              })
 
           BannerImagePicker(
               eventBannerUri, modifier = Modifier.testTag(EventEditTestTags.EVENT_IMAGE))
@@ -161,7 +209,10 @@ fun EventEditScreen(
                 Text(context.getString(R.string.event_creation_coauthors_label))
               }
 
-          AssociationChips(coauthorsAndBoolean)
+          Chips(
+              coauthorsAndBoolean,
+              getName = { it.name },
+          )
 
           OutlinedButton(
               modifier = Modifier.fillMaxWidth().testTag(EventEditTestTags.TAGGED_ASSOCIATIONS),
@@ -173,11 +224,32 @@ fun EventEditScreen(
                 Text(context.getString(R.string.event_creation_tagged_label))
               }
 
-          AssociationChips(taggedAndBoolean)
+          Chips(
+              taggedAndBoolean,
+              getName = { it.name },
+          )
+
+          OutlinedButton(
+              modifier = Modifier.fillMaxWidth().testTag(EventEditTestTags.EVENT_TYPE),
+              onClick = { showEventTypeOverlay = true }) {
+                Icon(
+                    Icons.Default.Add,
+                    contentDescription =
+                        context.getString(R.string.social_overlay_content_description_add))
+                Text(context.getString(R.string.event_edit_type))
+              }
+
+          Chips(types, getName = { context.getString(it.text) })
 
           OutlinedTextField(
               modifier = Modifier.fillMaxWidth().testTag(EventEditTestTags.DESCRIPTION),
               value = longDescription,
+              isError = longDescription.isEmpty(),
+              supportingText = {
+                if (longDescription.isEmpty()) {
+                  Text(context.getString(R.string.event_creation_description_error))
+                }
+              },
               onValueChange = { longDescription = it },
               label = { Text(context.getString(R.string.event_creation_description_label)) })
 
@@ -294,6 +366,7 @@ fun EventEditScreen(
                               startDate = startTimestamp!!,
                               endDate = endTimestamp!!,
                               location = selectedLocation!!,
+                              types = types.filter { it.second.value }.map { it.first },
                               eventPictures = MockReferenceList(),
                           )
                       // This should be extracted to a util
@@ -355,5 +428,15 @@ fun EventEditScreen(
                 bodyText = context.getString(R.string.associations_overlay_tagged_description))
           }
         }
+
+    if (showEventTypeOverlay) {
+      EventTypeOverlay(
+          onDismiss = { showEventTypeOverlay = false },
+          onSave = { types ->
+            eventTypeFlow.value = types
+            showEventTypeOverlay = false
+          },
+          types = types)
+    }
   }
 }

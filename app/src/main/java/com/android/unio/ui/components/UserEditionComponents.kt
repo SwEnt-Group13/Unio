@@ -145,11 +145,12 @@ fun InterestInputChip(pair: Pair<Interest, MutableState<Boolean>>, testTag: Stri
       label = { Text(context.getString(pair.first.title)) },
       onClick = {},
       selected = pair.second.value,
-      modifier = Modifier.padding(3.dp).testTag(testTag),
+      modifier = Modifier.padding(horizontal = 3.dp).testTag(testTag),
       avatar = {
         Icon(
             Icons.Default.Close,
-            contentDescription = "Add",
+            contentDescription =
+                context.getString(R.string.account_details_content_description_add),
             modifier = Modifier.clickable { pair.second.value = !pair.second.value })
       })
 }
@@ -169,7 +170,7 @@ fun SocialInputChip(userSocial: UserSocial, onRemove: () -> Unit, testTag: Strin
       label = { Text(userSocial.social.title) },
       onClick = {},
       selected = true,
-      modifier = Modifier.testTag(testTag + userSocial.social.title),
+      modifier = Modifier.padding(horizontal = 3.dp).testTag(testTag + userSocial.social.title),
       avatar = {
         Image(
             modifier = Modifier.size(24.dp),

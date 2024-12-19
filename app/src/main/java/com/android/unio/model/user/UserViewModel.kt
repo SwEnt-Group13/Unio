@@ -5,10 +5,12 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.android.unio.model.association.Association
 import com.android.unio.model.authentication.registerAuthStateListener
 import com.android.unio.model.event.Event
 import com.android.unio.model.image.ImageRepository
 import com.android.unio.model.strings.StoragePathsStrings
+import com.android.unio.model.usecase.UserDeletionUseCase
 import com.android.unio.ui.event.SECONDS_IN_AN_HOUR
 import com.google.firebase.Firebase
 import com.google.firebase.Timestamp
@@ -29,7 +31,8 @@ class UserViewModel
 @Inject
 constructor(
     private val userRepository: UserRepository,
-    private val imageRepository: ImageRepository
+    private val imageRepository: ImageRepository,
+    private val userDeletionUseCase: UserDeletionUseCase
 ) : ViewModel() {
   private val _user = MutableStateFlow<User?>(null)
   val user: StateFlow<User?> = _user.asStateFlow()
@@ -46,8 +49,9 @@ constructor(
   constructor(
       userRepository: UserRepository,
       imageRepository: ImageRepository,
+      userDeletionUseCase: UserDeletionUseCase,
       initializeWithAuthenticatedUser: Boolean
-  ) : this(userRepository, imageRepository) {
+  ) : this(userRepository, imageRepository, userDeletionUseCase) {
     this.initializeWithAuthenticatedUser = initializeWithAuthenticatedUser
   }
 
@@ -56,6 +60,7 @@ constructor(
       Firebase.auth.registerAuthStateListener { auth ->
         if (auth.currentUser != null) {
           userRepository.init { getUserByUid(auth.currentUser!!.uid, true) }
+          userDeletionUseCase.init {}
         }
       }
     } else {
@@ -197,18 +202,23 @@ constructor(
   }
 
   /**
-   * Deletes the user with the given userId from firebase auth, storage (for the profile picture)
-   * and firestore
+   * Deletes the user and from the database and update all its dependencies. If
+   * [deleteWithProfilePicture] is set to true, the user's profile picture will also be deleted.
    *
-   * @param userId The Id of the corresponding user we want to delete
-   * @return true if all three method were successful and false otherwise
+   * @param user The [User] object to delete.
+   * @param deleteWithProfilePicture Whether to delete the user's profile picture or not.
+   * @param onSuccess Callback if deletion is successful.
+   * @param onFailure Callback if deletion fails.
    */
   suspend fun deleteUser(
-      userId: String,
+      user: User,
       deleteWithProfilePicture: Boolean,
       onSuccess: () -> Unit,
       onFailure: (Exception) -> Unit
   ) {
+    val userId = user.uid
+    val eventToUpdate: MutableList<Event> = mutableListOf()
+    val associationToUpdate: MutableList<Association> = mutableListOf()
     try {
       coroutineScope {
 
@@ -236,8 +246,25 @@ constructor(
         }
 
         val firestoreTask = async {
-          userRepository.deleteUserInFirestore(
+          user.savedEvents.list.value.forEach { event ->
+            updateOrAdd(eventToUpdate, event) { it.copy(numberOfSaved = it.numberOfSaved - 1) }
+          }
+          user.followedAssociations.list.value.forEach { association ->
+            updateOrAdd(associationToUpdate, association) {
+              it.copy(followersCount = it.followersCount - 1)
+            }
+          }
+
+          user.joinedAssociations.list.value.forEach { association ->
+            updateOrAdd(associationToUpdate, association) { current ->
+              association.copy(members = current.members.filter { it.uid != userId })
+            }
+          }
+
+          userDeletionUseCase.deleteUser(
               userId,
+              eventToUpdate,
+              associationToUpdate,
               onSuccess = { Log.i("UserDeletion", "Successfully deleted user from firestore") },
               onFailure = { onFailure(it) })
         }
@@ -252,6 +279,26 @@ constructor(
 
       Log.e("UserDeletion", "Failed to delete user: ${e.message}", e)
       onFailure(e)
+    }
+  }
+
+  /**
+   * Check if the item is already in the list. If it is, update it with the provided operation,
+   * otherwise add it to the list with the provided operation applied.
+   *
+   * @param list The list to add/update the item in.
+   * @param item The item to add/update.
+   * @param operation The operation to apply to the item.
+   */
+  private fun <T> updateOrAdd(list: MutableList<T>, item: T, operation: (T) -> T) {
+    if (list.contains(item)) {
+      val index = list.indexOf(item)
+      val current = list[index]
+      val newItem = operation(current)
+      list[index] = newItem
+    } else {
+      val newItem = operation(item)
+      list.add(newItem)
     }
   }
 

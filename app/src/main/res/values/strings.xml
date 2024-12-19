@@ -112,6 +112,8 @@
     <string name="account_details_content_description_links_icon">Links icon</string>
     <string name="account_details_content_description_pfp">Profile Picture</string>
     <string name="account_details_content_description_remove_pfp">Remove Profile Picture</string>
+    <string name="account_details_content_description_clear_first_name">Clear first name</string>
+    <string name="account_details_content_description_clear_last_name">Clear last name</string>
 
     <!-- UserSettings Strings -->
     <string name="user_edition_content_description_remove_social">Remove User Social</string>
@@ -130,6 +132,8 @@
     <string name="user_edition_delete_user_failure" translatable="true">Failed to delete account, try again later</string>
     <string name="user_edition_modified_offline" translatable="true">Deleted user offline</string>
     <string name="user_edition_delete_user_offline" translatable="true">Please be connected to the internet to delete your Account</string>
+    <string name="user_edition_content_description_clear_first_name">Clear first name</string>
+    <string name="user_edition_content_description_clear_last_name">Clear last name</string>
 
 
     <!-- EmailVerification Strings -->
@@ -217,17 +221,34 @@
     <string name="event_creation_location_input_label">Enter an address</string>
     <string name="event_creation_location_dropdown_points">…</string>
     <string name="event_creation_location_dropdown_more">More…</string>
+    <string name="event_creation_name_error">Enter an event name</string>
+    <string name="event_creation_short_description_error">Enter an event short description</string>
+    <string name="event_creation_description_error">Enter an event description</string>
+    <string name="event_creation_type">Add types to your event</string>
+    <string name="event_creation_content_description_clear_title">Clear title</string>
+    <string name="event_creation_content_description_clear_short_description">Clear short description</string>
+    <string name="event_creation_location_icon">Location icon</string>
 
     <!-- Event Edit Strings -->
     <string name="event_edit_title">Edit </string>
     <string name="event_edit_delete_button">Delete</string>
     <string name="event_edit_failed">Failed to edit event</string>
     <string name="event_edit_save_button">Save</string>
+    <string name="event_edit_type">Edit the type of your event</string>
+
 
     <!-- Event Edit Component Strings -->
     <string name="event_edit_date_picker_desc">Select date</string>
     <string name="event_edit_time_picker_desc">Select time</string>
+    <string name="event_edit_date_error">Date is missing</string>
+    <string name="event_edit_time_error">Time is missing</string>
+    <string name="event_edit_location_error">Wrong location input</string>
     <string name="event_edit_toast_more_button">Continue typing to see more results</string>
+
+    <!-- Event Type Overlay Strings -->
+    <string name="event_type_overlay_title">Event Type</string>
+    <string name="event_type_overlay_description">Choose up to three event types to better describe your event to your audience</string>
+
 
     <!-- Associations Overlay Strings -->
     <string name="associations_overlay_coauthors_title" translatable="true">Coauthors</string>
@@ -252,6 +273,10 @@
     <string name="event_details_user_picture_content_description">A picture uploaded by a user</string>
     <string name="event_details_description_tab">Description</string>
     <string name="event_details_pictures_tab">Event pictures</string>
+    <string name="event_details_content_description_full_screen_picture">Full Screen Picture</string>
+    <string name="event_details_content_description_arrow_left">Arrow Left</string>
+    <string name="event_details_content_description_arrow_right">Arrow Right</string>
+
 
     /**
     * package: explore
@@ -420,9 +445,21 @@
     <string name="event_type_night_party">Night Party</string>
     <string name="event_type_jam">Jam</string>
     <string name="event_type_networking">Networking</string>
-    <string name="event_type_sport">Sport</string>
     <string name="event_type_trip">Trip</string>
+    <string name="event_type_sport_tournament">Sport Tournament</string>
+    <string name="event_type_sport_discovery">Sport</string>
+    <string name="event_type_lan">Lan</string>
+    <string name="event_type_film_projection">Film Projection</string>
+    <string name="event_type_foreign_culture_discovery">Foreing Culture Discovery</string>
+    <string name="event_type_tech_presentation">Tech Presentation</string>
+    <string name="event_type_science_fare">Science Fare</string>
+    <string name="event_type_food_distribuition">Food Distribution</string>
+    <string name="event_type_art_convention">Art Convention</string>
+    <string name="event_type_manifestation">Manifestation</string>
+    <string name="event_type_board_games">Board Games</string>
+    <string name="event_type_group_study">Groups study</string>
     <string name="event_type_other">Other</string>
+
 
     <!-- EventRepositoryFirestore Strings -->
     <string name="event_error_converting_document">Error while converting db document to Event object</string>
@@ -460,6 +497,10 @@
     <string name="interest_food" translatable="true">Food</string>
     <string name="interest_gaming" translatable="true">Gaming</string>
     <string name="interest_festivals" translatable="true">Festivals</string>
+    <string name="interest_apero" translatable="true">Apero</string>
+    <string name="interest_networking" translatable="true">Networking</string>
+    <string name="interest_culture" translatable="true">Culture</string>
+
 
     <!-- Reset Password Strings -->
     <string name="reset_password_success_toast">An email has been sent to the given address</string>

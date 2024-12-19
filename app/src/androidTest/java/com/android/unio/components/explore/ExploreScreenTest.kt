@@ -14,12 +14,12 @@ import com.android.unio.model.association.AssociationCategory
 import com.android.unio.model.association.AssociationRepositoryFirestore
 import com.android.unio.model.association.AssociationViewModel
 import com.android.unio.model.event.EventRepositoryFirestore
-import com.android.unio.model.follow.ConcurrentAssociationUserRepositoryFirestore
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.search.SearchRepository
 import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.strings.test_tags.explore.ExploreContentTestTags
 import com.android.unio.model.strings.test_tags.explore.ExploreTestTags
+import com.android.unio.model.usecase.FollowUseCaseFirestore
 import com.android.unio.ui.explore.ExploreScreen
 import com.android.unio.ui.explore.getFilteredAssociationsByAlphabeticalOrder
 import com.android.unio.ui.explore.getSortedEntriesAssociationsByCategory
@@ -43,9 +43,7 @@ class ExploreScreenTest : TearDown() {
   @MockK private lateinit var associationRepository: AssociationRepositoryFirestore
   private lateinit var searchViewModel: SearchViewModel
   @MockK private lateinit var searchRepository: SearchRepository
-  @MockK
-  private lateinit var concurrentAssociationUserRepositoryFirestore:
-      ConcurrentAssociationUserRepositoryFirestore
+  @MockK private lateinit var concurrentAssociationUserRepositoryFirestore: FollowUseCaseFirestore
   @MockK private lateinit var eventRepository: EventRepositoryFirestore
   @MockK private lateinit var imageRepository: ImageRepositoryFirebaseStorage
   @MockK private lateinit var context: Context
