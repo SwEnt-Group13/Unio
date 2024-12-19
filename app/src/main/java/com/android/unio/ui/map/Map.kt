@@ -323,7 +323,9 @@ fun DisplayEventMarker(
         title = event.title,
         snippet =
             timer +
+                " " +
                 context.getString(R.string.map_event_marker_snippet_separator) +
+                " " +
                 event.description,
         icon = pinPointIcon)
   }
@@ -345,14 +347,20 @@ fun timeUntilEvent(eventTimestamp: Timestamp, context: Context): String {
   val hours = TimeUnit.SECONDS.toHours(timeDifference) % MapCst.HOURS_IN_DAY
   return if (days > 0)
       (context.getString(R.string.map_event_marker_time_remaining_prefix) +
+          " " +
           days +
+          " " +
           context.getString(R.string.map_event_marker_time_remaining_days) +
+          " " +
           hours +
+          " " +
           context.getString(R.string.map_event_marker_time_remaining_hours))
   else
       (context.getString(R.string.map_event_marker_time_remaining_prefix) +
-          days +
-          context.getString(R.string.map_event_marker_time_remaining_days))
+          " " +
+          hours +
+          " " +
+          context.getString(R.string.map_event_marker_time_remaining_hours))
 }
 
 object MapCst {
