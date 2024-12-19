@@ -323,17 +323,23 @@ constructor(
     eventUserPictureRepository.addEventUserPicture(
         picture,
         {
+
           if (!event.eventPictures.contains(picture.uid)) {
-            event.eventPictures.add(picture.uid)
-            updateEventWithoutImage(
-                event,
-                { event.eventPictures.add(picture) },
-                { e -> Log.e("EventViewModel", "An error occurred while updating an event: $e") })
+              event.eventPictures.add(picture)
           } else {
-            event.eventPictures.remove(picture.uid)
-            event.eventPictures.add(picture)
+              event.eventPictures.remove(picture.uid)
+              event.eventPictures.add(picture)
           }
-          onSuccess()
+            updateEventWithoutImage(event, {
+                _events.value =
+                    _events.value.map {
+                        if (it.uid == event.uid) event else it
+                    }
+                onSuccess()
+            }, { e ->
+                onFailure(e)
+                Log.e("EventViewModel", "An error occurred while updating an event: $e") })
+
         },
         { e ->
           onFailure(e)

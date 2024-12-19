@@ -74,6 +74,7 @@ import androidx.core.net.toUri
 import com.android.unio.R
 import com.android.unio.model.association.Association
 import com.android.unio.model.event.Event
+import com.android.unio.model.event.EventUserPicture
 import com.android.unio.model.event.EventUtils.formatTimestamp
 import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.map.MapViewModel
@@ -267,12 +268,16 @@ fun EventScreenContent(
     tabList: List<String>
 ) {
   val context = LocalContext.current
-  Column(modifier = Modifier.testTag(EventDetailsTestTags.DETAILS_PAGE).fillMaxSize()) {
+  Column(modifier = Modifier
+      .testTag(EventDetailsTestTags.DETAILS_PAGE)
+      .fillMaxSize()) {
     Column(modifier = Modifier.height(200.dp)) {
       AsyncImageWrapper(
           imageUri = event.image.toUri(),
           contentDescription = context.getString(R.string.event_image_description),
-          modifier = Modifier.fillMaxWidth().testTag(EventDetailsTestTags.DETAILS_IMAGE),
+          modifier = Modifier
+              .fillMaxWidth()
+              .testTag(EventDetailsTestTags.DETAILS_IMAGE),
           contentScale = ContentScale.Crop,
           placeholderResourceId = R.drawable.placeholder_pictures)
     }
@@ -283,9 +288,10 @@ fun EventScreenContent(
     HorizontalPager(
         state = pagerState,
         modifier =
-            Modifier.fillMaxSize()
-                .padding(9.dp)
-                .testTag(EventDetailsTestTags.EVENT_DETAILS_PAGER)) { page ->
+        Modifier
+            .fillMaxSize()
+            .padding(9.dp)
+            .testTag(EventDetailsTestTags.EVENT_DETAILS_PAGER)) { page ->
           EventDetailsBody(
               navigationAction, mapViewModel, eventViewModel, event, user, context, page)
         }
@@ -303,15 +309,18 @@ fun EventScreenContent(
 fun EventInformationCard(event: Event, organisers: List<Association>, context: Context) {
   Column(
       modifier =
-          Modifier.testTag(EventDetailsTestTags.DETAILS_INFORMATION_CARD)
-              .background(MaterialTheme.colorScheme.primary)
-              .padding(12.dp)
-              .fillMaxWidth(),
+      Modifier
+          .testTag(EventDetailsTestTags.DETAILS_INFORMATION_CARD)
+          .background(MaterialTheme.colorScheme.primary)
+          .padding(12.dp)
+          .fillMaxWidth(),
       horizontalAlignment = Alignment.CenterHorizontally) {
         Text(
             event.title,
             modifier =
-                Modifier.testTag(EventDetailsTestTags.TITLE).align(Alignment.CenterHorizontally),
+            Modifier
+                .testTag(EventDetailsTestTags.TITLE)
+                .align(Alignment.CenterHorizontally),
             style = AppTypography.displayMedium,
             color = MaterialTheme.colorScheme.onPrimary)
 
@@ -319,18 +328,20 @@ fun EventInformationCard(event: Event, organisers: List<Association>, context: C
           for (i in organisers.indices) {
             Row(
                 modifier =
-                    Modifier.testTag("${EventDetailsTestTags.ORGANIZING_ASSOCIATION}$i")
-                        .padding(end = 6.dp),
+                Modifier
+                    .testTag("${EventDetailsTestTags.ORGANIZING_ASSOCIATION}$i")
+                    .padding(end = 6.dp),
                 horizontalArrangement = Arrangement.Center) {
                   AsyncImageWrapper(
                       imageUri = organisers[i].image.toUri(),
                       contentDescription =
                           context.getString(R.string.event_association_icon_description),
                       modifier =
-                          Modifier.size(ASSOCIATION_ICON_SIZE)
-                              .clip(RoundedCornerShape(5.dp))
-                              .align(Alignment.CenterVertically)
-                              .testTag("${EventDetailsTestTags.ASSOCIATION_LOGO}$i"),
+                      Modifier
+                          .size(ASSOCIATION_ICON_SIZE)
+                          .clip(RoundedCornerShape(5.dp))
+                          .align(Alignment.CenterVertically)
+                          .testTag("${EventDetailsTestTags.ASSOCIATION_LOGO}$i"),
                       placeholderResourceId = R.drawable.adec,
                       filterQuality = FilterQuality.None,
                       contentScale = ContentScale.Crop)
@@ -338,8 +349,9 @@ fun EventInformationCard(event: Event, organisers: List<Association>, context: C
                   Text(
                       organisers[i].name,
                       modifier =
-                          Modifier.testTag("${EventDetailsTestTags.ASSOCIATION_NAME}$i")
-                              .padding(start = 3.dp),
+                      Modifier
+                          .testTag("${EventDetailsTestTags.ASSOCIATION_NAME}$i")
+                          .padding(start = 3.dp),
                       style = AppTypography.bodySmall,
                       color = MaterialTheme.colorScheme.onPrimary)
                 }
@@ -434,7 +446,9 @@ fun EventDetailsPicturesTab(
     context: Context,
     eventViewModel: EventViewModel
 ) {
+
   val eventPictures by event.eventPictures.list.collectAsState()
+
   var showFullScreen by remember { mutableStateOf(false) }
   var selectedPictureUri by remember { mutableStateOf(Uri.EMPTY) }
   val pagerState = rememberPagerState { eventPictures.size }
@@ -455,8 +469,10 @@ fun EventDetailsPicturesTab(
   } else {
     LazyVerticalStaggeredGrid(
         columns = StaggeredGridCells.Adaptive(100.dp),
-        modifier = Modifier.fillMaxSize().testTag(EventDetailsTestTags.GALLERY_GRID)) {
-          itemsIndexed(eventPictures) { index, item ->
+        modifier = Modifier
+            .fillMaxSize()
+            .testTag(EventDetailsTestTags.GALLERY_GRID)) {
+          itemsIndexed(eventPictures.sortedWith(compareBy<EventUserPicture> { it.likes.uids.size }.thenBy{it.uid} ))  { index, item ->
             AsyncImageWrapper(
                 item.image.toUri(),
                 contentDescription =
@@ -465,13 +481,14 @@ fun EventDetailsPicturesTab(
                 placeholderResourceId = 0,
                 contentScale = ContentScale.Fit,
                 modifier =
-                    Modifier.padding(3.dp)
-                        .clip(RoundedCornerShape(10))
-                        .testTag(EventDetailsTestTags.USER_EVENT_PICTURE + item.uid)
-                        .clickable {
-                          scope.launch { pagerState.scrollToPage(index) }
-                          showFullScreen = true
-                        })
+                Modifier
+                    .padding(3.dp)
+                    .clip(RoundedCornerShape(10))
+                    .testTag(EventDetailsTestTags.USER_EVENT_PICTURE + item.uid)
+                    .clickable {
+                        scope.launch { pagerState.scrollToPage(index) }
+                        showFullScreen = true
+                    })
           }
         }
     if (showFullScreen) {
@@ -504,7 +521,10 @@ fun EventDetailsDescriptionTab(
 ) {
   Column(
       modifier =
-          Modifier.testTag(EventDetailsTestTags.DETAILS_BODY).fillMaxHeight().padding(top = 30.dp),
+      Modifier
+          .testTag(EventDetailsTestTags.DETAILS_BODY)
+          .fillMaxHeight()
+          .padding(top = 30.dp),
       verticalArrangement = Arrangement.spacedBy(30.dp)) {
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
           val priceStr =
@@ -532,10 +552,14 @@ fun EventDetailsDescriptionTab(
 
         Text(
             event.description,
-            modifier = Modifier.testTag(EventDetailsTestTags.DESCRIPTION).padding(6.dp),
+            modifier = Modifier
+                .testTag(EventDetailsTestTags.DESCRIPTION)
+                .padding(6.dp),
             style = AppTypography.bodyMedium)
         Column(
-            modifier = Modifier.fillMaxSize().padding(top = 30.dp),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(top = 30.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp)) {
               OutlinedButton(
                   onClick = {
@@ -543,15 +567,17 @@ fun EventDetailsDescriptionTab(
                     navigationAction.navigateTo(Screen.MAP)
                   },
                   modifier =
-                      Modifier.testTag(EventDetailsTestTags.MAP_BUTTON)
-                          .align(Alignment.CenterHorizontally)
-                          .wrapContentSize(),
+                  Modifier
+                      .testTag(EventDetailsTestTags.MAP_BUTTON)
+                      .align(Alignment.CenterHorizontally)
+                      .wrapContentSize(),
                   shape = CircleShape) {
                     Text(
                         event.location.name,
                         modifier =
-                            Modifier.testTag(EventDetailsTestTags.LOCATION_ADDRESS)
-                                .padding(end = 5.dp))
+                        Modifier
+                            .testTag(EventDetailsTestTags.LOCATION_ADDRESS)
+                            .padding(end = 5.dp))
                     Icon(
                         Icons.Outlined.LocationOn,
                         contentDescription =
@@ -583,7 +609,9 @@ fun EventDetailsBottomSheet(
     ) {
       Column {
         TextButton(
-            modifier = Modifier.fillMaxWidth().testTag(EventDetailsTestTags.SEND_NOTIFICATION),
+            modifier = Modifier
+                .fillMaxWidth()
+                .testTag(EventDetailsTestTags.SEND_NOTIFICATION),
             onClick = {
               scope.launch {
                 sheetState.hide()
@@ -694,11 +722,12 @@ fun EventSaveButton(event: Event, eventViewModel: EventViewModel, userViewModel:
 
   IconButton(
       modifier =
-          Modifier.size(28.dp)
-              .clip(RoundedCornerShape(14.dp))
-              .background(MaterialTheme.colorScheme.inversePrimary)
-              .padding(4.dp)
-              .testTag(EventDetailsTestTags.SAVE_BUTTON),
+      Modifier
+          .size(28.dp)
+          .clip(RoundedCornerShape(14.dp))
+          .background(MaterialTheme.colorScheme.inversePrimary)
+          .padding(4.dp)
+          .testTag(EventDetailsTestTags.SAVE_BUTTON),
       onClick = { onClickSaveButton() },
       enabled = enableButton) {
         Icon(
