@@ -153,7 +153,7 @@ service cloud.firestore {
       function isEventOrganiser(organisers) {
         // Check that the user creating the event is member of any of the organisers
         return organisers.hasAny(
-        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.get(joinedAssociations, false)
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.get("joinedAssociations", null)
         );
       }
 
