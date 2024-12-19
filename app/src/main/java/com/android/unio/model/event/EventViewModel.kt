@@ -77,7 +77,33 @@ constructor(
         })
   }
 
-  /**
+    /**
+     * Adds a new event or updates an existing event locally in the ViewModel's state.
+     *
+     * @param event The event to add or update.
+     */
+    fun addEditEventLocally(event: Event) {
+        // Check if the event already exists in the list
+        val existingEventIndex = _events.value.indexOfFirst { it.uid == event.uid }
+
+        if (existingEventIndex != -1) {
+            // Event exists, update it
+            val updatedEvents = _events.value.toMutableList()
+            updatedEvents[existingEventIndex] = event
+            _events.value = updatedEvents
+        } else {
+            // Event does not exist, add it
+            _events.value = _events.value + event
+        }
+
+        // If the selected event matches the updated event, refresh the selection
+        if (_selectedEvent.value?.uid == event.uid) {
+            _selectedEvent.value = event
+        }
+    }
+
+
+    /**
    * Updates the selected event in the ViewModel.
    *
    * @param eventId the ID of the event to select.
@@ -140,12 +166,14 @@ constructor(
       onSuccess: () -> Unit,
       onFailure: (Exception) -> Unit
   ) {
+      Log.d("Firestore", "Add Event !")
     event.uid = repository.getNewUid() // Generate a new UID for the event
     imageRepository.uploadImage(
         inputStream,
         StoragePathsStrings.EVENT_IMAGES + event.uid,
         { uri ->
-          event.image = uri
+            event.image = uri
+            Log.d("Firestore", "NewEventViewModel : $event")
           repository.addEvent(event, onSuccess, onFailure)
         },
         { e -> Log.e("ImageRepository", "Failed to store image: $e") })
@@ -163,7 +191,37 @@ constructor(
     _events.value += event
   }
 
-  /**
+    fun addImageToEvent(
+        inputStream: InputStream,
+        event: Event,
+        onSuccess: (Event) -> Unit,
+        onFailure: (Exception) -> Unit
+    ) {
+        try {
+            Log.d("Firestore", "Adding image to event!")
+
+            // Upload the image and get its URL
+            imageRepository.uploadImage(
+                inputStream,
+                "${StoragePathsStrings.EVENT_IMAGES}${event.uid}",
+                { uri ->
+                    event.image = uri // Set the image URL in the event
+                    Log.d("Firestore", "Image successfully uploaded. Event updated with image URL: $event")
+                    onSuccess(event) // Pass the updated event back to the success callback
+                },
+                { error ->
+                    Log.e("ImageRepository", "Failed to upload image: $error")
+                    onFailure(error) // Propagate the error
+                }
+            )
+        } catch (e: Exception) {
+            Log.e("addImageToEvent", "An unexpected error occurred: $e")
+            onFailure(e) // Handle any unexpected errors
+        }
+    }
+
+
+    /**
    * Update an existing event in the repository with a new image. It uploads the event image first,
    * then updates the event.
    *
@@ -172,40 +230,48 @@ constructor(
    * @param onSuccess A callback that is called when the event is successfully updated.
    * @param onFailure A callback that is called when an error occurs while updating the event.
    */
-  fun updateEvent(
-      inputStream: InputStream,
-      event: Event,
-      onSuccess: () -> Unit,
-      onFailure: (Exception) -> Unit
-  ) {
-    imageRepository.uploadImage(
-        inputStream,
-        // no need to delete the old image as it will be replaced by the new one
-        StoragePathsStrings.EVENT_IMAGES + event.uid,
-        { uri ->
-          event.image = uri
-          repository.addEvent(event, onSuccess, onFailure)
-        },
-        { e -> Log.e("ImageRepository", "Failed to store image: $e") })
+    fun updateEvent(
+        inputStream: InputStream,
+        event: Event,
+        onSuccess: () -> Unit,
+        onFailure: (Exception) -> Unit
+    ) {
+        imageRepository.uploadImage(
+            inputStream,
+            // No need to delete the old image as it will be replaced by the new one
+            StoragePathsStrings.EVENT_IMAGES + event.uid,
+            { uri ->
+                event.image = uri
+                repository.addEvent(event, onSuccess, onFailure)
+            },
+            { e -> Log.e("ImageRepository", "Failed to store image: $e") }
+        )
 
-    event.organisers.requestAll({
-      event.organisers.list.value.forEach {
-        if (it.events.contains(event.uid)) it.events.remove(event.uid)
-        it.events.add(event.uid)
-        associationRepository.saveAssociation(
-            isNewAssociation = false,
-            it,
-            {},
-            { e -> Log.e("EventViewModel", "An error occurred while loading associations: $e") })
-        it.events.requestAll()
-      }
-    })
+        event.organisers.requestAll({
+            event.organisers.list.value.forEach {
+                if (it.events.contains(event.uid)) it.events.remove(event.uid)
+                it.events.add(event.uid)
+                associationRepository.saveAssociation(
+                    isNewAssociation = false,
+                    it,
+                    {},
+                    { e -> Log.e("EventViewModel", "An error occurred while saving associations: $e") }
+                )
+                it.events.requestAll()
+            }
+        })
 
-    _events.value = _events.value.filter { it.uid != event.uid } // Remove the outdated event
-    _events.value += event
-  }
+        // Update events list with the new event
+        _events.value = _events.value.map { if (it.uid == event.uid) event else it }
 
-  /**
+        // Update selected event if the updated event matches the current selected one
+        if (_selectedEvent.value?.uid == event.uid) {
+            _selectedEvent.value = event
+        }
+    }
+
+
+    /**
    * Update an existing event in the repository without updating its image.
    *
    * @param event The event to update.
