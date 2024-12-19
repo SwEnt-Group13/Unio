@@ -3,6 +3,7 @@ package com.android.unio.model.search
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.unio.model.association.Association
+import com.android.unio.model.association.Member
 import com.android.unio.model.event.Event
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -25,6 +26,9 @@ class SearchViewModel @Inject constructor(private val repository: SearchReposito
 
   private val _events = MutableStateFlow<List<Event>>(emptyList())
   val events: StateFlow<List<Event>> = _events.asStateFlow()
+
+  private val _members = MutableStateFlow<List<Member>>(emptyList())
+  val members: StateFlow<List<Member>> = _members.asStateFlow()
 
   val status = MutableStateFlow(Status.IDLE)
 
@@ -50,7 +54,8 @@ class SearchViewModel @Inject constructor(private val repository: SearchReposito
    */
   enum class SearchType {
     ASSOCIATION,
-    EVENT
+    EVENT,
+    MEMBER
   }
   /** Initializes the ViewModel by creating the search database and connecting it to the session. */
   init {
@@ -72,6 +77,15 @@ class SearchViewModel @Inject constructor(private val repository: SearchReposito
     }
   }
 
+  fun searchMembers(query: String) {
+    viewModelScope.launch {
+      status.value = Status.LOADING
+      val results = repository.searchMembers(query)
+      _members.value = results
+      status.value = Status.SUCCESS
+    }
+  }
+
   /**
    * Debounces the search query to avoid making too many requests in a short period of time.
    *
@@ -84,6 +98,7 @@ class SearchViewModel @Inject constructor(private val repository: SearchReposito
       when (searchType) {
         SearchType.EVENT -> clearEvents()
         SearchType.ASSOCIATION -> clearAssociations()
+        SearchType.MEMBER -> clearMembers()
       }
     } else {
       searchJob =
@@ -92,6 +107,7 @@ class SearchViewModel @Inject constructor(private val repository: SearchReposito
             when (searchType) {
               SearchType.EVENT -> searchEvents(query)
               SearchType.ASSOCIATION -> searchAssociations(query)
+              SearchType.MEMBER -> searchMembers(query)
             }
           }
     }
@@ -123,6 +139,11 @@ class SearchViewModel @Inject constructor(private val repository: SearchReposito
       _events.value = results
       status.value = Status.SUCCESS
     }
+  }
+
+  private fun clearMembers() {
+    _members.value = emptyList()
+    status.value = Status.IDLE
   }
 
   public override fun onCleared() {

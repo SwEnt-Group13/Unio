@@ -18,7 +18,7 @@ fun compareMemberLists(expected: List<Member>, actual: List<Member>): Boolean {
   return sortedExpected.zip(sortedActual).all { (expectedMember, actualMember) ->
     expectedMember.uid == actualMember.uid &&
         expectedMember.user.uid == actualMember.user.uid &&
-        expectedMember.role.uid == actualMember.role.uid
+        expectedMember.roleUid == actualMember.roleUid
   }
 }
 
