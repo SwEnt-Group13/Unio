@@ -61,7 +61,7 @@ fun AssociationRepositoryFirestore.Companion.hydrate(data: Map<String, Any>?): A
         val role = roles.firstOrNull { it.uid == roleUid } ?: Role.GUEST
 
         // Return a Member containing the ReferenceElement<User> and the associated Role
-        Member(user = userReference, role = role)
+        Member(user = userReference, roleUid = role.uid)
       }
 
   return Association(

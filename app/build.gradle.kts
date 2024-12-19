@@ -258,6 +258,8 @@ dependencies {
     androidTestImplementation(libs.mockwebserver)
     androidTestImplementation(libs.retrofit.mock)
 
+    // ColorPicker - Compose -- https://github.com/skydoves/colorpicker-compose
+    implementation("com.github.skydoves:colorpicker-compose:1.1.2")
 
     // Testing Unit
     testImplementation(libs.junit)

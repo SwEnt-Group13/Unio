@@ -40,7 +40,7 @@ import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.strings.test_tags.user.UserClaimAssociationPresidentialRightsTestTags
 import com.android.unio.model.user.User
 import com.android.unio.model.user.UserViewModel
-import com.android.unio.ui.association.AssociationSearchBar
+import com.android.unio.ui.components.AssociationSearchBar
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
 import com.android.unio.ui.theme.AppTypography
