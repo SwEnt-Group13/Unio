@@ -74,16 +74,18 @@ service cloud.firestore {
       allow list: if isVerified();
       allow delete: if isOwner();
       allow create: if isOwner() && validate();
-      allow update; //if (onlySavedEventsUpdated() || onlyFollowedAssociationsUpdated()); //&& validateJoinedAssociations(); //&& validate();
+      allow update: if (isOwner() || onlySavedEventsUpdated() || onlyFollowedAssociationsUpdated()) && validateJoinedAssociations() && validate();
     }
 
     match /associations/{uid} {
       function isMember() {
-        return get(/databases/$(database)/documents/associations/$(uid)).data.members.keys().hasAny([request.auth.uid]);
+        return get(/databases/$(database)/documents/associations/$(uid)).data.members.hasAny([request.auth.uid]);
       }
       function onlyUpdatedFollowerCount() {
         // Check that the only updated field is the followersCount field
         // and that it was only incremented or decremented by 1
+        let newCount = request.resource.data.followersCount;
+        let oldCount = request.resource.data.followersCount;
 
         let affectedKeys = request.resource.data.diff(resource.data).affectedKeys();
         let onlyFollowerCountChanged = affectedKeys.hasOnly(['followersCount']);
@@ -115,7 +117,7 @@ service cloud.firestore {
 
       allow read: if isVerified();
       // Allow update if the user is a member of the association or if the changed data is the followersCount field
-      allow update: if isVerified() && (isMember() || onlyUpdatedFollowerCount()); //&& validate();
+      allow update: if isVerified() && (isMember() || onlyUpdatedFollowerCount()) && validate();
       
     }
 
@@ -180,7 +182,31 @@ service cloud.firestore {
         let hasCorrectNumberOfFields = request.resource.data.size() == fields.size();
         let hasCorrectFields = request.resource.data.keys().hasAll(fields);
 
-        return hasCorrectFields;
+        return hasCorrectNumberOfFields && hasCorrectFields &&
+        request.resource.data.uid == uid &&
+        request.resource.data.title is string &&
+        request.resource.data.title.size() <= 30 &&
+        request.resource.data.organisers is list &&
+        request.resource.data.taggedAssociations is list &&
+        request.resource.data.image is string &&
+        request.resource.data.description is string &&
+        request.resource.data.description.size() <= 300 &&
+        request.resource.data.catchyDescription is string &&
+        request.resource.data.catchyDescription.size() <= 100 &&
+        request.resource.data.price is number &&
+        request.resource.data.price >= 0 &&
+        request.resource.data.startDate is timestamp &&
+        request.resource.data.endDate is timestamp &&
+        request.resource.data.location is map &&
+        request.resource.data.location.latitude is number &&
+        request.resource.data.location.longitude is number &&
+        request.resource.data.location.name is string &&
+        request.resource.data.types is list &&
+        request.resource.data.maxNumberOfPlaces is number &&
+        request.resource.data.maxNumberOfPlaces >= -1 &&
+        request.resource.data.numberOfSaved is number &&
+        request.resource.data.numberOfSaved >= 0 &&
+        request.resource.data.eventPictures is list;
       }
 
       allow read: if isVerified();
@@ -191,7 +217,7 @@ service cloud.firestore {
 
       // To update or delete an event, the user must be an
       // organiser in the existing event document
-      allow update: if isVerified() && (onlyUpdatedEventPictures() || onlyUpdatedSavedCount()); //&& validate();
+      allow update: if isVerified() && (isEventOrganiser(resource.data.organisers) || onlyUpdatedEventPictures() || onlyUpdatedSavedCount()) && validate();
       allow delete: if isVerified() && isEventOrganiser(request.resource.data.organisers);
     }
 
