@@ -549,7 +549,6 @@ private fun AssociationProfileActionsContent(
  *
  * @param members (List<User>) : The list of users in the association that can be contacted
  */
-@SuppressLint("StateFlowValueCalledInComposition")
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun AssociationMembers(
@@ -572,12 +571,12 @@ private fun AssociationMembers(
       horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally),
       verticalArrangement = Arrangement.spacedBy(16.dp)) {
         members.forEach { member ->
-          val user = associationViewModel.getUserFromMember(member).collectAsState()
+          val user by associationViewModel.getUserFromMember(member).collectAsState()
           Column(
               modifier =
                   Modifier.background(
                           MaterialTheme.colorScheme.secondaryContainer, RoundedCornerShape(8.dp))
-                      .clickable { user.value?.let { onMemberClick(it) } }
+                      .clickable { user?.let { onMemberClick(it) } }
                       .padding(16.dp),
               verticalArrangement = Arrangement.spacedBy(8.dp),
               horizontalAlignment = Alignment.CenterHorizontally) {
@@ -586,7 +585,7 @@ private fun AssociationMembers(
                         Modifier.clip(CircleShape)
                             .size(75.dp)
                             .background(MaterialTheme.colorScheme.surfaceDim)) {
-                      user.value?.profilePicture?.toUri()?.let {
+                      user?.profilePicture?.toUri()?.let {
                         AsyncImageWrapper(
                             imageUri = it,
                             contentDescription =
@@ -596,9 +595,9 @@ private fun AssociationMembers(
                             contentScale = ContentScale.Crop)
                       }
                     }
-                user.value?.firstName?.let {
+                user?.firstName?.let {
                   val firstName = it
-                  user.value?.lastName?.let {
+                  user?.lastName?.let {
                     val lastName = it
                     Text("$firstName $lastName")
 
@@ -606,7 +605,7 @@ private fun AssociationMembers(
                     val association = associationViewModel.selectedAssociation.value
                     val userRole =
                         association?.roles?.find {
-                          it.uid == association.members.find { it.uid == user.value?.uid }?.roleUid
+                          it.uid == association.members.find { it.uid == user?.uid }?.roleUid
                         }
 
                     if (userRole != null) {
@@ -662,7 +661,7 @@ private fun AssociationActionsMembers(
   }
 
   val cardContent: @Composable (Member) -> Unit = { member ->
-    val user = associationViewModel.getUserFromMember(member).collectAsState()
+    val user by associationViewModel.getUserFromMember(member).collectAsState()
     Box(
         modifier = Modifier.fillMaxWidth().padding(top = 10.dp),
         contentAlignment = Alignment.Center) {
@@ -670,7 +669,7 @@ private fun AssociationActionsMembers(
               modifier =
                   Modifier.background(
                           MaterialTheme.colorScheme.secondaryContainer, RoundedCornerShape(8.dp))
-                      .clickable { user.value?.let { onMemberClick(it) } }
+                      .clickable { user?.let { onMemberClick(it) } }
                       .padding(16.dp),
               verticalArrangement = Arrangement.spacedBy(8.dp),
               horizontalAlignment = Alignment.CenterHorizontally) {
@@ -679,7 +678,7 @@ private fun AssociationActionsMembers(
                         Modifier.clip(CircleShape)
                             .size(75.dp)
                             .background(MaterialTheme.colorScheme.surfaceDim)) {
-                      user.value?.profilePicture?.toUri()?.let {
+                      user?.profilePicture?.toUri()?.let {
                         AsyncImageWrapper(
                             imageUri = it,
                             contentDescription =
@@ -689,15 +688,15 @@ private fun AssociationActionsMembers(
                             contentScale = ContentScale.Crop)
                       }
                     }
-                user.value?.firstName?.let { firstName ->
-                  user.value?.lastName?.let { lastName ->
+                user?.firstName?.let { firstName ->
+                  user?.lastName?.let { lastName ->
                     Text("$firstName $lastName")
 
                     // Role Badge
                     val association = associationViewModel.selectedAssociation.value
                     val userRole =
                         association?.roles?.find {
-                          it.uid == association.members.find { it.uid == user.value?.uid }?.roleUid
+                          it.uid == association.members.find { it.uid == user?.uid }?.roleUid
                         }
 
                     if (userRole != null) {
