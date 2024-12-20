@@ -120,6 +120,39 @@ fun addEditEventCloudFunction(
 }
 
 /**
+ * Serializes a Role object and associated metadata for Firebase Cloud Function calls.
+ *
+ * This function converts a Role object into a map that can be sent to Firebase Cloud Functions,
+ * including the necessary fields and associated metadata.
+ *
+ * @param tokenId The token ID of the current user.
+ * @param newRole The role object to be serialized.
+ * @param associationUId The unique identifier of the association to which the role belongs.
+ * @param isNewRole A boolean value indicating whether the role is new (true) or being edited (false).
+ * @return A map containing the serialized role data and associated metadata.
+ */
+private fun serializeRoleData(
+    tokenId: String,
+    newRole: Role,
+    associationUId: String,
+    isNewRole: Boolean
+): Map<String, Any> {
+    return mapOf(
+        "tokenId" to tokenId,
+        "role" to mapOf(
+            "displayName" to newRole.displayName,
+            "permissions" to newRole.permissions.getGrantedPermissions().toList().map { permission ->
+                permission.stringName
+            },
+            "color" to newRole.color.toInt(),
+            "uid" to newRole.uid
+        ),
+        "isNewRole" to isNewRole,
+        "associationUid" to associationUId
+    )
+}
+
+/**
  * Adds or edits a role by calling a Firebase Cloud Function to save the role.
  *
  * This function uploads role details to a Firebase Cloud Function, including role-specific
@@ -128,11 +161,9 @@ fun addEditEventCloudFunction(
  *
  * @param newRole The role object to be added or updated.
  * @param associationUId The unique identifier of the association to which the role belongs.
- * @param onSuccess A callback function that is called when the role is successfully added or
- *   updated.
+ * @param onSuccess A callback function that is called when the role is successfully added or updated.
  * @param onError A callback function that is called if an error occurs during the process.
- * @param isNewRole A boolean value indicating whether the role is new (true) or being edited
- *   (false).
+ * @param isNewRole A boolean value indicating whether the role is new (true) or being edited (false).
  */
 fun addEditRoleCloudFunction(
     newRole: Role,
@@ -141,38 +172,28 @@ fun addEditRoleCloudFunction(
     onError: (Exception) -> Unit,
     isNewRole: Boolean
 ) {
-  try {
-    giveCurrentUserTokenID(
-        onSuccess = { tokenId ->
-          firebaseFunctions
-              .getHttpsCallable("saveRole")
-              .call(
-                  hashMapOf(
-                      "tokenId" to tokenId,
-                      "role" to
-                          mapOf(
-                              "displayName" to newRole.displayName,
-                              "permissions" to
-                                  newRole.permissions.getGrantedPermissions().toList().map {
-                                      permission ->
-                                    permission.stringName
-                                  },
-                              "color" to newRole.color.toInt(),
-                              "uid" to newRole.uid),
-                      "isNewRole" to isNewRole,
-                      "associationUid" to associationUId))
-              .addOnSuccessListener { result ->
-                val responseData = result.data as? String
-                if (responseData != null) {
-                  onSuccess(responseData)
-                } else {
-                  onError(IllegalStateException("Unexpected response format from Cloud Function."))
-                }
-              }
-              .addOnFailureListener { error -> onError(error) }
-        },
-        onError = { error -> onError(error) })
-  } catch (e: Exception) {
-    onError(e)
-  }
+    try {
+        giveCurrentUserTokenID(
+            onSuccess = { tokenId ->
+                val requestData = serializeRoleData(tokenId, newRole, associationUId, isNewRole)
+
+                firebaseFunctions
+                    .getHttpsCallable("saveRole")
+                    .call(requestData)
+                    .addOnSuccessListener { result ->
+                        val responseData = result.data as? String
+                        if (responseData != null) {
+                            onSuccess(responseData)
+                        } else {
+                            onError(IllegalStateException("Unexpected response format from Cloud Function."))
+                        }
+                    }
+                    .addOnFailureListener { error -> onError(error) }
+            },
+            onError = { error -> onError(error) }
+        )
+    } catch (e: Exception) {
+        onError(e)
+    }
 }
+
