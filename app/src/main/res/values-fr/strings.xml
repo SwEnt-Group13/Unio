@@ -41,6 +41,29 @@
     <string name="association_profile_your_role_text">Votre rôle est</string>
     <string name="association_tab_overview">Aperçu</string>
     <string name="association_tab_actions">Actions</string>
+    <string name="association_profile_header_edit_button">bouton modifier</string>
+    <string name="association_profile_header_edit_text">Modifier l\'association</string>
+    <string name="association_profile_header_broadcast_button">bouton diffuser</string>
+    <string name="association_profile_header_broadcast_text">Diffuser un message à tous les membres de l\'association</string>
+    <string name="association_profile_general_actions_text">Actions générales</string>
+    <string name="association_profile_actions_events_text">Événements</string>
+    <string name="association_profile_save_role_dialog_permissions">Autorisations</string>
+    <string name="association_profile_save_role_dialog_role_color">Choisir la couleur du rôle</string>
+    <string name="association_profile_save_role_dialog_display_name">Nom affiché</string>
+    <string name="association_profile_save_role_dialog_edit_role">Modifier le rôle</string>
+    <string name="association_profile_save_role_dialog_create_role">Créer un nouveau rôle</string>
+    <string name="association_profile_save_role_dialog_cancel">Annuler</string>
+    <string name="association_profile_save_role_dialog_save">Enregistrer</string>
+    <string name="association_profile_save_role_dialog_create">Créer</string>
+    <string name="association_profile_role_card_delete">Supprimer</string>
+    <string name="association_profile_role_card_delete_role">Supprimer le rôle</string>
+    <string name="association_profile_role_card_cancel">Annuler</string>
+    <string name="association_profile_role_card_sure_delete_role">Êtes-vous sûr de vouloir supprimer le rôle</string>
+    <string name="association_profile_role_card_edit_role">Modifier le rôle</string>
+    <string name="association_profile_scaffold_overview">Aperçu</string>
+    <string name="association_profile_scaffold_actions">Actions</string>
+    <string name="association_profile_scaffold_role_is">Votre rôle est</string>
+
 
     <!-- SaveAssociation strings -->
     <string name="association_image_explanation">Ajoutez une image comme logo de l\'association.</string>
@@ -502,5 +525,8 @@
     <string name="association_category_sports">Sports</string>
     <string name="association_category_guidance">Orientation professionnelle</string>
     <string name="association_category_unknown">Inconnue</string>
+
+    <!-- Search Components Strings -->
+    <string name="search_pager_section_slide">Glissez pour voir tous les résultats</string>
 
 </resources>
