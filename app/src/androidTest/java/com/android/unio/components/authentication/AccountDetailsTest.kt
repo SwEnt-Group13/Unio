@@ -6,6 +6,7 @@ import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.assertTextContains
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.hasText
+import androidx.compose.ui.test.isDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
@@ -199,10 +200,16 @@ class AccountDetailsTest : TearDown() {
         .onNodeWithTag(SocialsOverlayTestTags.SAVE_BUTTON)
         .performScrollTo()
         .performClick()
+    Thread.sleep(20000)
     composeTestRule
         .onNodeWithTag(AccountDetailsTestTags.SOCIALS_CHIP + "Facebook")
         .performScrollTo()
         .assertIsDisplayed()
+    composeTestRule.waitUntil(10000) {
+      composeTestRule
+          .onNodeWithTag(AccountDetailsTestTags.SOCIALS_CHIP + "Instagram", useUnmergedTree = true)
+          .isDisplayed()
+    }
     composeTestRule
         .onNodeWithTag(AccountDetailsTestTags.SOCIALS_CHIP + "Instagram", true)
         .performScrollTo()

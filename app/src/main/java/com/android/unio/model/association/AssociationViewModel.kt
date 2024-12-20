@@ -97,7 +97,7 @@ constructor(
         _selectedAssociation.value = updatedAssociation
       }
 
-        _associationsByCategory.value = _associations.value.groupBy { it.category }
+      _associationsByCategory.value = _associations.value.groupBy { it.category }
     } else {
       Log.e("AssociationViewModel", "Association with ID $associationId not found.")
     }
@@ -134,7 +134,7 @@ constructor(
         _selectedAssociation.value = updatedAssociation
       }
 
-        _associationsByCategory.value = _associations.value.groupBy { it.category }
+      _associationsByCategory.value = _associations.value.groupBy { it.category }
     } else {
       Log.e("AssociationViewModel", "Association with ID $associationId not found.")
     }
@@ -169,7 +169,7 @@ constructor(
         _selectedAssociation.value = updatedAssociation
       }
 
-        _associationsByCategory.value = _associations.value.groupBy { it.category }
+      _associationsByCategory.value = _associations.value.groupBy { it.category }
     } else {
       Log.e("AssociationViewModel", "Association with ID $associationId not found.")
     }
@@ -391,8 +391,6 @@ constructor(
           onFailure)
     }
   }
-
-
 
   /**
    * Removes the specified role from the selected association. If the role does not exist, an error
