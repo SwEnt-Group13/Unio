@@ -37,7 +37,7 @@ fun <T> SearchPagerSection(
     searchBar: @Composable () -> Unit,
     pagerState: PagerState
 ) {
-    val context = LocalContext.current
+  val context = LocalContext.current
   Column(
       horizontalAlignment = Alignment.CenterHorizontally,
       modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)) {
@@ -45,15 +45,13 @@ fun <T> SearchPagerSection(
         // Sliding Progress Bar (if more than one item exists)
         if (items.size > 1) {
           // Search Bar Composable
-          //Box(modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp)) { searchBar() }
+          // Box(modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp)) { searchBar() }
 
           Text(
               text = context.getString(R.string.search_pager_section_slide),
               style = AppTypography.bodySmall,
               modifier = Modifier.padding(vertical = 8.dp))
-          ProgressBarBetweenElements(
-              tabList = items.map { it.toString() },
-              pagerState = pagerState)
+          ProgressBarBetweenElements(tabList = items.map { it.toString() }, pagerState = pagerState)
         }
 
         // Horizontal Pager
@@ -62,21 +60,16 @@ fun <T> SearchPagerSection(
             contentPadding = PaddingValues(horizontal = 16.dp),
             pageSpacing = 16.dp) { page ->
               val item = items[page]
-              Box(
-                  modifier =
-                      Modifier
-                          .fillMaxWidth(),
-                  contentAlignment = Alignment.Center
-                  ) {
-                    cardContent(item)
+              Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                cardContent(item)
               }
             }
       }
 }
 
 /**
- * A composable that renders a progress bar between elements in a tab layout, based on the state
- * of the pager. The progress bar visually represents the current position and movement between tabs.
+ * A composable that renders a progress bar between elements in a tab layout, based on the state of
+ * the pager. The progress bar visually represents the current position and movement between tabs.
  *
  * @param tabList The list of tab labels, corresponding to the pager's items.
  * @param pagerState The state of the pager, providing the current page and offset information.
@@ -113,7 +106,6 @@ fun ProgressBarBetweenElements(tabList: List<String>, pagerState: PagerState) {
 
                   val outerRectangleYStart = height - 45
                   val outerRectangleYEnd = height - 5
-
 
                   val tabWidth = sizeList[0]?.first ?: defaultTabWidth
                   val rectangleStartX = progressFromFirstPage * tabWidth + tabWidth / 4
@@ -163,11 +155,7 @@ fun ProgressBarBetweenElements(tabList: List<String>, pagerState: PagerState) {
                     sizeList[index] = Pair(it.width.toFloat(), it.height.toFloat())
                   },
               selectedContentColor = colorScheme.primary) {
-                Spacer(
-                    modifier =
-                        Modifier.height(
-                            20.dp)
-                    )
+                Spacer(modifier = Modifier.height(20.dp))
               }
         }
       }

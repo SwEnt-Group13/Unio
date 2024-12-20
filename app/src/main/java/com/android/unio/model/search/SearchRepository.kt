@@ -99,7 +99,6 @@ constructor(
 
         // Add the fresh set of associations to AppSearch
         session?.putAsync(PutDocumentsRequest.Builder().addDocuments(associationDocuments).build())
-
       } catch (e: Exception) {
         Log.e("SearchRepository", "Failed to refresh associations in AppSearch", e)
       }
@@ -112,9 +111,7 @@ constructor(
    */
   fun fetchAssociations() {
     associationRepository.getAssociations(
-        onSuccess = { associations ->
-          addAssociations(associations)
-        },
+        onSuccess = { associations -> addAssociations(associations) },
         onFailure = { exception ->
           Log.e("SearchRepository", "failed to fetch associations", exception)
         })
@@ -160,12 +157,12 @@ constructor(
     }
   }
 
-    /**
-     * Extracts and adds the members from the given list of [Association] objects to the search database.
-     * Each member is associated with their respective association.
-     *
-     * @param associations The list of [Association] objects to extract members from.
-     */
+  /**
+   * Extracts and adds the members from the given list of [Association] objects to the search
+   * database. Each member is associated with their respective association.
+   *
+   * @param associations The list of [Association] objects to extract members from.
+   */
   private fun addMembersFromAssociations(associations: List<Association>) {
     val memberDocuments =
         associations.flatMap { association ->
@@ -174,8 +171,7 @@ constructor(
                 uid = member.uid,
                 userUid = member.user.uid,
                 role = (association.roles.find { it.uid == member.uid }?.displayName ?: ""),
-                associationUid = association.uid
-                )
+                associationUid = association.uid)
           }
         }
     try {
@@ -250,12 +246,12 @@ constructor(
     }
   }
 
-    /**
-     * Searches the search database for members that match the given query.
-     *
-     * @param query The search query to look for in the database.
-     * @return A list of [Member] objects that match the search query.
-     */
+  /**
+   * Searches the search database for members that match the given query.
+   *
+   * @param query The search query to look for in the database.
+   * @return A list of [Member] objects that match the search query.
+   */
   suspend fun searchMembers(query: String): List<Member> {
     return withContext(Dispatchers.IO) {
       val searchSpec =
@@ -332,13 +328,13 @@ constructor(
     }
   }
 
-    /**
-     * Converts the given [MemberDocument] to a [Member] object.
-     * This method fetches the full member details using the [AssociationRepository].
-     *
-     * @param memberDocument The [MemberDocument] to convert.
-     * @return The corresponding [Member] object.
-     */
+  /**
+   * Converts the given [MemberDocument] to a [Member] object. This method fetches the full member
+   * details using the [AssociationRepository].
+   *
+   * @param memberDocument The [MemberDocument] to convert.
+   * @return The corresponding [Member] object.
+   */
   private suspend fun memberDocumentToMember(memberDocument: MemberDocument): Member {
     return suspendCoroutine { continuation ->
       associationRepository.getAssociationWithId(

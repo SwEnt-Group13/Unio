@@ -229,7 +229,6 @@ fun AssociationProfileScaffold(
               if (userPermissions?.hasAnyPermission() == true) {
                 val userRoleColor = Color(userRole.color)
 
-
                 Box(
                     modifier =
                         Modifier.fillMaxWidth()
@@ -237,92 +236,84 @@ fun AssociationProfileScaffold(
                             .height(50.dp)
                             .align(Alignment.TopCenter)) {
                       Text(
-                          context.getString(R.string.association_profile_scaffold_role_is) + " " + userRole.displayName,
+                          context.getString(R.string.association_profile_scaffold_role_is) +
+                              " " +
+                              userRole.displayName,
                           color = Color.White,
                           modifier = Modifier.align(Alignment.Center))
                     }
 
+                Box(modifier = Modifier.fillMaxSize().padding(top = 50.dp)) {
+                  Row(modifier = Modifier.fillMaxSize().padding(horizontal = 0.dp)) {
+                    Box(modifier = Modifier.width(2.dp).fillMaxHeight().background(userRoleColor))
 
-                Box(
-                    modifier =
-                        Modifier.fillMaxSize()
-                            .padding(top = 50.dp)
-                    ) {
-                      Row(
+                    // Main content (Conditional based on permission)
+                    if (userPermissions.hasPermission(PermissionType.BETTER_OVERVIEW) &&
+                        !(userPermissions.hasPermission(PermissionType.FULL_RIGHTS)) &&
+                        userPermissions.getGrantedPermissions().size == 1) {
+                      // Default content without HorizontalPager
+                      Box(
                           modifier =
-                              Modifier.fillMaxSize()
-                                  .padding(horizontal = 0.dp)
-                          ) {
-                            Box(
-                                modifier =
-                                    Modifier.width(2.dp).fillMaxHeight().background(userRoleColor))
+                              Modifier.weight(1f)
+                                  .padding(horizontal = 8.dp)
+                                  .pullRefresh(pullRefreshState)
+                                  .verticalScroll(rememberScrollState())) {
+                            AssociationProfileContent(
+                                navigationAction = navigationAction,
+                                userViewModel = userViewModel,
+                                eventViewModel = eventViewModel,
+                                associationViewModel = associationViewModel)
+                          }
+                    } else {
+                      // Main content with HorizontalPager
+                      Column(modifier = Modifier.weight(1f).padding(horizontal = 8.dp)) {
+                        val nbOfTabs = 2
+                        val pagerState = rememberPagerState(initialPage = 0) { nbOfTabs }
 
-                            // Main content (Conditional based on permission)
-                            if (userPermissions.hasPermission(PermissionType.BETTER_OVERVIEW) &&
-                                !(userPermissions.hasPermission(PermissionType.FULL_RIGHTS)) &&
-                                userPermissions.getGrantedPermissions().size == 1) {
-                              // Default content without HorizontalPager
-                              Box(
-                                  modifier =
-                                      Modifier.weight(1f)
-                                          .padding(horizontal = 8.dp)
-                                          .pullRefresh(pullRefreshState)
-                                          .verticalScroll(rememberScrollState())) {
-                                    AssociationProfileContent(
-                                        navigationAction = navigationAction,
-                                        userViewModel = userViewModel,
-                                        eventViewModel = eventViewModel,
-                                        associationViewModel = associationViewModel)
-                                  }
-                            } else {
-                              // Main content with HorizontalPager
-                              Column(modifier = Modifier.weight(1f).padding(horizontal = 8.dp)) {
-                                val nbOfTabs = 2
-                                val pagerState = rememberPagerState(initialPage = 0) { nbOfTabs }
+                        // Tab Menu
+                        val tabList =
+                            listOf(
+                                context.getString(R.string.association_profile_scaffold_overview),
+                                context.getString(R.string.association_profile_scaffold_actions))
+                        SmoothTopBarNavigationMenu(tabList, pagerState)
 
-                                // Tab Menu
-                                val tabList = listOf(context.getString(R.string.association_profile_scaffold_overview), context.getString(R.string.association_profile_scaffold_actions))
-                                SmoothTopBarNavigationMenu(tabList, pagerState)
-
-                                // Pager Content
-                                HorizontalPager(
-                                    userScrollEnabled = false,
-                                    state = pagerState,
-                                    modifier = Modifier.fillMaxSize()) { page ->
-                                      when (page) {
-                                        0 ->
-                                            Box(
-                                                modifier =
-                                                    Modifier.pullRefresh(pullRefreshState)
-                                                        .verticalScroll(rememberScrollState())) {
-                                                  AssociationProfileContent(
-                                                      navigationAction = navigationAction,
-                                                      userViewModel = userViewModel,
-                                                      eventViewModel = eventViewModel,
-                                                      associationViewModel = associationViewModel)
-                                                }
-                                        1 ->
-                                            Box(
-                                                modifier =
-                                                    Modifier.pullRefresh(pullRefreshState)
-                                                        .verticalScroll(rememberScrollState())) {
-                                                  AssociationProfileActionsContent(
-                                                      navigationAction = navigationAction,
-                                                      userViewModel = userViewModel,
-                                                      eventViewModel = eventViewModel,
-                                                      associationViewModel = associationViewModel,
-                                                      searchViewModel = searchViewModel)
-                                                }
-                                      }
-                                    }
+                        // Pager Content
+                        HorizontalPager(
+                            userScrollEnabled = false,
+                            state = pagerState,
+                            modifier = Modifier.fillMaxSize()) { page ->
+                              when (page) {
+                                0 ->
+                                    Box(
+                                        modifier =
+                                            Modifier.pullRefresh(pullRefreshState)
+                                                .verticalScroll(rememberScrollState())) {
+                                          AssociationProfileContent(
+                                              navigationAction = navigationAction,
+                                              userViewModel = userViewModel,
+                                              eventViewModel = eventViewModel,
+                                              associationViewModel = associationViewModel)
+                                        }
+                                1 ->
+                                    Box(
+                                        modifier =
+                                            Modifier.pullRefresh(pullRefreshState)
+                                                .verticalScroll(rememberScrollState())) {
+                                          AssociationProfileActionsContent(
+                                              navigationAction = navigationAction,
+                                              userViewModel = userViewModel,
+                                              eventViewModel = eventViewModel,
+                                              associationViewModel = associationViewModel,
+                                              searchViewModel = searchViewModel)
+                                        }
                               }
                             }
-
-                            Box(
-                                modifier =
-                                    Modifier.width(2.dp).fillMaxHeight().background(userRoleColor))
-                          }
+                      }
                     }
+
+                    Box(modifier = Modifier.width(2.dp).fillMaxHeight().background(userRoleColor))
+                  }
+                }
               } else {
                 // Default content without permissions
                 Box(
@@ -471,7 +462,6 @@ fun AssociationProfileContent(
         AssociationDescription(association!!)
         AssociationEvents(navigationAction, association!!, userViewModel, eventViewModel)
         AssociationMembers(associationViewModel, association!!.members, onMemberClick)
-
       }
 }
 
@@ -527,9 +517,7 @@ private fun AssociationProfileActionsContent(
 
   Column(
       modifier =
-          Modifier.testTag(AssociationProfileActionsTestTags.SCREEN)
-              .fillMaxWidth()
-              .padding(24.dp),
+          Modifier.testTag(AssociationProfileActionsTestTags.SCREEN).fillMaxWidth().padding(24.dp),
       verticalArrangement = Arrangement.spacedBy(16.dp)) {
         AssociationActionsHeader(
             association!!,
@@ -633,7 +621,8 @@ private fun AssociationMembers(
  *
  * @param associationViewModel The ViewModel responsible for managing the association's data.
  * @param userUid The unique identifier of the current user.
- * @param onMemberClick A lambda function to be called when a member's card is clicked, passing the selected member's data.
+ * @param onMemberClick A lambda function to be called when a member's card is clicked, passing the
+ *   selected member's data.
  * @param searchViewModel The ViewModel responsible for managing member search functionality.
  */
 @Composable
@@ -730,8 +719,9 @@ private fun AssociationActionsMembers(
 
 /**
  * Displays the list of roles for an association and allows creating, editing, and deleting roles.
- * Each role is displayed as a clickable card, and users can perform actions like editing or deleting the role.
- * A dialog is shown for creating or editing roles, and another dialog confirms deletion.
+ * Each role is displayed as a clickable card, and users can perform actions like editing or
+ * deleting the role. A dialog is shown for creating or editing roles, and another dialog confirms
+ * deletion.
  *
  * @param roles The list of roles for the association.
  * @param associationViewModel The ViewModel responsible for managing the association's data.
@@ -775,7 +765,7 @@ fun RoleCard(role: Role, associationViewModel: AssociationViewModel) {
   var showEditDialog by remember { mutableStateOf(false) }
   var showDeleteDialog by remember { mutableStateOf(false) }
 
-    val context = LocalContext.current
+  val context = LocalContext.current
 
   Card(
       modifier =
@@ -795,12 +785,14 @@ fun RoleCard(role: Role, associationViewModel: AssociationViewModel) {
             Row {
               Icon(
                   imageVector = Icons.Default.Edit,
-                  contentDescription = context.getString(R.string.association_profile_role_card_edit_role),
+                  contentDescription =
+                      context.getString(R.string.association_profile_role_card_edit_role),
                   modifier = Modifier.size(24.dp).clickable { showEditDialog = true }.padding(4.dp))
 
               Icon(
                   imageVector = Icons.Default.Delete,
-                  contentDescription = context.getString(R.string.association_profile_role_card_delete_role),
+                  contentDescription =
+                      context.getString(R.string.association_profile_role_card_delete_role),
                   modifier =
                       Modifier.size(24.dp).clickable { showDeleteDialog = true }.padding(4.dp))
             }
@@ -836,8 +828,7 @@ fun RoleCard(role: Role, associationViewModel: AssociationViewModel) {
           showEditDialog = false
         },
         associationViewModel = associationViewModel,
-        initialRole = role
-        )
+        initialRole = role)
   }
 
   // Delete Role Confirmation Dialog
@@ -855,22 +846,32 @@ fun RoleCard(role: Role, associationViewModel: AssociationViewModel) {
                 Text(context.getString(R.string.association_profile_role_card_delete))
               }
         },
-        dismissButton = { TextButton(onClick = { showDeleteDialog = false }) { Text(context.getString(R.string.association_profile_role_card_cancel)) } },
+        dismissButton = {
+          TextButton(onClick = { showDeleteDialog = false }) {
+            Text(context.getString(R.string.association_profile_role_card_cancel))
+          }
+        },
         title = { Text(context.getString(R.string.association_profile_role_card_delete_role)) },
-        text = { Text(context.getString(R.string.association_profile_role_card_sure_delete_role) +" '${role.displayName}'?") })
+        text = {
+          Text(
+              context.getString(R.string.association_profile_role_card_sure_delete_role) +
+                  " '${role.displayName}'?")
+        })
   }
 }
 
 /**
- * Displays a dialog to create or edit a role within the association.
- * If an existing role is passed, the dialog will allow editing the role's details, including the display name,
- * color, and permissions. If no existing role is passed, the dialog will create a new role.
- * Once the role is saved, it triggers the appropriate actions in the [associationViewModel].
+ * Displays a dialog to create or edit a role within the association. If an existing role is passed,
+ * the dialog will allow editing the role's details, including the display name, color, and
+ * permissions. If no existing role is passed, the dialog will create a new role. Once the role is
+ * saved, it triggers the appropriate actions in the [associationViewModel].
  *
  * @param onDismiss A lambda function to be called when the dialog is dismissed.
- * @param onCreateRole A lambda function to be called after the role is created or updated, passing the role.
+ * @param onCreateRole A lambda function to be called after the role is created or updated, passing
+ *   the role.
  * @param associationViewModel The ViewModel responsible for managing the association's data.
- * @param initialRole The initial role details to prefill the dialog fields (optional, null if creating a new role).
+ * @param initialRole The initial role details to prefill the dialog fields (optional, null if
+ *   creating a new role).
  */
 @Composable
 fun SaveRoleDialog(
@@ -890,7 +891,7 @@ fun SaveRoleDialog(
     }
   }
   val allPermissions = PermissionType.values()
-    val context = LocalContext.current
+  val context = LocalContext.current
 
   AlertDialog(
       onDismissRequest = onDismiss,
@@ -906,29 +907,41 @@ fun SaveRoleDialog(
                               .addPermissions(selectedPermissions.toList())
                               .build(),
                       color = colorInt,
-                      uid = initialRole?.uid ?: displayName.text
-                      )
+                      uid = initialRole?.uid ?: displayName.text)
               associationViewModel.selectedAssociation.value?.let { association ->
                 addEditRoleCloudFunction(
                     saveRole,
                     association.uid,
-                    onSuccess = {
-                      associationViewModel.addRoleLocally(association.uid, saveRole)
-                    },
+                    onSuccess = { associationViewModel.addRoleLocally(association.uid, saveRole) },
                     onError = { e -> Log.e("ADD_ROLE", "ERROR: $e") },
                     isNewRole = initialRole == null)
               }
               onCreateRole(saveRole)
             }) {
-              Text(if (initialRole != null) context.getString(R.string.association_profile_save_role_dialog_save) else context.getString(R.string.association_profile_save_role_dialog_create))
+              Text(
+                  if (initialRole != null)
+                      context.getString(R.string.association_profile_save_role_dialog_save)
+                  else context.getString(R.string.association_profile_save_role_dialog_create))
             }
       },
-      dismissButton = { TextButton(onClick = onDismiss) { Text(context.getString(R.string.association_profile_save_role_dialog_cancel)) } },
-      title = { Text(if (initialRole != null) context.getString(R.string.association_profile_save_role_dialog_edit_role) else context.getString(R.string.association_profile_save_role_dialog_create_role)) },
+      dismissButton = {
+        TextButton(onClick = onDismiss) {
+          Text(context.getString(R.string.association_profile_save_role_dialog_cancel))
+        }
+      },
+      title = {
+        Text(
+            if (initialRole != null)
+                context.getString(R.string.association_profile_save_role_dialog_edit_role)
+            else context.getString(R.string.association_profile_save_role_dialog_create_role))
+      },
       text = {
         Column(Modifier.fillMaxWidth()) {
           Column(Modifier.fillMaxWidth().padding(bottom = 16.dp)) {
-            Text(text = context.getString(R.string.association_profile_save_role_dialog_display_name), style = MaterialTheme.typography.labelMedium)
+            Text(
+                text =
+                    context.getString(R.string.association_profile_save_role_dialog_display_name),
+                style = MaterialTheme.typography.labelMedium)
             BasicTextField(
                 value = displayName,
                 onValueChange = { displayName = it },
@@ -936,7 +949,9 @@ fun SaveRoleDialog(
           }
 
           Column(Modifier.fillMaxWidth().padding(vertical = 16.dp)) {
-            Text(context.getString(R.string.association_profile_save_role_dialog_role_color), style = MaterialTheme.typography.labelMedium)
+            Text(
+                context.getString(R.string.association_profile_save_role_dialog_role_color),
+                style = MaterialTheme.typography.labelMedium)
             HsvColorPicker(
                 modifier = Modifier.fillMaxWidth().height(200.dp).padding(10.dp),
                 controller = controller,
@@ -944,7 +959,9 @@ fun SaveRoleDialog(
                 initialColor = selectedColor)
           }
 
-          Text(text = context.getString(R.string.association_profile_save_role_dialog_permissions), style = MaterialTheme.typography.labelMedium)
+          Text(
+              text = context.getString(R.string.association_profile_save_role_dialog_permissions),
+              style = MaterialTheme.typography.labelMedium)
           LazyColumn(modifier = Modifier.fillMaxWidth()) {
             items(allPermissions.size) { index ->
               val permission = allPermissions[index]
@@ -1026,9 +1043,9 @@ private fun AssociationEvents(
 }
 
 /**
- * Displays events related to an association, along with a search bar, event creation button,
- * and event details. The event list is sorted and displayed using a paginated view.
- * Users with appropriate permissions can create new events, and a search bar allows for event searching.
+ * Displays events related to an association, along with a search bar, event creation button, and
+ * event details. The event list is sorted and displayed using a paginated view. Users with
+ * appropriate permissions can create new events, and a search bar allows for event searching.
  *
  * @param navigationAction The navigation actions to navigate between screens.
  * @param association The association whose events are being displayed.
@@ -1101,7 +1118,6 @@ private fun AssociationActionsEvents(
   val pagerState = rememberPagerState { sortedEvents.size }
   val coroutineScope = rememberCoroutineScope()
 
-
   if (events.isNotEmpty()) {
     SearchPagerSection(
         items = sortedEvents,
@@ -1131,12 +1147,13 @@ private fun AssociationActionsEvents(
 }
 
 /**
- * Displays a button that toggles between "See More" and "See Less" states.
- * This component is used to show or hide more content, depending on whether the button has been clicked.
+ * Displays a button that toggles between "See More" and "See Less" states. This component is used
+ * to show or hide more content, depending on whether the button has been clicked.
  *
  * @param onSeeMore A lambda function that is triggered when the "See More" button is clicked.
  * @param onSeeLess A lambda function that is triggered when the "See Less" button is clicked.
- * @param isSeeMoreClicked A boolean flag indicating whether the "See More" button is clicked or not.
+ * @param isSeeMoreClicked A boolean flag indicating whether the "See More" button is clicked or
+ *   not.
  */
 @Composable
 fun AssociationProfileSeeMoreButton(
@@ -1169,8 +1186,9 @@ fun AssociationProfileSeeMoreButton(
 }
 
 /**
- * Displays a single event inside a card format. This component is typically used in places like the home screen
- * to show event details, and it includes an option for editing the event based on the provided permissions.
+ * Displays a single event inside a card format. This component is typically used in places like the
+ * home screen to show event details, and it includes an option for editing the event based on the
+ * provided permissions.
  *
  * @param navigationAction The navigation actions to navigate between screens.
  * @param event The event to be displayed in the card.
@@ -1302,54 +1320,47 @@ private fun AssociationActionsHeader(
       { showNotificationDialog = false })
 
   Row(
-      modifier =
-          Modifier.fillMaxWidth().padding(vertical = 0.dp),
+      modifier = Modifier.fillMaxWidth().padding(vertical = 0.dp),
       horizontalArrangement = Arrangement.Center,
-      verticalAlignment = Alignment.CenterVertically
-      ) {
-        Box(
-            modifier = Modifier.widthIn(max = 300.dp)
-            ) {
-              Text(
-                  text = context.getString(R.string.association_profile_header_broadcast_text),
-                  style = AppTypography.bodyMedium,
-                  modifier = Modifier.padding(end = 8.dp)
-                  )
-            }
+      verticalAlignment = Alignment.CenterVertically) {
+        Box(modifier = Modifier.widthIn(max = 300.dp)) {
+          Text(
+              text = context.getString(R.string.association_profile_header_broadcast_text),
+              style = AppTypography.bodyMedium,
+              modifier = Modifier.padding(end = 8.dp))
+        }
         IconButton(
             onClick = { showNotificationDialog = true },
-            modifier = Modifier.testTag(AssociationProfileActionsTestTags.BROADCAST_ICON_BUTTON).size(24.dp)) {
+            modifier =
+                Modifier.testTag(AssociationProfileActionsTestTags.BROADCAST_ICON_BUTTON)
+                    .size(24.dp)) {
               Icon(
                   Icons.AutoMirrored.Filled.Send,
-                  contentDescription = context.getString(R.string.association_profile_header_broadcast_button),
-                  tint = MaterialTheme.colorScheme.primary
-                  )
+                  contentDescription =
+                      context.getString(R.string.association_profile_header_broadcast_button),
+                  tint = MaterialTheme.colorScheme.primary)
             }
       }
 
   Row(
-      modifier =
-          Modifier.fillMaxWidth().padding(vertical = 0.dp),
+      modifier = Modifier.fillMaxWidth().padding(vertical = 0.dp),
       horizontalArrangement = Arrangement.Center,
-      verticalAlignment = Alignment.CenterVertically
-      ) {
-        Box(
-            modifier = Modifier.widthIn(max = 300.dp)
-            ) {
-              Text(
-                  text = context.getString(R.string.association_profile_header_edit_text),
-                  style = AppTypography.bodyMedium,
-                  modifier = Modifier.padding(end = 8.dp)
-                  )
-            }
+      verticalAlignment = Alignment.CenterVertically) {
+        Box(modifier = Modifier.widthIn(max = 300.dp)) {
+          Text(
+              text = context.getString(R.string.association_profile_header_edit_text),
+              style = AppTypography.bodyMedium,
+              modifier = Modifier.padding(end = 8.dp))
+        }
         IconButton(
             onClick = { onClickSaveButton() },
-            modifier = Modifier.testTag(AssociationProfileActionsTestTags.EDIT_BUTTON).size(24.dp)) {
+            modifier =
+                Modifier.testTag(AssociationProfileActionsTestTags.EDIT_BUTTON).size(24.dp)) {
               Icon(
                   Icons.Filled.Edit,
-                  contentDescription = context.getString(R.string.association_profile_header_edit_button),
-                  tint = MaterialTheme.colorScheme.primary
-                  )
+                  contentDescription =
+                      context.getString(R.string.association_profile_header_edit_button),
+                  tint = MaterialTheme.colorScheme.primary)
             }
       }
 }

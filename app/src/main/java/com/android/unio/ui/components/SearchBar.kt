@@ -154,91 +154,90 @@ fun AssociationSearchBar(
     shouldCloseExpandable: Boolean,
     onOutsideClickHandled: () -> Unit
 ) {
-    var searchQuery by remember { mutableStateOf("") }
-    var isExpanded by rememberSaveable { mutableStateOf(false) }
-    val associationResults by searchViewModel.associations.collectAsState()
-    val searchState by searchViewModel.status.collectAsState()
-    val context = LocalContext.current
+  var searchQuery by remember { mutableStateOf("") }
+  var isExpanded by rememberSaveable { mutableStateOf(false) }
+  val associationResults by searchViewModel.associations.collectAsState()
+  val searchState by searchViewModel.status.collectAsState()
+  val context = LocalContext.current
 
-    if (shouldCloseExpandable && isExpanded) {
-        isExpanded = false
-        onOutsideClickHandled()
-    }
+  if (shouldCloseExpandable && isExpanded) {
+    isExpanded = false
+    onOutsideClickHandled()
+  }
 
-    DockedSearchBar(
-        inputField = {
-            SearchBarDefaults.InputField(
-                modifier = Modifier.testTag(ExploreContentTestTags.SEARCH_BAR_INPUT),
-                query = searchQuery,
-                onQueryChange = {
-                    searchQuery = it
-                    searchViewModel.debouncedSearch(it, SearchViewModel.SearchType.ASSOCIATION)
-                },
-                onSearch = {},
-                expanded = isExpanded,
-                onExpandedChange = { isExpanded = it },
-                placeholder = {
-                    Text(
-                        text = context.getString(R.string.search_placeholder),
-                        style = AppTypography.bodyLarge,
-                        modifier = Modifier.testTag(ExploreContentTestTags.SEARCH_BAR_PLACEHOLDER))
-                },
-                trailingIcon = {
-                    Icon(
-                        Icons.Default.Search,
-                        contentDescription =
-                        context.getString(R.string.explore_content_description_search_icon),
-                        modifier = Modifier.testTag(ExploreContentTestTags.SEARCH_TRAILING_ICON))
-                },
-            )
-        },
-        expanded = isExpanded,
-        onExpandedChange = { isExpanded = it },
-        modifier = Modifier.padding(horizontal = 16.dp).testTag(ExploreContentTestTags.SEARCH_BAR)) {
+  DockedSearchBar(
+      inputField = {
+        SearchBarDefaults.InputField(
+            modifier = Modifier.testTag(ExploreContentTestTags.SEARCH_BAR_INPUT),
+            query = searchQuery,
+            onQueryChange = {
+              searchQuery = it
+              searchViewModel.debouncedSearch(it, SearchViewModel.SearchType.ASSOCIATION)
+            },
+            onSearch = {},
+            expanded = isExpanded,
+            onExpandedChange = { isExpanded = it },
+            placeholder = {
+              Text(
+                  text = context.getString(R.string.search_placeholder),
+                  style = AppTypography.bodyLarge,
+                  modifier = Modifier.testTag(ExploreContentTestTags.SEARCH_BAR_PLACEHOLDER))
+            },
+            trailingIcon = {
+              Icon(
+                  Icons.Default.Search,
+                  contentDescription =
+                      context.getString(R.string.explore_content_description_search_icon),
+                  modifier = Modifier.testTag(ExploreContentTestTags.SEARCH_TRAILING_ICON))
+            },
+        )
+      },
+      expanded = isExpanded,
+      onExpandedChange = { isExpanded = it },
+      modifier = Modifier.padding(horizontal = 16.dp).testTag(ExploreContentTestTags.SEARCH_BAR)) {
         when (searchState) {
-            SearchViewModel.Status.ERROR -> {
-                Box(
-                    modifier = Modifier.fillMaxWidth().padding(16.dp),
-                    contentAlignment = Alignment.Center) {
-                    Text(context.getString(R.string.explore_search_error_message))
+          SearchViewModel.Status.ERROR -> {
+            Box(
+                modifier = Modifier.fillMaxWidth().padding(16.dp),
+                contentAlignment = Alignment.Center) {
+                  Text(context.getString(R.string.explore_search_error_message))
                 }
-            }
-            SearchViewModel.Status.LOADING -> {
-                Box(
-                    modifier = Modifier.fillMaxWidth().padding(16.dp),
-                    contentAlignment = Alignment.Center) {
-                    LinearProgressIndicator()
+          }
+          SearchViewModel.Status.LOADING -> {
+            Box(
+                modifier = Modifier.fillMaxWidth().padding(16.dp),
+                contentAlignment = Alignment.Center) {
+                  LinearProgressIndicator()
                 }
-            }
-            SearchViewModel.Status.IDLE -> {}
-            SearchViewModel.Status.SUCCESS -> {
-                if (associationResults.isEmpty()) {
-                    Box(
-                        modifier = Modifier.fillMaxWidth().padding(16.dp),
-                        contentAlignment = Alignment.Center) {
-                        Text(context.getString(R.string.explore_search_no_results))
-                    }
-                } else {
-                    Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
-                        associationResults.forEach { association ->
-                            ListItem(
-                                modifier =
-                                Modifier.clickable {
-                                    isExpanded = false
-                                    onAssociationSelected(association)
-                                }
-                                    .testTag(
-                                        ExploreContentTestTags.ASSOCIATION_EXPLORE_RESULT +
-                                                association.name),
-                                headlineContent = { Text(association.name) })
-                        }
-                    }
+          }
+          SearchViewModel.Status.IDLE -> {}
+          SearchViewModel.Status.SUCCESS -> {
+            if (associationResults.isEmpty()) {
+              Box(
+                  modifier = Modifier.fillMaxWidth().padding(16.dp),
+                  contentAlignment = Alignment.Center) {
+                    Text(context.getString(R.string.explore_search_no_results))
+                  }
+            } else {
+              Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+                associationResults.forEach { association ->
+                  ListItem(
+                      modifier =
+                          Modifier.clickable {
+                                isExpanded = false
+                                onAssociationSelected(association)
+                              }
+                              .testTag(
+                                  ExploreContentTestTags.ASSOCIATION_EXPLORE_RESULT +
+                                      association.name),
+                      headlineContent = { Text(association.name) })
                 }
+              }
             }
+          }
         }
-    }
+      }
 }
-
 
 /** A search bar specialized for searching events. */
 @Composable

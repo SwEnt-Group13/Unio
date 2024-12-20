@@ -66,14 +66,14 @@ constructor(
     return member.user.element
   }
 
-    /**
-     * Adds a new role to the specified association in the local list. If the role already exists,
-     * it will not be added again. The association's roles are updated, and if the association is
-     * selected, the selected association is also updated.
-     *
-     * @param associationId The ID of the association to update.
-     * @param newRole The new role to add to the association.
-     */
+  /**
+   * Adds a new role to the specified association in the local list. If the role already exists, it
+   * will not be added again. The association's roles are updated, and if the association is
+   * selected, the selected association is also updated.
+   *
+   * @param associationId The ID of the association to update.
+   * @param newRole The new role to add to the association.
+   */
   fun addRoleLocally(associationId: String, newRole: Role) {
     val association = _associations.value.find { it.uid == associationId }
 
@@ -84,7 +84,6 @@ constructor(
 
         return
       }
-
 
       val updatedRoles = association.roles + newRole
       val updatedAssociation = association.copy(roles = updatedRoles)
@@ -97,20 +96,19 @@ constructor(
       if (_selectedAssociation.value?.uid == associationId) {
         _selectedAssociation.value = updatedAssociation
       }
-
     } else {
       Log.e("AssociationViewModel", "Association with ID $associationId not found.")
     }
   }
 
-    /**
-     * Edits an existing role of a specified association in the local list. If the role is found,
-     * it is updated with the new role data. If the role doesn't exist, an error is logged.
-     * If the association is selected, it is also updated.
-     *
-     * @param associationId The ID of the association whose role needs to be edited.
-     * @param role The updated role to set.
-     */
+  /**
+   * Edits an existing role of a specified association in the local list. If the role is found, it
+   * is updated with the new role data. If the role doesn't exist, an error is logged. If the
+   * association is selected, it is also updated.
+   *
+   * @param associationId The ID of the association whose role needs to be edited.
+   * @param role The updated role to set.
+   */
   fun editRoleLocally(associationId: String, role: Role) {
 
     val association = _associations.value.find { it.uid == associationId }
@@ -133,19 +131,18 @@ constructor(
       if (_selectedAssociation.value?.uid == associationId) {
         _selectedAssociation.value = updatedAssociation
       }
-
     } else {
       Log.e("AssociationViewModel", "Association with ID $associationId not found.")
     }
   }
 
-    /**
-     * Deletes the specified role from the association's local list of roles. If the role is found,
-     * it is removed from the association's roles. If the association is selected, it is updated.
-     *
-     * @param associationId The ID of the association from which the role will be deleted.
-     * @param role The role to delete.
-     */
+  /**
+   * Deletes the specified role from the association's local list of roles. If the role is found, it
+   * is removed from the association's roles. If the association is selected, it is updated.
+   *
+   * @param associationId The ID of the association from which the role will be deleted.
+   * @param role The role to delete.
+   */
   fun deleteRoleLocally(associationId: String, role: Role) {
     val association = _associations.value.find { it.uid == associationId }
 
@@ -167,7 +164,6 @@ constructor(
       if (_selectedAssociation.value?.uid == associationId) {
         _selectedAssociation.value = updatedAssociation
       }
-
     } else {
       Log.e("AssociationViewModel", "Association with ID $associationId not found.")
     }
@@ -222,11 +218,11 @@ constructor(
         })
   }
 
-    /**
-     * Refreshes the selected association by fetching the association and updating the selected
-     * association's details including events and members. If the association is not found,
-     * an error is logged.
-     */
+  /**
+   * Refreshes the selected association by fetching the association and updating the selected
+   * association's details including events and members. If the association is not found, an error
+   * is logged.
+   */
   fun refreshAssociation() {
     if (_selectedAssociation.value == null) {
       return
@@ -330,7 +326,6 @@ constructor(
     val selectedAssociation = _selectedAssociation.value
     if (selectedAssociation != null) {
       selectedAssociation.events.update(event)
-
     } else {
       Log.e("AssociationViewModel", "No association selected to add or edit event.")
     }
@@ -391,14 +386,14 @@ constructor(
     }
   }
 
-    /**
-     * Adds a new role to the selected association. If the role already exists, an error is triggered.
-     * After adding the role, the association is saved and the local state is updated.
-     *
-     * @param role The role to be added to the association.
-     * @param onSuccess A callback function to be executed after the role is successfully added.
-     * @param onFailure A callback function to handle errors during the operation.
-     */
+  /**
+   * Adds a new role to the selected association. If the role already exists, an error is triggered.
+   * After adding the role, the association is saved and the local state is updated.
+   *
+   * @param role The role to be added to the association.
+   * @param onSuccess A callback function to be executed after the role is successfully added.
+   * @param onFailure A callback function to handle errors during the operation.
+   */
   fun addRole(role: Role, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
     val currentAssociation = _selectedAssociation.value
     if (currentAssociation == null) {
@@ -426,14 +421,14 @@ constructor(
         onFailure = onFailure)
   }
 
-    /**
-     * Removes the specified role from the selected association. If the role does not exist,
-     * an error is triggered. After removing the role, the association is saved and the local state is updated.
-     *
-     * @param role The role to be removed from the association.
-     * @param onSuccess A callback function to be executed after the role is successfully removed.
-     * @param onFailure A callback function to handle errors during the operation.
-     */
+  /**
+   * Removes the specified role from the selected association. If the role does not exist, an error
+   * is triggered. After removing the role, the association is saved and the local state is updated.
+   *
+   * @param role The role to be removed from the association.
+   * @param onSuccess A callback function to be executed after the role is successfully removed.
+   * @param onFailure A callback function to handle errors during the operation.
+   */
   fun removeRole(role: Role, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
     val currentAssociation = _selectedAssociation.value
     if (currentAssociation == null) {

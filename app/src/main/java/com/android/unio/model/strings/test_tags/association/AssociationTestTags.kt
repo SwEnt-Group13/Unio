@@ -39,7 +39,7 @@ object AssociationProfileTestTags {
   const val FOLLOW_BUTTON = "associationFollowButton"
 }
 
-object AssociationProfileActionsTestTags{
+object AssociationProfileActionsTestTags {
   const val SCREEN = "associationProfileActionsScreen"
   const val EVENT_TITLE = "associationEventActionsTitle"
   const val SMALL_EVENT_TITLE = "associationSmallEventActionsTitle"

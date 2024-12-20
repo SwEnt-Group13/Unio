@@ -185,17 +185,21 @@ constructor(
     _events.value += event
   }
 
-    /**
-     * Adds an image to the specified event. This method uploads the image to the storage and updates
-     * the event's image URL once the upload is successful.
-     *
-     * This method helps in associating an image with an event, allowing the event to display a visual representation.
-     *
-     * @param inputStream The input stream of the image to upload. This is typically the raw data of the image selected by the user.
-     * @param event The event to which the image will be added.
-     * @param onSuccess A callback that is triggered if the image upload and event update are successful. It passes the updated event as a parameter.
-     * @param onFailure A callback that is triggered if the image upload or event update fails. It passes the error that occurred as a parameter.
-     */
+  /**
+   * Adds an image to the specified event. This method uploads the image to the storage and updates
+   * the event's image URL once the upload is successful.
+   *
+   * This method helps in associating an image with an event, allowing the event to display a visual
+   * representation.
+   *
+   * @param inputStream The input stream of the image to upload. This is typically the raw data of
+   *   the image selected by the user.
+   * @param event The event to which the image will be added.
+   * @param onSuccess A callback that is triggered if the image upload and event update are
+   *   successful. It passes the updated event as a parameter.
+   * @param onFailure A callback that is triggered if the image upload or event update fails. It
+   *   passes the error that occurred as a parameter.
+   */
   fun addImageToEvent(
       inputStream: InputStream,
       event: Event,
