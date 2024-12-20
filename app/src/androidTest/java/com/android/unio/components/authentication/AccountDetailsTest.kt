@@ -207,11 +207,11 @@ class AccountDetailsTest : TearDown() {
         .assertIsDisplayed()
     composeTestRule.waitUntil(10000) {
       composeTestRule
-          .onNodeWithTag(AccountDetailsTestTags.SOCIALS_CHIP + "Instagram", useUnmergedTree = true)
+          .onNodeWithTag(AccountDetailsTestTags.SOCIALS_CHIP + "Instagram", useUnmergedTree = false)
           .isDisplayed()
     }
     composeTestRule
-        .onNodeWithTag(AccountDetailsTestTags.SOCIALS_CHIP + "Instagram", true)
+        .onNodeWithTag(AccountDetailsTestTags.SOCIALS_CHIP + "Instagram", false)
         .performScrollTo()
         .assertIsDisplayed()
   }
