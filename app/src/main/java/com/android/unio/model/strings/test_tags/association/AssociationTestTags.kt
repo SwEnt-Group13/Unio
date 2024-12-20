@@ -41,6 +41,8 @@ object AssociationProfileTestTags {
   // PAGE
   const val OVERVIEW_PAGE = "associationOverviewPage"
   const val ACTIONS_PAGE = "associationActionsPage"
+
+  const val YOUR_ROLE_TEXT = "associationProfileYourRoleText"
 }
 
 object AssociationProfileActionsTestTags {
@@ -50,6 +52,10 @@ object AssociationProfileActionsTestTags {
   const val ADD_EVENT_BUTTON = "associationActionsAddEventButton"
   const val BROADCAST_ICON_BUTTON = "associationActionsBroadcastButton"
   const val EDIT_BUTTON = "associationActionsEditButton"
+  const val CREATE_ROLE = "associationActionsCreateRole"
+  const val CREATE_ROLE_DISPLAY_NAME = "associationActionsCreateRoleDisplayName"
+  const val EDIT_ROLE = "associationActionsEditRole"
+  const val DELETE_ROLE = "associationActionsDeleteRole"
 }
 
 object SaveAssociationTestTags {

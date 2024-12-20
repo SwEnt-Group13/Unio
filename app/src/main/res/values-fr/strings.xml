@@ -63,6 +63,7 @@
     <string name="association_profile_scaffold_overview">Aperçu</string>
     <string name="association_profile_scaffold_actions">Actions</string>
     <string name="association_profile_scaffold_role_is">Votre rôle est</string>
+    <string name="association_profile_create_role">Créer un nouveau rôle</string>
 
 
     <!-- SaveAssociation strings -->
