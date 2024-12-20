@@ -193,6 +193,7 @@ class EventDetailsTest : TearDown() {
     composeTestRule
         .onNodeWithTag(EventDetailsTestTags.SHARE_BUTTON)
         .assertDisplayComponentInScroll()
+      Thread.sleep(20000)
     composeTestRule
         .onNodeWithTag(EventDetailsTestTags.DETAILS_PAGE)
         .assertDisplayComponentInScroll()
