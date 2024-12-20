@@ -26,11 +26,14 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.android.unio.model.strings.test_tags.home.HomeTestTags
 import kotlinx.coroutines.launch
 
 @Composable
-fun SmoothTopBarNavigationMenu(tabList: List<String>, pagerState: PagerState) {
+fun SmoothTopBarNavigationMenu(
+    tabList: List<String>,
+    pagerState: PagerState,
+    tabTestTags: List<String>
+) {
   val defaultTabWidth = 576.0F
   val defaultTabHeight = 92.0F
 
@@ -74,7 +77,6 @@ fun SmoothTopBarNavigationMenu(tabList: List<String>, pagerState: PagerState) {
                       strokeWidth = Stroke.DefaultMiter)
                 })
       }) {
-        val tabTestTags = listOf(HomeTestTags.TAB_ALL, HomeTestTags.TAB_FOLLOWING)
         tabList.forEachIndexed { index, str ->
           Tab(
               selected = index == pagerState.currentPage,

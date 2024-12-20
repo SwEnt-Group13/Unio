@@ -1,6 +1,7 @@
 package com.android.unio.ui.event
 
 import android.net.Uri
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -44,6 +45,7 @@ import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventType
 import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.firestore.firestoreReferenceListWith
+import com.android.unio.model.functions.addEditEventCloudFunction
 import com.android.unio.model.map.Location
 import com.android.unio.model.map.nominatim.NominatimLocationSearchViewModel
 import com.android.unio.model.search.SearchViewModel
@@ -351,45 +353,80 @@ fun EventCreationScreen(
                       eventBannerUri.value != Uri.EMPTY &&
                       selectedLocation != null,
               onClick = {
-                val inputStream = context.contentResolver.openInputStream(eventBannerUri.value)!!
-                val newEvent =
-                    Event(
-                        uid = "", // This gets overwritten by eventViewModel.addEvent
-                        title = name,
-                        organisers =
-                            Association.firestoreReferenceListWith(
-                                (coauthorsAndBoolean
-                                        .filter { it.second.value }
-                                        .map { it.first.uid } +
-                                        associationViewModel.selectedAssociation.value!!.uid)
-                                    .distinct()),
-                        taggedAssociations =
-                            Association.firestoreReferenceListWith(
-                                taggedAndBoolean.filter { it.second.value }.map { it.first.uid }),
-                        image = eventBannerUri.value.toString(),
-                        description = longDescription,
-                        catchyDescription = shortDescription,
-                        price = 0.0,
-                        startDate = startTimestamp!!,
-                        endDate = endTimestamp!!,
-                        location = selectedLocation!!,
-                        types = types.filter { it.second.value }.map { it.first },
-                        eventPictures = MockReferenceList(),
-                    )
-                eventViewModel.addEvent(
-                    inputStream,
-                    newEvent,
-                    onSuccess = {
-                      associationViewModel.addEventLocally(newEvent)
-                      navigationAction.goBack()
-                    },
-                    onFailure = {
-                      Toast.makeText(
-                              context,
-                              context.getString(R.string.event_creation_failed),
-                              Toast.LENGTH_SHORT)
-                          .show()
-                    })
+                try {
+                  val inputStream = context.contentResolver.openInputStream(eventBannerUri.value)!!
+                  val newEvent =
+                      Event(
+                          uid = "", // This gets overwritten by eventViewModel.addEvent
+                          title = name,
+                          organisers =
+                              Association.firestoreReferenceListWith(
+                                  (coauthorsAndBoolean
+                                          .filter { it.second.value }
+                                          .map { it.first.uid } +
+                                          associationViewModel.selectedAssociation.value!!.uid)
+                                      .distinct()),
+                          taggedAssociations =
+                              Association.firestoreReferenceListWith(
+                                  taggedAndBoolean.filter { it.second.value }.map { it.first.uid }),
+                          image = eventBannerUri.value.toString(),
+                          description = longDescription,
+                          catchyDescription = shortDescription,
+                          price = 0.0,
+                          startDate = startTimestamp!!,
+                          endDate = endTimestamp!!,
+                          location = selectedLocation!!,
+                          types = types.filter { it.second.value }.map { it.first },
+                          eventPictures = MockReferenceList(),
+                      )
+
+                  // First step: Add the image to the event
+                  eventViewModel.addImageToEvent(
+                      inputStream,
+                      newEvent,
+                      onSuccess = { eventWithImage ->
+                        // Second step: Call the cloud function to save the event
+                        addEditEventCloudFunction(
+                            eventWithImage,
+                            associationViewModel.selectedAssociation.value!!.uid,
+                            onSuccess = { response ->
+                              // Handle successful cloud function execution
+                              Log.d("EventCreation", "Event successfully created: $response")
+                              associationViewModel.addEditEventLocally(
+                                  eventWithImage) // Update locally
+                              eventViewModel.addEditEventLocally(eventWithImage)
+                              navigationAction.goBack() // Navigate back
+                            },
+                            onError = { error ->
+                              // Handle error from cloud function
+                              Log.e(
+                                  "EventCreation",
+                                  "Failed to save event via cloud function: $error")
+                              Toast.makeText(
+                                      context,
+                                      context.getString(R.string.event_creation_failed),
+                                      Toast.LENGTH_SHORT)
+                                  .show()
+                            },
+                            isNewEvent = true)
+                      },
+                      onFailure = { error ->
+                        // Handle error from adding image
+                        Log.e("EventCreation", "Failed to add image to event: $error")
+                        Toast.makeText(
+                                context,
+                                context.getString(R.string.event_creation_failed),
+                                Toast.LENGTH_SHORT)
+                            .show()
+                      })
+                } catch (e: Exception) {
+                  Log.e("EventCreation", "Unexpected error during event creation: $e")
+                  Toast.makeText(
+                          context,
+                          context.getString(R.string.event_creation_failed),
+                          Toast.LENGTH_SHORT)
+                      .show()
+                }
               }) {
                 Text(context.getString(R.string.event_creation_save_button))
               }

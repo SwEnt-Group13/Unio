@@ -90,7 +90,7 @@ class SearchRepositoryTest {
           category = AssociationCategory.SCIENCE_TECH,
           description = "ACM is the world's largest educational and scientific computing society.",
           followersCount = 1,
-          members = listOf(Member(User.firestoreReferenceElementWith("1"), Role.GUEST)),
+          members = listOf(Member(User.firestoreReferenceElementWith("1"), Role.GUEST.uid)),
           roles = listOf(Role.GUEST),
           image = "https://www.example.com/image.jpg",
           events = Event.firestoreReferenceListWith(listOf("1", "2")),
@@ -106,7 +106,7 @@ class SearchRepositoryTest {
           description =
               "IEEE is the world's largest technical professional organization dedicated to advancing technology for the benefit of humanity.",
           followersCount = 1,
-          members = listOf(Member(User.firestoreReferenceElementWith("2"), Role.GUEST)),
+          members = listOf(Member(User.firestoreReferenceElementWith("2"), Role.GUEST.uid)),
           roles = listOf(Role.GUEST),
           image = "https://www.example.com/image.jpg",
           events = Event.firestoreReferenceListWith(listOf("3", "4")),

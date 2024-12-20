@@ -78,6 +78,28 @@ constructor(
   }
 
   /**
+   * Adds a new event or updates an existing event locally in the ViewModel's state.
+   *
+   * @param event The event to add or update.
+   */
+  fun addEditEventLocally(event: Event) {
+    val existingEventIndex = _events.value.indexOfFirst { it.uid == event.uid }
+
+    if (existingEventIndex != -1) {
+      val updatedEvents = _events.value.toMutableList()
+      updatedEvents[existingEventIndex] = event
+      _events.value = updatedEvents
+    } else {
+      _events.value = _events.value + event
+    }
+
+    // if the selected event matches the updated event, refresh the selection
+    if (_selectedEvent.value?.uid == event.uid) {
+      _selectedEvent.value = event
+    }
+  }
+
+  /**
    * Updates the selected event in the ViewModel.
    *
    * @param eventId the ID of the event to select.
@@ -164,6 +186,45 @@ constructor(
   }
 
   /**
+   * Adds an image to the specified event. This method uploads the image to the storage and updates
+   * the event's image URL once the upload is successful.
+   *
+   * This method helps in associating an image with an event, allowing the event to display a visual
+   * representation.
+   *
+   * @param inputStream The input stream of the image to upload. This is typically the raw data of
+   *   the image selected by the user.
+   * @param event The event to which the image will be added.
+   * @param onSuccess A callback that is triggered if the image upload and event update are
+   *   successful. It passes the updated event as a parameter.
+   * @param onFailure A callback that is triggered if the image upload or event update fails. It
+   *   passes the error that occurred as a parameter.
+   */
+  fun addImageToEvent(
+      inputStream: InputStream,
+      event: Event,
+      onSuccess: (Event) -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+    try {
+      imageRepository.uploadImage(
+          inputStream,
+          "${StoragePathsStrings.EVENT_IMAGES}${event.uid}",
+          { uri ->
+            event.image = uri
+            onSuccess(event)
+          },
+          { error ->
+            Log.e("ImageRepository", "Failed to upload image: $error")
+            onFailure(error)
+          })
+    } catch (e: Exception) {
+      Log.e("addImageToEvent", "An unexpected error occurred: $e")
+      onFailure(e)
+    }
+  }
+
+  /**
    * Update an existing event in the repository with a new image. It uploads the event image first,
    * then updates the event.
    *
@@ -180,7 +241,7 @@ constructor(
   ) {
     imageRepository.uploadImage(
         inputStream,
-        // no need to delete the old image as it will be replaced by the new one
+        // No need to delete the old image as it will be replaced by the new one
         StoragePathsStrings.EVENT_IMAGES + event.uid,
         { uri ->
           event.image = uri
@@ -196,13 +257,18 @@ constructor(
             isNewAssociation = false,
             it,
             {},
-            { e -> Log.e("EventViewModel", "An error occurred while loading associations: $e") })
+            { e -> Log.e("EventViewModel", "An error occurred while saving associations: $e") })
         it.events.requestAll()
       }
     })
 
-    _events.value = _events.value.filter { it.uid != event.uid } // Remove the outdated event
-    _events.value += event
+    // Update events list with the new event
+    _events.value = _events.value.map { if (it.uid == event.uid) event else it }
+
+    // Update selected event if the updated event matches the current selected one
+    if (_selectedEvent.value?.uid == event.uid) {
+      _selectedEvent.value = event
+    }
   }
 
   /**

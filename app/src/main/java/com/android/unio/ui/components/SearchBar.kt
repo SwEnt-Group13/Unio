@@ -1,4 +1,4 @@
-package com.android.unio.ui.association
+package com.android.unio.ui.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -33,6 +33,106 @@ import com.android.unio.model.association.Association
 import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.strings.test_tags.explore.ExploreContentTestTags
 import com.android.unio.ui.theme.AppTypography
+
+/**
+ * A general search bar composable that can be configured for different use cases.
+ *
+ * @param searchQuery The current search query.
+ * @param onQueryChange Callback invoked when the search query changes.
+ * @param results The list of search results to display.
+ * @param onResultClick Callback invoked when a search result is clicked.
+ * @param searchState The current search status.
+ * @param shouldCloseExpandable Whether the search bar should close the expandable when expanded.
+ * @param onOutsideClickHandled Callback invoked when an outside click is handled.
+ * @param resultContent A composable to define how each result is displayed.
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun <T> SearchBar(
+    searchQuery: String,
+    onQueryChange: (String) -> Unit,
+    results: List<T>,
+    onResultClick: (T) -> Unit,
+    searchState: SearchViewModel.Status,
+    shouldCloseExpandable: Boolean,
+    onOutsideClickHandled: () -> Unit,
+    resultContent: @Composable (T) -> Unit
+) {
+  var isExpanded by rememberSaveable { mutableStateOf(false) }
+  val context = LocalContext.current
+
+  if (shouldCloseExpandable && isExpanded) {
+    isExpanded = false
+    onOutsideClickHandled()
+  }
+
+  DockedSearchBar(
+      inputField = {
+        SearchBarDefaults.InputField(
+            modifier = Modifier.testTag("SEARCH_BAR_INPUT"),
+            query = searchQuery,
+            onQueryChange = { onQueryChange(it) },
+            onSearch = {},
+            expanded = isExpanded,
+            onExpandedChange = { isExpanded = it },
+            placeholder = {
+              Text(
+                  text = context.getString(R.string.search_placeholder),
+                  style = AppTypography.bodyLarge,
+                  modifier = Modifier.testTag("SEARCH_BAR_PLACEHOLDER"))
+            },
+            trailingIcon = {
+              Icon(
+                  Icons.Default.Search,
+                  contentDescription =
+                      context.getString(R.string.explore_content_description_search_icon),
+                  modifier = Modifier.testTag("SEARCH_TRAILING_ICON"))
+            },
+        )
+      },
+      expanded = isExpanded,
+      onExpandedChange = { isExpanded = it },
+      modifier = Modifier.padding(horizontal = 16.dp).testTag("SEARCH_BAR")) {
+        when (searchState) {
+          SearchViewModel.Status.ERROR -> {
+            Box(
+                modifier = Modifier.fillMaxWidth().padding(16.dp),
+                contentAlignment = Alignment.Center) {
+                  Text(context.getString(R.string.explore_search_error_message))
+                }
+          }
+          SearchViewModel.Status.LOADING -> {
+            Box(
+                modifier = Modifier.fillMaxWidth().padding(16.dp),
+                contentAlignment = Alignment.Center) {
+                  LinearProgressIndicator()
+                }
+          }
+          SearchViewModel.Status.IDLE -> {}
+          SearchViewModel.Status.SUCCESS -> {
+            if (results.isEmpty()) {
+              Box(
+                  modifier = Modifier.fillMaxWidth().padding(16.dp),
+                  contentAlignment = Alignment.Center) {
+                    Text(context.getString(R.string.explore_search_no_results))
+                  }
+            } else {
+              Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+                results.forEach { result ->
+                  ListItem(
+                      modifier =
+                          Modifier.clickable {
+                            isExpanded = false
+                            onResultClick(result)
+                          },
+                      headlineContent = { resultContent(result) })
+                }
+              }
+            }
+          }
+        }
+      }
+}
 
 /**
  * A search bar that allows users to search for associations. The last 2 parameters are used to

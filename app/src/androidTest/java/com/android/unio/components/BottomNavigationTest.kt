@@ -1,6 +1,6 @@
 package com.android.unio.components
 
-import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.isDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import com.android.unio.TearDown
@@ -78,6 +78,8 @@ class BottomNavigationTest : TearDown() {
 
   @Test
   fun testBottomNavigationMenuDisplayed() {
-    composeTestRule.onNodeWithTag(NavigationActionTestTags.BOTTOM_NAV_MENU).assertIsDisplayed()
+    composeTestRule.waitUntil(10000) {
+      composeTestRule.onNodeWithTag(NavigationActionTestTags.BOTTOM_NAV_MENU).isDisplayed()
+    }
   }
 }

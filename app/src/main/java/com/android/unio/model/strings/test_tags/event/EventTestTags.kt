@@ -94,6 +94,8 @@ object EventDetailsTestTags {
   const val SHARE_BUTTON = "eventShareButton"
   const val DETAILS_PAGE = "eventDetailsPage"
   const val DETAILS_IMAGE = "eventDetailsImage"
+  const val DETAILS_PAGE_HP = "eventDetailsPageHP"
+  const val DETAILS_IMAGE_HP = "eventDetailsImageHP"
   const val DETAILS_INFORMATION_CARD = "eventDetailsInformationCard"
   const val TITLE = "eventTitle"
   const val ORGANIZING_ASSOCIATION = "eventOrganisingAssociation"

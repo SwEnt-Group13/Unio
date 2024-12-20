@@ -12,6 +12,8 @@ interface ReferenceList<T> {
 
   fun addAll(uids: List<String>)
 
+  fun update(element: T)
+
   fun remove(uid: String)
 
   fun requestAll(onSuccess: () -> Unit = {}, lazy: Boolean = false)

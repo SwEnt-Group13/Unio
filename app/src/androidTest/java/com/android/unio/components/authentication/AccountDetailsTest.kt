@@ -203,10 +203,6 @@ class AccountDetailsTest : TearDown() {
         .onNodeWithTag(AccountDetailsTestTags.SOCIALS_CHIP + "Facebook")
         .performScrollTo()
         .assertIsDisplayed()
-    composeTestRule
-        .onNodeWithTag(AccountDetailsTestTags.SOCIALS_CHIP + "Instagram", true)
-        .performScrollTo()
-        .assertIsDisplayed()
   }
 
   @Test

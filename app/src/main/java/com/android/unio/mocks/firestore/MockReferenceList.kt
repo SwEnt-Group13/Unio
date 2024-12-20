@@ -13,9 +13,11 @@ class MockReferenceList<T : UniquelyIdentifiable>(elements: List<T> = emptyList(
 
   override fun add(uid: String) {}
 
-  override fun add(element: T) {}
+  override fun add(element: T) {} // do the changes only locally
 
   override fun addAll(uids: List<String>) {}
+
+  override fun update(element: T) {} // do the changes only locally
 
   override fun remove(uid: String) {}
 

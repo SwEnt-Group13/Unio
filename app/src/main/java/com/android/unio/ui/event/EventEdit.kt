@@ -1,6 +1,7 @@
 package com.android.unio.ui.event
 
 import android.net.Uri
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -369,14 +370,22 @@ fun EventEditScreen(
                               types = types.filter { it.second.value }.map { it.first },
                               eventPictures = MockReferenceList(),
                           )
+
+                      Log.d("AssociationViewModel", "CheckImageURI : " + eventBannerUri.toString())
                       // This should be extracted to a util
                       if (checkImageUri(eventBannerUri.toString()) == ImageUriType.LOCAL) {
+                        Log.d(
+                            "AssociationViewModel", "CheckImageURI2 : " + eventBannerUri.toString())
                         val inputStream =
                             context.contentResolver.openInputStream(eventBannerUri.value)!!
+
                         eventViewModel.updateEvent(
                             inputStream,
-                            updatedEvent,
-                            onSuccess = { navigationAction.goBack() },
+                            updatedEvent, // OUBLIE PAS DE ADDIMAGETOEVENT
+                            onSuccess = {
+                              navigationAction.goBack()
+                              associationViewModel.addEditEventLocally((updatedEvent))
+                            },
                             onFailure = {
                               Toast.makeText(
                                       context,
@@ -385,6 +394,7 @@ fun EventEditScreen(
                                   .show()
                             })
                       } else {
+                        Log.d("AssociationViewModel", "Update Event Without Image")
                         eventViewModel.updateEventWithoutImage(
                             updatedEvent,
                             onSuccess = { navigationAction.goBack() },

@@ -208,6 +208,7 @@ class EventDetailsTest : TearDown() {
     composeTestRule
         .onNodeWithTag(EventDetailsTestTags.SHARE_BUTTON)
         .assertDisplayComponentInScroll()
+
     composeTestRule
         .onNodeWithTag(EventDetailsTestTags.DETAILS_PAGE)
         .assertDisplayComponentInScroll()

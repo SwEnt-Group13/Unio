@@ -30,6 +30,7 @@ import com.android.unio.model.hilt.module.NetworkModule
 import com.android.unio.model.map.LocationRepository
 import com.android.unio.model.map.nominatim.NominatimApiService
 import com.android.unio.model.map.nominatim.NominatimLocationRepository
+import com.android.unio.model.strings.test_tags.association.AssociationProfileActionsTestTags
 import com.android.unio.model.strings.test_tags.association.AssociationProfileTestTags
 import com.android.unio.model.strings.test_tags.event.EventCreationTestTags
 import com.android.unio.model.strings.test_tags.event.EventDetailsTestTags
@@ -199,10 +200,17 @@ class EventCreationE2ETest : EndToEndTest() {
       composeTestRule.onNodeWithTag(AssociationProfileTestTags.SCREEN).isDisplayed()
     }
     composeTestRule.waitUntil(10000) {
-      composeTestRule.onNodeWithTag(AssociationProfileTestTags.ADD_EVENT_BUTTON).isDisplayed()
+      composeTestRule.onNodeWithTag(AssociationProfileTestTags.ACTIONS_PAGE).isDisplayed()
+    }
+    composeTestRule.onNodeWithTag(AssociationProfileTestTags.ACTIONS_PAGE).performClick()
+
+    composeTestRule.waitUntil(10000) {
+      composeTestRule
+          .onNodeWithTag(AssociationProfileActionsTestTags.ADD_EVENT_BUTTON)
+          .isDisplayed()
     }
     // Click on the "Add Event" button
-    composeTestRule.onNodeWithTag(AssociationProfileTestTags.ADD_EVENT_BUTTON).performClick()
+    composeTestRule.onNodeWithTag(AssociationProfileActionsTestTags.ADD_EVENT_BUTTON).performClick()
     composeTestRule.waitUntil(10000) {
       composeTestRule.onNodeWithTag(EventCreationTestTags.SCREEN).isDisplayed()
     }
@@ -297,6 +305,14 @@ class EventCreationE2ETest : EndToEndTest() {
         .performClick()
 
     // Go back to the Home screen
+    composeTestRule.waitUntil(10000) {
+      composeTestRule.onNodeWithTag(AssociationProfileActionsTestTags.SCREEN).isDisplayed()
+    }
+    composeTestRule.waitUntil(10000) {
+      composeTestRule.onNodeWithTag(AssociationProfileTestTags.OVERVIEW_PAGE).isDisplayed()
+    }
+    composeTestRule.onNodeWithTag(AssociationProfileTestTags.OVERVIEW_PAGE).performClick()
+
     composeTestRule.waitUntil(10000) {
       composeTestRule.onNodeWithTag(AssociationProfileTestTags.SCREEN).isDisplayed()
     }

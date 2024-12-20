@@ -61,6 +61,22 @@ class FirestoreReferenceList<T : UniquelyIdentifiable>(
   }
 
   /**
+   * Updates an element in the list. If the element is not already present, it is added.
+   *
+   * @param element The element to update.
+   */
+  override fun update(element: T) {
+    val index = _list.value.indexOfFirst { it.uid == element.uid }
+    if (index != -1) {
+      // Element exists; replace it
+      _list.value = _list.value.toMutableList().apply { this[index] = element }
+    } else {
+      // Element does not exist; add it
+      add(element)
+    }
+  }
+
+  /**
    * Adds an element to the list.
    *
    * @param element The element to add.

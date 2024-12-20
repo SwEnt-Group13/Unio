@@ -304,7 +304,10 @@ fun EventScreenContent(
 
     EventInformationCard(event, organisers, context)
 
-    SmoothTopBarNavigationMenu(tabList, pagerState)
+    SmoothTopBarNavigationMenu(
+        tabList,
+        pagerState,
+        listOf(EventDetailsTestTags.DETAILS_PAGE_HP, EventDetailsTestTags.DETAILS_IMAGE_HP))
     HorizontalPager(
         state = pagerState,
         modifier =

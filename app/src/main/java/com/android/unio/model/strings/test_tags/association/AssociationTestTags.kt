@@ -37,6 +37,25 @@ object AssociationProfileTestTags {
   const val HEADER_FOLLOWERS = "associationHeaderFollowers"
   const val HEADER_MEMBERS = "associationHeaderMembers"
   const val FOLLOW_BUTTON = "associationFollowButton"
+
+  // PAGE
+  const val OVERVIEW_PAGE = "associationOverviewPage"
+  const val ACTIONS_PAGE = "associationActionsPage"
+
+  const val YOUR_ROLE_TEXT = "associationProfileYourRoleText"
+}
+
+object AssociationProfileActionsTestTags {
+  const val SCREEN = "associationProfileActionsScreen"
+  const val EVENT_TITLE = "associationEventActionsTitle"
+  const val SMALL_EVENT_TITLE = "associationSmallEventActionsTitle"
+  const val ADD_EVENT_BUTTON = "associationActionsAddEventButton"
+  const val BROADCAST_ICON_BUTTON = "associationActionsBroadcastButton"
+  const val EDIT_BUTTON = "associationActionsEditButton"
+  const val CREATE_ROLE = "associationActionsCreateRole"
+  const val CREATE_ROLE_DISPLAY_NAME = "associationActionsCreateRoleDisplayName"
+  const val EDIT_ROLE = "associationActionsEditRole"
+  const val DELETE_ROLE = "associationActionsDeleteRole"
 }
 
 object SaveAssociationTestTags {

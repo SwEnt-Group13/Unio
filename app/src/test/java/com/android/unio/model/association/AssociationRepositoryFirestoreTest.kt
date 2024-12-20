@@ -98,7 +98,7 @@ class AssociationRepositoryFirestoreTest {
     association1 =
         MockAssociation.createMockAssociation(
             category = AssociationCategory.SCIENCE_TECH,
-            members = listOf(Member(User.emptyFirestoreReferenceElement(), Role.ADMIN)))
+            members = listOf(Member(User.emptyFirestoreReferenceElement(), Role.ADMIN.uid)))
     association2 =
         MockAssociation.createMockAssociation(category = AssociationCategory.SCIENCE_TECH)
 
@@ -151,8 +151,8 @@ class AssociationRepositoryFirestoreTest {
             "description" to association1.description,
             "members" to
                 mapOf(
-                    "1" to "Guest",
-                    "2" to "Guest"), // the serialization process does not allow us to simply put
+                    "1" to "GUESTUID",
+                    "2" to "GUESTUID"), // the serialization process does not allow us to simply put
             // association1.members
             "roles" to
                 mapOf(
@@ -160,12 +160,12 @@ class AssociationRepositoryFirestoreTest {
                         mapOf(
                             "displayName" to "Guest",
                             "color" to badgeColorBlue,
-                            "permissions" to listOf("Full rights")),
+                            "permissions" to listOf("Full Rights")),
                     "Administrator" to
                         mapOf(
                             "displayName" to "Administrator",
                             "color" to badgeColorCyan,
-                            "permissions" to listOf("Full rights"))),
+                            "permissions" to listOf("Full Rights"))),
             "followersCount" to association1.followersCount,
             "image" to association1.image,
             "events" to association1.events.uids,
@@ -179,19 +179,19 @@ class AssociationRepositoryFirestoreTest {
             "fullName" to association2.fullName,
             "category" to association2.category.name,
             "description" to association2.description,
-            "members" to mapOf("1" to "Guest", "2" to "Guest"),
+            "members" to mapOf("1" to "GUESTUID", "2" to "GUESTUID"),
             "roles" to
                 mapOf(
                     "Guest" to
                         mapOf(
                             "displayName" to "Guest",
                             "color" to badgeColorBlue,
-                            "permissions" to listOf("Full rights")),
+                            "permissions" to listOf("Full Rights")),
                     "Administrator" to
                         mapOf(
                             "displayName" to "Administrator",
                             "color" to badgeColorCyan,
-                            "permissions" to listOf("Full rights"))),
+                            "permissions" to listOf("Full Rights"))),
             "followersCount" to association2.followersCount,
             "image" to association2.image,
             "events" to association2.events.uids,
@@ -282,7 +282,7 @@ class AssociationRepositoryFirestoreTest {
                   fullName = "",
                   category = AssociationCategory.ARTS,
                   description = "",
-                  members = listOf(Member(User.emptyFirestoreReferenceElement(), Role.GUEST)),
+                  members = listOf(Member(User.emptyFirestoreReferenceElement(), Role.GUEST.uid)),
                   roles = listOf(Role.GUEST),
                   followersCount = 0,
                   image = "",

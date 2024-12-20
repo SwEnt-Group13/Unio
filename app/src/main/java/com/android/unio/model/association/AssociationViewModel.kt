@@ -67,6 +67,115 @@ constructor(
   }
 
   /**
+   * Adds a new role to the specified association in the local list. If the role already exists, it
+   * will not be added again. The association's roles are updated, and if the association is
+   * selected, the selected association is also updated.
+   *
+   * @param associationId The ID of the association to update.
+   * @param newRole The new role to add to the association.
+   */
+  fun addRoleLocally(associationId: String, newRole: Role) {
+    val association = _associations.value.find { it.uid == associationId }
+
+    if (association != null) {
+      // Check if the role already exists in the association's roles
+      val existingRole = association.roles.find { it.uid == newRole.uid }
+      if (existingRole != null) {
+
+        return
+      }
+
+      val updatedRoles = association.roles + newRole
+      val updatedAssociation = association.copy(roles = updatedRoles)
+
+      // update the local list of associations
+      _associations.value =
+          _associations.value.map { if (it.uid == association.uid) updatedAssociation else it }
+
+      // if the current association is the selected one, update the selected association too
+      if (_selectedAssociation.value?.uid == associationId) {
+        _selectedAssociation.value = updatedAssociation
+      }
+
+      _associationsByCategory.value = _associations.value.groupBy { it.category }
+    } else {
+      Log.e("AssociationViewModel", "Association with ID $associationId not found.")
+    }
+  }
+
+  /**
+   * Edits an existing role of a specified association in the local list. If the role is found, it
+   * is updated with the new role data. If the role doesn't exist, an error is logged. If the
+   * association is selected, it is also updated.
+   *
+   * @param associationId The ID of the association whose role needs to be edited.
+   * @param role The updated role to set.
+   */
+  fun editRoleLocally(associationId: String, role: Role) {
+
+    val association = _associations.value.find { it.uid == associationId }
+    if (association != null) {
+
+      val existingRoleIndex = association.roles.indexOfFirst { it.uid == role.uid }
+      if (existingRoleIndex == -1) {
+        Log.e("AssociationViewModel", "Role with UID ${role.uid} not found in the association.")
+        return
+      }
+
+      val updatedRoles = association.roles.toMutableList().apply { this[existingRoleIndex] = role }
+      val updatedAssociation = association.copy(roles = updatedRoles)
+
+      // update the local list of associations
+      _associations.value =
+          _associations.value.map { if (it.uid == association.uid) updatedAssociation else it }
+
+      // if the current association is selected, update it too
+      if (_selectedAssociation.value?.uid == associationId) {
+        _selectedAssociation.value = updatedAssociation
+      }
+
+      _associationsByCategory.value = _associations.value.groupBy { it.category }
+    } else {
+      Log.e("AssociationViewModel", "Association with ID $associationId not found.")
+    }
+  }
+
+  /**
+   * Deletes the specified role from the association's local list of roles. If the role is found, it
+   * is removed from the association's roles. If the association is selected, it is updated.
+   *
+   * @param associationId The ID of the association from which the role will be deleted.
+   * @param role The role to delete.
+   */
+  fun deleteRoleLocally(associationId: String, role: Role) {
+    val association = _associations.value.find { it.uid == associationId }
+
+    if (association != null) {
+      val existingRole = association.roles.find { it.uid == role.uid }
+      if (existingRole == null) {
+        Log.e("AssociationViewModel", "Role with UID ${role.uid} not found in the association.")
+        return
+      }
+
+      val updatedRoles = association.roles - existingRole
+      val updatedAssociation = association.copy(roles = updatedRoles)
+
+      // update the local list of associations
+      _associations.value =
+          _associations.value.map { if (it.uid == association.uid) updatedAssociation else it }
+
+      // if the current association is selected, update it too
+      if (_selectedAssociation.value?.uid == associationId) {
+        _selectedAssociation.value = updatedAssociation
+      }
+
+      _associationsByCategory.value = _associations.value.groupBy { it.category }
+    } else {
+      Log.e("AssociationViewModel", "Association with ID $associationId not found.")
+    }
+  }
+
+  /**
    * Adds a new association or updates an existing one in the local list of associations in the
    * ViewModel. This operation is performed locally without interacting with the repository.
    *
@@ -91,6 +200,7 @@ constructor(
    */
   private fun fetchUserFromMember(member: Member) {
     member.user.fetch()
+    member.user.element.value?.lastName?.let { Log.d("AssociationActionsMembers", it) }
   }
 
   /**
@@ -114,6 +224,11 @@ constructor(
         })
   }
 
+  /**
+   * Refreshes the selected association by fetching the association and updating the selected
+   * association's details including events and members. If the association is not found, an error
+   * is logged.
+   */
   fun refreshAssociation() {
     if (_selectedAssociation.value == null) {
       return
@@ -209,22 +324,16 @@ constructor(
   }
 
   /**
-   * Adds an event to the events list of the selected association locally.
+   * Add or Edit an event to the events list of the selected association locally.
    *
    * @param event The event to be added.
    */
-  fun addEventLocally(event: Event) {
+  fun addEditEventLocally(event: Event) {
     val selectedAssociation = _selectedAssociation.value
     if (selectedAssociation != null) {
-      val eventAlreadyExists = selectedAssociation.events.uids.contains(event.uid)
-      // Check if the event already exists in the events list
-      if (!eventAlreadyExists) {
-        selectedAssociation.events.add(event) // Ensure `add` does not fetch the database
-      } else {
-        Log.w("AssociationViewModel", "Event with ID ${event.uid} already exists")
-      }
+      selectedAssociation.events.update(event)
     } else {
-      Log.e("AssociationViewModel", "No association selected to add event to")
+      Log.e("AssociationViewModel", "No association selected to add or edit event.")
     }
   }
 
@@ -281,6 +390,41 @@ constructor(
           },
           onFailure)
     }
+  }
+
+  /**
+   * Removes the specified role from the selected association. If the role does not exist, an error
+   * is triggered. After removing the role, the association is saved and the local state is updated.
+   *
+   * @param role The role to be removed from the association.
+   * @param onSuccess A callback function to be executed after the role is successfully removed.
+   * @param onFailure A callback function to handle errors during the operation.
+   */
+  fun removeRole(role: Role, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+    val currentAssociation = _selectedAssociation.value
+    if (currentAssociation == null) {
+      onFailure(Exception("No association selected"))
+      return
+    }
+
+    // If the role does not exist, return an error
+    if (!currentAssociation.roles.contains(role)) {
+      onFailure(Exception("Role does not exist in the association"))
+      return
+    }
+
+    val updatedRoles = currentAssociation.roles - role
+    val updatedAssociation = currentAssociation.copy(roles = updatedRoles)
+
+    saveAssociation(
+        isNewAssociation = false,
+        association = updatedAssociation,
+        imageStream = null,
+        onSuccess = {
+          _selectedAssociation.value = updatedAssociation
+          onSuccess()
+        },
+        onFailure = onFailure)
   }
 
   /**

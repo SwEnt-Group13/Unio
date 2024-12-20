@@ -44,7 +44,7 @@ fun AssociationRepositoryFirestore.Companion.serialize(association: Association)
  * @return Map of user UIDs to role UIDs.
  */
 fun mapUsersToRoles(members: List<Member>): Map<String, String> {
-  return members.associate { member -> member.user.uid to member.role.uid }
+  return members.associate { member -> member.user.uid to member.roleUid }
 }
 
 /**

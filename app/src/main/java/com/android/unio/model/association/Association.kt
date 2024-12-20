@@ -80,7 +80,7 @@ enum class AssociationCategory(val displayNameId: Int) {
  * @property user Reference to the user who is a member.
  * @property role The role assigned to the member within the association.
  */
-data class Member(val user: ReferenceElement<User>, val role: Role) : UniquelyIdentifiable {
+data class Member(val user: ReferenceElement<User>, val roleUid: String) : UniquelyIdentifiable {
   class Companion {}
 
   override val uid: String
@@ -108,9 +108,10 @@ class Role(
         Role(
             "Committee",
             Permissions.PermissionsBuilder()
-                .addPermission(PermissionType.VIEW_MEMBERS)
-                .addPermission(PermissionType.EDIT_MEMBERS)
-                .addPermission(PermissionType.VIEW_EVENTS)
+                .addPermission(PermissionType.ADD_EDIT_EVENTS)
+                .addPermission(PermissionType.ADD_EDIT_MEMBERS)
+                .addPermission(PermissionType.SEE_STATISTICS)
+                .addPermission(PermissionType.SEND_NOTIFICATIONS)
                 .build(),
             badgeColorYellow,
             "Committee")
@@ -129,11 +130,17 @@ class Permissions private constructor(private val grantedPermissions: MutableSet
   /** Returns true if the permission is granted, false otherwise. */
   fun hasPermission(permission: PermissionType): Boolean {
     return grantedPermissions.contains(permission) ||
-        grantedPermissions.contains(PermissionType.FULL_RIGHTS)
+        (grantedPermissions.contains(PermissionType.FULL_RIGHTS) &&
+            permission != PermissionType.OWNER)
   }
 
   /** Returns a set of all permissions granted by this set. */
   fun getGrantedPermissions(): Set<PermissionType> = grantedPermissions.toSet()
+
+  /** Return true if the set of permissions is not empty. */
+  fun hasAnyPermission(): Boolean {
+    return grantedPermissions.isNotEmpty()
+  }
 
   /**
    * Adds a permission to the set grantedPermissions.
@@ -222,9 +229,8 @@ class Permissions private constructor(private val grantedPermissions: MutableSet
      * @return The Permissions object with the permissions added
      */
     fun build(): Permissions {
-      // Ensure that FULL_RIGHTS is not included explicitly
-      if (permissions.contains(PermissionType.FULL_RIGHTS)) {
-        throw IllegalArgumentException("Cannot grant FULL_RIGHTS explicitly.")
+      if (permissions.contains(PermissionType.OWNER)) {
+        this.addPermission(PermissionType.FULL_RIGHTS)
       }
       return Permissions(permissions)
     }
@@ -237,14 +243,36 @@ class Permissions private constructor(private val grantedPermissions: MutableSet
  * @property stringName A human-readable name for the permission.
  */
 enum class PermissionType(val stringName: String) {
-  FULL_RIGHTS("Full rights"), // Special permission granting all rights
-  VIEW_MEMBERS("View members"),
-  EDIT_MEMBERS("Edit members"),
-  DELETE_MEMBERS("Delete members"),
-  VIEW_EVENTS("View events"),
-  EDIT_EVENTS("Edit events"),
-  DELETE_EVENTS("Delete Events"),
-  ADD_EVENTS("Add Events")
+  // ADMIN
+  OWNER("Owner"), // Special permission granting FULL_RIGHTS & Add give Full Rights to people. Can
+  // also edit & delete the association.
+  FULL_RIGHTS("Full Rights"), // Special permission granting all permissions except owner
+
+  // MEMBERS
+  VIEW_INVISIBLE_MEMBERS(
+      "View Invisible Members"), // See all members of the association including invisible ones
+  ADD_EDIT_MEMBERS("Add & Edit Members"),
+  DELETE_MEMBERS("Delete Members"),
+
+  // ROLES
+  ADD_EDIT_ROLES("Add & Edit Roles"),
+  DELETE_ROLES("Delete Roles"),
+
+  // GENERAL
+  SEE_STATISTICS("See Statistics"), // See all statistics of the association
+  SEND_NOTIFICATIONS(
+      "Send Notification"), // Send notifications to every people who liked a certain event
+  VALIDATE_PICTURES(
+      "Validate Pictures"), // Validate pictures taken by other people, making them visible for
+  // other users
+  BETTER_OVERVIEW(
+      "Better Overview"), // Add the coloured strips to this association (If you don't have any
+  // other permission. Otherwise it is done automatically)
+
+  // EVENTS
+  VIEW_INVISIBLE_EVENTS("View Events"), // View events that will be launched soon, or drafts
+  ADD_EDIT_EVENTS("Add & Edit Events"),
+  DELETE_EVENTS("Delete Events")
 }
 
 /**
@@ -266,6 +294,19 @@ data class AssociationDocument(
     val fullName: String = "",
     @StringProperty(indexingType = StringPropertyConfig.INDEXING_TYPE_PREFIXES)
     val description: String = ""
+)
+
+@Document
+data class MemberDocument(
+    @Id val uid: String, // Unique identifier for the MemberDocument (can be member's uid)
+    @Namespace
+    val namespace: String = "unio", // Namespace for the document (similar to associations/events)
+    @StringProperty(indexingType = StringPropertyConfig.INDEXING_TYPE_PREFIXES)
+    val userUid: String, // The UID of the user (linked to the member)
+    @StringProperty(indexingType = StringPropertyConfig.INDEXING_TYPE_PREFIXES)
+    val role: String, // The role of the member
+    @StringProperty(indexingType = StringPropertyConfig.INDEXING_TYPE_PREFIXES)
+    val associationUid: String // The UID of the association this member belongs to
 )
 
 /**
