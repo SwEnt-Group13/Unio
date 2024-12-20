@@ -257,4 +257,12 @@ class EventViewModelTest {
         eventViewModel.deleteEventUserPicture(testEventPictures[0].uid, testEvents[1], {}, {})
         verify(eventUserPictureRepositoryFirestore).deleteEventUserPictureById(eq(testEventPictures[0].uid), any(), any())
     }
+
+    @Test
+    fun testUpdateEventUserPictureWithoutImage() {
+        val event = testEvents[1]
+        val picture = testEventPictures[0]
+        eventViewModel.updateEventUserPictureWithoutImage(event, picture, {}, {})
+        verify(eventUserPictureRepositoryFirestore).addEventUserPicture(eq(picture), any(), any())
+    }
 }
