@@ -34,7 +34,6 @@ import kotlinx.coroutines.launch
 fun <T> SearchPagerSection(
     items: List<T>,
     cardContent: @Composable (T) -> Unit,
-    searchBar: @Composable () -> Unit,
     pagerState: PagerState
 ) {
   val context = LocalContext.current
