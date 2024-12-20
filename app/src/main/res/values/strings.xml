@@ -574,4 +574,8 @@
         sem. Morbi id leo nisi. Cras pretium orci vitae sapien aliquet aliquam. Phasellus vestibulum
         diam nec consequat hendrerit.
     </string>
+
+    <!-- Search Components Strings -->
+    <string name="search_pager_section_slide">Slide to see all results</string>
+
 </resources>

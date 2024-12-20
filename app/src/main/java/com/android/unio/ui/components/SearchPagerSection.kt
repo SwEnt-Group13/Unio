@@ -13,7 +13,9 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import com.android.unio.R
 import com.android.unio.ui.theme.AppTypography
 import kotlinx.coroutines.launch
 
@@ -35,7 +37,7 @@ fun <T> SearchPagerSection(
     searchBar: @Composable () -> Unit,
     pagerState: PagerState
 ) {
-  // Column layout to hold title, search bar, progress bar, and pager
+    val context = LocalContext.current
   Column(
       horizontalAlignment = Alignment.CenterHorizontally,
       modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)) {
@@ -46,11 +48,11 @@ fun <T> SearchPagerSection(
           //Box(modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp)) { searchBar() }
 
           Text(
-              text = "Slide to see all results",
+              text = context.getString(R.string.search_pager_section_slide),
               style = AppTypography.bodySmall,
               modifier = Modifier.padding(vertical = 8.dp))
           ProgressBarBetweenElements(
-              tabList = items.map { it.toString() }, // Modify to use a meaningful title from T
+              tabList = items.map { it.toString() },
               pagerState = pagerState)
         }
 
@@ -60,20 +62,25 @@ fun <T> SearchPagerSection(
             contentPadding = PaddingValues(horizontal = 16.dp),
             pageSpacing = 16.dp) { page ->
               val item = items[page]
-              // cardContent(item) // Render content using the provided cardContent lambda
               Box(
                   modifier =
                       Modifier
-                          .fillMaxWidth(), // Ensures that the card takes the full width of the
-                                           // parent
-                  contentAlignment = Alignment.Center // Centers the content inside the Box
+                          .fillMaxWidth(),
+                  contentAlignment = Alignment.Center
                   ) {
-                    cardContent(item) // Render content using the provided cardContent lambda
+                    cardContent(item)
               }
             }
       }
 }
 
+/**
+ * A composable that renders a progress bar between elements in a tab layout, based on the state
+ * of the pager. The progress bar visually represents the current position and movement between tabs.
+ *
+ * @param tabList The list of tab labels, corresponding to the pager's items.
+ * @param pagerState The state of the pager, providing the current page and offset information.
+ */
 @Composable
 fun ProgressBarBetweenElements(tabList: List<String>, pagerState: PagerState) {
   val defaultTabWidth = 576.0F
@@ -104,11 +111,10 @@ fun ProgressBarBetweenElements(tabList: List<String>, pagerState: PagerState) {
                     height = sizeList[0]?.second ?: defaultTabHeight
                   }
 
-                  // Draw the outer rounded rectangle encompassing the full sliding bar area
                   val outerRectangleYStart = height - 45
                   val outerRectangleYEnd = height - 5
 
-                  // Draw the inner rounded rectangle (the sliding line area)
+
                   val tabWidth = sizeList[0]?.first ?: defaultTabWidth
                   val rectangleStartX = progressFromFirstPage * tabWidth + tabWidth / 4
                   val rectangleEndX = progressFromFirstPage * tabWidth + tabWidth * 3 / 4
@@ -135,7 +141,6 @@ fun ProgressBarBetweenElements(tabList: List<String>, pagerState: PagerState) {
                               height = rectangleYEnd - rectangleYStart),
                       cornerRadius = CornerRadius(x = 12.dp.toPx(), y = 12.dp.toPx()))
 
-                  // Draw the sliding line inside the inner rectangle
                   val lineStartOffset =
                       Offset(x = progressFromFirstPage * tabWidth + tabWidth / 3, y = height - 25)
                   val lineEndOffset =
@@ -161,7 +166,7 @@ fun ProgressBarBetweenElements(tabList: List<String>, pagerState: PagerState) {
                 Spacer(
                     modifier =
                         Modifier.height(
-                            20.dp) // Minimal size to retain dimensions without visible content
+                            20.dp)
                     )
               }
         }
