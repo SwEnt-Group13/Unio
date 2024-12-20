@@ -2,6 +2,8 @@ package com.android.unio.model.functions
 
 import com.android.unio.model.association.Role
 import com.android.unio.model.event.Event
+import com.android.unio.model.event.EventRepositoryFirestore
+import com.android.unio.model.firestore.transform.serialize
 import com.android.unio.model.map.Location
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
@@ -83,38 +85,20 @@ fun addEditEventCloudFunction(
     isNewEvent: Boolean
 ) {
   try {
-    giveCurrentUserTokenID(
+      val serializedEvent = EventRepositoryFirestore.Companion.serialize(newEvent).toMutableMap()
+
+        // Overwrite the startDate and endDate with the converted timestamp strings
+      serializedEvent[Event::startDate.name] = convertTimestampToString(newEvent.startDate)
+      serializedEvent[Event::endDate.name] = convertTimestampToString(newEvent.endDate)
+
+      giveCurrentUserTokenID(
         onSuccess = { tokenId ->
           Firebase.functions
               .getHttpsCallable("saveEvent")
               .call(
                   hashMapOf(
                       "tokenId" to tokenId,
-                      "event" to
-                          mapOf(
-                              Event::uid.name to newEvent.uid,
-                              Event::title.name to newEvent.title,
-                              Event::organisers.name to newEvent.organisers.uids,
-                              Event::taggedAssociations.name to newEvent.taggedAssociations.uids,
-                              Event::image.name to newEvent.image,
-                              Event::description.name to newEvent.description,
-                              Event::catchyDescription.name to newEvent.catchyDescription,
-                              Event::price.name to newEvent.price,
-                              Event::startDate.name to
-                                  convertTimestampToString(
-                                      newEvent.startDate), // Convert to milliseconds since epoch
-                              Event::endDate.name to
-                                  convertTimestampToString(
-                                      newEvent.endDate), // Convert to milliseconds since epoch
-                              Event::location.name to
-                                  mapOf(
-                                      Location::latitude.name to newEvent.location.latitude,
-                                      Location::longitude.name to newEvent.location.longitude,
-                                      Location::name.name to newEvent.location.name),
-                              Event::types.name to newEvent.types.map { it.name },
-                              Event::maxNumberOfPlaces.name to newEvent.maxNumberOfPlaces,
-                              Event::numberOfSaved.name to newEvent.numberOfSaved,
-                              Event::eventPictures.name to newEvent.eventPictures.uids),
+                      "event" to serializedEvent,
                       "isNewEvent" to isNewEvent,
                       "associationUid" to associationUId))
               .addOnSuccessListener { result ->
