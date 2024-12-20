@@ -106,7 +106,6 @@ import com.android.unio.ui.theme.AppTypography
 import com.android.unio.ui.utils.ToastUtils
 import com.github.skydoves.colorpicker.compose.HsvColorPicker
 import com.github.skydoves.colorpicker.compose.rememberColorPickerController
-import kotlinx.coroutines.launch
 
 /**
  * Composable element that contain the association profile screen. It display the association.
@@ -691,10 +690,7 @@ private fun AssociationActionsMembers(
   }
 
   if (members != null) {
-    SearchPagerSection(
-        items = members,
-        cardContent = { cardContent(it) },
-        pagerState = pagerState)
+    SearchPagerSection(items = members, cardContent = { cardContent(it) }, pagerState = pagerState)
 
     association?.let {
       RolesManagementScreen(it.roles, associationViewModel = associationViewModel)
@@ -778,14 +774,22 @@ fun RoleCard(role: Role, associationViewModel: AssociationViewModel) {
                   imageVector = Icons.Default.Edit,
                   contentDescription =
                       context.getString(R.string.association_profile_role_card_edit_role),
-                  modifier = Modifier.size(24.dp).clickable { showEditDialog = true }.padding(4.dp).testTag(AssociationProfileActionsTestTags.EDIT_ROLE + role.displayName))
+                  modifier =
+                      Modifier.size(24.dp)
+                          .clickable { showEditDialog = true }
+                          .padding(4.dp)
+                          .testTag(AssociationProfileActionsTestTags.EDIT_ROLE + role.displayName))
 
               Icon(
                   imageVector = Icons.Default.Delete,
                   contentDescription =
                       context.getString(R.string.association_profile_role_card_delete_role),
                   modifier =
-                      Modifier.size(24.dp).clickable { showDeleteDialog = true }.padding(4.dp).testTag(AssociationProfileActionsTestTags.DELETE_ROLE + role.displayName))
+                      Modifier.size(24.dp)
+                          .clickable { showDeleteDialog = true }
+                          .padding(4.dp)
+                          .testTag(
+                              AssociationProfileActionsTestTags.DELETE_ROLE + role.displayName))
             }
           }
 

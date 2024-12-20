@@ -219,31 +219,32 @@ class AssociationProfileE2ETest : EndToEndTest() {
     }
     composeTestRule.onNodeWithTag(AssociationProfileTestTags.ACTIONS_PAGE).performClick()
 
-    composeTestRule.onNodeWithTag(AssociationProfileActionsTestTags.EDIT_ROLE + "Test Role").performScrollTo()
-    composeTestRule.onNodeWithTag(AssociationProfileActionsTestTags.EDIT_ROLE + "Test Role").performClick()
+    composeTestRule
+        .onNodeWithTag(AssociationProfileActionsTestTags.EDIT_ROLE + "Test Role")
+        .performScrollTo()
+    composeTestRule
+        .onNodeWithTag(AssociationProfileActionsTestTags.EDIT_ROLE + "Test Role")
+        .performClick()
 
     composeTestRule.waitUntil(40000) {
       composeTestRule
-        .onNodeWithTag(AssociationProfileActionsTestTags.CREATE_ROLE_DISPLAY_NAME)
-        .isDisplayed()
+          .onNodeWithTag(AssociationProfileActionsTestTags.CREATE_ROLE_DISPLAY_NAME)
+          .isDisplayed()
     }
 
     // Enter role display name
     val roleDisplayName = "Edited Test Role"
     composeTestRule
-      .onNodeWithTag(AssociationProfileActionsTestTags.CREATE_ROLE_DISPLAY_NAME)
-      .performTextInput("Edited ")
+        .onNodeWithTag(AssociationProfileActionsTestTags.CREATE_ROLE_DISPLAY_NAME)
+        .performTextInput("Edited ")
 
     Espresso.closeSoftKeyboard()
 
     // Confirm the role creation
     composeTestRule
-      .onNodeWithText(
-        composeTestRule.activity.getString(
-          R.string.association_profile_save_role_dialog_save))
-      .performClick()
-
-
+        .onNodeWithText(
+            composeTestRule.activity.getString(R.string.association_profile_save_role_dialog_save))
+        .performClick()
 
     // Verify the role was created
     composeTestRule.waitUntil(10000) {
@@ -294,10 +295,12 @@ class AssociationProfileE2ETest : EndToEndTest() {
     }
     composeTestRule.onNodeWithTag(AssociationProfileTestTags.ACTIONS_PAGE).performClick()
 
-    composeTestRule.onNodeWithTag(AssociationProfileActionsTestTags.DELETE_ROLE + "Edited Test Role").performScrollTo()
-    composeTestRule.onNodeWithTag(AssociationProfileActionsTestTags.DELETE_ROLE + "Edited Test Role").performClick()
-
-
+    composeTestRule
+        .onNodeWithTag(AssociationProfileActionsTestTags.DELETE_ROLE + "Edited Test Role")
+        .performScrollTo()
+    composeTestRule
+        .onNodeWithTag(AssociationProfileActionsTestTags.DELETE_ROLE + "Edited Test Role")
+        .performClick()
 
     composeTestRule.waitUntil(50000) {
       composeTestRule.onNodeWithTag(AssociationProfileTestTags.OVERVIEW_PAGE).isDisplayed()
