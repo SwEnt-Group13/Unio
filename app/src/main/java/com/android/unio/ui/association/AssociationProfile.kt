@@ -94,8 +94,6 @@ import com.android.unio.model.strings.test_tags.association.AssociationProfileTe
 import com.android.unio.model.user.User
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.model.utils.NetworkUtils
-import com.android.unio.ui.components.EventSearchBar
-import com.android.unio.ui.components.MemberSearchBar
 import com.android.unio.ui.components.NotificationSender
 import com.android.unio.ui.components.RoleBadge
 import com.android.unio.ui.components.SearchPagerSection
@@ -239,7 +237,9 @@ fun AssociationProfileScaffold(
                               " " +
                               userRole.displayName,
                           color = Color.White,
-                          modifier = Modifier.align(Alignment.Center))
+                          modifier =
+                              Modifier.align(Alignment.Center)
+                                  .testTag(AssociationProfileTestTags.YOUR_ROLE_TEXT))
                     }
 
                 Box(modifier = Modifier.fillMaxSize().padding(top = 50.dp)) {
@@ -642,23 +642,6 @@ private fun AssociationActionsMembers(
   val pagerState = rememberPagerState(initialPage = 0) { members?.size ?: 0 }
   val coroutineScope = rememberCoroutineScope()
 
-  val searchBar: @Composable () -> Unit = {
-    association?.let {
-      MemberSearchBar(
-          searchViewModel = searchViewModel,
-          associationUid = it.uid,
-          userUid = userUid,
-          onMemberSelected = { selectedMember ->
-            val targetPage = members?.indexOfFirst { it.uid == selectedMember.uid }
-            if (targetPage != null && targetPage >= 0) {
-              coroutineScope.launch { pagerState.animateScrollToPage(targetPage) }
-            }
-          },
-          shouldCloseExpandable = false,
-          onOutsideClickHandled = {})
-    }
-  }
-
   val cardContent: @Composable (Member) -> Unit = { member ->
     val user by associationViewModel.getUserFromMember(member).collectAsState()
     Box(
@@ -711,7 +694,6 @@ private fun AssociationActionsMembers(
     SearchPagerSection(
         items = members,
         cardContent = { cardContent(it) },
-        searchBar = searchBar,
         pagerState = pagerState)
 
     association?.let {
@@ -733,6 +715,8 @@ private fun AssociationActionsMembers(
 fun RolesManagementScreen(roles: List<Role>, associationViewModel: AssociationViewModel) {
   var showCreateRoleDialog by remember { mutableStateOf(false) }
 
+  val context = LocalContext.current
+
   Column(Modifier.fillMaxSize().padding(16.dp)) {
     Text(text = "Roles", style = MaterialTheme.typography.headlineMedium)
 
@@ -742,7 +726,11 @@ fun RolesManagementScreen(roles: List<Role>, associationViewModel: AssociationVi
 
     Spacer(modifier = Modifier.height(16.dp))
 
-    Button(onClick = { showCreateRoleDialog = true }) { Text(text = "Create New Role") }
+    Button(
+        onClick = { showCreateRoleDialog = true },
+        modifier = Modifier.testTag(AssociationProfileActionsTestTags.CREATE_ROLE)) {
+          Text(text = context.getString(R.string.association_profile_create_role))
+        }
 
     // Show dialog for creating a new role
     if (showCreateRoleDialog) {
@@ -790,14 +778,14 @@ fun RoleCard(role: Role, associationViewModel: AssociationViewModel) {
                   imageVector = Icons.Default.Edit,
                   contentDescription =
                       context.getString(R.string.association_profile_role_card_edit_role),
-                  modifier = Modifier.size(24.dp).clickable { showEditDialog = true }.padding(4.dp))
+                  modifier = Modifier.size(24.dp).clickable { showEditDialog = true }.padding(4.dp).testTag(AssociationProfileActionsTestTags.EDIT_ROLE + role.displayName))
 
               Icon(
                   imageVector = Icons.Default.Delete,
                   contentDescription =
                       context.getString(R.string.association_profile_role_card_delete_role),
                   modifier =
-                      Modifier.size(24.dp).clickable { showDeleteDialog = true }.padding(4.dp))
+                      Modifier.size(24.dp).clickable { showDeleteDialog = true }.padding(4.dp).testTag(AssociationProfileActionsTestTags.DELETE_ROLE + role.displayName))
             }
           }
 
@@ -948,7 +936,11 @@ fun SaveRoleDialog(
             BasicTextField(
                 value = displayName,
                 onValueChange = { displayName = it },
-                modifier = Modifier.fillMaxWidth().background(Color.LightGray).padding(8.dp))
+                modifier =
+                    Modifier.fillMaxWidth()
+                        .background(Color.LightGray)
+                        .padding(8.dp)
+                        .testTag(AssociationProfileActionsTestTags.CREATE_ROLE_DISPLAY_NAME))
           }
 
           Column(Modifier.fillMaxWidth().padding(vertical = 16.dp)) {
@@ -1132,18 +1124,6 @@ private fun AssociationActionsEvents(
               userViewModel = userViewModel,
               eventViewModel = eventViewModel,
               shouldBeEditable = hasAddEventsPermission)
-        },
-        searchBar = {
-          EventSearchBar(
-              searchViewModel = searchViewModel,
-              onEventSelected = { selectedEvent ->
-                val targetPage = sortedEvents.indexOfFirst { it.uid == selectedEvent.uid }
-                if (targetPage >= 0) {
-                  coroutineScope.launch { pagerState.animateScrollToPage(targetPage) }
-                }
-              },
-              shouldCloseExpandable = false,
-              onOutsideClickHandled = {})
         },
         pagerState = pagerState)
   }
