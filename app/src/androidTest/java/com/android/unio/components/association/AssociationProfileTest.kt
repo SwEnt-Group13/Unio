@@ -90,8 +90,8 @@ class AssociationProfileTest : TearDown() {
   private lateinit var userViewModel: UserViewModel
   private lateinit var associationViewModel: AssociationViewModel
 
-    private lateinit var searchViewModel: SearchViewModel
-    @MockK(relaxed = true) private lateinit var searchRepository: SearchRepository
+  private lateinit var searchViewModel: SearchViewModel
+  @MockK(relaxed = true) private lateinit var searchRepository: SearchRepository
 
   @MockK private lateinit var associationRepository: AssociationRepositoryFirestore
 
@@ -266,7 +266,7 @@ class AssociationProfileTest : TearDown() {
     associationViewModel.getAssociations()
     associationViewModel.selectAssociation(associations.first().uid)
 
-      searchViewModel = spyk(SearchViewModel(searchRepository))
+    searchViewModel = spyk(SearchViewModel(searchRepository))
   }
 
   @Test
@@ -276,7 +276,11 @@ class AssociationProfileTest : TearDown() {
     composeTestRule.setContent {
       ProvidePreferenceLocals {
         AssociationProfileScaffold(
-            navigationAction, userViewModel, eventViewModel, associationViewModel, searchViewModel) {}
+            navigationAction,
+            userViewModel,
+            eventViewModel,
+            associationViewModel,
+            searchViewModel) {}
       }
     }
     composeTestRule.waitForIdle()
@@ -328,7 +332,11 @@ class AssociationProfileTest : TearDown() {
 
         seeLess = context.getString(R.string.association_see_less)
         AssociationProfileScaffold(
-            navigationAction, userViewModel, eventViewModel, associationViewModel, searchViewModel) {}
+            navigationAction,
+            userViewModel,
+            eventViewModel,
+            associationViewModel,
+            searchViewModel) {}
       }
     }
     composeTestRule
@@ -377,7 +385,11 @@ class AssociationProfileTest : TearDown() {
     composeTestRule.setContent {
       ProvidePreferenceLocals {
         AssociationProfileScaffold(
-            navigationAction, userViewModel, eventViewModel, associationViewModel, searchViewModel) {}
+            navigationAction,
+            userViewModel,
+            eventViewModel,
+            associationViewModel,
+            searchViewModel) {}
       }
     }
     val currentCount = associationViewModel.selectedAssociation.value!!.followersCount
@@ -414,7 +426,11 @@ class AssociationProfileTest : TearDown() {
     composeTestRule.setContent {
       ProvidePreferenceLocals {
         AssociationProfileScaffold(
-            navigationAction, userViewModel, eventViewModel, associationViewModel, searchViewModel) {}
+            navigationAction,
+            userViewModel,
+            eventViewModel,
+            associationViewModel,
+            searchViewModel) {}
       }
     }
 
@@ -439,7 +455,11 @@ class AssociationProfileTest : TearDown() {
     composeTestRule.setContent {
       ProvidePreferenceLocals {
         AssociationProfileScaffold(
-            navigationAction, userViewModel, eventViewModel, associationViewModel, searchViewModel) {}
+            navigationAction,
+            userViewModel,
+            eventViewModel,
+            associationViewModel,
+            searchViewModel) {}
       }
     }
 
@@ -455,7 +475,11 @@ class AssociationProfileTest : TearDown() {
     composeTestRule.setContent {
       ProvidePreferenceLocals {
         AssociationProfileScaffold(
-            navigationAction, userViewModel, eventViewModel, associationViewModel, searchViewModel) {}
+            navigationAction,
+            userViewModel,
+            eventViewModel,
+            associationViewModel,
+            searchViewModel) {}
       }
     }
 
@@ -485,20 +509,28 @@ class AssociationProfileTest : TearDown() {
     composeTestRule.setContent {
       ProvidePreferenceLocals {
         AssociationProfileScaffold(
-            navigationAction, userViewModel, eventViewModel, associationViewModel, searchViewModel) {}
+            navigationAction,
+            userViewModel,
+            eventViewModel,
+            associationViewModel,
+            searchViewModel) {}
       }
     }
 
-      composeTestRule.waitUntil (10000){
-          composeTestRule.onNodeWithTag(AssociationProfileTestTags.ACTIONS_PAGE).isDisplayed()
-      }
-      composeTestRule.onNodeWithTag(AssociationProfileTestTags.ACTIONS_PAGE).performClick()
+    composeTestRule.waitUntil(10000) {
+      composeTestRule.onNodeWithTag(AssociationProfileTestTags.ACTIONS_PAGE).isDisplayed()
+    }
+    composeTestRule.onNodeWithTag(AssociationProfileTestTags.ACTIONS_PAGE).performClick()
 
-      composeTestRule.waitUntil(10000){
-          composeTestRule.onNodeWithTag(AssociationProfileActionsTestTags.ADD_EVENT_BUTTON).isDisplayed()
-      }
+    composeTestRule.waitUntil(10000) {
+      composeTestRule
+          .onNodeWithTag(AssociationProfileActionsTestTags.ADD_EVENT_BUTTON)
+          .isDisplayed()
+    }
 
-      composeTestRule.onNodeWithTag(AssociationProfileActionsTestTags.ADD_EVENT_BUTTON).assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag(AssociationProfileActionsTestTags.ADD_EVENT_BUTTON)
+        .assertIsDisplayed()
 
     composeTestRule
         .onNodeWithTag(AssociationProfileActionsTestTags.ADD_EVENT_BUTTON)
@@ -515,25 +547,33 @@ class AssociationProfileTest : TearDown() {
     composeTestRule.setContent {
       ProvidePreferenceLocals {
         AssociationProfileScaffold(
-            navigationAction, userViewModel, eventViewModel, associationViewModel, searchViewModel) {}
+            navigationAction,
+            userViewModel,
+            eventViewModel,
+            associationViewModel,
+            searchViewModel) {}
       }
     }
 
-      composeTestRule.waitUntil (10000){
-          composeTestRule.onNodeWithTag(AssociationProfileTestTags.ACTIONS_PAGE).isDisplayed()
-      }
-      composeTestRule.onNodeWithTag(AssociationProfileTestTags.ACTIONS_PAGE).performClick()
+    composeTestRule.waitUntil(10000) {
+      composeTestRule.onNodeWithTag(AssociationProfileTestTags.ACTIONS_PAGE).isDisplayed()
+    }
+    composeTestRule.onNodeWithTag(AssociationProfileTestTags.ACTIONS_PAGE).performClick()
 
-      composeTestRule.waitUntil(10000){
-          composeTestRule.onNodeWithTag(AssociationProfileActionsTestTags.ADD_EVENT_BUTTON).isDisplayed()
-      }
-
-      composeTestRule.onNodeWithTag(AssociationProfileActionsTestTags.ADD_EVENT_BUTTON).assertIsDisplayed()
-
+    composeTestRule.waitUntil(10000) {
       composeTestRule
           .onNodeWithTag(AssociationProfileActionsTestTags.ADD_EVENT_BUTTON)
-          .performScrollTo()
-          .performClick()
+          .isDisplayed()
+    }
+
+    composeTestRule
+        .onNodeWithTag(AssociationProfileActionsTestTags.ADD_EVENT_BUTTON)
+        .assertIsDisplayed()
+
+    composeTestRule
+        .onNodeWithTag(AssociationProfileActionsTestTags.ADD_EVENT_BUTTON)
+        .performScrollTo()
+        .performClick()
 
     verify(exactly = 0) { navigationAction.navigateTo(Screen.EVENT_CREATION) }
   }

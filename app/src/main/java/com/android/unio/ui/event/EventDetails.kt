@@ -92,7 +92,6 @@ import com.android.unio.model.strings.FormatStrings.DAY_MONTH_FORMAT
 import com.android.unio.model.strings.FormatStrings.HOUR_MINUTE_FORMAT
 import com.android.unio.model.strings.NotificationStrings.EVENT_REMINDER_CHANNEL_ID
 import com.android.unio.model.strings.test_tags.event.EventDetailsTestTags
-import com.android.unio.model.strings.test_tags.home.HomeTestTags
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.model.utils.NetworkUtils
 import com.android.unio.ui.components.NotificationSender
@@ -295,7 +294,10 @@ fun EventScreenContent(
 
     EventInformationCard(event, organisers, context)
 
-    SmoothTopBarNavigationMenu(tabList, pagerState, listOf(EventDetailsTestTags.DETAILS_PAGE_HP, EventDetailsTestTags.DETAILS_IMAGE_HP))
+    SmoothTopBarNavigationMenu(
+        tabList,
+        pagerState,
+        listOf(EventDetailsTestTags.DETAILS_PAGE_HP, EventDetailsTestTags.DETAILS_IMAGE_HP))
     HorizontalPager(
         state = pagerState,
         modifier =

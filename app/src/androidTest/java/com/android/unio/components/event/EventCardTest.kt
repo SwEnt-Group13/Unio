@@ -112,7 +112,7 @@ class EventCardTest : TearDown() {
     every { eventRepository.getEvents(any(), any()) }
   }
 
-  private fun setEventScreen(event: Event, shouldBeEditable : Boolean = true) {
+  private fun setEventScreen(event: Event, shouldBeEditable: Boolean = true) {
     composeTestRule.setContent {
       ProvidePreferenceLocals {
         EventCard(navigationAction, event, userViewModel, eventViewModel, shouldBeEditable)
@@ -133,7 +133,7 @@ class EventCardTest : TearDown() {
     setEventViewModel(listOf(sampleEvent))
     setEventScreen(sampleEvent, false)
 
-      Thread.sleep(10000)
+    Thread.sleep(10000)
     composeTestRule
         .onNodeWithTag(EventCardTestTags.EVENT_TITLE, useUnmergedTree = true)
         .assertExists()
@@ -168,46 +168,46 @@ class EventCardTest : TearDown() {
         .assertExists()
   }
 
-    @Test
-    fun testEventCardElementsExistEdit() {
-        setEventViewModel(listOf(sampleEvent))
-        setEventScreen(sampleEvent, true)
+  @Test
+  fun testEventCardElementsExistEdit() {
+    setEventViewModel(listOf(sampleEvent))
+    setEventScreen(sampleEvent, true)
 
-        Thread.sleep(10000)
-        composeTestRule
-            .onNodeWithTag(EventCardTestTags.EVENT_TITLE, useUnmergedTree = true)
-            .assertExists()
-            .assertTextEquals("Sample Event")
+    Thread.sleep(10000)
+    composeTestRule
+        .onNodeWithTag(EventCardTestTags.EVENT_TITLE, useUnmergedTree = true)
+        .assertExists()
+        .assertTextEquals("Sample Event")
 
-        composeTestRule
-            .onNodeWithTag(EventCardTestTags.EVENT_MAIN_TYPE, useUnmergedTree = true)
-            .assertExists()
-            .assertTextEquals("Trip")
+    composeTestRule
+        .onNodeWithTag(EventCardTestTags.EVENT_MAIN_TYPE, useUnmergedTree = true)
+        .assertExists()
+        .assertTextEquals("Trip")
 
-        composeTestRule
-            .onNodeWithTag(EventCardTestTags.EVENT_LOCATION, useUnmergedTree = true)
-            .assertExists()
-            .assertTextEquals("Sample Location")
+    composeTestRule
+        .onNodeWithTag(EventCardTestTags.EVENT_LOCATION, useUnmergedTree = true)
+        .assertExists()
+        .assertTextEquals("Sample Location")
 
-        composeTestRule
-            .onNodeWithTag(EventCardTestTags.EVENT_DATE, useUnmergedTree = true)
-            .assertExists()
-            .assertTextEquals("20/07")
+    composeTestRule
+        .onNodeWithTag(EventCardTestTags.EVENT_DATE, useUnmergedTree = true)
+        .assertExists()
+        .assertTextEquals("20/07")
 
-        composeTestRule
-            .onNodeWithTag(EventCardTestTags.EVENT_TIME, useUnmergedTree = true)
-            .assertExists()
-            .assertTextEquals("00:00")
+    composeTestRule
+        .onNodeWithTag(EventCardTestTags.EVENT_TIME, useUnmergedTree = true)
+        .assertExists()
+        .assertTextEquals("00:00")
 
-        composeTestRule
-            .onNodeWithTag(EventCardTestTags.EVENT_CATCHY_DESCRIPTION, useUnmergedTree = true)
-            .assertExists()
-            .assertTextEquals("This is a catchy description.")
+    composeTestRule
+        .onNodeWithTag(EventCardTestTags.EVENT_CATCHY_DESCRIPTION, useUnmergedTree = true)
+        .assertExists()
+        .assertTextEquals("This is a catchy description.")
 
-        composeTestRule
-            .onNodeWithTag(EventCardTestTags.EDIT_BUTTON, useUnmergedTree = true)
-            .assertExists()
-    }
+    composeTestRule
+        .onNodeWithTag(EventCardTestTags.EDIT_BUTTON, useUnmergedTree = true)
+        .assertExists()
+  }
 
   @Test
   fun testClickOnEventCard() {

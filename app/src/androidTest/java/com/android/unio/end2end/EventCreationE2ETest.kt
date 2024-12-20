@@ -199,13 +199,15 @@ class EventCreationE2ETest : EndToEndTest() {
     composeTestRule.waitUntil(10000) {
       composeTestRule.onNodeWithTag(AssociationProfileTestTags.SCREEN).isDisplayed()
     }
-      composeTestRule.waitUntil(10000) {
-          composeTestRule.onNodeWithTag(AssociationProfileTestTags.ACTIONS_PAGE).isDisplayed()
-      }
-      composeTestRule.onNodeWithTag(AssociationProfileTestTags.ACTIONS_PAGE).performClick()
+    composeTestRule.waitUntil(10000) {
+      composeTestRule.onNodeWithTag(AssociationProfileTestTags.ACTIONS_PAGE).isDisplayed()
+    }
+    composeTestRule.onNodeWithTag(AssociationProfileTestTags.ACTIONS_PAGE).performClick()
 
     composeTestRule.waitUntil(10000) {
-      composeTestRule.onNodeWithTag(AssociationProfileActionsTestTags.ADD_EVENT_BUTTON).isDisplayed()
+      composeTestRule
+          .onNodeWithTag(AssociationProfileActionsTestTags.ADD_EVENT_BUTTON)
+          .isDisplayed()
     }
     // Click on the "Add Event" button
     composeTestRule.onNodeWithTag(AssociationProfileActionsTestTags.ADD_EVENT_BUTTON).performClick()
@@ -306,17 +308,16 @@ class EventCreationE2ETest : EndToEndTest() {
     composeTestRule.waitUntil(10000) {
       composeTestRule.onNodeWithTag(AssociationProfileActionsTestTags.SCREEN).isDisplayed()
     }
-      composeTestRule.waitUntil(10000) {
-          composeTestRule.onNodeWithTag(AssociationProfileTestTags.OVERVIEW_PAGE).isDisplayed()
-      }
-      composeTestRule.onNodeWithTag(AssociationProfileTestTags.OVERVIEW_PAGE).performClick()
+    composeTestRule.waitUntil(10000) {
+      composeTestRule.onNodeWithTag(AssociationProfileTestTags.OVERVIEW_PAGE).isDisplayed()
+    }
+    composeTestRule.onNodeWithTag(AssociationProfileTestTags.OVERVIEW_PAGE).performClick()
 
-      composeTestRule.waitUntil(10000) {
-          composeTestRule.onNodeWithTag(AssociationProfileTestTags.SCREEN).isDisplayed()
-      }
+    composeTestRule.waitUntil(10000) {
+      composeTestRule.onNodeWithTag(AssociationProfileTestTags.SCREEN).isDisplayed()
+    }
 
-
-      composeTestRule.onNodeWithTag(AssociationProfileTestTags.GO_BACK_BUTTON).performClick()
+    composeTestRule.onNodeWithTag(AssociationProfileTestTags.GO_BACK_BUTTON).performClick()
 
     composeTestRule.waitUntil(10000) {
       composeTestRule.onNodeWithTag(ExploreTestTags.EXPLORE_SCAFFOLD_TITLE).isDisplayed()

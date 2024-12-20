@@ -4,7 +4,6 @@ import com.android.unio.model.association.Role
 import com.android.unio.model.event.Event
 import com.android.unio.model.event.EventRepositoryFirestore
 import com.android.unio.model.firestore.transform.serialize
-import com.android.unio.model.map.Location
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.functions.FirebaseFunctions
@@ -88,13 +87,13 @@ fun addEditEventCloudFunction(
     isNewEvent: Boolean
 ) {
   try {
-      val serializedEvent = EventRepositoryFirestore.Companion.serialize(newEvent).toMutableMap()
+    val serializedEvent = EventRepositoryFirestore.Companion.serialize(newEvent).toMutableMap()
 
-        // Overwrite the startDate and endDate with the converted timestamp strings
-      serializedEvent[Event::startDate.name] = convertTimestampToString(newEvent.startDate)
-      serializedEvent[Event::endDate.name] = convertTimestampToString(newEvent.endDate)
+    // Overwrite the startDate and endDate with the converted timestamp strings
+    serializedEvent[Event::startDate.name] = convertTimestampToString(newEvent.startDate)
+    serializedEvent[Event::endDate.name] = convertTimestampToString(newEvent.endDate)
 
-      giveCurrentUserTokenID(
+    giveCurrentUserTokenID(
         onSuccess = { tokenId ->
           firebaseFunctions
               .getHttpsCallable("saveEvent")
