@@ -49,6 +49,7 @@ import com.android.unio.ui.navigation.Screen
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.firebase.Timestamp
 import emptyFirestoreReferenceElement
+import firestoreReferenceElementWith
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
@@ -67,6 +68,7 @@ class EventDetailsTest : TearDown() {
   private lateinit var navigationAction: NavigationAction
 
   private lateinit var events: List<Event>
+  private lateinit var user: User
   private lateinit var eventPictures: List<EventUserPicture>
   private lateinit var associations: List<Association>
 
@@ -101,6 +103,7 @@ class EventDetailsTest : TearDown() {
     MockKAnnotations.init(this, relaxed = true)
     val context = InstrumentationRegistry.getInstrumentation().targetContext
     val resources = context.applicationContext.resources
+    user = MockUser.createMockUser(uid = "moi")
     eventPictures =
         listOf(
             EventUserPicture(
@@ -112,7 +115,13 @@ class EventDetailsTest : TearDown() {
                 "34",
                 resources.getUri(R.drawable.placeholder_pictures).toString(),
                 User.emptyFirestoreReferenceElement(),
-                User.emptyFirestoreReferenceList()))
+                User.emptyFirestoreReferenceList()),
+            EventUserPicture(
+                "34",
+                resources.getUri(R.drawable.placeholder_pictures).toString(),
+                User.firestoreReferenceElementWith(user.uid),
+                User.emptyFirestoreReferenceList()),
+        )
     events =
         listOf(
             MockEvent.createMockEvent(
@@ -372,8 +381,83 @@ class EventDetailsTest : TearDown() {
     composeTestRule
         .onNodeWithTag(EventDetailsTestTags.EVENT_PICTURES_ARROW_LEFT)
         .assertIsDisplayed()
+
+    composeTestRule
+        .onNodeWithTag(EventDetailsTestTags.EVENT_PICTURES_LIKE_BUTTON)
+        .assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag(EventDetailsTestTags.EVENT_PICTURES_LIKE_COUNTER)
+        .assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag(EventDetailsTestTags.EVENT_PICTURES_AUTHOR_INFO)
+        .assertIsDisplayed()
+  }
+
+  @Test
+  fun testLikePicture() {
+    eventViewModel.loadEvents()
+    eventViewModel.selectEvent(events[0].uid, true)
+
+    setEventScreen(events[0])
+
+    goToGallery()
+    composeTestRule.waitUntil(5000) {
+      composeTestRule
+          .onNodeWithTag(EventDetailsTestTags.USER_EVENT_PICTURE + eventPictures[0].uid)
+          .isDisplayed()
+    }
+
+    composeTestRule
+        .onNodeWithTag(EventDetailsTestTags.USER_EVENT_PICTURE + eventPictures[0].uid)
+        .performClick()
+
+    composeTestRule.onNodeWithTag(EventDetailsTestTags.PICTURE_FULL_SCREEN).assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag(EventDetailsTestTags.EVENT_PICTURES_ARROW_LEFT)
+        .assertIsDisplayed()
     composeTestRule
         .onNodeWithTag(EventDetailsTestTags.EVENT_PICTURES_ARROW_RIGHT)
         .assertIsDisplayed()
+        .performClick()
+
+    composeTestRule
+        .onNodeWithTag(EventDetailsTestTags.EVENT_PICTURES_LIKE_BUTTON)
+        .assertIsDisplayed()
+        .performClick()
+    Thread.sleep(500)
+    composeTestRule
+        .onNodeWithTag(EventDetailsTestTags.EVENT_PICTURES_LIKE_COUNTER)
+        .assertTextEquals("1")
+  }
+
+  @Test
+  fun testDeletePicture() {
+    eventViewModel.loadEvents()
+    eventViewModel.selectEvent(events[0].uid, true)
+
+    setEventScreen(events[0])
+
+    goToGallery()
+    composeTestRule.waitUntil(5000) {
+      composeTestRule
+          .onNodeWithTag(EventDetailsTestTags.USER_EVENT_PICTURE + eventPictures[0].uid)
+          .isDisplayed()
+    }
+
+    composeTestRule
+        .onNodeWithTag(EventDetailsTestTags.USER_EVENT_PICTURE + eventPictures[0].uid)
+        .performClick()
+
+    composeTestRule.onNodeWithTag(EventDetailsTestTags.PICTURE_FULL_SCREEN).assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag(EventDetailsTestTags.EVENT_PICTURES_ARROW_RIGHT)
+        .assertIsDisplayed()
+        .performClick()
+        .performClick()
+
+    composeTestRule
+        .onNodeWithTag(EventDetailsTestTags.EVENT_PICTURES_DELETE_BUTTON)
+        .assertIsDisplayed()
+        .performClick()
   }
 }

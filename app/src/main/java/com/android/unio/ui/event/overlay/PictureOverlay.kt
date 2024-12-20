@@ -51,7 +51,7 @@ import com.android.unio.model.strings.test_tags.event.EventDetailsTestTags.PICTU
 import com.android.unio.model.user.User
 import com.android.unio.ui.image.AsyncImageWrapper
 import com.android.unio.ui.theme.AppTypography
-import com.android.unio.ui.user.UserDeletePrompt
+import com.android.unio.ui.user.DeletePrompt
 import kotlinx.coroutines.launch
 
 private val ASSOCIATION_ICON_SIZE = 32.dp
@@ -166,7 +166,7 @@ fun PictureOverlay(
                     onClick = { showDeletePicturePrompt = true },
                     modifier =
                         Modifier.align(Alignment.TopEnd)
-                            .testTag("")
+                            .testTag(EventDetailsTestTags.EVENT_PICTURES_DELETE_BUTTON)
                             .padding(end = PADDING_VALUE + 15.dp),
                     colors =
                         IconButtonDefaults.iconButtonColors(
@@ -174,7 +174,9 @@ fun PictureOverlay(
                             containerColor = Color(120, 30, 24))) {
                       Icon(
                           imageVector = Icons.Default.Delete,
-                          contentDescription = "",
+                          contentDescription =
+                              context.getString(
+                                  R.string.event_details_content_description_delete_picture),
                           modifier = Modifier.size(30.dp))
                     }
               }
@@ -217,7 +219,8 @@ fun PictureOverlay(
                     Row(verticalAlignment = Alignment.CenterVertically) {
                       IconButton(
                           onClick = onClickLike,
-                          modifier = Modifier,
+                          modifier =
+                              Modifier.testTag(EventDetailsTestTags.EVENT_PICTURES_LIKE_BUTTON),
                           colors =
                               IconButtonDefaults.iconButtonColors(
                                   contentColor = MaterialTheme.colorScheme.onPrimary)) {
@@ -231,7 +234,11 @@ fun PictureOverlay(
                                 tint = if (isLiked) Color.Red else Color.White)
                           }
 
-                      Text("$nbOfLikes", color = Color.White)
+                      Text(
+                          "$nbOfLikes",
+                          color = Color.White,
+                          modifier =
+                              Modifier.testTag(EventDetailsTestTags.EVENT_PICTURES_LIKE_COUNTER))
                     }
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
@@ -265,7 +272,9 @@ fun PictureOverlay(
             }
       }
   if (showDeletePicturePrompt) {
-    UserDeletePrompt(
-        onDismiss = { showDeletePicturePrompt = false }, onConfirmDelete = { onDeletePicture() })
+    DeletePrompt(
+        onDismiss = { showDeletePicturePrompt = false },
+        onConfirmDelete = { onDeletePicture() },
+        text = context.getString(R.string.event_details_delete_picture_confirmation))
   }
 }

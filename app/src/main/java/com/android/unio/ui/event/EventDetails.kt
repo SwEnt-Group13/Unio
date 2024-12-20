@@ -145,8 +145,6 @@ fun EventScreen(
 
   if (event == null || user == null) {
     Log.e("EventScreen", "Event or user is null")
-    println(event == null)
-    println(user == null)
     Toast.makeText(LocalContext.current, "An error occurred.", Toast.LENGTH_SHORT).show()
     return
   }

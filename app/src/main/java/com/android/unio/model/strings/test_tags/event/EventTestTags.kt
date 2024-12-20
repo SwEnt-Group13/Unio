@@ -124,20 +124,10 @@ object EventDetailsTestTags {
   const val EVENT_PICTURES_AUTHOR_ICON = "picturesAuthorIcon"
   const val EVENT_PICTURES_AUTHOR_INFO = "picturesAuthorInfo"
   const val EVENT_PICTURES_AUTHOR_NAME = "picturesAuthorName"
+  const val EVENT_PICTURES_LIKE_BUTTON = "picturesLikeButton"
+  const val EVENT_PICTURES_LIKE_COUNTER = "picturesLikeCounter"
+  const val EVENT_PICTURES_DELETE_BUTTON = "picturesDeleteButton"
   const val CHIPS = "eventChips"
-}
-
-object EventDetailsPictureOverlayTestTags {
-
-  const val COLUMN = "eventOverlayColumn"
-  const val TITLE_TEXT = "eventOverlayTitleText"
-  const val SUBTITLE_TEXT = "eventOverlaySubtitleText"
-  const val DIVIDER = "eventOverlayDivider"
-  const val CANCEL_BUTTON = "eventOverlayCancelButton"
-  const val SAVE_BUTTON = "eventOverlaySaveButton"
-  const val CLICKABLE_ROW = "eventOverlayClickableRow"
-  const val TEXT = "eventOverlayRowText"
-  const val CHECK_BOX = "eventOverlayRowCheckBox"
 }
 
 object EventTypeOverlayTestTags {

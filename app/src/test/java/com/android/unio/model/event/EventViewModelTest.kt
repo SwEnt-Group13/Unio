@@ -106,10 +106,10 @@ class EventViewModelTest {
           onSuccess()
         }
 
-      `when`(repository.getEvents(any(), any())).thenAnswer { invocation ->
-          val onSuccess = invocation.arguments[0] as (List<Event>) -> Unit
-          onSuccess(testEvents)
-      }
+    `when`(repository.getEvents(any(), any())).thenAnswer { invocation ->
+      val onSuccess = invocation.arguments[0] as (List<Event>) -> Unit
+      onSuccess(testEvents)
+    }
 
     eventViewModel =
         EventViewModel(
@@ -251,18 +251,19 @@ class EventViewModelTest {
     verify(eventUserPictureRepositoryFirestore).addEventUserPicture(any(), any(), any())
   }
 
-    @Test
-    fun testDeleteEventUserPicture() {
-        eventViewModel.loadEvents()
-        eventViewModel.deleteEventUserPicture(testEventPictures[0].uid, testEvents[1], {}, {})
-        verify(eventUserPictureRepositoryFirestore).deleteEventUserPictureById(eq(testEventPictures[0].uid), any(), any())
-    }
+  @Test
+  fun testDeleteEventUserPicture() {
+    eventViewModel.loadEvents()
+    eventViewModel.deleteEventUserPicture(testEventPictures[0].uid, testEvents[1], {}, {})
+    verify(eventUserPictureRepositoryFirestore)
+        .deleteEventUserPictureById(eq(testEventPictures[0].uid), any(), any())
+  }
 
-    @Test
-    fun testUpdateEventUserPictureWithoutImage() {
-        val event = testEvents[1]
-        val picture = testEventPictures[0]
-        eventViewModel.updateEventUserPictureWithoutImage(event, picture, {}, {})
-        verify(eventUserPictureRepositoryFirestore).addEventUserPicture(eq(picture), any(), any())
-    }
+  @Test
+  fun testUpdateEventUserPictureWithoutImage() {
+    val event = testEvents[1]
+    val picture = testEventPictures[0]
+    eventViewModel.updateEventUserPictureWithoutImage(event, picture, {}, {})
+    verify(eventUserPictureRepositoryFirestore).addEventUserPicture(eq(picture), any(), any())
+  }
 }
