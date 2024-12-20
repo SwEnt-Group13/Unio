@@ -61,7 +61,7 @@ class HydrationAndSerializationTest {
           fullName = "Example Association",
           category = AssociationCategory.ARTS,
           description = "An example association",
-          members = listOf(Member(User.firestoreReferenceElementWith("1"), Role.GUEST)),
+          members = listOf(Member(User.firestoreReferenceElementWith("1"), Role.GUEST.uid)),
           roles = listOf(Role.GUEST),
           followersCount = 0,
           image = "https://www.example.com/image.jpg",
