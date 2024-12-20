@@ -96,6 +96,8 @@ constructor(
       if (_selectedAssociation.value?.uid == associationId) {
         _selectedAssociation.value = updatedAssociation
       }
+
+        _associationsByCategory.value = _associations.value.groupBy { it.category }
     } else {
       Log.e("AssociationViewModel", "Association with ID $associationId not found.")
     }
@@ -131,6 +133,8 @@ constructor(
       if (_selectedAssociation.value?.uid == associationId) {
         _selectedAssociation.value = updatedAssociation
       }
+
+        _associationsByCategory.value = _associations.value.groupBy { it.category }
     } else {
       Log.e("AssociationViewModel", "Association with ID $associationId not found.")
     }
@@ -164,6 +168,8 @@ constructor(
       if (_selectedAssociation.value?.uid == associationId) {
         _selectedAssociation.value = updatedAssociation
       }
+
+        _associationsByCategory.value = _associations.value.groupBy { it.category }
     } else {
       Log.e("AssociationViewModel", "Association with ID $associationId not found.")
     }
