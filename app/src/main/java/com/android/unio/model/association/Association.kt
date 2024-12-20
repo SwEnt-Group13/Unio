@@ -232,7 +232,7 @@ class Permissions private constructor(private val grantedPermissions: MutableSet
       if (permissions.contains(PermissionType.OWNER)) {
         this.addPermission(PermissionType.FULL_RIGHTS)
       }
-      return Permissions(permissions.toMutableSet())
+      return Permissions(permissions)
     }
   }
 }
@@ -254,9 +254,9 @@ enum class PermissionType(val stringName: String) {
   ADD_EDIT_MEMBERS("Add & Edit Members"),
   DELETE_MEMBERS("Delete Members"),
 
-    // ROLES
-    ADD_EDIT_ROLES("Add & Edit Roles"),
-    DELETE_ROLES("Delete Roles"),
+  // ROLES
+  ADD_EDIT_ROLES("Add & Edit Roles"),
+  DELETE_ROLES("Delete Roles"),
 
   // GENERAL
   SEE_STATISTICS("See Statistics"), // See all statistics of the association

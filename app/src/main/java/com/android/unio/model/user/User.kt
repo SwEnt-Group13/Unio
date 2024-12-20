@@ -193,7 +193,9 @@ fun getPlaceHolderText(social: Social): String {
 
 fun getUserRoleInAssociation(association: Association, userUid: String): Role? {
 
-
-  val roleOfMember = association.roles.find { it.uid == association.members.find { it.user.uid == userUid }?.roleUid }
+  val roleOfMember =
+      association.roles.find {
+        it.uid == association.members.find { it.user.uid == userUid }?.roleUid
+      }
   return roleOfMember
 }

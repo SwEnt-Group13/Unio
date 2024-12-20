@@ -1,5 +1,6 @@
 package com.android.unio.model.search
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.unio.model.association.Association
@@ -77,6 +78,12 @@ class SearchViewModel @Inject constructor(private val repository: SearchReposito
     }
   }
 
+  /**
+   * Searches the members in the search database using the given query and updates the internal
+   * [MutableStateFlow] with the results.
+   *
+   * @param query The query to search for.
+   */
   fun searchMembers(query: String) {
     viewModelScope.launch {
       status.value = Status.LOADING
@@ -141,11 +148,18 @@ class SearchViewModel @Inject constructor(private val repository: SearchReposito
     }
   }
 
+  /**
+   * Clears the list of members and sets the search status to [Status.IDLE].
+   */
   private fun clearMembers() {
     _members.value = emptyList()
     status.value = Status.IDLE
   }
 
+  /**
+   * Called when the ViewModel is cleared. This is typically used to release any resources or perform cleanup tasks.
+   * In this case, it closes the search session from the [repository].
+   */
   public override fun onCleared() {
     super.onCleared()
     repository.closeSession()

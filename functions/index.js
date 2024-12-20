@@ -136,6 +136,9 @@ exports.sendVerificationEmail = onRequest(async (req, res) => {
   }
 });
 
+/**
+ * Verifies that the code given by the user is the same that the one sent, and if so, give admin rights of this association to the user.
+ */
 exports.verifyCode = onRequest(async (req, res) => {
   try {
     const code = req.body.data?.code;

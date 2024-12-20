@@ -39,6 +39,15 @@ object AssociationProfileTestTags {
   const val FOLLOW_BUTTON = "associationFollowButton"
 }
 
+object AssociationProfileActionsTestTags{
+  const val SCREEN = "associationProfileActionsScreen"
+  const val EVENT_TITLE = "associationEventActionsTitle"
+  const val SMALL_EVENT_TITLE = "associationSmallEventActionsTitle"
+  const val ADD_EVENT_BUTTON = "associationActionsAddEventButton"
+  const val BROADCAST_ICON_BUTTON = "associationActionsBroadcastButton"
+  const val EDIT_BUTTON = "associationActionsEditButton"
+}
+
 object SaveAssociationTestTags {
   // SCAFFOLD
   const val SCREEN = "saveAssociationScreen"

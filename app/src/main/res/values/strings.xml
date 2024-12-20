@@ -46,6 +46,29 @@
     <string name="association_profile_your_role_text">Your role is</string>
     <string name="association_tab_overview">Overview</string>
     <string name="association_tab_actions">Actions</string>
+    <string name="association_profile_header_edit_button">edit button</string>
+    <string name="association_profile_header_edit_text">Edit Association</string>
+    <string name="association_profile_header_broadcast_button">broadcast button</string>
+    <string name="association_profile_header_broadcast_text">Broadcast a message to all members of the association</string>
+    <string name="association_profile_general_actions_text">General Actions</string>
+    <string name="association_profile_actions_events_text">Events</string>
+    <string name="association_profile_save_role_dialog_permissions">Permissions</string>
+    <string name="association_profile_save_role_dialog_role_color">Choose Role Color</string>
+    <string name="association_profile_save_role_dialog_display_name">Display Name</string>
+    <string name="association_profile_save_role_dialog_edit_role">Edit Role</string>
+    <string name="association_profile_save_role_dialog_create_role">Create New Role</string>
+    <string name="association_profile_save_role_dialog_cancel">Cancel</string>
+    <string name="association_profile_save_role_dialog_save">Save</string>
+    <string name="association_profile_save_role_dialog_create">Create</string>
+    <string name="association_profile_role_card_delete">Delete</string>
+    <string name="association_profile_role_card_delete_role">Delete Role</string>
+    <string name="association_profile_role_card_cancel">Cancel</string>
+    <string name="association_profile_role_card_sure_delete_role">Are you sure you want to delete the role</string>
+    <string name="association_profile_role_card_edit_role">Edit Role</string>
+    <string name="association_profile_scaffold_overview">Overview</string>
+    <string name="association_profile_scaffold_actions">Actions</string>
+    <string name="association_profile_scaffold_role_is">Your role is</string>
+
 
 
     <!-- SaveAssociation strings -->

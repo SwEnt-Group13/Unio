@@ -52,8 +52,7 @@ class FirestoreReferenceElement<T : UniquelyIdentifiable>(
           .document(_uid)
           .get()
           .addOnSuccessListener { document ->
-              _element.value = hydrate(document.data)
-              element.value?.let { Log.d("AssociationActionsMembers", "uid de l'element : " + it.uid) }
+            _element.value = hydrate(document.data)
             onSuccess()
           }
           .addOnFailureListener { exception ->
@@ -61,8 +60,7 @@ class FirestoreReferenceElement<T : UniquelyIdentifiable>(
             Log.e("FirestoreReferenceElement", "Failed to fetch document", exception)
           }
     } else {
-      Log.e("AssociationActionsMembers", "Missing collection path")
-        Log.e("FirestoreReferenceElement", "Missing collection path")
+      Log.e("FirestoreReferenceElement", "Missing collection path")
     }
   }
 
