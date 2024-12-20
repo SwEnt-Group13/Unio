@@ -1,6 +1,7 @@
 package com.android.unio.components.event
 
 import android.content.ContentResolver
+import android.content.Context
 import android.content.res.Resources
 import android.net.Uri
 import androidx.annotation.AnyRes
@@ -23,6 +24,7 @@ import com.android.unio.TearDown
 import com.android.unio.assertDisplayComponentInScroll
 import com.android.unio.mocks.association.MockAssociation
 import com.android.unio.mocks.event.MockEvent
+import com.android.unio.mocks.firestore.MockReferenceElement
 import com.android.unio.mocks.firestore.MockReferenceList
 import com.android.unio.mocks.user.MockUser
 import com.android.unio.model.association.Association
@@ -43,13 +45,13 @@ import com.android.unio.model.usecase.UserDeletionUseCaseFirestore
 import com.android.unio.model.user.User
 import com.android.unio.model.user.UserRepositoryFirestore
 import com.android.unio.model.user.UserViewModel
+import com.android.unio.ui.event.EventDetailsPicturesTab
 import com.android.unio.ui.event.EventScreenScaffold
 import com.android.unio.ui.navigation.NavigationAction
 import com.android.unio.ui.navigation.Screen
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.firebase.Timestamp
 import emptyFirestoreReferenceElement
-import firestoreReferenceElementWith
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
@@ -71,6 +73,7 @@ class EventDetailsTest : TearDown() {
   private lateinit var user: User
   private lateinit var eventPictures: List<EventUserPicture>
   private lateinit var associations: List<Association>
+  private lateinit var context: Context
 
   private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
   private lateinit var mapViewModel: MapViewModel
@@ -101,9 +104,10 @@ class EventDetailsTest : TearDown() {
   @Before
   fun setUp() {
     MockKAnnotations.init(this, relaxed = true)
-    val context = InstrumentationRegistry.getInstrumentation().targetContext
+    context = InstrumentationRegistry.getInstrumentation().targetContext
     val resources = context.applicationContext.resources
     user = MockUser.createMockUser(uid = "moi")
+
     eventPictures =
         listOf(
             EventUserPicture(
@@ -117,9 +121,9 @@ class EventDetailsTest : TearDown() {
                 User.emptyFirestoreReferenceElement(),
                 User.emptyFirestoreReferenceList()),
             EventUserPicture(
-                "34",
+                "56",
                 resources.getUri(R.drawable.placeholder_pictures).toString(),
-                User.firestoreReferenceElementWith(user.uid),
+                MockReferenceElement(user),
                 User.emptyFirestoreReferenceList()),
         )
     events =
@@ -168,7 +172,9 @@ class EventDetailsTest : TearDown() {
         }
 
     userViewModel = UserViewModel(userRepository, imageRepository, userDeletionRepository)
-    userViewModel.getUserByUid("uid")
+    userViewModel.addUser(user) { userViewModel.refreshUser() }
+
+    // every { userRepository.updateUser(user, any(), any()) } returns Unit
   }
 
   private fun setEventScreen(event: Event) {
@@ -434,27 +440,21 @@ class EventDetailsTest : TearDown() {
   fun testDeletePicture() {
     eventViewModel.loadEvents()
     eventViewModel.selectEvent(events[0].uid, true)
-
-    setEventScreen(events[0])
-
-    goToGallery()
+    composeTestRule.setContent {
+      ProvidePreferenceLocals { EventDetailsPicturesTab(events[0], user, context, eventViewModel) }
+    }
     composeTestRule.waitUntil(5000) {
       composeTestRule
-          .onNodeWithTag(EventDetailsTestTags.USER_EVENT_PICTURE + eventPictures[0].uid)
+          .onNodeWithTag(EventDetailsTestTags.USER_EVENT_PICTURE + eventPictures[2].uid)
           .isDisplayed()
     }
 
     composeTestRule
-        .onNodeWithTag(EventDetailsTestTags.USER_EVENT_PICTURE + eventPictures[0].uid)
+        .onNodeWithTag(EventDetailsTestTags.USER_EVENT_PICTURE + eventPictures[2].uid)
         .performClick()
 
     composeTestRule.onNodeWithTag(EventDetailsTestTags.PICTURE_FULL_SCREEN).assertIsDisplayed()
-    composeTestRule
-        .onNodeWithTag(EventDetailsTestTags.EVENT_PICTURES_ARROW_RIGHT)
-        .assertIsDisplayed()
-        .performClick()
-        .performClick()
-
+    Thread.sleep(1000)
     composeTestRule
         .onNodeWithTag(EventDetailsTestTags.EVENT_PICTURES_DELETE_BUTTON)
         .assertIsDisplayed()
