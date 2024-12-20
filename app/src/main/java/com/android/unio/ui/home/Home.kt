@@ -279,6 +279,6 @@ fun TopBar(
             listOf(
                 context.getString(R.string.home_tab_all),
                 context.getString(R.string.home_tab_following))
-        SmoothTopBarNavigationMenu(tabList, pagerState)
+        SmoothTopBarNavigationMenu(tabList, pagerState, listOf(HomeTestTags.TAB_ALL, HomeTestTags.TAB_FOLLOWING))
       }
 }

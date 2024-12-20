@@ -37,6 +37,10 @@ object AssociationProfileTestTags {
   const val HEADER_FOLLOWERS = "associationHeaderFollowers"
   const val HEADER_MEMBERS = "associationHeaderMembers"
   const val FOLLOW_BUTTON = "associationFollowButton"
+
+  //PAGE
+  const val OVERVIEW_PAGE = "associationOverviewPage"
+  const val ACTIONS_PAGE = "associationActionsPage"
 }
 
 object AssociationProfileActionsTestTags {

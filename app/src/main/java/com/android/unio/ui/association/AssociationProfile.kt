@@ -92,6 +92,7 @@ import com.android.unio.model.notification.NotificationType
 import com.android.unio.model.search.SearchViewModel
 import com.android.unio.model.strings.test_tags.association.AssociationProfileActionsTestTags
 import com.android.unio.model.strings.test_tags.association.AssociationProfileTestTags
+import com.android.unio.model.strings.test_tags.event.EventDetailsTestTags
 import com.android.unio.model.user.User
 import com.android.unio.model.user.UserViewModel
 import com.android.unio.model.utils.NetworkUtils
@@ -275,7 +276,7 @@ fun AssociationProfileScaffold(
                             listOf(
                                 context.getString(R.string.association_profile_scaffold_overview),
                                 context.getString(R.string.association_profile_scaffold_actions))
-                        SmoothTopBarNavigationMenu(tabList, pagerState)
+                        SmoothTopBarNavigationMenu(tabList, pagerState, listOf(AssociationProfileTestTags.OVERVIEW_PAGE, AssociationProfileTestTags.ACTIONS_PAGE))
 
                         // Pager Content
                         HorizontalPager(
