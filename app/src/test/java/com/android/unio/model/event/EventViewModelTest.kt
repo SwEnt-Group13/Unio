@@ -106,6 +106,11 @@ class EventViewModelTest {
           onSuccess()
         }
 
+      `when`(repository.getEvents(any(), any())).thenAnswer { invocation ->
+          val onSuccess = invocation.arguments[0] as (List<Event>) -> Unit
+          onSuccess(testEvents)
+      }
+
     eventViewModel =
         EventViewModel(
             repository,
@@ -203,10 +208,6 @@ class EventViewModelTest {
 
   @Test
   fun testFindEventById() {
-    `when`(repository.getEvents(any(), any())).thenAnswer { invocation ->
-      val onSuccess = invocation.arguments[0] as (List<Event>) -> Unit
-      onSuccess(testEvents)
-    }
 
     eventViewModel.loadEvents()
     assertEquals(testEvents, eventViewModel.events.value)
@@ -249,4 +250,11 @@ class EventViewModelTest {
     eventViewModel.addEventUserPicture(inputStream, testEvents[0], picture, {}, {})
     verify(eventUserPictureRepositoryFirestore).addEventUserPicture(any(), any(), any())
   }
+
+    @Test
+    fun testDeleteEventUserPicture() {
+        eventViewModel.loadEvents()
+        eventViewModel.deleteEventUserPicture(testEventPictures[0].uid, testEvents[1], {}, {})
+        verify(eventUserPictureRepositoryFirestore).deleteEventUserPictureById(eq(testEventPictures[0].uid), any(), any())
+    }
 }
