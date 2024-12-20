@@ -199,7 +199,6 @@ class AccountDetailsTest : TearDown() {
         .onNodeWithTag(SocialsOverlayTestTags.SAVE_BUTTON)
         .performScrollTo()
         .performClick()
-    Thread.sleep(20000)
     composeTestRule
         .onNodeWithTag(AccountDetailsTestTags.SOCIALS_CHIP + "Facebook")
         .performScrollTo()

@@ -537,7 +537,7 @@ private fun AssociationProfileActionsContent(
             userViewModel,
             eventViewModel,
             searchViewModel = searchViewModel)
-        AssociationActionsMembers(associationViewModel, user!!.uid, onMemberClick, searchViewModel)
+        AssociationActionsMembers(associationViewModel, onMemberClick)
       }
 }
 
@@ -630,16 +630,13 @@ private fun AssociationMembers(
 @Composable
 private fun AssociationActionsMembers(
     associationViewModel: AssociationViewModel,
-    userUid: String,
     onMemberClick: (User) -> Unit,
-    searchViewModel: SearchViewModel,
 ) {
   val context = LocalContext.current
 
   val association by associationViewModel.selectedAssociation.collectAsState()
   val members = association?.members
   val pagerState = rememberPagerState(initialPage = 0) { members?.size ?: 0 }
-  val coroutineScope = rememberCoroutineScope()
 
   val cardContent: @Composable (Member) -> Unit = { member ->
     val user by associationViewModel.getUserFromMember(member).collectAsState()

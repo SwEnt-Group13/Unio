@@ -88,7 +88,7 @@ constructor(
     withContext(Dispatchers.IO) {
       try {
         // Get the current associations from the view model
-        val associations = associationViewModel.associations.value // Replace with actual method
+        val associations = associationViewModel.associations.value
         val associationDocuments = associations.map { it.toAssociationDocument() }
 
         // Clear the existing associations in AppSearch
