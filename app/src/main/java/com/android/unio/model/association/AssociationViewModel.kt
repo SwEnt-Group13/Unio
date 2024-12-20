@@ -392,40 +392,7 @@ constructor(
     }
   }
 
-  /**
-   * Adds a new role to the selected association. If the role already exists, an error is triggered.
-   * After adding the role, the association is saved and the local state is updated.
-   *
-   * @param role The role to be added to the association.
-   * @param onSuccess A callback function to be executed after the role is successfully added.
-   * @param onFailure A callback function to handle errors during the operation.
-   */
-  fun addRole(role: Role, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
-    val currentAssociation = _selectedAssociation.value
-    if (currentAssociation == null) {
-      onFailure(Exception("No association selected"))
-      return
-    }
 
-    // Avoid adding duplicate roles
-    if (currentAssociation.roles.contains(role)) {
-      onFailure(Exception("Role already exists in the association"))
-      return
-    }
-
-    val updatedRoles = currentAssociation.roles + role
-    val updatedAssociation = currentAssociation.copy(roles = updatedRoles)
-
-    saveAssociation(
-        isNewAssociation = false,
-        association = updatedAssociation,
-        imageStream = null,
-        onSuccess = {
-          _selectedAssociation.value = updatedAssociation
-          onSuccess()
-        },
-        onFailure = onFailure)
-  }
 
   /**
    * Removes the specified role from the selected association. If the role does not exist, an error
