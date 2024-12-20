@@ -160,8 +160,7 @@ class AssociationRepositoryFirestoreTest {
                         mapOf(
                             "displayName" to "Guest",
                             "color" to badgeColorBlue,
-                            "permissions" to listOf("Full Rights")
-                        ),
+                            "permissions" to listOf("Full Rights")),
                     "Administrator" to
                         mapOf(
                             "displayName" to "Administrator",
