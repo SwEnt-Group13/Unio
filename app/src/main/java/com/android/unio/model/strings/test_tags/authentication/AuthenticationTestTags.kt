@@ -95,6 +95,7 @@ object WelcomeTestTags {
   // SCREEN
   const val SCREEN = "welcomeScreen"
   const val EMAIL = "welcomeEmail"
+  const val CLEAR_EMAIL = "welcomeClearEmail"
   const val PASSWORD = "welcomePassword"
   const val BUTTON = "welcomeButton"
   const val FORGOT_PASSWORD = "welcomeForgotPassword"

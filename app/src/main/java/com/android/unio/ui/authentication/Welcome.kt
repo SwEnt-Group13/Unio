@@ -16,7 +16,9 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material.icons.outlined.Clear
 import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
@@ -64,6 +66,7 @@ import com.google.firebase.auth.auth
  * @param navigationAction The navigation action to use.
  * @param authViewModel The [UserViewModel] to use.
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WelcomeScreen(navigationAction: NavigationAction, authViewModel: AuthViewModel) {
   val context = LocalContext.current
@@ -112,7 +115,18 @@ fun WelcomeScreen(navigationAction: NavigationAction, authViewModel: AuthViewMod
                   singleLine = true,
                   label = { Text(context.getString(R.string.welcome_email_enter)) },
                   placeholder = { Text(context.getString(R.string.welcome_email_display)) },
-              )
+                  trailingIcon = {
+                    IconButton(
+                        onClick = { email = "" },
+                        enabled = email.isNotEmpty(),
+                        modifier = Modifier.testTag(WelcomeTestTags.CLEAR_EMAIL)) {
+                          Icon(
+                              imageVector = Icons.Outlined.Clear,
+                              contentDescription =
+                                  context.getString(
+                                      R.string.welcome_content_description_clear_email))
+                        }
+                  })
 
               OutlinedTextField(
                   modifier = Modifier.testTag(WelcomeTestTags.PASSWORD),

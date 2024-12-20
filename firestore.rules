@@ -79,7 +79,7 @@ service cloud.firestore {
 
     match /associations/{uid} {
       function isMember() {
-        let members = get(/databases/$(database)/documents/associations/$(uid)).data.get(members, null);
+        let members = get(/databases/$(database)/documents/associations/$(uid)).data.get("members", null);
         return (members != null) && members.keys().hasAny([request.auth.uid]);
       }
       function onlyUpdatedFollowerCount() {
@@ -176,8 +176,8 @@ service cloud.firestore {
 
         let affectedKeys = request.resource.data.diff(resource.data).affectedKeys();
         
-        let onlySavedCountChanged = affectedKeys.hasOnly(['numberOfSaved']);
-        return onlySavedCountChanged && (newCount == oldCount || newCount == oldCount + 1 || newCount == oldCount - 1);
+        let onlySavedCountChanged = affectedKeys.hasOnly(["numberOfSaved"]);
+        return onlySavedCountChanged && newCount != null && oldCount != null;
       }
 
       function validate() {
@@ -227,7 +227,8 @@ service cloud.firestore {
 
     match /eventUserPictures/{uid} {
       function isAuthor() {
-        return isVerified() && request.auth.uid == request.resource.data.author;
+        let author = resource.data.get("author", null);
+        return isVerified() && author != null && request.auth.uid == author;
       }
 
       function validate() {

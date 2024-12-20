@@ -20,7 +20,10 @@ import com.android.unio.model.user.UserViewModel
 import com.android.unio.ui.home.HomeScreen
 import com.android.unio.ui.navigation.NavigationAction
 import io.mockk.MockKAnnotations
+import io.mockk.every
 import io.mockk.impl.annotations.MockK
+import io.mockk.just
+import io.mockk.runs
 import io.mockk.spyk
 import org.junit.Before
 import org.junit.Rule
@@ -65,6 +68,8 @@ class BottomNavigationTest : TearDown() {
     userViewModel = UserViewModel(userRepository, imageRepository, userDeletionRepository)
 
     searchViewModel = spyk(SearchViewModel(searchRepository))
+
+    every { userDeletionRepository.init {} } just runs
 
     composeTestRule.setContent {
       HomeScreen(navigationAction, eventViewModel, userViewModel, searchViewModel)

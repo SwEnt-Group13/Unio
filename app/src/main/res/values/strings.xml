@@ -192,6 +192,7 @@
     <string name="welcome_content_description_hide_password">Hide password</string>
     <string name="welcome_content_description_show_password">Show password</string>
     <string name="welcome_forgot_password">Forgot your password ?</string>
+    <string name="welcome_content_description_clear_email">Clear email</string>
 
     <!-- Picture Selection Tool Strings -->
     <string name="selection_tool_selected_picture_text">Selected Pictures</string>
@@ -300,6 +301,10 @@
     <string name="event_details_content_description_full_screen_picture">Full Screen Picture</string>
     <string name="event_details_content_description_arrow_left">Arrow Left</string>
     <string name="event_details_content_description_arrow_right">Arrow Right</string>
+    <string name="event_details_content_description_like_picture">Icon to like the picture</string>
+    <string name="event_details_content_description_delete_picture">Icon to delete the picture</string>
+    <string name="event_details_content_description_author_icon">Profile picture of the picture\'s author</string>
+    <string name="event_details_delete_picture_confirmation" translatable="true">Your picture will be erased, do you want to proceed ?</string>
 
 
     /**
@@ -333,8 +338,8 @@
     <string name="map_event_go_back_button">Go back</string>
     <string name="map_event_title">Event map</string>
     <string name="map_event_marker_time_remaining_prefix">In </string>
-    <string name="map_event_marker_time_remaining_days">days, </string>
-    <string name="map_event_marker_time_remaining_hours">hours</string>
+    <string name="map_event_marker_time_remaining_days">day(s), </string>
+    <string name="map_event_marker_time_remaining_hours">hour(s)</string>
     <string name="map_event_marker_prefix">Event: </string>
     <string name="map_event_marker_snippet_separator" translatable="false"> - </string>
     <string name="map_content_description_center_on_user">Center on User</string>

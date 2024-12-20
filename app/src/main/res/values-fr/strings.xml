@@ -185,6 +185,7 @@
     <string name="welcome_content_description_hide_password">Cacher le mot de passe</string>
     <string name="welcome_content_description_show_password">Montrer le mot de passe</string>
     <string name="welcome_forgot_password">Oubli de mot de passe ?</string>
+    <string name="welcome_content_description_clear_email">Effacer email</string>
 
     <!-- Picture Selection Tool Strings -->
     <string name="selection_tool_selected_picture_text">Images sélectionnées</string>
@@ -306,8 +307,8 @@
     <string name="map_event_go_back_button">Retour</string>
     <string name="map_event_title">Carte d\'évènements</string>
     <string name="map_event_marker_time_remaining_prefix">Dans </string>
-    <string name="map_event_marker_time_remaining_days">jours, </string>
-    <string name="map_event_marker_time_remaining_hours">heures</string>
+    <string name="map_event_marker_time_remaining_days">jour(s), </string>
+    <string name="map_event_marker_time_remaining_hours">heure(s)</string>
     <string name="map_event_marker_prefix">Evénements : </string>
     <string name="map_content_description_center_on_user">Centrer sur l\'utilisateur</string>
 
@@ -505,6 +506,10 @@
     <string name="event_details_content_description_full_screen_picture">Image en plein écran</string>
     <string name="event_details_content_description_arrow_left">Flèche gauche</string>
     <string name="event_details_content_description_arrow_right">Flèche droite</string>
+    <string name="event_details_content_description_like_picture">Bouton pour aimer la photo</string>
+    <string name="event_details_content_description_delete_picture">Bouton pour supprimer la photo</string>
+    <string name="event_details_content_description_author_icon">Photo de profil de l\'auteur de la photo</string>
+    <string name="event_details_delete_picture_confirmation" translatable="true">Votre photo va être supprimée, voulez vous continuer ?</string>
 
     <!-- Bottom Navigation Strings -->
     <string name="bottom_nav_home">Accueil</string>

@@ -278,25 +278,32 @@ constructor(
    * @param onSuccess A callback that is called when the event is successfully updated.
    * @param onFailure A callback that is called when an error occurs while updating the event.
    */
-  fun updateEventWithoutImage(event: Event, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+  fun updateEventWithoutImage(
+      event: Event,
+      onSuccess: () -> Unit,
+      onFailure: (Exception) -> Unit,
+      updateAssociation: Boolean = true
+  ) {
     repository.addEvent(event, onSuccess, onFailure)
 
-    event.organisers.requestAll(
-        {
-          event.organisers.list.value.forEach {
-            if (it.events.contains(event.uid)) it.events.remove(event.uid)
-            it.events.add(event.uid)
-            associationRepository.saveAssociation(
-                isNewAssociation = false,
-                it,
-                {},
-                { e ->
-                  Log.e("EventViewModel", "An error occurred while loading associations: $e")
-                })
-            it.events.requestAll()
-          }
-        },
-        lazy = true)
+    if (updateAssociation) {
+      event.organisers.requestAll(
+          {
+            event.organisers.list.value.forEach {
+              if (it.events.contains(event.uid)) it.events.remove(event.uid)
+              it.events.add(event.uid)
+              associationRepository.saveAssociation(
+                  isNewAssociation = false,
+                  it,
+                  {},
+                  { e ->
+                    Log.e("EventViewModel", "An error occurred while loading associations: $e")
+                  })
+              it.events.requestAll()
+            }
+          },
+          lazy = true)
+    }
 
     _events.value = _events.value.filter { it.uid != event.uid } // Remove the outdated event
     _events.value += event
@@ -372,7 +379,9 @@ constructor(
   fun addEventUserPicture(
       pictureInputStream: InputStream,
       event: Event,
-      picture: EventUserPicture
+      picture: EventUserPicture,
+      onSuccess: () -> Unit,
+      onFailure: (Exception) -> Unit
   ) {
     val picId = eventUserPictureRepository.getNewUid()
     imageRepository.uploadImage(
@@ -383,19 +392,84 @@ constructor(
           eventUserPictureRepository.addEventUserPicture(
               newEventPicture,
               {
-                event.eventPictures.add(newEventPicture.uid)
+                event.eventPictures.add(newEventPicture)
                 updateEventWithoutImage(
                     event,
-                    { event.eventPictures.add(newEventPicture) },
+                    { onSuccess() },
                     { e ->
                       Log.e("EventViewModel", "An error occurred while updating an event: $e")
-                    })
+                    },
+                    false)
               },
               { e ->
+                onFailure(e)
                 Log.e("EventViewModel", "An error occurred while adding an event picture: $e")
               })
         },
         onFailure = { e -> Log.e("ImageRepository", "Failed to store image: $e") })
+  }
+
+  /**
+   * Update an existing eventUserPicture without updating its image.
+   *
+   * @param event The event in question.
+   * @param picture The [EventUserPicture] to update
+   */
+  fun updateEventUserPictureWithoutImage(
+      event: Event,
+      picture: EventUserPicture,
+      onSuccess: () -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+    eventUserPictureRepository.addEventUserPicture(
+        picture,
+        {
+          if (!event.eventPictures.contains(picture.uid)) {
+            event.eventPictures.add(picture)
+          }
+          updateEventWithoutImage(
+              event,
+              {
+                _events.value = _events.value.map { if (it.uid == event.uid) event else it }
+                onSuccess()
+              },
+              { e ->
+                onFailure(e)
+                Log.e("EventViewModel", "An error occurred while updating an event: $e")
+              },
+              false)
+        },
+        { e ->
+          onFailure(e)
+          Log.e("EventViewModel", "An error occurred while adding an event picture: $e")
+        })
+  }
+
+  fun deleteEventUserPicture(
+      uid: String,
+      event: Event,
+      onSuccess: () -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+
+    eventUserPictureRepository.deleteEventUserPictureById(
+        uid,
+        {
+          event.eventPictures.remove(uid)
+          updateEventWithoutImage(
+              event,
+              {
+                _events.value = _events.value.map { if (it.uid == event.uid) event else it }
+                onSuccess()
+              },
+              { e ->
+                onFailure(e)
+                Log.e("EventViewModel", "An error occurred while updating an event: $e")
+              },
+              false)
+          onSuccess()
+        },
+        onFailure)
   }
 
   /**
