@@ -138,12 +138,7 @@ async function runTests(testEnv) {
       uid: "new-association",
     })
   );
-  /*await assertSucceeds(
-    updateDoc(doc(aliceDb, `/associations/${aliceAssociation.uid}`), {
-      ...aliceAssociation,
-      name: "New name",
-    })
-  );*/
+
   await assertSucceeds(
     updateDoc(doc(aliceDb, `/associations/${otherAssociation.uid}`), {
       ...otherAssociation,

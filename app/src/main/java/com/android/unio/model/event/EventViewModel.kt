@@ -212,25 +212,32 @@ constructor(
    * @param onSuccess A callback that is called when the event is successfully updated.
    * @param onFailure A callback that is called when an error occurs while updating the event.
    */
-  fun updateEventWithoutImage(event: Event, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+  fun updateEventWithoutImage(
+      event: Event,
+      onSuccess: () -> Unit,
+      onFailure: (Exception) -> Unit,
+      updateAssociation: Boolean = true
+  ) {
     repository.addEvent(event, onSuccess, onFailure)
 
-    event.organisers.requestAll(
-        {
-          event.organisers.list.value.forEach {
-            if (it.events.contains(event.uid)) it.events.remove(event.uid)
-            it.events.add(event.uid)
-            associationRepository.saveAssociation(
-                isNewAssociation = false,
-                it,
-                {},
-                { e ->
-                  Log.e("EventViewModel", "An error occurred while loading associations: $e")
-                })
-            it.events.requestAll()
-          }
-        },
-        lazy = true)
+    if (updateAssociation) {
+      event.organisers.requestAll(
+          {
+            event.organisers.list.value.forEach {
+              if (it.events.contains(event.uid)) it.events.remove(event.uid)
+              it.events.add(event.uid)
+              associationRepository.saveAssociation(
+                  isNewAssociation = false,
+                  it,
+                  {},
+                  { e ->
+                    Log.e("EventViewModel", "An error occurred while loading associations: $e")
+                  })
+              it.events.requestAll()
+            }
+          },
+          lazy = true)
+    }
 
     _events.value = _events.value.filter { it.uid != event.uid } // Remove the outdated event
     _events.value += event
@@ -325,7 +332,8 @@ constructor(
                     { onSuccess() },
                     { e ->
                       Log.e("EventViewModel", "An error occurred while updating an event: $e")
-                    })
+                    },
+                    false)
               },
               { e ->
                 onFailure(e)
@@ -362,7 +370,8 @@ constructor(
               { e ->
                 onFailure(e)
                 Log.e("EventViewModel", "An error occurred while updating an event: $e")
-              })
+              },
+              false)
         },
         { e ->
           onFailure(e)
