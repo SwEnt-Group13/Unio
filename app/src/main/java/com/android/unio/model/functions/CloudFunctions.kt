@@ -7,11 +7,14 @@ import com.android.unio.model.firestore.transform.serialize
 import com.android.unio.model.map.Location
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.functions.FirebaseFunctions
 import com.google.firebase.functions.ktx.functions
 import com.google.firebase.ktx.Firebase
 import java.text.SimpleDateFormat
 import java.util.Locale
 import java.util.TimeZone
+
+val firebaseFunctions: FirebaseFunctions by lazy { Firebase.functions }
 
 /**
  * Retrieves the current user's token ID asynchronously.
@@ -93,7 +96,7 @@ fun addEditEventCloudFunction(
 
       giveCurrentUserTokenID(
         onSuccess = { tokenId ->
-          Firebase.functions
+          firebaseFunctions
               .getHttpsCallable("saveEvent")
               .call(
                   hashMapOf(
@@ -142,7 +145,7 @@ fun addEditRoleCloudFunction(
   try {
     giveCurrentUserTokenID(
         onSuccess = { tokenId ->
-          Firebase.functions
+          firebaseFunctions
               .getHttpsCallable("saveRole")
               .call(
                   hashMapOf(
