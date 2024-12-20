@@ -87,11 +87,9 @@ fun PictureOverlay(
   val onClickArrow: (Boolean) -> Unit = { isRight: Boolean ->
     if (isRight && pagerState.currentPage < eventPictures.size - 1) {
       val newPageIndex = pagerState.currentPage + 1
-      eventPictures[newPageIndex].author.fetch()
       scope.launch { pagerState.animateScrollToPage(newPageIndex) }
     } else if (!isRight && pagerState.currentPage > 0) {
       val newPageIndex = pagerState.currentPage - 1
-      eventPictures[newPageIndex].author.fetch()
       scope.launch { pagerState.animateScrollToPage(newPageIndex) }
     }
   }
@@ -130,6 +128,7 @@ fun PictureOverlay(
     eventViewModel.updateEventUserPictureWithoutImage(
         event = event!!, picture = picture, { enableButton = true }, {})
   }
+
   Dialog(
       onDismissRequest = onDismiss,
       properties =
@@ -162,7 +161,7 @@ fun PictureOverlay(
                                 .fillMaxWidth())
                   }
 
-              if (author?.uid == user.uid) {
+              if (author?.uid == user.uid && pagerState.currentPageOffsetFraction == 0f) {
                 IconButton(
                     onClick = { showDeletePicturePrompt = true },
                     modifier =

@@ -81,7 +81,6 @@ import androidx.core.net.toUri
 import com.android.unio.R
 import com.android.unio.model.association.Association
 import com.android.unio.model.event.Event
-import com.android.unio.model.event.EventUserPicture
 import com.android.unio.model.event.EventUtils.formatTimestamp
 import com.android.unio.model.event.EventViewModel
 import com.android.unio.model.map.MapViewModel
@@ -489,30 +488,26 @@ fun EventDetailsPicturesTab(
             Modifier.fillMaxWidth()
                 .heightIn(max = Short.MAX_VALUE.toInt().dp)
                 .testTag(EventDetailsTestTags.GALLERY_GRID)) {
-          itemsIndexed(
-              eventPictures.sortedWith(
-                  compareBy<EventUserPicture> { it.uid }
-                      .thenByDescending { it.likes.uids.size })) { index, item ->
-                println(item.likes.uids.size)
-                AsyncImageWrapper(
-                    item.image.toUri(),
-                    contentDescription =
-                        context.getString(R.string.event_details_user_picture_content_description),
-                    filterQuality = FilterQuality.Medium,
-                    placeholderResourceId = 0,
-                    contentScale = ContentScale.Fit,
-                    modifier =
-                        Modifier.padding(3.dp)
-                            .clip(RoundedCornerShape(10))
-                            .testTag(EventDetailsTestTags.USER_EVENT_PICTURE + item.uid)
-                            .clickable {
-                              if (eventPictures[index].author.element.value == null) {
-                                eventPictures[index].author.fetch()
-                              }
-                              scope.launch { pagerState.scrollToPage(index) }
-                              showFullScreen = true
-                            })
-              }
+          itemsIndexed(eventPictures) { index, item ->
+            AsyncImageWrapper(
+                item.image.toUri(),
+                contentDescription =
+                    context.getString(R.string.event_details_user_picture_content_description),
+                filterQuality = FilterQuality.Medium,
+                placeholderResourceId = 0,
+                contentScale = ContentScale.Fit,
+                modifier =
+                    Modifier.padding(3.dp)
+                        .clip(RoundedCornerShape(10))
+                        .testTag(EventDetailsTestTags.USER_EVENT_PICTURE + item.uid)
+                        .clickable {
+                          scope.launch {
+                            eventPictures.forEach { pic -> pic.author.fetch(lazy = true) }
+                            pagerState.scrollToPage(index)
+                          }
+                          showFullScreen = true
+                        })
+          }
         }
     if (showFullScreen) {
       PictureOverlay(
