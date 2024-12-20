@@ -31,9 +31,9 @@ import androidx.compose.ui.unit.dp
 import com.android.unio.R
 import com.android.unio.model.association.Association
 import com.android.unio.model.association.Member
-import com.android.unio.model.association.Role
 import com.android.unio.model.event.Event
 import com.android.unio.model.search.SearchViewModel
+import com.android.unio.model.strings.test_tags.explore.ExploreContentTestTags
 import com.android.unio.ui.theme.AppTypography
 
 /**
@@ -136,7 +136,17 @@ fun <T> SearchBar(
       }
 }
 
-/** A search bar specialized for searching associations. */
+/**
+ * A search bar that allows users to search for associations. The last 2 parameters are used to
+ * handle the expandable state of the search bar. For an example of how to use this, see Explore.kt
+ *
+ * @param searchViewModel [SearchViewModel] that provides the search results.
+ * @param onAssociationSelected Callback when an association is selected.
+ * @param shouldCloseExpandable Whether the search bar should close the expandable when it is
+ *   expanded.
+ * @param onOutsideClickHandled Callback when the outside click is handled.
+ */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AssociationSearchBar(
     searchViewModel: SearchViewModel,
@@ -144,23 +154,91 @@ fun AssociationSearchBar(
     shouldCloseExpandable: Boolean,
     onOutsideClickHandled: () -> Unit
 ) {
-  val searchQuery by remember { mutableStateOf("") }
-  val associationResults by searchViewModel.associations.collectAsState()
-  val searchState by searchViewModel.status.collectAsState()
+    var searchQuery by remember { mutableStateOf("") }
+    var isExpanded by rememberSaveable { mutableStateOf(false) }
+    val associationResults by searchViewModel.associations.collectAsState()
+    val searchState by searchViewModel.status.collectAsState()
+    val context = LocalContext.current
 
-  SearchBar(
-      searchQuery = searchQuery,
-      onQueryChange = {
-        searchViewModel.debouncedSearch(it, SearchViewModel.SearchType.ASSOCIATION)
-      },
-      results = associationResults,
-      onResultClick = onAssociationSelected,
-      searchState = searchState,
-      shouldCloseExpandable = shouldCloseExpandable,
-      onOutsideClickHandled = onOutsideClickHandled) { association ->
-        Text(association.name)
-      }
+    if (shouldCloseExpandable && isExpanded) {
+        isExpanded = false
+        onOutsideClickHandled()
+    }
+
+    DockedSearchBar(
+        inputField = {
+            SearchBarDefaults.InputField(
+                modifier = Modifier.testTag(ExploreContentTestTags.SEARCH_BAR_INPUT),
+                query = searchQuery,
+                onQueryChange = {
+                    searchQuery = it
+                    searchViewModel.debouncedSearch(it, SearchViewModel.SearchType.ASSOCIATION)
+                },
+                onSearch = {},
+                expanded = isExpanded,
+                onExpandedChange = { isExpanded = it },
+                placeholder = {
+                    Text(
+                        text = context.getString(R.string.search_placeholder),
+                        style = AppTypography.bodyLarge,
+                        modifier = Modifier.testTag(ExploreContentTestTags.SEARCH_BAR_PLACEHOLDER))
+                },
+                trailingIcon = {
+                    Icon(
+                        Icons.Default.Search,
+                        contentDescription =
+                        context.getString(R.string.explore_content_description_search_icon),
+                        modifier = Modifier.testTag(ExploreContentTestTags.SEARCH_TRAILING_ICON))
+                },
+            )
+        },
+        expanded = isExpanded,
+        onExpandedChange = { isExpanded = it },
+        modifier = Modifier.padding(horizontal = 16.dp).testTag(ExploreContentTestTags.SEARCH_BAR)) {
+        when (searchState) {
+            SearchViewModel.Status.ERROR -> {
+                Box(
+                    modifier = Modifier.fillMaxWidth().padding(16.dp),
+                    contentAlignment = Alignment.Center) {
+                    Text(context.getString(R.string.explore_search_error_message))
+                }
+            }
+            SearchViewModel.Status.LOADING -> {
+                Box(
+                    modifier = Modifier.fillMaxWidth().padding(16.dp),
+                    contentAlignment = Alignment.Center) {
+                    LinearProgressIndicator()
+                }
+            }
+            SearchViewModel.Status.IDLE -> {}
+            SearchViewModel.Status.SUCCESS -> {
+                if (associationResults.isEmpty()) {
+                    Box(
+                        modifier = Modifier.fillMaxWidth().padding(16.dp),
+                        contentAlignment = Alignment.Center) {
+                        Text(context.getString(R.string.explore_search_no_results))
+                    }
+                } else {
+                    Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+                        associationResults.forEach { association ->
+                            ListItem(
+                                modifier =
+                                Modifier.clickable {
+                                    isExpanded = false
+                                    onAssociationSelected(association)
+                                }
+                                    .testTag(
+                                        ExploreContentTestTags.ASSOCIATION_EXPLORE_RESULT +
+                                                association.name),
+                                headlineContent = { Text(association.name) })
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
+
 
 /** A search bar specialized for searching events. */
 @Composable
@@ -189,8 +267,8 @@ fun EventSearchBar(
 @Composable
 fun MemberSearchBar(
     searchViewModel: SearchViewModel,
-    associationUid : String,
-    userUid : String,
+    associationUid: String,
+    userUid: String,
     onMemberSelected: (Member) -> Unit,
     shouldCloseExpandable: Boolean,
     onOutsideClickHandled: () -> Unit
@@ -198,7 +276,7 @@ fun MemberSearchBar(
   var searchQuery by remember { mutableStateOf("") }
   val memberResults by
       searchViewModel.members.collectAsState() // Fetching members results from the ViewModel
-    val associations by searchViewModel.associations.collectAsState()
+  val associations by searchViewModel.associations.collectAsState()
   val searchState by searchViewModel.status.collectAsState()
 
   SearchBar(
@@ -215,11 +293,14 @@ fun MemberSearchBar(
       onOutsideClickHandled = onOutsideClickHandled) { member ->
         // Display the member's name or any other information you'd like here
 
-      val association = associations.find{ it.uid == associationUid }
-      val userRole = association?.roles?.find { it.uid == association.members.find { it.uid == userUid }?.roleUid}
+        val association = associations.find { it.uid == associationUid }
+        val userRole =
+            association?.roles?.find {
+              it.uid == association.members.find { it.uid == userUid }?.roleUid
+            }
 
-      if (userRole != null) {
+        if (userRole != null) {
           Text("${member.user.uid} - ${userRole.displayName}")
-      }
+        }
       }
 }
