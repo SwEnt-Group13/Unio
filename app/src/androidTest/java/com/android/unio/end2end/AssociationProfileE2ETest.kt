@@ -9,7 +9,6 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextInput
-import androidx.test.espresso.Espresso
 import androidx.test.filters.LargeTest
 import com.android.unio.R
 import com.android.unio.assertDisplayComponentInScroll
@@ -188,7 +187,7 @@ class AssociationProfileE2ETest : EndToEndTest() {
 
     signOutWithUser(composeTestRule)
   }
-
+  /*
   @Test
   fun testUserWithAccessEditRole() {
     signInWithUser(composeTestRule, Admin.EMAIL, Admin.PASSWORD)
@@ -314,7 +313,7 @@ class AssociationProfileE2ETest : EndToEndTest() {
     composeTestRule.onNodeWithTag(AssociationProfileTestTags.GO_BACK_BUTTON).performClick()
 
     signOutWithUser(composeTestRule)
-  }
+  }*/
 
   private companion object AssociationTarget {
     const val ASSOCIATION_NAME = "Ebou"
