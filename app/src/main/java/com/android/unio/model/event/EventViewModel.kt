@@ -379,6 +379,33 @@ constructor(
         })
   }
 
+  fun deleteEventUserPicture(
+      uid: String,
+      event: Event,
+      onSuccess: () -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+
+    eventUserPictureRepository.deleteEventUserPictureById(
+        uid,
+        {
+          event.eventPictures.remove(uid)
+          updateEventWithoutImage(
+              event,
+              {
+                _events.value = _events.value.map { if (it.uid == event.uid) event else it }
+                onSuccess()
+              },
+              { e ->
+                onFailure(e)
+                Log.e("EventViewModel", "An error occurred while updating an event: $e")
+              },
+              false)
+          onSuccess()
+        },
+        onFailure)
+  }
+
   /**
    * Updates the save status of the user for the target event. If the user has already saved the
    * event, the event's interested count is decremented and the event is removed from the user's

@@ -15,6 +15,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.material3.Icon
@@ -50,6 +51,7 @@ import com.android.unio.model.strings.test_tags.event.EventDetailsTestTags.PICTU
 import com.android.unio.model.user.User
 import com.android.unio.ui.image.AsyncImageWrapper
 import com.android.unio.ui.theme.AppTypography
+import com.android.unio.ui.user.UserDeletePrompt
 import kotlinx.coroutines.launch
 
 private val ASSOCIATION_ICON_SIZE = 32.dp
@@ -72,7 +74,7 @@ fun PictureOverlay(
 
   val scope = rememberCoroutineScope()
   val context = LocalContext.current
-  val iconSize = 40.dp
+  val arrowSize = 40.dp
   var enableButton by remember { mutableStateOf(true) }
   val event by eventViewModel.selectedEvent.collectAsState()
 
@@ -81,6 +83,7 @@ fun PictureOverlay(
     Toast.makeText(LocalContext.current, "An error occurred.", Toast.LENGTH_SHORT).show()
     return
   }
+
   val onClickArrow: (Boolean) -> Unit = { isRight: Boolean ->
     if (isRight && pagerState.currentPage < eventPictures.size - 1) {
       val newPageIndex = pagerState.currentPage + 1
@@ -94,7 +97,15 @@ fun PictureOverlay(
   }
 
   val author by eventPictures[pagerState.currentPage].author.element.collectAsState()
-
+  var showDeletePicturePrompt by remember { mutableStateOf(false) }
+  val onDeletePicture: () -> Unit = {
+    showDeletePicturePrompt = false
+    onDismiss()
+    scope.launch {
+      eventViewModel.deleteEventUserPicture(
+          eventPictures[pagerState.currentPage].uid, event!!, {}, {})
+    }
+  }
   var isLiked by
       remember(pagerState.currentPage) {
         mutableStateOf(eventPictures[pagerState.currentPage].likes.contains(user.uid))
@@ -150,6 +161,24 @@ fun PictureOverlay(
                                 .align(Alignment.Center)
                                 .fillMaxWidth())
                   }
+
+              if (author?.uid == user.uid) {
+                IconButton(
+                    onClick = { showDeletePicturePrompt = true },
+                    modifier =
+                        Modifier.align(Alignment.TopEnd)
+                            .testTag("")
+                            .padding(end = PADDING_VALUE + 15.dp),
+                    colors =
+                        IconButtonDefaults.iconButtonColors(
+                            contentColor = MaterialTheme.colorScheme.onPrimary,
+                            containerColor = Color(120, 30, 24))) {
+                      Icon(
+                          imageVector = Icons.Default.Delete,
+                          contentDescription = "",
+                          modifier = Modifier.size(30.dp))
+                    }
+              }
               IconButton(
                   onClick = { onClickArrow(false) },
                   modifier =
@@ -161,7 +190,7 @@ fun PictureOverlay(
                     Icon(
                         Icons.AutoMirrored.Filled.ArrowBack,
                         context.getString(R.string.event_details_content_description_arrow_left),
-                        modifier = Modifier.size(iconSize))
+                        modifier = Modifier.size(arrowSize))
                   }
 
               IconButton(
@@ -175,7 +204,7 @@ fun PictureOverlay(
                     Icon(
                         Icons.AutoMirrored.Filled.ArrowForward,
                         context.getString(R.string.event_details_content_description_arrow_right),
-                        modifier = Modifier.size(iconSize))
+                        modifier = Modifier.size(arrowSize))
                   }
 
               Row(
@@ -199,7 +228,7 @@ fun PictureOverlay(
                                     else Icons.Rounded.FavoriteBorder,
                                 context.getString(
                                     R.string.event_details_content_description_like_picture),
-                                modifier = Modifier.size(iconSize),
+                                modifier = Modifier.size(arrowSize),
                                 tint = if (isLiked) Color.Red else Color.White)
                           }
 
@@ -236,4 +265,8 @@ fun PictureOverlay(
                   }
             }
       }
+  if (showDeletePicturePrompt) {
+    UserDeletePrompt(
+        onDismiss = { showDeletePicturePrompt = false }, onConfirmDelete = { onDeletePicture() })
+  }
 }

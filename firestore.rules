@@ -227,7 +227,8 @@ service cloud.firestore {
 
     match /eventUserPictures/{uid} {
       function isAuthor() {
-        return isVerified() && request.auth.uid == request.resource.data.author;
+        val author = resource.data.get("author", null);
+        return isVerified() && author != null && request.auth.uid == author;
       }
 
       function validate() {
