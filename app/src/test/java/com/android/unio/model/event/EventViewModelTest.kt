@@ -246,7 +246,7 @@ class EventViewModelTest {
             "http://real-image.com",
             User.emptyFirestoreReferenceElement(),
             User.emptyFirestoreReferenceList())
-    eventViewModel.addEventUserPicture(inputStream, testEvents[0], picture)
+    eventViewModel.addEventUserPicture(inputStream, testEvents[0], picture, {}, {})
     verify(eventUserPictureRepositoryFirestore).addEventUserPicture(any(), any(), any())
   }
 }

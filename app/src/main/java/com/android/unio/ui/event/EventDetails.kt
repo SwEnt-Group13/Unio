@@ -146,6 +146,8 @@ fun EventScreen(
 
   if (event == null || user == null) {
     Log.e("EventScreen", "Event or user is null")
+    println(event == null)
+    println(user == null)
     Toast.makeText(LocalContext.current, "An error occurred.", Toast.LENGTH_SHORT).show()
     return
   }
@@ -504,7 +506,9 @@ fun EventDetailsPicturesTab(
                             .clip(RoundedCornerShape(10))
                             .testTag(EventDetailsTestTags.USER_EVENT_PICTURE + item.uid)
                             .clickable {
-                              eventPictures[index].author.fetch()
+                              if (eventPictures[index].author.element.value == null) {
+                                eventPictures[index].author.fetch()
+                              }
                               scope.launch { pagerState.scrollToPage(index) }
                               showFullScreen = true
                             })

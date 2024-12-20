@@ -56,11 +56,6 @@ import com.android.unio.ui.user.SomeoneElseUserProfileScreen
 import com.android.unio.ui.user.UserClaimAssociationPresidentialRightsScreen
 import com.android.unio.ui.user.UserProfileEditionScreen
 import com.android.unio.ui.user.UserProfileScreen
-import com.google.firebase.Firebase
-import com.google.firebase.auth.auth
-import com.google.firebase.firestore.firestore
-import com.google.firebase.functions.functions
-import com.google.firebase.storage.storage
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.HiltAndroidApp
 import java.util.Locale
@@ -75,10 +70,10 @@ class MainActivity : ComponentActivity() {
     requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
     super.onCreate(savedInstanceState)
     // TODO BLBLBL
-    Firebase.storage.useEmulator("10.0.2.2", 9199)
-    Firebase.auth.useEmulator("10.0.2.2", 9099)
-    Firebase.functions.useEmulator("10.0.2.2", 5001)
-    Firebase.firestore.useEmulator("10.0.2.2", 8080)
+    // Firebase.storage.useEmulator("10.0.2.2", 9199)
+    // Firebase.auth.useEmulator("10.0.2.2", 9099)
+    // Firebase.functions.useEmulator("10.0.2.2", 5001)
+    // Firebase.firestore.useEmulator("10.0.2.2", 8080)
     setContent {
       Surface(modifier = Modifier.fillMaxSize()) {
         ProvidePreferenceLocals { AppTheme { UnioApp() } }

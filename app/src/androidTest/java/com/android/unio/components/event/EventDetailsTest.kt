@@ -163,7 +163,6 @@ class EventDetailsTest : TearDown() {
   }
 
   private fun setEventScreen(event: Event) {
-
     composeTestRule.setContent {
       ProvidePreferenceLocals {
         EventScreenScaffold(
@@ -270,8 +269,6 @@ class EventDetailsTest : TearDown() {
         .assertDisplayComponentInScroll()
 
     // Save button
-    println(events[0].uid)
-    println(eventViewModel.events.value)
     composeTestRule.onNodeWithTag(EventDetailsTestTags.SAVE_BUTTON).assertDisplayComponentInScroll()
     composeTestRule.onNodeWithTag(EventDetailsTestTags.SAVE_BUTTON).performClick()
 
@@ -355,7 +352,11 @@ class EventDetailsTest : TearDown() {
 
   @Test
   fun testFullSizePictureOnClick() {
+    eventViewModel.loadEvents()
+    eventViewModel.selectEvent(events[0].uid, true)
+
     setEventScreen(events[0])
+
     goToGallery()
     composeTestRule.waitUntil(5000) {
       composeTestRule
