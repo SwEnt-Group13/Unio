@@ -4,6 +4,7 @@ import androidx.test.core.app.ApplicationProvider
 import com.android.unio.mocks.event.MockEvent
 import com.android.unio.mocks.firestore.MockReferenceList
 import com.android.unio.model.association.AssociationRepositoryFirestore
+import com.android.unio.model.firestore.emptyFirestoreReferenceList
 import com.android.unio.model.image.ImageRepositoryFirebaseStorage
 import com.android.unio.model.strings.StoragePathsStrings
 import com.android.unio.model.usecase.SaveUseCaseFirestore
@@ -51,9 +52,15 @@ class EventViewModelTest {
   private val testEventPictures =
       listOf(
           EventUserPicture(
-              uid = "1", image = "http://image.com", User.emptyFirestoreReferenceElement(), 0),
+              uid = "1",
+              image = "http://image.com",
+              User.emptyFirestoreReferenceElement(),
+              User.emptyFirestoreReferenceList()),
           EventUserPicture(
-              uid = "2", image = "http://image2.com", User.emptyFirestoreReferenceElement(), 0))
+              uid = "2",
+              image = "http://image2.com",
+              User.emptyFirestoreReferenceElement(),
+              User.emptyFirestoreReferenceList()))
   private val testEvents =
       listOf(
           MockEvent.createMockEvent(
@@ -98,6 +105,11 @@ class EventViewModelTest {
           val onSuccess = invocation.arguments[1] as () -> Unit
           onSuccess()
         }
+
+    `when`(repository.getEvents(any(), any())).thenAnswer { invocation ->
+      val onSuccess = invocation.arguments[0] as (List<Event>) -> Unit
+      onSuccess(testEvents)
+    }
 
     eventViewModel =
         EventViewModel(
@@ -196,10 +208,6 @@ class EventViewModelTest {
 
   @Test
   fun testFindEventById() {
-    `when`(repository.getEvents(any(), any())).thenAnswer { invocation ->
-      val onSuccess = invocation.arguments[0] as (List<Event>) -> Unit
-      onSuccess(testEvents)
-    }
 
     eventViewModel.loadEvents()
     assertEquals(testEvents, eventViewModel.events.value)
@@ -234,8 +242,28 @@ class EventViewModelTest {
   fun testAddEventUserPicture() {
     `when`(eventUserPictureRepositoryFirestore.getNewUid()).thenReturn("1")
     val picture =
-        EventUserPicture("0", "http://real-image.com", User.emptyFirestoreReferenceElement(), 0)
-    eventViewModel.addEventUserPicture(inputStream, testEvents[0], picture)
+        EventUserPicture(
+            "0",
+            "http://real-image.com",
+            User.emptyFirestoreReferenceElement(),
+            User.emptyFirestoreReferenceList())
+    eventViewModel.addEventUserPicture(inputStream, testEvents[0], picture, {}, {})
     verify(eventUserPictureRepositoryFirestore).addEventUserPicture(any(), any(), any())
+  }
+
+  @Test
+  fun testDeleteEventUserPicture() {
+    eventViewModel.loadEvents()
+    eventViewModel.deleteEventUserPicture(testEventPictures[0].uid, testEvents[1], {}, {})
+    verify(eventUserPictureRepositoryFirestore)
+        .deleteEventUserPictureById(eq(testEventPictures[0].uid), any(), any())
+  }
+
+  @Test
+  fun testUpdateEventUserPictureWithoutImage() {
+    val event = testEvents[1]
+    val picture = testEventPictures[0]
+    eventViewModel.updateEventUserPictureWithoutImage(event, picture, {}, {})
+    verify(eventUserPictureRepositoryFirestore).addEventUserPicture(eq(picture), any(), any())
   }
 }

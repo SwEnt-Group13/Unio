@@ -7,7 +7,7 @@ service cloud.firestore {
   match /databases/{database}/documents {
 
     match /{document=**} {
-        allow read, write: if request.auth.token.role == "admin";
+      allow read, write : if request.auth.token.get("role", null) == "admin";
     }
 
     function isSignedIn() {
@@ -26,121 +26,227 @@ service cloud.firestore {
         // This will be handled by a Firebase Function
         return request.resource.data.joinedAssociations == resource.data.joinedAssociations;
       }
+
+      function onlySavedEventsUpdated() {
+        // Check that the only updated field is the numberOfSaved field
+        // and that it was only incremented or decremented by 1
+
+        let affectedKeys = request.resource.data.diff(resource.data).affectedKeys();
+        let onlySavedEventsChanged = affectedKeys.hasOnly(['savedEvents']);
+
+        return onlySavedEventsChanged;
+      }
+
+      function onlyFollowedAssociationsUpdated() {
+        // Check that the only updated field is the numberOfSaved field
+        // and that it was only incremented or decremented by 1
+
+        let affectedKeys = request.resource.data.diff(resource.data).affectedKeys();
+        let onlyFollowedAssociationsChanged = affectedKeys.hasOnly(['followedAssociations']);
+
+        return onlyFollowedAssociationsChanged;
+      }
+
       function validate() {
-        // CHeck that the user document has the correct fields
+        // Check that the user document has the correct fields
         let fields = ['uid', 'email', 'firstName', 'lastName', 'biography', 'savedEvents', 'followedAssociations', 'joinedAssociations', 'interests', 'socials', 'profilePicture'];
         let hasCorrectNumberOfFields = request.resource.data.size() == fields.size();
         let hasCorrectFields = request.resource.data.keys().hasAll(fields);
 
         return hasCorrectNumberOfFields && hasCorrectFields &&
-          request.resource.data.uid == request.auth.uid &&
-          request.resource.data.email == request.auth.token.email &&
-          request.resource.data.firstName is string &&
-          request.resource.data.firstName.size() <= 30 &&
-          request.resource.data.lastName is string &&
-          request.resource.data.lastName.size() <= 30 &&
-          request.resource.data.biography is string &&
-          request.resource.data.biography.size() <= 300 &&
-          request.resource.data.savedEvents is list &&
-          request.resource.data.followedAssociations is list &&
-          request.resource.data.joinedAssociations is list &&
-          request.resource.data.interests is list &&
-          request.resource.data.socials is list &&
-          request.resource.data.profilePicture is string;
+        request.resource.data.uid == uid &&
+        request.resource.data.email == request.auth.token.email &&
+        request.resource.data.firstName is string &&
+        request.resource.data.firstName.size() <= 30 &&
+        request.resource.data.lastName is string &&
+        request.resource.data.lastName.size() <= 30 &&
+        request.resource.data.biography is string &&
+        request.resource.data.biography.size() <= 300 &&
+        request.resource.data.savedEvents is list &&
+        request.resource.data.followedAssociations is list &&
+        request.resource.data.joinedAssociations is list &&
+        request.resource.data.interests is list &&
+        request.resource.data.socials is list &&
+        request.resource.data.profilePicture is string;
       }
 
       allow get: if isVerified();
       allow list: if isVerified();
       allow delete: if isOwner();
       allow create: if isOwner() && validate();
-      allow update: if isOwner() && validateJoinedAssociations() && validate();
+      allow update: if validateJoinedAssociations() && validate() && isOwner();
     }
 
     match /associations/{uid} {
       function isMember() {
-        return isVerified() && get(/databases/$(database)/documents/associations/$(uid)).data.members.hasAny([request.auth.uid]);
+        let members = get(/databases/$(database)/documents/associations/$(uid)).data.get("members", null);
+        return (members != null) && members.keys().hasAny([request.auth.uid]);
       }
       function onlyUpdatedFollowerCount() {
         // Check that the only updated field is the followersCount field
         // and that it was only incremented or decremented by 1
-        let newCount = request.resource.data.followersCount;
-        let oldCount = resource.data.followersCount;
+        let newCount = request.resource.data.get("followersCount", null);
+        let oldCount = resource.data.get("followersCount", null);
+
 
         let affectedKeys = request.resource.data.diff(resource.data).affectedKeys();
         let onlyFollowerCountChanged = affectedKeys.hasOnly(['followersCount']);
 
         return onlyFollowerCountChanged && (newCount == oldCount || newCount == oldCount + 1 || newCount == oldCount - 1);
       }
+
       function validate() {
         // Check that the association document has the correct fields
-        let fields = ['uid', 'url', 'name', 'fullName', 'category', 'description', 'followersCount', 'members', 'image', 'events'];
+        let fields = ['uid', 'url', 'name', 'fullName', 'category', 'description', 'followersCount', 'members','roles', 'image', 'events', "principalEmailAddress"];
         let hasCorrectNumberOfFields = request.resource.data.size() == fields.size();
         let hasCorrectFields = request.resource.data.keys().hasAll(fields);
 
         return hasCorrectNumberOfFields && hasCorrectFields &&
-          request.resource.data.uid == uid &&
-          request.resource.data.url is string &&
-          request.resource.data.name is string &&
-          request.resource.data.fullName is string &&
-          request.resource.data.category is string &&
-          request.resource.data.description is string &&
-          request.resource.data.followersCount is int &&
-          request.resource.data.followersCount >= 0 &&
-          request.resource.data.members is list &&
-          request.resource.data.image is string &&
-          request.resource.data.events is list;
+        request.resource.data.uid == uid &&
+        request.resource.data.url is string &&
+        request.resource.data.name is string &&
+        request.resource.data.fullName is string &&
+        request.resource.data.category is string &&
+        request.resource.data.description is string &&
+        request.resource.data.followersCount is int &&
+        request.resource.data.followersCount >= 0 &&
+        request.resource.data.members is map &&
+        request.resource.data.roles is map &&
+        request.resource.data.image is string &&
+        request.resource.data.events is list &&
+        request.resource.data.principalEmailAddress is string;
       }
 
       allow read: if isVerified();
       // Allow update if the user is a member of the association or if the changed data is the followersCount field
-      allow update: if isVerified() &&
-          ((isMember() || onlyUpdatedFollowerCount())) && validate();
+      allow update: if isVerified() && (isMember() || onlyUpdatedFollowerCount()) && validate();
+      
+    }
+
+    match /associationsRequest/{uid} {
+
+      function validate() {
+        // Check that the association document has the correct fields
+        let fields = ['uid', 'url', 'name', 'fullName', 'category', 'description', 'followersCount', 'members','roles', 'image', 'events', "principalEmailAddress"];
+        let hasCorrectNumberOfFields = request.resource.data.size() == fields.size();
+        let hasCorrectFields = request.resource.data.keys().hasAll(fields);
+
+        return hasCorrectNumberOfFields && hasCorrectFields &&
+        request.resource.data.uid == uid &&
+        request.resource.data.url is string &&
+        request.resource.data.name is string &&
+        request.resource.data.fullName is string &&
+        request.resource.data.category is string &&
+        request.resource.data.description is string &&
+        request.resource.data.followersCount is int &&
+        request.resource.data.followersCount >= 0 &&
+        request.resource.data.members is map &&
+        request.resource.data.roles is map &&
+        request.resource.data.image is string &&
+        request.resource.data.events is list &&
+        request.resource.data.principalEmailAddress is string;
+      }
+      allow create: if isVerified() && validate();
     }
 
     match /events/{uid} {
       function isEventOrganiser(organisers) {
         // Check that the user creating the event is member of any of the organisers
-        return isVerified() && organisers.hasAny(
-          get(/databases/$(database)/documents/users/$(request.auth.uid)).data.joinedAssociations
+        return organisers.hasAny(
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.get("joinedAssociations", null)
         );
       }
+
+      function onlyUpdatedEventPictures() {
+        // Check that the only updated field is the eventPictures field
+
+        let affectedKeys = request.resource.data.diff(resource.data).affectedKeys();
+        let onlyEventPicturesChanged = affectedKeys.hasOnly(['eventPictures']);
+
+        return onlyEventPicturesChanged;
+      }
+
+      function onlyUpdatedSavedCount() {
+        // Check that the only updated field is the numberOfSaved field
+        // and that it was only incremented or decremented by 1
+
+
+        let newCount = request.resource.data.get("numberOfSaved", null);
+        let oldCount = resource.data.get("numberOfSaved", null);
+
+        let affectedKeys = request.resource.data.diff(resource.data).affectedKeys();
+        
+        let onlySavedCountChanged = affectedKeys.hasOnly(["numberOfSaved"]);
+        return onlySavedCountChanged && newCount != null && oldCount != null;
+      }
+
       function validate() {
         // Check that the event document has the correct fields
-        let fields = ['uid', 'title', 'organisers', 'taggedAssociations', 'image', 'description', 'catchyDescription', 'price', 'date', 'location', 'types'];
+        let fields = ['uid', 'title', 'organisers', 'taggedAssociations', 'image', 'description', 'catchyDescription', 'price', 'startDate', 'endDate', 'location', 'types', 'maxNumberOfPlaces', 'numberOfSaved', 'eventPictures'];
         let hasCorrectNumberOfFields = request.resource.data.size() == fields.size();
         let hasCorrectFields = request.resource.data.keys().hasAll(fields);
 
         return hasCorrectNumberOfFields && hasCorrectFields &&
-          request.resource.data.uid == uid &&
-          request.resource.data.title is string &&
-          request.resource.data.title.size() <= 30 &&
-          request.resource.data.organisers is list &&
-          request.resource.data.taggedAssociations is list &&
-          request.resource.data.image is string &&
-          request.resource.data.description is string &&
-          request.resource.data.description.size() <= 300 &&
-          request.resource.data.catchyDescription is string &&
-          request.resource.data.catchyDescription.size() <= 100 &&
-          request.resource.data.price is number &&
-          request.resource.data.price >= 0 &&
-          request.resource.data.date is timestamp &&
-          request.resource.data.location is map &&
-          request.resource.data.location.latitude is number &&
-          request.resource.data.location.longitude is number &&
-          request.resource.data.location.name is string &&
-          request.resource.data.types is list;
+        request.resource.data.uid == uid &&
+        request.resource.data.title is string &&
+        request.resource.data.title.size() <= 30 &&
+        request.resource.data.organisers is list &&
+        request.resource.data.taggedAssociations is list &&
+        request.resource.data.image is string &&
+        request.resource.data.description is string &&
+        request.resource.data.description.size() <= 300 &&
+        request.resource.data.catchyDescription is string &&
+        request.resource.data.catchyDescription.size() <= 100 &&
+        request.resource.data.price is number &&
+        request.resource.data.price >= 0 &&
+        request.resource.data.startDate is timestamp &&
+        request.resource.data.endDate is timestamp &&
+        request.resource.data.location is map &&
+        request.resource.data.location.latitude is number &&
+        request.resource.data.location.longitude is number &&
+        request.resource.data.location.name is string &&
+        request.resource.data.types is list &&
+        request.resource.data.maxNumberOfPlaces is number &&
+        request.resource.data.maxNumberOfPlaces >= -1 &&
+        request.resource.data.numberOfSaved is number &&
+        request.resource.data.numberOfSaved >= 0 &&
+        request.resource.data.eventPictures is list;
       }
 
       allow read: if isVerified();
 
       // To create an event, the user must be an organiser
       // specified in the event document of the request
-      allow create: if isEventOrganiser(request.resource.data.organisers) && validate();
+      allow create: if isVerified() && isEventOrganiser(request.resource.data.organisers) && validate();
 
       // To update or delete an event, the user must be an
       // organiser in the existing event document
-      allow update: if isEventOrganiser(resource.data.organisers) && validate();
-      allow delete: if isEventOrganiser(resource.data.organisers);
+      allow update: if isVerified() && (isEventOrganiser(resource.data.organisers) || onlyUpdatedSavedCount() || onlyUpdatedEventPictures()) && validate();
+      allow delete: if isVerified() && isEventOrganiser(resource.data.organisers);
+    }
+
+    match /eventUserPictures/{uid} {
+      function isAuthor() {
+        let author = resource.data.get("author", null);
+        return isVerified() && author != null && request.auth.uid == author;
+      }
+
+      function validate() {
+        // Check that the eventUserPicture document has the correct fields
+        let fields = ['uid', 'image', 'author', 'likes'];
+        let hasCorrectNumberOfFields = request.resource.data.size() == fields.size();
+        let hasCorrectFields = request.resource.data.keys().hasAll(fields);
+
+        return hasCorrectNumberOfFields && hasCorrectFields &&
+        request.resource.data.uid == uid &&
+        request.resource.data.image is string &&
+        request.resource.data.author is string &&
+        request.resource.data.likes is list;
+        }
+      allow read: if isVerified();
+      allow create: if isVerified() && validate();
+      allow update: if isVerified() && validate();
+      allow delete: if isAuthor();
     }
   }
 }

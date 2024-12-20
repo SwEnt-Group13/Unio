@@ -120,6 +120,13 @@ object EventDetailsTestTags {
   const val EVENT_PICTURES_ARROW_LEFT = "picturesArrowLeft"
   const val EVENT_PICTURES_ARROW_RIGHT = "picturesArrowRight"
   const val PICTURE_FULL_SCREEN = "pictureFullScreen"
+  const val INTERACTION_ROW = "pictureInteractionRow"
+  const val EVENT_PICTURES_AUTHOR_ICON = "picturesAuthorIcon"
+  const val EVENT_PICTURES_AUTHOR_INFO = "picturesAuthorInfo"
+  const val EVENT_PICTURES_AUTHOR_NAME = "picturesAuthorName"
+  const val EVENT_PICTURES_LIKE_BUTTON = "picturesLikeButton"
+  const val EVENT_PICTURES_LIKE_COUNTER = "picturesLikeCounter"
+  const val EVENT_PICTURES_DELETE_BUTTON = "picturesDeleteButton"
   const val CHIPS = "eventChips"
 }
 

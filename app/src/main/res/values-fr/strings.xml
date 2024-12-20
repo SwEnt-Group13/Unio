@@ -479,6 +479,10 @@
     <string name="event_details_content_description_full_screen_picture">Image en plein écran</string>
     <string name="event_details_content_description_arrow_left">Flèche gauche</string>
     <string name="event_details_content_description_arrow_right">Flèche droite</string>
+    <string name="event_details_content_description_like_picture">Bouton pour aimer la photo</string>
+    <string name="event_details_content_description_delete_picture">Bouton pour supprimer la photo</string>
+    <string name="event_details_content_description_author_icon">Photo de profil de l\'auteur de la photo</string>
+    <string name="event_details_delete_picture_confirmation" translatable="true">Votre photo va être supprimée, voulez vous continuer ?</string>
 
     <!-- Bottom Navigation Strings -->
     <string name="bottom_nav_home">Accueil</string>

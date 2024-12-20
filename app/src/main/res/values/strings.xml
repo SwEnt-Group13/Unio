@@ -274,6 +274,10 @@
     <string name="event_details_content_description_full_screen_picture">Full Screen Picture</string>
     <string name="event_details_content_description_arrow_left">Arrow Left</string>
     <string name="event_details_content_description_arrow_right">Arrow Right</string>
+    <string name="event_details_content_description_like_picture">Icon to like the picture</string>
+    <string name="event_details_content_description_delete_picture">Icon to delete the picture</string>
+    <string name="event_details_content_description_author_icon">Profile picture of the picture\'s author</string>
+    <string name="event_details_delete_picture_confirmation" translatable="true">Your picture will be erased, do you want to proceed ?</string>
 
 
     /**

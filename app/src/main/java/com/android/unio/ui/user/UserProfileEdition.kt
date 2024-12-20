@@ -344,8 +344,10 @@ fun UserProfileEditionScreenScaffold(
     }
 
     if (showDeleteUserPrompt) {
-      UserDeletePrompt(
-          onDismiss = { showDeleteUserPrompt = false }, onConfirmDelete = { onDeleteUser(user) })
+      DeletePrompt(
+          onDismiss = { showDeleteUserPrompt = false },
+          onConfirmDelete = { onDeleteUser(user) },
+          text = context.getString(R.string.user_edition_delete_user_confirmation))
     }
   }
 }
@@ -567,15 +569,16 @@ private fun SocialButtonAndFlowRow(
 }
 
 /**
- * The [UserDeletePrompt] composable contains the dialog that prompts the user to confirm the
- * deletion of their account.
+ * The [DeletePrompt] composable contains the dialog that prompts the user to confirm the deletion
+ * of their account.
  *
  * @param onDismiss The function to call when the user wants to dismiss the dialog.
  * @param onConfirmDelete The function to call when the user wants to confirm the deletion of their
  *   account.
  */
 @Composable
-fun UserDeletePrompt(
+fun DeletePrompt(
+    text: String,
     onDismiss: () -> Unit,
     onConfirmDelete: () -> Unit,
 ) {
@@ -592,9 +595,7 @@ fun UserDeletePrompt(
                   modifier = Modifier.padding(16.dp),
                   horizontalAlignment = Alignment.CenterHorizontally,
                   verticalArrangement = Arrangement.SpaceBetween) {
-                    Text(
-                        text = context.getString(R.string.user_edition_delete_user_confirmation),
-                        textAlign = TextAlign.Center)
+                    Text(text = text, textAlign = TextAlign.Center)
 
                     Button(
                         modifier = Modifier.testTag(UserEditionTestTags.DELETE_CONFIRMATION),
